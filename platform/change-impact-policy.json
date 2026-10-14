@@ -1032,6 +1032,7 @@
     {
       "id": "fixed-public-state-characteristic-contract",
       "patterns": [
+        "tests/fixtures/additional-conditional-modifier-cards.json",
         "quorune/card_programs/runtime.py",
         "quorune/characteristic_fragments.py",
         "quorune/characteristic_evaluation.py",

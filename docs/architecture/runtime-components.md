@@ -372,6 +372,14 @@ state predicate. Declaration restrictions consume the same snapshot for their
 closed public conditions; they do not add a combat-local query registry. No
 runtime Oracle parser or parallel applicability registry is involved.
 
+`continuous.characteristics.public-state-keywords.v1` retains complete typed
+keyword fragments behind the same public-state predicate and target relation.
+Its keyword labels and fragments use the ordinary query-grant validator;
+fixed generic ward and protection keep their established consumers. Conditional
+combat and spell-cast keyword triggers use the current recipient's fragments.
+The earlier characteristic-only descriptor continues to reject fragment fields.
+An already created trigger retains its consequence when the live grant ends.
+
 The same quantity boundary supports versioned distinct basic land types,
 graveyard card types, colors, maximum/total mana value and colored mana-symbol
 counts. It reads current copy/type/color data only through layer 5. Exactly two

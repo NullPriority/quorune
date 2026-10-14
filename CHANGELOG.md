@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Preserve typed conditional keyword grants, including fixed ward and
+  protection, through the existing public-state and characteristic owners.
+
 - Compile qualified player-damage batch triggers with subtype and public
   characteristic predicates, one trigger per observer and damaged player.
   Captured trigger sources use deterministic ordering across checkpoint replay.

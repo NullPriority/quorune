@@ -658,6 +658,13 @@ fragment through the shared layer-6 owner; the earlier characteristic-only
 schema remains strict. An unsupported condition, quoted child, nested static
 grant, multiple quotation, or material sibling prevents complete-card closure.
 
+The same compiler also combines a closed public-state predicate with an
+independently compiled keyword grant. Fixed generic ward, protection, and
+represented combat or spell-cast trigger keywords retain their complete typed
+fragments and consumer capabilities. The versioned conditional keyword
+descriptor shares the existing layer-6/7c lowering. Unknown keyword parameters,
+toxic query grants, hidden conditions, and unsupported siblings remain residual.
+
 Fixed static declaration composition reuses the declaration requirement and
 restriction parsers rather than adding a combat validator. A source-local line
 may contain either one exact fragment or one of the closed two-fragment

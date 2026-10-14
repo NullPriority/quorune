@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 246,
+  "registry_version": 247,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -5788,7 +5788,7 @@
     },
     {
       "id": "continuous.ability.fixed_query_keyword_grant",
-      "version": 13,
+      "version": 14,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -5805,7 +5805,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Grant one or more selected ordinary keywords, including five fixed basic landwalk variants and Horsemanship, in layer 6 to a live source-controller, source-opponent, or global battlefield set selected by the shared closed public ObjectQuerySpec, optionally coupled to fixed layer-7c power/toughness or exact declaration fragments over that identical query. Global canonical creature-subtype plurals accept optional All and Other; one shared query preserves every controller and source exclusion. Bare canonical creature-subtype queries include noncreature Kindred permanents; explicit creature descriptions retain their creature constraint. Grant already-represented fixed combat or spell-cast keyword trigger fragments with exact label, instance and consumer dependencies. Dedicated version-two handlers also grant complete fixed typed Protection fragments to live queried sets, optionally with the same fixed stat query.",
+        "summary": "Grant one or more selected ordinary keywords, including five fixed basic landwalk variants and Horsemanship, in layer 6 to a live source-controller, source-opponent, or global battlefield set selected by the shared closed public ObjectQuerySpec, optionally coupled to fixed layer-7c power/toughness or exact declaration fragments over that identical query. Global canonical creature-subtype plurals accept optional All and Other; one shared query preserves every controller and source exclusion. Bare canonical creature-subtype queries include noncreature Kindred permanents; explicit creature descriptions retain their creature constraint. Grant already-represented fixed combat or spell-cast keyword trigger fragments with exact label, instance and consumer dependencies. Dedicated version-two handlers also grant complete fixed typed Protection fragments to live queried sets, optionally with the same fixed stat query. Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition.",
         "inputs": [
           "active phased-in battlefield source",
           "source-controller, source-opponent, or global target relation",
@@ -5846,7 +5846,9 @@
         "quorune.continuous_effects.evaluate_continuous_effects",
         "quorune.keyword_abilities.triggered_keyword_grant",
         "quorune.semantic_runtime.continuous_components.FixedQueryProtectionGrantHandler",
-        "quorune.semantic_runtime.continuous_components.FixedQueryCharacteristicProtectionGrantHandler"
+        "quorune.semantic_runtime.continuous_components.FixedQueryCharacteristicProtectionGrantHandler",
+        "quorune.compiler.conditional_granted_ability_templates.conditional_typed_keyword_handler",
+        "quorune.semantic_runtime.conditional_continuous.ConditionalTypedKeywordHandler"
       ],
       "positive_tests": [
         "test_closed_query_grammar_compiles_exact_with_consumer_capabilities",
@@ -5868,7 +5870,10 @@
         "test_extended_bare_subtype_queries_preserve_kindred_and_explicit_creature_distinction",
         "test_live_keyword_trigger_grants_carry_exact_fragment_and_consumer_dependencies",
         "test_fixed_protection_uses_closed_direct_target_and_quality_contracts",
-        "test_public_query_protection_grants_keep_typed_quality_and_reject_unbound_labels"
+        "test_public_query_protection_grants_keep_typed_quality_and_reject_unbound_labels",
+        "test_conditional_typed_keywords_keep_their_fragments_and_condition",
+        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay"
       ],
       "negative_tests": [
         "test_open_or_unsupported_queries_remain_material_residuals",
@@ -5883,7 +5888,10 @@
         "test_static_label_dispatch_omission_mutant_is_killed",
         "test_unknown_nouns_and_class_level_context_remain_residual",
         "test_triggered_keyword_grant_labels_and_fragments_are_exact_and_fail_closed",
-        "test_expanded_protection_targets_remain_residual_when_precise_owner_is_unavailable"
+        "test_expanded_protection_targets_remain_residual_when_precise_owner_is_unavailable",
+        "test_conditional_typed_keyword_schema_dependencies_and_omission_fail_closed",
+        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay"
       ],
       "interaction_tests": [
         "test_aura_attachment_and_query_grant_execute_from_one_exact_card",
@@ -5907,7 +5915,9 @@
         "test_original_archangels_grant_independent_exalted_instances_and_replay",
         "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
         "test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure",
-        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays"
+        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay"
       ],
       "multiplayer_tests": [
         "test_live_queries_track_global_control_subtype_phase_and_zone_changes",
@@ -5919,14 +5929,17 @@
         "test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
         "test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry",
         "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
-        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays"
+        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays"
       ],
       "privacy_tests": [
         "test_projection_and_replay_preserve_grants_without_private_identities",
         "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks",
         "test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
         "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
-        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays"
+        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay"
       ],
       "replay_tests": [
         "test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
@@ -5942,7 +5955,9 @@
         "test_original_archangels_grant_independent_exalted_instances_and_replay",
         "test_granted_prowess_response_bounce_invalidates_old_recipient_and_replays",
         "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
-        "test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure"
+        "test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure",
+        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay"
       ],
       "required_evidence": [
         "positive",
@@ -5961,7 +5976,7 @@
     },
     {
       "id": "continuous.characteristics.fixed_public_state",
-      "version": 11,
+      "version": 12,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -5980,7 +5995,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply fixed supported keywords and power/toughness modifiers in layers 6 and 7c while one closed authoritative public scalar, object, cycle-safe query, sealed history, distinct graveyard characteristic, hand, starting-life, player-counter, or designation condition is true. Compose one recipient-relative declaration requirement or restriction with fixed characteristics behind that same current public condition.",
+        "summary": "Apply fixed supported keywords and power/toughness modifiers in layers 6 and 7c while one closed authoritative public scalar, object, cycle-safe query, sealed history, distinct graveyard characteristic, hand, starting-life, player-counter, or designation condition is true. Compose one recipient-relative declaration requirement or restriction with fixed characteristics behind that same current public condition. Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition.",
         "inputs": [
           "active phased-in battlefield source",
           "source controller turn, life, public hand, graveyard, current or sealed turn-history, opponent poison, monarch, and starting-life facts",
@@ -6022,7 +6037,9 @@
         "quorune.card_programs.runtime.collect_card_program_continuous_effects",
         "quorune.continuous_effects.evaluate_continuous_effects",
         "quorune.compiler.declaration_nodes.conditional_characteristic_declaration_grant",
-        "quorune.semantic_runtime.conditional_continuous.ConditionalDeclarationGrantHandler"
+        "quorune.semantic_runtime.conditional_continuous.ConditionalDeclarationGrantHandler",
+        "quorune.compiler.conditional_granted_ability_templates.conditional_typed_keyword_handler",
+        "quorune.semantic_runtime.conditional_continuous.ConditionalTypedKeywordHandler"
       ],
       "positive_tests": [
         "test_closed_public_state_grammar_compiles_capability_closed",
@@ -6037,7 +6054,10 @@
         "test_public_fact_thresholds_use_canonical_producers_and_consumers",
         "test_two_simultaneous_copies_use_post_event_history_characteristics",
         "test_additional_and_also_fixed_bonuses_keep_the_complete_condition",
-        "test_conditional_stats_and_declaration_result_preserve_one_live_condition"
+        "test_conditional_stats_and_declaration_result_preserve_one_live_condition",
+        "test_conditional_typed_keywords_keep_their_fragments_and_condition",
+        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay"
       ],
       "negative_tests": [
         "test_unrepresented_conditions_and_bodies_remain_residual",
@@ -6047,7 +6067,10 @@
         "test_pre_history_characteristic_sealing_mutant_is_killed",
         "test_additional_wording_does_not_admit_unrepresented_bonus_or_condition",
         "test_additional_modifier_producer_and_capability_omissions_fail_closed",
-        "test_conditional_declaration_composition_rejects_open_grammar_and_malformed_descriptors"
+        "test_conditional_declaration_composition_rejects_open_grammar_and_malformed_descriptors",
+        "test_conditional_typed_keyword_schema_dependencies_and_omission_fail_closed",
+        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay"
       ],
       "interaction_tests": [
         "test_live_public_object_state_and_layer_five_queries_recompute",
@@ -6061,19 +6084,24 @@
         "test_history_precedes_final_power_and_keyword_sealing",
         "test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it",
         "test_original_jetmir_additional_thresholds_stack_and_recompute_after_real_bounce",
-        "test_original_channeler_condition_controls_required_attack_and_replays"
+        "test_original_channeler_condition_controls_required_attack_and_replays",
+        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay"
       ],
       "multiplayer_tests": [
         "test_turn_gated_attachment_and_anthem_compose",
         "test_public_condition_queries_follow_authoritative_history_and_control",
         "test_public_fact_conditions_recompute_and_replay",
-        "test_original_channeler_condition_controls_required_attack_and_replays"
+        "test_original_channeler_condition_controls_required_attack_and_replays",
+        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays"
       ],
       "privacy_tests": [
         "test_hand_count_condition_projects_and_replays_without_hidden_identity",
         "test_public_condition_queries_follow_authoritative_history_and_control",
         "test_public_fact_conditions_recompute_and_replay",
-        "test_original_channeler_condition_controls_required_attack_and_replays"
+        "test_original_channeler_condition_controls_required_attack_and_replays",
+        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay"
       ],
       "replay_tests": [
         "test_hand_count_condition_projects_and_replays_without_hidden_identity",
@@ -6083,7 +6111,9 @@
         "test_two_simultaneous_copies_use_post_event_history_characteristics",
         "test_history_characteristic_distinguishing_controls",
         "test_replacement_adjusted_history_characteristic_quantity",
-        "test_original_channeler_condition_controls_required_attack_and_replays"
+        "test_original_channeler_condition_controls_required_attack_and_replays",
+        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay"
       ],
       "required_evidence": [
         "positive",

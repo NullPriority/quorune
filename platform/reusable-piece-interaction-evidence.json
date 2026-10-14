@@ -4,6 +4,36 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
+      "test_id": "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_state",
+        "capability.trigger.keyword.ward.fixed_generic"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_state",
+        "trigger.keyword.ward.fixed_generic"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual opposing Unsummon creates the original K-9 grant recipient ward, declining preserves the target, and a real K-9 tap activation removes the grant so the next Unsummon resolves. Pending save/load, privacy, unauthorized rollback and complete pre-action replay retain the result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_state",
+        "capability.protection.typed.debt"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_state",
+        "protection.typed.debt"
+      ],
+      "interaction_order": 2,
+      "assertion": "A strictly compiled original Pristine Angel is cast, rejects a blue target while untapped, becomes targetable after a real selected-tap cost, then untaps from its actual spell-cast trigger. Restored protection makes the already cast blue spell fail resolution revalidation; private projections and pending save/load/replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
       "test_id": "test_actual_original_squirrel_damage_batch_coalesces_per_player_and_replays",
       "piece_ids": [
         "capability.trigger.event.qualified_damage_batch",

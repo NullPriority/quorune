@@ -440,15 +440,16 @@ def _continuous_static_runtime_template(
                     "continuous-effect capability"
                 ),
             )
-        conditional_keyword = conditional_self_keyword_handler(
-            text,
-            source_name=source_name,
+        from .conditional_granted_ability_templates import conditional_typed_keyword_handler
+        conditional_keyword = (
+            conditional_typed_keyword_handler(text, source_name=source_name)
+            or conditional_self_keyword_handler(text, source_name=source_name)
         )
         if conditional_keyword is not None:
             return StaticRuntimeTemplate(
                 compiled=conditional_keyword,
                 kind="static_ability",
-                event="continuous",
+                event=conditional_keyword[1]['event'],
                 dependency_reason=(
                     "generic conditional characteristics require their closed "
                     "typed capability"

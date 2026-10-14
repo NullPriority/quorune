@@ -225,6 +225,78 @@ def source_context(
 
 
 class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
+    def test_conditional_typed_keyword_schema_dependencies_and_omission_fail_closed(self):
+        from test_qualified_zone_event_queries import query_record
+        from quorune.compiler.conditional_granted_ability_templates import conditional_typed_keyword_handler
+        from quorune.semantic_runtime.conditional_continuous import ConditionalTypedKeywordHandler
+
+        text = 'During your turn, this creature has ward {2}.'
+        compiled = conditional_typed_keyword_handler(text, source_name='Generic Query Observer')
+        self.assertIsNotNone(compiled)
+        descriptor = compiled[1]
+        handler = ConditionalTypedKeywordHandler()
+        handler.validate(descriptor)
+        for altered in (
+            text.replace('{2}', '{X}'), text.replace('{2}', '\u2014Pay 2 life'),
+            text.replace('During your turn', 'As long as the top card of your library is blue'),
+            text.replace('ward {2}', 'unrepresented'), text + ' Draw a card.',
+        ):
+            self.assertIsNone(conditional_typed_keyword_handler(altered, source_name='Generic Query Observer'))
+        for field, value in (('schema_version', True), ('unknown', True)):
+            with self.assertRaises(SemanticNodeError):
+                handler.validate({**descriptor, field:value})
+        for field, value in (('add_abilities', ['Ward {3}']), ('add_ability_fragments', []), ('power', True)):
+            altered = copy.deepcopy(descriptor)
+            altered['modifier'][field] = value
+            with self.assertRaises(SemanticNodeError):
+                handler.validate(altered)
+        legacy = {**descriptor, 'handler_id':FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID, 'schema_version':1}
+        with self.assertRaises(SemanticNodeError):
+            default_continuous_effect_component_registry().validate(legacy)
+        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        for capability in ('continuous.characteristics.fixed_public_state', 'trigger.keyword.ward.fixed_generic'):
+            altered = copy.deepcopy(raw)
+            next(row for row in altered['capabilities'] if row['id']==capability).update(status='blocked', blockers=['conditional keyword dependency withdrawal'])
+            self.assertNotEqual('exact', compile_oracle_card(query_record(text), capability_registry=CapabilityRegistry(altered)).status)
+        with mock.patch('quorune.compiler.conditional_granted_ability_templates.conditional_typed_keyword_handler', return_value=None):
+            self.assertNotEqual('exact', compile_oracle_card(query_record(text), capability_registry=load_default_capability_registry()).status)
+
+    def test_conditional_typed_keywords_keep_their_fragments_and_condition(self):
+        from test_qualified_zone_event_queries import query_record
+        from quorune.ability_fragments import ability_fragment_from_dict
+        from quorune.trigger_participation import WardSpec
+        from quorune.ability_fragments import ProtectionSpec, CombatKeywordTriggerSpec, SpellCastKeywordTriggerSpec
+
+        registry = load_default_capability_registry()
+        cases = (
+            ('This creature has prowess as long as you control a black creature.', SpellCastKeywordTriggerSpec, 'query_count_at_least'),
+            ('During your turn, this creature has ward {2}.', WardSpec, 'controller_turn'),
+            ('As long as this creature is untapped, other legendary creatures you control have ward {1}.', WardSpec, 'source_matches_query'),
+            ('As long as this creature is untapped, it has protection from artifacts and from each color.', ProtectionSpec, 'source_matches_query'),
+            ('As long as equipped creature is a Human, it has bushido 2.', CombatKeywordTriggerSpec, 'attached_matches_query'),
+        )
+        for text, fragment_type, condition_kind in cases:
+            with self.subTest(text=text):
+                ir = compile_oracle_card(query_record(text), capability_registry=registry,
+                    capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                node = next(n for n in ir.faces[0].nodes if n.kind == 'static_ability')
+                self.assertEqual(text, node.text)
+                self.assertEqual((0, len(text)), (node.span.start, node.span.end))
+                descriptor = node.handlers[0]
+                self.assertEqual('continuous.characteristics.public-state-keywords.v1', descriptor['handler_id'])
+                self.assertEqual(7, descriptor['schema_version'])
+                self.assertEqual(condition_kind, descriptor['source_condition']['kind'])
+                fragments = descriptor['modifier']['add_ability_fragments']
+                self.assertTrue(fragments)
+                self.assertTrue(all(isinstance(ability_fragment_from_dict(f), fragment_type) for f in fragments))
+                default_continuous_effect_component_registry().validate(descriptor)
+                self.assertTrue(bind_card_program_runtime(compile_card_program(
+                    type('NoRulings', (), {'rulings':lambda self, record: ()})(), query_record(text),
+                    capability_registry=registry, capability_profile='commander_review',
+                    trust_level='trusted'), capability_registry=registry,
+                    profile='commander_review')['strict_capability_ready'])
+
     def test_graveyard_static_grant_keeps_explicit_active_zone_and_owner_relative_query(self):
         from test_qualified_zone_event_queries import query_record
         text = 'As long as this card is in your graveyard and you control an Island, creatures you control have flying.'
@@ -1129,12 +1201,12 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
         base = self.db.lookup("Fresh-Faced Recruit")
         unsupported = (
             "This creature gets +X/+X during your turn.",
-            "During your turn, this creature has ward {2}.",
+            "During your turn, this creature has ward {X}.",
             "As long as this creature is untapped, other legendary creatures "
-            "you control have ward {1}.",
+            "you control have ward {X}.",
             "During your turn, this creature has \"{T}: Draw a card.\" "
             "and has \"{T}: You gain 1 life.\"",
-            "As long as this creature is equipped, it has ward {2}.",
+            "As long as this creature is equipped, it has ward {X}.",
             "Creatures you control have flying as long as you control an "
             "artifact with flying.",
             "Artifacts you control have shroud as long as you control three "
@@ -2811,6 +2883,129 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay(self):
+        from quorune.ability_fragments import ProtectionSpec
+        session = self.session(3630702)
+        engine = session.engine
+        angel = self.add(engine, 'Pristine Angel', zone='hand', ref='conditional-pristine')
+        tapper = self.add(engine, 'Generic Conditional Keyword Tap Helper', ref='conditional-protection-tapper')
+        self.add(engine, 'Generic Bound Body', ref='conditional-protection-other')
+        island = self.add(engine, 'Generic Conditional Keyword Island', ref='conditional-protection-island')
+        bounce = self.add(engine, 'Unsummon', zone='hand', ref='conditional-protection-bounce')
+        offered = self.ready(session, angel, {'W':2, 'C':4})
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id':offered['id'], 'pay':'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertTrue(any(isinstance(f, ProtectionSpec) for f in engine._effective_ability_fragments(angel)))
+        while session.state.priority_player != 'A':
+            result = session.act(session.pending_principals()[0], {'action_id':'pass'})
+            self.assertTrue(result.ok, result.summary)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        mana_action = next(row for row in actions if row['id'].startswith('activate:'+island.ref+':'))
+        accepted = session.act('pilot:A', {'action_id':mana_action['id']})
+        self.assertTrue(accepted.ok, accepted.summary)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        protected_cast = next((row for row in actions if row.get('card') == bounce.ref), None)
+        self.assertIsNotNone(protected_cast)
+        before = session.state.to_dict()
+        rejected = session.act('pilot:A', {'action_id':protected_cast['id'], 'targets':[angel.ref], 'pay':'auto'})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, session.state.to_dict())
+        angel = session.state.cards[angel.object_id]
+        activation = next(row for row in actions if row['id'].startswith('activate:'+tapper.ref+':'))
+        accepted = session.act('pilot:A', {'action_id':activation['id'], 'cost_cards':[angel.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(angel.tapped)
+        self.assertFalse(any(isinstance(f, ProtectionSpec) for f in engine._effective_ability_fragments(angel)))
+        self.resolve(session)
+        while session.state.priority_player != 'A':
+            result = session.act(session.pending_principals()[0], {'action_id':'pass'})
+            self.assertTrue(result.ok, result.summary)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        cast = next(row for row in actions if row.get('card') == bounce.ref)
+        accepted = session.act('pilot:A', {'action_id':cast['id'], 'targets':[angel.ref], 'pay':'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        choice = self.resolve(session)
+        self.assertEqual('semantic.choice', choice.kind)
+        self.replay(session, load=True)
+        selected = session.act('pilot:A', {'action_id':'choose', 'choice':'apply', 'reason':'Untap the original Angel.'})
+        self.assertTrue(selected.ok, selected.summary)
+        self.resolve(session)
+        self.assertFalse(angel.tapped)
+        self.assertEqual('battlefield', session.state.cards[angel.object_id].zone)
+        self.assertTrue(any(isinstance(f, ProtectionSpec) for f in engine._effective_ability_fragments(angel)))
+        for seat in 'BCD':
+            public = session.packet('pilot:'+seat, full=True)['state']['players']['A']
+            self.assertNotIn('hand', public)
+        self.replay(session)
+
+    def test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays(self):
+        from quorune.trigger_participation import WardSpec
+        session = self.session(3630701)
+        engine = session.engine
+        source = self.add(engine, 'K-9, Mark I', ref='conditional-k9')
+        self.assert_whole_admission('K-9, Mark I')
+        target = session.state.cards[session.state.players['A'].zones['command'][0]]
+        engine.move_card(target.object_id, 'battlefield', controller='A', log=False)
+        outsider = self.add(engine, 'Generic Bound Body', seat='C', ref='conditional-ward-outsider')
+        first = self.add(engine, 'Unsummon', seat='B', zone='hand', ref='conditional-ward-first')
+        second = self.add(engine, 'Unsummon', seat='B', zone='hand', ref='conditional-ward-second')
+        engine.state.players['B'].mana_pool['U'] = 2
+        offered = self.ready(session, source, {'U':1, 'C':1})
+        self.checkpoint(session)
+        before = session.state.to_dict()
+        self.assertFalse(session.act('pilot:C', {'action_id':offered['id'], 'pay':'auto'}).ok)
+        self.assertEqual(before, session.state.to_dict())
+        self.assertTrue(any(isinstance(f, WardSpec) for f in engine._effective_ability_fragments(target)))
+        self.assertFalse(any(isinstance(f, WardSpec) for f in engine._effective_ability_fragments(source)))
+        self.assertFalse(any(isinstance(f, WardSpec) for f in engine._effective_ability_fragments(outsider)))
+        while session.state.priority_player != 'B':
+            result = session.act(session.pending_principals()[0], {'action_id':'pass'})
+            self.assertTrue(result.ok, result.summary)
+        actions = session.packet('pilot:B', full=True)['decision']['ctx']['legal']['actions']
+        cast = next(row for row in actions if row.get('card') == first.ref)
+        accepted = session.act('pilot:B', {'action_id':cast['id'], 'targets':[target.ref], 'pay':'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        ward = self.resolve(session)
+        self.assertEqual('semantic.choice', ward.kind)
+        self.replay(session, load=True)
+        before = session.state.to_dict()
+        self.assertFalse(session.act('pilot:C', {'action_id':'choose', 'pay':False, 'plan':'DECLINE_WARD'}).ok)
+        self.assertEqual(before, session.state.to_dict())
+        declined = session.act('pilot:B', {'action_id':'choose', 'pay':False, 'plan':'DECLINE_WARD', 'reason':'Preserve mana.'})
+        self.assertTrue(declined.ok, declined.summary)
+        self.resolve(session)
+        self.assertEqual('battlefield', session.state.cards[target.object_id].zone)
+        while session.state.priority_player != 'A':
+            result = session.act(session.pending_principals()[0], {'action_id':'pass'})
+            self.assertTrue(result.ok, result.summary)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        activation = next(row for row in actions if row['id'].startswith('activate:'+source.ref+':'))
+        accepted = session.act('pilot:A', {'action_id':activation['id'], 'targets':[target.ref], 'pay':'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(source.tapped)
+        self.assertFalse(any(isinstance(f, WardSpec) for f in engine._effective_ability_fragments(target)))
+        self.resolve(session)
+        while session.state.priority_player != 'B':
+            result = session.act(session.pending_principals()[0], {'action_id':'pass'})
+            self.assertTrue(result.ok, result.summary)
+        actions = session.packet('pilot:B', full=True)['decision']['ctx']['legal']['actions']
+        cast = next(row for row in actions if row.get('card') == second.ref)
+        accepted = session.act('pilot:B', {'action_id':cast['id'], 'targets':[target.ref], 'pay':'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        replacement = self.resolve(session)
+        self.assertEqual('replacement.order', replacement.kind)
+        declined_replacement = next(row['id'] for row in replacement.payload_by_actor['A']['options'] if row['decline'])
+        accepted = session.act('pilot:A', {'action_id':'choose', 'replacement':declined_replacement})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual('hand', session.state.cards[target.object_id].zone)
+        for seat in 'ACD':
+            public = session.packet('pilot:'+seat, full=True)['state']['players']['B']
+            self.assertNotIn('hand', public)
+        self.replay(session)
+
     @classmethod
     def setUpClass(cls):
         from quorune.deck import DeckDefinition, DeckEntry
