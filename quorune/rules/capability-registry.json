@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 279,
+  "registry_version": 280,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -21084,6 +21084,68 @@
         "test_original_mutagen_native_cast_target_counter_and_sorcery_timing_replay",
         "test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation"
       ]
+    },
+    {
+      "id": "state_based.role_attachment.uniqueness",
+      "version": 1,
+      "official_rules": [
+        "303.7a",
+        "613.7",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Pure same-controller/same-attachment Role grouping retains one unique latest timestamp and proposes older Role graveyard moves through existing state-based owners.",
+        "inputs": [
+          "current public controller, reciprocal attachment and ordered timestamp snapshots",
+          "current Role subtype and phased-in participation"
+        ],
+        "outputs": [
+          "ordinary nondestruction graveyard subjects for older Roles"
+        ],
+        "exclusions": [
+          "unrepresented simultaneous timestamp ordering",
+          "missing controller or timestamp facts",
+          "claimed original Role-token creation and layer definitions before their separate closure"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.state_based_actions._role_rule_object_ids",
+        "quorune.state_based_execution.permanent_sba_snapshots"
+      ],
+      "positive_tests": [
+        "test_role_rule_keeps_latest_per_controller_and_attachment"
+      ],
+      "negative_tests": [
+        "test_role_rule_requires_complete_controller_and_ordered_timestamp_facts"
+      ],
+      "interaction_tests": [],
+      "multiplayer_tests": [
+        "test_role_rule_keeps_latest_per_controller_and_attachment"
+      ],
+      "privacy_tests": [],
+      "replay_tests": [],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "Preparatory pure rule and snapshot capture; no original Role CardProgram is promoted by this partial capability.",
+      "implementation_mutation_status": "not_run",
+      "implementation_mutation_rationale": "Full native Role composition and focused implementation mutation evidence remain required before trust.",
+      "blockers": [
+        "Complete original Role definitions, native timestamp ordering and result/replay evidence are pending."
+      ],
+      "status": "implemented"
     }
   ]
 }

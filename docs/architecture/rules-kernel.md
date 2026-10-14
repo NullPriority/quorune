@@ -414,6 +414,16 @@ replacement preparation or departure-time last-known information.
 `replacement_decisions.py` persists competing
 affected-seat choices as ordinary Game Record v3 continuations, and represented
 zone-destination changes use the same exact selection journal before mutation.
+`state_based_execution.permanent_sba_snapshots` captures one current public
+characteristic, controller, attachment and timestamp view for the pure
+state-based evaluator. The engine's compatibility facade delegates that query.
+Role grouping keeps the unique latest Role for each controller and attachment;
+older Roles receive ordinary nondestruction graveyard actions. Missing facts or
+an unrepresented timestamp tie fail closed. This preparatory rule does not close
+original Role token definitions, creation, layers or simultaneous timestamp
+ordering; its capability remains implemented and untrusted until their native composition and
+replay evidence exists.
+
 Triggers consume normalized events; replacements transform represented events
 before final mutation; state-based actions run to a fixed point. Mandatory
 direct counters now use a closed typed stack-target grammar and an exact

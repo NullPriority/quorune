@@ -14,6 +14,9 @@ maintenance: "hand-maintained"
 - Preserve independent library-selection card slots and qualified card types,
   and reject unrepresented qualifiers that previously became subtype names.
 
+- Capture state-based public facts through the existing rules owner and
+  evaluate Role uniqueness for explicit controller, attachment and ordered timestamps.
+
 - Create predefined Lander and Mutagen tokens with complete activation prices,
   private search and target-counter results, preserving timing and incarnation rules.
 

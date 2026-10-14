@@ -21,7 +21,6 @@ from .aura import (
 )
 from .ability_fragment_host import AbilityFragmentHostMixin
 from .ability_fragments import (
-    counter_maximum_values,
     declaration_cost_specs,
 )
 from .attachments import (
@@ -174,9 +173,7 @@ from .selection.public_choice import PublicChoiceOwnerMixin
 from . import turn_counter_coordination
 from .impulse_access import temporary_play_permission_is_current
 from . import untap_step_coordination
-from .saga_progression import saga_final_chapter_snapshot
 from . import haste
-from .keyword_abilities import normalized_characteristic_keywords
 from .combat_evasion_engine_adapter import engine_combat_evasion_verdict
 from .errors import GameRuleError, StateInvariantError
 from .entry_counter_coordination import (
@@ -356,6 +353,7 @@ from .state_based_execution import (
     commit_state_based_counter_removals,
     commit_state_based_zone_changes,
     prepare_state_based_execution,
+    permanent_sba_snapshots,
 )
 from .targets import (
     TargetGroup,
@@ -6552,93 +6550,8 @@ class CommanderEngine(
             for card in newly_world:
                 card.world_supertype_timestamp = timestamp
 
-    def _permanent_sba_snapshots(
-        self,
-    ) -> list[PermanentSnapshot]:
-        snapshots: list[PermanentSnapshot] = []
-        seen: set[str] = set()
-        for seat in self.active_seats:
-            for object_id in self.state.players[seat].zones["battlefield"]:
-                if object_id in seen:
-                    continue
-                seen.add(object_id)
-                card = self.state.cards[object_id]
-                if card.zone != "battlefield":
-                    continue
-                if card.phased_out:
-                    snapshots.append(
-                        PermanentSnapshot(
-                            object_id=card.object_id,
-                            deathtouch_damage=card.deathtouch_damage,
-                            phased_out=True,
-                        )
-                    )
-                    continue
-                data = self._effective_card_data(card)
-                card_types, subtypes, supertypes = self._type_parts(
-                    str(data.get("type_line") or "")
-                )
-                keywords = normalized_characteristic_keywords(data)
-                snapshots.append(
-                    PermanentSnapshot(
-                        object_id=card.object_id,
-                        card_types=frozenset(card_types),
-                        subtypes=frozenset(subtypes),
-                        world="world" in supertypes,
-                        world_timestamp=(
-                            card.world_supertype_timestamp
-                        ),
-                        toughness=(
-                            self._numeric_stat(object_id, "toughness")
-                            if "creature" in card_types
-                            else None
-                        ),
-                        marked_damage=card.marked_damage,
-                        deathtouch_damage=card.deathtouch_damage,
-                        indestructible="indestructible" in keywords,
-                        loyalty=(
-                            int(card.counters.get("loyalty", 0))
-                            if (
-                                "planeswalker" in card_types
-                                and (
-                                    "loyalty" in card.counters
-                                    or card.annotations.get(
-                                        "loyalty_initialized"
-                                    )
-                                    or card.counters.get(
-                                        "loyalty_initialized"
-                                    )
-                                )
-                            )
-                            else None
-                        ),
-                        defense=(
-                            int(card.counters.get("defense", 0))
-                            if "battle" in card_types
-                            else None
-                        ),
-                        battle_trigger_pending=(
-                            self._battle_trigger_pending(card)
-                            if "battle" in card_types
-                            else False
-                        ),
-                        saga=saga_final_chapter_snapshot(self, card),
-                        attached_to=card.attached_to,
-                        attachment_legal=(
-                            self._attachment_is_legal(
-                                card,
-                                subtypes=subtypes,
-                            )
-                            if card.attached_to is not None
-                            else False
-                        ),
-                        counters=dict(card.counters),
-                        counter_maximums=counter_maximum_values(
-                            data.get("ability_fragments", ())
-                        ),
-                    )
-                )
-        return snapshots
+    def _permanent_sba_snapshots(self) -> list[PermanentSnapshot]:
+        return permanent_sba_snapshots(self)
 
     def _object_sba_snapshots(self) -> list[ObjectSnapshot]:
         return [
