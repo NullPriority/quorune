@@ -2957,6 +2957,47 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay(self):
+        for seed,reenter in ((3632601,False),(3632602,True)):
+            with self.subTest(reenter=reenter):
+                session=self.session(seed);engine=session.engine
+                observer=self.add(engine,'Good-Fortune Unicorn',ref='entrycounter-unicorn')
+                body=self.add(engine,'Generic Ordinary Grant Flash Sliver',zone='hand',ref='entrycounter-recipient')
+                bounce=self.add(engine,'Unsummon',zone='hand',ref='entrycounter-bounce')
+                self.assert_whole_admission(observer.printed_name)
+                offered=self.ready(session,body,{'U':1})
+                self.checkpoint(session)
+                before=session.state.to_dict()
+                self.assertFalse(session.act('pilot:B',{'action_id':offered['id'],'pay':'auto'}).ok);self.assertEqual(before,session.state.to_dict())
+                accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary)
+                for _ in range(8):
+                    if any(item.kind=='triggered_ability' for item in session.state.stack):break
+                    self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+                self.assertTrue(any(item.kind=='triggered_ability' for item in session.state.stack))
+                identity=session.state.cards[body.object_id].logical_object_id
+                self.replay(session,load=True)
+                if reenter:
+                    while session.state.priority_player!='A':
+                        self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+                    actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                    cast=next(row for row in actions if row.get('card')==bounce.ref)
+                    accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':[body.ref],'pay':'auto'})
+                    self.assertTrue(accepted.ok,accepted.summary)
+                    for _ in range(8):
+                        if session.state.cards[body.object_id].zone=='hand':break
+                        self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+                    while session.state.priority_player!='A':
+                        self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+                    actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                    cast=next(row for row in actions if row.get('card')==body.ref)
+                    accepted=session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary)
+                self.resolve(session)
+                current=session.state.cards[body.object_id]
+                self.assertEqual(1,current.counters.get('+1/+1',0));self.assertEqual(0,session.state.cards[observer.object_id].counters.get('+1/+1',0))
+                if reenter:self.assertNotEqual(identity,current.logical_object_id)
+                for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+                self.replay(session)
+
     def test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay(self):
         session=self.session(3632501);engine=session.engine
         observer=self.add(engine,'Polluted Bonds',seat='B',ref='event-controller-bonds')

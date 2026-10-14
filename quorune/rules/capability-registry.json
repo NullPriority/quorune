@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 265,
+  "registry_version": 266,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -238,6 +238,82 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "counter.producer.fixed_event_object",
+      "version": 1,
+      "official_rules": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Complete fixed counter leaf for one sealed entering permanent incarnation without selecting a target.",
+        "inputs": [
+          "oneobjectentrybinding",
+          "sealedcardrefandcard_object_identity",
+          "closedexistingfixedcounterleaf"
+        ],
+        "outputs": [
+          "existingcounterintentoneventobjectifsamepublicincarnationremains"
+        ],
+        "exclusions": [
+          "aggregate/multievent/death/hiddenobjectoccurrence",
+          "newobjectbodyantecedents",
+          "partial or variablecounters",
+          "missingeventidentity"
+        ]
+      },
+      "dependencies": [
+        "counter.producer.fixed_effect"
+      ],
+      "implementation_components": [
+        "quorune.compiler.event_counter_results.entry_event_counter_result",
+        "quorune.semantic_runtime.values.resolve_semantic_value",
+        "quorune.rules.counter_placement_capability_shapes.fixed_counter_placement_node_capabilities"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Missingeventcounterorfixedplacement authorityblocksexactadmission; typedreference rejects missingidentity andskipssubsequentincarnation.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omittingeventcounterloweringleaveswholeprintedentrycounterclauseunresolved.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_entry_event_counter_result_uses_entering_incarnation_without_a_target",
+        "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay"
+      ],
+      "negative_tests": [
+        "test_entry_event_counter_reference_domain_dependency_and_omission_fail_closed",
+        "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay"
+      ],
+      "interaction_tests": [
+        "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay"
+      ],
+      "multiplayer_tests": [
+        "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay"
+      ],
+      "privacy_tests": [
+        "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay"
+      ],
+      "replay_tests": [
+        "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay"
+      ]
+    },
     {
       "id": "resolution.event_player.fixed_result",
       "version": 3,

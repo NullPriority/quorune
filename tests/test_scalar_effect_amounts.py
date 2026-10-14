@@ -44,6 +44,40 @@ def scalar_record(text: str, *, type_line: str = "Creature — Goblin") -> CardR
 
 
 class ScalarEffectAmountCompilerTests(unittest.TestCase):
+    def test_entry_event_counter_reference_domain_dependency_and_omission_fail_closed(self):
+        import json
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.semantic_runtime.values import resolve_semantic_value
+        text='Whenever another creature you control enters, put a +1/+1 counter on that creature.'
+        self.assertEqual('exact',self.compile(text).status)
+        for cap in ('counter.producer.fixed_event_object','counter.producer.fixed_effect'):
+            raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+            next(row for row in raw['capabilities'] if row['id']==cap).update(status='blocked',blockers=['eventcounter authority withdrawn'])
+            self.assertNotEqual('exact',compile_oracle_card(scalar_record(text),capability_registry=CapabilityRegistry(raw)).status)
+        for altered in ('Whenever another creature dies, put a +1/+1 counter on that creature.',
+            'Whenever one or more creatures enter, put a +1/+1 counter on it.',
+            text+' Create a token.'):
+            self.assertNotEqual('exact',self.compile(altered).status)
+        with mock.patch('quorune.compiler.event_counter_results.entry_event_counter_result',return_value=None):
+            self.assertNotEqual('exact',self.compile(text).status)
+        card=SimpleNamespace(ref='entry',zone='battlefield',phased_out=False,logical_object_id='new')
+        host=SimpleNamespace(state=SimpleNamespace(cards={'entry':card}))
+        item=SimpleNamespace(context={'card':'entry','card_object_identity':'old'})
+        self.assertIsNone(resolve_semantic_value(host,'$event.entry_object',item))
+        item.context['card_object_identity']='new';self.assertEqual('entry',resolve_semantic_value(host,'$event.entry_object',item))
+        item.context={}
+        with self.assertRaises(ValueError):resolve_semantic_value(host,'$event.entry_object',item)
+
+    def test_entry_event_counter_result_uses_entering_incarnation_without_a_target(self):
+        for text in ('Whenever another creature you control enters, put a +1/+1 counter on that creature.',
+            'Whenever another artifact you control enters, put two charge counters on it.'):
+            ir=self.compile(text)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            node=ir.faces[0].nodes[0]
+            self.assertEqual('$event.entry_object',node.effects[0]['card'])
+            self.assertIsNone(node.target_schema)
+            self.assertIn('counter.producer.fixed_event_object',node.capability_dependencies)
+
     def test_event_controller_and_individual_attack_recipient_results_preserve_fields(self):
         from dataclasses import replace
         from quorune.oracle_ir import generated_programs

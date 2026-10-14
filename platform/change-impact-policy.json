@@ -869,7 +869,8 @@
         "quorune/public_characteristic_aggregates.py",
         "quorune/compiler/public_characteristic_aggregates.py",
         "quorune/compiler/event_player_results.py",
-        "quorune/rules/event_player_result_shapes.py"
+        "quorune/rules/event_player_result_shapes.py",
+        "quorune/compiler/event_counter_results.py"
       ],
       "test_modules": [
         "test_scalar_effect_amounts",
@@ -892,7 +893,8 @@
         "test_fixed_spell_cost_reductions",
         "test_public_quantity_mana",
         "test_fixed_public_state_characteristics",
-        "test_fixed_affected_player_discards"
+        "test_fixed_affected_player_discards",
+        "test_fixed_counter_event_triggers"
       ]
     },
     {

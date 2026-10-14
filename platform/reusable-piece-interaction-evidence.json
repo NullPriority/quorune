@@ -10541,6 +10541,21 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual PollutedBonds foreignlandplay uses enteringcontroller; CampaignVengeance twoactualattackers towardBandC preserveeach sealeddefender through ordering andcomplete distinctloss/gain consequences. Wrongprincipalrollback andpending/fullpreactionreplay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
+      "piece_ids": [
+        "capability.counter.producer.fixed_effect",
+        "capability.counter.producer.fixed_event_object"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_effect",
+        "counter.producer.fixed_event_object"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original GoodFortuneUnicorn observes actualtrustedcreaturecasts and counters the entering object rather than observer. Actualbounce/recast while firsttriggerpending creates newincarnation; onlynewtriggeraddsonecounter whileoldtriggerskips it. Unauthorizedrollback, principalprivacy andpending/fullreplay agree."
     }
   ]
 }

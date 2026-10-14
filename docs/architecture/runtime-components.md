@@ -89,6 +89,14 @@ still determine participation. Version-1 descriptors retain their original
 schema. This family does not consume a persistent prevention pool or interpret
 chosen-color and variable prevention text.
 
+Fixed entry-event counter results carry `$event.entry_object` and request
+`counter.producer.fixed_event_object` alongside ordinary counter placement.
+The reference resolves only the public battlefield object with the entry
+occurrence's sealed identity. Departure, phasing and re-entry make the old
+reference unavailable, so the existing resolution boundary skips that leaf.
+The observer remains the placement source and never replaces the recipient.
+Aggregate, multiple-event, death and partial-result antecedents stay excluded.
+
 ## Lifecycle and participation
 
 1. The compiler or reviewed program emits a versioned component descriptor.

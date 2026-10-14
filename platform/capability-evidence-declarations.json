@@ -32360,6 +32360,177 @@
       "applicability_note": "Replay four priority passes and the affected-seat replacement choice to the identical authoritative state hash."
     },
     {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalGoodFortuneUnicorn sees actualtrustedflashcreaturecast andputsonecounteronentrant ratherthanobserver. Actualbounce/recastwhilefirsttriggerpendingcreatesanewincarnationwithonefromnewtrigger,firsttriggercannotaddanother; unauthorizedrollback, privacy, pendingload andfullreplay agree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalGoodFortuneUnicorn sees actualtrustedflashcreaturecast andputsonecounteronentrant ratherthanobserver. Actualbounce/recastwhilefirsttriggerpendingcreatesanewincarnationwithonefromnewtrigger,firsttriggercannotaddanother; unauthorizedrollback, privacy, pendingload andfullreplay agree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_entry_event_counter_reference_domain_dependency_and_omission_fail_closed",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closedentryeventfixedcounterleaf usessealedincarnation; missingidentity/unsupporteddeath/multievent/partialtail andwithdrawndependenciesreject, old/newincarnationsdistinguished andcompileromissionkilled."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalGoodFortuneUnicorn sees actualtrustedflashcreaturecast andputsonecounteronentrant ratherthanobserver. Actualbounce/recastwhilefirsttriggerpendingcreatesanewincarnationwithonefromnewtrigger,firsttriggercannotaddanother; unauthorizedrollback, privacy, pendingload andfullreplay agree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_entry_event_counter_reference_domain_dependency_and_omission_fail_closed",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closedentryeventfixedcounterleaf usessealedincarnation; missingidentity/unsupporteddeath/multievent/partialtail andwithdrawndependenciesreject, old/newincarnationsdistinguished andcompileromissionkilled."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalGoodFortuneUnicorn sees actualtrustedflashcreaturecast andputsonecounteronentrant ratherthanobserver. Actualbounce/recastwhilefirsttriggerpendingcreatesanewincarnationwithonefromnewtrigger,firsttriggercannotaddanother; unauthorizedrollback, privacy, pendingload andfullreplay agree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_entry_event_counter_result_uses_entering_incarnation_without_a_target",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closedentryeventfixedcounterleaf usessealedincarnation; missingidentity/unsupporteddeath/multievent/partialtail andwithdrawndependenciesreject, old/newincarnationsdistinguished andcompileromissionkilled."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalGoodFortuneUnicorn sees actualtrustedflashcreaturecast andputsonecounteronentrant ratherthanobserver. Actualbounce/recastwhilefirsttriggerpendingcreatesanewincarnationwithonefromnewtrigger,firsttriggercannotaddanother; unauthorizedrollback, privacy, pendingload andfullreplay agree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalGoodFortuneUnicorn sees actualtrustedflashcreaturecast andputsonecounteronentrant ratherthanobserver. Actualbounce/recastwhilefirsttriggerpendingcreatesanewincarnationwithonefromnewtrigger,firsttriggercannotaddanother; unauthorizedrollback, privacy, pendingload andfullreplay agree."
+    },
+    {
       "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "interaction",
       "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerRuntimeTests.test_battalion_uses_sealed_three_attacker_transition",

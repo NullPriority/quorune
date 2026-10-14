@@ -11,6 +11,9 @@ from .fixed_entry_return_requirements import fixed_entry_return_effect_template
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True):
+    from .event_counter_results import entry_event_counter_result
+    counter=entry_event_counter_result(binding,body,effect_template=effect_template,card_name=card_name)
+    if counter is not None:return counter
     from .event_player_results import fixed_event_player_result
     player_result=fixed_event_player_result(binding,body,effect_template=effect_template,card_name=card_name)
     if player_result is not None:return player_result

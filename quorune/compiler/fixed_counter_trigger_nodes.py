@@ -1236,6 +1236,13 @@ def _event_runtime_coverage(
 _binding_effect_template = binding_effect_template
 
 
+def _counter_binding_accepts_result(binding,body_mechanics):
+    return ('fixed-entry-event-object-counter' in body_mechanics
+        or binding.variant not in _NONCOUNTER_PUBLIC_EVENT_VARIANTS
+        or binding.event in {FixedCounterTriggerEvent.PERMANENT_SACRIFICED,FixedCounterTriggerEvent.CARD_DISCARDED}
+        and binding.variant in PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS)
+
+
 def fixed_counter_event_trigger_node(
     *,
     node_id: str,
@@ -1262,11 +1269,6 @@ def fixed_counter_event_trigger_node(
     )
     if binding is None:
         return None
-    if binding.variant in _NONCOUNTER_PUBLIC_EVENT_VARIANTS and not (
-        binding.event in {FixedCounterTriggerEvent.PERMANENT_SACRIFICED, FixedCounterTriggerEvent.CARD_DISCARDED}
-        and binding.variant in PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS
-    ):
-        return None
     optional_match = re.fullmatch(
         r"you may (?P<body>(?!pay\b).+)",
         binding.body,
@@ -1290,7 +1292,7 @@ def fixed_counter_event_trigger_node(
     nested_counter_operations = _COUNTER_PLACEMENT_OPERATIONS.intersection(
         _nested_operations(effects)
     )
-    if template is None or not nested_counter_operations:
+    if template is None or not nested_counter_operations or not _counter_binding_accepts_result(binding,body_mechanics):
         return None
     if optional_match is not None:
         if (

@@ -2603,6 +2603,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/event_counter_results.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/event_player_results.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -13340,5 +13355,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "1192ec94ac3018255313b6a2c5cb39083f42f4a547654f4b931fa456c65a3bce"
+  "fingerprint": "a24ce91985ba040d0b74a4e62ef15e421a9977e521dd486af3732df359794fa4"
 }

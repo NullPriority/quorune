@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Put fixed counters on the sealed entering object incarnation, preserving
+  counter recipients through pending trigger departure and re-entry.
+
 - Preserve entering and departing object controllers and individual attack
   defenders when binding fixed event-player consequences.
 
