@@ -70,13 +70,19 @@ class FixedResolutionManaRuntimeTests(unittest.TestCase):
         from quorune.card_programs.adapters import compile_best_available_card_program
         from quorune.compiler.unlock_frontier import analyze_card_unlocks
         from quorune.semantics import SemanticRegistry
-        pieces = {'capability.mana.production.fixed_resolution',
+        residuals = {
             'residual.replacement.replacement-applicability',
             'residual.replacement.self-replacement-and-prevention-ordering'}
         for oid in ('4b1da9aa-a30c-44b8-a10e-f9dc3fe70b6f','5b5bf1fa-6502-4790-b66b-f0f8504ebc7c',
                 '907ae517-22d5-4ac7-bc3a-3f4d5eaeeb57','947b40a2-e272-4ef6-85fb-3d767a21bc7a',
                 'bdf476e5-1d57-4b17-b45b-d52fd75aadeb'):
             with self.subTest(oracle_id=oid):
+                pieces = {
+                    ('capability.mana.activated.fixed_output'
+                     if oid == 'bdf476e5-1d57-4b17-b45b-d52fd75aadeb'
+                     else 'capability.mana.production.fixed_resolution'),
+                    *residuals,
+                }
                 record = self.db.by_oracle_id(oid)
                 ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile='commander_review')
                 program = compile_best_available_card_program(self.db, record, semantic_registry=SemanticRegistry(),

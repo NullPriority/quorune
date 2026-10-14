@@ -253,9 +253,18 @@ class QueryPowerToughnessDefinitionCompilerTests(unittest.TestCase):
             fragments_from_descriptors((descriptor,))
 
     def test_query_definition_ability_removal_sibling_withholds_runtime_admission(self):
+        supported = self.compile(permanent(
+            "Definition Source's power and toughness are each equal to the number of creatures you control.\n"
+            "Definition Source loses all abilities.", suffix=129_002_002,
+        ))
+        self.assertFalse(supported.residuals)
+        self.assertTrue(bind_card_program_runtime(
+            supported, capability_registry=self.capabilities,
+            profile="commander_review",
+        )["strict_capability_ready"])
         record = permanent(
             "Definition Source's power and toughness are each equal to the number of creatures you control.\n"
-            "Definition Source loses all abilities.",
+            "As long as a chosen player controls a creature, Definition Source loses all abilities.",
             suffix=129_002_000,
         )
         program = self.compile(record, trust_level="provisional")

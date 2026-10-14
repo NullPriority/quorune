@@ -631,13 +631,20 @@ class AttachedContinuousCompilerTests(unittest.TestCase):
                 "0/1. It can't attack and loses all abilities."
             ),
             (
-                "Equipped creature gets +1/+0 for each Equipment attached to it."
+                "Equipped creature gets +1/+0 for each Equipment that was attached to it this turn."
             ),
         ):
             with self.subTest(line=line):
                 self.assertIsNone(
                     attached_fixed_characteristics_handler(line)
                 )
+        modifier = descriptor(
+            "Equipped creature gets +1/+0 for each Equipment attached to it."
+        )["modifier"]
+        self.assertEqual("attached_to_recipient", modifier["quantity"]["scope"])
+        self.assertEqual(["equipment"], modifier["quantity"]["query"]["subtypes_all"])
+        self.assertEqual(1, modifier["quantity_power"])
+        self.assertEqual(0, modifier["quantity_toughness"])
 
     def test_compiler_lowers_closed_dynamic_compound_and_transform_forms(self):
         fixtures = {
@@ -899,28 +906,51 @@ class AttachedContinuousCompilerTests(unittest.TestCase):
                     )
                 )
 
-    def test_attached_granted_departure_triggers_remain_residual(self):
+    def test_attached_granted_departure_triggers_keep_closed_and_linked_boundaries(self):
         capabilities = load_default_capability_registry()
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
         for event_text in (
             "When this creature dies, you gain 2 life.",
             "When this creature leaves the battlefield, you gain 2 life.",
         ):
             with self.subTest(event_text=event_text):
+                record = attached_grant_record(
+                    f'Enchanted creature has "{event_text}"'
+                )
                 ir = compile_oracle_card(
-                    attached_grant_record(
-                        f'Enchanted creature has "{event_text}"'
-                    ),
+                    record,
                     capability_registry=capabilities,
                     capability_profile="commander_review",
                 )
-                self.assertNotEqual("exact", ir.status)
-                self.assertTrue(ir.material_residuals)
-                self.assertFalse(
+                self.assertEqual("exact", ir.status)
+                self.assertFalse(ir.material_residuals)
+                self.assertTrue(
                     any(
                         node.kind == "granted_triggered_ability"
                         for node in ir.faces[0].nodes
                     )
                 )
+                program = compile_best_available_card_program(
+                    self.db, record, semantic_registry=SemanticRegistry(),
+                    capability_registry=capabilities, capability_profile="commander_review",
+                )
+                binding = bind_card_program_runtime(
+                    program, capability_registry=capabilities, profile="commander_review",
+                )
+                self.assertTrue(binding["strict_capability_ready"], binding)
+        for event_text in (
+            "When this creature dies, return it to the battlefield under your control.",
+            "When this creature leaves the battlefield, draw a card for each counter on it.",
+        ):
+            with self.subTest(unrepresented_event_text=event_text):
+                ir = compile_oracle_card(
+                    attached_grant_record(f'Enchanted creature has "{event_text}"'),
+                    capability_registry=capabilities, capability_profile="commander_review",
+                )
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
 
     def test_fixed_equip_keyword_has_exact_bounded_capability(self):
         greaves = self.db.lookup("Lightning Greaves")

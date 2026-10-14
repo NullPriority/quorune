@@ -1345,6 +1345,14 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 )
 
     def test_fixed_source_event_near_misses_remain_material(self):
+        supported = self.compile(
+            "Whenever this creature deals damage, draw a card.",
+            type_line="Creature — Fixture",
+        )
+        self.assertEqual("exact", supported.status)
+        self.assertFalse(supported.material_residuals)
+        node = supported.faces[0].nodes[0]
+        self.assertEqual("damage.dealt.self", node.event)
         cases = (
             "When this Vehicle enters, if a chosen player controls an "
             "artifact, draw a card.",
@@ -1352,7 +1360,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "When this creature is put into a graveyard from the battlefield, "
             "draw a card.",
             "Whenever this creature deals damage to a creature, draw a card.",
-            "Whenever this creature deals damage, draw a card.",
+            "Whenever this creature deals damage, draw a card for each counter on it.",
             "Whenever equipped creature deals combat damage to an opponent, draw "
             "a card.",
             "Whenever one or more creatures deal combat damage to a player, "

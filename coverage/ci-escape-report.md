@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "589faefced4763c9a3a553563a9e65a62d46f4996e4cfc0595bc397efe512ce1"
+verified: "7af23309aabb4e14eb5c0ff8f49d777f63273ee760ba41e573305387508eb9ca"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 99
-- Deterministic escapes: 92
+- Escapes: 100
+- Deterministic escapes: 93
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -29,6 +29,7 @@ This report classifies observed deterministic failures that escaped the local qu
 
 | ID | Run | Category | Impact edge | Resolution |
 |---|---:|---|---|---|
+| `ci-20261014-pr509-promoted-integration-consumers` | [38561634928](https://github.com/NullPriority/quorune/actions/runs/38561634928) | `missing_affected_test` | `added` | Exact unchanged-source failures were isolated by method. Preserve generated strict admission and original-card residual siblings, remove duplicate fixture registration, retarget the ordering mutation to the final canonical owner, and retain meaningful hidden/linked/conditional boundaries. Update current handler inventory and parser-only cohort controls separately from whole-card trust. Deduplicate the impact path without reducing selection, add missed direct consumer edges, and refresh accurate interaction claims through canonical descendants while retaining the completed census fingerprint. The Embalm pending-reload fixture uses each generated doubling source once and preserves its four-token privacy/replay result. Replace obsolete original-pair claims with actual original transformed-Saga residual witnesses, and label the variable-entry untap boundary as constructed. |
 | `ci-20261014-509-counter-attachment-mapping-shape` | [38552613617](https://github.com/NullPriority/quorune/actions/runs/38552613617) | `source_correctness` | `not_applicable` | Require a string before event-reference set membership and use mapping-safe tuple comparisons at the child result boundary. The regression preserves registered attached counter dependencies and recursive value decoding; existing counter/quantity impact edges already select the direct consumer. |
 | `ci-20261014-pr508-surveil-integration` | [38486561263](https://github.com/NullPriority/quorune/actions/runs/38486561263) | `source_correctness` | `not_applicable` | Exact unchanged-source reproduction confirms a stale integration exclusion. Assert simple Surveil/draw observer whole-program strict binding positively, and retain a linked this-way graveyard-count observer as the unsupported boundary. The library completion impact edge already selected both consumer modules. Gameplay source is unchanged; successful content-bound corpus and frontier owners are reused through canonical generation. |
 | `ci-20261013-pr508-static-protection-expectations` | [38478187352](https://github.com/NullPriority/quorune/actions/runs/38478187352) | `source_correctness` | `not_applicable` | Assert the promoted whole-program red quality and preserve a deliberate unresolved chosen-player quality as the negative boundary. The static Protection impact edge already selects this exact integration module. |

@@ -226,7 +226,7 @@ class ExtortRuntimeTests(unittest.TestCase):
             self.assertEqual(43,s.state.players['A'].life);self.assertEqual(39,s.state.players['B'].life);self.replay(s,load=True)
 
     def test_source_order_omission_mutant_is_killed_by_two_source_replay(self):
-        with patch('quorune.rules.casting.commit._ordered_event_sources',side_effect=lambda host,sources:list(host._semantic_event_sources())):
+        with patch('quorune.trigger_discovery._ordered_event_sources',side_effect=lambda host,sources:list(host._semantic_event_sources())):
             with self.assertRaisesRegex(ValueError,'Replay diverged'):
                 self.test_two_actual_sources_choose_independent_payments_for_one_cast()
 

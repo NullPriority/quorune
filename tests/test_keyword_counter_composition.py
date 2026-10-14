@@ -451,9 +451,32 @@ class KeywordCounterCompositionTests(unittest.TestCase):
             capability_registry=load_default_capability_registry(),
             capability_profile="commander_review",
         )
+        self.assertEqual("exact", compiled.status)
+        self.assertFalse(compiled.material_residuals)
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
+        registry = load_default_capability_registry()
+        program = compile_best_available_card_program(
+            self.db, doubling_record, semantic_registry=SemanticRegistry(),
+            capability_registry=registry, capability_profile="commander_review",
+        )
+        binding = bind_card_program_runtime(
+            program, capability_registry=registry, profile="commander_review",
+        )
+        self.assertFalse(binding["strict_capability_ready"])
+        self.assertIn(
+            "ability:replacement:counter-quantity:capability:"
+            "undeclared_runtime_dependency:counter.placement.quantity_replacement",
+            binding["blockers"],
+        )
+        unresolved = compile_oracle_card(
+            self.db.lookup("Securitron Squadron"), capability_registry=registry,
+            capability_profile="commander_review",
+        )
         blockers = {
             blocker
-            for residual in compiled.material_residuals
+            for residual in unresolved.material_residuals
             for blocker in residual.blockers
         }
         self.assertGreaterEqual(
@@ -491,7 +514,7 @@ class KeywordCounterCompositionTests(unittest.TestCase):
                 "keywords": ["Indestructible"],
             },
         )
-        self.assertEqual(1, len(created))
+        self.assertEqual(2, len(created))
         target = engine._resolve_object(
             "B", created[0], zones={"battlefield"}
         )

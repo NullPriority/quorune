@@ -417,9 +417,18 @@ class FixedActivatedZoneChangeCostCompilerTests(unittest.TestCase):
 
         self.assertTrue(ability.mana_ability)
         self.assertTrue(ability.uncompiled_costs)
-        self.assertIs(
-            ability,
-            activated_mana_nodes.fixed_activated_zone_change_cost(ability),
+        compiled = activated_mana_nodes.fixed_activated_zone_change_cost(ability)
+        self.assertFalse(compiled.uncompiled_costs)
+        self.assertEqual("sacrifice_one", compiled.choices[0].kind)
+        self.assertEqual(1, compiled.choices[0].count)
+        self.assertEqual(("goblin",), compiled.choices[0].predicate["subtypes_all"])
+        unrepresented = parse_activated_abilities(
+            card_name="Mana Cost Fixture", oracle_text="Sacrifice two Goblins: Add {R}.",
+        )[0]
+        parsed_unrepresented = activated_mana_nodes.fixed_activated_zone_change_cost(unrepresented)
+        self.assertEqual(2, parsed_unrepresented.choices[0].count)
+        self.assertIsNone(
+            activated_mana_nodes.compile_fixed_activated_mana_ability(parsed_unrepresented)
         )
         source_ir = self.compile(
             fixture_card(

@@ -481,10 +481,19 @@ class TypedQuerySelfCharacteristicCompilerTests(unittest.TestCase):
                 assert_compiled()
 
     def test_query_ability_removal_sibling_withholds_runtime_admission(self):
+        supported = self.compile(permanent(
+            "As long as you control an artifact, this creature has flying.\n"
+            "This creature loses all abilities.", suffix=122_002_002,
+        ))
+        self.assertFalse(supported.residuals)
+        self.assertTrue(bind_card_program_runtime(
+            supported, capability_registry=self.capabilities,
+            profile="commander_review",
+        )["strict_capability_ready"])
         program = self.compile(
             permanent(
                 "As long as you control an artifact, this creature has flying.\n"
-                "This creature loses all abilities.",
+                "As long as a chosen player controls a creature, this creature loses all abilities.",
                 suffix=122_002_001,
             ),
             trust_level="provisional",

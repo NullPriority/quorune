@@ -338,19 +338,29 @@
       "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
       "test_id": "test_original_control_carriers_with_saga_or_replacement_siblings_reject_runtime_admission",
-      "piece_ids": ["capability.continuous.control.fixed_resolution", "residual.replacement.replacement-applicability"],
-      "capability_ids": ["continuous.control.fixed_resolution"],
+      "piece_ids": [
+        "capability.continuous.control.fixed_resolution",
+        "residual.event_binding.normalized-event-binding"
+      ],
+      "capability_ids": [
+        "continuous.control.fixed_resolution"
+      ],
       "interaction_order": 2,
-      "assertion": "Original The Beast, Deathless Prince contains a recognized fixed-control result beside an unresolved stun-counter entry replacement. Canonical runtime admission rejects the whole unresolved CardProgram rather than admitting its supported prefix as a complete card."
+      "assertion": "Original The Beast, Deathless Prince retains fixed control and represented tapped/stun-counter entry beside an unresolved creature damage-to-owner event subscription. Canonical whole CardProgram binding rejects unresolved trust."
     },
     {
       "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
       "test_id": "test_original_control_carriers_with_saga_or_replacement_siblings_reject_runtime_admission",
-      "piece_ids": ["capability.continuous.control.fixed_resolution", "residual.replacement.self-replacement-and-prevention-ordering"],
-      "capability_ids": ["continuous.control.fixed_resolution"],
+      "piece_ids": [
+        "capability.continuous.control.fixed_resolution",
+        "residual.event_binding.intervening-if-and-reflexive-trigger-grammar"
+      ],
+      "capability_ids": [
+        "continuous.control.fixed_resolution"
+      ],
       "interaction_order": 2,
-      "assertion": "The same original Beast carrier preserves explicit self-replacement/ordering residuals and reaches the canonical runtime binding rejection boundary. This is evidence for fail-closed admission, not execution of its unsupported replacement."
+      "assertion": "Original The Beast, Deathless Prince retains fixed control and represented tapped/stun-counter entry beside an unresolved creature damage-to-owner event subscription. Canonical whole CardProgram binding rejects unresolved trust."
     },
     {
       "evidence_class": "interaction",
@@ -4410,19 +4420,29 @@
       "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
       "test_id": "test_tap_state_residual_pairs_fail_closed_at_runtime_boundary",
-      "piece_ids": ["capability.permanent.untap.effect", "residual.replacement.replacement-applicability"],
-      "capability_ids": ["permanent.untap.effect"],
+      "piece_ids": [
+        "capability.permanent.untap.effect",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "permanent.untap.effect"
+      ],
       "interaction_order": 2,
-      "assertion": "Sleep-Cursed Faerie compiles its exact self-untap effect but its unresolved stun replacement applicability prevents strict runtime admission."
+      "assertion": "A constructed Generic Untap Variable Entry Boundary retains exact self-untap and an unrepresented hand-counted stun-counter entry replacement. The complete constructed CardProgram rejects strict runtime admission. The original fixed Sleep-Cursed Faerie is supported separately."
     },
     {
       "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
       "test_id": "test_tap_state_residual_pairs_fail_closed_at_runtime_boundary",
-      "piece_ids": ["capability.permanent.untap.effect", "residual.replacement.self-replacement-and-prevention-ordering"],
-      "capability_ids": ["permanent.untap.effect"],
+      "piece_ids": [
+        "capability.permanent.untap.effect",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "permanent.untap.effect"
+      ],
       "interaction_order": 2,
-      "assertion": "Sleep-Cursed Faerie compiles its exact self-untap effect while unresolved self-replacement and prevention ordering keeps the complete CardProgram fail-closed."
+      "assertion": "A constructed Generic Untap Variable Entry Boundary retains exact self-untap and an unrepresented hand-counted stun-counter entry replacement. The complete constructed CardProgram rejects strict runtime admission. The original fixed Sleep-Cursed Faerie is supported separately."
     },
     {
       "evidence_class": "interaction",
@@ -8127,13 +8147,13 @@
       "test_id": "test_original_batch_carriers_with_residual_siblings_reject_runtime_admission",
       "piece_ids": [
         "capability.mana.production.public_quantity",
-        "residual.replacement.replacement-applicability"
+        "residual.activated_effect.unparsed-clause-grammar"
       ],
       "capability_ids": [
         "mana.production.public_quantity"
       ],
       "interaction_order": 2,
-      "assertion": "Original pinned Rotating Fireplace retains public-quantity mana beside unsupported tapped entry replacement. Canonical whole CardProgram runtime binding rejects the unresolved composition, rather than admitting its supported mana prefix."
+      "assertion": "Original Rotating Fireplace retains public-quantity mana and represented tapped/counter entry beside its unsupported Time Travel activated instruction. Canonical whole CardProgram binding rejects unresolved trust."
     },
     {
       "evidence_class": "interaction",
@@ -8141,13 +8161,13 @@
       "test_id": "test_original_batch_carriers_with_residual_siblings_reject_runtime_admission",
       "piece_ids": [
         "capability.mana.production.public_quantity",
-        "residual.replacement.self-replacement-and-prevention-ordering"
+        "residual.activated_effect.ordered-effect-composition"
       ],
       "capability_ids": [
         "mana.production.public_quantity"
       ],
       "interaction_order": 2,
-      "assertion": "The same original Rotating Fireplace carrier retains an explicit replacement-ordering residual and fails canonical whole-card runtime admission. This witnesses rejection, not successful replacement execution."
+      "assertion": "Original Rotating Fireplace retains public-quantity mana and represented tapped/counter entry beside its unsupported Time Travel activated instruction. Canonical whole CardProgram binding rejects unresolved trust."
     },
     {
       "evidence_class": "interaction",
@@ -9684,7 +9704,7 @@
         "mana.production.fixed_resolution"
       ],
       "interaction_order": 2,
-      "assertion": "Original Urabrask, Cabal Ritual, Valki, Esper Origins and Lake of the Dead retain observed fixed-resolution mana and replacement-applicability pieces. All five original whole CardPrograms reach canonical runtime binding and reject strict and compatible admission with material replacement siblings; no unsupported replacement execution is claimed."
+      "assertion": "Original Urabrask, Cabal Ritual, Valki and Esper Origins retain fixed-resolution mana beside replacement residuals. Lake of the Dead retains typed selected-sacrifice activated mana beside its unsupported entry replacement. Each original whole CardProgram rejects strict and compatible admission; no unsupported replacement execution is claimed."
     },
     {
       "evidence_class": "interaction",
@@ -9698,7 +9718,7 @@
         "mana.production.fixed_resolution"
       ],
       "interaction_order": 2,
-      "assertion": "The same five original complete Oracle carriers retain self-replacement/ordering residuals beside recognized fixed-resolution mana and are rejected by canonical whole-program runtime binding. This proves the supported-prefix exclusion boundary rather than successful unsupported composition."
+      "assertion": "Original Urabrask, Cabal Ritual, Valki and Esper Origins retain fixed-resolution mana beside replacement residuals. Lake of the Dead retains typed selected-sacrifice activated mana beside its unsupported entry replacement. Each original whole CardProgram rejects strict and compatible admission; no unsupported replacement execution is claimed."
     },
     {
       "evidence_class": "interaction",
@@ -10703,6 +10723,62 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Merfolk Windrobber retains its exact event-player mill result beside the unrepresented graveyard-conditioned sacrifice activation. Canonical whole CardProgram binding rejects unresolved trust."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_transform_carriers_retain_control_and_quantity_replacement_boundaries",
+      "piece_ids": [
+        "capability.continuous.control.fixed_resolution",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "continuous.control.fixed_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original The Shattered States Era // Nameless Conqueror retains its observed supported fixed-control leaf beside unsupported transformed Saga replacement and ordering. Canonical whole CardProgram binding rejects strict and compatible admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_transform_carriers_retain_control_and_quantity_replacement_boundaries",
+      "piece_ids": [
+        "capability.continuous.control.fixed_resolution",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "continuous.control.fixed_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original The Shattered States Era // Nameless Conqueror retains its observed supported fixed-control leaf beside unsupported transformed Saga replacement and ordering. Canonical whole CardProgram binding rejects strict and compatible admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_transform_carriers_retain_control_and_quantity_replacement_boundaries",
+      "piece_ids": [
+        "capability.mana.production.public_quantity",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "mana.production.public_quantity"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original The Legend of Kyoshi // Avatar Kyoshi retains its observed supported public-quantity mana leaf beside unsupported transformed Saga replacement and ordering. Canonical whole CardProgram binding rejects strict and compatible admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_transform_carriers_retain_control_and_quantity_replacement_boundaries",
+      "piece_ids": [
+        "capability.mana.production.public_quantity",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "mana.production.public_quantity"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original The Legend of Kyoshi // Avatar Kyoshi retains its observed supported public-quantity mana leaf beside unsupported transformed Saga replacement and ordering. Canonical whole CardProgram binding rejects strict and compatible admission."
     }
   ]
 }

@@ -11,7 +11,6 @@ from common import (
     ROOT,
     keep_all,
     make_session,
-    register_token_quantity_multiplier,
 )
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.combat_entry_activations import resolve_encore_tokens
@@ -207,18 +206,43 @@ class FixedCombatEntryKeywordLifecycleCompilerTests(unittest.TestCase):
         self.assertNotEqual("exact", mutated.status)
         self.assertTrue(mutated.material_residuals)
 
-    def test_token_multiplier_oracle_grammar_remains_residual(self):
+    def test_token_multiplier_oracle_grammar_has_strict_compiler_admission(self):
+        record = token_multiplier_record(
+            "If an effect would create one or more tokens under your "
+            "control, it creates twice that many of those tokens instead.",
+            1,
+        )
         ir = compile_oracle_card(
-            token_multiplier_record(
-                "If an effect would create one or more tokens under your "
-                "control, it creates twice that many of those tokens instead.",
-                1,
-            ),
+            record,
             capability_registry=self.capabilities,
             capability_profile="commander_review",
         )
         token_node = ir.faces[0].nodes[0]
-        self.assertFalse(token_node.exact)
+        self.assertTrue(token_node.exact)
+        self.assertFalse(ir.material_residuals)
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
+        program = compile_best_available_card_program(
+            self.db, record, semantic_registry=SemanticRegistry(),
+            capability_registry=self.capabilities, capability_profile="commander_review",
+        )
+        binding = bind_card_program_runtime(
+            program, capability_registry=self.capabilities, profile="commander_review",
+        )
+        self.assertTrue(binding["strict_capability_ready"], binding)
+
+    def test_token_multiplier_oracle_grammar_remains_residual(self):
+        ir = compile_oracle_card(
+            token_multiplier_record(
+                "If an effect would create one or more creature tokens under your "
+                "control, it creates twice that many of those tokens instead.",
+                2,
+            ),
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+        )
+        self.assertFalse(ir.faces[0].nodes[0].exact)
         self.assertTrue(ir.material_residuals)
 
     def test_token_multiplier_rejects_open_or_malformed_forms(self):
@@ -334,12 +358,18 @@ class FixedCombatEntryKeywordLifecycleRuntimeTests(unittest.TestCase):
             ref=ref,
             zone="battlefield",
         )
-        register_token_quantity_multiplier(
-            self.db,
-            engine,
-            source,
-            self.capabilities,
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
+        program = compile_best_available_card_program(
+            self.db, self.db.by_oracle_id(source.oracle_id),
+            semantic_registry=SemanticRegistry(), capability_registry=self.capabilities,
+            capability_profile="commander_review",
         )
+        binding = bind_card_program_runtime(
+            program, capability_registry=self.capabilities, profile="commander_review",
+        )
+        self.assertTrue(binding["strict_capability_ready"], binding)
         return source
 
     @staticmethod

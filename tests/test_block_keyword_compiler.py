@@ -154,8 +154,16 @@ class BlockKeywordCompilerTests(unittest.TestCase):
             capability_registry=self.capabilities,
             capability_profile="commander_review",
         )
-        self.assertNotEqual("exact", ir.status)
-        self.assertTrue(ir.faces[0].residuals)
+        self.assertEqual("exact", ir.status)
+        self.assertFalse(ir.faces[0].residuals)
+        self.assertFalse(any(node.kind == "keyword" for node in ir.faces[0].nodes))
+        self.assertTrue(any(node.kind == "static_ability" for node in ir.faces[0].nodes))
+        unrepresented = compile_oracle_card(
+            _keyword_card("bushido", "As long as a chosen player controls a creature, this creature has flanking.", 702_045_101),
+            capability_registry=self.capabilities, capability_profile="commander_review",
+        )
+        self.assertNotEqual("exact", unrepresented.status)
+        self.assertTrue(unrepresented.faces[0].residuals)
 
 
 if __name__ == "__main__":
