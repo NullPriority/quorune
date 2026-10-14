@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "d3510ef82983ca85b0c444cd358a51d71eb67cbf522d76a3fe95c71450795cbc",
-  "declaration_source_fingerprint": "2eb42e21c5341265c0c6e6391a1bbf4f88b3731414634f4a02fd0e885fcb46c5",
+  "registry_fingerprint": "5962ca9b58669208154dac15ada86f8c5a2ea9f9baf8f7cb28291104e76286dc",
+  "declaration_source_fingerprint": "3e19671c09a1e63040c1eced9afa4f9c6015e199df5a161101f0eac3783d7c22",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -19896,6 +19896,26 @@
     {
       "capability_id": "choice.controller.fixed_return_owner_hand",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_entry_return_triggers.FixedEntryReturnTriggerRuntimeTests.test_external_entry_self_returns_batch_in_apnap_order",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Directly affected entry-return controls preserve APNAP source returns and source-incarnation revalidation with replay."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_entry_return_triggers.FixedEntryReturnTriggerRuntimeTests.test_reentered_source_remains_excluded_from_another_return_payment",
       "official_rule_ids": [
         "101.4",
@@ -19995,6 +20015,26 @@
     },
     {
       "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_damage_effect_clauses.FixedDamageEffectCompilerTests.test_source_entry_return_declares_registered_bounce_dependency",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trial of Zeal strict whole-program binding retains the registered self-bounce dependency; only the closed source-zone-object shape requests it, malformed target references reject."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_entry_return_counts_lower_as_many_and_exact_unless_shapes",
       "official_rule_ids": [
@@ -20056,6 +20096,26 @@
     {
       "capability_id": "choice.controller.fixed_return_owner_hand",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_effect_clauses.FixedDamageEffectCompilerTests.test_source_entry_return_declares_registered_bounce_dependency",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trial of Zeal strict whole-program binding retains the registered self-bounce dependency; only the closed source-zone-object shape requests it, malformed target references reject."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_entry_return_triggers.FixedEntryReturnTriggerRuntimeTests.test_entry_return_untapped_basic_land_subtypes_execute",
       "official_rule_ids": [
         "101.4",
@@ -20112,6 +20172,26 @@
         "commander_review"
       ],
       "applicability_note": "Replay the public choice continuation, owner-hand destination, normalized move, and final authoritative state hash."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_entry_return_triggers.FixedEntryReturnTriggerRuntimeTests.test_external_entry_self_return_uses_source_incarnation",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Directly affected entry-return controls preserve APNAP source returns and source-incarnation revalidation with replay."
     },
     {
       "capability_id": "choice.controller.fixed_return_owner_hand",
@@ -62049,6 +62129,21 @@
     {
       "capability_id": "damage.amount.positive",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Raging Regisaur and Thorncaster Sliver source/granted attacks create one recipient-source damage trigger. Legal target takes1; actual Unsummon target departure fizzles it. Wrong-principal rollback, private projection and pending/full pre-attack replay agree."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "interaction",
       "test_id": "tests.test_keyword_counter_composition.KeywordCounterCompositionTests.test_keyword_damage_composes_with_exact_counter_replacement_and_residuals",
       "official_rule_ids": [
         "120.1",
@@ -62093,6 +62188,21 @@
     },
     {
       "capability_id": "damage.amount.positive",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Raging Regisaur and Thorncaster Sliver source/granted attacks create one recipient-source damage trigger. Legal target takes1; actual Unsummon target departure fizzles it. Wrong-principal rollback, private projection and pending/full pre-attack replay agree."
+    },
+    {
+      "capability_id": "damage.amount.positive",
       "evidence_class": "mutation",
       "test_id": "tests.test_capability_implementation_mutations.CapabilityImplementationMutationTests.test_damage_amount_guard_mutant_is_killed",
       "official_rule_ids": [
@@ -62123,6 +62233,51 @@
     },
     {
       "capability_id": "damage.amount.positive",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_damage_effect_clauses.FixedDamageEffectCompilerTests.test_source_action_pronoun_damage_dependency_and_omission_fail_closed",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Self-event fixed source-pronoun damage shares existing closed target leaf, excludes public/new-object/variable result antecedents, rejects withdrawn damage dependency and kills omitted lowering."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_damage_effect_clauses.FixedDamageEffectCompilerTests.test_source_action_pronoun_damage_dependency_and_omission_fail_closed",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Self-event fixed source-pronoun damage shares existing closed target leaf, excludes public/new-object/variable result antecedents, rejects withdrawn damage dependency and kills omitted lowering."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_damage_effect_clauses.FixedDamageEffectCompilerTests.test_source_action_pronoun_damage_reuses_closed_target_leaf",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Self-event fixed source-pronoun damage shares existing closed target leaf, excludes public/new-object/variable result antecedents, rejects withdrawn damage dependency and kills omitted lowering."
+    },
+    {
+      "capability_id": "damage.amount.positive",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_damage_effect_clauses.FixedDamageEffectTemplateTests.test_controller_damage_has_no_arbitrary_recipient_or_zero_amount_shape",
       "official_rule_ids": [
@@ -62135,6 +62290,21 @@
         "commander_review"
       ],
       "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Raging Regisaur and Thorncaster Sliver source/granted attacks create one recipient-source damage trigger. Legal target takes1; actual Unsummon target departure fizzles it. Wrong-principal rollback, private projection and pending/full pre-attack replay agree."
     },
     {
       "capability_id": "damage.amount.positive",
@@ -62214,6 +62384,21 @@
     {
       "capability_id": "damage.amount.positive",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_effect_clauses.FixedDamageEffectCompilerTests.test_source_action_pronoun_damage_reuses_closed_target_leaf",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Self-event fixed source-pronoun damage shares existing closed target leaf, excludes public/new-object/variable result antecedents, rejects withdrawn damage dependency and kills omitted lowering."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_damage_effect_clauses.FixedDamageEffectTemplateTests.test_nontarget_damage_to_you_binds_resolving_controller_and_preserves_damage",
       "official_rule_ids": [
         "120.1",
@@ -62225,6 +62410,21 @@
         "commander_review"
       ],
       "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Raging Regisaur and Thorncaster Sliver source/granted attacks create one recipient-source damage trigger. Legal target takes1; actual Unsummon target departure fizzles it. Wrong-principal rollback, private projection and pending/full pre-attack replay agree."
     },
     {
       "capability_id": "damage.amount.positive",
@@ -62255,6 +62455,21 @@
         "commander_review"
       ],
       "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Raging Regisaur and Thorncaster Sliver source/granted attacks create one recipient-source damage trigger. Legal target takes1; actual Unsummon target departure fizzles it. Wrong-principal rollback, private projection and pending/full pre-attack replay agree."
     },
     {
       "capability_id": "damage.amount.positive",
@@ -62300,6 +62515,21 @@
         "commander_review"
       ],
       "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Raging Regisaur and Thorncaster Sliver source/granted attacks create one recipient-source damage trigger. Legal target takes1; actual Unsummon target departure fizzles it. Wrong-principal rollback, private projection and pending/full pre-attack replay agree."
     },
     {
       "capability_id": "damage.amount.positive",
@@ -127317,5 +127547,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "7208f918d67b292e753dd088332fdab0242e6e7bdceb82ec0bae3737a10de927"
+  "fingerprint": "9e1f427ab11b77a4fb6fb3fee510382002881979884d67f38cc222b1730f4662"
 }

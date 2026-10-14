@@ -36,6 +36,14 @@ their consequences. A quoted source-permanent regeneration instruction uses
 the existing incarnation-pinned shield owner; the grant origin never substitutes
 for its recipient. Unsupported child clauses still prevent whole-program trust.
 
+An independently source-specific action/damage subscription may lower a whole
+`it deals N damage` instruction through the existing fixed damage leaf. Public
+event antecedents and newly created object references remain excluded. Trigger
+targets still use the shared announcement and resolution revalidation owner.
+Fixed source-return entry subscriptions declare `permanent.return.owner_hand`
+alongside their return-choice family so registered bounce intents retain strict
+capability closure.
+
 ## Lifecycle and participation
 
 1. The compiler or reviewed program emits a versioned component descriptor.

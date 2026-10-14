@@ -167,7 +167,9 @@
         "test_draw_continuation",
         "test_madness_rules",
         "test_semantic_counter_replacement_continuations",
-        "test_high_risk_interaction_assurance"
+        "test_high_risk_interaction_assurance",
+        "test_fixed_public_state_characteristics",
+        "test_fixed_damage_effect_clauses"
       ]
     },
     {
@@ -2106,7 +2108,9 @@
         "test_permanent_additional_costs",
         "test_cast_creature_targets",
         "test_persist_undying_rules",
-        "test_source_maintenance"
+        "test_source_maintenance",
+        "test_fixed_public_state_characteristics",
+        "test_fixed_damage_effect_clauses"
       ]
     },
     {
@@ -2417,7 +2421,9 @@
         "test_fixed_counter_event_triggers",
         "test_scalar_effect_amounts",
         "test_card_program_trust",
-        "test_fixed_source_characteristic_effects"
+        "test_fixed_source_characteristic_effects",
+        "test_fixed_public_state_characteristics",
+        "test_fixed_damage_effect_clauses"
       ]
     },
     {
@@ -3566,7 +3572,9 @@
         "test_fixed_affected_player_discards",
         "test_fixed_controller_effect_sequences",
         "test_scheduled_player_triggers",
-        "test_card_program_trust"
+        "test_card_program_trust",
+        "test_fixed_public_state_characteristics",
+        "test_fixed_damage_effect_clauses"
       ]
     },
     {
@@ -3583,7 +3591,9 @@
         "test_fixed_target_effect_sequences",
         "test_fixed_token_creation_effects",
         "test_bound_effect_programs",
-        "test_oracle_corpus_examples"
+        "test_oracle_corpus_examples",
+        "test_fixed_public_state_characteristics",
+        "test_fixed_damage_effect_clauses"
       ]
     },
     {
@@ -3864,7 +3874,9 @@
         "test_fixed_optional_effect_choices",
         "test_resolution_public_conditions",
         "test_card_program_trust",
-        "test_game_record_v3"
+        "test_game_record_v3",
+        "test_fixed_public_state_characteristics",
+        "test_fixed_damage_effect_clauses"
       ]
     },
     {

@@ -2957,6 +2957,46 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay(self):
+        from quorune.model import CombatState
+        cases=((3631801,'Raging Regisaur',False),(3631802,'Thorncaster Sliver',False),
+            (3631803,'Raging Regisaur',True),(3631804,'Thorncaster Sliver',True))
+        for seed,name,revalidate in cases:
+            with self.subTest(name=name,revalidate=revalidate):
+                session=self.session(seed);engine=session.engine
+                source=self.add(engine,name,ref='source-action-damage-observer')
+                attacker=source if name=='Raging Regisaur' else self.add(engine,'Generic Ordinary Grant Sliver',ref='source-action-granted-attacker')
+                victim=self.add(engine,'Generic Bound Body',seat='B',ref='source-action-damage-victim')
+                bounce=self.add(engine,'Unsummon',zone='hand',ref='source-action-target-bounce')
+                self.assert_whole_admission(source.printed_name)
+                self.ready(session,bounce,{'U':1})
+                session.state.pending_decision=None;session.state.priority_player=None
+                session.state.priority_passes=[];session.state.phase='combat'
+                session.state.step='declare_attackers';session.state.phase_index=5;session.state.combat=CombatState()
+                engine.permissions.invalidate_current();engine.pump();self.checkpoint(session)
+                before=session.state.to_dict()
+                self.assertFalse(session.act('pilot:C',{'action_id':'attack','attackers':{attacker.ref:'B'}}).ok)
+                self.assertEqual(before,session.state.to_dict())
+                accepted=session.act('pilot:A',{'action_id':'attack','attackers':{attacker.ref:'B'}})
+                self.assertTrue(accepted.ok,accepted.summary)
+                decision=session.state.pending_decision
+                self.assertEqual('semantic.target',decision.kind)
+                accepted=session.act('pilot:A',{'action_id':'choose','targets':[victim.ref]})
+                self.assertTrue(accepted.ok,accepted.summary)
+                self.assertEqual(attacker.object_id,session.state.stack[-1].source_object_id)
+                self.replay(session,load=True)
+                if revalidate:
+                    actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                    cast=next(row for row in actions if row.get('card')==bounce.ref)
+                    accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':[victim.ref],'pay':'auto'})
+                    self.assertTrue(accepted.ok,accepted.summary)
+                self.resolve(session)
+                self.assertEqual('hand' if revalidate else 'battlefield',session.state.cards[victim.object_id].zone)
+                self.assertEqual(0 if revalidate else 1,session.state.cards[victim.object_id].marked_damage)
+                self.assertFalse(session.state.stack)
+                for observer in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+observer,full=True)['state']['players']['A'])
+                self.replay(session)
+
     def test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay(self):
         session=self.session(3631701);engine=session.engine
         source=self.add(engine,'Dormant Sliver',zone='hand',ref='ordinary-dormant-source')

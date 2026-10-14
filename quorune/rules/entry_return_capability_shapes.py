@@ -124,7 +124,7 @@ def fixed_entry_return_node_capabilities(
     )
     if not source_return and not _contains_closed_choice(effect):
         return ()
-    return (FIXED_ENTRY_RETURN_CAPABILITY,)
+    return (FIXED_ENTRY_RETURN_CAPABILITY, *(('permanent.return.owner_hand',) if source_return else ()))
 
 
 __all__ = ["fixed_entry_return_node_capabilities"]

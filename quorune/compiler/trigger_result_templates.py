@@ -12,6 +12,9 @@ from .fixed_entry_return_requirements import fixed_entry_return_effect_template
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True):
     if binding.event.value.endswith('.self') or binding.variant in {'source_attacks', 'this_creature_blocks', 'this_creature_becomes_blocked'}:
+        from .damage_templates import source_pronoun_damage_effect_template
+        damage=source_pronoun_damage_effect_template(body)
+        if damage is not None:return damage.compiled(),False
         from .connive_templates import fixed_connive_effect_template
         connive = fixed_connive_effect_template(body, source_name=card_name, source_is_permanent=True,
                                                 allow_source_pronoun=True)

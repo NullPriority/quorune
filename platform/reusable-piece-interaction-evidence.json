@@ -10419,6 +10419,21 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Infernal Scarring is cast onto an opposing creature, applies its fixed bonus, and the granted source-death draw survives actual Murder via the recipient LKI. The foreign controller draws privately and pending/full pre-action replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
+      "piece_ids": [
+        "capability.continuous.ability.fixed_query_grant",
+        "capability.damage.amount.positive"
+      ],
+      "capability_ids": [
+        "continuous.ability.fixed_query_grant",
+        "damage.amount.positive"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual original Raging Regisaur attack and current Thorncaster Sliver granted-recipient attack create source-bound fixed damage triggers. Legal targets take1, actual bounce responses remove chosen targets before damage, and private projection, wrong-principal rollback and full pre-attack/pending replay agree."
     }
   ]
 }

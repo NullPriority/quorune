@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Bind complete fixed source-pronoun damage results to self-action triggers and
+  retain the registered return-to-hand dependency of source-return triggers.
+
 - Compile ordinary source-entry and source-death clauses inside typed ability
   grants, and retain recipient identity for source-permanent regeneration.
 
