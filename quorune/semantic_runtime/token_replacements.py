@@ -643,7 +643,7 @@ class TokenQuantityReplacementHandler:
         )
         if descriptor["handler_id"] != self.handler_id:
             raise SemanticNodeError("Runtime handler ID does not match registry")
-        if descriptor["schema_version"] != self.schema_version:
+        if type(descriptor["schema_version"]) is not int or descriptor["schema_version"] != self.schema_version:
             raise SemanticNodeError(
                 f"Unsupported {self.handler_id} schema version"
             )

@@ -695,6 +695,13 @@ count. Fixed static increases lower to typed current components; existing
 quantity consumers declare the devotion producer dependency at admission.
 Unknown colors, unsupported increases and unrepresented siblings remain residual.
 
+Counted token wording can use a complete public value after “equal to,” while
+the ordinary fixed-token parser still owns the entire definition and abilities.
+The quantity resolves once before the shared token replacement transaction.
+Mandatory controller-scoped token doubling lowers to the already registered
+quantity replacement descriptor with current ability coverage. Unknown values,
+definitions, linked results and wider doubling scopes remain residual.
+
 Fixed static declaration composition reuses the declaration requirement and
 restriction parsers rather than adding a combat validator. A source-local line
 may contain either one exact fragment or one of the closed two-fragment

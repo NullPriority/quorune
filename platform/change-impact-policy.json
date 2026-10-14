@@ -1269,6 +1269,9 @@
     {
       "id": "fixed-token-production-contract",
       "patterns": [
+        "quorune/compiler/static_runtime_nodes.py",
+        "quorune/compiler/public_query_effect_amounts.py",
+        "tests/fixtures/additional-conditional-modifier-cards.json",
         "quorune/token_copy_*.py",
         "quorune/zone_object_cleanup.py",
         "quorune/compiler/token_copy_templates.py",
@@ -1476,6 +1479,10 @@
     {
       "id": "public-query-effect-amount-contract",
       "patterns": [
+        "quorune/compiler/static_runtime_nodes.py",
+        "quorune/compiler/token_templates.py",
+        "quorune/token_creation.py",
+        "tests/fixtures/additional-conditional-modifier-cards.json",
         "quorune/compiler/collection_quantity_templates.py",
         "quorune/public_quantity_reductions.py",
         "tests/fixtures/public-collection-quantity-cards.json",

@@ -107,6 +107,8 @@ class TokenCreationHost(Protocol):
 
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
 
+    def _effective_static_component_key_map(self) -> Mapping[str,Sequence[str]]: ...
+
     def apnap_order(self, *, start: str | None = None) -> list[str]: ...
 
     def _next_zone_timestamp(self) -> int: ...
@@ -480,6 +482,7 @@ def _token_replacement_effects(
 ) -> tuple[Any, ...]:
     registry = default_token_creation_replacement_registry()
     effects = []
+    component_map = None
     for source in sources:
         programs = host.semantics.runtime_handler_programs_for_oracle(
             copiable_oracle_id(source),
@@ -489,6 +492,12 @@ def _token_replacement_effects(
         for program in programs:
             if not host.semantic_program_is_current_trusted(program):
                 continue
+            from .ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+            if CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage:
+                if component_map is None:
+                    component_map=host._effective_static_component_key_map()
+                if program.key not in component_map.get(source.object_id,()):
+                    continue
             for descriptor_index, descriptor in enumerate(program.handlers):
                 runtime_descriptor = (
                     normalize_game_record_v3_runtime_handler(descriptor)

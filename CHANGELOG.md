@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile complete-value token counts and mandatory controller-scoped doubling
+  through the shared token transaction, retaining current source ability
+  presence and rejecting malformed schema versions.
+
 - Evaluate devotion through one copy/control/text snapshot and typed live
   increases, preserving hybrid union counts across characteristics, effects,
   mana production and casting costs.

@@ -49523,6 +49523,31 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantRuntimeTests.test_query_scaled_grant_revalidates_current_ability_and_replays",
       "official_rule_ids": ["109.2", "109.2a", "205.3m", "608.2h", "611.2c", "613.1d", "613.1e", "613.4c", "701.22a", "701.22b", "701.25a", "701.25c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -49706,6 +49731,31 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
       "official_rule_ids": ["109.2", "109.2a", "205.3m", "608.2h", "611.2c", "613.1d", "613.1e", "613.4c", "701.22a", "701.22b", "701.25a", "701.25c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -49821,6 +49871,31 @@
       "official_rule_ids": ["109.2", "109.2a", "205.3m", "608.2h", "611.2c", "613.1d", "613.1e", "613.4c", "701.22a", "701.22b", "701.25a", "701.25c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "A known-empty collection cannot turn an unsupported later-layer predicate into an authorized zero scalar result."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_number_of_tokens_complete_value_rejects_unknown_quantity_definition_and_missing_producer",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constructed source-spanned compiler and whole-program admission preserves complete token definition, public quantity producer and current replacement ability identity; unsupported grammar, missing dependencies and malformed schema types fail closed."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -49944,6 +50019,31 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_source_self_activation_is_trusted_and_replays",
       "official_rule_ids": ["109.2", "109.2a", "205.3m", "608.2h", "611.2c", "613.1d", "613.1e", "613.4c", "701.22a", "701.22b", "701.25a", "701.25c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -49985,6 +50085,31 @@
       "official_rule_ids": ["109.2", "109.2a", "205.3m", "608.2h", "611.2c", "613.1d", "613.1e", "613.4c", "701.22a", "701.22b", "701.25a", "701.25c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile source-self and direct-target query-scaled temporary power/toughness modifiers across spell, activation, normalized trigger, and typed quoted-activation carriers without adding an effect operation."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_number_of_tokens_complete_value_keeps_definition_and_quantity_authority",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constructed source-spanned compiler and whole-program admission preserves complete token definition, public quantity producer and current replacement ability identity; unsupported grammar, missing dependencies and malformed schema types fail closed."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -50052,6 +50177,31 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "privacy",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
       "official_rule_ids": ["109.2", "109.2a", "205.3m", "608.2h", "611.2c", "613.1d", "613.1e", "613.4c", "701.22a", "701.22b", "701.25a", "701.25c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -50096,6 +50246,31 @@
         "commander_review"
       ],
       "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -57214,11 +57389,95 @@
     },
     {
       "capability_id": "token.creation.quantity_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "official_rule_ids": [
+        "111.2",
+        "614.1",
+        "614.1a",
+        "614.4",
+        "614.5",
+        "614.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
+    },
+    {
+      "capability_id": "token.creation.quantity_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_token_doubler_owner_diagnostic_respects_controller_and_current_ability_removal",
+      "official_rule_ids": [
+        "111.2",
+        "614.1",
+        "614.1a",
+        "614.4",
+        "614.5",
+        "614.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Separately labeled engine-owner diagnostic uses trusted generated programs to contrast own versus foreign creation and current ability removal; this does not replace the original-card command witness."
+    },
+    {
+      "capability_id": "token.creation.quantity_replacement",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_myriad_token_multiplier_expands_per_copy_destination_choices",
       "official_rule_ids": ["111.2", "614.1", "614.1a", "614.4", "614.5", "614.6", "614.16", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Preserve the selected nondefending opponent association for every replacement-expanded Myriad copy in four-player combat."
+    },
+    {
+      "capability_id": "token.creation.quantity_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "official_rule_ids": [
+        "111.2",
+        "614.1",
+        "614.1a",
+        "614.4",
+        "614.5",
+        "614.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
+    },
+    {
+      "capability_id": "token.creation.quantity_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_token_doubler_owner_diagnostic_respects_controller_and_current_ability_removal",
+      "official_rule_ids": [
+        "111.2",
+        "614.1",
+        "614.1a",
+        "614.4",
+        "614.5",
+        "614.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Separately labeled engine-owner diagnostic uses trusted generated programs to contrast own versus foreign creation and current ability removal; this does not replace the original-card command witness."
     },
     {
       "capability_id": "token.creation.quantity_replacement",
@@ -57238,6 +57497,90 @@
     },
     {
       "capability_id": "token.creation.quantity_replacement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_token_doubler_owner_diagnostic_respects_controller_and_current_ability_removal",
+      "official_rule_ids": [
+        "111.2",
+        "614.1",
+        "614.1a",
+        "614.4",
+        "614.5",
+        "614.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Separately labeled engine-owner diagnostic uses trusted generated programs to contrast own versus foreign creation and current ability removal; this does not replace the original-card command witness."
+    },
+    {
+      "capability_id": "token.creation.quantity_replacement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_fixed_token_doubler_is_compiled_with_current_source_ability_coverage",
+      "official_rule_ids": [
+        "111.2",
+        "614.1",
+        "614.1a",
+        "614.4",
+        "614.5",
+        "614.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constructed source-spanned compiler and whole-program admission preserves complete token definition, public quantity producer and current replacement ability identity; unsupported grammar, missing dependencies and malformed schema types fail closed."
+    },
+    {
+      "capability_id": "token.creation.quantity_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "official_rule_ids": [
+        "111.2",
+        "614.1",
+        "614.1a",
+        "614.4",
+        "614.5",
+        "614.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
+    },
+    {
+      "capability_id": "token.creation.quantity_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_fixed_token_doubler_is_compiled_with_current_source_ability_coverage",
+      "official_rule_ids": [
+        "111.2",
+        "614.1",
+        "614.1a",
+        "614.4",
+        "614.5",
+        "614.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constructed source-spanned compiler and whole-program admission preserves complete token definition, public quantity producer and current replacement ability identity; unsupported grammar, missing dependencies and malformed schema types fail closed."
+    },
+    {
+      "capability_id": "token.creation.quantity_replacement",
       "evidence_class": "positive",
       "test_id": "tests.test_token_creation_replacements.TokenCreationReplacementTests.test_token_multiplier_preserves_specifications_and_simultaneous_commit",
       "official_rule_ids": ["111.2", "614.1", "614.1a", "614.4", "614.5", "614.6", "614.16", "616.1"],
@@ -57254,11 +57597,53 @@
     },
     {
       "capability_id": "token.creation.quantity_replacement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "official_rule_ids": [
+        "111.2",
+        "614.1",
+        "614.1a",
+        "614.4",
+        "614.5",
+        "614.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
+    },
+    {
+      "capability_id": "token.creation.quantity_replacement",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_token_multiplier_replacement_order_resumes_before_destinations",
       "official_rule_ids": ["111.2", "614.1", "614.1a", "614.4", "614.5", "614.6", "614.16", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay replacement ordering, the expanded per-copy destination decision, simultaneous entry, and delayed cleanup scheduling to the same authoritative hash."
+    },
+    {
+      "capability_id": "token.creation.quantity_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "official_rule_ids": [
+        "111.2",
+        "614.1",
+        "614.1a",
+        "614.4",
+        "614.5",
+        "614.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
     },
     {
       "capability_id": "token.creation.typed_ability_definition",

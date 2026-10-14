@@ -82,6 +82,9 @@ _TOKEN_FOR_EACH = re.compile(
     r"(?P<definition>.+? tokens?) for each (?P<quantity>.+?)\.?$",
     re.IGNORECASE,
 )
+_TOKEN_COMPLETE_VALUE = re.compile(
+    r'^Create a number of (?P<definition>.+?) equal to (?P<quantity>.+?)\.?$', re.I,
+)
 _COUNTER_FOR_EACH = re.compile(
     rf"^Put (?P<coefficient>a|an|one|two|three|four|five|[1-9]\d*) "
     rf"(?P<counter>{FIXED_COUNTER_NAME_PATTERN}) counters? on "
@@ -194,7 +197,7 @@ def _parsed_candidate(
         match = pattern.fullmatch(text)
         if match is not None:
             return "draw", match.group("quantity"), 1, "Draw two cards.", index == 1
-    token = _TOKEN_PATTERN.fullmatch(text) or _TOKEN_FOR_EACH.fullmatch(text)
+    token = _TOKEN_PATTERN.fullmatch(text) or _TOKEN_FOR_EACH.fullmatch(text) or _TOKEN_COMPLETE_VALUE.fullmatch(text)
     if token is not None:
         definition = re.sub(
             r" token$",
@@ -207,7 +210,7 @@ def _parsed_candidate(
             token.group("quantity"),
             _coefficient(token.groupdict().get("coefficient")),
             f"Create two {definition}.",
-            False,
+            text.casefold().startswith('create a number of '),
         )
     counter = _COUNTER_FOR_EACH.fullmatch(text)
     if counter is not None:

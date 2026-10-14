@@ -101,6 +101,7 @@ def static_runtime_node(
     """Lower one closed static descriptor and its capability evidence."""
 
     from .devotion_templates import fixed_devotion_increase_handler
+    from .token_templates import static_token_quantity_replacement_handler
     from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
     devotion = (fixed_devotion_increase_handler(material_line)
         if not source_is_class and card_types.intersection(permanent_card_types) else None)
@@ -108,6 +109,13 @@ def static_runtime_node(
         return runtime_handler_node(node_id=node_id,line=line,span=span,compiled=devotion,
             kind='static_ability',event='devotion.evaluate',runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
             dependency_reason='Devotion requires its current public-query capability',
+            capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    token = (static_token_quantity_replacement_handler(material_line)
+        if not source_is_class and card_types.intersection(permanent_card_types) else None)
+    if token is not None:
+        return runtime_handler_node(node_id=node_id,line=line,span=span,compiled=token,
+            kind='replacement_effect',event='token.create',runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason='Token quantity replacement requires its canonical replacement owner',
             capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
     template = static_runtime_template(
         material_line,

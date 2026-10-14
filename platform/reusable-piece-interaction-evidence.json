@@ -4,6 +4,51 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
+      "test_id": "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "piece_ids": [
+        "capability.quantity_expression.public_query_effect_amount",
+        "capability.token.creation.quantity_replacement"
+      ],
+      "capability_ids": [
+        "quantity_expression.public_query_effect_amount",
+        "token.creation.quantity_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual strictly compiled Parallel Lives and Master of Waves casts produce six doubled devotion-count tokens; the live anthem makes the entering Elementals 2/1, and real source bounce removes the anthem so state-based actions dispose of the zero-toughness tokens. Private projection, unauthorized rollback, pending save/load and complete pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "piece_ids": [
+        "capability.state_query.devotion.current",
+        "capability.token.creation.fixed_definition"
+      ],
+      "capability_ids": [
+        "state_query.devotion.current",
+        "token.creation.fixed_definition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual strictly compiled Parallel Lives and Master of Waves casts produce six doubled devotion-count tokens; the live anthem makes the entering Elementals 2/1, and real source bounce removes the anthem so state-based actions dispose of the zero-toughness tokens. Private projection, unauthorized rollback, pending save/load and complete pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "piece_ids": [
+        "capability.continuous.power_toughness.fixed_anthem",
+        "capability.token.creation.fixed_definition"
+      ],
+      "capability_ids": [
+        "continuous.power_toughness.fixed_anthem",
+        "token.creation.fixed_definition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual strictly compiled Parallel Lives and Master of Waves casts produce six doubled devotion-count tokens; the live anthem makes the entering Elementals 2/1, and real source bounce removes the anthem so state-based actions dispose of the zero-toughness tokens. Private projection, unauthorized rollback, pending save/load and complete pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
       "test_id": "test_original_daxos_devotion_cast_uses_live_modifier_ability_and_departure_with_replay",
       "piece_ids": [
         "capability.continuous.characteristics.query_power_toughness_definition",

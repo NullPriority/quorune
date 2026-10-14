@@ -412,6 +412,13 @@ Characteristic definitions, resolution amounts, mana production and self cast-
 cost reductions share this owner. Every newly compiled consumer declares the
 devotion capability separately from its result capability.
 
+Compiled token quantity replacements participate only while their source's
+current static component is present. The shared token discovery path reads
+that component map before materializing a replacement. Legacy descriptors
+retain their existing compatibility boundary; a current typed descriptor
+requires an integer schema version. Counted token results enter the ordinary
+replacement, simultaneous entry and state-based stabilization transaction.
+
 `continuous.attached.fixed-characteristics.v1` keeps one reciprocal live
 attachment relation while lowering its closed operations into layers 4, 5, 6,
 7b, and 7c. It supports fixed or typed public-query power/toughness, base

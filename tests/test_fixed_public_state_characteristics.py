@@ -2883,6 +2883,73 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_token_doubler_owner_diagnostic_respects_controller_and_current_ability_removal(self):
+        """Engine-owner contrast; the Master witness supplies native command evidence."""
+        from quorune.continuous_effects import ContinuousEffect,ContinuousEffectOrigin,ContinuousEffectDuration,ContinuousObjectIdentity,ContinuousOperation
+        from quorune.continuous_effect_state import commit_continuous_effect
+        session=self.session(3631302);engine=session.engine
+        source=self.add(engine,'Generic Counted Token Doubler',ref='token-doubler-removal-source')
+        self.assert_whole_admission(source.printed_name)
+        definition={'type_line':'Token Creature — Wolf','power':'1','toughness':'1','colors':[],'keywords':[]}
+        self.assertEqual(1,len(engine.create_token('B',name='Foreign Owner Diagnostic',characteristics=definition)))
+        self.assertEqual(2,len(engine.create_token('A',name='Own Owner Diagnostic',characteristics=definition)))
+        commit_continuous_effect(engine.state,ContinuousEffect(effect_id='fixture:remove-token-doubler',source_id='fixture:ability-removal',
+            layer=Layer.ABILITY,sublayer='6',timestamp=engine._next_zone_timestamp(),
+            operations=(ContinuousOperation('remove_all_abilities'),),origin=ContinuousEffectOrigin.RESOLUTION,
+            duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,applies=ObjectQuerySpec(zones=('battlefield',)),
+            locked_objects=(ContinuousObjectIdentity(source.object_id,source.logical_object_id),)))
+        self.assertEqual(1,len(engine.create_token('A',name='Removed Owner Diagnostic',characteristics=definition)))
+
+    def test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays(self):
+        session=self.session(3631301);engine=session.engine
+        master=self.add(engine,'Master of Waves',zone='hand',ref='counted-master-waves')
+        self.add(engine,'Generic Devotion Amplifier',ref='counted-token-devotion-modifier')
+        self.add(engine,'Generic Devotion Hybrid',ref='counted-token-devotion-hybrid')
+        doubler=self.add(engine,'Parallel Lives',zone='hand',ref='counted-token-doubler')
+        island=self.add(engine,'Generic Conditional Keyword Island',ref='counted-token-island')
+        colorless=self.add(engine,'Generic Counted Token Three Mana',ref='counted-token-colorless')
+        bounce=self.add(engine,'Generic Devotion Creature Bounce',zone='hand',ref='counted-master-bounce')
+        self.assert_whole_admission(master.printed_name)
+        self.assert_whole_admission('Parallel Lives')
+        offered=self.ready(session,doubler,{'C':3,'G':1})
+        self.checkpoint(session)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:C',{'action_id':offered['id'],'pay':'auto'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        while session.state.priority_player!='A':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        for land in (island,colorless):
+            actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+            mana=next(row for row in actions if row['id'].startswith('activate:'+land.ref+':'))
+            self.assertTrue(session.act('pilot:A',{'action_id':mana['id']}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==master.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.replay(session,load=True)
+        self.resolve(session)
+        tokens=[card for card in session.state.cards.values() if card.zone=='battlefield' and card.controller=='A' and card.object_kind=='token']
+        self.assertEqual(6,len(tokens))
+        for token in tokens:
+            self.assertEqual(2,engine._numeric_stat(token.object_id,'power'))
+            self.assertEqual(1,engine._numeric_stat(token.object_id,'toughness'))
+        while session.state.priority_player!='A':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==bounce.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':[master.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual('hand',session.state.cards[master.object_id].zone)
+        self.assertFalse(any(token.object_id in session.state.players['A'].zones['battlefield'] for token in tokens))
+        for seat in 'BCD':
+            self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
     def test_original_karametra_acolyte_mana_uses_devotion_and_current_modifier_with_replay(self):
         session=self.session(3631205);engine=session.engine
         source=self.add(engine,"Karametra's Acolyte",ref='devotion-mana-acolyte')
