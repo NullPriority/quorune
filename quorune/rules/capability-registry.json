@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 263,
+  "registry_version": 264,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -13616,24 +13616,89 @@
     },
     {
       "id": "damage.prevention.static_fixed",
-      "version": 1,
-      "official_rules": ["120.4b", "615.1", "615.6", "615.10", "615.12", "615.12a", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Apply trusted generic or reviewed fixed static prevention and represented protection prevention to each typed damage event in affected-subject order.",
-        "inputs": ["typed positive damage proposal", "trusted fixed prevention component or represented protection", "unpreventable flag"],
-        "outputs": ["final dealt and prevented amounts", "prevention journal"],
-        "exclusions": ["next-damage shields", "divisible prevention shields", "redirection", "damage-result replacement", "mana-result damage requiring an explicit replacement choice"]
+        "inputs": [
+          "typed positive damage proposal",
+          "trusted fixed prevention component or represented protection",
+          "unpreventable flag"
+        ],
+        "outputs": [
+          "final dealt and prevented amounts",
+          "prevention journal"
+        ],
+        "exclusions": [
+          "next-damage shields",
+          "divisible prevention shields",
+          "redirection",
+          "damage-result replacement",
+          "mana-result damage requiring an explicit replacement choice"
+        ]
       },
-      "dependencies": ["damage.amount.positive", "damage.replacement.static_quantity"],
-      "implementation_components": ["quorune.damage.prepare_damage_batch", "quorune.damage.commit_prepared_damage_batch", "quorune.semantic_runtime.damage_replacements.FixedDamagePreventionHandler", "quorune.oracle_ir._static_damage_handler"],
-      "positive_tests": ["test_static_prevention_applies_to_each_simultaneous_event", "test_static_damage_replacement_wording_lowers_to_generic_handlers"],
-      "negative_tests": ["test_unpreventable_damage_applies_prevention_without_reducing_damage", "test_static_damage_replacement_wording_lowers_to_generic_handlers"],
-      "interaction_tests": ["test_furnace_and_daunting_order_changes_final_damage", "test_protection_prevents_player_and_colored_permanent_damage"],
-      "multiplayer_tests": ["test_four_player_fixed_prevention_applies_per_controller"],
-      "privacy_tests": ["test_combat_replacement_choice_is_seat_scoped_and_precommit"],
-      "replay_tests": ["test_semantic_damage_replacement_choice_replays_exactly"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "damage.amount.positive",
+        "damage.replacement.static_quantity"
+      ],
+      "implementation_components": [
+        "quorune.damage.prepare_damage_batch",
+        "quorune.damage.commit_prepared_damage_batch",
+        "quorune.semantic_runtime.damage_replacements.FixedDamagePreventionHandler",
+        "quorune.oracle_ir._static_damage_handler",
+        "quorune.semantic_runtime.damage_replacements.FixedDamagePreventionV2Handler"
+      ],
+      "positive_tests": [
+        "test_fixed_prevention_colored_source_reuses_versioned_public_damage_predicate",
+        "test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+        "test_static_damage_replacement_wording_lowers_to_generic_handlers",
+        "test_static_prevention_applies_to_each_simultaneous_event"
+      ],
+      "negative_tests": [
+        "test_colored_fixed_prevention_schema_dependencies_and_omission_fail_closed",
+        "test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+        "test_static_damage_replacement_wording_lowers_to_generic_handlers",
+        "test_unpreventable_damage_applies_prevention_without_reducing_damage"
+      ],
+      "interaction_tests": [
+        "test_furnace_and_daunting_order_changes_final_damage",
+        "test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+        "test_protection_prevents_player_and_colored_permanent_damage"
+      ],
+      "multiplayer_tests": [
+        "test_four_player_fixed_prevention_applies_per_controller",
+        "test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay"
+      ],
+      "privacy_tests": [
+        "test_combat_replacement_choice_is_seat_scoped_and_precommit",
+        "test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay"
+      ],
+      "replay_tests": [
+        "test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+        "test_semantic_damage_replacement_choice_replays_exactly"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "",
       "implementation_mutation_status": "killed",

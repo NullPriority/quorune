@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Prevent a fixed amount from each matching colored-source damage event using
+  the shared typed source snapshot predicate.
+
 - Preserve explicit event-player and controller recipients across two ordered
   fixed draw or life instructions.
 

@@ -79,6 +79,14 @@ results remain outside this family. Fixed affected-player
 discard registration separately verifies its closed choice shape and declared
 dependencies before promoting a generated program.
 
+Fixed static prevention version 2 uses the existing extended damage source
+predicate for printed color restrictions. Source colors come from the frozen
+damage proposal; matching damage events each receive the printed prevention
+amount independently. Current control, source ability presence and departure
+still determine participation. Version-1 descriptors retain their original
+schema. This family does not consume a persistent prevention pool or interpret
+chosen-color and variable prevention text.
+
 ## Lifecycle and participation
 
 1. The compiler or reviewed program emits a versioned component descriptor.

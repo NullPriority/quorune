@@ -3101,7 +3101,9 @@
         "test_damage_replacement_model",
         "test_fixed_token_creation_effects",
         "test_high_risk_interaction_assurance",
-        "test_rules_scheduler"
+        "test_rules_scheduler",
+        "test_scalar_effect_amounts",
+        "test_fixed_public_state_characteristics"
       ]
     },
     {

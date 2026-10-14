@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "574894d045a7b7c917b4ecd9fec30387e0846436132d0d9ac24384244003a383",
-  "declaration_source_fingerprint": "c88473f4df9ad9c19e2ff1ff4019b37f54fb9b5e8e2587f68c60d331c251dcd1",
+  "registry_fingerprint": "ebd22bcadd6e2efcca6bf5228c05324113f04ea35047454c642f0894b30f504f",
+  "declaration_source_fingerprint": "185f5d18fa52030304a947f7a6bf58bbb4e35bdd9765f38f74de730b4ef365bc",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -66062,6 +66062,27 @@
     },
     {
       "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Sphere of Law is cast. Actual red LightningBolt3 to its controller commits1, a constructed whole blue damage3 commits3, reddamage to anotherplayercommits3, and actualDisenchantsource departure endsprevention beforeanother red3. Wrongprincipal rollback, privateprojection andpending/fullreplay agree."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_damage_replacement_multiplayer.DamageReplacementMultiplayerTests.test_four_player_fixed_prevention_applies_per_controller",
       "official_rule_ids": [
@@ -66083,6 +66104,27 @@
     },
     {
       "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Sphere of Law is cast. Actual red LightningBolt3 to its controller commits1, a constructed whole blue damage3 commits3, reddamage to anotherplayercommits3, and actualDisenchantsource departure endsprevention beforeanother red3. Wrongprincipal rollback, privateprojection andpending/fullreplay agree."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
       "evidence_class": "mutation",
       "test_id": "tests.test_capability_implementation_mutations.CapabilityImplementationMutationTests.test_damage_replacement_prevention_mutants_are_killed",
       "official_rule_ids": [
@@ -66101,6 +66143,27 @@
         "commander_review"
       ],
       "applicability_note": "Apply trusted generic or reviewed fixed static prevention and represented protection prevention to each typed damage event in affected-subject order."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_colored_fixed_prevention_schema_dependencies_and_omission_fail_closed",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedpreventionV2 shares existing extended frozen-source predicate withtypedcolors. Allfivecolors lower; boolschema/amount, wrongversion/unknowncolor, unsupportedtails andwithdrawncapabilities reject; compileromission killed whileV1 unchanged."
     },
     {
       "capability_id": "damage.prevention.static_fixed",
@@ -66126,6 +66189,27 @@
     {
       "capability_id": "damage.prevention.static_fixed",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Sphere of Law is cast. Actual red LightningBolt3 to its controller commits1, a constructed whole blue damage3 commits3, reddamage to anotherplayercommits3, and actualDisenchantsource departure endsprevention beforeanother red3. Wrongprincipal rollback, privateprojection andpending/fullreplay agree."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "negative",
       "test_id": "tests.test_oracle_ir.OracleIRTests.test_static_damage_replacement_wording_lowers_to_generic_handlers",
       "official_rule_ids": [
         "120.4b",
@@ -66143,6 +66227,27 @@
         "commander_review"
       ],
       "applicability_note": "Apply trusted generic or reviewed fixed static prevention and represented protection prevention to each typed damage event in affected-subject order."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_colored_fixed_prevention_schema_dependencies_and_omission_fail_closed",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedpreventionV2 shares existing extended frozen-source predicate withtypedcolors. Allfivecolors lower; boolschema/amount, wrongversion/unknowncolor, unsupportedtails andwithdrawncapabilities reject; compileromission killed whileV1 unchanged."
     },
     {
       "capability_id": "damage.prevention.static_fixed",
@@ -66168,6 +66273,27 @@
     {
       "capability_id": "damage.prevention.static_fixed",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Sphere of Law is cast. Actual red LightningBolt3 to its controller commits1, a constructed whole blue damage3 commits3, reddamage to anotherplayercommits3, and actualDisenchantsource departure endsprevention beforeanother red3. Wrongprincipal rollback, privateprojection andpending/fullreplay agree."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "positive",
       "test_id": "tests.test_oracle_ir.OracleIRTests.test_static_damage_replacement_wording_lowers_to_generic_handlers",
       "official_rule_ids": [
         "120.4b",
@@ -66185,6 +66311,27 @@
         "commander_review"
       ],
       "applicability_note": "Apply trusted generic or reviewed fixed static prevention and represented protection prevention to each typed damage event in affected-subject order."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_fixed_prevention_colored_source_reuses_versioned_public_damage_predicate",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedpreventionV2 shares existing extended frozen-source predicate withtypedcolors. Allfivecolors lower; boolschema/amount, wrongversion/unknowncolor, unsupportedtails andwithdrawncapabilities reject; compileromission killed whileV1 unchanged."
     },
     {
       "capability_id": "damage.prevention.static_fixed",
@@ -66209,6 +66356,27 @@
     },
     {
       "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Sphere of Law is cast. Actual red LightningBolt3 to its controller commits1, a constructed whole blue damage3 commits3, reddamage to anotherplayercommits3, and actualDisenchantsource departure endsprevention beforeanother red3. Wrongprincipal rollback, privateprojection andpending/fullreplay agree."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
       "evidence_class": "replay",
       "test_id": "tests.test_damage_replacement_integration.DamageReplacementIntegrationTests.test_semantic_damage_replacement_choice_replays_exactly",
       "official_rule_ids": [
@@ -66227,6 +66395,27 @@
         "commander_review"
       ],
       "applicability_note": "Apply trusted generic or reviewed fixed static prevention and represented protection prevention to each typed damage event in affected-subject order."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Sphere of Law is cast. Actual red LightningBolt3 to its controller commits1, a constructed whole blue damage3 commits3, reddamage to anotherplayercommits3, and actualDisenchantsource departure endsprevention beforeanother red3. Wrongprincipal rollback, privateprojection andpending/fullreplay agree."
     },
     {
       "capability_id": "damage.prevention.triggered_results",
@@ -128804,5 +128993,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "1bc344061369b331ef4b31aff62126a4589cf7958442669b56dd8da92678f966"
+  "fingerprint": "8dc2c9c2e2b66d5c7932cb4ba9dc22bc8dc321b79ab9c861040a14a1694bded5"
 }

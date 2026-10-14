@@ -44,6 +44,37 @@ def scalar_record(text: str, *, type_line: str = "Creature — Goblin") -> CardR
 
 
 class ScalarEffectAmountCompilerTests(unittest.TestCase):
+    def test_colored_fixed_prevention_schema_dependencies_and_omission_fail_closed(self):
+        import json
+        from quorune.semantic_runtime.damage_replacements import FixedDamagePreventionV2Handler
+        from quorune.rules.capabilities import CapabilityRegistry
+        text='If a red source would deal damage to you, prevent 2 of that damage.'
+        ir=self.compile(text,type_line='Enchantment');descriptor=ir.faces[0].nodes[0].handlers[0]
+        handler=FixedDamagePreventionV2Handler();node=handler.validate(descriptor)
+        self.assertEqual(('R',),node.condition.source_colors_all)
+        for altered in ({**descriptor,'schema_version':True},{**descriptor,'schema_version':1},
+            {**descriptor,'modification':{'amount':True}},
+            {**descriptor,'condition':{**descriptor['condition'],'source_colors_all':['purple']}}):
+            with self.assertRaises(ValueError):handler.validate(altered)
+        for altered in ('If a source of the chosen color would deal damage to you, prevent 2 of that damage.',
+            text+' Draw a card.',text.replace('prevent 2','prevent X')):
+            self.assertNotEqual('exact',self.compile(altered,type_line='Enchantment').status)
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(row for row in raw['capabilities'] if row['id']=='damage.prevention.static_fixed').update(status='blocked',blockers=['colored prevention authority withdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(scalar_record(text,type_line='Enchantment'),capability_registry=CapabilityRegistry(raw)).status)
+        with mock.patch('quorune.compiler.damage_templates._colored_fixed_prevention_handler',return_value=None):
+            self.assertNotEqual('exact',self.compile(text,type_line='Enchantment').status)
+
+    def test_fixed_prevention_colored_source_reuses_versioned_public_damage_predicate(self):
+        for color,symbol in (('white','W'),('blue','U'),('black','B'),('red','R'),('green','G')):
+            text='If a '+color+' source would deal damage to you, prevent 2 of that damage.'
+            ir=self.compile(text,type_line='Enchantment')
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            descriptor=ir.faces[0].nodes[0].handlers[0]
+            self.assertEqual('prevention.damage.fixed.v2',descriptor['handler_id'])
+            self.assertEqual([symbol],descriptor['condition']['source_colors_all'])
+            self.assertEqual(2,descriptor['modification']['amount'])
+
     def test_event_player_fixed_sequence_rejects_partial_and_unknown_recipient_clauses(self):
         from dataclasses import replace
         from quorune.oracle_ir import generated_programs

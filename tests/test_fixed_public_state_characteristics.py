@@ -2957,6 +2957,39 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay(self):
+        session=self.session(3632401);engine=session.engine
+        sphere=self.add(engine,'Sphere of Law',zone='hand',ref='colored-prevention-sphere')
+        red=[self.add(engine,'Lightning Bolt',zone='hand',ref='colored-prevention-red-'+str(i)) for i in range(3)]
+        blue=self.add(engine,'Generic Colored Prevention Blue Damage',zone='hand',ref='colored-prevention-blue')
+        remove=self.add(engine,'Disenchant',zone='hand',ref='colored-prevention-remove')
+        self.assert_whole_admission(sphere.printed_name)
+        offered=self.ready(session,sphere,{'C':6,'W':2,'R':6})
+        self.checkpoint(session)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:D',{'action_id':offered['id'],'pay':'auto'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        life={seat:session.state.players[seat].life for seat in 'ABCD'}
+        def cast(card,target):
+            while session.state.priority_player!='A':
+                self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+            actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+            self.assertTrue(any(row.get('card')==card.ref for row in actions),
+                {'card':card.printed_name,'pool':dict(session.state.players['A'].mana_pool),'zone':session.state.cards[card.object_id].zone})
+            offered=next(row for row in actions if row.get('card')==card.ref)
+            accepted=session.act('pilot:A',{'action_id':offered['id'],'targets':[target],'pay':'auto'})
+            self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        cast(red[0],'A');self.assertEqual(life['A']-1,session.state.players['A'].life)
+        cast(blue,'A');self.assertEqual(life['A']-4,session.state.players['A'].life)
+        cast(red[1],'B');self.assertEqual(life['B']-3,session.state.players['B'].life)
+        cast(remove,sphere.ref);self.assertEqual('graveyard',session.state.cards[sphere.object_id].zone)
+        self.replay(session,load=True)
+        cast(red[2],'A');self.assertEqual(life['A']-7,session.state.players['A'].life)
+        for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
     def test_original_event_player_two_result_kambal_and_assassin_native_actions_replay(self):
         session=self.session(3632301);engine=session.engine
         observer=self.add(engine,'Kambal, Consul of Allocation',seat='B',ref='sequence-event-kambal')

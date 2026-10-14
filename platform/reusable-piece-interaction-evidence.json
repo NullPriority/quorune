@@ -10511,6 +10511,21 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Kambal real noncreature cast and Agate-Blade actual attack resolve two ordered life leaves on distinct sealed occurrence and trigger controller recipients. Creature cast control is excluded. Principal rollback, private projection and pending/full pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+      "piece_ids": [
+        "capability.damage.amount.positive",
+        "capability.damage.prevention.static_fixed"
+      ],
+      "capability_ids": [
+        "damage.amount.positive",
+        "damage.prevention.static_fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Sphere ofLaw actualcast then redBolt andbluewholeconstructed damage showmatchingcolor reduction, foreignrecipient exclusion, andactualDisenchantsource departure beforea finalredBolt. Existing damage/prevention owner, wrongprincipalrollback, privateprojection andpending/fullreplay agree."
     }
   ]
 }
