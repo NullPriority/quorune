@@ -140,6 +140,47 @@ def focused_database(directory: str) -> CardDatabase:
 
 
 class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
+    def test_anywhere_graveyard_subscription_withdrawal_omission_and_open_grammar_fail_closed(self):
+        from test_bound_effect_programs import record
+        from quorune.rules.capabilities import CapabilityRegistry
+        text = 'Whenever a land card is put into your graveyard from anywhere, you gain 1 life.'
+        card = record(text, 'Creature — Satyr Druid')
+        raw = json.loads(REGISTRY_PATH.read_text(encoding='utf-8'))
+        cap = next(r for r in raw['capabilities'] if r['id'] == 'trigger.event.normalized_anywhere_graveyard')
+        cap.update(status='blocked', blockers=['withdrawn graveyard destination producer'])
+        withdrawn = CapabilityRegistry(raw)
+        withdrawn.mark_evidence_verified('0' * 64)
+        self.assertNotEqual('exact', compile_oracle_card(card, capability_registry=withdrawn,
+            capability_profile='commander_review').status)
+        with patch('quorune.compiler.fixed_public_event_trigger_bindings._anywhere_graveyard_spec', return_value=None):
+            self.assertNotEqual('exact', compile_oracle_card(card, capability_registry=self.capabilities,
+                capability_profile='commander_review').status)
+        for text in (
+            'Whenever one or more land cards are put into your graveyard from anywhere, you gain 2 life.',
+            'Whenever a card with the chosen name is put into your graveyard from anywhere, draw a card.',
+            'Whenever a card is put into the chosen player\'s graveyard from anywhere, draw a card.',
+            'Whenever a token is put into your graveyard from anywhere, draw a card.',
+        ):
+            with self.subTest(unrepresented=text):
+                self.assertNotEqual('exact', self.compile(text, type_line='Enchantment').status)
+
+    def test_anywhere_graveyard_public_subscription_requires_destination_event(self):
+        for text, predicate in (
+            ('Whenever a land card is put into your graveyard from anywhere, you gain 1 life.',
+             {'field': 'owner', 'op': 'eq', 'value': '$source.controller'}),
+            ("Whenever a black card is put into an opponent's graveyard from anywhere, draw a card.",
+             {'field': 'owner', 'op': 'ne', 'value': '$source.controller'}),
+            ('Whenever a creature card is put into a graveyard from anywhere, you gain 1 life.', None),
+        ):
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line='Enchantment')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual('card.enter_graveyard', node.event)
+                self.assertIn('trigger.event.normalized_anywhere_graveyard', node.capability_dependencies)
+                if predicate is not None:
+                    self.assertIn(predicate, node.event_condition['all'])
+
     def test_public_target_counter_missing_producer_open_body_and_schema_mutant_fail_closed(self):
         from test_bound_effect_programs import record
         from quorune.rules.capabilities import CapabilityRegistry

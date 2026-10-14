@@ -2377,6 +2377,17 @@ does not cancel a legal independent target result; target blink or reentry
 cannot substitute a new object. Optional, variable, multitarget and compound
 results remain outside this producer.
 
+`trigger.event.normalized_anywhere_graveyard` separately admits a physical card
+entering own, an opponent's, or any graveyard from anywhere, optionally qualified
+by one fixed public card type or color. The subscription consumes
+`card.enter_graveyard` with destination characteristics and current incarnation;
+it discovers only observers present after the committed transition. Existing
+independently closed results, including optional draw, retain their own grammar
+and capability checks. Tokens, replacement destinations outside the graveyard,
+source-self shuffle, chosen qualifiers and one-or-more batch grammar are outside
+this subscription. Death and battlefield-departure predicates continue to use
+their distinct last-known-information events.
+
 `compiler/qualified_zone_event_bindings.py` adds closed single-object public
 entry, death, graveyard, and leave subjects through that same event-effect
 owner. It normalizes subject-word order into the existing characteristic query

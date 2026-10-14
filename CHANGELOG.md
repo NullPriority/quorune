@@ -14,6 +14,9 @@ maintenance: "hand-maintained"
 - Preserve independent library-selection card slots and qualified card types,
   and reject unrepresented qualifiers that previously became subtype names.
 
+- Observe cards entering a graveyard from anywhere through destination facts
+  and surviving observers, with closed type, color and graveyard-owner predicates.
+
 - Compose closed public event subscriptions with fixed direct-target counters,
   preserving target choice and resolution-time incarnation checks.
 

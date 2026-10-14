@@ -530,6 +530,22 @@ def normalized_zone_trigger_events(
                         f"{card_type}.enter", "after", FrozenMap(entered)
                     )
                 )
+    if (occurrence.card_object and not occurrence.token
+            and occurrence.destination == 'graveyard' and occurrence.origin != 'graveyard'):
+        entered_graveyard = {
+            **common, **sealed_public_characteristic_facts(occurrence.current_characteristics),
+            'card_object_identity': occurrence.current_logical_object_id,
+            'attachments': [], 'attached_to': None,
+        }
+        entered_graveyard.pop('copiable_snapshot', None)
+        entered_graveyard.pop('counter_names', None)
+        if occurrence.current_copy_snapshot is not None:
+            entered_graveyard['copiable_snapshot'] = dict(occurrence.current_copy_snapshot)
+        if occurrence.current_counters is not None:
+            entered_graveyard['counter_names'] = sorted(
+                name for name, count in occurrence.current_counters.items() if count > 0
+            )
+        result.append(NormalizedZoneTriggerEvent('card.enter_graveyard', 'after', FrozenMap(entered_graveyard)))
     return tuple(result)
 
 

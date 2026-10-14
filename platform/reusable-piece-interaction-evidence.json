@@ -10869,6 +10869,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Raise Dead moves the own creature from graveyard to hand; the existing one-or-more during-own-turn subscription queues one targeted counter result and preserves private hand projection."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
+      "piece_ids": [
+        "capability.trigger.event.normalized_anywhere_graveyard",
+        "capability.trigger.event.normalized_zone_change"
+      ],
+      "capability_ids": [
+        "trigger.event.normalized_anywhere_graveyard",
+        "trigger.event.normalized_zone_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native Mind Rot and Stone Rain route hand and battlefield objects through the same committed zone owner and complete each own-graveyard land life consequence."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
+      "piece_ids": [
+        "capability.trigger.event.normalized_anywhere_graveyard",
+        "capability.trigger.placement.apnap"
+      ],
+      "capability_ids": [
+        "trigger.event.normalized_anywhere_graveyard",
+        "trigger.placement.apnap"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native Wrath of God commits simultaneous deaths; surviving Profane Memento queues both creature-card consequences while the dying Skola Grovedancer observer is absent after the event."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
+      "piece_ids": [
+        "capability.trigger.event.normalized_anywhere_graveyard",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "trigger.event.normalized_anywhere_graveyard",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Compost observes only the black card discarded by an opponent, resolves its existing optional draw through the authentic controller choice, and retains hidden hand projection and replay."
     }
   ]
 }

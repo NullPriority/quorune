@@ -211,6 +211,7 @@ MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
 )
 PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
+        'public_anywhere_graveyard_card',
         "another_controlled_colorless_creature_enters",
         "another_controlled_creature_power_at_most",
         "controlled_enchantment_graveyard",
@@ -352,6 +353,7 @@ class FixedCounterTriggerEvent(str, Enum):
     CARD_CYCLED = "card.cycled"
     SOURCE_CYCLED = "card.cycled.self"
     CARD_LEAVE_GRAVEYARD = "card.leave_graveyard"
+    CARD_ENTER_GRAVEYARD = 'card.enter_graveyard'
     CARD_DISCARDED = "card.discarded"
     TARGET_ANNOUNCED = 'object.became_target'
     PERMANENT_LEAVE = "permanent.leave"
@@ -1212,9 +1214,7 @@ def _event_runtime_coverage(
     if current_ability or binding.variant in {QUALIFIED_ZONE_VARIANT, AGGREGATED_ZONE_VARIANT} or binding.variant in {
         'your first main phase','your precombat main phase','your second main phase','your postcombat main phase',
         *_ABILITY_WORD_PUBLIC_EVENT_VARIANTS,
-        *PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
-        *PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS,
-        *MULTI_EVENT_BINDING_CLOSURE_VARIANTS,
+        *(_ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS - COUNTER_EVENT_VARIANTS),
         "class_level_changed",
     }:
         values.append(CURRENT_ABILITY_FRAGMENT_COVERAGE)

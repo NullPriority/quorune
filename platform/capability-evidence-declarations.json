@@ -67655,6 +67655,557 @@
     {"capability_id": "trigger.event.counter_qualified_zone_change", "evidence_class": "replay", "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_simultaneous_counter_deaths_keep_departing_observers_apnap_and_replay", "official_rule_ids": ["122.1", "122.2", "400.7", "603.2", "603.3", "603.6a", "603.6c", "603.10", "603.10a", "700.4"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."},
     {"capability_id": "trigger.event.counter_qualified_zone_change", "evidence_class": "rollback", "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_actual_sacrifice_uses_counter_lki_and_replays_private_draw", "official_rule_ids": ["122.1", "122.2", "400.7", "603.2", "603.3", "603.6a", "603.6c", "603.10", "603.10a", "700.4"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."},
     {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed destination event observes current graveyard identity/characteristics and current observer existence, independently from death LKI. Original Skola Grovedancer cast and mill activations contrast own/foreign graveyard owners with accepted/rejected principals, pending reload, private projection and complete replay. Producer/schema tests are separate diagnostics."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed destination event observes current graveyard identity/characteristics and current observer existence, independently from death LKI. Original Skola Grovedancer cast and mill activations contrast own/foreign graveyard owners with accepted/rejected principals, pending reload, private projection and complete replay. Producer/schema tests are separate diagnostics."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_zone_trigger_events.ZoneTriggerEventModelTests.test_anywhere_graveyard_event_reads_destination_facts_and_observers",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed destination event observes current graveyard identity/characteristics and current observer existence, independently from death LKI. Original Skola Grovedancer cast and mill activations contrast own/foreign graveyard owners with accepted/rejected principals, pending reload, private projection and complete replay. Producer/schema tests are separate diagnostics."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_anywhere_graveyard_subscription_withdrawal_omission_and_open_grammar_fail_closed",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Minimal independent compiler records require the new destination event and capability; withdrawal and parser omission reject exact admission, and aggregate, chosen and token grammar stays residual. This is compiler/dependency evidence, separate from native original-card action witnesses."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed destination event observes current graveyard identity/characteristics and current observer existence, independently from death LKI. Original Skola Grovedancer cast and mill activations contrast own/foreign graveyard owners with accepted/rejected principals, pending reload, private projection and complete replay. Producer/schema tests are separate diagnostics."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_zone_trigger_events.ZoneTriggerEventModelTests.test_anywhere_graveyard_event_reads_destination_facts_and_observers",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed destination event observes current graveyard identity/characteristics and current observer existence, independently from death LKI. Original Skola Grovedancer cast and mill activations contrast own/foreign graveyard owners with accepted/rejected principals, pending reload, private projection and complete replay. Producer/schema tests are separate diagnostics."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_anywhere_graveyard_public_subscription_requires_destination_event",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed destination event observes current graveyard identity/characteristics and current observer existence, independently from death LKI. Original Skola Grovedancer cast and mill activations contrast own/foreign graveyard owners with accepted/rejected principals, pending reload, private projection and complete replay. Producer/schema tests are separate diagnostics."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed destination event observes current graveyard identity/characteristics and current observer existence, independently from death LKI. Original Skola Grovedancer cast and mill activations contrast own/foreign graveyard owners with accepted/rejected principals, pending reload, private projection and complete replay. Producer/schema tests are separate diagnostics."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_zone_trigger_events.ZoneTriggerEventModelTests.test_anywhere_graveyard_event_reads_destination_facts_and_observers",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed destination event observes current graveyard identity/characteristics and current observer existence, independently from death LKI. Original Skola Grovedancer cast and mill activations contrast own/foreign graveyard owners with accepted/rejected principals, pending reload, private projection and complete replay. Producer/schema tests are separate diagnostics."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed destination event observes current graveyard identity/characteristics and current observer existence, independently from death LKI. Original Skola Grovedancer cast and mill activations contrast own/foreign graveyard owners with accepted/rejected principals, pending reload, private projection and complete replay. Producer/schema tests are separate diagnostics."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed destination event observes current graveyard identity/characteristics and current observer existence, independently from death LKI. Original Skola Grovedancer cast and mill activations contrast own/foreign graveyard owners with accepted/rejected principals, pending reload, private projection and complete replay. Producer/schema tests are separate diagnostics."
+    },
+    {
+      "capability_id": "trigger.event.normalized_anywhere_graveyard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
+      "official_rule_ids": [
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.6c",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
       "capability_id": "trigger.event.normalized_card_draw",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_draw_and_second_draw_counter_triggers_share_one_batch",
@@ -69748,6 +70299,98 @@
     {
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "interaction",
       "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_history_characteristic_distinguishing_controls",
       "official_rule_ids": [
         "603.2",
@@ -69849,6 +70492,98 @@
     {
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_preflight_v080.NormalizedZoneEventTests.test_simultaneous_semantic_triggers_use_apnap_and_owner_order",
       "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -69869,6 +70604,98 @@
       "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill omission of the normalized counter-event derivation at the shared committed zone-change boundary."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
     },
     {
       "capability_id": "trigger.event.normalized_zone_change",
@@ -69916,6 +70743,98 @@
       "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Match a self-entry trigger only from the committed untapped entry fact and reject the tapped contrast."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
     },
     {
       "capability_id": "trigger.event.normalized_zone_change",
@@ -69975,6 +70894,98 @@
     {
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "privacy",
       "test_id": "tests.test_zone_trigger_events.ZoneTriggerEventModelTests.test_private_library_to_hand_move_produces_no_public_trigger_event",
       "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -69987,6 +70998,98 @@
       "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay an actual mass-destruction cast from a pre-action checkpoint through complete batch history, LKI trigger placement, two draw consequences, and the final authoritative hash."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
     },
     {
       "capability_id": "trigger.event.normalized_zone_change",

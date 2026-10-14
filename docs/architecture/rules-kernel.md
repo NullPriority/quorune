@@ -416,6 +416,15 @@ damage, prevention, and entry participation remain blocked. New rules work must
 identify event/replacement participation and use capability IDs from the
 versioned registry.
 
+Every committed move of a physical nontoken card into a graveyard from another
+zone also emits `card.enter_graveyard`. This after-transition occurrence seals
+the destination characteristics, current logical incarnation and graveyard
+owner, and discovers surviving observers through the current ability query.
+It represents "from anywhere" subscriptions independently from predeparture
+death or leaves-battlefield LKI, including during simultaneous deaths. A
+replacement to another destination emits no graveyard-entry occurrence.
+The historical countered-spell `card.graveyard` event remains distinct.
+
 The simultaneous zone-transition owner separates history publication from
 trigger discovery. After every replacement-aware move in a batch commits, it
 records entry, death, discard, and sacrifice history for the actual final
