@@ -2883,6 +2883,53 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays(self):
+        session=self.session(3631101)
+        engine=session.engine
+        source=self.add(engine,'Howlpack Resurgence',zone='hand',ref='singular-howlpack-source')
+        wolf=self.add(engine,'Generic Singular Wolf',ref='singular-wolf')
+        werewolf=self.add(engine,'Generic Singular Werewolf',ref='singular-werewolf')
+        dual=self.add(engine,'Generic Singular Wolf Werewolf',ref='singular-dual')
+        outsider=self.add(engine,'Generic Bound Body',ref='singular-human')
+        foreign=self.add(engine,'Generic Singular Wolf',seat='B',ref='singular-foreign-wolf')
+        bounce=self.add(engine,'Generic Singular Enchantment Bounce',zone='hand',ref='singular-source-bounce')
+        island=self.add(engine,'Generic Conditional Keyword Island',ref='singular-bounce-island')
+        self.assert_whole_admission('Howlpack Resurgence')
+        offered=self.ready(session,source,{'G':1,'C':2})
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        for recipient in (wolf,werewolf,dual):
+            self.assertEqual(3,engine._numeric_stat(recipient.object_id,'power'))
+            self.assertIn('trample',{word.casefold() for word in engine._effective_card_data(recipient)['keywords']})
+        for recipient in (outsider,foreign):
+            self.assertEqual(2,engine._numeric_stat(recipient.object_id,'power'))
+            self.assertNotIn('trample',{word.casefold() for word in engine._effective_card_data(recipient)['keywords']})
+        while session.state.priority_player!='A':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        mana=next(row for row in actions if row['id'].startswith('activate:'+island.ref+':'))
+        self.assertTrue(session.act('pilot:A',{'action_id':mana['id']}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==bounce.ref)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:D',{'action_id':cast['id'],'targets':[source.ref],'pay':'auto'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':[source.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.replay(session,load=True)
+        self.resolve(session)
+        self.assertEqual('hand',session.state.cards[source.object_id].zone)
+        for recipient in (wolf,werewolf,dual):
+            current=session.state.cards[recipient.object_id]
+            self.assertEqual(2,engine._numeric_stat(current.object_id,'power'))
+            self.assertNotIn('trample',{word.casefold() for word in engine._effective_card_data(current)['keywords']})
+        for seat in 'BCD':
+            self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
     def test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay(self):
         session=self.session(3631002)
         engine=session.engine

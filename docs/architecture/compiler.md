@@ -683,6 +683,11 @@ versioned recipient-relative public quantity; the ordinary attached owner
 keeps any paired keyword fragments and applies the resolved count in layer 7c.
 Unrepresented relative qualities and hidden attachment quantities stay residual.
 
+Fixed live-set stat and keyword composition accepts singular “each ... gets
+... and has ...” wording alongside the plural form. Both use the same public
+query, subtype union, source exclusion and layer owners. Unknown subjects,
+variable results and unsupported siblings retain their existing residuals.
+
 Fixed static declaration composition reuses the declaration requirement and
 restriction parsers rather than adding a combat validator. A source-local line
 may contain either one exact fragment or one of the closed two-fragment

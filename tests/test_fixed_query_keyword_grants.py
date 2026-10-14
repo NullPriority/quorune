@@ -189,6 +189,33 @@ def _permanent(
 
 
 class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
+    def test_singular_each_query_modifiers_keep_subtype_union_and_source_exclusion(self):
+        import re
+        from quorune.oracle_ir import compile_oracle_card
+        registry=load_default_capability_registry()
+        for index,text in enumerate((
+            "Each creature you control that's a Wolf or a Werewolf gets +1/+1 and has trample.",
+            "Each other creature you control that's a Wolf or a Werewolf gets +1/+1.",
+        )):
+            with self.subTest(text=text):
+                ir=compile_oracle_card(_permanent(text,suffix=363110001+index,name='Generic Singular Query Observer'),capability_registry=registry,capability_profile='commander_review')
+                self.assertEqual('exact',ir.status,ir.material_residuals)
+                node=ir.faces[0].nodes[0]
+                self.assertEqual(text,node.text)
+                descriptor=node.handlers[0]
+                self.assertEqual(['werewolf','wolf'],descriptor['condition']['predicate']['subtypes_any'])
+                self.assertEqual(index==1,descriptor['condition']['exclude_source'])
+                self.assertEqual('source_controller',descriptor['condition']['target_controller'])
+                default_continuous_effect_component_registry().validate(descriptor)
+                program=compile_card_program(_NoRulingsDatabase(),_permanent(text,suffix=363110001+index,name='Generic Singular Query Observer'),
+                    capability_registry=registry,capability_profile='commander_review',trust_level='trusted')
+                from quorune.card_programs import bind_card_program_runtime
+                self.assertTrue(bind_card_program_runtime(program,capability_registry=registry,profile='commander_review')['strict_capability_ready'])
+        self.assertIsNone(fixed_query_characteristic_grant_handler("Each creature you control that's a Wolf or a Werewolf gets +X/+X and has trample."))
+        self.assertIsNone(fixed_query_characteristic_grant_handler("Each creature you control that's a Wolf or unrepresented gets +1/+1 and has trample."))
+        with mock.patch('quorune.compiler.continuous_templates._FIXED_QUERY_CHARACTERISTIC_GRANT', re.compile(r'(?!)')):
+            self.assertIsNone(fixed_query_characteristic_grant_handler("Each creature you control that's a Wolf or a Werewolf gets +1/+1 and has trample."))
+
     def test_public_query_protection_grants_keep_typed_quality_and_reject_unbound_labels(self):
         from quorune.semantic_runtime.continuous_components import (
             FixedQueryProtectionGrantHandler, FixedQueryCharacteristicProtectionGrantHandler,

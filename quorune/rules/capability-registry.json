@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 250,
+  "registry_version": 251,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -5868,7 +5868,7 @@
     },
     {
       "id": "continuous.ability.fixed_query_keyword_grant",
-      "version": 14,
+      "version": 15,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -5885,7 +5885,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Grant one or more selected ordinary keywords, including five fixed basic landwalk variants and Horsemanship, in layer 6 to a live source-controller, source-opponent, or global battlefield set selected by the shared closed public ObjectQuerySpec, optionally coupled to fixed layer-7c power/toughness or exact declaration fragments over that identical query. Global canonical creature-subtype plurals accept optional All and Other; one shared query preserves every controller and source exclusion. Bare canonical creature-subtype queries include noncreature Kindred permanents; explicit creature descriptions retain their creature constraint. Grant already-represented fixed combat or spell-cast keyword trigger fragments with exact label, instance and consumer dependencies. Dedicated version-two handlers also grant complete fixed typed Protection fragments to live queried sets, optionally with the same fixed stat query. Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition.",
+        "summary": "Grant one or more selected ordinary keywords, including five fixed basic landwalk variants and Horsemanship, in layer 6 to a live source-controller, source-opponent, or global battlefield set selected by the shared closed public ObjectQuerySpec, optionally coupled to fixed layer-7c power/toughness or exact declaration fragments over that identical query. Global canonical creature-subtype plurals accept optional All and Other; one shared query preserves every controller and source exclusion. Bare canonical creature-subtype queries include noncreature Kindred permanents; explicit creature descriptions retain their creature constraint. Grant already-represented fixed combat or spell-cast keyword trigger fragments with exact label, instance and consumer dependencies. Dedicated version-two handlers also grant complete fixed typed Protection fragments to live queried sets, optionally with the same fixed stat query. Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition. Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers.",
         "inputs": [
           "active phased-in battlefield source",
           "source-controller, source-opponent, or global target relation",
@@ -5953,7 +5953,9 @@
         "test_public_query_protection_grants_keep_typed_quality_and_reject_unbound_labels",
         "test_conditional_typed_keywords_keep_their_fragments_and_condition",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
-        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay"
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
+        "test_singular_each_query_modifiers_keep_subtype_union_and_source_exclusion",
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
       ],
       "negative_tests": [
         "test_open_or_unsupported_queries_remain_material_residuals",
@@ -5971,7 +5973,9 @@
         "test_expanded_protection_targets_remain_residual_when_precise_owner_is_unavailable",
         "test_conditional_typed_keyword_schema_dependencies_and_omission_fail_closed",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
-        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay"
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
+        "test_singular_each_query_modifiers_keep_subtype_union_and_source_exclusion",
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
       ],
       "interaction_tests": [
         "test_aura_attachment_and_query_grant_execute_from_one_exact_card",
@@ -5997,7 +6001,8 @@
         "test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure",
         "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
-        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay"
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
       ],
       "multiplayer_tests": [
         "test_live_queries_track_global_control_subtype_phase_and_zone_changes",
@@ -6010,7 +6015,8 @@
         "test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry",
         "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
         "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
-        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays"
+        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
       ],
       "privacy_tests": [
         "test_projection_and_replay_preserve_grants_without_private_identities",
@@ -6019,7 +6025,8 @@
         "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
         "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
-        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay"
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
       ],
       "replay_tests": [
         "test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
@@ -6037,7 +6044,8 @@
         "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
         "test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
-        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay"
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
       ],
       "required_evidence": [
         "positive",
@@ -7016,7 +7024,7 @@
     },
     {
       "id": "continuous.power_toughness.fixed_anthem",
-      "version": 9,
+      "version": 10,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -7033,7 +7041,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply a reviewed battlefield static ability that gives a live source-controller, source-opponent, or global typed creature set a fixed power/toughness modifier or fixed coefficients per named source counter in layer 7c while the source remains applicable. One shared query preserves controller and source exclusion. Bare canonical creature-subtype sets include Kindred permanents without defining absent power or toughness; explicit creature descriptions retain their type constraint.",
+        "summary": "Apply a reviewed battlefield static ability that gives a live source-controller, source-opponent, or global typed creature set a fixed power/toughness modifier or fixed coefficients per named source counter in layer 7c while the source remains applicable. One shared query preserves controller and source exclusion. Bare canonical creature-subtype sets include Kindred permanents without defining absent power or toughness; explicit creature descriptions retain their type constraint. Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers.",
         "inputs": [
           "active phased-in source object",
           "source-controller, source-opponent, or global relation",
@@ -7080,7 +7088,9 @@
         "test_source_counter_group_anthems_preserve_live_public_query_and_named_counter",
         "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure",
         "test_bare_subtype_combined_grant_preserves_undefined_noncreature_stats",
-        "test_bare_subtype_union_modifier_keeps_kindred_and_rejects_unknown_subtypes"
+        "test_bare_subtype_union_modifier_keeps_kindred_and_rejects_unknown_subtypes",
+        "test_singular_each_query_modifiers_keep_subtype_union_and_source_exclusion",
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
       ],
       "negative_tests": [
         "test_anthem_component_rejects_malformed_descriptors",
@@ -7090,7 +7100,9 @@
         "test_unknown_nouns_and_class_level_context_remain_residual",
         "test_source_counter_group_anthems_preserve_live_public_query_and_named_counter",
         "test_source_counter_anthem_descriptor_keeps_legacy_shape_and_rejects_malformed_scaling",
-        "test_source_counter_anthem_missing_authority_and_producer_remain_residual"
+        "test_source_counter_anthem_missing_authority_and_producer_remain_residual",
+        "test_singular_each_query_modifiers_keep_subtype_union_and_source_exclusion",
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
       ],
       "interaction_tests": [
         "test_multiple_anthem_components_stack_and_respect_control",
@@ -7102,20 +7114,25 @@
         "test_subtype_union_recomputes_after_layer_four_and_excludes_source",
         "test_ability_presence_query_uses_shared_layer_six_dependency_order",
         "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
-        "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure"
+        "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure",
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
       ],
       "multiplayer_tests": [
         "test_static_anthem_is_controller_scoped_in_four_player_evaluation",
         "test_live_fixed_queries_track_relations_source_identity_and_phasing",
         "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
-        "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure"
+        "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure",
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
       ],
-      "privacy_tests": [],
+      "privacy_tests": [
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
+      ],
       "replay_tests": [
         "test_anthem_component_replays_exactly",
         "test_live_public_object_state_and_layer_five_queries_recompute",
         "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
-        "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure"
+        "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure",
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
       ],
       "required_evidence": [
         "positive",

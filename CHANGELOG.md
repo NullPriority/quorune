@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile singular each-object stat and keyword grants with the shared live
+  battlefield query, preserving subtype unions and source exclusions.
+
 - Compile explicit self-graveyard casting permissions with owner-relative
   public-state conditions shared by casting offers and accepted commands.
 

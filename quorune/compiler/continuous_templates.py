@@ -220,13 +220,13 @@ _GLOBAL_PLURAL_KEYWORD_GRANT = re.compile(
 )
 _TRAILING_REMINDER = re.compile(r"\s+\([^()]*\)\.?$")
 _FIXED_QUERY_CHARACTERISTIC_GRANT = re.compile(
-    r"^(?P<subject>.+?) get "
-    r"(?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) and have "
+    r"^(?P<subject>.+?) gets? "
+    r"(?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) and ha(?:ve|s) "
     r"(?P<abilities>.+?)\.?$",
     re.IGNORECASE,
 )
 _FIXED_QUERY_POWER_TOUGHNESS = re.compile(
-    r"^(?P<subject>.+?) get (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+)\.?$",
+    r"^(?P<subject>.+?) gets? (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+)\.?$",
     re.IGNORECASE,
 )
 def fixed_power_toughness_anthem_handler(

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "64742724155e1c4ddafaedceab6d1da73b72fea043428829a8cd6c291b7bd390",
-  "declaration_source_fingerprint": "5e40eb56c741e4e09dc1a4a48186919294fa6d0159462052faf4624c463bccc5",
+  "registry_fingerprint": "fd95c28d425cf030e0e4d2fad478e24e52dd689b1802cf633f57877bfd3cdabf",
+  "declaration_source_fingerprint": "ab63d42e35383a640c4a79610cd128945fb430c8bed5eaeaf8d0d26e42092739",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -31088,6 +31088,27 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
       "official_rule_ids": [
         "604.1",
@@ -31466,6 +31487,27 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
       "official_rule_ids": [
         "604.1",
@@ -31802,6 +31844,27 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
       "official_rule_ids": [
         "604.1",
@@ -31949,6 +32012,27 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_singular_each_query_modifiers_keep_subtype_union_and_source_exclusion",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_triggered_keyword_grant_labels_and_fragments_are_exact_and_fail_closed",
       "official_rule_ids": [
         "604.1",
@@ -32071,6 +32155,27 @@
         "commander_review"
       ],
       "applicability_note": "Compile a fixed query keyword grant beside exact declaration fragments without duplicating the query owner."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -32327,6 +32432,27 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_singular_each_query_modifiers_keep_subtype_union_and_source_exclusion",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_measured_50_card_lower_bound_is_capability_closed",
       "official_rule_ids": [
         "604.1",
@@ -32428,6 +32554,27 @@
         "commander_review"
       ],
       "applicability_note": "Compile exact controller-wide Artifact Hexproof and creature-token Haste sentences into source-spanned query descriptors while adjacent keyword and predicate forms remain residual."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -32554,6 +32701,27 @@
         "commander_review"
       ],
       "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -41747,6 +41915,27 @@
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_live_public_object_state_and_layer_five_queries_recompute",
       "official_rule_ids": [
         "604.1",
@@ -41911,6 +42100,27 @@
         "commander_review"
       ],
       "applicability_note": "Keep a fixed static anthem scoped to its source controller across a four-player battlefield."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -42104,6 +42314,27 @@
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_query_dependency_fails_closed_across_consumers",
       "official_rule_ids": [
         "604.1",
@@ -42121,6 +42352,27 @@
         "commander_review"
       ],
       "applicability_note": "Block the shared public query and retain the affected anthem as a source-spanned material residual."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_singular_each_query_modifiers_keep_subtype_union_and_source_exclusion",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -42272,6 +42524,27 @@
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_public_object_state_and_query_conditions_compile_closed",
       "official_rule_ids": [
         "604.1",
@@ -42331,6 +42604,27 @@
         "commander_review"
       ],
       "applicability_note": "Compile fixed public type, subtype, token, state, and positive ability sets into the existing layer-7c owner."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_singular_each_query_modifiers_keep_subtype_union_and_source_exclusion",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -42481,6 +42775,27 @@
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "property",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_source_counter_anthem_descriptor_keeps_legacy_shape_and_rejects_malformed_scaling",
       "official_rule_ids": [
@@ -42520,6 +42835,27 @@
         "commander_review"
       ],
       "applicability_note": "Apply a reviewed battlefield static ability that gives same-controller permanents with declared subtypes a fixed power/toughness modifier in layer 7c."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -124384,5 +124720,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "e5b5bb61b9c883426cdf4bb64dd640ff07d1153b1ebf23abda01b8792fd0a2d7"
+  "fingerprint": "5183bb49f722c35eeaa9e6b597bb445adc3c141f7bd74f547930d7fd768bf07c"
 }

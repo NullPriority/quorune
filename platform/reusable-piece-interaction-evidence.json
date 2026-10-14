@@ -4,6 +4,21 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
+      "test_id": "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+      "piece_ids": [
+        "capability.continuous.ability.fixed_query_keyword_grant",
+        "capability.continuous.power_toughness.fixed_anthem"
+      ],
+      "capability_ids": [
+        "continuous.ability.fixed_query_keyword_grant",
+        "continuous.power_toughness.fixed_anthem"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Howlpack Resurgence is strictly compiled and cast. Wolf, Werewolf and dual-subtype recipients each receive one fixed bonus and trample; a Human and foreign-controlled Wolf do not. A real bounce removes the source and both results. Unauthorized rollback, privacy, pending save/load and complete pre-cast replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
       "test_id": "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
       "piece_ids": [
         "capability.casting.zone.self_graveyard.controlled_subtype",
