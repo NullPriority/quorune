@@ -10464,6 +10464,21 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Psychic Corrosion actual cast plus Divination draws creates two mill triggers. A real concession removes C; each trigger mills the remaining opponents through one simultaneous zone batch, taking only available cards and excluding controller A. Private draw projection, pending load and full pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
+      "piece_ids": [
+        "capability.zone.mill.event_recipient",
+        "capability.zone.mill.fixed"
+      ],
+      "capability_ids": [
+        "zone.mill.event_recipient",
+        "zone.mill.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual original Shriekgeist/Crosstown Courier combat mills the damaged player, Nemesis of Reason attack mills its defending player, and Memory Erosion observes a real foreign cast and mills that caster. Untargeted instructions retain their sealed recipient while pending load and full pre-action replay agree."
     }
   ]
 }

@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Address untargeted mill instructions to typed damage recipients, defending
+  players and spell casters through the existing mill result owner.
+
 - Mill current opponents through the shared simultaneous zone transaction,
   excluding the resolving controller and departed players.
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Mapping, Sequence
 
-from ..compiler.mill_templates import MILL_CAPABILITY_ID, MILL_MECHANIC_ID
+from ..compiler.mill_templates import MILL_CAPABILITY_ID, MILL_MECHANIC_ID,EVENT_MILL_RECIPIENT_CAPABILITY,EVENT_MILL_RECIPIENT_MECHANIC
 
 
 def _player_target_schema_is_closed(
@@ -60,6 +60,9 @@ def fixed_mill_node_capabilities(
     ):
         return ()
     player = effect.get("player")
+    if target_schema is None and EVENT_MILL_RECIPIENT_MECHANIC in mechanics and player in {
+            '$context.target','$context.player','$context.defending_player'}:
+        return (MILL_CAPABILITY_ID,EVENT_MILL_RECIPIENT_CAPABILITY)
     if target_schema is None and player == "$controller":
         return (MILL_CAPABILITY_ID,)
     if (
@@ -71,4 +74,9 @@ def fixed_mill_node_capabilities(
     return ()
 
 
-__all__ = ["fixed_mill_node_capabilities"]
+def mill_covered_mechanics(supplied):
+    return {mechanic for cap,mechanic in ((MILL_CAPABILITY_ID,MILL_MECHANIC_ID),
+        (EVENT_MILL_RECIPIENT_CAPABILITY,EVENT_MILL_RECIPIENT_MECHANIC)) if cap in supplied}
+
+
+__all__ = ["fixed_mill_node_capabilities","mill_covered_mechanics"]

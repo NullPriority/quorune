@@ -59,6 +59,14 @@ opponent rosters produce no intent; short libraries contribute only available
 cards. The historical `all_active_players` scope retains its recipient contract.
 No pre-mill hidden card identities enter the descriptor or public projection.
 
+Event-addressed mill requests `zone.mill.event_recipient` through the dedicated
+`fixed-event-recipient-mill` mechanic. A damage binding must guarantee a player
+recipient before using `$context.target`; source attacks use the sealed
+`$context.defending_player`, and spell casts use `$context.player`. These
+references create no target announcement. Fixed and committed scalar amounts
+retain their own producer schemas. A context reference without this mechanic,
+an ambiguous event or an unsupported result tail prevents exact admission.
+
 ## Lifecycle and participation
 
 1. The compiler or reviewed program emits a versioned component descriptor.

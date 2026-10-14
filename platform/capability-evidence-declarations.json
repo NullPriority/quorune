@@ -76850,6 +76850,195 @@
     {"capability_id":"zone.linked_exile_return.fixed","evidence_class":"replay","test_id":"tests.test_linked_exile_return.LinkedExileReturnActionTests.test_optional_other_zero_targets_without_eligible_object_and_replay","official_rule_ids":["111.8","115.1a","400.7","400.7j","603.7b","603.7c","603.7d","603.7e","608.2b","608.2c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"An offered activation with no eligible target resolves legally, consumes its real payment and reproduces its zero-target outcome after load and exact command replay."},
     {"capability_id":"zone.linked_exile_return.fixed","evidence_class":"replay","test_id":"tests.test_linked_exile_return.LinkedExileReturnActionTests.test_trusted_immediate_blink_offer_payment_owner_privacy_and_replay","official_rule_ids":["111.8","115.1a","400.7","400.7j","603.7b","603.7c","603.7d","603.7e","608.2b","608.2c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Save/load and exact command replay start at a checkpoint before the accepted cast."},
     {
+      "capability_id": "zone.mill.event_recipient",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
+      "official_rule_ids": [
+        "101.4",
+        "113.7a",
+        "603.2",
+        "608.2c",
+        "608.2h",
+        "701.17a",
+        "701.17b",
+        "701.17c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Shriekgeist and Crosstown Courier real combat mill the damaged player, Nemesis of Reason actual attack mills its defending player, and Memory Erosion observes a real foreign spellcast and mills that caster. Pendingload, privateprojection, wrongprincipal rejection and fullpreaction replay retain recipients."
+    },
+    {
+      "capability_id": "zone.mill.event_recipient",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
+      "official_rule_ids": [
+        "101.4",
+        "113.7a",
+        "603.2",
+        "608.2c",
+        "608.2h",
+        "701.17a",
+        "701.17b",
+        "701.17c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Shriekgeist and Crosstown Courier real combat mill the damaged player, Nemesis of Reason actual attack mills its defending player, and Memory Erosion observes a real foreign spellcast and mills that caster. Pendingload, privateprojection, wrongprincipal rejection and fullpreaction replay retain recipients."
+    },
+    {
+      "capability_id": "zone.mill.event_recipient",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_mill_rules.FixedMillCompilerTests.test_event_bound_mill_domain_dependencies_and_omission_fail_closed",
+      "official_rule_ids": [
+        "101.4",
+        "113.7a",
+        "603.2",
+        "608.2c",
+        "608.2h",
+        "701.17a",
+        "701.17b",
+        "701.17c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete typed boundmill compiles fixed and committed amounts without introducing target choice; malformed/unproven recipient conditions, partialclauses, missing capabilities and omitted lowering fail closed."
+    },
+    {
+      "capability_id": "zone.mill.event_recipient",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
+      "official_rule_ids": [
+        "101.4",
+        "113.7a",
+        "603.2",
+        "608.2c",
+        "608.2h",
+        "701.17a",
+        "701.17b",
+        "701.17c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Shriekgeist and Crosstown Courier real combat mill the damaged player, Nemesis of Reason actual attack mills its defending player, and Memory Erosion observes a real foreign spellcast and mills that caster. Pendingload, privateprojection, wrongprincipal rejection and fullpreaction replay retain recipients."
+    },
+    {
+      "capability_id": "zone.mill.event_recipient",
+      "evidence_class": "negative",
+      "test_id": "tests.test_mill_rules.FixedMillCompilerTests.test_event_bound_mill_domain_dependencies_and_omission_fail_closed",
+      "official_rule_ids": [
+        "101.4",
+        "113.7a",
+        "603.2",
+        "608.2c",
+        "608.2h",
+        "701.17a",
+        "701.17b",
+        "701.17c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete typed boundmill compiles fixed and committed amounts without introducing target choice; malformed/unproven recipient conditions, partialclauses, missing capabilities and omitted lowering fail closed."
+    },
+    {
+      "capability_id": "zone.mill.event_recipient",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
+      "official_rule_ids": [
+        "101.4",
+        "113.7a",
+        "603.2",
+        "608.2c",
+        "608.2h",
+        "701.17a",
+        "701.17b",
+        "701.17c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Shriekgeist and Crosstown Courier real combat mill the damaged player, Nemesis of Reason actual attack mills its defending player, and Memory Erosion observes a real foreign spellcast and mills that caster. Pendingload, privateprojection, wrongprincipal rejection and fullpreaction replay retain recipients."
+    },
+    {
+      "capability_id": "zone.mill.event_recipient",
+      "evidence_class": "positive",
+      "test_id": "tests.test_mill_rules.FixedMillCompilerTests.test_event_bound_mill_recipients_retain_occurrence_without_targeting",
+      "official_rule_ids": [
+        "101.4",
+        "113.7a",
+        "603.2",
+        "608.2c",
+        "608.2h",
+        "701.17a",
+        "701.17b",
+        "701.17c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete typed boundmill compiles fixed and committed amounts without introducing target choice; malformed/unproven recipient conditions, partialclauses, missing capabilities and omitted lowering fail closed."
+    },
+    {
+      "capability_id": "zone.mill.event_recipient",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
+      "official_rule_ids": [
+        "101.4",
+        "113.7a",
+        "603.2",
+        "608.2c",
+        "608.2h",
+        "701.17a",
+        "701.17b",
+        "701.17c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Shriekgeist and Crosstown Courier real combat mill the damaged player, Nemesis of Reason actual attack mills its defending player, and Memory Erosion observes a real foreign spellcast and mills that caster. Pendingload, privateprojection, wrongprincipal rejection and fullpreaction replay retain recipients."
+    },
+    {
+      "capability_id": "zone.mill.event_recipient",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
+      "official_rule_ids": [
+        "101.4",
+        "113.7a",
+        "603.2",
+        "608.2c",
+        "608.2h",
+        "701.17a",
+        "701.17b",
+        "701.17c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Shriekgeist and Crosstown Courier real combat mill the damaged player, Nemesis of Reason actual attack mills its defending player, and Memory Erosion observes a real foreign spellcast and mills that caster. Pendingload, privateprojection, wrongprincipal rejection and fullpreaction replay retain recipients."
+    },
+    {
       "capability_id": "zone.mill.fixed",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",

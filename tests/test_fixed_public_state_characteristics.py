@@ -2957,6 +2957,49 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay(self):
+        from quorune.model import CombatState
+        for index,name in enumerate(('Shriekgeist','Crosstown Courier','Nemesis of Reason')):
+            with self.subTest(name=name):
+                session=self.session(3632101+index);engine=session.engine
+                source=self.add(engine,name,ref='event-bound-mill-source')
+                self.assert_whole_admission(source.printed_name)
+                engine.permissions.invalidate_current();session.state.pending_decision=None;session.state.started=True
+                session.state.active_player='A';session.state.priority_player=None;session.state.priority_passes=[]
+                session.state.phase='combat';session.state.step='declare_attackers';session.state.phase_index=5;session.state.combat=CombatState()
+                engine.pump();self.checkpoint(session)
+                before={s:len(session.state.players[s].zones['graveyard']) for s in 'ABCD'}
+                available=len(session.state.players['B'].zones['library'])
+                expected=10 if name=='Nemesis of Reason' else 2
+                denied=session.act('pilot:D',{'action_id':'attack','attackers':{source.ref:'B'}})
+                self.assertFalse(denied.ok)
+                accepted=session.act('pilot:A',{'action_id':'attack','attackers':{source.ref:'B'}})
+                self.assertTrue(accepted.ok,accepted.summary)
+                self.replay(session,load=True)
+                for _ in range(60):
+                    if session.state.phase=='postcombat_main' and not session.state.stack:break
+                    decision=session.state.pending_decision
+                    if decision.kind=='priority':command={'action_id':'pass'}
+                    elif decision.kind=='combat.blockers':command={'action_id':'block','blocks':{}}
+                    else:self.fail('Unexpected boundmill decision '+decision.kind)
+                    accepted=session.act(session.pending_principals()[0],command);self.assertTrue(accepted.ok,accepted.summary)
+                else:self.fail('Boundmillcombatdidnotfinish')
+                self.assertEqual(before['B']+min(expected,available),len(session.state.players['B'].zones['graveyard']))
+                for seat in 'ACD':self.assertEqual(before[seat],len(session.state.players[seat].zones['graveyard']))
+                self.replay(session)
+        session=self.session(3632104);engine=session.engine
+        observer=self.add(engine,'Memory Erosion',seat='B',ref='event-mill-caster-observer')
+        spell=self.add(engine,'Generic Boolean Life Response',zone='hand',ref='event-mill-cast-spell')
+        self.assert_whole_admission(observer.printed_name)
+        offered=self.ready(session,spell,{})
+        before={s:len(session.state.players[s].zones['graveyard']) for s in 'ABCD'}
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'targets':['A'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(before['A']+3,len(session.state.players['A'].zones['graveyard']))
+        for seat in 'BCD':self.assertEqual(before[seat],len(session.state.players[seat].zones['graveyard']))
+        self.replay(session)
+
     def test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays(self):
         from unittest.mock import patch
         from quorune.zone_transitions import ZoneTransitionOwner

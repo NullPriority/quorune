@@ -11,6 +11,9 @@ from .fixed_entry_return_requirements import fixed_entry_return_effect_template
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True):
+    from .mill_templates import event_recipient_mill_result
+    mill=event_recipient_mill_result(binding,body,compile_fixed=lambda text:effect_template(text,card_name=card_name),source_name=card_name)
+    if mill is not None:return mill
     if binding.event.value.endswith('.self') or binding.variant in {'source_attacks', 'this_creature_blocks', 'this_creature_becomes_blocked'}:
         from .damage_templates import source_pronoun_damage_effect_template
         damage=source_pronoun_damage_effect_template(body)

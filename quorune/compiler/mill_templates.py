@@ -123,3 +123,34 @@ __all__ = [
     "MILL_CAPABILITY_ID",
     "MILL_MECHANIC_ID",
 ]
+
+
+EVENT_MILL_RECIPIENT_CAPABILITY='zone.mill.event_recipient'
+EVENT_MILL_RECIPIENT_MECHANIC='fixed-event-recipient-mill'
+
+
+def event_recipient_mill_result(binding,body,*,compile_fixed,source_name):
+    """One mandatory mill bound to an independently guaranteed event player."""
+    match=re.fullmatch(r'(?P<subject>that player|they|defending player) mills? (?P<body>.+)',body,re.I)
+    if match is None:return None
+    player=None
+    if match['subject'].casefold()=='defending player':
+        if binding.event.value=='creature.attacks' and binding.variant=='source_attacks':player='$context.defending_player'
+    elif binding.event.value in {'damage.dealt','damage.dealt.self'}:
+        def guarantees_player(condition):
+            return isinstance(condition,Mapping) and (condition=={'field':'target_kind','op':'eq','value':'player'}
+                or any(guarantees_player(child) for child in condition.get('all',())))
+        if guarantees_player(binding.event_condition):player='$context.target'
+    elif binding.event.value=='spell.cast':player='$context.player'
+    if player is None:return None
+    normalized='Mill '+match['body']
+    from .scalar_effect_amounts import scalar_effect_amount_template
+    scalar=scalar_effect_amount_template(normalized,source_name=source_name,event=binding.event.value,
+        source_event=binding.event.value.endswith('.self'),compile_fixed=compile_fixed)
+    fixed=fixed_mill_effect_template(normalized)
+    compiled=scalar or (fixed.compiled() if fixed is not None else None)
+    if compiled is None or compiled[2] is not None or len(compiled[1])!=1:return None
+    effect=compiled[1][0]
+    if effect.get('op')!='mill' or effect.get('player')!='$controller':return None
+    return ('fixed-event-recipient-mill-v1',({**effect,'player':player},),None,
+        (*compiled[3],EVENT_MILL_RECIPIENT_MECHANIC)),False

@@ -41,6 +41,45 @@ def focused_card_database(directory: str) -> CardDatabase:
 
 
 class FixedMillCompilerTests(unittest.TestCase):
+    def test_event_bound_mill_domain_dependencies_and_omission_fail_closed(self):
+        from quorune.rules.mill_capability_shapes import fixed_mill_node_capabilities
+        base=self.db.lookup('Fixed Target Mill')
+        text='Whenever this creature deals combat damage to a player, that player mills two cards.'
+        card=replace(base,oracle_text=text,type_line='Creature — Human')
+        self.assertEqual('exact',compile_oracle_card(card,capability_registry=self.capabilities).status)
+        for cap in ('zone.mill.event_recipient','zone.mill.fixed'):
+            value=json.loads(REGISTRY_PATH.read_text(encoding='utf-8'))
+            next(row for row in value['capabilities'] if row['id']==cap).update(status='blocked',blockers=['event mill recipient withdrawn'])
+            self.assertNotEqual('exact',compile_oracle_card(card,capability_registry=CapabilityRegistry(value)).status)
+        for altered in (
+            'Whenever this creature deals damage, that player mills two cards.',
+            'Whenever a creature attacks, defending player mills two cards.',
+            text+' Return one of those cards to hand.',
+        ):
+            self.assertNotEqual('exact',compile_oracle_card(replace(card,oracle_text=altered),capability_registry=self.capabilities).status)
+        effect={'op':'mill','player':'$context.target','count':2}
+        self.assertFalse(fixed_mill_node_capabilities(effects=(effect,),target_schema=None,mechanic_ids=('mill',)))
+        with patch('quorune.compiler.mill_templates.event_recipient_mill_result',return_value=None):
+            self.assertNotEqual('exact',compile_oracle_card(card,capability_registry=self.capabilities).status)
+
+    def test_event_bound_mill_recipients_retain_occurrence_without_targeting(self):
+        base=self.db.lookup('Fixed Target Mill')
+        cases=(
+            ('Whenever this creature deals combat damage to a player, that player mills two cards.','$context.target',2),
+            ('Whenever this creature deals combat damage to a player, that player mills that many cards.','$context.target',None),
+            ('Whenever this creature attacks, defending player mills ten cards.','$context.defending_player',10),
+            ('Whenever an opponent casts a spell, that player mills two cards.','$context.player',2),
+        )
+        for text,player,count in cases:
+            ir=compile_oracle_card(replace(base,oracle_text=text,type_line='Creature — Human'),
+                capability_registry=self.capabilities,capability_profile='commander_review')
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            node=ir.faces[0].nodes[0]
+            self.assertIsNone(node.target_schema);self.assertEqual(player,node.effects[0]['player'])
+            self.assertIn('zone.mill.event_recipient',node.capability_dependencies)
+            if count is not None:self.assertEqual(count,node.effects[0]['count'])
+            else:self.assertEqual('committed_event_amount',node.effects[0]['count']['origin'])
+
     def test_opponent_mill_scope_dependency_and_compiler_omission_fail_closed(self):
         from quorune.compiler.mill_templates import fixed_mill_effect_template
         from quorune.card_programs import bind_card_program_runtime

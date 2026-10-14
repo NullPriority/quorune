@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 260,
+  "registry_version": 261,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -238,6 +238,85 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "zone.mill.event_recipient",
+      "version": 1,
+      "official_rules": [
+        "101.4",
+        "113.7a",
+        "603.2",
+        "608.2c",
+        "608.2h",
+        "701.17a",
+        "701.17b",
+        "701.17c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Complete untargeted fixed/scalar mill addressed to a sealed damaged player, source attacker defending player or event spell caster.",
+        "inputs": [
+          "independent normalized damage/attack/spellcast binding",
+          "guaranteed player occurrence field",
+          "fixed or committed scalar result count"
+        ],
+        "outputs": [
+          "one untargeted existing mill intent for event recipient"
+        ],
+        "exclusions": [
+          "unrestricteddamage recipient",
+          "globalattack defender ambiguity",
+          "newobject/linked/partial result",
+          "unavailable context recipient"
+        ]
+      },
+      "dependencies": [
+        "zone.mill.fixed"
+      ],
+      "implementation_components": [
+        "quorune.compiler.mill_templates.event_recipient_mill_result",
+        "quorune.rules.mill_capability_shapes.fixed_mill_node_capabilities",
+        "quorune.semantic_runtime.generic.MillHandler",
+        "quorune.milling.mill_cards"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawn recipient or mill producer blocks exact admission; context references without the dedicated mechanic are rejected.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting event recipient lowering makes complete event-addressed mill residual.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_event_bound_mill_recipients_retain_occurrence_without_targeting",
+        "test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay"
+      ],
+      "negative_tests": [
+        "test_event_bound_mill_domain_dependencies_and_omission_fail_closed",
+        "test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay"
+      ],
+      "interaction_tests": [
+        "test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay"
+      ],
+      "multiplayer_tests": [
+        "test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay"
+      ],
+      "privacy_tests": [
+        "test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay"
+      ],
+      "replay_tests": [
+        "test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay"
+      ]
+    },
     {
       "id": "quantity_expression.public_characteristic_aggregate",
       "version": 1,
