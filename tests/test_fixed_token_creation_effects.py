@@ -167,6 +167,66 @@ class PredefinedBloodTokenCompilerTests(unittest.TestCase):
             capability_profile='commander_review').status)
 
 
+class AdditionalPredefinedTokenCompilerTests(unittest.TestCase):
+    def test_lander_and_mutagen_profiles_results_and_dependency_mutants_fail_closed(self):
+        from quorune.standard_token_abilities import standard_token_characteristics
+        from quorune.abilities import ActivatedAbility
+        from quorune.rules.activation.resolution import builtin_activation_resolution
+        from quorune.rules.token_creation_capability_shapes import fixed_token_creation_node_capabilities
+        for name, profile, mana, result in (
+            ('Lander', 'two_tap_sac_basic_land_search_v1', 2, 'search'),
+            ('Mutagen', 'one_tap_sac_target_counter_v1', 1, 'place_counters'),
+        ):
+            with self.subTest(name=name):
+                ability = ActivatedAbility.from_dict(standard_token_characteristics({
+                    'activated_ability_profile': profile})['activated_abilities'][0])
+                self.assertEqual(mana, sum(ability.mana.values()))
+                self.assertTrue(ability.tap_source)
+                self.assertTrue(ability.sacrifice_source)
+                self.assertEqual(name == 'Mutagen', ability.sorcery_speed)
+                resolution = builtin_activation_resolution(ability.builtin_semantic_key, 'B')
+                self.assertEqual(result, resolution.effects[0]['op'])
+                if name == 'Lander':
+                    self.assertEqual(('basic',), resolution.effects[0]['selector']['supertypes'])
+                    self.assertTrue(resolution.effects[0]['shuffle_after'])
+                    self.assertTrue(resolution.effects[0]['enters_tapped_override'])
+                else:
+                    self.assertEqual('$target.0', resolution.effects[0]['card'])
+                    self.assertEqual('+1/+1', resolution.effects[0]['counter'])
+                    self.assertEqual(1, resolution.effects[0]['amount'])
+                    self.assertEqual(('creature',), ability.target_schema['types_any'])
+                template = fixed_token_creation_effect_template(f'Create a {name} token.')
+                mutant = copy.deepcopy(template.effect)
+                mutant['characteristics']['activated_ability_profile'] = 'two_sac_draw_card_v1'
+                self.assertFalse(fixed_token_creation_node_capabilities(effects=(mutant,), target_schema=None,
+                    mechanic_ids=template.mechanics))
+                raw = json.loads(CAPABILITY_REGISTRY_PATH.read_text(encoding='utf-8'))
+                cap = next(row for row in raw['capabilities'] if row['id'] == 'token.ability.fixed_'+name.lower())
+                cap.update(status='blocked', blockers=['withdrawn predefined activation profile'])
+                withdrawn = CapabilityRegistry(raw)
+                withdrawn.mark_evidence_verified('0' * 64)
+                card = token_record('Predefined Token Compiler Fixture', f'Create a {name} token.', 3640602)
+                self.assertNotEqual('exact', compile_oracle_card(card, capability_registry=withdrawn,
+                    capability_profile='commander_review').status)
+        for key in ('builtin:fixed-basic-land-search:2:tapped', 'builtin:fixed-target-counter:+1/+1:2'):
+            self.assertIsNone(builtin_activation_resolution(key, 'A'))
+
+    def test_lander_and_mutagen_definitions_require_complete_specific_profiles(self):
+        registry = load_default_capability_registry()
+        for name, profile in (
+            ('Lander', 'two_tap_sac_basic_land_search_v1'),
+            ('Mutagen', 'one_tap_sac_target_counter_v1'),
+        ):
+            with self.subTest(name=name):
+                card = token_record('Predefined Token Compiler Fixture', f'Create a {name} token.', 3640601)
+                ir = compile_oracle_card(card, capability_registry=registry, capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                effect = ir.faces[0].nodes[0].effects[0]
+                self.assertEqual('Token Artifact — '+name, effect['characteristics']['type_line'])
+                self.assertEqual(profile, effect['characteristics']['activated_ability_profile'])
+                self.assertIn('token.ability.fixed_'+name.lower(), ir.faces[0].nodes[0].capability_dependencies)
+
+
 class FixedTokenCreationCompilerTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

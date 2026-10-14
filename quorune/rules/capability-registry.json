@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 278,
+  "registry_version": 279,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -4874,7 +4874,7 @@
     },
     {
       "id": "token.creation.fixed_definition",
-      "version": 4,
+      "version": 5,
       "official_rules": [
         "111.2",
         "111.3",
@@ -20910,6 +20910,179 @@
       "replay_tests": [
         "test_original_blood_token_empty_hand_offer_changes_after_native_draw",
         "test_original_blood_token_native_cast_cost_payment_and_private_draw_replay"
+      ]
+    },
+    {
+      "id": "token.ability.fixed_lander",
+      "version": 1,
+      "official_rules": [
+        "111.10u",
+        "602.2b",
+        "701.19b",
+        "701.19c",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Predefined Lander pays two generic mana, taps and sacrifices its source before an independent private basic-land search, tapped entry and shuffle.",
+        "inputs": [
+          "canonical predefined token definition and explicit complete profile",
+          "authenticated activation and current legal source/target/selection",
+          "payable fixed price and ordinary timing"
+        ],
+        "outputs": [
+          "one canonical typed token",
+          "one independent queued result with ordinary source and target revalidation"
+        ],
+        "exclusions": [
+          "variable or noncanonical profiles",
+          "unrepresented token definitions",
+          "unpaid price or unavailable timing",
+          "foreign-principal selection",
+          "new-incarnation substitution"
+        ]
+      },
+      "dependencies": [
+        "activation.source_zone_change.fixed",
+        "activation.tap_untap_cost.haste",
+        "library.search.fixed_to_battlefield"
+      ],
+      "implementation_components": [
+        "quorune.standard_token_abilities._basic_land_search",
+        "quorune.rules.activation.resolution.builtin_activation_resolution",
+        "quorune.rules.token_creation_capability_shapes.fixed_token_creation_node_capabilities"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The specific predefined profile and independently closed result capabilities are required; withdrawing a producer or substituting a cheaper profile prevents exact admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Canonical cost/result assertions reject altered prices, missing source costs, target predicates and unsupported builtin keys; profile mutation and dependency withdrawal prevent promotion.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_lander_and_mutagen_definitions_require_complete_specific_profiles",
+        "test_original_lander_native_cast_search_tapped_entry_and_private_replay",
+        "test_original_lander_native_search_can_fail_to_find_and_still_shuffle"
+      ],
+      "negative_tests": [
+        "test_lander_and_mutagen_profiles_results_and_dependency_mutants_fail_closed",
+        "test_original_lander_native_cast_search_tapped_entry_and_private_replay",
+        "test_original_lander_native_search_can_fail_to_find_and_still_shuffle"
+      ],
+      "interaction_tests": [
+        "test_original_lander_native_cast_search_tapped_entry_and_private_replay",
+        "test_original_lander_native_search_can_fail_to_find_and_still_shuffle"
+      ],
+      "multiplayer_tests": [
+        "test_original_lander_native_cast_search_tapped_entry_and_private_replay",
+        "test_original_lander_native_search_can_fail_to_find_and_still_shuffle"
+      ],
+      "privacy_tests": [
+        "test_original_lander_native_cast_search_tapped_entry_and_private_replay",
+        "test_original_lander_native_search_can_fail_to_find_and_still_shuffle"
+      ],
+      "replay_tests": [
+        "test_original_lander_native_cast_search_tapped_entry_and_private_replay",
+        "test_original_lander_native_search_can_fail_to_find_and_still_shuffle"
+      ]
+    },
+    {
+      "id": "token.ability.fixed_mutagen",
+      "version": 1,
+      "official_rules": [
+        "111.10v",
+        "602.2b",
+        "307.5",
+        "115.1c",
+        "608.2b",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Predefined Mutagen pays one generic mana, taps and sacrifices its source only at sorcery timing before one fixed counter on a chosen legal creature incarnation.",
+        "inputs": [
+          "canonical predefined token definition and explicit complete profile",
+          "authenticated activation and current legal source/target/selection",
+          "payable fixed price and ordinary timing"
+        ],
+        "outputs": [
+          "one canonical typed token",
+          "one independent queued result with ordinary source and target revalidation"
+        ],
+        "exclusions": [
+          "variable or noncanonical profiles",
+          "unrepresented token definitions",
+          "unpaid price or unavailable timing",
+          "foreign-principal selection",
+          "new-incarnation substitution"
+        ]
+      },
+      "dependencies": [
+        "activation.source_zone_change.fixed",
+        "activation.tap_untap_cost.haste",
+        "activation.condition.phase_window",
+        "counter.producer.fixed_effect",
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.standard_token_abilities._target_counter",
+        "quorune.rules.activation.resolution.builtin_activation_resolution",
+        "quorune.rules.token_creation_capability_shapes.fixed_token_creation_node_capabilities"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The specific predefined profile and independently closed result capabilities are required; withdrawing a producer or substituting a cheaper profile prevents exact admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Canonical cost/result assertions reject altered prices, missing source costs, target predicates and unsupported builtin keys; profile mutation and dependency withdrawal prevent promotion.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_lander_and_mutagen_definitions_require_complete_specific_profiles",
+        "test_original_mutagen_native_cast_target_counter_and_sorcery_timing_replay",
+        "test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation"
+      ],
+      "negative_tests": [
+        "test_lander_and_mutagen_profiles_results_and_dependency_mutants_fail_closed",
+        "test_original_mutagen_native_cast_target_counter_and_sorcery_timing_replay",
+        "test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation"
+      ],
+      "interaction_tests": [
+        "test_original_mutagen_native_cast_target_counter_and_sorcery_timing_replay",
+        "test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation"
+      ],
+      "multiplayer_tests": [
+        "test_original_mutagen_native_cast_target_counter_and_sorcery_timing_replay",
+        "test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation"
+      ],
+      "privacy_tests": [
+        "test_original_mutagen_native_cast_target_counter_and_sorcery_timing_replay",
+        "test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation"
+      ],
+      "replay_tests": [
+        "test_original_mutagen_native_cast_target_counter_and_sorcery_timing_replay",
+        "test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation"
       ]
     }
   ]

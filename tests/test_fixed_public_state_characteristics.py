@@ -2959,6 +2959,142 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
     register_fixture_cards_on_add = True
 
+    def test_original_lander_native_cast_search_tapped_entry_and_private_replay(self):
+        session = self.session(3640601)
+        engine = session.engine
+        source = self.add(engine, 'Galactic Wayfarer', zone='hand', ref='predefined-lander-native-wayfarer')
+        nonbasic = self.add(engine, 'Dryad Arbor', zone='library', ref='predefined-lander-nonbasic-land')
+        self.assert_whole_admission(source.printed_name)
+        action = self.ready(session, source, {'G': 3, 'C': 6})
+        self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'}).ok)
+        self.assertIsNone(self.resolve(session))
+        token = next(card for card in session.state.cards.values() if card.is_token and card.printed_name == 'Lander')
+        while session.state.priority_player != 'A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+                      if a['id'].startswith('activate:'+token.ref+':'))
+        self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'}).ok)
+        self.assertEqual('outside', session.state.cards[token.object_id].zone)
+        self.assertEqual('semantic.search', self.resolve(session).kind)
+        chosen = next(session.state.cards[oid] for oid in session.state.players['A'].zones['library']
+                      if session.state.cards[oid].printed_name == 'Generic Bound Plains')
+        self.replay(session, load=True)
+        before = session.state.to_dict()
+        self.assertFalse(session.act('pilot:B', {'action_id': 'choose', 'search_cards': [chosen.ref]}).ok)
+        self.assertEqual(before, session.state.to_dict())
+        self.assertFalse(session.act('pilot:A', {'action_id': 'choose', 'search_cards': [nonbasic.ref]}).ok)
+        self.assertEqual(before, session.state.to_dict())
+        for seat in 'BCD':
+            self.assertNotIn(chosen.ref, json.dumps(session.packet('pilot:'+seat, full=True)))
+        self.assertTrue(session.act('pilot:A', {'action_id': 'choose', 'search_cards': [chosen.ref]}).ok)
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[chosen.object_id]
+        self.assertEqual('battlefield', current.zone)
+        self.assertTrue(current.tapped)
+        self.assertEqual('A', current.controller)
+        self.replay(session, load=True)
+
+    def test_original_lander_native_search_can_fail_to_find_and_still_shuffle(self):
+        session = self.session(3640603)
+        engine = session.engine
+        source = self.add(engine, 'Galactic Wayfarer', zone='hand', ref='predefined-lander-fail-find-wayfarer')
+        self.assert_whole_admission(source.printed_name)
+        action = self.ready(session, source, {'G': 3, 'C': 6})
+        self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'}).ok)
+        self.assertIsNone(self.resolve(session))
+        token = next(card for card in session.state.cards.values() if card.is_token and card.printed_name == 'Lander')
+        while session.state.priority_player != 'A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+                      if a['id'].startswith('activate:'+token.ref+':'))
+        self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'}).ok)
+        self.assertEqual('semantic.search', self.resolve(session).kind)
+        library_size = len(session.state.players['A'].zones['library'])
+        before_shuffle = session.state.players['A'].stats.get('shuffle_count', 0)
+        self.replay(session, load=True)
+        self.assertTrue(session.act('pilot:A', {'action_id': 'choose', 'search_cards': []}).ok)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(library_size, len(session.state.players['A'].zones['library']))
+        self.assertEqual(before_shuffle+1, session.state.players['A'].stats['shuffle_count'])
+        self.assertFalse(any(self.db.by_oracle_id(card.oracle_id).type_line.startswith('Basic Land')
+            for card in session.state.cards.values() if card.owner == 'A' and card.zone == 'battlefield'
+            and card.oracle_id is not None))
+        self.replay(session, load=True)
+
+    def test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation(self):
+        session = self.session(3640604)
+        engine = session.engine
+        source = self.add(engine, 'Crustacean Commando', zone='hand', ref='predefined-mutagen-blink-commando')
+        target = self.add(engine, 'Generic Bound Body', seat='B', ref='predefined-mutagen-blink-recipient')
+        blink = self.add(engine, 'Cloudshift', seat='B', zone='hand', ref='predefined-mutagen-original-blink')
+        self.assert_whole_admission(source.printed_name)
+        action = self.ready(session, source, {'U': 4, 'C': 4})
+        session.state.players['B'].mana_pool.update({'W': 4})
+        self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'}).ok)
+        self.assertIsNone(self.resolve(session))
+        token = next(card for card in session.state.cards.values() if card.is_token and card.printed_name == 'Mutagen')
+        while session.state.priority_player != 'A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+                      if a['id'].startswith('activate:'+token.ref+':'))
+        self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'targets': [target.ref], 'pay': 'auto'}).ok)
+        while session.state.priority_player != 'B':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        action = next(a for a in session.packet('pilot:B', full=True)['decision']['ctx']['legal']['actions']
+                      if a.get('card') == blink.ref)
+        previous_identity = target.logical_object_id
+        self.assertTrue(session.act('pilot:B', {'action_id': action['id'], 'targets': [target.ref], 'pay': 'auto'}).ok)
+        self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertNotEqual(previous_identity, session.state.cards[target.object_id].logical_object_id)
+        self.assertEqual(0, session.state.cards[target.object_id].counters.get('+1/+1', 0))
+        self.replay(session, load=True)
+
+    def test_original_mutagen_native_cast_target_counter_and_sorcery_timing_replay(self):
+        session = self.session(3640602)
+        engine = session.engine
+        source = self.add(engine, 'Crustacean Commando', zone='hand', ref='predefined-mutagen-native-commando')
+        target = self.add(engine, 'Generic Bound Body', seat='B', ref='predefined-mutagen-foreign-creature')
+        invalid = self.add(engine, 'Generic Bound Plains', ref='predefined-mutagen-noncreature')
+        draw = self.add(engine, 'Divination', zone='hand', ref='predefined-mutagen-native-stack-spell')
+        self.assert_whole_admission(source.printed_name)
+        action = self.ready(session, source, {'U': 8, 'C': 8})
+        self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'}).ok)
+        self.assertIsNone(self.resolve(session))
+        token = next(card for card in session.state.cards.values() if card.is_token and card.printed_name == 'Mutagen')
+        while session.state.priority_player != 'A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        draw_action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+                           if a.get('card') == draw.ref)
+        self.assertTrue(session.act('pilot:A', {'action_id': draw_action['id'], 'pay': 'auto'}).ok)
+        token_action = 'activate:'+token.ref+':ab1'
+        self.assertNotIn(token_action, [a['id'] for a in
+            session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']])
+        before = session.state.to_dict()
+        self.assertFalse(session.act('pilot:A', {'action_id': token_action, 'targets': [target.ref], 'pay': 'auto'}).ok)
+        self.assertEqual(before, session.state.to_dict())
+        self.assertIsNone(self.resolve(session))
+        while session.state.priority_player != 'A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+                      if a['id'].startswith('activate:'+token.ref+':'))
+        before = session.state.to_dict()
+        for principal, recipient in (('pilot:B', target.ref), ('pilot:A', invalid.ref)):
+            self.assertFalse(session.act(principal, {'action_id': action['id'], 'targets': [recipient], 'pay': 'auto'}).ok)
+            self.assertEqual(before, session.state.to_dict())
+        self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'targets': [target.ref], 'pay': 'auto'}).ok)
+        self.assertEqual('outside', session.state.cards[token.object_id].zone)
+        self.assertEqual(0, target.counters.get('+1/+1', 0))
+        self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(1, session.state.cards[target.object_id].counters.get('+1/+1', 0))
+        self.assertEqual(0, source.counters.get('+1/+1', 0))
+        self.replay(session, load=True)
+
     def test_original_blood_token_native_cast_cost_payment_and_private_draw_replay(self):
         session = self.session(3640501)
         engine = session.engine

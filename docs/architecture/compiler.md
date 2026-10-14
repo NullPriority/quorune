@@ -1774,7 +1774,11 @@ display text. A predefined Blood definition additionally requires
 `token.ability.fixed_blood`: its explicit activation profile retains all four
 costs and delegates owned-hand selection, source departure and private draw to
 existing generic owners. The token's name or display text does not select its
-runtime ability. The same owner lowers canonical fixed Investigate, fixed
+runtime ability. Lander and Mutagen have separate predefined-profile capabilities.
+Lander preserves a private basic-land search, tapped entry and mandatory shuffle,
+including legal failure to find. Mutagen retains sorcery timing and one current
+creature target for its fixed counter. Both pay their complete source costs
+before an independent queued result. The same owner lowers canonical fixed Investigate, fixed
 Afterlife through permanent-graveyard LKI, one current-target copy token, and
 one source-independent next-end-step creation. `compiler/token_copy_templates.py`
 adds fixed copy recipes referencing the source, one qualified public permanent

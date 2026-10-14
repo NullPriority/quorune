@@ -64275,6 +64275,561 @@
       "applicability_note": "Original Blood Servitor actual cast and complete entry consequence create Blood. Authentic Blood activation pays mana, tap, owned-hand discard and source sacrifice before an independent private draw, with foreign/invalid-cost rejection, pending reload and exact replay. Minimal definition tests remain compiler evidence."
     },
     {
+      "capability_id": "token.ability.fixed_lander",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_lander_native_cast_search_tapped_entry_and_private_replay",
+      "official_rule_ids": [
+        "111.10u",
+        "602.2b",
+        "701.19b",
+        "701.19c",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Galactic Wayfarer or Crustacean Commando native cast creates the predefined token; accepted complete activation retains the ordinary private search or target-counter consequence, source sacrifice, rejected foreign answers, pending reload and exact replay. Separate profile/result/dependency diagnostics protect canonical grammar and costs."
+    },
+    {
+      "capability_id": "token.ability.fixed_lander",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_lander_native_search_can_fail_to_find_and_still_shuffle",
+      "official_rule_ids": [
+        "111.10u",
+        "602.2b",
+        "701.19b",
+        "701.19c",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native Lander quality search may fail to find despite available basic lands and still shuffles; native Mutagen target blink through original Cloudshift prevents substitution of a new incarnation. Both complete source-price, pending save/load and full replay paths use the original trusted token-producing card."
+    },
+    {
+      "capability_id": "token.ability.fixed_lander",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_lander_native_cast_search_tapped_entry_and_private_replay",
+      "official_rule_ids": [
+        "111.10u",
+        "602.2b",
+        "701.19b",
+        "701.19c",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Galactic Wayfarer or Crustacean Commando native cast creates the predefined token; accepted complete activation retains the ordinary private search or target-counter consequence, source sacrifice, rejected foreign answers, pending reload and exact replay. Separate profile/result/dependency diagnostics protect canonical grammar and costs."
+    },
+    {
+      "capability_id": "token.ability.fixed_lander",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_lander_native_search_can_fail_to_find_and_still_shuffle",
+      "official_rule_ids": [
+        "111.10u",
+        "602.2b",
+        "701.19b",
+        "701.19c",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native Lander quality search may fail to find despite available basic lands and still shuffles; native Mutagen target blink through original Cloudshift prevents substitution of a new incarnation. Both complete source-price, pending save/load and full replay paths use the original trusted token-producing card."
+    },
+    {
+      "capability_id": "token.ability.fixed_lander",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_token_creation_effects.AdditionalPredefinedTokenCompilerTests.test_lander_and_mutagen_profiles_results_and_dependency_mutants_fail_closed",
+      "official_rule_ids": [
+        "111.10u",
+        "602.2b",
+        "701.19b",
+        "701.19c",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Galactic Wayfarer or Crustacean Commando native cast creates the predefined token; accepted complete activation retains the ordinary private search or target-counter consequence, source sacrifice, rejected foreign answers, pending reload and exact replay. Separate profile/result/dependency diagnostics protect canonical grammar and costs."
+    },
+    {
+      "capability_id": "token.ability.fixed_lander",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_lander_native_cast_search_tapped_entry_and_private_replay",
+      "official_rule_ids": [
+        "111.10u",
+        "602.2b",
+        "701.19b",
+        "701.19c",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Galactic Wayfarer or Crustacean Commando native cast creates the predefined token; accepted complete activation retains the ordinary private search or target-counter consequence, source sacrifice, rejected foreign answers, pending reload and exact replay. Separate profile/result/dependency diagnostics protect canonical grammar and costs."
+    },
+    {
+      "capability_id": "token.ability.fixed_lander",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_lander_native_search_can_fail_to_find_and_still_shuffle",
+      "official_rule_ids": [
+        "111.10u",
+        "602.2b",
+        "701.19b",
+        "701.19c",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native Lander quality search may fail to find despite available basic lands and still shuffles; native Mutagen target blink through original Cloudshift prevents substitution of a new incarnation. Both complete source-price, pending save/load and full replay paths use the original trusted token-producing card."
+    },
+    {
+      "capability_id": "token.ability.fixed_lander",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_token_creation_effects.AdditionalPredefinedTokenCompilerTests.test_lander_and_mutagen_profiles_results_and_dependency_mutants_fail_closed",
+      "official_rule_ids": [
+        "111.10u",
+        "602.2b",
+        "701.19b",
+        "701.19c",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Galactic Wayfarer or Crustacean Commando native cast creates the predefined token; accepted complete activation retains the ordinary private search or target-counter consequence, source sacrifice, rejected foreign answers, pending reload and exact replay. Separate profile/result/dependency diagnostics protect canonical grammar and costs."
+    },
+    {
+      "capability_id": "token.ability.fixed_lander",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_lander_native_cast_search_tapped_entry_and_private_replay",
+      "official_rule_ids": [
+        "111.10u",
+        "602.2b",
+        "701.19b",
+        "701.19c",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Galactic Wayfarer or Crustacean Commando native cast creates the predefined token; accepted complete activation retains the ordinary private search or target-counter consequence, source sacrifice, rejected foreign answers, pending reload and exact replay. Separate profile/result/dependency diagnostics protect canonical grammar and costs."
+    },
+    {
+      "capability_id": "token.ability.fixed_lander",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_lander_native_search_can_fail_to_find_and_still_shuffle",
+      "official_rule_ids": [
+        "111.10u",
+        "602.2b",
+        "701.19b",
+        "701.19c",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native Lander quality search may fail to find despite available basic lands and still shuffles; native Mutagen target blink through original Cloudshift prevents substitution of a new incarnation. Both complete source-price, pending save/load and full replay paths use the original trusted token-producing card."
+    },
+    {
+      "capability_id": "token.ability.fixed_lander",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_token_creation_effects.AdditionalPredefinedTokenCompilerTests.test_lander_and_mutagen_definitions_require_complete_specific_profiles",
+      "official_rule_ids": [
+        "111.10u",
+        "602.2b",
+        "701.19b",
+        "701.19c",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Galactic Wayfarer or Crustacean Commando native cast creates the predefined token; accepted complete activation retains the ordinary private search or target-counter consequence, source sacrifice, rejected foreign answers, pending reload and exact replay. Separate profile/result/dependency diagnostics protect canonical grammar and costs."
+    },
+    {
+      "capability_id": "token.ability.fixed_lander",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_lander_native_cast_search_tapped_entry_and_private_replay",
+      "official_rule_ids": [
+        "111.10u",
+        "602.2b",
+        "701.19b",
+        "701.19c",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Galactic Wayfarer or Crustacean Commando native cast creates the predefined token; accepted complete activation retains the ordinary private search or target-counter consequence, source sacrifice, rejected foreign answers, pending reload and exact replay. Separate profile/result/dependency diagnostics protect canonical grammar and costs."
+    },
+    {
+      "capability_id": "token.ability.fixed_lander",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_lander_native_search_can_fail_to_find_and_still_shuffle",
+      "official_rule_ids": [
+        "111.10u",
+        "602.2b",
+        "701.19b",
+        "701.19c",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native Lander quality search may fail to find despite available basic lands and still shuffles; native Mutagen target blink through original Cloudshift prevents substitution of a new incarnation. Both complete source-price, pending save/load and full replay paths use the original trusted token-producing card."
+    },
+    {
+      "capability_id": "token.ability.fixed_lander",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_lander_native_cast_search_tapped_entry_and_private_replay",
+      "official_rule_ids": [
+        "111.10u",
+        "602.2b",
+        "701.19b",
+        "701.19c",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Galactic Wayfarer or Crustacean Commando native cast creates the predefined token; accepted complete activation retains the ordinary private search or target-counter consequence, source sacrifice, rejected foreign answers, pending reload and exact replay. Separate profile/result/dependency diagnostics protect canonical grammar and costs."
+    },
+    {
+      "capability_id": "token.ability.fixed_lander",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_lander_native_search_can_fail_to_find_and_still_shuffle",
+      "official_rule_ids": [
+        "111.10u",
+        "602.2b",
+        "701.19b",
+        "701.19c",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native Lander quality search may fail to find despite available basic lands and still shuffles; native Mutagen target blink through original Cloudshift prevents substitution of a new incarnation. Both complete source-price, pending save/load and full replay paths use the original trusted token-producing card."
+    },
+    {
+      "capability_id": "token.ability.fixed_mutagen",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_mutagen_native_cast_target_counter_and_sorcery_timing_replay",
+      "official_rule_ids": [
+        "111.10v",
+        "602.2b",
+        "307.5",
+        "115.1c",
+        "608.2b",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Galactic Wayfarer or Crustacean Commando native cast creates the predefined token; accepted complete activation retains the ordinary private search or target-counter consequence, source sacrifice, rejected foreign answers, pending reload and exact replay. Separate profile/result/dependency diagnostics protect canonical grammar and costs."
+    },
+    {
+      "capability_id": "token.ability.fixed_mutagen",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation",
+      "official_rule_ids": [
+        "111.10v",
+        "602.2b",
+        "307.5",
+        "115.1c",
+        "608.2b",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native Lander quality search may fail to find despite available basic lands and still shuffles; native Mutagen target blink through original Cloudshift prevents substitution of a new incarnation. Both complete source-price, pending save/load and full replay paths use the original trusted token-producing card."
+    },
+    {
+      "capability_id": "token.ability.fixed_mutagen",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_mutagen_native_cast_target_counter_and_sorcery_timing_replay",
+      "official_rule_ids": [
+        "111.10v",
+        "602.2b",
+        "307.5",
+        "115.1c",
+        "608.2b",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Galactic Wayfarer or Crustacean Commando native cast creates the predefined token; accepted complete activation retains the ordinary private search or target-counter consequence, source sacrifice, rejected foreign answers, pending reload and exact replay. Separate profile/result/dependency diagnostics protect canonical grammar and costs."
+    },
+    {
+      "capability_id": "token.ability.fixed_mutagen",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation",
+      "official_rule_ids": [
+        "111.10v",
+        "602.2b",
+        "307.5",
+        "115.1c",
+        "608.2b",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native Lander quality search may fail to find despite available basic lands and still shuffles; native Mutagen target blink through original Cloudshift prevents substitution of a new incarnation. Both complete source-price, pending save/load and full replay paths use the original trusted token-producing card."
+    },
+    {
+      "capability_id": "token.ability.fixed_mutagen",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_token_creation_effects.AdditionalPredefinedTokenCompilerTests.test_lander_and_mutagen_profiles_results_and_dependency_mutants_fail_closed",
+      "official_rule_ids": [
+        "111.10v",
+        "602.2b",
+        "307.5",
+        "115.1c",
+        "608.2b",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Galactic Wayfarer or Crustacean Commando native cast creates the predefined token; accepted complete activation retains the ordinary private search or target-counter consequence, source sacrifice, rejected foreign answers, pending reload and exact replay. Separate profile/result/dependency diagnostics protect canonical grammar and costs."
+    },
+    {
+      "capability_id": "token.ability.fixed_mutagen",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_mutagen_native_cast_target_counter_and_sorcery_timing_replay",
+      "official_rule_ids": [
+        "111.10v",
+        "602.2b",
+        "307.5",
+        "115.1c",
+        "608.2b",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Galactic Wayfarer or Crustacean Commando native cast creates the predefined token; accepted complete activation retains the ordinary private search or target-counter consequence, source sacrifice, rejected foreign answers, pending reload and exact replay. Separate profile/result/dependency diagnostics protect canonical grammar and costs."
+    },
+    {
+      "capability_id": "token.ability.fixed_mutagen",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation",
+      "official_rule_ids": [
+        "111.10v",
+        "602.2b",
+        "307.5",
+        "115.1c",
+        "608.2b",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native Lander quality search may fail to find despite available basic lands and still shuffles; native Mutagen target blink through original Cloudshift prevents substitution of a new incarnation. Both complete source-price, pending save/load and full replay paths use the original trusted token-producing card."
+    },
+    {
+      "capability_id": "token.ability.fixed_mutagen",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_token_creation_effects.AdditionalPredefinedTokenCompilerTests.test_lander_and_mutagen_profiles_results_and_dependency_mutants_fail_closed",
+      "official_rule_ids": [
+        "111.10v",
+        "602.2b",
+        "307.5",
+        "115.1c",
+        "608.2b",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Galactic Wayfarer or Crustacean Commando native cast creates the predefined token; accepted complete activation retains the ordinary private search or target-counter consequence, source sacrifice, rejected foreign answers, pending reload and exact replay. Separate profile/result/dependency diagnostics protect canonical grammar and costs."
+    },
+    {
+      "capability_id": "token.ability.fixed_mutagen",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_mutagen_native_cast_target_counter_and_sorcery_timing_replay",
+      "official_rule_ids": [
+        "111.10v",
+        "602.2b",
+        "307.5",
+        "115.1c",
+        "608.2b",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Galactic Wayfarer or Crustacean Commando native cast creates the predefined token; accepted complete activation retains the ordinary private search or target-counter consequence, source sacrifice, rejected foreign answers, pending reload and exact replay. Separate profile/result/dependency diagnostics protect canonical grammar and costs."
+    },
+    {
+      "capability_id": "token.ability.fixed_mutagen",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation",
+      "official_rule_ids": [
+        "111.10v",
+        "602.2b",
+        "307.5",
+        "115.1c",
+        "608.2b",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native Lander quality search may fail to find despite available basic lands and still shuffles; native Mutagen target blink through original Cloudshift prevents substitution of a new incarnation. Both complete source-price, pending save/load and full replay paths use the original trusted token-producing card."
+    },
+    {
+      "capability_id": "token.ability.fixed_mutagen",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_token_creation_effects.AdditionalPredefinedTokenCompilerTests.test_lander_and_mutagen_definitions_require_complete_specific_profiles",
+      "official_rule_ids": [
+        "111.10v",
+        "602.2b",
+        "307.5",
+        "115.1c",
+        "608.2b",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Galactic Wayfarer or Crustacean Commando native cast creates the predefined token; accepted complete activation retains the ordinary private search or target-counter consequence, source sacrifice, rejected foreign answers, pending reload and exact replay. Separate profile/result/dependency diagnostics protect canonical grammar and costs."
+    },
+    {
+      "capability_id": "token.ability.fixed_mutagen",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_mutagen_native_cast_target_counter_and_sorcery_timing_replay",
+      "official_rule_ids": [
+        "111.10v",
+        "602.2b",
+        "307.5",
+        "115.1c",
+        "608.2b",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Galactic Wayfarer or Crustacean Commando native cast creates the predefined token; accepted complete activation retains the ordinary private search or target-counter consequence, source sacrifice, rejected foreign answers, pending reload and exact replay. Separate profile/result/dependency diagnostics protect canonical grammar and costs."
+    },
+    {
+      "capability_id": "token.ability.fixed_mutagen",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation",
+      "official_rule_ids": [
+        "111.10v",
+        "602.2b",
+        "307.5",
+        "115.1c",
+        "608.2b",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native Lander quality search may fail to find despite available basic lands and still shuffles; native Mutagen target blink through original Cloudshift prevents substitution of a new incarnation. Both complete source-price, pending save/load and full replay paths use the original trusted token-producing card."
+    },
+    {
+      "capability_id": "token.ability.fixed_mutagen",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_mutagen_native_cast_target_counter_and_sorcery_timing_replay",
+      "official_rule_ids": [
+        "111.10v",
+        "602.2b",
+        "307.5",
+        "115.1c",
+        "608.2b",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Galactic Wayfarer or Crustacean Commando native cast creates the predefined token; accepted complete activation retains the ordinary private search or target-counter consequence, source sacrifice, rejected foreign answers, pending reload and exact replay. Separate profile/result/dependency diagnostics protect canonical grammar and costs."
+    },
+    {
+      "capability_id": "token.ability.fixed_mutagen",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation",
+      "official_rule_ids": [
+        "111.10v",
+        "602.2b",
+        "307.5",
+        "115.1c",
+        "608.2b",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native Lander quality search may fail to find despite available basic lands and still shuffles; native Mutagen target blink through original Cloudshift prevents substitution of a new incarnation. Both complete source-price, pending save/load and full replay paths use the original trusted token-producing card."
+    },
+    {
       "capability_id": "token.creation.additional_replacement",
       "evidence_class": "interaction",
       "test_id": "tests.test_additional_token_compiler.AdditionalTokenCompilerTests.test_generated_and_reviewed_equivalent_handler_is_not_registered_twice",

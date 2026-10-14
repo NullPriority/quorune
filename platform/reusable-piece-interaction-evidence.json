@@ -11004,6 +11004,66 @@
       ],
       "interaction_order": 2,
       "assertion": "Blood activation pays its complete cost before the private draw. Foreign seats never receive the drawn identity and pending/full replay preserve the consequence."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_lander_native_cast_search_tapped_entry_and_private_replay",
+      "piece_ids": [
+        "capability.library.search.fixed_to_battlefield",
+        "capability.token.ability.fixed_lander"
+      ],
+      "capability_ids": [
+        "library.search.fixed_to_battlefield",
+        "token.ability.fixed_lander"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Galactic Wayfarer creates Lander; the token pays and sacrifices before a private basic-land search, rejects a nonbasic selection and enters the selected basic land tapped with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_lander_native_search_can_fail_to_find_and_still_shuffle",
+      "piece_ids": [
+        "capability.activation.source_zone_change.fixed",
+        "capability.token.ability.fixed_lander"
+      ],
+      "capability_ids": [
+        "activation.source_zone_change.fixed",
+        "token.ability.fixed_lander"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native Lander source sacrifice precedes its independent search; quality-based failure to find preserves library size and still executes the mandatory shuffle."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_mutagen_native_cast_target_counter_and_sorcery_timing_replay",
+      "piece_ids": [
+        "capability.counter.producer.fixed_effect",
+        "capability.token.ability.fixed_mutagen"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_effect",
+        "token.ability.fixed_mutagen"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Crustacean Commando creates Mutagen. Accepted sorcery-window activation pays its price and resolves one fixed counter on the chosen foreign creature; noncreature and foreign-principal attempts preserve state."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.token.ability.fixed_mutagen"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "token.ability.fixed_mutagen"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native original Cloudshift changes the chosen target incarnation after Mutagen activation; target revalidation prevents the new creature from receiving the old fixed counter."
     }
   ]
 }

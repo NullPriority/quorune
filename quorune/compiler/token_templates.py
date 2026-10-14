@@ -88,10 +88,20 @@ _FIXED_CREATURE_TOKEN = re.compile(
 _FIXED_PREDEFINED_TOKEN = re.compile(
     rf"^Create (?P<count>{FIXED_COUNT_PATTERN}|eleven|twelve|thirteen) "
     r"(?P<tapped>tapped )?"
-    r"(?P<name>Treasure|Food|Map|Clue|Powerstone|Junk|Vibranium|Blood) tokens?\.?$",
+    r"(?P<name>Treasure|Food|Map|Clue|Powerstone|Junk|Vibranium|Blood|Lander|Mutagen) tokens?\.?$",
     re.IGNORECASE,
 )
 _TOKEN_DEFINITIONS: dict[str, Mapping[str, Any]] = {
+    "lander token": {
+        "name": "Lander", "type_line": "Token Artifact — Lander",
+        "display_text": "{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+        "ability_profile": "two_tap_sac_basic_land_search_v1",
+    },
+    "mutagen token": {
+        "name": "Mutagen", "type_line": "Token Artifact — Mutagen",
+        "display_text": "{1}, {T}, Sacrifice this token: Put a +1/+1 counter on target creature. Activate only as a sorcery.",
+        "ability_profile": "one_tap_sac_target_counter_v1",
+    },
     "blood token": {
         "name": "Blood",
         "type_line": "Token Artifact — Blood",
@@ -187,6 +197,7 @@ _PREDEFINED_CREATION_DEFINITIONS: dict[str, Mapping[str, Any]] = {
     for key, definition in _TOKEN_DEFINITIONS.items()
     if key
     in {
+        "lander token", "mutagen token",
         "blood token",
         "treasure token",
         "food token",

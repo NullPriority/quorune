@@ -399,6 +399,11 @@ and discarding one selected owned hand card. Shared activation availability and
 cost validation reject missing hand cards, tapped sources and unpaid costs.
 The complete payment precedes an independent private draw on the stack; token
 departure does not remove that queued result.
+Lander delegates its fixed basic-land search and shuffle to the ordinary private
+search owner. Mutagen delegates its fixed counter to the counter transaction
+owner and shares ordinary target-incarnation revalidation. Their finite builtin
+result keys carry no variable effect grammar; the explicit token profiles own
+their mana, source tap and sacrifice, and Mutagen's sorcery timing.
 For each committed token instruction, the owner first publishes the complete
 group's identity/controller/type history, then seals the final entry-time
 characteristics used by entry predicates. History-dependent static power,

@@ -14,6 +14,9 @@ maintenance: "hand-maintained"
 - Preserve independent library-selection card slots and qualified card types,
   and reject unrepresented qualifiers that previously became subtype names.
 
+- Create predefined Lander and Mutagen tokens with complete activation prices,
+  private search and target-counter results, preserving timing and incarnation rules.
+
 - Create predefined Blood tokens with complete typed activation costs and
   private draw consequences through existing activation and zone owners.
 
