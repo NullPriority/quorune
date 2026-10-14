@@ -15,6 +15,19 @@ replacement effects, prevention effects, draw policies, or continuous effects
 from live source descriptors. Components participate in a subsystem-owned
 transaction; they do not commit state.
 
+Public power/toughness aggregates use the immutable
+`PublicCharacteristicAggregateSpec` and the read-only owner in
+`quorune/public_characteristic_aggregates.py`. Version-3 scalar amounts and
+self-cost metrics carry the complete battlefield query, controller relation,
+stat and sum/maximum operation. Effects and mana use current complete layer-7
+characteristics; casting offers and accepted commands use the same producer.
+Negative members enter a total before an ordinary result is clamped to zero.
+A declared scalar is cached once for its resolving ability, including later
+instructions that change the candidate stats. Known empty sets yield zero;
+unavailable creature stats raise an error. Hidden zones, source exclusions,
+attachment-state predicates and static characteristic cycles stay outside this
+family. The aggregate capability remains an explicit dependency of each consumer.
+
 ## Lifecycle and participation
 
 1. The compiler or reviewed program emits a versioned component descriptor.

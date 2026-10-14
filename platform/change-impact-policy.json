@@ -860,7 +860,10 @@
         "quorune/scalar_effect_amount_model.py",
         "quorune/scalar_effect_amounts.py",
         "quorune/compiler/scalar_effect_amounts.py",
-        "tests/fixtures/scalar-effect-amount-cards.json"
+        "tests/fixtures/scalar-effect-amount-cards.json",
+        "quorune/public_characteristic_aggregate_model.py",
+        "quorune/public_characteristic_aggregates.py",
+        "quorune/compiler/public_characteristic_aggregates.py"
       ],
       "test_modules": [
         "test_scalar_effect_amounts",
@@ -879,7 +882,10 @@
         "test_station_rules",
         "test_targeted_return_to_hand_effect_clauses",
         "test_delayed_triggers",
-        "test_rules_scheduler"
+        "test_rules_scheduler",
+        "test_fixed_spell_cost_reductions",
+        "test_public_quantity_mana",
+        "test_fixed_public_state_characteristics"
       ]
     },
     {

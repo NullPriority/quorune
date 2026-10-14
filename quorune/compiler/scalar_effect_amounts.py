@@ -38,6 +38,9 @@ _HISTORY = {
 
 def _characteristic(value: str, *, source_name: str, body: str, schema: Any,
                     event: str | None, source_event: bool) -> ScalarEffectAmountSpec | None:
+    from .public_characteristic_aggregates import public_characteristic_aggregate
+    aggregate=public_characteristic_aggregate(value)
+    if aggregate is not None:return aggregate
     counter=re.fullmatch(r'(?:the )?number of (?P<counter>[A-Za-z0-9+/-]+) counters? on (?P<reference>.+)',value,re.I)
     if counter is not None:
         source=rf'(?:this (?:artifact|aura|creature|enchantment|equipment|land|permanent|token)|{SourceReferenceSpec(source_name).regex_pattern})'

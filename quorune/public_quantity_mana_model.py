@@ -38,7 +38,7 @@ class PublicQuantityManaOutput:
             raise ValueError('Public quantity mana requires an existing typed producer')
         if isinstance(self.amount,CharacteristicQuantitySpec) and self.amount.scope is not CharacteristicQuantityScope.SOURCE_COUNTER:
             PublicQueryAmountSpec(replace(self.amount,exclude_source=False))
-        if isinstance(self.amount,ScalarEffectAmountSpec) and self.amount.origin not in {ScalarAmountOrigin.SOURCE,ScalarAmountOrigin.HISTORY}:
+        if isinstance(self.amount,ScalarEffectAmountSpec) and self.amount.origin not in {ScalarAmountOrigin.SOURCE,ScalarAmountOrigin.HISTORY,ScalarAmountOrigin.PUBLIC_AGGREGATE}:
             raise ValueError('Target or event-relative mana amounts are outside this grammar')
         if isinstance(self.amount,ScalarEffectAmountSpec) and (self.amount.coefficient != 1 or self.amount.binding_id is not None):
             raise ValueError('Public quantity mana does not carry scalar arithmetic or declaration caches')

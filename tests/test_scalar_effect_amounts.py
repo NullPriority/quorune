@@ -44,6 +44,79 @@ def scalar_record(text: str, *, type_line: str = "Creature — Goblin") -> CardR
 
 
 class ScalarEffectAmountCompilerTests(unittest.TestCase):
+    def test_public_stat_aggregate_codec_dependencies_and_static_exclusions_fail_closed(self):
+        import json
+        from pathlib import Path
+        from quorune.public_characteristic_aggregates import PublicCharacteristicAggregateSpec,current_public_characteristic_aggregate
+        from quorune.object_predicate import ObjectQuerySpec
+        from quorune.scalar_effect_amount_model import ScalarEffectAmountSpec
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.compiler.public_characteristic_aggregates import public_characteristic_aggregate
+        spec=public_characteristic_aggregate('the greatest power among creatures you control')
+        payload=spec.to_dict()
+        self.assertEqual(spec,ScalarEffectAmountSpec.from_dict(payload))
+        for field,value in (('schema_version',True),('origin','source_characteristic'),('aggregate',{}),('characteristic','power')):
+            with self.assertRaises(ValueError):ScalarEffectAmountSpec.from_dict({**payload,field:value})
+        for text in ('the greatest power among cards in your hand','the total toughness of creatures in your graveyard','the greatest power among other creatures you control',
+            'the total power of equipped creatures you control','the greatest toughness among modified creatures you control'):
+            self.assertIsNone(public_characteristic_aggregate(text))
+        text='Draw X cards, where X is the greatest power among creatures you control.'
+        ir=self.compile(text,type_line='Sorcery')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        self.assertIn('quantity_expression.public_characteristic_aggregate',ir.faces[0].nodes[0].capability_dependencies)
+        from quorune.card_programs import compile_card_program,bind_card_program_runtime
+        database=type('NoRulings',(),{'rulings':lambda self,record:()})()
+        program=compile_card_program(database,scalar_record(text,type_line='Sorcery'),capability_registry=self.registry,capability_profile='commander_review',trust_level='trusted')
+        self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')['strict_capability_ready'])
+        raw=json.loads((Path(__file__).parents[1]/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        changed=deepcopy(raw)
+        next(row for row in changed['capabilities'] if row['id']=='quantity_expression.public_characteristic_aggregate').update(status='blocked',blockers=['aggregate producer withdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(scalar_record(text,type_line='Sorcery'),capability_registry=CapabilityRegistry(changed)).status)
+        with mock.patch('quorune.compiler.public_characteristic_aggregates.public_characteristic_aggregate',return_value=None):
+            self.assertNotEqual('exact',self.compile(text,type_line='Sorcery').status)
+
+    def test_public_stat_aggregate_total_maximum_empty_negative_and_unavailable_contrasts(self):
+        from dataclasses import replace
+        from types import SimpleNamespace
+        from quorune.public_characteristic_aggregates import PublicCharacteristicAggregateSpec,current_public_characteristic_aggregate
+        from quorune.object_predicate import ObjectQuerySpec
+        from quorune.characteristic_evaluation import type_parts
+        from quorune.scalar_effect_amount_model import ScalarAmountOrigin,ScalarEffectAmountSpec
+        from quorune.scalar_effect_amounts import resolve_scalar_effect_amount
+        from quorune.model import CardInstance
+        cards={};values={}
+        for index,(controller,power,kind,phased) in enumerate((('A','5','Creature — Wolf',False),('A','-3','Creature — Wolf',False),('B','20','Creature — Wolf',False),('A','30','Creature — Wolf',True),('A',None,'Artifact',False))):
+            card=CardInstance(str(index),'R'+str(index),'fixture','Generic Aggregate Body',controller,controller,'battlefield')
+            card.phased_out=phased;cards[card.object_id]=card
+            values[card.object_id]={'type_line':kind,'power':power,'toughness':'2','mana_value':0,'colors':[],'keywords':[]}
+        host=SimpleNamespace(state=SimpleNamespace(cards=cards,players={'A':object(),'B':object()}),
+            _effective_card_data=lambda card:values[card.object_id],_type_parts=type_parts)
+        total=PublicCharacteristicAggregateSpec('power','sum','source_controller',ObjectQuerySpec(zones=('battlefield',),types_all=('creature',)))
+        maximum=replace(total,reduction='maximum')
+        self.assertEqual(2,current_public_characteristic_aggregate(host,'A',total))
+        self.assertEqual(5,current_public_characteristic_aggregate(host,'A',maximum))
+        self.assertEqual(20,current_public_characteristic_aggregate(host,'B',maximum))
+        self.assertEqual(0,current_public_characteristic_aggregate(host,'A',replace(total,query=ObjectQuerySpec(zones=('battlefield',),types_all=('creature',),subtypes_all=('elf',)))))
+        spec=ScalarEffectAmountSpec(ScalarAmountOrigin.PUBLIC_AGGREGATE,schema_version=3,aggregate=total)
+        self.assertEqual(spec,ScalarEffectAmountSpec.from_dict(spec.to_dict()))
+        values['0']['power']='-5'
+        item=SimpleNamespace(context={},controller='A')
+        self.assertEqual(0,resolve_scalar_effect_amount(host,spec.to_dict(),item))
+        values['0']['power']=None
+        with self.assertRaises(ValueError):current_public_characteristic_aggregate(host,'A',total)
+
+    def test_public_stat_aggregate_compiles_as_resolution_producer_with_its_query(self):
+        text='Draw X cards, where X is the greatest power among creatures you control.'
+        ir=self.compile(text,type_line='Sorcery')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        effects=ir.faces[0].nodes[0].effects
+        amount=next(value for value in effects if value['op']=='draw')['count']
+        self.assertEqual(3,amount['schema_version'])
+        self.assertEqual('public_characteristic_aggregate',amount['origin'])
+        self.assertEqual('maximum',amount['aggregate']['reduction'])
+        self.assertEqual('source_controller',amount['aggregate']['controller_relation'])
+        self.assertEqual(['creature'],amount['aggregate']['query']['types_all'])
+
     @classmethod
     def setUpClass(cls):
         cls.registry = load_default_capability_registry()
@@ -72,7 +145,7 @@ class ScalarEffectAmountCompilerTests(unittest.TestCase):
 
     def test_open_ambiguous_and_cost_quantities_stay_residual(self):
         for text in (
-            "Draw X cards, where X is the greatest power among creatures you control.",
+            "Draw X cards, where X is the greatest power among cards in your hand.",
             "Destroy target creature with mana value X, where X is this creature's power.",
             "Target creature gets +X/+X until end of turn, where X is the chosen creature's power.",
             "Draw that many cards.",

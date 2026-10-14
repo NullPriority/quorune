@@ -10118,7 +10118,6 @@
       "interaction_order": 2,
       "assertion": "Actual casts resolve controller Surveil counts and trigger only the current controller observer after the private partition finishes. Zero performs no action; positive empty-library completion triggers once. Pending reload and pre-cast replay preserve the result."
     },
-
     {
       "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
@@ -10280,7 +10279,6 @@
       "interaction_order": 2,
       "assertion": "Original Gelatinous Cube and Perilous Snare preserve conditional exile beside unresolved targeted activated siblings. Canonical whole CardProgram binding rejects unresolved trust without constructing a gameplay approximation."
     },
-
     {
       "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
@@ -10325,6 +10323,57 @@
       ],
       "interaction_order": 2,
       "assertion": "A constructed strictly bound Equipment offers its restricted Halfling Equip only for the current matching creature. Accepted Equip grants conditional Hexproof on the controller turn; changing the active turn removes and restores the live grant, and accepted unrestricted re-equipping transfers it to the new recipient with exact replay. Original Bilbo's Ring retains its unresolved attack-alone sibling and remains untrusted."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
+      "piece_ids": [
+        "capability.casting.cost.self_public_reduction",
+        "capability.continuous.characteristics.fixed_public_state",
+        "capability.quantity_expression.public_characteristic_aggregate"
+      ],
+      "capability_ids": [
+        "casting.cost.self_public_reduction",
+        "continuous.characteristics.fixed_public_state",
+        "quantity_expression.public_characteristic_aggregate"
+      ],
+      "interaction_order": 3,
+      "assertion": "Original Ghalta uses full current own creature power in the shared offer/commit cost owner. An actual Unsummon removes the reduction, a stale command rolls back, recasting the conditional body restores affordability, and colored payment and pending/full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_state",
+        "capability.mana.production.public_quantity",
+        "capability.quantity_expression.public_characteristic_aggregate"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_state",
+        "mana.production.public_quantity",
+        "quantity_expression.public_characteristic_aggregate"
+      ],
+      "interaction_order": 3,
+      "assertion": "A complete strictly admitted constructed artifact produces maximum own current power as chosen colored mana, rejects foreign principal and wrong totals, pays actual Essence Harvest and preserves private projection with pending/full replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_state",
+        "capability.life.change.effect",
+        "capability.quantity_expression.public_characteristic_aggregate"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_state",
+        "life.change.effect",
+        "quantity_expression.public_characteristic_aggregate"
+      ],
+      "interaction_order": 3,
+      "assertion": "Original Essence Harvest resolves a declared maximum once: self-target loss temporarily drops the conditional candidate power, but gain retains the cached ten, with rollback, private projection and pre-action/pending replay."
     }
   ]
 }

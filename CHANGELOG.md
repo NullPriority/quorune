@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Share current battlefield power/toughness aggregates across effects, casting
+  costs and mana production, preserving declared values through later instructions.
+
 - Compose closed public-state conditions with shared Boolean snapshots,
   retaining leaf query identities, status dependencies and trigger rechecks.
 

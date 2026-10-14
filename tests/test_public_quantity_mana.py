@@ -27,6 +27,28 @@ import test_bound_effect_programs as witnesses
 
 
 class PublicQuantityManaCompilerTests(unittest.TestCase):
+    def test_public_stat_aggregate_mana_codec_and_dependency_gate(self):
+        import copy
+        from quorune.card_programs import compile_card_program,bind_card_program_runtime
+        registry=load_default_capability_registry()
+        for type_line,prefix in (('Artifact','{T}: '),('Sorcery','')):
+            text=prefix+'Add an amount of {G} equal to the greatest power among creatures you control.'
+            record=replace(query_record(text),type_line=type_line)
+            ir=compile_oracle_card(record,capability_registry=registry,capability_profile='commander_review')
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            self.assertIn('quantity_expression.public_characteristic_aggregate',ir.faces[0].nodes[0].capability_dependencies)
+            database=type('NoRulings',(),{'rulings':lambda self,record:()})()
+            program=compile_card_program(database,record,capability_registry=registry,capability_profile='commander_review',trust_level='trusted')
+            self.assertTrue(bind_card_program_runtime(program,capability_registry=registry,profile='commander_review')['strict_capability_ready'])
+            raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+            altered=copy.deepcopy(raw)
+            next(row for row in altered['capabilities'] if row['id']=='quantity_expression.public_characteristic_aggregate').update(status='blocked',blockers=['aggregate withdrawn'])
+            self.assertNotEqual('exact',compile_oracle_card(record,capability_registry=CapabilityRegistry(altered)).status)
+        output=public_quantity_mana_template(text,source_name='Generic Source')
+        self.assertEqual(output,PublicQuantityManaOutput.from_dict(output.to_dict()))
+        payload=output.to_dict();payload['amount']['aggregate']['query']['zones']=['hand']
+        with self.assertRaises(ValueError):PublicQuantityManaOutput.from_dict(payload)
+
     def test_quantity_mana_compiler_and_codec_close_existing_producers(self):
         for body in ('Add {G} for each creature you control.',
                      'Add {B} for each basic Swamp you control.',

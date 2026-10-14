@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 255,
+  "registry_version": 256,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -238,6 +238,105 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "quantity_expression.public_characteristic_aggregate",
+      "version": 1,
+      "official_rules": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Current total or maximum battlefield power/toughness through typed public queries, scalar instructions, source cost metrics and mana production.",
+        "inputs": [
+          "complete effective battlefield characteristics",
+          "locked resolving controller",
+          "typed public query/reduction",
+          "declared scalar identity"
+        ],
+        "outputs": [
+          "signed aggregate before ordinary result zero-clamping",
+          "single cached value across linked result instructions"
+        ],
+        "exclusions": [
+          "static characteristic cycles",
+          "hidden/graveyard/event-linked collections",
+          "unavailable creature stats",
+          "source-exclusion ambiguity",
+          "unsupported consumers or siblings"
+        ]
+      },
+      "dependencies": [
+        "quantity_expression.scalar_effect_amount"
+      ],
+      "implementation_components": [
+        "quorune.public_characteristic_aggregates.current_public_characteristic_aggregate",
+        "quorune.public_characteristic_aggregate_model.PublicCharacteristicAggregateSpec",
+        "quorune.compiler.public_characteristic_aggregates.public_characteristic_aggregate",
+        "quorune.scalar_effect_amounts.resolve_scalar_effect_amount"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawn aggregate producer blocks exact whole-program admission; ordinary scalar result authority remains a separate dependency.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the aggregate compiler production makes the supported constructed result residual.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
+        "test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
+        "test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
+        "test_public_stat_aggregate_compiles_as_resolution_producer_with_its_query",
+        "test_public_stat_aggregate_cost_codec_and_dependency_gate",
+        "test_public_stat_aggregate_mana_codec_and_dependency_gate",
+        "test_public_stat_aggregate_total_maximum_empty_negative_and_unavailable_contrasts"
+      ],
+      "negative_tests": [
+        "test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
+        "test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
+        "test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
+        "test_public_stat_aggregate_codec_dependencies_and_static_exclusions_fail_closed",
+        "test_public_stat_aggregate_cost_codec_and_dependency_gate",
+        "test_public_stat_aggregate_mana_codec_and_dependency_gate",
+        "test_public_stat_aggregate_total_maximum_empty_negative_and_unavailable_contrasts"
+      ],
+      "interaction_tests": [
+        "test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
+        "test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
+        "test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
+        "test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
+        "test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays"
+      ],
+      "privacy_tests": [
+        "test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
+        "test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
+        "test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays"
+      ],
+      "replay_tests": [
+        "test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
+        "test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
+        "test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays"
+      ]
+    },
     {
       "id": "quantity_expression.public_player_count",
       "version": 1,

@@ -637,6 +637,8 @@ def self_spell_cost_reduction_handler(
             )
         elif variable := _SELF_VARIABLE_REDUCTION.fullmatch(normalized):
             metric_text = variable.group("metric")
+            from .public_characteristic_aggregates import public_characteristic_aggregate
+            aggregate=public_characteristic_aggregate(metric_text)
             devotion = re.fullmatch(
                 r"your devotion to (?P<color>white|blue|black|red|green)(?:\. \(.+\))?",
                 metric_text,
@@ -647,7 +649,10 @@ def self_spell_cost_reduction_handler(
                 metric_text,
                 re.IGNORECASE,
             )
-            if devotion is not None:
+            if aggregate is not None:
+                metric=CastReductionMetric(kind=CastReductionMetricKind.PUBLIC_AGGREGATE,
+                    aggregate=aggregate.aggregate,schema_version=3)
+            elif devotion is not None:
                 color = _COLORS[devotion.group("color").casefold()]
                 metric = CastReductionMetric(
                     kind=CastReductionMetricKind.DEVOTION,

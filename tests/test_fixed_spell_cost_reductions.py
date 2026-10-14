@@ -81,6 +81,31 @@ def _record(text: str, suffix: int) -> CardRecord:
 
 
 class FixedSpellCostReductionCompilerTests(unittest.TestCase):
+    def test_public_stat_aggregate_cost_codec_and_dependency_gate(self):
+        import copy
+        from quorune.card_programs import compile_card_program, bind_card_program_runtime
+        from quorune.rules.capabilities import CapabilityRegistry
+        text='This spell costs {X} less to cast, where X is the total power of creatures you control.'
+        ir=self.compile(text,363160101)
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        node=ir.faces[0].nodes[0]
+        self.assertIn('quantity_expression.public_characteristic_aggregate',node.capability_dependencies)
+        payload=node.handlers[0]['reduction']['terms'][0]['metric']
+        metric=CastReductionMetric.from_dict(payload)
+        self.assertEqual(3,metric.schema_version)
+        self.assertEqual('sum',metric.aggregate.reduction)
+        self.assertEqual(payload,metric.to_dict())
+        for field,value in (('schema_version',True),('aggregate',{}),('color','G'),('kind','object_count')):
+            with self.assertRaises(ValueError):CastReductionMetric.from_dict({**payload,field:value})
+        database=type('NoRulings',(),{'rulings':lambda self,record:()})()
+        program=compile_card_program(database,_record(text,363160101),capability_registry=self.capabilities,
+            capability_profile='commander_review',trust_level='trusted')
+        self.assertTrue(bind_card_program_runtime(program,capability_registry=self.capabilities,profile='commander_review')['strict_capability_ready'])
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        altered=copy.deepcopy(raw)
+        next(row for row in altered['capabilities'] if row['id']=='quantity_expression.public_characteristic_aggregate').update(status='blocked',blockers=['aggregate withdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(_record(text,363160101),capability_registry=CapabilityRegistry(altered)).status)
+
     def test_conditional_spell_cost_schema_and_dependencies_fail_closed(self):
         import copy
         from quorune.rules.capabilities import CapabilityRegistry
@@ -220,7 +245,7 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
         unsupported = (
             "This spell costs {2} less to cast if it targets a tapped creature.",
             "This spell costs {1} less to cast for each card you've drawn this turn.",
-            "This spell costs {X} less to cast, where X is the total power of creatures you control.",
+            "This spell costs {X} less to cast, where X is the total power of creature cards in your hand.",
             "This spell costs {1} less to cast for each card with an Adventure in your graveyard.",
             "Spells you cast of the chosen type cost {1} less to cast.",
         )
@@ -346,7 +371,7 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
         excluded = (
             (
                 "This spell costs {X} less to cast, where X is the total power "
-                "of creatures you control."
+                "of creature cards in your graveyard."
             ),
             "Spells you cast cost {1} less to cast for each target.",
             "Spells you cast of the chosen type cost {1} less to cast.",

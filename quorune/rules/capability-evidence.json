@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "0bf70a171b42618fb175179ed16f69abf73b074778c77f028eb0951c0982b825",
-  "declaration_source_fingerprint": "6a957f1d0248fea9d94f70bd3c3c2d95e4a534d8a2f48fc3c042431b84c3c1e4",
+  "registry_fingerprint": "46f4b0bd568e3ea4538dc23f1a613823176b407bd5718666e92c108a7e443b80",
+  "declaration_source_fingerprint": "481a38d07890d0d77302e5322081aefcdda6c6a45704938e1af1fc5391c3121a",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -83337,6 +83337,546 @@
       "applicability_note": "Library counts use the existing declared quantity result slot and fixed Scry/Surveil owners; inline Scry definition followed by fixed draw preserves one quantity binding and printed action order. Unsupported quantities remain residual."
     },
     {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete strictly admitted constructed aggregate mana carrier rejects wrong principals and excessive allocation, excludes foreign power, produces ten chosen colored mana without a stack item, pays actual Essence Harvest and loads/replays all commands."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Essence Harvest casts using strict generated programs and resolves one maximum-power value across loss/gain even when the first life change alters the candidate power. Private projection, unauthorized rollback, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ghalta uses current own total power for a real cast, loses its affordable offer after actual bounce, rejects a stale offer, restores the offer after recasting the body, preserves colored payment, and loads/replays from before actions."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete strictly admitted constructed aggregate mana carrier rejects wrong principals and excessive allocation, excludes foreign power, produces ten chosen colored mana without a stack item, pays actual Essence Harvest and loads/replays all commands."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Essence Harvest casts using strict generated programs and resolves one maximum-power value across loss/gain even when the first life change alters the candidate power. Private projection, unauthorized rollback, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ghalta uses current own total power for a real cast, loses its affordable offer after actual bounce, rejects a stale offer, restores the offer after recasting the body, preserves colored payment, and loads/replays from before actions."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_public_stat_aggregate_codec_dependencies_and_static_exclusions_fail_closed",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed aggregate contrasts distinguish maximum/total, negative member summation, current control/phasing, empty/unavailable stats, malformed and unsupported domains, whole-program closure and producer omission."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete strictly admitted constructed aggregate mana carrier rejects wrong principals and excessive allocation, excludes foreign power, produces ten chosen colored mana without a stack item, pays actual Essence Harvest and loads/replays all commands."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Essence Harvest casts using strict generated programs and resolves one maximum-power value across loss/gain even when the first life change alters the candidate power. Private projection, unauthorized rollback, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ghalta uses current own total power for a real cast, loses its affordable offer after actual bounce, rejects a stale offer, restores the offer after recasting the body, preserves colored payment, and loads/replays from before actions."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_public_stat_aggregate_cost_codec_and_dependency_gate",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aggregate casting/mana consumers round-trip closed typed schemas, bind complete constructed CardPrograms and reject withdrawn aggregate dependencies and hidden-zone mutations."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaCompilerTests.test_public_stat_aggregate_mana_codec_and_dependency_gate",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aggregate casting/mana consumers round-trip closed typed schemas, bind complete constructed CardPrograms and reject withdrawn aggregate dependencies and hidden-zone mutations."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_public_stat_aggregate_codec_dependencies_and_static_exclusions_fail_closed",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed aggregate contrasts distinguish maximum/total, negative member summation, current control/phasing, empty/unavailable stats, malformed and unsupported domains, whole-program closure and producer omission."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_public_stat_aggregate_total_maximum_empty_negative_and_unavailable_contrasts",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed aggregate contrasts distinguish maximum/total, negative member summation, current control/phasing, empty/unavailable stats, malformed and unsupported domains, whole-program closure and producer omission."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete strictly admitted constructed aggregate mana carrier rejects wrong principals and excessive allocation, excludes foreign power, produces ten chosen colored mana without a stack item, pays actual Essence Harvest and loads/replays all commands."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Essence Harvest casts using strict generated programs and resolves one maximum-power value across loss/gain even when the first life change alters the candidate power. Private projection, unauthorized rollback, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ghalta uses current own total power for a real cast, loses its affordable offer after actual bounce, rejects a stale offer, restores the offer after recasting the body, preserves colored payment, and loads/replays from before actions."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_public_stat_aggregate_cost_codec_and_dependency_gate",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aggregate casting/mana consumers round-trip closed typed schemas, bind complete constructed CardPrograms and reject withdrawn aggregate dependencies and hidden-zone mutations."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaCompilerTests.test_public_stat_aggregate_mana_codec_and_dependency_gate",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aggregate casting/mana consumers round-trip closed typed schemas, bind complete constructed CardPrograms and reject withdrawn aggregate dependencies and hidden-zone mutations."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_public_stat_aggregate_compiles_as_resolution_producer_with_its_query",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed aggregate contrasts distinguish maximum/total, negative member summation, current control/phasing, empty/unavailable stats, malformed and unsupported domains, whole-program closure and producer omission."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_public_stat_aggregate_total_maximum_empty_negative_and_unavailable_contrasts",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed aggregate contrasts distinguish maximum/total, negative member summation, current control/phasing, empty/unavailable stats, malformed and unsupported domains, whole-program closure and producer omission."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete strictly admitted constructed aggregate mana carrier rejects wrong principals and excessive allocation, excludes foreign power, produces ten chosen colored mana without a stack item, pays actual Essence Harvest and loads/replays all commands."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Essence Harvest casts using strict generated programs and resolves one maximum-power value across loss/gain even when the first life change alters the candidate power. Private projection, unauthorized rollback, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ghalta uses current own total power for a real cast, loses its affordable offer after actual bounce, rejects a stale offer, restores the offer after recasting the body, preserves colored payment, and loads/replays from before actions."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete strictly admitted constructed aggregate mana carrier rejects wrong principals and excessive allocation, excludes foreign power, produces ten chosen colored mana without a stack item, pays actual Essence Harvest and loads/replays all commands."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Essence Harvest casts using strict generated programs and resolves one maximum-power value across loss/gain even when the first life change alters the candidate power. Private projection, unauthorized rollback, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ghalta uses current own total power for a real cast, loses its affordable offer after actual bounce, rejects a stale offer, restores the offer after recasting the body, preserves colored payment, and loads/replays from before actions."
+    },
+    {
       "capability_id": "quantity_expression.public_player_count",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
@@ -126187,5 +126727,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "c312502892ce242c46d70e21aea60d5f4c1abc9f7b978daab64da3fef1bf472b"
+  "fingerprint": "c3a28998addaad50e0ff7811e3e3f0241febe28174e3fb7057dcd95c648ad549"
 }

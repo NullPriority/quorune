@@ -198,6 +198,9 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
     if spec.origin is ScalarAmountOrigin.EVENT_AMOUNT:
         context = item.context.get("event_context", item.context)
         amount = context.get("amount") if isinstance(context, Mapping) else None
+    elif spec.origin is ScalarAmountOrigin.PUBLIC_AGGREGATE:
+        from .public_characteristic_aggregates import current_public_characteristic_aggregate
+        amount=current_public_characteristic_aggregate(host,item.controller,spec.aggregate)
     elif spec.origin is ScalarAmountOrigin.HISTORY:
         amount = _history_amount(host, item, spec.history_fact)
     else:

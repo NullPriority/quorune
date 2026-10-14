@@ -33,6 +33,9 @@ def _amount(value: str, *, source_name: str, count: bool):
     )
     if quantity is not None:
         return quantity
+    from .public_characteristic_aggregates import public_characteristic_aggregate
+    aggregate=public_characteristic_aggregate(normalized)
+    if aggregate is not None:return aggregate
     counter = re.fullmatch(
         r"(?:the number of )?(?P<counter>[A-Za-z0-9+/-]+) counters? on "
         r"(?P<source>.+)", normalized, re.IGNORECASE,
