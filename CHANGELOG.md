@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile explicit self-graveyard casting permissions with owner-relative
+  public-state conditions shared by casting offers and accepted commands.
+
 - Count recipient attachments for dynamic Aura and Equipment stat modifiers,
   retaining reciprocal identity, foreign control and reattachment semantics.
 

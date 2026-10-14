@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 249,
+  "registry_version": 250,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -6056,7 +6056,7 @@
     },
     {
       "id": "continuous.characteristics.fixed_public_state",
-      "version": 13,
+      "version": 14,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -6075,7 +6075,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply fixed supported keywords and power/toughness modifiers in layers 6 and 7c while one closed authoritative public scalar, object, cycle-safe query, sealed history, distinct graveyard characteristic, hand, starting-life, player-counter, or designation condition is true. Compose one recipient-relative declaration requirement or restriction with fixed characteristics behind that same current public condition. Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition. A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope.",
+        "summary": "Apply fixed supported keywords and power/toughness modifiers in layers 6 and 7c while one closed authoritative public scalar, object, cycle-safe query, sealed history, distinct graveyard characteristic, hand, starting-life, player-counter, or designation condition is true. Compose one recipient-relative declaration requirement or restriction with fixed characteristics behind that same current public condition. Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition. A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope. Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost.",
         "inputs": [
           "active phased-in battlefield source",
           "source controller turn, life, public hand, graveyard, current or sealed turn-history, opponent poison, monarch, and starting-life facts",
@@ -6122,7 +6122,11 @@
         "quorune.semantic_runtime.conditional_continuous.ConditionalTypedKeywordHandler",
         "quorune.compiler.cast_cost_modifier_templates.static_fixed_spell_cost_reduction_handler",
         "quorune.semantic_runtime.cast_costs.ConditionalSpellCostModifierHandler",
-        "quorune.semantic_runtime.cast_costs.active_fixed_spell_cost_reductions"
+        "quorune.semantic_runtime.cast_costs.active_fixed_spell_cost_reductions",
+        "quorune.compiler.casting_activation_metadata_templates.static_self_zone_cast_permission_handler",
+        "quorune.semantic_runtime.casting_activation_metadata.PublicStateSelfZoneCastPermissionHandler",
+        "quorune.semantic_runtime.casting_activation_metadata.compiled_self_zone_cast_permission",
+        "quorune.continuous_conditions.OwnerRelativeConditionSource"
       ],
       "positive_tests": [
         "test_closed_public_state_grammar_compiles_capability_closed",
@@ -6142,7 +6146,10 @@
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
         "test_conditional_spell_cost_keeps_public_condition_and_existing_modifier",
-        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+        "test_self_graveyard_permission_preserves_general_public_condition",
+        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay"
       ],
       "negative_tests": [
         "test_unrepresented_conditions_and_bodies_remain_residual",
@@ -6157,7 +6164,10 @@
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
         "test_conditional_spell_cost_schema_and_dependencies_fail_closed",
-        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+        "test_self_graveyard_public_permission_schema_and_unknown_scope_fail_closed",
+        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay"
       ],
       "interaction_tests": [
         "test_live_public_object_state_and_layer_five_queries_recompute",
@@ -6174,7 +6184,9 @@
         "test_original_channeler_condition_controls_required_attack_and_replays",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
-        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay"
       ],
       "multiplayer_tests": [
         "test_turn_gated_attachment_and_anthem_compose",
@@ -6182,7 +6194,8 @@
         "test_public_fact_conditions_recompute_and_replay",
         "test_original_channeler_condition_controls_required_attack_and_replays",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
-        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay"
       ],
       "privacy_tests": [
         "test_hand_count_condition_projects_and_replays_without_hidden_identity",
@@ -6191,7 +6204,8 @@
         "test_original_channeler_condition_controls_required_attack_and_replays",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
-        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay"
       ],
       "replay_tests": [
         "test_hand_count_condition_projects_and_replays_without_hidden_identity",
@@ -6204,7 +6218,9 @@
         "test_original_channeler_condition_controls_required_attack_and_replays",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
-        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay"
       ],
       "required_evidence": [
         "positive",
@@ -8543,24 +8559,89 @@
     },
     {
       "id": "casting.zone.self_graveyard.controlled_subtype",
-      "version": 1,
-      "official_rules": ["205.3m", "601.3"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Compile and evaluate the exact permission to cast the source card from its owner's graveyard while that player controls a permanent with one pinned creature subtype.",
-        "inputs": ["owned card in graveyard", "current source face", "trusted source-spanned CardProgram V2 self-zone descriptor", "current phased-in controlled battlefield characteristics", "pinned creature-subtype vocabulary"],
-        "outputs": ["seat-scoped graveyard cast offer and accepted proposal through the ordinary casting transaction", "exact replay of the resulting cast command"],
-        "exclusions": ["permissions from zones other than the graveyard", "permissions to cast another card", "non-subtype, count, color, card-type, turn-history, or compound conditions", "temporary granted permissions", "timing changes", "inactive faces", "untrusted or prose-only permissions"]
+        "summary": "Compile and evaluate the exact permission to cast the source card from its owner's graveyard while that player controls a permanent with one pinned creature subtype. Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost.",
+        "inputs": [
+          "owned card in graveyard",
+          "current source face",
+          "trusted source-spanned CardProgram V2 self-zone descriptor",
+          "current phased-in controlled battlefield characteristics",
+          "pinned creature-subtype vocabulary"
+        ],
+        "outputs": [
+          "seat-scoped graveyard cast offer and accepted proposal through the ordinary casting transaction",
+          "exact replay of the resulting cast command"
+        ],
+        "exclusions": [
+          "permissions from zones other than the graveyard",
+          "permissions to cast another card",
+          "non-subtype, count, color, card-type, turn-history, or compound conditions",
+          "temporary granted permissions",
+          "timing changes",
+          "inactive faces",
+          "untrusted or prose-only permissions"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.compiler.casting_activation_metadata_templates.static_self_zone_cast_permission_handler", "quorune.semantic_runtime.casting_activation_metadata.SelfZoneCastPermissionHandler", "quorune.semantic_runtime.casting_activation_metadata.compiled_self_zone_cast_permission", "CommanderEngine._compiled_zone_cast_permission", "quorune.rules.casting.proposal.build_cast_proposal"],
-      "positive_tests": ["test_closed_casting_activation_metadata_compiles_source_spanned_programs", "test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays"],
-      "negative_tests": ["test_near_miss_and_malformed_casting_activation_metadata_fails_closed", "test_raw_oracle_zone_permission_without_typed_metadata_fails_closed"],
-      "interaction_tests": ["test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays"],
-      "multiplayer_tests": ["test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays"],
-      "privacy_tests": ["test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays"],
-      "replay_tests": ["test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.compiler.casting_activation_metadata_templates.static_self_zone_cast_permission_handler",
+        "quorune.semantic_runtime.casting_activation_metadata.SelfZoneCastPermissionHandler",
+        "quorune.semantic_runtime.casting_activation_metadata.compiled_self_zone_cast_permission",
+        "CommanderEngine._compiled_zone_cast_permission",
+        "quorune.rules.casting.proposal.build_cast_proposal",
+        "quorune.semantic_runtime.casting_activation_metadata.PublicStateSelfZoneCastPermissionHandler",
+        "quorune.continuous_conditions.OwnerRelativeConditionSource"
+      ],
+      "positive_tests": [
+        "test_closed_casting_activation_metadata_compiles_source_spanned_programs",
+        "test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays",
+        "test_self_graveyard_permission_preserves_general_public_condition",
+        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay"
+      ],
+      "negative_tests": [
+        "test_near_miss_and_malformed_casting_activation_metadata_fails_closed",
+        "test_raw_oracle_zone_permission_without_typed_metadata_fails_closed",
+        "test_self_graveyard_public_permission_schema_and_unknown_scope_fail_closed",
+        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay"
+      ],
+      "interaction_tests": [
+        "test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays",
+        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay"
+      ],
+      "multiplayer_tests": [
+        "test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays",
+        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay"
+      ],
+      "privacy_tests": [
+        "test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays",
+        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay"
+      ],
+      "replay_tests": [
+        "test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays",
+        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "The exact self-zone descriptor authorizes only the owner's card and one current controlled-subtype condition; ordinary priority, timing, cost, proposal, and zone-mutation owners remain independently authoritative.",
       "implementation_mutation_status": "killed",

@@ -16,6 +16,19 @@ class FixedPublicStateConditionError(ValueError):
     """A fixed public-state continuous-effect condition is malformed."""
 
 
+@dataclass(frozen=True, slots=True)
+class OwnerRelativeConditionSource:
+    """CR 109.5: a nonbattlefield card's static 'you' refers to its owner."""
+    source: Any
+
+    @property
+    def controller(self):
+        return self.source.owner
+
+    def __getattr__(self, field):
+        return getattr(self.source, field)
+
+
 FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID = (
     "continuous.characteristics.fixed-public-state.v1"
 )

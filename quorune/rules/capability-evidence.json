@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "f869c9bf27a54f798af5d056106c80d0dcbaf1ac9dd92a082e03576557baa5c8",
-  "declaration_source_fingerprint": "c40fd1d2ab140767e36f39a5f3d79a102b65af9c6e588fbaea8152a55c692c42",
+  "registry_fingerprint": "64742724155e1c4ddafaedceab6d1da73b72fea043428829a8cd6c291b7bd390",
+  "declaration_source_fingerprint": "5e40eb56c741e4e09dc1a4a48186919294fa6d0159462052faf4624c463bccc5",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -18211,6 +18211,36 @@
     },
     {
       "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_casting_activation_metadata.SelfZoneCastPermissionRuntimeTests.test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays",
       "official_rule_ids": [
@@ -18223,6 +18253,21 @@
         "commander_review"
       ],
       "applicability_note": "Restrict the graveyard offer and accepted cast command to the owning seat in a four-player game."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
     },
     {
       "capability_id": "casting.zone.self_graveyard.controlled_subtype",
@@ -18257,6 +18302,21 @@
     {
       "capability_id": "casting.zone.self_graveyard.controlled_subtype",
       "evidence_class": "negative",
+      "test_id": "tests.test_casting_activation_metadata.CastingActivationMetadataCompilerTests.test_self_graveyard_public_permission_schema_and_unknown_scope_fail_closed",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "negative",
       "test_id": "tests.test_casting_activation_metadata.SelfZoneCastPermissionRuntimeTests.test_raw_oracle_zone_permission_without_typed_metadata_fails_closed",
       "official_rule_ids": [
         "205.3m",
@@ -18268,6 +18328,36 @@
         "commander_review"
       ],
       "applicability_note": "Prove raw Oracle prose cannot authorize a graveyard cast when trusted typed metadata is absent."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
     },
     {
       "capability_id": "casting.zone.self_graveyard.controlled_subtype",
@@ -18287,6 +18377,21 @@
     {
       "capability_id": "casting.zone.self_graveyard.controlled_subtype",
       "evidence_class": "positive",
+      "test_id": "tests.test_casting_activation_metadata.CastingActivationMetadataCompilerTests.test_self_graveyard_permission_preserves_general_public_condition",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "positive",
       "test_id": "tests.test_casting_activation_metadata.SelfZoneCastPermissionRuntimeTests.test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays",
       "official_rule_ids": [
         "205.3m",
@@ -18298,6 +18403,36 @@
         "commander_review"
       ],
       "applicability_note": "Authorize only the owner's exact graveyard card while a current phased-in controlled permanent has the pinned subtype."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
     },
     {
       "capability_id": "casting.zone.self_graveyard.controlled_subtype",
@@ -18316,6 +18451,21 @@
     },
     {
       "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
       "evidence_class": "replay",
       "test_id": "tests.test_casting_activation_metadata.SelfZoneCastPermissionRuntimeTests.test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays",
       "official_rule_ids": [
@@ -18328,6 +18478,36 @@
         "commander_review"
       ],
       "applicability_note": "Replay the accepted typed graveyard cast through the ordinary command journal to the same final state."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
     },
     {
       "capability_id": "choice.affected_player.fixed_controller_discard",
@@ -36513,6 +36693,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
       "official_rule_ids": [
         "604.1",
@@ -36555,6 +36758,29 @@
         "commander_review"
       ],
       "applicability_note": "Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -36835,6 +37061,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it",
       "official_rule_ids": [
         "604.1",
@@ -37042,6 +37291,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "negative",
+      "test_id": "tests.test_casting_activation_metadata.CastingActivationMetadataCompilerTests.test_self_graveyard_public_permission_schema_and_unknown_scope_fail_closed",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierCompilerTests.test_additional_wording_does_not_admit_unrepresented_bonus_or_condition",
       "official_rule_ids": [
         "604.1",
@@ -37088,6 +37360,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
       "official_rule_ids": [
         "604.1",
@@ -37130,6 +37425,29 @@
         "commander_review"
       ],
       "applicability_note": "Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -37318,6 +37636,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
+      "test_id": "tests.test_casting_activation_metadata.CastingActivationMetadataCompilerTests.test_self_graveyard_permission_preserves_general_public_condition",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierCompilerTests.test_additional_and_also_fixed_bonuses_keep_the_complete_condition",
       "official_rule_ids": [
         "604.1",
@@ -37364,6 +37705,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
       "official_rule_ids": [
         "604.1",
@@ -37406,6 +37770,29 @@
         "commander_review"
       ],
       "applicability_note": "Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -37732,6 +38119,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it",
       "official_rule_ids": [
         "604.1",
@@ -37870,6 +38280,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
       "official_rule_ids": [
         "604.1",
@@ -37912,6 +38345,29 @@
         "commander_review"
       ],
       "applicability_note": "Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -123928,5 +124384,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "2b67d054c38f9aaa52342693aa0f9854ceb5a909e80d5a77dc65dcd07ae4d829"
+  "fingerprint": "e5b5bb61b9c883426cdf4bb64dd640ff07d1153b1ebf23abda01b8792fd0a2d7"
 }

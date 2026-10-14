@@ -2883,6 +2883,86 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay(self):
+        session=self.session(3631002)
+        engine=session.engine
+        vampire=self.add(engine,'Oathsworn Vampire',zone='graveyard',ref='conditional-zone-vampire')
+        self.assert_whole_admission('Oathsworn Vampire')
+        tapper=self.add(engine,'Generic Conditional Keyword Tap Helper',ref='conditional-zone-lifegain')
+        body=self.add(engine,'Generic Bound Body',ref='conditional-zone-lifegain-body')
+        self.ready(session,tapper,{'B':1,'C':1})
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        self.assertFalse(any(row.get('card')==vampire.ref for row in actions))
+        activation=next(row for row in actions if row['id'].startswith('activate:'+tapper.ref+':'))
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':activation['id'],'cost_cards':[body.ref]})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        while session.state.priority_player!='A':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==vampire.ref)
+        self.replay(session,load=True)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        self.assertEqual('battlefield',session.state.cards[vampire.object_id].zone)
+        self.assertTrue(session.state.cards[vampire.object_id].tapped)
+        self.replay(session)
+
+    def test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay(self):
+        session=self.session(3631001)
+        engine=session.engine
+        prowler=self.add(engine,'Marang River Prowler',zone='graveyard',ref='conditional-zone-prowler')
+        prowler.controller='B'
+        self.assert_whole_admission('Marang River Prowler')
+        qualifier=self.add(engine,'Generic Conditional Green Qualifier',ref='conditional-zone-qualifier')
+        foreign=self.add(engine,'Generic Conditional Green Qualifier',seat='C',ref='conditional-zone-foreign')
+        bounce=self.add(engine,'Generic Recipient Count Artifact Bounce',zone='hand',ref='conditional-zone-bounce')
+        island=self.add(engine,'Generic Conditional Keyword Island',ref='conditional-zone-island')
+        self.ready(session,bounce,{'U':2,'C':2})
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        offered=next(row for row in actions if row.get('card')==prowler.ref)
+        from quorune.semantic_runtime.casting_activation_metadata import compiled_self_zone_cast_permission
+        self.assertTrue(compiled_self_zone_cast_permission(engine,'A',prowler))
+        self.assertFalse(compiled_self_zone_cast_permission(engine,'B',prowler))
+        self.checkpoint(session)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:D',{'action_id':offered['id'],'pay':'auto'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==bounce.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':[qualifier.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        self.assertFalse(compiled_self_zone_cast_permission(engine,'A',session.state.cards[prowler.object_id]))
+        while session.state.priority_player!='A':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        self.assertFalse(any(row.get('card')==prowler.ref for row in actions))
+        qualifier_cast=next(row for row in actions if row.get('card')==qualifier.ref)
+        self.assertTrue(session.act('pilot:A',{'action_id':qualifier_cast['id'],'pay':'auto'}).ok)
+        self.resolve(session)
+        while session.state.priority_player!='A':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        mana=next(row for row in actions if row['id'].startswith('activate:'+island.ref+':'))
+        self.assertTrue(session.act('pilot:A',{'action_id':mana['id']}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==prowler.ref)
+        self.replay(session,load=True)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        self.assertEqual('battlefield',session.state.cards[prowler.object_id].zone)
+        self.assertEqual('A',session.state.cards[prowler.object_id].controller)
+        for seat in 'BCD':
+            self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
     def test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays(self):
         from quorune.attachments import attach_objects
         session = self.session(3630901)

@@ -386,6 +386,13 @@ uses the shared condition evaluator before returning the ordinary modifier to
 the total-cost owner. Offer and commit use that same collector, preserving
 current ability presence, source control, generic floors and colored payments.
 
+`permission.cast.self-zone-public-state.v1` evaluates an explicit self-graveyard
+permission against the same typed public-state facts. Outside the battlefield,
+the condition's controller-relative facts use the card's owner through a shared
+immutable source view. The ordinary casting proposal still owns timing, cost,
+target and current-zone checks. The earlier controlled-subtype permission
+descriptor retains its existing schema and behavior.
+
 The same quantity boundary supports versioned distinct basic land types,
 graveyard card types, colors, maximum/total mana value and colored mana-symbol
 counts. It reads current copy/type/color data only through layer 5. Exactly two

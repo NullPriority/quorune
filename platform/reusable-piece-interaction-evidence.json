@@ -4,6 +4,21 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
+      "test_id": "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+      "piece_ids": [
+        "capability.casting.zone.self_graveyard.controlled_subtype",
+        "capability.continuous.characteristics.fixed_public_state"
+      ],
+      "capability_ids": [
+        "casting.zone.self_graveyard.controlled_subtype",
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Marang River Prowler retains explicit graveyard and owner identity even with a foreign stored controller. A real artifact bounce removes the owner's qualifying green permanent while a foreign green permanent cannot supply it; a real recast restores the condition and a native graveyard cast resolves. Private projections, unauthorized rollback, pending save/load and complete pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
       "test_id": "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
       "piece_ids": [
         "capability.attachment.equip.fixed_mana",

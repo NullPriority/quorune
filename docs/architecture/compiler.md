@@ -671,6 +671,12 @@ predicate, controller scope, total-cost adjustment and current-ability coverage.
 Named sources remain data in the compiled condition. Hidden, nested or unknown
 conditions and unsupported cost bodies remain residual.
 
+Explicit conditional self-graveyard casting permission also reuses the public-
+state grammar. The compiler retains a typed condition, graveyard activity and
+ordinary cast semantics; Max Speed and monarch predicates retain their own
+capability requirements. Additional costs, alternative zones, hidden conditions,
+permission riders and unsupported siblings remain outside this production.
+
 Attached characteristic grammar represents fixed modifiers per Equipment,
 Aura, or Aura/Equipment attached to the recipient. The compiler emits the
 versioned recipient-relative public quantity; the ordinary attached owner

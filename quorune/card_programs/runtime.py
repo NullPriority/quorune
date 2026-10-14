@@ -538,19 +538,6 @@ def _annotated_static_component_keys(source: Any) -> tuple[str, ...]:
     )
 
 
-@dataclass(frozen=True, slots=True)
-class _OwnerRelativeStaticSource:
-    """CR 109.5: a nonbattlefield card's static 'you' refers to its owner."""
-    source: Any
-
-    @property
-    def controller(self):
-        return self.source.owner
-
-    def __getattr__(self, field):
-        return getattr(self.source, field)
-
-
 def _continuous_programs_for_source(
     semantics: "SemanticRegistry",
     source: Any,
@@ -667,7 +654,8 @@ def collect_card_program_continuous_effects(
             ):
                 continue
             if source.zone == 'graveyard':
-                source = _OwnerRelativeStaticSource(source)
+                from ..continuous_conditions import OwnerRelativeConditionSource
+                source = OwnerRelativeConditionSource(source)
             programs = _continuous_programs_for_source(
                 semantics, source, static_component_resolver
             )

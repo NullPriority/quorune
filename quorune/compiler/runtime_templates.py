@@ -166,7 +166,7 @@ def _source_permanent_participation_template(
                 "typed runtime capability"
             ),
         )
-    self_zone_cast = static_self_zone_cast_permission_handler(text)
+    self_zone_cast = static_self_zone_cast_permission_handler(text, source_name=source_name or 'source')
     if self_zone_cast is not None:
         return StaticRuntimeTemplate(
             compiled=self_zone_cast,
