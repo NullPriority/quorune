@@ -2959,6 +2959,84 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
     register_fixture_cards_on_add = True
 
+    def test_original_blood_token_native_cast_cost_payment_and_private_draw_replay(self):
+        session = self.session(3640501)
+        engine = session.engine
+        source = self.add(engine, 'Blood Servitor', zone='hand', ref='predefined-blood-native-servitor')
+        foreign = self.add(engine, 'Generic Bound Body', seat='B', zone='hand', ref='predefined-blood-foreign-cost')
+        self.assert_whole_admission(source.printed_name)
+        action = self.ready(session, source, {'C': 6})
+        self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'}).ok)
+        self.assertIsNone(self.resolve(session))
+        for seat in 'BCD':
+            self.assertEqual(40, session.state.players[seat].life)
+        blood = next(card for card in session.state.cards.values() if card.is_token and card.printed_name == 'Blood')
+        while session.state.priority_player != 'A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+                      if a['id'].startswith('activate:'+blood.ref+':'))
+        own = session.state.cards[session.state.players['A'].zones['hand'][0]]
+        top = session.state.players['A'].zones['library'][-1]
+        hand_before = len(session.state.players['A'].zones['hand'])
+        mana_before = sum(session.state.players['A'].mana_pool.values())
+        before = session.state.to_dict()
+        for principal, selected in (('pilot:B', own.ref), ('pilot:A', foreign.ref), ('pilot:A', source.ref)):
+            self.assertFalse(session.act(principal, {'action_id': action['id'], 'cost_cards': [selected], 'pay': 'auto'}).ok)
+            self.assertEqual(before, session.state.to_dict())
+        self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'cost_cards': [own.ref], 'pay': 'auto'}).ok)
+        self.assertEqual('graveyard', session.state.cards[own.object_id].zone)
+        self.assertEqual(mana_before-1, sum(session.state.players['A'].mana_pool.values()))
+        self.assertEqual('outside', session.state.cards[blood.object_id].zone)
+        self.assertEqual(hand_before-1, len(session.state.players['A'].zones['hand']))
+        self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(hand_before, len(session.state.players['A'].zones['hand']))
+        self.assertEqual('hand', session.state.cards[top].zone)
+        for seat in 'BCD':
+            packet = session.packet('pilot:'+seat, full=True)
+            self.assertNotIn('hand', packet['state']['players']['A'])
+            self.assertNotIn(session.state.cards[top].ref, json.dumps(packet))
+        self.replay(session, load=True)
+
+    def test_original_blood_token_empty_hand_offer_changes_after_native_draw(self):
+        session = self.session(3640502)
+        engine = session.engine
+        self.clear_initial_hand(session)
+        source = self.add(engine, 'Blood Servitor', zone='hand', ref='predefined-blood-empty-servitor')
+        drawer = self.add(engine, 'Azure Mage', ref='predefined-blood-native-drawer')
+        self.assert_whole_admission(source.printed_name)
+        self.assert_whole_admission(drawer.printed_name)
+        action = self.ready(session, source, {'C': 9, 'U': 4})
+        self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'}).ok)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual([], session.state.players['A'].zones['hand'])
+        blood = next(card for card in session.state.cards.values() if card.is_token and card.printed_name == 'Blood')
+        while session.state.priority_player != 'A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        blood_action = 'activate:'+blood.ref+':ab1'
+        self.assertNotIn(blood_action, [a['id'] for a in actions])
+        before = session.state.to_dict()
+        self.assertFalse(session.act('pilot:A', {'action_id': blood_action, 'cost_cards': [], 'pay': 'auto'}).ok)
+        self.assertEqual(before, session.state.to_dict())
+        draw_action = next(a for a in actions if a['id'].startswith('activate:'+drawer.ref+':'))
+        self.assertTrue(session.act('pilot:A', {'action_id': draw_action['id'], 'pay': 'auto'}).ok)
+        self.assertIsNone(self.resolve(session))
+        while session.state.priority_player != 'A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        self.assertIn(blood_action, [a['id'] for a in actions])
+        own = session.state.cards[session.state.players['A'].zones['hand'][0]]
+        self.assertTrue(session.act('pilot:A', {'action_id': blood_action, 'cost_cards': [own.ref], 'pay': 'auto'}).ok)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual('graveyard', session.state.cards[own.object_id].zone)
+        self.assertEqual(1, len(session.state.players['A'].zones['hand']))
+        for seat in 'BCD':
+            self.assertNotIn('hand', session.packet('pilot:'+seat, full=True)['state']['players']['A'])
+        self.replay(session, load=True)
+
     def test_original_optional_have_modifier_targets_before_resolution_and_replays(self):
         session = self.session(3640401)
         engine = session.engine

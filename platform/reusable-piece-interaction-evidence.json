@@ -10959,6 +10959,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Forerunner optional acceptance damages each current creature, including source, own and foreign recipients, through the canonical fixed-set damage owner with pending reload and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_blood_token_empty_hand_offer_changes_after_native_draw",
+      "piece_ids": [
+        "capability.activation.selected_zone_change.fixed",
+        "capability.token.ability.fixed_blood"
+      ],
+      "capability_ids": [
+        "activation.selected_zone_change.fixed",
+        "token.ability.fixed_blood"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native empty-hand Blood is unavailable until original Azure Mage draws; activation consumes exactly the selected owned hand card and rejects missing cost."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_blood_token_native_cast_cost_payment_and_private_draw_replay",
+      "piece_ids": [
+        "capability.activation.source_zone_change.fixed",
+        "capability.token.ability.fixed_blood"
+      ],
+      "capability_ids": [
+        "activation.source_zone_change.fixed",
+        "token.ability.fixed_blood"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Blood Servitor creates Blood; accepted compound cost discards the selected owned card and sacrifices the token before an independent stack draw, retaining rollback and pending replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_blood_token_native_cast_cost_payment_and_private_draw_replay",
+      "piece_ids": [
+        "capability.token.ability.fixed_blood",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "token.ability.fixed_blood",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Blood activation pays its complete cost before the private draw. Foreign seats never receive the drawn identity and pending/full replay preserve the consequence."
     }
   ]
 }

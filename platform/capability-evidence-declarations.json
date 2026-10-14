@@ -63915,6 +63915,366 @@
       "applicability_note": "Reject an underpayment after the Flash timing check without consuming the card or mutating state."
     },
     {
+      "capability_id": "token.ability.fixed_blood",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_blood_token_empty_hand_offer_changes_after_native_draw",
+      "official_rule_ids": [
+        "111.2",
+        "111.7",
+        "111.10g",
+        "602.2b",
+        "701.9a",
+        "704.5d",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Servitor native creation with empty hand does not offer or accept Blood activation; original Azure Mage accepted draw makes it payable and the complete selected discard/sacrifice/draw path replays. Separate typed profile controls require every fixed cost and distinguish tapped, missing-hand and missing-mana availability."
+    },
+    {
+      "capability_id": "token.ability.fixed_blood",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_blood_token_native_cast_cost_payment_and_private_draw_replay",
+      "official_rule_ids": [
+        "111.2",
+        "111.7",
+        "111.10g",
+        "602.2b",
+        "701.9a",
+        "704.5d",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Servitor actual cast and complete entry consequence create Blood. Authentic Blood activation pays mana, tap, owned-hand discard and source sacrifice before an independent private draw, with foreign/invalid-cost rejection, pending reload and exact replay. Minimal definition tests remain compiler evidence."
+    },
+    {
+      "capability_id": "token.ability.fixed_blood",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_blood_token_empty_hand_offer_changes_after_native_draw",
+      "official_rule_ids": [
+        "111.2",
+        "111.7",
+        "111.10g",
+        "602.2b",
+        "701.9a",
+        "704.5d",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Servitor native creation with empty hand does not offer or accept Blood activation; original Azure Mage accepted draw makes it payable and the complete selected discard/sacrifice/draw path replays. Separate typed profile controls require every fixed cost and distinguish tapped, missing-hand and missing-mana availability."
+    },
+    {
+      "capability_id": "token.ability.fixed_blood",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_blood_token_native_cast_cost_payment_and_private_draw_replay",
+      "official_rule_ids": [
+        "111.2",
+        "111.7",
+        "111.10g",
+        "602.2b",
+        "701.9a",
+        "704.5d",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Servitor actual cast and complete entry consequence create Blood. Authentic Blood activation pays mana, tap, owned-hand discard and source sacrifice before an independent private draw, with foreign/invalid-cost rejection, pending reload and exact replay. Minimal definition tests remain compiler evidence."
+    },
+    {
+      "capability_id": "token.ability.fixed_blood",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_token_creation_effects.PredefinedBloodTokenCompilerTests.test_blood_profile_definition_and_dependency_mutants_fail_closed",
+      "official_rule_ids": [
+        "111.2",
+        "111.7",
+        "111.10g",
+        "602.2b",
+        "701.9a",
+        "704.5d",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Changing the explicit profile to a cheaper Clue ability rejects the noncanonical Blood definition; omission and specific-capability withdrawal cannot grant exact whole-program admission. Native cost and draw evidence is separate."
+    },
+    {
+      "capability_id": "token.ability.fixed_blood",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_token_creation_effects.PredefinedBloodTokenCompilerTests.test_blood_typed_profile_preserves_all_costs_and_availability",
+      "official_rule_ids": [
+        "111.2",
+        "111.7",
+        "111.10g",
+        "602.2b",
+        "701.9a",
+        "704.5d",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Servitor native creation with empty hand does not offer or accept Blood activation; original Azure Mage accepted draw makes it payable and the complete selected discard/sacrifice/draw path replays. Separate typed profile controls require every fixed cost and distinguish tapped, missing-hand and missing-mana availability."
+    },
+    {
+      "capability_id": "token.ability.fixed_blood",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_blood_token_empty_hand_offer_changes_after_native_draw",
+      "official_rule_ids": [
+        "111.2",
+        "111.7",
+        "111.10g",
+        "602.2b",
+        "701.9a",
+        "704.5d",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Servitor native creation with empty hand does not offer or accept Blood activation; original Azure Mage accepted draw makes it payable and the complete selected discard/sacrifice/draw path replays. Separate typed profile controls require every fixed cost and distinguish tapped, missing-hand and missing-mana availability."
+    },
+    {
+      "capability_id": "token.ability.fixed_blood",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_blood_token_native_cast_cost_payment_and_private_draw_replay",
+      "official_rule_ids": [
+        "111.2",
+        "111.7",
+        "111.10g",
+        "602.2b",
+        "701.9a",
+        "704.5d",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Servitor actual cast and complete entry consequence create Blood. Authentic Blood activation pays mana, tap, owned-hand discard and source sacrifice before an independent private draw, with foreign/invalid-cost rejection, pending reload and exact replay. Minimal definition tests remain compiler evidence."
+    },
+    {
+      "capability_id": "token.ability.fixed_blood",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_token_creation_effects.PredefinedBloodTokenCompilerTests.test_blood_profile_definition_and_dependency_mutants_fail_closed",
+      "official_rule_ids": [
+        "111.2",
+        "111.7",
+        "111.10g",
+        "602.2b",
+        "701.9a",
+        "704.5d",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Changing the explicit profile to a cheaper Clue ability rejects the noncanonical Blood definition; omission and specific-capability withdrawal cannot grant exact whole-program admission. Native cost and draw evidence is separate."
+    },
+    {
+      "capability_id": "token.ability.fixed_blood",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_token_creation_effects.PredefinedBloodTokenCompilerTests.test_blood_typed_profile_preserves_all_costs_and_availability",
+      "official_rule_ids": [
+        "111.2",
+        "111.7",
+        "111.10g",
+        "602.2b",
+        "701.9a",
+        "704.5d",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Servitor native creation with empty hand does not offer or accept Blood activation; original Azure Mage accepted draw makes it payable and the complete selected discard/sacrifice/draw path replays. Separate typed profile controls require every fixed cost and distinguish tapped, missing-hand and missing-mana availability."
+    },
+    {
+      "capability_id": "token.ability.fixed_blood",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_blood_token_empty_hand_offer_changes_after_native_draw",
+      "official_rule_ids": [
+        "111.2",
+        "111.7",
+        "111.10g",
+        "602.2b",
+        "701.9a",
+        "704.5d",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Servitor native creation with empty hand does not offer or accept Blood activation; original Azure Mage accepted draw makes it payable and the complete selected discard/sacrifice/draw path replays. Separate typed profile controls require every fixed cost and distinguish tapped, missing-hand and missing-mana availability."
+    },
+    {
+      "capability_id": "token.ability.fixed_blood",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_blood_token_native_cast_cost_payment_and_private_draw_replay",
+      "official_rule_ids": [
+        "111.2",
+        "111.7",
+        "111.10g",
+        "602.2b",
+        "701.9a",
+        "704.5d",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Servitor actual cast and complete entry consequence create Blood. Authentic Blood activation pays mana, tap, owned-hand discard and source sacrifice before an independent private draw, with foreign/invalid-cost rejection, pending reload and exact replay. Minimal definition tests remain compiler evidence."
+    },
+    {
+      "capability_id": "token.ability.fixed_blood",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_token_creation_effects.PredefinedBloodTokenCompilerTests.test_blood_typed_profile_preserves_all_costs_and_availability",
+      "official_rule_ids": [
+        "111.2",
+        "111.7",
+        "111.10g",
+        "602.2b",
+        "701.9a",
+        "704.5d",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Servitor native creation with empty hand does not offer or accept Blood activation; original Azure Mage accepted draw makes it payable and the complete selected discard/sacrifice/draw path replays. Separate typed profile controls require every fixed cost and distinguish tapped, missing-hand and missing-mana availability."
+    },
+    {
+      "capability_id": "token.ability.fixed_blood",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_token_creation_effects.PredefinedBloodTokenCompilerTests.test_fixed_blood_definition_requires_complete_activation_profile",
+      "official_rule_ids": [
+        "111.2",
+        "111.7",
+        "111.10g",
+        "602.2b",
+        "701.9a",
+        "704.5d",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Servitor actual cast and complete entry consequence create Blood. Authentic Blood activation pays mana, tap, owned-hand discard and source sacrifice before an independent private draw, with foreign/invalid-cost rejection, pending reload and exact replay. Minimal definition tests remain compiler evidence."
+    },
+    {
+      "capability_id": "token.ability.fixed_blood",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_blood_token_empty_hand_offer_changes_after_native_draw",
+      "official_rule_ids": [
+        "111.2",
+        "111.7",
+        "111.10g",
+        "602.2b",
+        "701.9a",
+        "704.5d",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Servitor native creation with empty hand does not offer or accept Blood activation; original Azure Mage accepted draw makes it payable and the complete selected discard/sacrifice/draw path replays. Separate typed profile controls require every fixed cost and distinguish tapped, missing-hand and missing-mana availability."
+    },
+    {
+      "capability_id": "token.ability.fixed_blood",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_blood_token_native_cast_cost_payment_and_private_draw_replay",
+      "official_rule_ids": [
+        "111.2",
+        "111.7",
+        "111.10g",
+        "602.2b",
+        "701.9a",
+        "704.5d",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Servitor actual cast and complete entry consequence create Blood. Authentic Blood activation pays mana, tap, owned-hand discard and source sacrifice before an independent private draw, with foreign/invalid-cost rejection, pending reload and exact replay. Minimal definition tests remain compiler evidence."
+    },
+    {
+      "capability_id": "token.ability.fixed_blood",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_blood_token_empty_hand_offer_changes_after_native_draw",
+      "official_rule_ids": [
+        "111.2",
+        "111.7",
+        "111.10g",
+        "602.2b",
+        "701.9a",
+        "704.5d",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Servitor native creation with empty hand does not offer or accept Blood activation; original Azure Mage accepted draw makes it payable and the complete selected discard/sacrifice/draw path replays. Separate typed profile controls require every fixed cost and distinguish tapped, missing-hand and missing-mana availability."
+    },
+    {
+      "capability_id": "token.ability.fixed_blood",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_blood_token_native_cast_cost_payment_and_private_draw_replay",
+      "official_rule_ids": [
+        "111.2",
+        "111.7",
+        "111.10g",
+        "602.2b",
+        "701.9a",
+        "704.5d",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Servitor actual cast and complete entry consequence create Blood. Authentic Blood activation pays mana, tap, owned-hand discard and source sacrifice before an independent private draw, with foreign/invalid-cost rejection, pending reload and exact replay. Minimal definition tests remain compiler evidence."
+    },
+    {
       "capability_id": "token.creation.additional_replacement",
       "evidence_class": "interaction",
       "test_id": "tests.test_additional_token_compiler.AdditionalTokenCompilerTests.test_generated_and_reviewed_equivalent_handler_is_not_registered_twice",

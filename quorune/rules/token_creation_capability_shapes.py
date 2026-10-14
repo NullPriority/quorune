@@ -66,6 +66,7 @@ _CREATURE_KEYWORDS = frozenset(
     }
 )
 _PREDEFINED_CAPABILITIES = {
+    "Blood": ("token.ability.fixed_blood",),
     "Treasure": ("mana.activated.fixed_output",),
     "Food": ("life.change.effect",),
     "Map": ("keyword_action.explore.single",),

@@ -88,10 +88,16 @@ _FIXED_CREATURE_TOKEN = re.compile(
 _FIXED_PREDEFINED_TOKEN = re.compile(
     rf"^Create (?P<count>{FIXED_COUNT_PATTERN}|eleven|twelve|thirteen) "
     r"(?P<tapped>tapped )?"
-    r"(?P<name>Treasure|Food|Map|Clue|Powerstone|Junk|Vibranium) tokens?\.?$",
+    r"(?P<name>Treasure|Food|Map|Clue|Powerstone|Junk|Vibranium|Blood) tokens?\.?$",
     re.IGNORECASE,
 )
 _TOKEN_DEFINITIONS: dict[str, Mapping[str, Any]] = {
+    "blood token": {
+        "name": "Blood",
+        "type_line": "Token Artifact — Blood",
+        "display_text": "{1}, {T}, Discard a card, Sacrifice this token: Draw a card.",
+        "ability_profile": "one_tap_discard_sac_draw_card_v1",
+    },
     "treasure token": {
         "name": _TOKEN_TREASURE,
         "type_line": "Token Artifact — Treasure",
@@ -181,6 +187,7 @@ _PREDEFINED_CREATION_DEFINITIONS: dict[str, Mapping[str, Any]] = {
     for key, definition in _TOKEN_DEFINITIONS.items()
     if key
     in {
+        "blood token",
         "treasure token",
         "food token",
         "map token",

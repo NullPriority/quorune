@@ -1343,6 +1343,7 @@
         "test_fixed_impulse_access",
         "test_fixed_mana_abilities",
         "test_fixed_token_creation_effects",
+        "test_fixed_public_state_characteristics",
         "test_fixed_token_production",
         "test_rules_scheduler",
         "test_token_creation_replacements",

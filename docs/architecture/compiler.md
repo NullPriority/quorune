@@ -1770,7 +1770,11 @@ with up to three colors, optional Artifact and Enchantment card types, a
 proper name or Legendary supertype, and capability-backed keywords. Changeling
 and the exact can't-block or can't-be-blocked token sentences lower to the
 shared typed characteristic and declaration fragments rather than executable
-display text. The same owner lowers canonical fixed Investigate, fixed
+display text. A predefined Blood definition additionally requires
+`token.ability.fixed_blood`: its explicit activation profile retains all four
+costs and delegates owned-hand selection, source departure and private draw to
+existing generic owners. The token's name or display text does not select its
+runtime ability. The same owner lowers canonical fixed Investigate, fixed
 Afterlife through permanent-graveyard LKI, one current-target copy token, and
 one source-independent next-end-step creation. `compiler/token_copy_templates.py`
 adds fixed copy recipes referencing the source, one qualified public permanent

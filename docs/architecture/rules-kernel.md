@@ -394,6 +394,11 @@ copies, and next-end-step creation all converge on that same transaction.
 Token Changeling and declaration restrictions are serialized as typed
 characteristic fragments, while Powerstone, Junk, and Vibranium use closed
 ability profiles; token display text never becomes runtime authority.
+The Blood profile requires one generic mana, tapping and sacrificing its source,
+and discarding one selected owned hand card. Shared activation availability and
+cost validation reject missing hand cards, tapped sources and unpaid costs.
+The complete payment precedes an independent private draw on the stack; token
+departure does not remove that queued result.
 For each committed token instruction, the owner first publishes the complete
 group's identity/controller/type history, then seals the final entry-time
 characteristics used by entry predicates. History-dependent static power,

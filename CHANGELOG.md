@@ -14,6 +14,9 @@ maintenance: "hand-maintained"
 - Preserve independent library-selection card slots and qualified card types,
   and reject unrepresented qualifiers that previously became subtype names.
 
+- Create predefined Blood tokens with complete typed activation costs and
+  private draw consequences through existing activation and zone owners.
+
 - Normalize fixed optional "you may have" results through existing effect
   owners, preserving early target selection and resolution-time acceptance.
 

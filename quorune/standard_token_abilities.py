@@ -5,7 +5,8 @@ from __future__ import annotations
 from enum import Enum
 from typing import Any, Mapping
 
-from .abilities import ActivatedAbility
+from .abilities import ActivatedAbility, CostChoice
+from .object_predicate import ObjectQuerySpec
 from .fixed_mana_abilities import FixedManaMode
 from .replacement.immutable import FrozenMap
 from .util import normalize_mana_bundle
@@ -20,6 +21,7 @@ class StandardTokenAbilityProfile(str, Enum):
     )
     TAP_COLORLESS_RESTRICTED = "tap_colorless_restricted_v1"
     TAP_SAC_IMPULSE_ONE = "tap_sac_impulse_one_v1"
+    ONE_TAP_DISCARD_SAC_DRAW_CARD = "one_tap_discard_sac_draw_card_v1"
 
 
 TOKEN_ABILITY_PROFILE_FIELD = "activated_ability_profile"
@@ -68,6 +70,19 @@ def _draw_card() -> ActivatedAbility:
         zones=("battlefield",),
         mana={"GENERIC": 2},
         sacrifice_source=True,
+        builtin_semantic_key="builtin:draw:1",
+    )
+
+
+def _discard_and_draw_card() -> ActivatedAbility:
+    return ActivatedAbility(
+        ability_id="ab1", line_index=0,
+        oracle_line="{1}, {T}, Discard a card, Sacrifice this token: Draw a card.",
+        cost_text="{1}, {T}, Discard a card, Sacrifice this token",
+        effect_text="Draw a card.", zones=("battlefield",),
+        mana={"GENERIC": 1}, tap_source=True, sacrifice_source=True,
+        choices=(CostChoice(kind="discard_one", zone="hand",
+            predicate=FrozenMap(ObjectQuerySpec(zones=("hand",), owner="$actor", known_to_actor=True).to_dict())),),
         builtin_semantic_key="builtin:draw:1",
     )
 
@@ -163,6 +178,9 @@ _STANDARD_TOKEN_ABILITIES = {
     ),
     StandardTokenAbilityProfile.TAP_SAC_IMPULSE_ONE: (
         _junk_impulse_one(),
+    ),
+    StandardTokenAbilityProfile.ONE_TAP_DISCARD_SAC_DRAW_CARD: (
+        _discard_and_draw_card(),
     ),
 }
 
