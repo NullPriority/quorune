@@ -455,6 +455,19 @@ def compile_fixed_query_granted_ability_nodes(
     )
 
 
+def _ordinary_granted_inner(compile_inner, trigger_node):
+    """Use the same ordinary-source fallback as a standalone ability."""
+    def compile_complete(**arguments):
+        result = compile_inner(**arguments)
+        if result is not None or arguments['residuals']:
+            return result
+        trigger_arguments = {key:value for key,value in arguments.items()
+            if key not in {'type_line','keywords','trigger_effect_template'}}
+        trigger_arguments['effect_template'] = arguments.get('trigger_effect_template') or arguments['effect_template']
+        return trigger_node(**trigger_arguments)
+    return compile_complete
+
+
 def compile_keyword_or_attached_grant_nodes(
     *,
     record: CardRecord,
@@ -533,6 +546,7 @@ def compile_keyword_or_attached_grant_nodes(
     granted_effect, granted_trigger_effect = grant_effect_templates(
         True, ("creature",), None
     )
+    compile_inner = _ordinary_granted_inner(compile_inner, trigger_node)
     from .temporary_quoted_ability_nodes import temporary_quoted_ability_nodes
     temporary = temporary_quoted_ability_nodes(record=record, face_id=face_id,
         node_id=node_id, line=line, material_line=material_line, span=span,

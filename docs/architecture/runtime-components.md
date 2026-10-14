@@ -28,6 +28,14 @@ unavailable creature stats raise an error. Hidden zones, source exclusions,
 attachment-state predicates and static characteristic cycles stay outside this
 family. The aggregate capability remains an explicit dependency of each consumer.
 
+Quoted ability grants compile their complete child through the same fixed and
+ordinary-source trigger paths as standalone abilities. The ordinary fallback
+runs only when the first compiler returned no node and no residual. Entry and
+death subscriptions retain source identity, and recipient control determines
+their consequences. A quoted source-permanent regeneration instruction uses
+the existing incarnation-pinned shield owner; the grant origin never substitutes
+for its recipient. Unsupported child clauses still prevent whole-program trust.
+
 ## Lifecycle and participation
 
 1. The compiler or reviewed program emits a versioned component descriptor.

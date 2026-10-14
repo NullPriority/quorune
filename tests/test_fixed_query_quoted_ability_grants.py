@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from pathlib import Path
 import tempfile
 import unittest
@@ -73,6 +74,43 @@ def fixture_record(text: str, *, suffix: int = 1) -> CardRecord:
 
 
 class FixedQueryQuotedAbilityGrantCompilerTests(unittest.TestCase):
+    def test_ordinary_source_enter_and_death_quotes_compile_the_same_inner_binding(self):
+        from quorune.card_programs import compile_card_program,bind_card_program_runtime
+        for index,text in enumerate((
+            'All Slivers have "When this permanent enters, draw a card."',
+            'All Sliver creatures have "When this creature dies, draw a card."',
+            'Enchanted creature gets +2/+0 and has "When this creature dies, draw a card."',
+        )):
+            record=fixture_record(text,suffix=363170101+index)
+            if text.startswith('Enchanted'):
+                record=replace(record,type_line='Enchantment — Aura',oracle_text='Enchant creature\n'+text,keywords=('Enchant',))
+            ir=self.compile(record)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            inner=next(n for n in ir.faces[0].nodes if n.kind=='granted_triggered_ability')
+            self.assertIn(inner.event,('permanent.enter.self','creature.dies.self'))
+            self.assertEqual({'op':'draw','player':'$controller','count':1,'private':True},inner.effects[0])
+            program=compile_card_program(_NoRulingsDatabase(),record,capability_registry=self.capabilities,
+                capability_profile='commander_review',trust_level='trusted')
+            self.assertTrue(bind_card_program_runtime(program,capability_registry=self.capabilities,profile='commander_review')['strict_capability_ready'])
+
+    def test_ordinary_source_quote_rejects_missing_dependency_partial_child_and_omission(self):
+        from unittest import mock
+        text='All Slivers have "When this permanent enters, draw a card."'
+        record=fixture_record(text,suffix=363170105)
+        self.assertEqual('exact',self.compile(record).status)
+        for cap in ('continuous.ability.fixed_query_grant','zone.draw.library_to_hand'):
+            raw=json.loads(REGISTRY.read_text(encoding='utf-8'))
+            next(row for row in raw['capabilities'] if row['id']==cap).update(status='blocked',blockers=['ordinary grant dependency withdrawn'])
+            self.assertNotEqual('exact',compile_oracle_card(record,capability_registry=CapabilityRegistry(raw)).status)
+        for altered in (
+            text.replace('draw a card.','draw a card. Repeat this process.'),
+            text.replace('When this permanent enters','When a chosen permanent enters'),
+            text.replace('When this permanent enters','When this permanent enters, if the top card of your library is green'),
+        ):
+            self.assertNotEqual('exact',self.compile(fixture_record(altered,suffix=363170106)).status)
+        with mock.patch('quorune.compiler.attached_granted_ability_nodes._ordinary_granted_inner',side_effect=lambda inner,trigger:inner):
+            self.assertNotEqual('exact',self.compile(record).status)
+
     @classmethod
     def setUpClass(cls):
         cls.capabilities = load_default_capability_registry()

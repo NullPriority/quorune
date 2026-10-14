@@ -10374,6 +10374,51 @@
       ],
       "interaction_order": 3,
       "assertion": "Original Essence Harvest resolves a declared maximum once: self-target loss temporarily drops the conditional candidate power, but gain retains the cached ten, with rollback, private projection and pre-action/pending replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
+      "piece_ids": [
+        "capability.continuous.ability.fixed_query_grant",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "continuous.ability.fixed_query_grant",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Dormant Sliver is cast, draws on its own entry, and grants the same source-specific trigger to a foreign flash Sliver cast during native priority. Each draw belongs to the entering controller with private projection and exact pending/full replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "piece_ids": [
+        "capability.continuous.ability.fixed_query_grant",
+        "capability.permanent.regeneration.self_activation"
+      ],
+      "capability_ids": [
+        "continuous.ability.fixed_query_grant",
+        "permanent.regeneration.self_activation"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Clot Sliver is cast and its complete typed grant is activated by a foreign Sliver controller. The shield belongs to the recipient incarnation, excludes a nonsubtype body, rejects another principal, then replaces actual Murder with tap/shield consumption and exact pending/full replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
+      "piece_ids": [
+        "capability.continuous.attached.fixed_characteristics",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "continuous.attached.fixed_characteristics",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Infernal Scarring is cast onto an opposing creature, applies its fixed bonus, and the granted source-death draw survives actual Murder via the recipient LKI. The foreign controller draws privately and pending/full pre-action replay agrees."
     }
   ]
 }

@@ -2957,6 +2957,92 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay(self):
+        session=self.session(3631701);engine=session.engine
+        source=self.add(engine,'Dormant Sliver',zone='hand',ref='ordinary-dormant-source')
+        recipient=self.add(engine,'Generic Ordinary Grant Flash Sliver',seat='B',zone='hand',ref='ordinary-dormant-recipient')
+        session.state.players['B'].mana_pool['C']=1
+        self.assert_whole_admission(source.printed_name)
+        offered=self.ready(session,source,{'G':1,'U':1,'C':2})
+        before_a=len(session.state.players['A'].zones['hand'])
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(before_a,len(session.state.players['A'].zones['hand']))
+        while session.state.priority_player!='B':
+            self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:B',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==recipient.ref)
+        before_b=len(session.state.players['B'].zones['hand'])
+        accepted=session.act('pilot:B',{'action_id':cast['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual(before_b,len(session.state.players['B'].zones['hand']))
+        self.assertIn('Defender',engine._effective_card_data(session.state.cards[recipient.object_id])['keywords'])
+        for observer in 'ACD':self.assertNotIn('hand',session.packet('pilot:'+observer,full=True)['state']['players']['B'])
+        self.replay(session)
+
+    def test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays(self):
+        session=self.session(3631702);engine=session.engine
+        source=self.add(engine,'Clot Sliver',zone='hand',ref='ordinary-clot-source')
+        recipient=self.add(engine,'Generic Ordinary Grant Sliver',seat='B',ref='ordinary-clot-recipient')
+        non_sliver=self.add(engine,'Generic Bound Body',seat='B',ref='ordinary-clot-nonrecipient')
+        destroy=self.add(engine,'Murder',zone='hand',ref='ordinary-clot-destroy')
+        session.state.players['B'].mana_pool['C']=2
+        self.assert_whole_admission(source.printed_name)
+        offered=self.ready(session,source,{'C':3,'B':3})
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertFalse(any('Regenerate' in ability.effect_text for ability in engine._activated_abilities(non_sliver)))
+        while session.state.priority_player!='B':
+            self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:B',full=True)['decision']['ctx']['legal']['actions']
+        ability=next(row for row in actions if row['id'].startswith('activate:'+recipient.ref+':'))
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:C',{'action_id':ability['id'],'pay':'auto'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:B',{'action_id':ability['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(1,session.state.cards[recipient.object_id].regeneration_shields)
+        self.assertEqual(0,session.state.cards[source.object_id].regeneration_shields)
+        while session.state.priority_player!='A':
+            self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        self.assertTrue(any(row.get('card')==destroy.ref for row in actions),
+            {'pool':dict(session.state.players['A'].mana_pool),'zone':session.state.cards[destroy.object_id].zone,
+             'phase':session.state.phase,'step':session.state.step,'active':session.state.active_player,
+             'actions':[(row['id'],row.get('card')) for row in actions]})
+        cast=next(row for row in actions if row.get('card')==destroy.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':[recipient.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        current=session.state.cards[recipient.object_id]
+        self.assertEqual('battlefield',current.zone);self.assertTrue(current.tapped)
+        self.assertEqual(0,current.regeneration_shields)
+        self.replay(session)
+
+    def test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays(self):
+        session=self.session(3631703);engine=session.engine
+        aura=self.add(engine,'Infernal Scarring',zone='hand',ref='ordinary-infernal-aura')
+        recipient=self.add(engine,'Generic Bound Body',seat='B',ref='ordinary-infernal-recipient')
+        destroy=self.add(engine,'Murder',zone='hand',ref='ordinary-infernal-destroy')
+        self.assert_whole_admission(aura.printed_name)
+        offered=self.ready(session,aura,{'C':2,'B':3})
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'targets':[recipient.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual(4,engine._numeric_stat(recipient.object_id,'power'))
+        before_b=len(session.state.players['B'].zones['hand'])
+        while session.state.priority_player!='A':
+            self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==destroy.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':[recipient.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.replay(session,load=True);self.resolve(session)
+        self.assertEqual('graveyard',session.state.cards[recipient.object_id].zone)
+        self.assertEqual(before_b+1,len(session.state.players['B'].zones['hand']))
+        for observer in 'ACD':self.assertNotIn('hand',session.packet('pilot:'+observer,full=True)['state']['players']['B'])
+        self.replay(session)
+
     def test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays(self):
         session=self.session(3631602);engine=session.engine
         spell=self.add(engine,'Ghalta, Primal Hunger',zone='hand',ref='aggregate-ghalta')

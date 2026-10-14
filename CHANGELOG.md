@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile ordinary source-entry and source-death clauses inside typed ability
+  grants, and retain recipient identity for source-permanent regeneration.
+
 - Share current battlefield power/toughness aggregates across effects, casting
   costs and mana production, preserving declared values through later instructions.
 

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 256,
+  "registry_version": 257,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -6262,24 +6262,129 @@
     },
     {
       "id": "continuous.ability.fixed_query_grant",
-      "version": 5,
-      "official_rules": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 6,
+      "official_rules": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Grant independently exact typed declaration, activated, fixed-output mana, or triggered ability fragments, optionally composed with fixed supported keywords, in layer 6 to live battlefield objects selected by the shared closed public battlefield ObjectQuerySpec.",
-        "inputs": ["active phased-in battlefield source", "source-controller, source-opponent, or global target relation", "closed battlefield ObjectQuerySpec", "one or more typed declaration requirement or restriction, granted activated, fixed-output mana, or triggered ability fragments", "optional fixed supported keyword operations sharing that exact query", "fixed mana, tap, untap, source-sacrifice, life-payment, selected-object, and represented restricted-mana activation costs", "independently exact cycle-safe public-query temporary power/toughness amounts inside a typed granted ability"],
-        "outputs": ["source-bound layer-6 keyword and ability-fragment grants", "live new-entry, type, subtype conjunction or union, token, public-state, control, source, phasing, and ability-removal applicability", "recipient-bound canonical declaration legality, activation, trigger discovery, and query-scaled resolution", "immediate source-departure and granting-ability-removal expiration", "canonical replay-pinned continuous effect"],
-        "exclusions": ["untyped or independently inexact declaration, activated, or triggered fragments", "source discard or exile, energy, loyalty, variable-cost, complex-symbol, alternative, zone, usage-limited, and unsupported restricted-mana activation costs", "dynamic effect values outside query-scaled temporary power/toughness through the cycle-safe PublicQueryAmountSpec", "quoted query-scaled life, damage, draw, and token results", "multiple quoted abilities", "hidden-zone applicability", "runtime rules-text execution", "multiple-block capacity, defender suppression, and combat-damage assignment rules"]
+        "inputs": [
+          "active phased-in battlefield source",
+          "source-controller, source-opponent, or global target relation",
+          "closed battlefield ObjectQuerySpec",
+          "one or more typed declaration requirement or restriction, granted activated, fixed-output mana, or triggered ability fragments",
+          "optional fixed supported keyword operations sharing that exact query",
+          "fixed mana, tap, untap, source-sacrifice, life-payment, selected-object, and represented restricted-mana activation costs",
+          "independently exact cycle-safe public-query temporary power/toughness amounts inside a typed granted ability"
+        ],
+        "outputs": [
+          "source-bound layer-6 keyword and ability-fragment grants",
+          "live new-entry, type, subtype conjunction or union, token, public-state, control, source, phasing, and ability-removal applicability",
+          "recipient-bound canonical declaration legality, activation, trigger discovery, and query-scaled resolution",
+          "immediate source-departure and granting-ability-removal expiration",
+          "canonical replay-pinned continuous effect"
+        ],
+        "exclusions": [
+          "untyped or independently inexact declaration, activated, or triggered fragments",
+          "source discard or exile, energy, loyalty, variable-cost, complex-symbol, alternative, zone, usage-limited, and unsupported restricted-mana activation costs",
+          "dynamic effect values outside query-scaled temporary power/toughness through the cycle-safe PublicQueryAmountSpec",
+          "quoted query-scaled life, damage, draw, and token results",
+          "multiple quoted abilities",
+          "hidden-zone applicability",
+          "runtime rules-text execution",
+          "multiple-block capacity, defender suppression, and combat-damage assignment rules"
+        ]
       },
-      "dependencies": ["state_query.permanent.public_state_predicate"],
-      "implementation_components": ["quorune.compiler.continuous_templates.fixed_query_quoted_ability_handler", "quorune.compiler.declaration_nodes.fixed_static_declaration_grant_handler", "quorune.compiler.public_state_queries.fixed_characteristic_battlefield_query_subject", "quorune.compiler.attached_granted_ability_nodes.compile_fixed_query_granted_ability_nodes", "quorune.compiler.attached_granted_ability_nodes.attached_granted_ability_plan", "quorune.ability_fragments.GrantedActivatedAbilitySpec", "quorune.ability_fragments.GrantedTriggeredAbilitySpec", "quorune.declaration_fragments.DeclarationRequirementTemplate", "quorune.declaration_fragments.DeclarationRestrictionTemplate", "quorune.semantic_runtime.continuous_components.FixedQueryAbilityGrantHandler", "quorune.card_programs.runtime.collect_card_program_continuous_effects", "quorune.continuous_effects.evaluate_continuous_effects", "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin", "quorune.declaration_requirement_runtime.typed_attacker_block_requirements", "quorune.declaration_requirement_runtime.typed_blocker_requirements", "quorune.rules.activation.query.activated_abilities", "quorune.rules.activation.commit.commit_activation", "quorune.trigger_discovery._event_programs_for_source"],
-      "positive_tests": ["test_fixed_query_ability_grant_is_typed_and_canonical", "test_group_quotes_compile_exact_typed_inner_programs_and_costs", "test_insidious_roots_batches_graveyard_departures_and_grants_token_mana", "test_shared_public_set_query_fans_into_layers_and_resolution", "test_static_query_and_attachment_declaration_grants_compile_closed"],
-      "negative_tests": ["test_fixed_query_ability_grant_rejects_malformed_descriptors", "test_group_quote_grammar_and_inner_behavior_fail_closed", "test_shared_public_query_dependency_fails_closed_across_consumers", "test_static_declaration_grant_dependencies_fail_closed", "test_static_query_and_attachment_declaration_grants_compile_closed"],
-      "interaction_tests": ["test_insidious_roots_batches_graveyard_departures_and_grants_token_mana", "test_live_query_recomputes_control_entry_source_and_layer_six", "test_extended_granted_costs_reach_canonical_activation_owners", "test_granted_source_cost_is_atomic_revalidated_and_replays", "test_query_scaled_grant_revalidates_current_ability_and_replays", "test_subtype_union_recomputes_after_layer_four_and_excludes_source", "test_static_query_declaration_grant_uses_offer_commit_authority", "test_static_query_restriction_revalidates_and_obeys_ability_removal"],
-      "multiplayer_tests": ["test_global_granted_triggers_preserve_multiplicity_apnap_and_privacy"],
-      "privacy_tests": ["test_global_granted_triggers_preserve_multiplicity_apnap_and_privacy"],
-      "replay_tests": ["test_fixed_query_ability_grant_is_typed_and_canonical", "test_granted_source_cost_is_atomic_revalidated_and_replays", "test_global_granted_triggers_preserve_multiplicity_apnap_and_privacy", "test_query_scaled_grant_revalidates_current_ability_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "state_query.permanent.public_state_predicate"
+      ],
+      "implementation_components": [
+        "quorune.ability_fragments.GrantedActivatedAbilitySpec",
+        "quorune.ability_fragments.GrantedTriggeredAbilitySpec",
+        "quorune.card_programs.runtime.collect_card_program_continuous_effects",
+        "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin",
+        "quorune.compiler.attached_granted_ability_nodes._ordinary_granted_inner",
+        "quorune.compiler.attached_granted_ability_nodes.attached_granted_ability_plan",
+        "quorune.compiler.attached_granted_ability_nodes.compile_fixed_query_granted_ability_nodes",
+        "quorune.compiler.continuous_templates.fixed_query_quoted_ability_handler",
+        "quorune.compiler.declaration_nodes.fixed_static_declaration_grant_handler",
+        "quorune.compiler.public_state_queries.fixed_characteristic_battlefield_query_subject",
+        "quorune.continuous_effects.evaluate_continuous_effects",
+        "quorune.declaration_fragments.DeclarationRequirementTemplate",
+        "quorune.declaration_fragments.DeclarationRestrictionTemplate",
+        "quorune.declaration_requirement_runtime.typed_attacker_block_requirements",
+        "quorune.declaration_requirement_runtime.typed_blocker_requirements",
+        "quorune.rules.activation.commit.commit_activation",
+        "quorune.rules.activation.query.activated_abilities",
+        "quorune.semantic_runtime.continuous_components.FixedQueryAbilityGrantHandler",
+        "quorune.trigger_discovery._event_programs_for_source"
+      ],
+      "positive_tests": [
+        "test_fixed_query_ability_grant_is_typed_and_canonical",
+        "test_group_quotes_compile_exact_typed_inner_programs_and_costs",
+        "test_insidious_roots_batches_graveyard_departures_and_grants_token_mana",
+        "test_ordinary_source_enter_and_death_quotes_compile_the_same_inner_binding",
+        "test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+        "test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
+        "test_shared_public_set_query_fans_into_layers_and_resolution",
+        "test_static_query_and_attachment_declaration_grants_compile_closed"
+      ],
+      "negative_tests": [
+        "test_fixed_query_ability_grant_rejects_malformed_descriptors",
+        "test_group_quote_grammar_and_inner_behavior_fail_closed",
+        "test_ordinary_source_quote_rejects_missing_dependency_partial_child_and_omission",
+        "test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+        "test_shared_public_query_dependency_fails_closed_across_consumers",
+        "test_static_declaration_grant_dependencies_fail_closed",
+        "test_static_query_and_attachment_declaration_grants_compile_closed"
+      ],
+      "interaction_tests": [
+        "test_extended_granted_costs_reach_canonical_activation_owners",
+        "test_granted_source_cost_is_atomic_revalidated_and_replays",
+        "test_insidious_roots_batches_graveyard_departures_and_grants_token_mana",
+        "test_live_query_recomputes_control_entry_source_and_layer_six",
+        "test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+        "test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
+        "test_query_scaled_grant_revalidates_current_ability_and_replays",
+        "test_static_query_declaration_grant_uses_offer_commit_authority",
+        "test_static_query_restriction_revalidates_and_obeys_ability_removal",
+        "test_subtype_union_recomputes_after_layer_four_and_excludes_source"
+      ],
+      "multiplayer_tests": [
+        "test_global_granted_triggers_preserve_multiplicity_apnap_and_privacy",
+        "test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+        "test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay"
+      ],
+      "privacy_tests": [
+        "test_global_granted_triggers_preserve_multiplicity_apnap_and_privacy",
+        "test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay"
+      ],
+      "replay_tests": [
+        "test_fixed_query_ability_grant_is_typed_and_canonical",
+        "test_global_granted_triggers_preserve_multiplicity_apnap_and_privacy",
+        "test_granted_source_cost_is_atomic_revalidated_and_replays",
+        "test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+        "test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
+        "test_query_scaled_grant_revalidates_current_ability_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The compiler records the shared public-query dependency and every independently exact inner capability on the outer grant node; blocking the query, grant, or any inner owner prevents exact admission, while malformed descriptors fail before characteristic evaluation.",
       "implementation_mutation_status": "killed",
@@ -7363,7 +7468,7 @@
     },
     {
       "id": "continuous.attached.fixed_characteristics",
-      "version": 11,
+      "version": 12,
       "official_rules": [
         "301.5",
         "303.4",
@@ -7420,100 +7525,108 @@
         "continuous.characteristics.query_count_modifier"
       ],
       "implementation_components": [
-        "quorune.semantic_runtime.attached_continuous.AttachedFixedCharacteristicsHandler",
-        "quorune.ability_fragments.StaticComponentSpec",
         "quorune.ability_fragments.GrantedActivatedAbilitySpec",
         "quorune.ability_fragments.GrantedTriggeredAbilitySpec",
-        "quorune.declaration_fragments.DeclarationRequirementTemplate",
-        "quorune.declaration_fragments.DeclarationRestrictionTemplate",
+        "quorune.ability_fragments.StaticComponentSpec",
         "quorune.attachments.attach_objects",
         "quorune.attachments.attached_object_identity",
         "quorune.card_programs.runtime.collect_card_program_continuous_effects",
         "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin",
+        "quorune.compiler.attached_granted_ability_nodes._ordinary_granted_inner",
         "quorune.compiler.attached_granted_ability_nodes.attached_granted_ability_plan",
+        "quorune.compiler.collection_quantity_templates.recipient_attachment_quantity",
         "quorune.compiler.continuous_templates.attached_fixed_characteristics_handler",
         "quorune.compiler.continuous_templates.attached_quoted_ability_handler",
         "quorune.compiler.declaration_nodes.fixed_static_declaration_grant_handler",
         "quorune.compiler.query_characteristic_templates.query_characteristic_quantity",
         "quorune.continuous_effects.evaluate_continuous_effects",
-        "quorune.dynamic_characteristics.query_characteristic_count",
+        "quorune.declaration_fragments.DeclarationRequirementTemplate",
+        "quorune.declaration_fragments.DeclarationRestrictionTemplate",
         "quorune.declaration_requirement_runtime.typed_attacker_block_requirements",
         "quorune.declaration_requirement_runtime.typed_blocker_requirements",
-        "quorune.rules.activation.query.activated_abilities",
-        "quorune.trigger_discovery._event_programs_for_source",
+        "quorune.dynamic_characteristics.query_characteristic_count",
         "quorune.keyword_abilities.triggered_keyword_grant",
-        "quorune.compiler.collection_quantity_templates.recipient_attachment_quantity"
+        "quorune.rules.activation.query.activated_abilities",
+        "quorune.semantic_runtime.attached_continuous.AttachedFixedCharacteristicsHandler",
+        "quorune.trigger_discovery._event_programs_for_source"
       ],
       "positive_tests": [
-        "test_fixed_modifier_and_keyword_apply_only_to_exact_logical_object",
-        "test_dynamic_transform_and_remove_then_grant_use_canonical_layers",
+        "test_animate_dead_and_bestow_modifiers_use_generic_attached_handler",
+        "test_compiler_lowers_attached_quoted_abilities_to_typed_programs",
         "test_compiler_lowers_closed_dynamic_compound_and_transform_forms",
         "test_compiler_lowers_coupled_protection_and_fixed_ward_grants",
-        "test_compiler_lowers_attached_quoted_abilities_to_typed_programs",
-        "test_animate_dead_and_bestow_modifiers_use_generic_attached_handler",
-        "test_thornbite_staff_grants_damage_death_untap_and_shaman_attach",
-        "test_static_query_and_attachment_declaration_grants_compile_closed",
-        "test_fixed_basic_landwalk_and_horsemanship_grants_declare_exact_consumers",
         "test_decorative_static_labels_preserve_descriptor_and_original_source_span",
-        "test_werewolf_plural_union_is_typed_and_deduplicates_recipient_query",
+        "test_dynamic_transform_and_remove_then_grant_use_canonical_layers",
+        "test_fixed_basic_landwalk_and_horsemanship_grants_declare_exact_consumers",
+        "test_fixed_modifier_and_keyword_apply_only_to_exact_logical_object",
         "test_live_keyword_trigger_grants_carry_exact_fragment_and_consumer_dependencies",
+        "test_ordinary_source_enter_and_death_quotes_compile_the_same_inner_binding",
+        "test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
+        "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
         "test_recipient_attachment_quantity_keeps_relative_object_and_live_query",
-        "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays"
+        "test_static_query_and_attachment_declaration_grants_compile_closed",
+        "test_thornbite_staff_grants_damage_death_untap_and_shaman_attach",
+        "test_werewolf_plural_union_is_typed_and_deduplicates_recipient_query"
       ],
       "negative_tests": [
-        "test_relation_model_and_descriptor_fail_closed",
-        "test_compiler_rejects_conditional_and_unrepresented_text",
         "test_compiler_keeps_unsupported_attached_grants_residual",
-        "test_malformed_relation_fails_before_mutation",
-        "test_static_declaration_grant_dependencies_fail_closed",
-        "test_static_query_and_attachment_declaration_grants_compile_closed",
+        "test_compiler_rejects_conditional_and_unrepresented_text",
         "test_grant_boundaries_and_missing_evasion_consumer_fail_closed",
+        "test_malformed_relation_fails_before_mutation",
         "test_missing_granted_landwalk_consumer_mapping_mutant_is_killed",
-        "test_semantic_markers_and_unrepresented_labeled_body_stay_residual",
-        "test_static_label_dispatch_omission_mutant_is_killed",
-        "test_triggered_keyword_grant_labels_and_fragments_are_exact_and_fail_closed",
+        "test_ordinary_source_quote_rejects_missing_dependency_partial_child_and_omission",
+        "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
         "test_recipient_attachment_quantity_rejects_legacy_scope_and_open_queries",
         "test_recipient_quantity_counts_reciprocal_union_once_and_follows_control_phasing_reattachment",
-        "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays"
+        "test_relation_model_and_descriptor_fail_closed",
+        "test_semantic_markers_and_unrepresented_labeled_body_stay_residual",
+        "test_static_declaration_grant_dependencies_fail_closed",
+        "test_static_label_dispatch_omission_mutant_is_killed",
+        "test_static_query_and_attachment_declaration_grants_compile_closed",
+        "test_triggered_keyword_grant_labels_and_fragments_are_exact_and_fail_closed"
       ],
       "interaction_tests": [
-        "test_live_generic_equipment_effect_moves_detaches_and_tracks_control",
-        "test_target_departure_and_source_departure_end_effect_without_stale_identity",
-        "test_attached_subject_type_is_rechecked_before_modifier_layers",
-        "test_type_and_ability_removal_use_their_canonical_layers",
-        "test_shared_static_component_query_owns_removal_and_typed_grant",
-        "test_granted_activation_shares_offer_commit_lifetime_and_rollback",
-        "test_attached_granted_source_sacrifice_uses_recipient_and_lki_program",
-        "test_granted_mana_ability_is_recipient_bound_and_ends_on_departure",
-        "test_dynamic_quantities_use_source_controller_and_attached_exclusion",
-        "test_attached_fixed_ward_uses_current_fragment",
-        "test_aura_equipment_anthem_temporary_effect_and_draw_compose",
-        "test_exact_continuous_effects_compose_while_replacements_stay_residual",
-        "test_attached_characteristics_and_requirement_end_with_attachment",
         "test_actual_islandwalk_aura_cast_tracks_recipient_and_ends_on_source_departure",
+        "test_attached_characteristics_and_requirement_end_with_attachment",
+        "test_attached_fixed_ward_uses_current_fragment",
+        "test_attached_granted_source_sacrifice_uses_recipient_and_lki_program",
+        "test_attached_subject_type_is_rechecked_before_modifier_layers",
+        "test_aura_equipment_anthem_temporary_effect_and_draw_compose",
+        "test_dynamic_quantities_use_source_controller_and_attached_exclusion",
+        "test_exact_continuous_effects_compose_while_replacements_stay_residual",
+        "test_granted_activation_shares_offer_commit_lifetime_and_rollback",
+        "test_granted_mana_ability_is_recipient_bound_and_ends_on_departure",
+        "test_live_generic_equipment_effect_moves_detaches_and_tracks_control",
         "test_original_archangels_grant_independent_exalted_instances_and_replay",
         "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
+        "test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
+        "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
         "test_recipient_quantity_counts_reciprocal_union_once_and_follows_control_phasing_reattachment",
-        "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays"
+        "test_shared_static_component_query_owns_removal_and_typed_grant",
+        "test_target_departure_and_source_departure_end_effect_without_stale_identity",
+        "test_type_and_ability_removal_use_their_canonical_layers"
       ],
       "multiplayer_tests": [
         "test_multiple_sources_apply_independently_in_four_player_game",
         "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
+        "test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
         "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays"
       ],
       "privacy_tests": [
-        "test_projection_hides_relation_identity_and_replay_is_exact",
         "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
-        "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays"
+        "test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
+        "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
+        "test_projection_hides_relation_identity_and_replay_is_exact"
       ],
       "replay_tests": [
-        "test_projection_hides_relation_identity_and_replay_is_exact",
-        "test_relation_round_trip_is_canonical_and_legacy_shape_stays_stable",
-        "test_granted_triggers_preserve_multiplicity_and_replay",
         "test_actual_islandwalk_aura_cast_tracks_recipient_and_ends_on_source_departure",
-        "test_original_archangels_grant_independent_exalted_instances_and_replay",
         "test_granted_prowess_response_bounce_invalidates_old_recipient_and_replays",
-        "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays"
+        "test_granted_triggers_preserve_multiplicity_and_replay",
+        "test_original_archangels_grant_independent_exalted_instances_and_replay",
+        "test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
+        "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
+        "test_projection_hides_relation_identity_and_replay_is_exact",
+        "test_relation_round_trip_is_canonical_and_legacy_shape_stays_stable"
       ],
       "required_evidence": [
         "positive",
@@ -9765,24 +9878,94 @@
     },
     {
       "id": "permanent.regeneration.self_activation",
-      "version": 1,
-      "official_rules": ["506.4", "701.19", "701.19a", "701.19c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "506.4",
+        "701.19",
+        "701.19a",
+        "701.19c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile and execute one exact self-creature regeneration activation by creating an identity-pinned until-cleanup shield, then replace one represented effect or damage state-based destruction with shield consumption, tapping, damage removal, and canonical combat removal.",
-        "inputs": ["exact Regenerate this creature instruction", "compiled supported activation cost", "same phased-in battlefield source incarnation", "represented effect or lethal/deathtouch state-based destruction"],
-        "outputs": ["one public regeneration shield", "one replaced destruction event", "tapped permanent with no marked or Deathtouch damage", "canonical removal from combat", "exact command replay"],
-        "exclusions": ["static regeneration abilities", "targeted or noncreature self-regeneration grammar", "effects that prohibit regeneration", "affected-player ordering between regeneration and shield-counter replacements", "sacrifice, exile, zero-toughness, and other non-destruction zone changes", "destruction events outside the represented effect and damage state-based owners"]
+        "inputs": [
+          "exact Regenerate this creature instruction",
+          "compiled supported activation cost",
+          "same phased-in battlefield source incarnation",
+          "represented effect or lethal/deathtouch state-based destruction"
+        ],
+        "outputs": [
+          "one public regeneration shield",
+          "one replaced destruction event",
+          "tapped permanent with no marked or Deathtouch damage",
+          "canonical removal from combat",
+          "exact command replay"
+        ],
+        "exclusions": [
+          "static regeneration abilities",
+          "targeted or noncreature self-regeneration grammar",
+          "effects that prohibit regeneration",
+          "affected-player ordering between regeneration and shield-counter replacements",
+          "sacrifice, exile, zero-toughness, and other non-destruction zone changes",
+          "destruction events outside the represented effect and damage state-based owners"
+        ]
       },
-      "dependencies": ["permanent.destroy.effect", "permanent.destroy.state_based_damage"],
-      "implementation_components": ["quorune.compiler.regeneration_templates.SelfRegenerationEffectTemplate", "quorune.rules.node_capability_shapes.self_regeneration_node_capabilities", "quorune.semantic_runtime.regeneration_handlers.CreateRegenerationShieldHandler", "quorune.regeneration.create_regeneration_shield", "quorune.regeneration.apply_regeneration_replacement", "quorune.destruction.prepare_destructions", "quorune.destruction.commit_destruction_plan", "quorune.tap_state.set_permanent_tapped", "quorune.damage_results.clear_permanent_damage"],
-      "positive_tests": ["test_exact_self_regeneration_compiles_and_harvests_frontier", "test_activation_creates_public_shield_and_replays"],
-      "negative_tests": ["test_unsupported_regeneration_grammar_remains_residual", "test_regeneration_does_not_replace_sacrifice_exile_or_zero_toughness", "test_stale_and_competing_replacements_fail_before_mutation"],
-      "interaction_tests": ["test_regeneration_replaces_effect_and_state_based_destruction", "test_regeneration_taps_clears_damage_and_removes_from_combat", "test_regeneration_shields_expire_at_cleanup_and_zone_change"],
-      "multiplayer_tests": ["test_activation_creates_public_shield_and_replays"],
-      "privacy_tests": ["test_activation_creates_public_shield_and_replays"],
-      "replay_tests": ["test_activation_creates_public_shield_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "permanent.destroy.effect",
+        "permanent.destroy.state_based_damage"
+      ],
+      "implementation_components": [
+        "quorune.compiler.regeneration_templates.SelfRegenerationEffectTemplate",
+        "quorune.rules.node_capability_shapes.self_regeneration_node_capabilities",
+        "quorune.semantic_runtime.regeneration_handlers.CreateRegenerationShieldHandler",
+        "quorune.regeneration.create_regeneration_shield",
+        "quorune.regeneration.apply_regeneration_replacement",
+        "quorune.destruction.prepare_destructions",
+        "quorune.destruction.commit_destruction_plan",
+        "quorune.tap_state.set_permanent_tapped",
+        "quorune.damage_results.clear_permanent_damage"
+      ],
+      "positive_tests": [
+        "test_activation_creates_public_shield_and_replays",
+        "test_exact_self_regeneration_compiles_and_harvests_frontier",
+        "test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+        "test_self_permanent_regeneration_reuses_source_identity_without_a_target"
+      ],
+      "negative_tests": [
+        "test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+        "test_regeneration_does_not_replace_sacrifice_exile_or_zero_toughness",
+        "test_stale_and_competing_replacements_fail_before_mutation",
+        "test_unsupported_regeneration_grammar_remains_residual"
+      ],
+      "interaction_tests": [
+        "test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+        "test_regeneration_replaces_effect_and_state_based_destruction",
+        "test_regeneration_shields_expire_at_cleanup_and_zone_change",
+        "test_regeneration_taps_clears_damage_and_removes_from_combat"
+      ],
+      "multiplayer_tests": [
+        "test_activation_creates_public_shield_and_replays",
+        "test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays"
+      ],
+      "privacy_tests": [
+        "test_activation_creates_public_shield_and_replays"
+      ],
+      "replay_tests": [
+        "test_activation_creates_public_shield_and_replays",
+        "test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The exact node closes over both represented destruction causes; blocking either destruction owner prevents the regeneration CardProgram from becoming trusted.",
       "implementation_mutation_status": "killed",
@@ -15975,7 +16158,7 @@
     },
     {
       "id": "continuous.ability.fixed_public_state_grant",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "113.7a",
         "604.1",
@@ -16012,18 +16195,21 @@
         "continuous.characteristics.fixed_public_state"
       ],
       "implementation_components": [
-        "quorune.compiler.conditional_granted_ability_templates.conditional_quoted_ability_handler",
+        "quorune.card_programs.runtime.collect_card_program_continuous_effects",
+        "quorune.compiler.attached_granted_ability_nodes._ordinary_granted_inner",
         "quorune.compiler.attached_granted_ability_nodes.attached_granted_ability_plan",
-        "quorune.semantic_runtime.conditional_continuous.FixedPublicStateGrantedAbilityHandler",
-        "quorune.card_programs.runtime.collect_card_program_continuous_effects"
+        "quorune.compiler.conditional_granted_ability_templates.conditional_quoted_ability_handler",
+        "quorune.semantic_runtime.conditional_continuous.FixedPublicStateGrantedAbilityHandler"
       ],
       "positive_tests": [
+        "test_ordinary_source_enter_and_death_quotes_compile_the_same_inner_binding",
         "test_original_grant_carriers_are_capability_bound",
         "test_printed_conditional_activation_ends_without_erasing_stack",
         "test_printed_conditional_granted_hand_choice_is_private_and_persists"
       ],
       "negative_tests": [
         "test_conditional_grant_schema_and_dependencies_fail_closed",
+        "test_ordinary_source_quote_rejects_missing_dependency_partial_child_and_omission",
         "test_printed_conditional_activation_ends_without_erasing_stack"
       ],
       "interaction_tests": [

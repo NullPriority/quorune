@@ -1422,7 +1422,8 @@
         "test_continuous_effect_components",
         "test_fixed_attachment_actions",
         "test_fixed_query_quoted_ability_grants",
-        "test_typed_ability_fragments"
+        "test_typed_ability_fragments",
+        "test_fixed_public_state_characteristics"
       ]
     },
     {
@@ -3639,7 +3640,8 @@
         "test_regeneration_rules",
         "test_fixed_counter_event_triggers",
         "test_targeted_destruction_effect_clauses",
-        "test_oracle_corpus_examples"
+        "test_oracle_corpus_examples",
+        "test_fixed_public_state_characteristics"
       ]
     },
     {

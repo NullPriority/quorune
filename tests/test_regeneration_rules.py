@@ -91,6 +91,16 @@ def focused_card_database(directory: str) -> CardDatabase:
 
 
 class RegenerationCompilerTests(unittest.TestCase):
+    def test_self_permanent_regeneration_reuses_source_identity_without_a_target(self):
+        text='{2}: Regenerate this permanent.'
+        record=replace(self.record,oracle_text=text)
+        ir=compile_oracle_card(record,capability_registry=self.capabilities,capability_profile='commander_review')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        node=ir.faces[0].nodes[0]
+        self.assertEqual(({'op':'regenerate','card':'$source.zone_object'},),node.effects)
+        self.assertIsNone(node.target_schema)
+        self.assertEqual(('permanent.regeneration.self_activation',),node.capability_dependencies)
+
     @classmethod
     def setUpClass(cls):
         cls.capabilities = load_default_capability_registry()
@@ -296,7 +306,7 @@ class RegenerationCompilerTests(unittest.TestCase):
     def test_unsupported_regeneration_grammar_remains_residual(self):
         variants = (
             "{B}: Regenerate this creature",
-            "{B}: Regenerate this permanent.",
+            "{B}: Regenerate that permanent.",
             "{B}: Regenerate another creature.",
             "{B}: Regenerate target Elf with power equal to the number of cards in your hand.",
             "{B}: Regenerate two target creatures.",

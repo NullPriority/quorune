@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "46f4b0bd568e3ea4538dc23f1a613823176b407bd5718666e92c108a7e443b80",
-  "declaration_source_fingerprint": "481a38d07890d0d77302e5322081aefcdda6c6a45704938e1af1fc5391c3121a",
+  "registry_fingerprint": "d3510ef82983ca85b0c444cd358a51d71eb67cbf522d76a3fe95c71450795cbc",
+  "declaration_source_fingerprint": "2eb42e21c5341265c0c6e6391a1bbf4f88b3731414634f4a02fd0e885fcb46c5",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -30510,6 +30510,25 @@
     {
       "capability_id": "continuous.ability.fixed_public_state_grant",
       "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantCompilerTests.test_ordinary_source_quote_rejects_missing_dependency_partial_child_and_omission",
+      "official_rule_ids": [
+        "113.7a",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary-source quoted children reuse complete standalone trigger binding, preserve strict whole-program closure, reject partial children and missing dependencies, and kill omitted fallback; fixed source-permanent regeneration uses the existing incarnation-pinned shield."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_public_state_grant",
+      "evidence_class": "mutation",
       "test_id": "tests.test_typed_grant_carriers.TypedGrantCarrierTests.test_conditional_grant_compiler_mutation_is_killed",
       "official_rule_ids": [
         "113.7a",
@@ -30525,6 +30544,25 @@
         "commander_review"
       ],
       "applicability_note": "Grant one independently compiled typed activation, fixed-output mana ability or trigger while a closed source or attached-object public-state condition holds."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_public_state_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantCompilerTests.test_ordinary_source_quote_rejects_missing_dependency_partial_child_and_omission",
+      "official_rule_ids": [
+        "113.7a",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary-source quoted children reuse complete standalone trigger binding, preserve strict whole-program closure, reject partial children and missing dependencies, and kill omitted fallback; fixed source-permanent regeneration uses the existing incarnation-pinned shield."
     },
     {
       "capability_id": "continuous.ability.fixed_public_state_grant",
@@ -30563,6 +30601,25 @@
         "commander_review"
       ],
       "applicability_note": "Grant one independently compiled typed activation, fixed-output mana ability or trigger while a closed source or attached-object public-state condition holds."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_public_state_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantCompilerTests.test_ordinary_source_enter_and_death_quotes_compile_the_same_inner_binding",
+      "official_rule_ids": [
+        "113.7a",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary-source quoted children reuse complete standalone trigger binding, preserve strict whole-program closure, reject partial children and missing dependencies, and kill omitted fallback; fixed source-permanent regeneration uses the existing incarnation-pinned shield."
     },
     {
       "capability_id": "continuous.ability.fixed_public_state_grant",
@@ -30795,6 +30852,44 @@
     {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Clot Sliver grants a source-permanent shield to a foreign Sliver, rejects wrong principals and nongrant recipients, then replaces actual Murder destruction on the recipient with full replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Dormant Sliver grants entry draws to itself and a foreign controller flash recipient, preserving private consequences and full pre-action replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_subtype_union_recomputes_after_layer_four_and_excludes_source",
       "official_rule_ids": [
         "604.1",
@@ -30871,6 +30966,44 @@
     {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Clot Sliver grants a source-permanent shield to a foreign Sliver, rejects wrong principals and nongrant recipients, then replaces actual Murder destruction on the recipient with full replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Dormant Sliver grants entry draws to itself and a foreign controller flash recipient, preserving private consequences and full pre-action replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantRuntimeTests.test_global_granted_triggers_preserve_multiplicity_apnap_and_privacy",
       "official_rule_ids": [
         "604.1",
@@ -30924,6 +31057,25 @@
         "commander_review"
       ],
       "applicability_note": "Block either the outer layer-6 grant or an independently exact inner behavior owner and reject exact admission."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantCompilerTests.test_ordinary_source_quote_rejects_missing_dependency_partial_child_and_omission",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary-source quoted children reuse complete standalone trigger binding, preserve strict whole-program closure, reject partial children and missing dependencies, and kill omitted fallback; fixed source-permanent regeneration uses the existing incarnation-pinned shield."
     },
     {
       "capability_id": "continuous.ability.fixed_query_grant",
@@ -30985,6 +31137,25 @@
     {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Clot Sliver grants a source-permanent shield to a foreign Sliver, rejects wrong principals and nongrant recipients, then replaces actual Murder destruction on the recipient with full replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_query_dependency_fails_closed_across_consumers",
       "official_rule_ids": [
         "604.1",
@@ -31019,6 +31190,25 @@
         "commander_review"
       ],
       "applicability_note": "Keep multiple quotes, static prose, external or named sources, hidden recipients, and unsupported activation costs residual."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantCompilerTests.test_ordinary_source_quote_rejects_missing_dependency_partial_child_and_omission",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary-source quoted children reuse complete standalone trigger binding, preserve strict whole-program closure, reject partial children and missing dependencies, and kill omitted fallback; fixed source-permanent regeneration uses the existing incarnation-pinned shield."
     },
     {
       "capability_id": "continuous.ability.fixed_query_grant",
@@ -31061,6 +31251,44 @@
     {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Clot Sliver grants a source-permanent shield to a foreign Sliver, rejects wrong principals and nongrant recipients, then replaces actual Murder destruction on the recipient with full replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Dormant Sliver grants entry draws to itself and a foreign controller flash recipient, preserving private consequences and full pre-action replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_set_query_fans_into_layers_and_resolution",
       "official_rule_ids": [
         "604.1",
@@ -31095,6 +31323,44 @@
         "commander_review"
       ],
       "applicability_note": "Compile one closed public query shell and independently exact activated, fixed-output mana, or triggered inner program into typed source-spanned nodes."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantCompilerTests.test_ordinary_source_enter_and_death_quotes_compile_the_same_inner_binding",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary-source quoted children reuse complete standalone trigger binding, preserve strict whole-program closure, reject partial children and missing dependencies, and kill omitted fallback; fixed source-permanent regeneration uses the existing incarnation-pinned shield."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Dormant Sliver grants entry draws to itself and a foreign controller flash recipient, preserving private consequences and full pre-action replay."
     },
     {
       "capability_id": "continuous.ability.fixed_query_grant",
@@ -31133,6 +31399,44 @@
         "commander_review"
       ],
       "applicability_note": "Round-trip the complete typed continuous effect and its fixed granted fragment without changing canonical identity."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Clot Sliver grants a source-permanent shield to a foreign Sliver, rejects wrong principals and nongrant recipients, then replaces actual Murder destruction on the recipient with full replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Dormant Sliver grants entry draws to itself and a foreign controller flash recipient, preserving private consequences and full pre-action replay."
     },
     {
       "capability_id": "continuous.ability.fixed_query_grant",
@@ -34299,6 +34603,29 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
       "official_rule_ids": [
         "301.5",
@@ -34387,6 +34714,29 @@
         "commander_review"
       ],
       "applicability_note": "Stack attached sources controlled by different seats in a four-player state."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -34502,6 +34852,29 @@
         "commander_review"
       ],
       "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantCompilerTests.test_ordinary_source_quote_rejects_missing_dependency_partial_child_and_omission",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary-source quoted children reuse complete standalone trigger binding, preserve strict whole-program closure, reject partial children and missing dependencies, and kill omitted fallback; fixed source-permanent regeneration uses the existing incarnation-pinned shield."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -34735,6 +35108,29 @@
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantCompilerTests.test_ordinary_source_quote_rejects_missing_dependency_partial_child_and_omission",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary-source quoted children reuse complete standalone trigger binding, preserve strict whole-program closure, reject partial children and missing dependencies, and kill omitted fallback; fixed source-permanent regeneration uses the existing incarnation-pinned shield."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "positive",
       "test_id": "tests.test_attached_static_characteristics.AttachedContinuousCompilerTests.test_compiler_lowers_attached_quoted_abilities_to_typed_programs",
       "official_rule_ids": [
@@ -34920,6 +35316,29 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
       "official_rule_ids": [
         "301.5",
@@ -34965,6 +35384,29 @@
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantCompilerTests.test_ordinary_source_enter_and_death_quotes_compile_the_same_inner_binding",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary-source quoted children reuse complete standalone trigger binding, preserve strict whole-program closure, reject partial children and missing dependencies, and kill omitted fallback; fixed source-permanent regeneration uses the existing incarnation-pinned shield."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "privacy",
       "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_projection_hides_relation_identity_and_replay_is_exact",
       "official_rule_ids": [
@@ -34985,6 +35427,29 @@
         "commander_review"
       ],
       "applicability_note": "Project public characteristics without physical or logical relation IDs."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -35100,6 +35565,29 @@
         "commander_review"
       ],
       "applicability_note": "Replay a timestamped attach command and its characteristic result exactly."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -80120,6 +80608,23 @@
     {
       "capability_id": "permanent.regeneration.self_activation",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "official_rule_ids": [
+        "506.4",
+        "701.19",
+        "701.19a",
+        "701.19c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Clot Sliver grants a source-permanent shield to a foreign Sliver, rejects wrong principals and nongrant recipients, then replaces actual Murder destruction on the recipient with full replay."
+    },
+    {
+      "capability_id": "permanent.regeneration.self_activation",
+      "evidence_class": "interaction",
       "test_id": "tests.test_regeneration_rules.RegenerationRuntimeTests.test_regeneration_replaces_effect_and_state_based_destruction",
       "official_rule_ids": [
         "506.4",
@@ -80167,6 +80672,23 @@
         "commander_review"
       ],
       "applicability_note": "Apply tapping, damage removal, Deathtouch-marker removal, and canonical combat removal as the single replacement result."
+    },
+    {
+      "capability_id": "permanent.regeneration.self_activation",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "official_rule_ids": [
+        "506.4",
+        "701.19",
+        "701.19a",
+        "701.19c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Clot Sliver grants a source-permanent shield to a foreign Sliver, rejects wrong principals and nongrant recipients, then replaces actual Murder destruction on the recipient with full replay."
     },
     {
       "capability_id": "permanent.regeneration.self_activation",
@@ -80222,6 +80744,23 @@
     {
       "capability_id": "permanent.regeneration.self_activation",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "official_rule_ids": [
+        "506.4",
+        "701.19",
+        "701.19a",
+        "701.19c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Clot Sliver grants a source-permanent shield to a foreign Sliver, rejects wrong principals and nongrant recipients, then replaces actual Murder destruction on the recipient with full replay."
+    },
+    {
+      "capability_id": "permanent.regeneration.self_activation",
+      "evidence_class": "negative",
       "test_id": "tests.test_regeneration_rules.RegenerationCompilerTests.test_unsupported_regeneration_grammar_remains_residual",
       "official_rule_ids": [
         "506.4",
@@ -80273,6 +80812,23 @@
     {
       "capability_id": "permanent.regeneration.self_activation",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "official_rule_ids": [
+        "506.4",
+        "701.19",
+        "701.19a",
+        "701.19c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Clot Sliver grants a source-permanent shield to a foreign Sliver, rejects wrong principals and nongrant recipients, then replaces actual Murder destruction on the recipient with full replay."
+    },
+    {
+      "capability_id": "permanent.regeneration.self_activation",
+      "evidence_class": "positive",
       "test_id": "tests.test_regeneration_rules.RegenerationCompilerTests.test_exact_self_regeneration_compiles_and_harvests_frontier",
       "official_rule_ids": [
         "506.4",
@@ -80286,6 +80842,23 @@
         "commander_review"
       ],
       "applicability_note": "Lower the exact self-creature instruction with its compiled cost and source-zone-object identity into one trusted capability-closed program."
+    },
+    {
+      "capability_id": "permanent.regeneration.self_activation",
+      "evidence_class": "positive",
+      "test_id": "tests.test_regeneration_rules.RegenerationCompilerTests.test_self_permanent_regeneration_reuses_source_identity_without_a_target",
+      "official_rule_ids": [
+        "506.4",
+        "701.19",
+        "701.19a",
+        "701.19c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary-source quoted children reuse complete standalone trigger binding, preserve strict whole-program closure, reject partial children and missing dependencies, and kill omitted fallback; fixed source-permanent regeneration uses the existing incarnation-pinned shield."
     },
     {
       "capability_id": "permanent.regeneration.self_activation",
@@ -80320,6 +80893,23 @@
         "commander_review"
       ],
       "applicability_note": "Project the public shield count identically to every seat without adding hidden-zone or decision data."
+    },
+    {
+      "capability_id": "permanent.regeneration.self_activation",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "official_rule_ids": [
+        "506.4",
+        "701.19",
+        "701.19a",
+        "701.19c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Clot Sliver grants a source-permanent shield to a foreign Sliver, rejects wrong principals and nongrant recipients, then replaces actual Murder destruction on the recipient with full replay."
     },
     {
       "capability_id": "permanent.regeneration.self_activation",
@@ -126727,5 +127317,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "c3a28998addaad50e0ff7811e3e3f0241febe28174e3fb7057dcd95c648ad549"
+  "fingerprint": "7208f918d67b292e753dd088332fdab0242e6e7bdceb82ec0bae3737a10de927"
 }
