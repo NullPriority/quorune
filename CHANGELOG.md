@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Register added public-characteristic fixture cards per session instead of
+  compiling unused fixture records, preserving existing action and replay checks.
+
 - Count current tapped and untapped battlefield objects through the shared
   quantity query across characteristics and effect results.
 

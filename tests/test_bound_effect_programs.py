@@ -9,13 +9,14 @@ this grammar. A suspended replacement resumes after already committed effects.
 """
 
 from copy import deepcopy
-from dataclasses import replace
+from dataclasses import asdict, replace
 from functools import partial
 import json
 from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
+from weakref import WeakKeyDictionary
 
 from common import ROOT, keep_all
 from quorune.carddb import CardDatabase, CardRecord
@@ -29,6 +30,7 @@ from quorune.continuous_effect_state import expire_end_of_turn_continuous_effect
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.model import CardInstance, GameConfig
 from quorune.oracle_ir import _reviewed_atomic_effect_template, compile_oracle_card, register_generated_programs
+from quorune.util import stable_json
 from quorune.record import authoritative_state_hash, checkpoint_envelope, replay_record
 from quorune.rules.bound_effect_program_shapes import bound_effect_program_node_capabilities
 from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
@@ -374,15 +376,33 @@ class BoundEffectProgramRuntimeTests(unittest.TestCase):
         engine.state.pending_decision = None
         engine.state.priority_player = None
         engine.state.priority_passes = []
-        records = tuple(self.db.iter_cards())
-        register_generated_programs(self.db, engine.semantics, records, trust_level="provisional",
-            capability_registry=self.registry, capability_profile="commander_review",
-            promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
-            promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
+        if not getattr(self, "register_fixture_cards_on_add", False):
+            records = tuple(self.db.iter_cards())
+            register_generated_programs(self.db, engine.semantics, records, trust_level="provisional",
+                capability_registry=self.registry, capability_profile="commander_review",
+                promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+                promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
         return session
 
     def add(self, engine, name, *, seat="A", zone="battlefield", ref=None):
         row = self.db.lookup(name)
+        if getattr(self, "register_fixture_cards_on_add", False):
+            if not hasattr(self, "_fixture_card_registrations"):
+                self._fixture_card_registrations = WeakKeyDictionary()
+            registered = self._fixture_card_registrations.setdefault(engine.semantics, {})
+            identity = stable_json({
+                "record": asdict(row), "rulings": [asdict(ruling) for ruling in self.db.rulings(row)],
+                "capabilities": self.registry.fingerprint, "evidence": self.registry.evidence_fingerprint,
+            })
+            current_programs = stable_json([program.to_dict()
+                for program in engine.semantics.programs_for_oracle(row.oracle_id)])
+            if registered.get(row.oracle_id) != (identity, current_programs):
+                register_generated_programs(self.db, engine.semantics, (row,), trust_level="provisional",
+                    capability_registry=self.registry, capability_profile="commander_review",
+                    promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+                    promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
+                registered[row.oracle_id] = (identity, stable_json([program.to_dict()
+                    for program in engine.semantics.programs_for_oracle(row.oracle_id)]))
         key = ref or name.lower().replace(" ", "-")
         card = CardInstance(object_id="fixture:"+key, ref=key, oracle_id=row.oracle_id,
             printed_name=row.name, owner=seat, controller=seat, zone=zone,

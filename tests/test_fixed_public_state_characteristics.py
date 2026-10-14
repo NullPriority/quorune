@@ -2957,6 +2957,91 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+
+    def test_fixture_addition_registers_complete_card_once_per_isolated_session(self):
+        from unittest.mock import patch
+        from quorune.oracle_ir import register_generated_programs
+
+        registration_calls = []
+
+        def observed_registration(db, semantics, records, **kwargs):
+            records = tuple(records)
+            registration_calls.append(tuple(record.oracle_id for record in records))
+            return register_generated_programs(db, semantics, records, **kwargs)
+
+        with patch.object(self._bound, 'register_generated_programs', observed_registration):
+            first = self.session(3633401)
+            source_record = self.db.lookup('Heritage Druid')
+            unrelated_record = self.db.lookup('Master of Waves')
+            self.assertEqual([], registration_calls)
+            self.assertFalse(first.engine.semantics.programs_for_oracle(source_record.oracle_id))
+            self.assertFalse(first.engine.semantics.programs_for_oracle(unrelated_record.oracle_id))
+            source = self.add(first.engine, 'Heritage Druid', ref='registration-first')
+            self.assertEqual([(source_record.oracle_id,)], registration_calls)
+            self.assertTrue(first.engine.semantics.programs_for_oracle(source.oracle_id))
+            self.assertTrue(all(first.engine.semantic_program_is_current_trusted(program)
+                                for program in first.engine.semantics.programs_for_oracle(source.oracle_id)))
+            self.assertTrue(bind_card_program_runtime(
+                first.engine.semantics.card_program_for_oracle(source.oracle_id),
+                capability_registry=self.registry, profile='commander_review',
+            )['strict_capability_ready'])
+            self.assertFalse(first.engine.semantics.programs_for_oracle(unrelated_record.oracle_id))
+            self.add(first.engine, 'Heritage Druid', seat='B', ref='registration-second')
+            self.assertEqual(1, len(registration_calls))
+            second = self.session(3633402)
+            self.assertIsNot(first.engine.semantics, second.engine.semantics)
+            self.assertFalse(second.engine.semantics.programs_for_oracle(source_record.oracle_id))
+            self.add(second.engine, 'Heritage Druid', ref='registration-other-session')
+            self.assertEqual([(source_record.oracle_id,)] * 2, registration_calls)
+            self.assertNotEqual(source.object_id, 'fixture:registration-other-session')
+
+    def test_fixture_card_registration_omission_keeps_untrusted_actions_unavailable(self):
+        from unittest.mock import patch
+        from quorune.rules.activation.query import activated_abilities
+
+        session = self.session(3633403)
+        with patch.object(self._bound, 'register_generated_programs', return_value={}):
+            source = self.add(session.engine, 'Heritage Druid', ref='registration-omitted')
+        for index in range(2):
+            self.add(session.engine, 'Generic Selected Tap Elf', ref=f'registration-elf-{index}')
+        self.assertFalse(session.engine.semantics.programs_for_oracle(source.oracle_id))
+        abilities = activated_abilities(session.engine, source)
+        self.assertFalse(abilities)
+        self.assertFalse(any(action['id'].startswith(f'activate:{source.ref}:')
+                             for action in session.engine._priority_action_hints('A')['actions']))
+
+    def test_fixture_registration_rechecks_changed_inputs_and_failed_attempts(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.carddb import Ruling
+        from quorune.oracle_ir import register_generated_programs
+
+        session = self.session(3633404)
+        source = self.add(session.engine, 'Heritage Druid', ref='registration-input-source')
+        record = self.db.lookup('Heritage Druid')
+        original_rulings = tuple(self.db.rulings(record))
+        changed = replace(record, oracle_text=record.oracle_text + '\nUnrepresented fixture restriction.')
+        with patch.object(self.db, 'lookup', return_value=changed), patch.object(
+            self._bound, 'register_generated_programs', side_effect=RuntimeError('changed record registration'),
+        ) as registration:
+            with self.assertRaisesRegex(RuntimeError, 'changed record registration'):
+                self.add(session.engine, 'Heritage Druid', ref='registration-changed-input')
+            registration.assert_called_once()
+        with patch.object(self.db, 'rulings', return_value=(*original_rulings,
+            Ruling(oracle_id=record.oracle_id, published_at='2026-10-14', source='fixture', comment='changed'))):
+            with patch.object(self._bound, 'register_generated_programs',
+                              side_effect=RuntimeError('changed rulings registration')) as registration:
+                with self.assertRaisesRegex(RuntimeError, 'changed rulings registration'):
+                    self.add(session.engine, 'Heritage Druid', ref='registration-changed-ruling')
+                registration.assert_called_once()
+        for program in tuple(session.engine.semantics.programs_for_oracle(source.oracle_id)):
+            session.engine.semantics.remove(program.key)
+        with patch.object(self._bound, 'register_generated_programs', wraps=register_generated_programs) as registration:
+            self.add(session.engine, 'Heritage Druid', ref='registration-after-removal')
+            registration.assert_called_once()
+        self.assertTrue(session.engine.semantics.programs_for_oracle(source.oracle_id))
+
     def test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay(self):
         session=self.session(3633301);engine=session.engine
         source=self.add(engine,'Copperhoof Vorrac',ref='tapped-quantity-vorrac')

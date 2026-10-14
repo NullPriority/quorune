@@ -29,6 +29,13 @@ output parity and edited, missing, malformed, and unreadable input boundaries
 before relying on an optimization. Keep exact-source certification, complete
 test inventory, and the checked concurrency envelope intact.
 
+For runtime fixtures with a large card database, profile registration separately
+from actual actions and replay. The bound-effect helper's optional per-card
+registration compiles each added complete record through the same trusted
+registration path and retains fresh session state. Enable it only for measured
+consumers and verify original-card composition, missing registration, and session
+isolation before relying on the timing change.
+
 Public-reference lookup resolves identity before the fallback effective-name
 query. Profile the same real-action and replay witness before and after a
 lookup change, and retain wrong-zone, wrong-owner, wrong-controller, duplicate
