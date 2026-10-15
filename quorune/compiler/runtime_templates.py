@@ -172,7 +172,8 @@ def _source_permanent_participation_template(
             compiled=self_zone_cast,
             kind="static_ability",
             event="cast.zone.permission",
-            active_zone="graveyard",
+            active_zone='all' if self_zone_cast[1].get('handler_id') == 'permission.cast.self-public-zones.v1' else 'graveyard',
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,) if self_zone_cast[1].get('handler_id') == 'permission.cast.self-public-zones.v1' else (),
             dependency_reason=(
                 "self-zone casting permission requires its closed typed "
                 "runtime capability"

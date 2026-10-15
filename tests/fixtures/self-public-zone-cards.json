@@ -1,0 +1,266 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "focused_original_and_synthetic_rules_cards",
+  "source": "Pinned Squee/Misthollow/Mountain Oracle/rulings and explicit synthetic controls",
+  "cards": [
+    {
+      "oracle_id": "481fb71a-11b9-462e-a4da-ca35ffd1bd22",
+      "name": "Squee, the Immortal",
+      "mana_cost": "{1}{R}{R}",
+      "type_line": "Legendary Creature \u2014 Goblin",
+      "oracle_text": "You may cast this card from your graveyard or from exile.",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2022-04-29",
+      "cmc": 3.0,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a990e744-bfc4-435d-aef6-6256ac10f5a6",
+      "name": "Misthollow Griffin",
+      "mana_cost": "{2}{U}{U}",
+      "type_line": "Creature \u2014 Griffin",
+      "oracle_text": "Flying\nYou may cast this card from exile.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2012-05-04",
+      "cmc": 4.0,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "name": "Mountain",
+      "mana_cost": "",
+      "type_line": "Basic Land \u2014 Mountain",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2026-11-13",
+      "cmc": 0.0,
+      "colors": [],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "R"
+      ],
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "621bc39b-5636-477c-b2dc-751ea13f6101",
+      "name": "Generic Public Zone Destroy",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Instant",
+      "oracle_text": "Destroy target creature.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "621bc39b-5636-477c-b2dc-751ea13f6102",
+      "name": "Generic Public Zone Exile",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Instant",
+      "oracle_text": "Exile target creature.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "621bc39b-5636-477c-b2dc-751ea13f6103",
+      "name": "Generic Incomplete Public Zone Caster",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Creature \u2014 Human",
+      "oracle_text": "You may cast this card from exile.\nThis creature has an unrepresented material ability.",
+      "power": "2",
+      "toughness": "2",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "621bc39b-5636-477c-b2dc-751ea13f6104",
+      "name": "Generic Speed Public Zone Caster",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Creature \u2014 Human",
+      "oracle_text": "Max speed \u2014 You may cast this card from your graveyard.",
+      "power": "2",
+      "toughness": "2",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Max speed"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "481fb71a-11b9-462e-a4da-ca35ffd1bd22",
+      "published_at": "2018-04-27",
+      "source": "wotc",
+      "comment": "You must follow the normal timing permissions and restrictions and pay its cost to cast Squee from your graveyard or from exile."
+    },
+    {
+      "oracle_id": "481fb71a-11b9-462e-a4da-ca35ffd1bd22",
+      "published_at": "2018-04-27",
+      "source": "wotc",
+      "comment": "Squee's ability doesn't prevent you from casting Squee from any other zone."
+    },
+    {
+      "oracle_id": "a990e744-bfc4-435d-aef6-6256ac10f5a6",
+      "published_at": "2012-05-01",
+      "source": "wotc",
+      "comment": "Misthollow Griffin's ability doesn't change when you can cast creature spells: when you have priority during your main phase when the stack is empty."
+    },
+    {
+      "oracle_id": "a990e744-bfc4-435d-aef6-6256ac10f5a6",
+      "published_at": "2012-05-01",
+      "source": "wotc",
+      "comment": "You must still pay Misthollow Griffin's mana cost when you cast it from exile."
+    },
+    {
+      "oracle_id": "a990e744-bfc4-435d-aef6-6256ac10f5a6",
+      "published_at": "2012-05-01",
+      "source": "wotc",
+      "comment": "Misthollow Griffin doesn't have an ability that exiles itself. Some other effect will be needed to get the card into exile."
+    },
+    {
+      "oracle_id": "a990e744-bfc4-435d-aef6-6256ac10f5a6",
+      "published_at": "2012-05-01",
+      "source": "wotc",
+      "comment": "Misthollow Griffin can also be cast from a player's hand."
+    }
+  ]
+}

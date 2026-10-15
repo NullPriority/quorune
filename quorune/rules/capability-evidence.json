@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "018aa32507cee3a91293f24bf2d9f89e08be012ee50799a46132d5d455de2dd1",
-  "declaration_source_fingerprint": "6199c993df347f3e658db2db9e54f98e37d0cd3c88feb74c232c587f06697f6b",
+  "registry_fingerprint": "42d14e9184d3e839a4d053a7a9556b185ea6370b9a256ab7081d318a174bcb9e",
+  "declaration_source_fingerprint": "ef9ede1377dd3cd87554d33db7bb1ad5f3f33d7e4e520425e0a56b78e0c46d2b",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -19329,6 +19329,321 @@
         "commander_review"
       ],
       "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "casting.zone.self_public_repeatable",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_public_zone_casting.SelfPublicZoneRuntimeTests.test_actual_exile_permission_retains_timing_owner_visibility_and_complete_admission",
+      "official_rule_ids": [
+        "113.6f",
+        "117.1a",
+        "400.7",
+        "601.2a",
+        "601.2f",
+        "601.2h",
+        "601.3",
+        "601.3f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Misthollow casting and boundary commands preserve normal timing, owner, face-down visibility and incomplete-program rejection with authoritative rollback and pre-action replay."
+    },
+    {
+      "capability_id": "casting.zone.self_public_repeatable",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_public_zone_casting.SelfPublicZoneRuntimeTests.test_actual_squee_hand_graveyard_exile_and_owner_after_foreign_control_replay",
+      "official_rule_ids": [
+        "113.6f",
+        "117.1a",
+        "400.7",
+        "601.2a",
+        "601.2f",
+        "601.2h",
+        "601.3",
+        "601.3f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Squee hand/graveyard/exile casts pay normal costs and retain owner authority after foreign control and departure; four-seat projection, rollback, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "casting.zone.self_public_repeatable",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_public_zone_casting.SelfPublicZoneRuntimeTests.test_actual_squee_hand_graveyard_exile_and_owner_after_foreign_control_replay",
+      "official_rule_ids": [
+        "113.6f",
+        "117.1a",
+        "400.7",
+        "601.2a",
+        "601.2f",
+        "601.2h",
+        "601.3",
+        "601.3f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Squee hand/graveyard/exile casts pay normal costs and retain owner authority after foreign control and departure; four-seat projection, rollback, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "casting.zone.self_public_repeatable",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_self_public_zone_casting.SelfPublicZoneCompilerTests.test_permission_codec_rejects_open_zone_or_admission_authority",
+      "official_rule_ids": [
+        "113.6f",
+        "117.1a",
+        "400.7",
+        "601.2a",
+        "601.2f",
+        "601.2h",
+        "601.3",
+        "601.3f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Executed omitted-lowerer mutation fails the canonical declared-zone assertion (one failure, no errors)."
+    },
+    {
+      "capability_id": "casting.zone.self_public_repeatable",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_public_zone_casting.SelfPublicZoneCompilerTests.test_permission_codec_rejects_open_zone_or_admission_authority",
+      "official_rule_ids": [
+        "113.6f",
+        "117.1a",
+        "400.7",
+        "601.2a",
+        "601.2f",
+        "601.2h",
+        "601.3",
+        "601.3f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Codec rejects unsupported, duplicate or noncanonical zones, altered identity, missing complete admission and external payer authority."
+    },
+    {
+      "capability_id": "casting.zone.self_public_repeatable",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_public_zone_casting.SelfPublicZoneCompilerTests.test_restriction_cost_or_condition_tail_and_withdrawn_authority_fail_closed",
+      "official_rule_ids": [
+        "113.6f",
+        "117.1a",
+        "400.7",
+        "601.2a",
+        "601.2f",
+        "601.2h",
+        "601.3",
+        "601.3f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Unrepresented conditions, restrictions, costs, other-card subjects and withdrawn fine authority prevent exact compilation."
+    },
+    {
+      "capability_id": "casting.zone.self_public_repeatable",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_public_zone_casting.SelfPublicZoneRuntimeTests.test_actual_exile_permission_retains_timing_owner_visibility_and_complete_admission",
+      "official_rule_ids": [
+        "113.6f",
+        "117.1a",
+        "400.7",
+        "601.2a",
+        "601.2f",
+        "601.2h",
+        "601.3",
+        "601.3f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Misthollow casting and boundary commands preserve normal timing, owner, face-down visibility and incomplete-program rejection with authoritative rollback and pre-action replay."
+    },
+    {
+      "capability_id": "casting.zone.self_public_repeatable",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_public_zone_casting.SelfPublicZoneRuntimeTests.test_wrong_source_face_or_missing_whole_program_certificate_supplies_no_permission",
+      "official_rule_ids": [
+        "113.6f",
+        "117.1a",
+        "400.7",
+        "601.2a",
+        "601.2f",
+        "601.2h",
+        "601.3",
+        "601.3f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Wrong source face or unavailable complete-program certificate supplies no intrinsic source-zone authority."
+    },
+    {
+      "capability_id": "casting.zone.self_public_repeatable",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_public_zone_casting.SelfPublicZoneCompilerTests.test_fixed_zone_declarations_are_complete_and_source_face_bound",
+      "official_rule_ids": [
+        "113.6f",
+        "117.1a",
+        "400.7",
+        "601.2a",
+        "601.2f",
+        "601.2h",
+        "601.3",
+        "601.3f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete fixed zone sets retain the source face, explicit whole-program admission and ordinary casting authority."
+    },
+    {
+      "capability_id": "casting.zone.self_public_repeatable",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_public_zone_casting.SelfPublicZoneRuntimeTests.test_actual_exile_permission_retains_timing_owner_visibility_and_complete_admission",
+      "official_rule_ids": [
+        "113.6f",
+        "117.1a",
+        "400.7",
+        "601.2a",
+        "601.2f",
+        "601.2h",
+        "601.3",
+        "601.3f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Misthollow casting and boundary commands preserve normal timing, owner, face-down visibility and incomplete-program rejection with authoritative rollback and pre-action replay."
+    },
+    {
+      "capability_id": "casting.zone.self_public_repeatable",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_public_zone_casting.SelfPublicZoneRuntimeTests.test_actual_squee_hand_graveyard_exile_and_owner_after_foreign_control_replay",
+      "official_rule_ids": [
+        "113.6f",
+        "117.1a",
+        "400.7",
+        "601.2a",
+        "601.2f",
+        "601.2h",
+        "601.3",
+        "601.3f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Squee hand/graveyard/exile casts pay normal costs and retain owner authority after foreign control and departure; four-seat projection, rollback, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "casting.zone.self_public_repeatable",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_public_zone_casting.SelfPublicZoneRuntimeTests.test_actual_exile_permission_retains_timing_owner_visibility_and_complete_admission",
+      "official_rule_ids": [
+        "113.6f",
+        "117.1a",
+        "400.7",
+        "601.2a",
+        "601.2f",
+        "601.2h",
+        "601.3",
+        "601.3f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Misthollow casting and boundary commands preserve normal timing, owner, face-down visibility and incomplete-program rejection with authoritative rollback and pre-action replay."
+    },
+    {
+      "capability_id": "casting.zone.self_public_repeatable",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_public_zone_casting.SelfPublicZoneRuntimeTests.test_actual_squee_hand_graveyard_exile_and_owner_after_foreign_control_replay",
+      "official_rule_ids": [
+        "113.6f",
+        "117.1a",
+        "400.7",
+        "601.2a",
+        "601.2f",
+        "601.2h",
+        "601.3",
+        "601.3f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Squee hand/graveyard/exile casts pay normal costs and retain owner authority after foreign control and departure; four-seat projection, rollback, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "casting.zone.self_public_repeatable",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_public_zone_casting.SelfPublicZoneRuntimeTests.test_actual_exile_permission_retains_timing_owner_visibility_and_complete_admission",
+      "official_rule_ids": [
+        "113.6f",
+        "117.1a",
+        "400.7",
+        "601.2a",
+        "601.2f",
+        "601.2h",
+        "601.3",
+        "601.3f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Misthollow casting and boundary commands preserve normal timing, owner, face-down visibility and incomplete-program rejection with authoritative rollback and pre-action replay."
+    },
+    {
+      "capability_id": "casting.zone.self_public_repeatable",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_public_zone_casting.SelfPublicZoneRuntimeTests.test_actual_squee_hand_graveyard_exile_and_owner_after_foreign_control_replay",
+      "official_rule_ids": [
+        "113.6f",
+        "117.1a",
+        "400.7",
+        "601.2a",
+        "601.2f",
+        "601.2h",
+        "601.3",
+        "601.3f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Squee hand/graveyard/exile casts pay normal costs and retain owner authority after foreign control and departure; four-seat projection, rollback, pending load and full pre-action replay agree."
     },
     {
       "capability_id": "choice.affected_player.fixed_controller_discard",
@@ -142496,5 +142811,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "8466af453e4fe959981b9eab06117a648dafc9b032940a1150c0bbcec44c06e9"
+  "fingerprint": "663eca24fb55bef5215f046ff4f910d4fd5e3626ebfa81c64525db4dcc36416e"
 }

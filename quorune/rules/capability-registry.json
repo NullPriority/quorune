@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 298,
+  "registry_version": 299,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -22331,6 +22331,88 @@
         "test_actual_original_thassa_entry_replacement_and_post_entry_event_use_distinct_devotion",
         "test_actual_devotion_type_removal_precedes_persistent_ability_loss",
         "test_actual_attacking_god_leaves_combat_and_does_not_rejoin_after_devotion_returns"
+      ]
+    },
+    {
+      "id": "casting.zone.self_public_repeatable",
+      "version": 1,
+      "official_rules": [
+        "113.6f",
+        "117.1a",
+        "400.7",
+        "601.2a",
+        "601.2f",
+        "601.2h",
+        "601.3",
+        "601.3f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability": {
+        "summary": "Owner may repeatedly cast the explicitly identified face-up source card from fixed graveyard/exile zones at ordinary timing and cost, without changing normal hand permission or post-resolution destination.",
+        "inputs": [
+          "complete source-spanned self-only fixed-zone declaration",
+          "current owner, selected face, zone and ability component",
+          "complete capability-closed CardProgram"
+        ],
+        "outputs": [
+          "shared ordinary cast offer and accepted-command zone authority"
+        ],
+        "exclusions": [
+          "face-down or other-owner cards",
+          "arbitrary hidden zones or other-card permissions",
+          "unrepresented restrictions, conditions, alternative costs or source modifications"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.compiler.casting_activation_metadata_templates.static_self_zone_cast_permission_handler",
+        "quorune.semantic_runtime.casting_activation_metadata.SelfPublicZoneCastPermissionHandler",
+        "quorune.semantic_runtime.casting_activation_metadata.compiled_self_zone_cast_permission",
+        "quorune.compiled_flashback.compiled_ordinary_zone_cast_permission"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawn intrinsic authority or absent complete-program admission prevents the zone permission; normal timing/payment remain separately authoritative.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting typed permission lowering fails the independently expected explicit public-zone set.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_fixed_zone_declarations_are_complete_and_source_face_bound",
+        "test_actual_squee_hand_graveyard_exile_and_owner_after_foreign_control_replay",
+        "test_actual_exile_permission_retains_timing_owner_visibility_and_complete_admission"
+      ],
+      "negative_tests": [
+        "test_permission_codec_rejects_open_zone_or_admission_authority",
+        "test_restriction_cost_or_condition_tail_and_withdrawn_authority_fail_closed",
+        "test_actual_exile_permission_retains_timing_owner_visibility_and_complete_admission",
+        "test_wrong_source_face_or_missing_whole_program_certificate_supplies_no_permission"
+      ],
+      "interaction_tests": [
+        "test_actual_squee_hand_graveyard_exile_and_owner_after_foreign_control_replay",
+        "test_actual_exile_permission_retains_timing_owner_visibility_and_complete_admission"
+      ],
+      "multiplayer_tests": [
+        "test_actual_squee_hand_graveyard_exile_and_owner_after_foreign_control_replay"
+      ],
+      "privacy_tests": [
+        "test_actual_squee_hand_graveyard_exile_and_owner_after_foreign_control_replay",
+        "test_actual_exile_permission_retains_timing_owner_visibility_and_complete_admission"
+      ],
+      "replay_tests": [
+        "test_actual_squee_hand_graveyard_exile_and_owner_after_foreign_control_replay",
+        "test_actual_exile_permission_retains_timing_owner_visibility_and_complete_admission"
       ]
     }
   ]

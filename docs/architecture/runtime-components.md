@@ -556,6 +556,15 @@ immutable source view. The ordinary casting proposal still owns timing, cost,
 target and current-zone checks. The earlier controlled-subtype permission
 descriptor retains its existing schema and behavior.
 
+`permission.cast.self-public-zones.v1` adds only the card owner's explicitly
+declared graveyard or face-up exile origins. The descriptor contains typed zone
+data and requires complete CardProgram admission and the current selected-face
+component. It retains ordinary timing, mana and additional costs, hand casting,
+and resolution destinations. It supplies no Flashback exile replacement or
+temporary designation. New incarnations use their own printed permission;
+face-down cards and unrepresented condition, cost or restriction tails fail
+closed. Existing conditional self-graveyard schemas retain their gates.
+
 The same quantity boundary supports versioned distinct basic land types,
 graveyard card types, colors, maximum/total mana value and colored mana-symbol
 counts. It reads current copy/type/color data only through layer 5. Exactly two

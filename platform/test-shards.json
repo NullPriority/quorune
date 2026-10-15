@@ -89,6 +89,7 @@
       "test_resolution_rules",
       "test_scheduled_player_triggers",
       "test_selection_ownership",
+      "test_self_public_zone_casting",
       "test_semantic_choice_model",
       "test_semantic_counter_replacement_continuations",
       "test_server_launcher",

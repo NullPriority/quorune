@@ -138,6 +138,7 @@
     "tests/fixtures/scheduled-player-triggers.json",
     "tests/fixtures/scoped-damage-prevention-cards.json",
     "tests/fixtures/scryfall-exact-lists.json",
+    "tests/fixtures/self-public-zone-cards.json",
     "tests/fixtures/shared-characteristic-query-cards.json",
     "tests/fixtures/source-counter-amounts.json",
     "tests/fixtures/source-counter-anthem-cards.json",
