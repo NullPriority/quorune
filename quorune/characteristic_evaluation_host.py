@@ -385,6 +385,7 @@ class CharacteristicEvaluationHostMixin:
             self.semantics,
             self.semantic_program_is_current_trusted,
             maximum_layer=Layer.ABILITY,
+            static_component_presence_only=True,
             public_object_resolver=partial(
                 self._public_object_query_result,
                 _enforce_static_component_applicability=False,

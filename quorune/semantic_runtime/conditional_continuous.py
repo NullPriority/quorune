@@ -258,6 +258,12 @@ class FixedPublicStateCharacteristicsHandler:
         "continuous.characteristics.fixed_public_state",
     )
 
+    def may_affect_static_components(self, descriptor: Mapping[str, Any]) -> bool:
+        """Keep fragment-producing variants in the live component-presence scan."""
+        if type(self).lower is not FixedPublicStateCharacteristicsHandler.lower:
+            return True
+        return bool(self.validate(descriptor).fragments)
+
     def validate(
         self, descriptor: Mapping[str, Any]
     ) -> FixedPublicStateCharacteristicsNode:

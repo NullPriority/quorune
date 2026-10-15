@@ -42,6 +42,14 @@ lookup change, and retain wrong-zone, wrong-owner, wrong-controller, duplicate
 reference, name-ambiguity and name-change controls. A reference-only path
 avoids evaluating every unrelated card's characteristics without caching state.
 
+Profile complete action and replay witnesses when characteristic evaluation is
+the functional tail. Component-presence collection uses a handler-owned shape
+query to avoid evaluating conditional modifiers whose validated output cannot
+change static components. Fragment-producing and unclassified handlers retain
+their live evaluation. Compare the resulting presence effects with full
+collection and retain current-ability removal, malformed-descriptor, action,
+save/load and replay controls.
+
 Whole-program cohort probes lazily construct one built-in semantic registry
 per measurement and reuse it for read-only compilation of that measurement's
 cards. Separate measurements construct fresh registries, and probes with no
