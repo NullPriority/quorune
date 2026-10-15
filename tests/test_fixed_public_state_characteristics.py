@@ -4,6 +4,7 @@ from dataclasses import replace
 import json
 import unittest
 from public_state_action_support import PublicStateActionFixture
+from public_state_condition_support import CAPABILITY_ID
 from unittest import mock
 from common import ROOT
 from quorune.card_programs import bind_card_program_runtime, compile_card_program
