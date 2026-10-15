@@ -74,6 +74,7 @@ FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES: Mapping[
     "Reach": ("combat.block.reach",),
     "Shadow": ("combat.block.shadow",),
     "Shroud": ("target.protection.shroud_permanent",),
+    "Skulk": ("combat.block.skulk",),
     "Trample": ("combat.damage.assignment.trample",),
     "Vigilance": ("combat.attack.vigilance",),
     "Wither": ("damage.result.wither",),

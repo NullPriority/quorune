@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 297,
+  "registry_version": 298,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -7616,7 +7616,7 @@
     },
     {
       "id": "continuous.ability.fixed_query_keyword_grant",
-      "version": 15,
+      "version": 16,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -7703,7 +7703,10 @@
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
         "test_singular_each_query_modifiers_keep_subtype_union_and_source_exclusion",
-        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+        "test_all_existing_grant_scopes_declare_the_live_skulk_owner",
+        "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
       ],
       "negative_tests": [
         "test_open_or_unsupported_queries_remain_material_residuals",
@@ -7723,7 +7726,8 @@
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
         "test_singular_each_query_modifiers_keep_subtype_union_and_source_exclusion",
-        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+        "test_unknown_siblings_and_withdrawn_skulk_authority_remain_residual"
       ],
       "interaction_tests": [
         "test_aura_attachment_and_query_grant_execute_from_one_exact_card",
@@ -7750,7 +7754,9 @@
         "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
-        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+        "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
       ],
       "multiplayer_tests": [
         "test_live_queries_track_global_control_subtype_phase_and_zone_changes",
@@ -7764,7 +7770,9 @@
         "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
         "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
-        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+        "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
       ],
       "privacy_tests": [
         "test_projection_and_replay_preserve_grants_without_private_identities",
@@ -7774,7 +7782,9 @@
         "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
-        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+        "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
       ],
       "replay_tests": [
         "test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
@@ -7793,7 +7803,9 @@
         "test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
-        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+        "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
       ],
       "required_evidence": [
         "positive",
@@ -8720,7 +8732,7 @@
     },
     {
       "id": "continuous.attached.fixed_characteristics",
-      "version": 12,
+      "version": 13,
       "official_rules": [
         "301.5",
         "303.4",
@@ -8818,7 +8830,10 @@
         "test_recipient_attachment_quantity_keeps_relative_object_and_live_query",
         "test_static_query_and_attachment_declaration_grants_compile_closed",
         "test_thornbite_staff_grants_damage_death_untap_and_shaman_attach",
-        "test_werewolf_plural_union_is_typed_and_deduplicates_recipient_query"
+        "test_werewolf_plural_union_is_typed_and_deduplicates_recipient_query",
+        "test_all_existing_grant_scopes_declare_the_live_skulk_owner",
+        "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
       ],
       "negative_tests": [
         "test_compiler_keeps_unsupported_attached_grants_residual",
@@ -8835,7 +8850,8 @@
         "test_static_declaration_grant_dependencies_fail_closed",
         "test_static_label_dispatch_omission_mutant_is_killed",
         "test_static_query_and_attachment_declaration_grants_compile_closed",
-        "test_triggered_keyword_grant_labels_and_fragments_are_exact_and_fail_closed"
+        "test_triggered_keyword_grant_labels_and_fragments_are_exact_and_fail_closed",
+        "test_unknown_siblings_and_withdrawn_skulk_authority_remain_residual"
       ],
       "interaction_tests": [
         "test_actual_islandwalk_aura_cast_tracks_recipient_and_ends_on_source_departure",
@@ -8856,19 +8872,25 @@
         "test_recipient_quantity_counts_reciprocal_union_once_and_follows_control_phasing_reattachment",
         "test_shared_static_component_query_owns_removal_and_typed_grant",
         "test_target_departure_and_source_departure_end_effect_without_stale_identity",
-        "test_type_and_ability_removal_use_their_canonical_layers"
+        "test_type_and_ability_removal_use_their_canonical_layers",
+        "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
       ],
       "multiplayer_tests": [
         "test_multiple_sources_apply_independently_in_four_player_game",
         "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
         "test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
-        "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays"
+        "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
+        "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
       ],
       "privacy_tests": [
         "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
         "test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
         "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
-        "test_projection_hides_relation_identity_and_replay_is_exact"
+        "test_projection_hides_relation_identity_and_replay_is_exact",
+        "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
       ],
       "replay_tests": [
         "test_actual_islandwalk_aura_cast_tracks_recipient_and_ends_on_source_departure",
@@ -8878,7 +8900,9 @@
         "test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
         "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
         "test_projection_hides_relation_identity_and_replay_is_exact",
-        "test_relation_round_trip_is_canonical_and_legacy_shape_stays_stable"
+        "test_relation_round_trip_is_canonical_and_legacy_shape_stays_stable",
+        "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
       ],
       "required_evidence": [
         "positive",
@@ -10096,23 +10120,84 @@
     {
       "id": "combat.block.skulk",
       "version": 1,
-      "official_rules": ["509.1b", "702.118", "702.118a", "702.118b", "702.118c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "509.1b",
+        "702.118",
+        "702.118a",
+        "702.118b",
+        "702.118c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Prohibit a creature whose exact current power is greater from blocking a current represented attacking creature with one or more Skulk instances.",
-        "inputs": ["fully validated proposed blocker-attacker pair", "current represented effective keyword states", "attacker and blocker exact current represented power"],
-        "outputs": ["equal-or-lower-power blocker left to remaining restrictions", "greater-power blocker prohibited", "negative current powers compared normally", "unresolved power rejected before mutation", "case-insensitive redundant Skulk result"],
-        "exclusions": ["conditional or rules-text-equivalent Skulk", "unresolved variable characteristic definitions", "block declaration costs and unrelated restrictions or requirements", "unsupported continuous-effect, copy, face-down, power, and ability-changing producers"]
+        "inputs": [
+          "fully validated proposed blocker-attacker pair",
+          "current represented effective keyword states",
+          "attacker and blocker exact current represented power"
+        ],
+        "outputs": [
+          "equal-or-lower-power blocker left to remaining restrictions",
+          "greater-power blocker prohibited",
+          "negative current powers compared normally",
+          "unresolved power rejected before mutation",
+          "case-insensitive redundant Skulk result"
+        ],
+        "exclusions": [
+          "conditional or rules-text-equivalent Skulk",
+          "unresolved variable characteristic definitions",
+          "block declaration costs and unrelated restrictions or requirements",
+          "unsupported continuous-effect, copy, face-down, power, and ability-changing producers"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.combat_evasion.CombatantEvasionCharacteristics", "quorune.combat_evasion.combat_evasion_verdict", "quorune.combat_evasion_engine_adapter.combatant_evasion_characteristics", "CommanderEngine._can_block"],
-      "positive_tests": ["test_skulk_compares_exact_current_power"],
-      "negative_tests": ["test_malformed_and_unresolved_inputs_fail_closed"],
-      "interaction_tests": ["test_all_represented_restrictions_are_cumulative"],
-      "multiplayer_tests": ["test_offer_and_command_share_cumulative_legality_and_rollback"],
-      "privacy_tests": ["test_offer_and_command_share_cumulative_legality_and_rollback"],
-      "replay_tests": ["test_legal_block_replays_exactly_in_four_player_combat"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.combat_evasion.CombatantEvasionCharacteristics",
+        "quorune.combat_evasion.combat_evasion_verdict",
+        "quorune.combat_evasion_engine_adapter.combatant_evasion_characteristics",
+        "CommanderEngine._can_block"
+      ],
+      "positive_tests": [
+        "test_skulk_compares_exact_current_power",
+        "test_all_existing_grant_scopes_declare_the_live_skulk_owner",
+        "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
+      ],
+      "negative_tests": [
+        "test_malformed_and_unresolved_inputs_fail_closed",
+        "test_unknown_siblings_and_withdrawn_skulk_authority_remain_residual"
+      ],
+      "interaction_tests": [
+        "test_all_represented_restrictions_are_cumulative",
+        "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
+      ],
+      "multiplayer_tests": [
+        "test_offer_and_command_share_cumulative_legality_and_rollback",
+        "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
+      ],
+      "privacy_tests": [
+        "test_offer_and_command_share_cumulative_legality_and_rollback",
+        "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
+      ],
+      "replay_tests": [
+        "test_legal_block_replays_exactly_in_four_player_combat",
+        "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "This bounded restriction consumes canonical current public characteristics and fails closed when current power is unresolved.",
       "implementation_mutation_status": "killed",

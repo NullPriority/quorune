@@ -197,7 +197,10 @@ overlay boundary; archived payloads retain their recorded descriptors.
 setting to a reciprocal attached object or a closed public battlefield query.
 The compiler preserves type retention, source exclusion, controller scope,
 fixed colors, keyword additions, ability removal, base power/toughness and
-fixed modifiers. Creature subtype replacement removes only creature subtypes,
+fixed modifiers. Attached and live-set producers share the fixed keyword
+vocabulary. Printed and granted Skulk use the existing blocking owner, which
+compares the holder's and blocker's current power when blocks are validated.
+Creature subtype replacement removes only creature subtypes,
 preserving unrelated artifact or enchantment subtypes. Unknown subjects,
 chosen values, names, dynamic definitions and quoted grants remain residual.
 

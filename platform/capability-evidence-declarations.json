@@ -14912,11 +14912,83 @@
     },
     {
       "capability_id": "combat.block.skulk",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+      "official_rule_ids": [
+        "509.1b",
+        "702.118",
+        "702.118a",
+        "702.118b",
+        "702.118c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attacks and accepted/rejected blocks distinguish greater from equal current power and respond to a real power-changing spell; grant controller and holder differ, with complete consequences, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "combat.block.skulk",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+      "official_rule_ids": [
+        "509.1b",
+        "702.118",
+        "702.118a",
+        "702.118b",
+        "702.118c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Skeleton Key casting/equipping, holder control change and source departure preserve current holder semantics, four-seat private projection, unauthorized rollback, pending reload and full pre-action replay."
+    },
+    {
+      "capability_id": "combat.block.skulk",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_combat_evasion_restrictions.CombatEvasionIntegrationTests.test_offer_and_command_share_cumulative_legality_and_rollback",
       "official_rule_ids": ["509.1b","702.118","702.118a","702.118b","702.118c"],
       "supported_profiles": ["traditional","commander_duel","commander_review"],
       "applicability_note": "Evaluate Skulk only for the attacked seat in a four-player blocker decision."
+    },
+    {
+      "capability_id": "combat.block.skulk",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+      "official_rule_ids": [
+        "509.1b",
+        "702.118",
+        "702.118a",
+        "702.118b",
+        "702.118c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attacks and accepted/rejected blocks distinguish greater from equal current power and respond to a real power-changing spell; grant controller and holder differ, with complete consequences, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "combat.block.skulk",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+      "official_rule_ids": [
+        "509.1b",
+        "702.118",
+        "702.118a",
+        "702.118b",
+        "702.118c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Skeleton Key casting/equipping, holder control change and source departure preserve current holder semantics, four-seat private projection, unauthorized rollback, pending reload and full pre-action replay."
     },
     {
       "capability_id": "combat.block.skulk",
@@ -14936,6 +15008,24 @@
     },
     {
       "capability_id": "combat.block.skulk",
+      "evidence_class": "negative",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkCompilerTests.test_unknown_siblings_and_withdrawn_skulk_authority_remain_residual",
+      "official_rule_ids": [
+        "509.1b",
+        "702.118",
+        "702.118a",
+        "702.118b",
+        "702.118c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Unknown siblings and withdrawn fine Skulk authority prevent exact admission; no partial recognition becomes complete support."
+    },
+    {
+      "capability_id": "combat.block.skulk",
       "evidence_class": "positive",
       "test_id": "tests.test_combat_evasion_restrictions.CombatEvasionRestrictionTests.test_skulk_compares_exact_current_power",
       "official_rule_ids": ["509.1b","702.118","702.118a","702.118b","702.118c"],
@@ -14944,11 +15034,101 @@
     },
     {
       "capability_id": "combat.block.skulk",
+      "evidence_class": "positive",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkCompilerTests.test_all_existing_grant_scopes_declare_the_live_skulk_owner",
+      "official_rule_ids": [
+        "509.1b",
+        "702.118",
+        "702.118a",
+        "702.118b",
+        "702.118c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Compiler scopes use the existing live-power Skulk consumer and one canonical fixed-keyword vocabulary."
+    },
+    {
+      "capability_id": "combat.block.skulk",
+      "evidence_class": "positive",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+      "official_rule_ids": [
+        "509.1b",
+        "702.118",
+        "702.118a",
+        "702.118b",
+        "702.118c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attacks and accepted/rejected blocks distinguish greater from equal current power and respond to a real power-changing spell; grant controller and holder differ, with complete consequences, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "combat.block.skulk",
+      "evidence_class": "positive",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+      "official_rule_ids": [
+        "509.1b",
+        "702.118",
+        "702.118a",
+        "702.118b",
+        "702.118c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Skeleton Key casting/equipping, holder control change and source departure preserve current holder semantics, four-seat private projection, unauthorized rollback, pending reload and full pre-action replay."
+    },
+    {
+      "capability_id": "combat.block.skulk",
       "evidence_class": "privacy",
       "test_id": "tests.test_combat_evasion_restrictions.CombatEvasionIntegrationTests.test_offer_and_command_share_cumulative_legality_and_rollback",
       "official_rule_ids": ["509.1b","702.118","702.118a","702.118b","702.118c"],
       "supported_profiles": ["traditional","commander_duel","commander_review"],
       "applicability_note": "Project the Skulk-constrained blocker task only to the attacked seat from public characteristics."
+    },
+    {
+      "capability_id": "combat.block.skulk",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+      "official_rule_ids": [
+        "509.1b",
+        "702.118",
+        "702.118a",
+        "702.118b",
+        "702.118c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attacks and accepted/rejected blocks distinguish greater from equal current power and respond to a real power-changing spell; grant controller and holder differ, with complete consequences, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "combat.block.skulk",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+      "official_rule_ids": [
+        "509.1b",
+        "702.118",
+        "702.118a",
+        "702.118b",
+        "702.118c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Skeleton Key casting/equipping, holder control change and source departure preserve current holder semantics, four-seat private projection, unauthorized rollback, pending reload and full pre-action replay."
     },
     {
       "capability_id": "combat.block.skulk",
@@ -14965,6 +15145,42 @@
       "official_rule_ids": ["509.1b","702.118","702.118a","702.118b","702.118c"],
       "supported_profiles": ["traditional","commander_duel","commander_review"],
       "applicability_note": "Replay an accepted four-player block through the shared Skulk legality boundary."
+    },
+    {
+      "capability_id": "combat.block.skulk",
+      "evidence_class": "replay",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+      "official_rule_ids": [
+        "509.1b",
+        "702.118",
+        "702.118a",
+        "702.118b",
+        "702.118c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attacks and accepted/rejected blocks distinguish greater from equal current power and respond to a real power-changing spell; grant controller and holder differ, with complete consequences, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "combat.block.skulk",
+      "evidence_class": "replay",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+      "official_rule_ids": [
+        "509.1b",
+        "702.118",
+        "702.118a",
+        "702.118b",
+        "702.118c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Skeleton Key casting/equipping, holder control change and source departure preserve current holder semantics, four-seat private projection, unauthorized rollback, pending reload and full pre-action replay."
     },
     {
       "capability_id": "combat.block.skulk",
@@ -19139,6 +19355,48 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "interaction",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+      "official_rule_ids": [
+        "109.2",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attacks and accepted/rejected blocks distinguish greater from equal current power and respond to a real power-changing spell; grant controller and holder differ, with complete consequences, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+      "official_rule_ids": [
+        "109.2",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Skeleton Key casting/equipping, holder control change and source departure preserve current holder semantics, four-seat private projection, unauthorized rollback, pending reload and full pre-action replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_state_condition_runtime.FixedPublicStateCharacteristicRuntimeTests.test_live_public_object_state_and_layer_five_queries_recompute",
       "official_rule_ids": [
         "604.1",
@@ -19387,6 +19645,48 @@
         "commander_review"
       ],
       "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+      "official_rule_ids": [
+        "109.2",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attacks and accepted/rejected blocks distinguish greater from equal current power and respond to a real power-changing spell; grant controller and holder differ, with complete consequences, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+      "official_rule_ids": [
+        "109.2",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Skeleton Key casting/equipping, holder control change and source departure preserve current holder semantics, four-seat private projection, unauthorized rollback, pending reload and full pre-action replay."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -19790,6 +20090,27 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "negative",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkCompilerTests.test_unknown_siblings_and_withdrawn_skulk_authority_remain_residual",
+      "official_rule_ids": [
+        "109.2",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Unknown siblings and withdrawn fine Skulk authority prevent exact admission; no partial recognition becomes complete support."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "negative",
       "test_id": "tests.test_public_state_condition_compiler.FixedPublicStateCharacteristicCompilerTests.test_conditional_typed_keyword_schema_dependencies_and_omission_fail_closed",
       "official_rule_ids": [
         "604.1",
@@ -20189,6 +20510,69 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "positive",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkCompilerTests.test_all_existing_grant_scopes_declare_the_live_skulk_owner",
+      "official_rule_ids": [
+        "109.2",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Compiler scopes use the existing live-power Skulk consumer and one canonical fixed-keyword vocabulary."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+      "official_rule_ids": [
+        "109.2",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attacks and accepted/rejected blocks distinguish greater from equal current power and respond to a real power-changing spell; grant controller and holder differ, with complete consequences, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+      "official_rule_ids": [
+        "109.2",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Skeleton Key casting/equipping, holder control change and source departure preserve current holder semantics, four-seat private projection, unauthorized rollback, pending reload and full pre-action replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "positive",
       "test_id": "tests.test_public_state_condition_compiler.FixedPublicStateCharacteristicCompilerTests.test_conditional_typed_keywords_keep_their_fragments_and_condition",
       "official_rule_ids": [
         "604.1",
@@ -20420,6 +20804,48 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "privacy",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+      "official_rule_ids": [
+        "109.2",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attacks and accepted/rejected blocks distinguish greater from equal current power and respond to a real power-changing spell; grant controller and holder differ, with complete consequences, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+      "official_rule_ids": [
+        "109.2",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Skeleton Key casting/equipping, holder control change and source departure preserve current holder semantics, four-seat private projection, unauthorized rollback, pending reload and full pre-action replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "privacy",
       "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
       "official_rule_ids": [
         "604.1",
@@ -20647,6 +21073,48 @@
         "commander_review"
       ],
       "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+      "official_rule_ids": [
+        "109.2",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attacks and accepted/rejected blocks distinguish greater from equal current power and respond to a real power-changing spell; grant controller and holder differ, with complete consequences, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+      "official_rule_ids": [
+        "109.2",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Skeleton Key casting/equipping, holder control change and source departure preserve current holder semantics, four-seat private projection, unauthorized rollback, pending reload and full pre-action replay."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -21816,6 +22284,52 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attacks and accepted/rejected blocks distinguish greater from equal current power and respond to a real power-changing spell; grant controller and holder differ, with complete consequences, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Skeleton Key casting/equipping, holder control change and source departure preserve current holder semantics, four-seat private projection, unauthorized rollback, pending reload and full pre-action replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
       "official_rule_ids": [
         "301.5",
@@ -21889,6 +22403,52 @@
         "commander_review"
       ],
       "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attacks and accepted/rejected blocks distinguish greater from equal current power and respond to a real power-changing spell; grant controller and holder differ, with complete consequences, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Skeleton Key casting/equipping, holder control change and source departure preserve current holder semantics, four-seat private projection, unauthorized rollback, pending reload and full pre-action replay."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -22155,6 +22715,29 @@
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "negative",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkCompilerTests.test_unknown_siblings_and_withdrawn_skulk_authority_remain_residual",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Unknown siblings and withdrawn fine Skulk authority prevent exact admission; no partial recognition becomes complete support."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "positive",
       "test_id": "tests.test_attached_static_characteristics.AttachedContinuousCompilerTests.test_compiler_lowers_attached_quoted_abilities_to_typed_programs",
       "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
@@ -22304,6 +22887,75 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "positive",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkCompilerTests.test_all_existing_grant_scopes_declare_the_live_skulk_owner",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Compiler scopes use the existing live-power Skulk consumer and one canonical fixed-keyword vocabulary."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attacks and accepted/rejected blocks distinguish greater from equal current power and respond to a real power-changing spell; grant controller and holder differ, with complete consequences, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Skeleton Key casting/equipping, holder control change and source departure preserve current holder semantics, four-seat private projection, unauthorized rollback, pending reload and full pre-action replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
       "official_rule_ids": [
         "301.5",
@@ -22377,6 +23029,52 @@
         "commander_review"
       ],
       "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attacks and accepted/rejected blocks distinguish greater from equal current power and respond to a real power-changing spell; grant controller and holder differ, with complete consequences, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Skeleton Key casting/equipping, holder control change and source departure preserve current holder semantics, four-seat private projection, unauthorized rollback, pending reload and full pre-action replay."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -22493,6 +23191,52 @@
         "commander_review"
       ],
       "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attacks and accepted/rejected blocks distinguish greater from equal current power and respond to a real power-changing spell; grant controller and holder differ, with complete consequences, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_granted_skulk.GrantedSkulkRuntimeTests.test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Skeleton Key casting/equipping, holder control change and source departure preserve current holder semantics, four-seat private projection, unauthorized rollback, pending reload and full pre-action replay."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",

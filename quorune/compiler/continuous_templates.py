@@ -66,35 +66,8 @@ _ATTACHED_ADDED_TYPE = re.compile(
     r"in addition to its other types$",
 )
 _ATTACHED_SUPPORTED_ABILITIES = frozenset(
-    {
-        "deathtouch",
-        "defender",
-        "double strike",
-        "first strike",
-        "flash",
-        "fear",
-        "flying",
-        "haste",
-        "hexproof",
-        "horsemanship",
-        "plainswalk",
-        "islandwalk",
-        "swampwalk",
-        "mountainwalk",
-        "forestwalk",
-        "indestructible",
-        "infect",
-        "intimidate",
-        "lifelink",
-        "menace",
-        "reach",
-        "shadow",
-        "shroud",
-        "trample",
-        "vigilance",
-        "wither",
-    }
-)
+    keyword.casefold() for keyword in FIXED_CHARACTERISTIC_KEYWORDS
+) | {'flash'}
 
 _ATTACHED_QUOTED_ABILITY_SENTINELS = (
     "Flying",
