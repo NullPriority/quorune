@@ -7,6 +7,11 @@ import json
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 
+try:
+    from scripts.source_syntax import analysis_syntax
+except ModuleNotFoundError:
+    from source_syntax import analysis_syntax
+
 
 WRITE_CLASSIFICATIONS = (
     "canonical_mutation_owner_write",
@@ -309,8 +314,9 @@ def runtime_text_accesses(
     records: dict[tuple[str, str, str, str], dict[str, Any]] = {}
     for relative, analysis in analyses.items():
         tree = analysis.tree
-        parents = _parents(tree)
-        for node in ast.walk(tree):
+        syntax = analysis_syntax(analysis)
+        parents = syntax.parents
+        for node in syntax.walk(tree):
             member: str | None = None
             access_kind: str | None = None
             if isinstance(node, ast.Attribute) and node.attr in _RAW_TEXT_MEMBERS:

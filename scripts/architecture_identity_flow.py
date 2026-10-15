@@ -9,6 +9,11 @@ import re
 from types import SimpleNamespace
 from typing import Any, Iterable, Mapping, Sequence
 
+try:
+    from scripts.source_syntax import SyntaxSnapshot, analysis_syntax
+except ModuleNotFoundError:
+    from source_syntax import SyntaxSnapshot, analysis_syntax
+
 
 PROHIBITED_CLASSIFICATION = "prohibited_identity_dispatch"
 HISTORICAL_CLASSIFICATION = "reviewed_historical_compatibility"
@@ -110,16 +115,19 @@ def _scope_nodes(scope: ast.AST) -> tuple[ast.AST, ...]:
     return tuple(result)
 
 
-def _annotation_tokens(node: ast.AST | None) -> frozenset[str]:
+def _annotation_tokens(
+    node: ast.AST | None, *, syntax: SyntaxSnapshot | None = None,
+) -> frozenset[str]:
     if node is None:
         return frozenset()
+    walk = ast.walk if syntax is None else syntax.walk
     return frozenset(
         child.id
-        for child in ast.walk(node)
+        for child in walk(node)
         if isinstance(child, ast.Name)
     ) | frozenset(
         child.attr
-        for child in ast.walk(node)
+        for child in walk(node)
         if isinstance(child, ast.Attribute)
     )
 
@@ -218,6 +226,7 @@ def _identity_receiver_names(
     scope: ast.AST,
     nodes: Sequence[ast.AST],
     policy: Mapping[str, Any],
+    *, syntax: SyntaxSnapshot | None = None,
 ) -> set[str]:
     receiver_types = set(map(str, policy["identity_receiver_types"]))
     returning_calls = set(map(str, policy["identity_returning_calls"]))
@@ -233,11 +242,11 @@ def _identity_receiver_names(
         if scope.args.kwarg:
             arguments.append(scope.args.kwarg)
         for argument in arguments:
-            if receiver_types & _annotation_tokens(argument.annotation):
+            if receiver_types & _annotation_tokens(argument.annotation, syntax=syntax):
                 names.add(argument.arg)
     for node in nodes:
         if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name):
-            if receiver_types & _annotation_tokens(node.annotation):
+            if receiver_types & _annotation_tokens(node.annotation, syntax=syntax):
                 names.add(node.target.id)
         value: ast.AST | None = None
         targets: Sequence[ast.AST] = ()
@@ -266,6 +275,7 @@ class _ScopeAnalyzer:
         policy: Mapping[str, Any],
         module_classification: Mapping[str, Any],
         module_static: Mapping[str, _StaticValue],
+        syntax: SyntaxSnapshot | None = None,
     ) -> None:
         self.relative = relative
         self.tree = tree
@@ -273,13 +283,14 @@ class _ScopeAnalyzer:
         self.policy = policy
         self.module_classification = module_classification
         self.parents = parents
+        self.syntax = SyntaxSnapshot(tree) if syntax is None else syntax
         self.nodes = _scope_nodes(scope)
         self.static: dict[str, _StaticValue] = dict(module_static)
         self.taints: dict[str, tuple[IdentityOrigin, ...]] = {}
         self.map_aliases: dict[str, str] = {}
         self.structural_occurrences: Counter[str] = Counter()
         self.identity_receivers = _identity_receiver_names(
-            scope, self.nodes, policy
+            scope, self.nodes, policy, syntax=self.syntax
         )
         self.direct_origins: dict[int, IdentityOrigin] = {}
 
@@ -561,7 +572,7 @@ class _ScopeAnalyzer:
                 subject = self._expr_taints(node.subject)
                 fixed_patterns = [
                     child.value
-                    for child in ast.walk(node)
+                    for child in self.syntax.walk(node)
                     if isinstance(child, ast.Constant) and isinstance(child.value, str)
                 ]
                 if subject and fixed_patterns:
@@ -655,11 +666,12 @@ def analyze_identity_flows(
         if not isinstance(tree, ast.Module):
             raise ValueError(f"Identity-flow analysis requires an AST module: {relative}")
         module_static = _module_static_values(tree)
-        parents = _parents(tree)
+        syntax = analysis_syntax(analysis)
+        parents = syntax.parents
         scopes: list[ast.AST] = [tree]
         scopes.extend(
             node
-            for node in ast.walk(tree)
+            for node in syntax.walk(tree)
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
         )
         for scope in scopes:
@@ -672,6 +684,7 @@ def analyze_identity_flows(
                     policy=policy,
                     module_classification=classifications.get(relative, {}),
                     module_static=module_static,
+                    syntax=syntax,
                 ).analyze()
             )
     unique = {record.flow_id: record for record in records}

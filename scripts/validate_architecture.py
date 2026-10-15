@@ -11,6 +11,7 @@ import sys
 from typing import Any, Iterable, Mapping
 
 try:
+    from scripts.source_syntax import SyntaxSnapshot, analysis_syntax
     from scripts.architecture_observability import (
         classify_state_writes,
         runtime_text_accesses,
@@ -28,6 +29,7 @@ try:
         analyze_production,
     )
 except ModuleNotFoundError:  # Direct `python scripts/...` execution.
+    from source_syntax import SyntaxSnapshot, analysis_syntax
     from architecture_observability import (
         classify_state_writes,
         runtime_text_accesses,
@@ -110,11 +112,11 @@ def _protected(relative: str, policy: Mapping[str, Any]) -> bool:
     )
 
 
-def _game_state_imports(tree: ast.Module) -> bool:
+def _game_state_imports(tree: ast.Module, *, syntax: SyntaxSnapshot | None = None) -> bool:
     return any(
         isinstance(node, ast.ImportFrom)
         and any(alias.name == "GameState" for alias in node.names)
-        for node in ast.walk(tree)
+        for node in (ast.walk(tree) if syntax is None else syntax.walk(tree))
     )
 
 
@@ -583,7 +585,7 @@ def _dependency_and_mutation_failures(
     access_violations = sorted(
         relative
         for relative, analysis in analyses.items()
-        if _game_state_imports(analysis.tree) and relative not in allowed_state_access
+        if _game_state_imports(analysis.tree, syntax=analysis_syntax(analysis)) and relative not in allowed_state_access
     )
     if access_violations:
         failures.append(

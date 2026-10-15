@@ -7,6 +7,7 @@ from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Iterable, Mapping
 
 from quorune.util import normalize_card_name
+from scripts.source_syntax import SourceFiles, SyntaxSnapshot
 
 
 MANIFEST_SCHEMA_VERSION = 2
@@ -497,25 +498,41 @@ def _function_inventory(tree: ast.AST) -> tuple[tuple[int, int, str], ...]:
     return tuple(sorted(inventory))
 
 
+class DependencySourceScope:
+    """Share only syntax facts; requirement and binding contexts stay per module."""
+
+    def __init__(self) -> None:
+        self.files = SourceFiles()
+        self._functions: dict[ast.AST, tuple[tuple[int, int, str], ...]] = {}
+
+    def functions(self, tree: ast.AST) -> tuple[tuple[int, int, str], ...]:
+        if tree not in self._functions:
+            self._functions[tree] = _function_inventory(tree)
+        return self._functions[tree]
+
+
 def _environments(
     tree: ast.AST,
     *,
     root: Path,
+    syntax: SyntaxSnapshot | None = None,
+    functions: tuple[tuple[int, int, str], ...] | None = None,
 ) -> dict[str, dict[str, tuple[str, ...]]]:
     base = {
         "ROOT": (root.as_posix(),),
         "TESTS": ((root / "tests").as_posix(),),
     }
     result: dict[str, dict[str, tuple[str, ...]]] = {"<module>": dict(base)}
-    functions = _function_inventory(tree)
+    functions = _function_inventory(tree) if functions is None else functions
+    walk = ast.walk if syntax is None else syntax.walk
     nodes_by_symbol: dict[str, ast.AST] = {}
-    for node in ast.walk(tree):
+    for node in walk(tree):
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             symbol = _source_symbol(node, functions)
             nodes_by_symbol[symbol] = node
     for symbol, node in nodes_by_symbol.items():
         environment = dict(base)
-        for candidate in ast.walk(node):
+        for candidate in walk(node):
             if isinstance(candidate, (ast.Assign, ast.AnnAssign)):
                 targets = (
                     candidate.targets
@@ -587,15 +604,19 @@ def _assignment_mode(value: ast.AST, *, has_local_builder: bool) -> str | None:
 
 def _database_modes(
     tree: ast.AST,
+    *,
+    syntax: SyntaxSnapshot | None = None,
+    functions: tuple[tuple[int, int, str], ...] | None = None,
 ) -> tuple[dict[str, str], dict[tuple[str, str], str]]:
-    functions = _function_inventory(tree)
+    functions = _function_inventory(tree) if functions is None else functions
+    walk = ast.walk if syntax is None else syntax.walk
     has_local_builder = any(
         isinstance(node, ast.Call) and _call_name(node.func) == "build_fixture_database"
-        for node in ast.walk(tree)
+        for node in walk(tree)
     )
     class_modes: dict[str, str] = {}
     name_modes: dict[tuple[str, str], str] = {}
-    for node in ast.walk(tree):
+    for node in walk(tree):
         if not isinstance(node, (ast.Assign, ast.AnnAssign)):
             continue
         value = node.value
@@ -646,10 +667,13 @@ def _wrapper_inventory(
     *,
     class_modes: Mapping[str, str],
     name_modes: Mapping[tuple[str, str], str],
+    syntax: SyntaxSnapshot | None = None,
+    functions: tuple[tuple[int, int, str], ...] | None = None,
 ) -> tuple[WrapperSpec, ...]:
     wrappers: set[WrapperSpec] = set()
-    functions = _function_inventory(tree)
-    for node in ast.walk(tree):
+    functions = _function_inventory(tree) if functions is None else functions
+    walk = ast.walk if syntax is None else syntax.walk
+    for node in walk(tree):
         if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             continue
         symbol = _source_symbol(node, functions)
@@ -679,7 +703,7 @@ def _wrapper_inventory(
             resolved = _expression_values(default, {})
             if resolved is not None:
                 defaults[parameter.arg] = resolved
-        for candidate in ast.walk(node):
+        for candidate in walk(node):
             if not isinstance(candidate, ast.Call) or not candidate.args:
                 continue
             kind = {
@@ -718,17 +742,20 @@ def _wrapper_inventory(
     return tuple(sorted(wrappers, key=lambda row: (row.name, row.kind, row.position)))
 
 
-def _local_support_paths(test_path: Path, *, root: Path) -> tuple[Path, ...]:
+def _local_support_paths(
+    test_path: Path, *, root: Path, sources: DependencySourceScope | None = None,
+) -> tuple[Path, ...]:
     tests_root = root / "tests"
     visited: set[Path] = set()
+    sources = DependencySourceScope() if sources is None else sources
 
     def visit(path: Path) -> None:
         resolved = path.resolve()
         if resolved in visited or not path.is_file():
             return
         visited.add(resolved)
-        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-        for node in ast.walk(tree):
+        parsed = sources.files.read(path)
+        for node in parsed.syntax.walk():
             modules: list[str] = []
             if isinstance(node, ast.ImportFrom) and node.module:
                 modules.append(node.module)
@@ -768,19 +795,25 @@ def discover_module_requirements(
     module: str,
     *,
     root: Path,
+    sources: DependencySourceScope | None = None,
 ) -> tuple[tuple[Requirement, ...], tuple[DynamicSite, ...], tuple[str, ...]]:
     test_path = root / "tests" / f"{module}.py"
     if not test_path.is_file():
         return (), (), (f"Missing test source: tests/{module}.py",)
     try:
-        sources = _local_support_paths(test_path, root=root)
+        sources = DependencySourceScope() if sources is None else sources
+        paths = _local_support_paths(test_path, root=root, sources=sources)
         parsed = {
-            path: ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-            for path in sources
+            path: sources.files.read(path)
+            for path in paths
         }
     except (OSError, SyntaxError, UnicodeDecodeError) as exc:
         return (), (), (f"Cannot parse {test_path.relative_to(root)}: {exc}",)
-    modes_by_path = {path: _database_modes(tree) for path, tree in parsed.items()}
+    modes_by_path = {
+        path: _database_modes(value.tree, syntax=value.syntax,
+            functions=sources.functions(value.tree))
+        for path, value in parsed.items()
+    }
     combined_class_modes = {
         name: mode
         for class_modes, _ in modes_by_path.values()
@@ -789,8 +822,8 @@ def discover_module_requirements(
     changed = True
     while changed:
         changed = False
-        for tree in parsed.values():
-            for node in ast.walk(tree):
+        for value in parsed.values():
+            for node in value.syntax.walk():
                 if not isinstance(node, ast.ClassDef):
                     continue
                 inherited = next(
@@ -806,11 +839,13 @@ def discover_module_requirements(
                     changed = True
     wrappers = tuple(
         wrapper
-        for path, tree in parsed.items()
+        for path, value in parsed.items()
         for wrapper in _wrapper_inventory(
-            tree,
+            value.tree,
             class_modes={**combined_class_modes, **modes_by_path[path][0]},
             name_modes=modes_by_path[path][1],
+            syntax=value.syntax,
+            functions=sources.functions(value.tree),
         )
     )
     wrappers_by_name: dict[str, list[WrapperSpec]] = {}
@@ -819,14 +854,16 @@ def discover_module_requirements(
 
     requirements: set[Requirement] = set()
     dynamic: set[DynamicSite] = set()
-    for path, tree in parsed.items():
+    for path, value in parsed.items():
+        tree = value.tree
+        walk = value.syntax.walk
         relative = path.relative_to(root).as_posix()
-        functions = _function_inventory(tree)
-        environments = _environments(tree, root=root)
+        functions = sources.functions(tree)
+        environments = _environments(tree, root=root, syntax=value.syntax, functions=functions)
         local_class_modes, name_modes = modes_by_path[path]
         class_modes = {**combined_class_modes, **local_class_modes}
         function_parameters: dict[str, set[str]] = {}
-        for node in ast.walk(tree):
+        for node in walk(tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 symbol = _source_symbol(node, functions)
                 function_parameters[symbol] = {
@@ -837,7 +874,7 @@ def discover_module_requirements(
                         *node.args.kwonlyargs,
                     )
                 }
-        for call in (node for node in ast.walk(tree) if isinstance(node, ast.Call)):
+        for call in (node for node in walk(tree) if isinstance(node, ast.Call)):
             symbol = _source_symbol(call, functions)
             environment = environments.get(symbol, environments["<module>"])
             provenance = Provenance(module, relative, symbol, int(call.lineno))

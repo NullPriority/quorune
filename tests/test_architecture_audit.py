@@ -21,6 +21,75 @@ def _json(relative: str) -> dict:
     return json.loads((ROOT / relative).read_text(encoding="utf-8"))
 
 
+class SourceSyntaxSnapshotTests(unittest.TestCase):
+    def test_walk_order_parent_map_and_independent_iterators_match_ast(self):
+        import ast
+        from scripts.source_syntax import SyntaxSnapshot
+
+        tree = ast.parse('async def outer(item: CardInstance):\n    def inner():\n        return item.name\n    match item.name:\n        case "fixed":\n            return inner()\n')
+        expected = tuple(ast.walk(tree))
+        parents = {child: parent for parent in expected for child in ast.iter_child_nodes(parent)}
+        snapshot = SyntaxSnapshot(tree)
+        original = ast.walk
+        with mock.patch('scripts.source_syntax.ast.walk', wraps=original) as walker:
+            first = snapshot.walk()
+            self.assertIs(tree, next(first))
+            self.assertEqual(expected, tuple(snapshot.walk()))
+            self.assertEqual(expected[1:], tuple(first))
+            self.assertEqual(expected, tuple(snapshot.walk()))
+            self.assertEqual(1, walker.call_count)
+            child = tree.body[0]
+            self.assertEqual(tuple(original(child)), tuple(snapshot.walk(child)))
+            self.assertEqual(tuple(original(child)), tuple(snapshot.walk(child)))
+            self.assertEqual(2, walker.call_count)
+        self.assertEqual(parents, snapshot.parents)
+        self.assertIs(snapshot.parents, snapshot.parents)
+        with self.assertRaises(TypeError):
+            snapshot.parents[tree] = tree
+
+    def test_file_scope_reloads_edits_and_does_not_cache_failures(self):
+        import ast
+        from scripts.source_syntax import SourceFiles
+
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / 'owner.py'
+            path.write_text('VALUE = 1\n', encoding='utf-8')
+            scope = SourceFiles()
+            first = scope.read(path)
+            with mock.patch.object(Path, 'read_text', side_effect=AssertionError('reread one scope')):
+                self.assertIs(first, scope.read(path))
+            metadata = path.stat()
+            path.write_text('VALUE = 2\n', encoding='utf-8')
+            os.utime(path, ns=(metadata.st_atime_ns, metadata.st_mtime_ns))
+            self.assertEqual('VALUE = 2\n', SourceFiles().read(path).text)
+            path.write_text('def (\n', encoding='utf-8')
+            fresh = SourceFiles()
+            with self.assertRaises(SyntaxError) as error:
+                fresh.read(path)
+            self.assertEqual(str(path), error.exception.filename)
+            path.write_text('VALUE = 3\n', encoding='utf-8')
+            self.assertEqual(ast.dump(ast.parse('VALUE = 3\n')), ast.dump(fresh.read(path).tree))
+            with mock.patch.object(Path, 'read_text', side_effect=PermissionError('unreadable')):
+                with self.assertRaises(PermissionError):
+                    SourceFiles().read(path)
+            path.unlink()
+            with self.assertRaises(FileNotFoundError):
+                SourceFiles().read(path)
+
+    def test_analysis_with_replaced_tree_cannot_reuse_an_older_snapshot(self):
+        import ast
+        from types import SimpleNamespace
+        from scripts.source_syntax import SyntaxSnapshot, analysis_syntax
+
+        first = ast.parse('old_value = 1\n')
+        second = ast.parse('new_value = 2\n')
+        analysis = SimpleNamespace(tree=first, syntax=SyntaxSnapshot(first))
+        self.assertIs(analysis.syntax, analysis_syntax(analysis))
+        analysis.tree = second
+        self.assertIs(second, analysis_syntax(analysis).tree)
+        self.assertEqual(tuple(ast.walk(second)), tuple(analysis_syntax(analysis).walk()))
+
+
 class ArchitectureTestImportInventoryTests(unittest.TestCase):
     def test_shared_import_inventory_keeps_matching_and_rereads_after_edits(self):
         from scripts.architecture_observability import _test_import_inventory, _tests_for_modules

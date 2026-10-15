@@ -12,6 +12,7 @@ from scripts.compact_ci_dependencies import (
     DynamicSite,
     Provenance,
     Requirement,
+    DependencySourceScope,
     discover_module_requirements,
     index_fixture_ownership,
     load_dependency_manifest,
@@ -90,9 +91,10 @@ def build_dependency_report(
     requirements_by_module: dict[str, set[Requirement]] = {}
     unresolved: list[DynamicSite] = []
     discovery_errors: list[str] = []
+    sources = DependencySourceScope()
     for module in compact_modules:
         discovered, dynamic_sites, errors = discover_module_requirements(
-            module, root=root
+            module, root=root, sources=sources
         )
         discovery_errors.extend(errors)
         module_requirements = set(discovered)
