@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "registry_fingerprint": "1b4acbf973471b3f1f6bdacf130d5df083d6638b244a24433c04a613469aaaf8",
-  "declaration_source_fingerprint": "d920bca02e01190cfde9b72f65938643235157c881aaa6595a3c43955922b68b",
+  "declaration_source_fingerprint": "2bfde17cbf2ccab3698f7b4a4631849caebcc622cd45c8deb2fbb3acbfcb968e",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -13567,24 +13567,6 @@
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "interaction",
-      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
-      "official_rule_ids": [
-        "601.2f",
-        "601.2h",
-        "700.8",
-        "700.8a",
-        "700.8b"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Shared current devotion participates in native cast-cost and mana outcomes; modifier departure changes affordability and a real recast restores the accepted cast, while hybrid and foreign sources retain their scoped contribution."
-    },
-    {
-      "capability_id": "casting.cost.self_public_reduction",
-      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_multiple_qualifying_opponents_apply_one_fixed_reduction",
       "official_rule_ids": [
         "601.2f",
@@ -13692,6 +13674,24 @@
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared current devotion participates in native cast-cost and mana outcomes; modifier departure changes affordability and a real recast restores the accepted cast, while hybrid and foreign sources retain their scoped contribution."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_is_private_multiplayer_and_replays",
       "official_rule_ids": [
@@ -13725,24 +13725,6 @@
         "commander_review"
       ],
       "applicability_note": "Remove source-spanned lowering and evaluated runtime reduction independently so exact compilation and cost assertions reject both mutants."
-    },
-    {
-      "capability_id": "casting.cost.self_public_reduction",
-      "evidence_class": "negative",
-      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
-      "official_rule_ids": [
-        "601.2f",
-        "601.2h",
-        "700.8",
-        "700.8a",
-        "700.8b"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Shared current devotion participates in native cast-cost and mana outcomes; modifier departure changes affordability and a real recast restores the accepted cast, while hybrid and foreign sources retain their scoped contribution."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
@@ -13818,7 +13800,7 @@
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
-      "evidence_class": "positive",
+      "evidence_class": "negative",
       "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
       "official_rule_ids": [
         "601.2f",
@@ -13926,7 +13908,7 @@
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
-      "evidence_class": "privacy",
+      "evidence_class": "positive",
       "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
       "official_rule_ids": [
         "601.2f",
@@ -13962,7 +13944,7 @@
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
-      "evidence_class": "replay",
+      "evidence_class": "privacy",
       "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
       "official_rule_ids": [
         "601.2f",
@@ -14013,6 +13995,24 @@
         "commander_review"
       ],
       "applicability_note": "Replay the public count, reduced mana payment, stack transition, resolution, and final authoritative hash exactly."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared current devotion participates in native cast-cost and mana outcomes; modifier departure changes affordability and a real recast restores the accepted cast, while hybrid and foreign sources retain their scoped contribution."
     },
     {
       "capability_id": "casting.disguise.fixed_mana",
@@ -31905,44 +31905,6 @@
     {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "interaction",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
-      "official_rule_ids": [
-        "604.1",
-        "611.3a",
-        "611.3b",
-        "611.3c",
-        "613.1f",
-        "613.6"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Actual original Clot Sliver grants a source-permanent shield to a foreign Sliver, rejects wrong principals and nongrant recipients, then replaces actual Murder destruction on the recipient with full replay."
-    },
-    {
-      "capability_id": "continuous.ability.fixed_query_grant",
-      "evidence_class": "interaction",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
-      "official_rule_ids": [
-        "604.1",
-        "611.3a",
-        "611.3b",
-        "611.3c",
-        "613.1f",
-        "613.6"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Actual original Dormant Sliver grants entry draws to itself and a foreign controller flash recipient, preserving private consequences and full pre-action replay."
-    },
-    {
-      "capability_id": "continuous.ability.fixed_query_grant",
-      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_subtype_union_recomputes_after_layer_four_and_excludes_source",
       "official_rule_ids": [
         "604.1",
@@ -32018,6 +31980,63 @@
     },
     {
       "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Clot Sliver grants a source-permanent shield to a foreign Sliver, rejects wrong principals and nongrant recipients, then replaces actual Murder destruction on the recipient with full replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Dormant Sliver grants entry draws to itself and a foreign controller flash recipient, preserving private consequences and full pre-action replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantRuntimeTests.test_global_granted_triggers_preserve_multiplicity_apnap_and_privacy",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply two global typed grants in four-player state and retain separate recipient-controlled trigger occurrences through APNAP placement."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
       "official_rule_ids": [
@@ -32053,25 +32072,6 @@
         "commander_review"
       ],
       "applicability_note": "Actual original Dormant Sliver grants entry draws to itself and a foreign controller flash recipient, preserving private consequences and full pre-action replay."
-    },
-    {
-      "capability_id": "continuous.ability.fixed_query_grant",
-      "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantRuntimeTests.test_global_granted_triggers_preserve_multiplicity_apnap_and_privacy",
-      "official_rule_ids": [
-        "604.1",
-        "611.3a",
-        "611.3b",
-        "611.3c",
-        "613.1f",
-        "613.6"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Apply two global typed grants in four-player state and retain separate recipient-controlled trigger occurrences through APNAP placement."
     },
     {
       "capability_id": "continuous.ability.fixed_query_grant",
@@ -32190,25 +32190,6 @@
     {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "negative",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
-      "official_rule_ids": [
-        "604.1",
-        "611.3a",
-        "611.3b",
-        "611.3c",
-        "613.1f",
-        "613.6"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Actual original Clot Sliver grants a source-permanent shield to a foreign Sliver, rejects wrong principals and nongrant recipients, then replaces actual Murder destruction on the recipient with full replay."
-    },
-    {
-      "capability_id": "continuous.ability.fixed_query_grant",
-      "evidence_class": "negative",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_query_dependency_fails_closed_across_consumers",
       "official_rule_ids": [
         "604.1",
@@ -32265,6 +32246,25 @@
     },
     {
       "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Clot Sliver grants a source-permanent shield to a foreign Sliver, rejects wrong principals and nongrant recipients, then replaces actual Murder destruction on the recipient with full replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "positive",
       "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_query_and_attachment_declaration_grants_compile_closed",
       "official_rule_ids": [
@@ -32300,44 +32300,6 @@
         "commander_review"
       ],
       "applicability_note": "Discover and execute every fixed color mode of the granted token mana ability through the ordinary activation owner."
-    },
-    {
-      "capability_id": "continuous.ability.fixed_query_grant",
-      "evidence_class": "positive",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
-      "official_rule_ids": [
-        "604.1",
-        "611.3a",
-        "611.3b",
-        "611.3c",
-        "613.1f",
-        "613.6"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Actual original Clot Sliver grants a source-permanent shield to a foreign Sliver, rejects wrong principals and nongrant recipients, then replaces actual Murder destruction on the recipient with full replay."
-    },
-    {
-      "capability_id": "continuous.ability.fixed_query_grant",
-      "evidence_class": "positive",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
-      "official_rule_ids": [
-        "604.1",
-        "611.3a",
-        "611.3b",
-        "611.3c",
-        "613.1f",
-        "613.6"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Actual original Dormant Sliver grants entry draws to itself and a foreign controller flash recipient, preserving private consequences and full pre-action replay."
     },
     {
       "capability_id": "continuous.ability.fixed_query_grant",
@@ -32398,7 +32360,26 @@
     },
     {
       "capability_id": "continuous.ability.fixed_query_grant",
-      "evidence_class": "privacy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Clot Sliver grants a source-permanent shield to a foreign Sliver, rejects wrong principals and nongrant recipients, then replaces actual Murder destruction on the recipient with full replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "positive",
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
       "official_rule_ids": [
         "604.1",
@@ -32436,6 +32417,25 @@
     },
     {
       "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Dormant Sliver grants entry draws to itself and a foreign controller flash recipient, preserving private consequences and full pre-action replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "replay",
       "test_id": "tests.test_continuous_effect_components.ContinuousEffectComponentTests.test_fixed_query_ability_grant_is_typed_and_canonical",
       "official_rule_ids": [
@@ -32452,44 +32452,6 @@
         "commander_review"
       ],
       "applicability_note": "Round-trip the complete typed continuous effect and its fixed granted fragment without changing canonical identity."
-    },
-    {
-      "capability_id": "continuous.ability.fixed_query_grant",
-      "evidence_class": "replay",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
-      "official_rule_ids": [
-        "604.1",
-        "611.3a",
-        "611.3b",
-        "611.3c",
-        "613.1f",
-        "613.6"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Actual original Clot Sliver grants a source-permanent shield to a foreign Sliver, rejects wrong principals and nongrant recipients, then replaces actual Murder destruction on the recipient with full replay."
-    },
-    {
-      "capability_id": "continuous.ability.fixed_query_grant",
-      "evidence_class": "replay",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
-      "official_rule_ids": [
-        "604.1",
-        "611.3a",
-        "611.3b",
-        "611.3c",
-        "613.1f",
-        "613.6"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Actual original Dormant Sliver grants entry draws to itself and a foreign controller flash recipient, preserving private consequences and full pre-action replay."
     },
     {
       "capability_id": "continuous.ability.fixed_query_grant",
@@ -32528,6 +32490,44 @@
         "commander_review"
       ],
       "applicability_note": "Replay the source-sacrifice stack object and last-known recipient program through exact resolution."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Clot Sliver grants a source-permanent shield to a foreign Sliver, rejects wrong principals and nongrant recipients, then replaces actual Murder destruction on the recipient with full replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Dormant Sliver grants entry draws to itself and a foreign controller flash recipient, preserving private consequences and full pre-action replay."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -35656,29 +35656,6 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
-      "official_rule_ids": [
-        "301.5",
-        "303.4",
-        "604.1",
-        "611.3a",
-        "611.3b",
-        "613.1d",
-        "613.1f",
-        "613.1g",
-        "613.6",
-        "701.3c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
-    },
-    {
-      "capability_id": "continuous.attached.fixed_characteristics",
-      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
       "official_rule_ids": [
         "301.5",
@@ -35747,6 +35724,29 @@
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_multiple_sources_apply_independently_in_four_player_game",
       "official_rule_ids": [
@@ -35767,29 +35767,6 @@
         "commander_review"
       ],
       "applicability_note": "Stack attached sources controlled by different seats in a four-player state."
-    },
-    {
-      "capability_id": "continuous.attached.fixed_characteristics",
-      "evidence_class": "multiplayer",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
-      "official_rule_ids": [
-        "301.5",
-        "303.4",
-        "604.1",
-        "611.3a",
-        "611.3b",
-        "613.1d",
-        "613.1f",
-        "613.1g",
-        "613.6",
-        "701.3c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -35836,6 +35813,29 @@
         "commander_review"
       ],
       "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -36369,29 +36369,6 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "positive",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
-      "official_rule_ids": [
-        "301.5",
-        "303.4",
-        "604.1",
-        "611.3a",
-        "611.3b",
-        "613.1d",
-        "613.1f",
-        "613.1g",
-        "613.6",
-        "701.3c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
-    },
-    {
-      "capability_id": "continuous.attached.fixed_characteristics",
-      "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
       "official_rule_ids": [
         "301.5",
@@ -36460,6 +36437,29 @@
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "privacy",
       "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_projection_hides_relation_identity_and_replay_is_exact",
       "official_rule_ids": [
@@ -36480,29 +36480,6 @@
         "commander_review"
       ],
       "applicability_note": "Project public characteristics without physical or logical relation IDs."
-    },
-    {
-      "capability_id": "continuous.attached.fixed_characteristics",
-      "evidence_class": "privacy",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
-      "official_rule_ids": [
-        "301.5",
-        "303.4",
-        "604.1",
-        "611.3a",
-        "611.3b",
-        "613.1d",
-        "613.1f",
-        "613.1g",
-        "613.6",
-        "701.3c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -36549,6 +36526,29 @@
         "commander_review"
       ],
       "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -36622,29 +36622,6 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "replay",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
-      "official_rule_ids": [
-        "301.5",
-        "303.4",
-        "604.1",
-        "611.3a",
-        "611.3b",
-        "613.1d",
-        "613.1f",
-        "613.1g",
-        "613.6",
-        "701.3c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
-    },
-    {
-      "capability_id": "continuous.attached.fixed_characteristics",
-      "evidence_class": "replay",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
       "official_rule_ids": [
         "301.5",
@@ -36710,6 +36687,29 @@
         "commander_review"
       ],
       "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
     },
     {
       "capability_id": "continuous.basic_land_type.add_all_lands",
@@ -66819,21 +66819,6 @@
     {
       "capability_id": "damage.amount.positive",
       "evidence_class": "interaction",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
-      "official_rule_ids": [
-        "120.1",
-        "120.2"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Original Raging Regisaur and Thorncaster Sliver source/granted attacks create one recipient-source damage trigger. Legal target takes1; actual Unsummon target departure fizzles it. Wrong-principal rollback, private projection and pending/full pre-attack replay agree."
-    },
-    {
-      "capability_id": "damage.amount.positive",
-      "evidence_class": "interaction",
       "test_id": "tests.test_keyword_counter_composition.KeywordCounterCompositionTests.test_keyword_damage_composes_with_exact_counter_replacement_and_residuals",
       "official_rule_ids": [
         "120.1",
@@ -66845,6 +66830,21 @@
         "commander_review"
       ],
       "applicability_note": "Commit one positive noncombat damage event through Deathtouch, Infect, and Lifelink results before a distinct effect-generated counter placement."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Raging Regisaur and Thorncaster Sliver source/granted attacks create one recipient-source damage trigger. Legal target takes1; actual Unsummon target departure fizzles it. Wrong-principal rollback, private projection and pending/full pre-attack replay agree."
     },
     {
       "capability_id": "damage.amount.positive",
@@ -70839,27 +70839,6 @@
     {
       "capability_id": "damage.prevention.static_fixed",
       "evidence_class": "negative",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
-      "official_rule_ids": [
-        "120.4b",
-        "615.1",
-        "615.6",
-        "615.10",
-        "615.12",
-        "615.12a",
-        "616.1",
-        "616.1f"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Original Sphere of Law is cast. Actual red LightningBolt3 to its controller commits1, a constructed whole blue damage3 commits3, reddamage to anotherplayercommits3, and actualDisenchantsource departure endsprevention beforeanother red3. Wrongprincipal rollback, privateprojection andpending/fullreplay agree."
-    },
-    {
-      "capability_id": "damage.prevention.static_fixed",
-      "evidence_class": "negative",
       "test_id": "tests.test_oracle_ir.OracleIRTests.test_static_damage_replacement_wording_lowers_to_generic_handlers",
       "official_rule_ids": [
         "120.4b",
@@ -70877,6 +70856,27 @@
         "commander_review"
       ],
       "applicability_note": "Apply trusted generic or reviewed fixed static prevention and represented protection prevention to each typed damage event in affected-subject order."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Sphere of Law is cast. Actual red LightningBolt3 to its controller commits1, a constructed whole blue damage3 commits3, reddamage to anotherplayercommits3, and actualDisenchantsource departure endsprevention beforeanother red3. Wrongprincipal rollback, privateprojection andpending/fullreplay agree."
     },
     {
       "capability_id": "damage.prevention.static_fixed",
@@ -70923,27 +70923,6 @@
     {
       "capability_id": "damage.prevention.static_fixed",
       "evidence_class": "positive",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
-      "official_rule_ids": [
-        "120.4b",
-        "615.1",
-        "615.6",
-        "615.10",
-        "615.12",
-        "615.12a",
-        "616.1",
-        "616.1f"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Original Sphere of Law is cast. Actual red LightningBolt3 to its controller commits1, a constructed whole blue damage3 commits3, reddamage to anotherplayercommits3, and actualDisenchantsource departure endsprevention beforeanother red3. Wrongprincipal rollback, privateprojection andpending/fullreplay agree."
-    },
-    {
-      "capability_id": "damage.prevention.static_fixed",
-      "evidence_class": "positive",
       "test_id": "tests.test_oracle_ir.OracleIRTests.test_static_damage_replacement_wording_lowers_to_generic_handlers",
       "official_rule_ids": [
         "120.4b",
@@ -70961,6 +70940,27 @@
         "commander_review"
       ],
       "applicability_note": "Apply trusted generic or reviewed fixed static prevention and represented protection prevention to each typed damage event in affected-subject order."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Sphere of Law is cast. Actual red LightningBolt3 to its controller commits1, a constructed whole blue damage3 commits3, reddamage to anotherplayercommits3, and actualDisenchantsource departure endsprevention beforeanother red3. Wrongprincipal rollback, privateprojection andpending/fullreplay agree."
     },
     {
       "capability_id": "damage.prevention.static_fixed",
@@ -91342,6 +91342,46 @@
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_public_stat_aggregate_cost_codec_and_dependency_gate",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aggregate casting/mana consumers round-trip closed typed schemas, bind complete constructed CardPrograms and reject withdrawn aggregate dependencies and hidden-zone mutations."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaCompilerTests.test_public_stat_aggregate_mana_codec_and_dependency_gate",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aggregate casting/mana consumers round-trip closed typed schemas, bind complete constructed CardPrograms and reject withdrawn aggregate dependencies and hidden-zone mutations."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "negative",
       "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
       "official_rule_ids": [
         "107.1b",
@@ -91398,46 +91438,6 @@
         "commander_review"
       ],
       "applicability_note": "Original Ghalta uses current own total power for a real cast, loses its affordable offer after actual bounce, rejects a stale offer, restores the offer after recasting the body, preserves colored payment, and loads/replays from before actions."
-    },
-    {
-      "capability_id": "quantity_expression.public_characteristic_aggregate",
-      "evidence_class": "negative",
-      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_public_stat_aggregate_cost_codec_and_dependency_gate",
-      "official_rule_ids": [
-        "107.1b",
-        "208.3",
-        "601.2f",
-        "605.1a",
-        "608.2h",
-        "613.1g",
-        "613.4c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Aggregate casting/mana consumers round-trip closed typed schemas, bind complete constructed CardPrograms and reject withdrawn aggregate dependencies and hidden-zone mutations."
-    },
-    {
-      "capability_id": "quantity_expression.public_characteristic_aggregate",
-      "evidence_class": "negative",
-      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaCompilerTests.test_public_stat_aggregate_mana_codec_and_dependency_gate",
-      "official_rule_ids": [
-        "107.1b",
-        "208.3",
-        "601.2f",
-        "605.1a",
-        "608.2h",
-        "613.1g",
-        "613.4c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Aggregate casting/mana consumers round-trip closed typed schemas, bind complete constructed CardPrograms and reject withdrawn aggregate dependencies and hidden-zone mutations."
     },
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
@@ -91482,6 +91482,46 @@
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_public_stat_aggregate_cost_codec_and_dependency_gate",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aggregate casting/mana consumers round-trip closed typed schemas, bind complete constructed CardPrograms and reject withdrawn aggregate dependencies and hidden-zone mutations."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaCompilerTests.test_public_stat_aggregate_mana_codec_and_dependency_gate",
+      "official_rule_ids": [
+        "107.1b",
+        "208.3",
+        "601.2f",
+        "605.1a",
+        "608.2h",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aggregate casting/mana consumers round-trip closed typed schemas, bind complete constructed CardPrograms and reject withdrawn aggregate dependencies and hidden-zone mutations."
+    },
+    {
+      "capability_id": "quantity_expression.public_characteristic_aggregate",
+      "evidence_class": "positive",
       "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
       "official_rule_ids": [
         "107.1b",
@@ -91538,46 +91578,6 @@
         "commander_review"
       ],
       "applicability_note": "Original Ghalta uses current own total power for a real cast, loses its affordable offer after actual bounce, rejects a stale offer, restores the offer after recasting the body, preserves colored payment, and loads/replays from before actions."
-    },
-    {
-      "capability_id": "quantity_expression.public_characteristic_aggregate",
-      "evidence_class": "positive",
-      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_public_stat_aggregate_cost_codec_and_dependency_gate",
-      "official_rule_ids": [
-        "107.1b",
-        "208.3",
-        "601.2f",
-        "605.1a",
-        "608.2h",
-        "613.1g",
-        "613.4c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Aggregate casting/mana consumers round-trip closed typed schemas, bind complete constructed CardPrograms and reject withdrawn aggregate dependencies and hidden-zone mutations."
-    },
-    {
-      "capability_id": "quantity_expression.public_characteristic_aggregate",
-      "evidence_class": "positive",
-      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaCompilerTests.test_public_stat_aggregate_mana_codec_and_dependency_gate",
-      "official_rule_ids": [
-        "107.1b",
-        "208.3",
-        "601.2f",
-        "605.1a",
-        "608.2h",
-        "613.1g",
-        "613.4c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Aggregate casting/mana consumers round-trip closed typed schemas, bind complete constructed CardPrograms and reject withdrawn aggregate dependencies and hidden-zone mutations."
     },
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
@@ -91799,25 +91799,6 @@
     {
       "capability_id": "quantity_expression.public_player_count",
       "evidence_class": "negative",
-      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
-      "official_rule_ids": [
-        "102.2",
-        "102.3",
-        "104.3a",
-        "608.2h",
-        "800.4",
-        "800.4a"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Strict original Tyranid Invasion is cast while three opponents remain; actual confirmed concession leaves two before resolution, yielding two complete tokens. Private projection, unauthorized and malformed-command rollback, pending save/load and pre-action replay agree."
-    },
-    {
-      "capability_id": "quantity_expression.public_player_count",
-      "evidence_class": "negative",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_opponent_token_quantity_has_explicit_player_count_dependency",
       "official_rule_ids": [
         "102.2",
@@ -91833,6 +91814,25 @@
         "commander_review"
       ],
       "applicability_note": "Typed public roster counts exclude the controller and departed seats without object/hidden reads; subset exploration, malformed/domain inputs, withdrawn dependencies and fixed-three mutation distinguish the intended result."
+    },
+    {
+      "capability_id": "quantity_expression.public_player_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
+      "official_rule_ids": [
+        "102.2",
+        "102.3",
+        "104.3a",
+        "608.2h",
+        "800.4",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Strict original Tyranid Invasion is cast while three opponents remain; actual confirmed concession leaves two before resolution, yielding two complete tokens. Private projection, unauthorized and malformed-command rollback, pending save/load and pre-action replay agree."
     },
     {
       "capability_id": "quantity_expression.public_player_count",
@@ -91856,25 +91856,6 @@
     {
       "capability_id": "quantity_expression.public_player_count",
       "evidence_class": "positive",
-      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
-      "official_rule_ids": [
-        "102.2",
-        "102.3",
-        "104.3a",
-        "608.2h",
-        "800.4",
-        "800.4a"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Strict original Tyranid Invasion is cast while three opponents remain; actual confirmed concession leaves two before resolution, yielding two complete tokens. Private projection, unauthorized and malformed-command rollback, pending save/load and pre-action replay agree."
-    },
-    {
-      "capability_id": "quantity_expression.public_player_count",
-      "evidence_class": "positive",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_opponent_token_quantity_has_explicit_player_count_dependency",
       "official_rule_ids": [
         "102.2",
@@ -91890,6 +91871,25 @@
         "commander_review"
       ],
       "applicability_note": "Typed public roster counts exclude the controller and departed seats without object/hidden reads; subset exploration, malformed/domain inputs, withdrawn dependencies and fixed-three mutation distinguish the intended result."
+    },
+    {
+      "capability_id": "quantity_expression.public_player_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
+      "official_rule_ids": [
+        "102.2",
+        "102.3",
+        "104.3a",
+        "608.2h",
+        "800.4",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Strict original Tyranid Invasion is cast while three opponents remain; actual confirmed concession leaves two before resolution, yielding two complete tokens. Private projection, unauthorized and malformed-command rollback, pending save/load and pre-action replay agree."
     },
     {
       "capability_id": "quantity_expression.public_player_count",
@@ -91947,56 +91947,6 @@
         "commander_review"
       ],
       "applicability_note": "Strict original Tyranid Invasion is cast while three opponents remain; actual confirmed concession leaves two before resolution, yielding two complete tokens. Private projection, unauthorized and malformed-command rollback, pending save/load and pre-action replay agree."
-    },
-    {
-      "capability_id": "quantity_expression.public_query_effect_amount",
-      "evidence_class": "interaction",
-      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
-      "official_rule_ids": [
-        "109.2",
-        "109.2a",
-        "205.3m",
-        "608.2h",
-        "611.2c",
-        "613.1d",
-        "613.1e",
-        "613.4c",
-        "701.22a",
-        "701.22b",
-        "701.25a",
-        "701.25c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "OriginalCopperhoofVorraccurrentstatsloseonebonusafteractualforeignlandmanaT,but ownlandTdoesnotcontribute. Acompleteconstructed drawspellafteractualHeritage3creaturetapdraws3andexcludeuntappedcreature. Principalprivatehand,pendingloadandfullpreactionreplayagree."
-    },
-    {
-      "capability_id": "quantity_expression.public_query_effect_amount",
-      "evidence_class": "interaction",
-      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
-      "official_rule_ids": [
-        "109.2",
-        "109.2a",
-        "205.3m",
-        "608.2h",
-        "611.2c",
-        "613.1d",
-        "613.1e",
-        "613.4c",
-        "701.22a",
-        "701.22b",
-        "701.25a",
-        "701.25c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -92276,6 +92226,56 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalCopperhoofVorraccurrentstatsloseonebonusafteractualforeignlandmanaT,but ownlandTdoesnotcontribute. Acompleteconstructed drawspellafteractualHeritage3creaturetapdraws3andexcludeuntappedcreature. Principalprivatehand,pendingloadandfullpreactionreplayagree."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_query_scaled_counters.QueryScaledCounterCompilerTests.test_query_counter_sequence_preserves_instruction_order_and_rejects_open_tail",
       "official_rule_ids": [
         "109.2",
@@ -92451,56 +92451,6 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
-      "official_rule_ids": [
-        "109.2",
-        "109.2a",
-        "205.3m",
-        "608.2h",
-        "611.2c",
-        "613.1d",
-        "613.1e",
-        "613.4c",
-        "701.22a",
-        "701.22b",
-        "701.25a",
-        "701.25c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "OriginalCopperhoofVorraccurrentstatsloseonebonusafteractualforeignlandmanaT,but ownlandTdoesnotcontribute. Acompleteconstructed drawspellafteractualHeritage3creaturetapdraws3andexcludeuntappedcreature. Principalprivatehand,pendingloadandfullpreactionreplayagree."
-    },
-    {
-      "capability_id": "quantity_expression.public_query_effect_amount",
-      "evidence_class": "multiplayer",
-      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
-      "official_rule_ids": [
-        "109.2",
-        "109.2a",
-        "205.3m",
-        "608.2h",
-        "611.2c",
-        "613.1d",
-        "613.1e",
-        "613.4c",
-        "701.22a",
-        "701.22b",
-        "701.25a",
-        "701.25c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
-    },
-    {
-      "capability_id": "quantity_expression.public_query_effect_amount",
-      "evidence_class": "multiplayer",
       "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityActionTests.test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
       "official_rule_ids": [
         "109.2",
@@ -92622,6 +92572,56 @@
         "commander_review"
       ],
       "applicability_note": "Resolve a controller-hand count in four-player state without exposing hidden card identity to another principal."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalCopperhoofVorraccurrentstatsloseonebonusafteractualforeignlandmanaT,but ownlandTdoesnotcontribute. Acompleteconstructed drawspellafteractualHeritage3creaturetapdraws3andexcludeuntappedcreature. Principalprivatehand,pendingloadandfullpreactionreplayagree."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -92826,31 +92826,6 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "negative",
-      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
-      "official_rule_ids": [
-        "109.2",
-        "109.2a",
-        "205.3m",
-        "608.2h",
-        "611.2c",
-        "613.1d",
-        "613.1e",
-        "613.4c",
-        "701.22a",
-        "701.22b",
-        "701.25a",
-        "701.25c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "OriginalCopperhoofVorraccurrentstatsloseonebonusafteractualforeignlandmanaT,but ownlandTdoesnotcontribute. Acompleteconstructed drawspellafteractualHeritage3creaturetapdraws3andexcludeuntappedcreature. Principalprivatehand,pendingloadandfullpreactionreplayagree."
-    },
-    {
-      "capability_id": "quantity_expression.public_query_effect_amount",
-      "evidence_class": "negative",
       "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityCompilerTests.test_counted_token_definition_retains_trailing_keywords",
       "official_rule_ids": [
         "109.2",
@@ -93047,6 +93022,31 @@
         "commander_review"
       ],
       "applicability_note": "Reject hidden, source-relative, ability-presence, stateful, linked, optional, modal, compound, and malformed quantity descriptors before runtime authority."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalCopperhoofVorraccurrentstatsloseonebonusafteractualforeignlandmanaT,but ownlandTdoesnotcontribute. Acompleteconstructed drawspellafteractualHeritage3creaturetapdraws3andexcludeuntappedcreature. Principalprivatehand,pendingloadandfullpreactionreplayagree."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -93276,56 +93276,6 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "positive",
-      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
-      "official_rule_ids": [
-        "109.2",
-        "109.2a",
-        "205.3m",
-        "608.2h",
-        "611.2c",
-        "613.1d",
-        "613.1e",
-        "613.4c",
-        "701.22a",
-        "701.22b",
-        "701.25a",
-        "701.25c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "OriginalCopperhoofVorraccurrentstatsloseonebonusafteractualforeignlandmanaT,but ownlandTdoesnotcontribute. Acompleteconstructed drawspellafteractualHeritage3creaturetapdraws3andexcludeuntappedcreature. Principalprivatehand,pendingloadandfullpreactionreplayagree."
-    },
-    {
-      "capability_id": "quantity_expression.public_query_effect_amount",
-      "evidence_class": "positive",
-      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
-      "official_rule_ids": [
-        "109.2",
-        "109.2a",
-        "205.3m",
-        "608.2h",
-        "611.2c",
-        "613.1d",
-        "613.1e",
-        "613.4c",
-        "701.22a",
-        "701.22b",
-        "701.25a",
-        "701.25c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
-    },
-    {
-      "capability_id": "quantity_expression.public_query_effect_amount",
-      "evidence_class": "positive",
       "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityCompilerTests.test_counted_token_definition_retains_trailing_keywords",
       "official_rule_ids": [
         "109.2",
@@ -93526,6 +93476,56 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "positive",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalCopperhoofVorraccurrentstatsloseonebonusafteractualforeignlandmanaT,but ownlandTdoesnotcontribute. Acompleteconstructed drawspellafteractualHeritage3creaturetapdraws3andexcludeuntappedcreature. Principalprivatehand,pendingloadandfullpreactionreplayagree."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
       "test_id": "tests.test_query_scaled_counters.QueryScaledCounterCompilerTests.test_public_query_counter_amounts_preserve_subject_counter_kind_and_query",
       "official_rule_ids": [
         "109.2",
@@ -93651,56 +93651,6 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "privacy",
-      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
-      "official_rule_ids": [
-        "109.2",
-        "109.2a",
-        "205.3m",
-        "608.2h",
-        "611.2c",
-        "613.1d",
-        "613.1e",
-        "613.4c",
-        "701.22a",
-        "701.22b",
-        "701.25a",
-        "701.25c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "OriginalCopperhoofVorraccurrentstatsloseonebonusafteractualforeignlandmanaT,but ownlandTdoesnotcontribute. Acompleteconstructed drawspellafteractualHeritage3creaturetapdraws3andexcludeuntappedcreature. Principalprivatehand,pendingloadandfullpreactionreplayagree."
-    },
-    {
-      "capability_id": "quantity_expression.public_query_effect_amount",
-      "evidence_class": "privacy",
-      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
-      "official_rule_ids": [
-        "109.2",
-        "109.2a",
-        "205.3m",
-        "608.2h",
-        "611.2c",
-        "613.1d",
-        "613.1e",
-        "613.4c",
-        "701.22a",
-        "701.22b",
-        "701.25a",
-        "701.25c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
-    },
-    {
-      "capability_id": "quantity_expression.public_query_effect_amount",
-      "evidence_class": "privacy",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
       "official_rule_ids": [
         "109.2",
@@ -93801,31 +93751,6 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "privacy",
-      "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_actual_magistrate_counts_only_controlled_elves_and_uses_real_targets",
-      "official_rule_ids": [
-        "109.2",
-        "109.2a",
-        "205.3m",
-        "608.2h",
-        "611.2c",
-        "613.1d",
-        "613.1e",
-        "613.4c",
-        "701.22a",
-        "701.22b",
-        "701.25a",
-        "701.25c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
-    },
-    {
-      "capability_id": "quantity_expression.public_query_effect_amount",
-      "evidence_class": "replay",
       "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
       "official_rule_ids": [
         "109.2",
@@ -93850,7 +93775,7 @@
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
-      "evidence_class": "replay",
+      "evidence_class": "privacy",
       "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
       "official_rule_ids": [
         "109.2",
@@ -93872,6 +93797,31 @@
         "commander_review"
       ],
       "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_actual_magistrate_counts_only_controlled_elves_and_uses_real_targets",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -94072,6 +94022,56 @@
         "commander_review"
       ],
       "applicability_note": "Save, load, and exactly replay the typed query descriptor, locked controller, resolved amount, and final authoritative state."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalCopperhoofVorraccurrentstatsloseonebonusafteractualforeignlandmanaT,but ownlandTdoesnotcontribute. Acompleteconstructed drawspellafteractualHeritage3creaturetapdraws3andexcludeuntappedcreature. Principalprivatehand,pendingloadandfullpreactionreplayagree."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -94436,6 +94436,26 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "negative",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_zero_scalar_counter_quantity_commits_price_and_places_no_counters",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered commands preserve independently specified result quantity, recorded cast choice, departed object identity and canonical continuation outcomes with exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "negative",
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_damage_amount_subscription_diagnostic_excludes_noncombat_incoming_and_foreign_sources",
       "official_rule_ids": [
         "107.1b",
@@ -94472,26 +94492,6 @@
         "commander_review"
       ],
       "applicability_note": "Actual original Fear of Failed Tests deals combat2 and draws2; Mourning Thrull deals1 and gains1; Wall of Essence blocks a real2power attack and gains2 from committed combat damage. Wrongprincipal rollback, private draws, pending load and full pre-attack replay agree."
-    },
-    {
-      "capability_id": "quantity_expression.scalar_effect_amount",
-      "evidence_class": "negative",
-      "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_zero_scalar_counter_quantity_commits_price_and_places_no_counters",
-      "official_rule_ids": [
-        "107.1b",
-        "107.2",
-        "107.3c",
-        "113.7a",
-        "400.7",
-        "608.2h",
-        "613.4c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Actual registered commands preserve independently specified result quantity, recorded cast choice, departed object identity and canonical continuation outcomes with exact replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -94596,26 +94596,6 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "positive",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
-      "official_rule_ids": [
-        "107.1b",
-        "107.2",
-        "107.3c",
-        "113.7a",
-        "400.7",
-        "608.2h",
-        "613.4c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Actual original Fear of Failed Tests deals combat2 and draws2; Mourning Thrull deals1 and gains1; Wall of Essence blocks a real2power attack and gains2 from committed combat damage. Wrongprincipal rollback, private draws, pending load and full pre-attack replay agree."
-    },
-    {
-      "capability_id": "quantity_expression.scalar_effect_amount",
-      "evidence_class": "positive",
       "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_actual_scalar_counter_quantity_reads_current_power_and_replays",
       "official_rule_ids": [
         "107.1b",
@@ -94632,6 +94612,26 @@
         "commander_review"
       ],
       "applicability_note": "Actual registered commands preserve independently specified result quantity, recorded cast choice, departed object identity and canonical continuation outcomes with exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Fear of Failed Tests deals combat2 and draws2; Mourning Thrull deals1 and gains1; Wall of Essence blocks a real2power attack and gains2 from committed combat damage. Wrongprincipal rollback, private draws, pending load and full pre-attack replay agree."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -94816,26 +94816,6 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "replay",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
-      "official_rule_ids": [
-        "107.1b",
-        "107.2",
-        "107.3c",
-        "113.7a",
-        "400.7",
-        "608.2h",
-        "613.4c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Actual original Fear of Failed Tests deals combat2 and draws2; Mourning Thrull deals1 and gains1; Wall of Essence blocks a real2power attack and gains2 from committed combat damage. Wrongprincipal rollback, private draws, pending load and full pre-attack replay agree."
-    },
-    {
-      "capability_id": "quantity_expression.scalar_effect_amount",
-      "evidence_class": "replay",
       "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_actual_scalar_counter_quantity_reads_current_power_and_replays",
       "official_rule_ids": [
         "107.1b",
@@ -94852,6 +94832,26 @@
         "commander_review"
       ],
       "applicability_note": "Actual registered commands preserve independently specified result quantity, recorded cast choice, departed object identity and canonical continuation outcomes with exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Fear of Failed Tests deals combat2 and draws2; Mourning Thrull deals1 and gains1; Wall of Essence blocks a real2power attack and gains2 from committed combat damage. Wrongprincipal rollback, private draws, pending load and full pre-attack replay agree."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -109477,6 +109477,27 @@
     {
       "capability_id": "token.creation.quantity_replacement",
       "evidence_class": "negative",
+      "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_fixed_token_doubler_is_compiled_with_current_source_ability_coverage",
+      "official_rule_ids": [
+        "111.2",
+        "614.1",
+        "614.1a",
+        "614.4",
+        "614.5",
+        "614.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constructed source-spanned compiler and whole-program admission preserves complete token definition, public quantity producer and current replacement ability identity; unsupported grammar, missing dependencies and malformed schema types fail closed."
+    },
+    {
+      "capability_id": "token.creation.quantity_replacement",
+      "evidence_class": "negative",
       "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_token_doubler_owner_diagnostic_respects_controller_and_current_ability_removal",
       "official_rule_ids": [
         "111.2",
@@ -109497,7 +109518,7 @@
     },
     {
       "capability_id": "token.creation.quantity_replacement",
-      "evidence_class": "negative",
+      "evidence_class": "positive",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_fixed_token_doubler_is_compiled_with_current_source_ability_coverage",
       "official_rule_ids": [
         "111.2",
@@ -109536,27 +109557,6 @@
         "commander_review"
       ],
       "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
-    },
-    {
-      "capability_id": "token.creation.quantity_replacement",
-      "evidence_class": "positive",
-      "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_fixed_token_doubler_is_compiled_with_current_source_ability_coverage",
-      "official_rule_ids": [
-        "111.2",
-        "614.1",
-        "614.1a",
-        "614.4",
-        "614.5",
-        "614.6",
-        "614.16",
-        "616.1"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Constructed source-spanned compiler and whole-program admission preserves complete token definition, public quantity producer and current replacement ability identity; unsupported grammar, missing dependencies and malformed schema types fail closed."
     },
     {
       "capability_id": "token.creation.quantity_replacement",
@@ -136781,27 +136781,6 @@
     {
       "capability_id": "zone.mill.event_recipient",
       "evidence_class": "negative",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
-      "official_rule_ids": [
-        "101.4",
-        "113.7a",
-        "603.2",
-        "608.2c",
-        "608.2h",
-        "701.17a",
-        "701.17b",
-        "701.17c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Original Shriekgeist and Crosstown Courier real combat mill the damaged player, Nemesis of Reason actual attack mills its defending player, and Memory Erosion observes a real foreign spellcast and mills that caster. Pendingload, privateprojection, wrongprincipal rejection and fullpreaction replay retain recipients."
-    },
-    {
-      "capability_id": "zone.mill.event_recipient",
-      "evidence_class": "negative",
       "test_id": "tests.test_mill_rules.FixedMillCompilerTests.test_event_bound_mill_domain_dependencies_and_omission_fail_closed",
       "official_rule_ids": [
         "101.4",
@@ -136822,7 +136801,7 @@
     },
     {
       "capability_id": "zone.mill.event_recipient",
-      "evidence_class": "positive",
+      "evidence_class": "negative",
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
       "official_rule_ids": [
         "101.4",
@@ -136861,6 +136840,27 @@
         "commander_review"
       ],
       "applicability_note": "Complete typed boundmill compiles fixed and committed amounts without introducing target choice; malformed/unproven recipient conditions, partialclauses, missing capabilities and omitted lowering fail closed."
+    },
+    {
+      "capability_id": "zone.mill.event_recipient",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
+      "official_rule_ids": [
+        "101.4",
+        "113.7a",
+        "603.2",
+        "608.2c",
+        "608.2h",
+        "701.17a",
+        "701.17b",
+        "701.17c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Shriekgeist and Crosstown Courier real combat mill the damaged player, Nemesis of Reason actual attack mills its defending player, and Memory Erosion observes a real foreign spellcast and mills that caster. Pendingload, privateprojection, wrongprincipal rejection and fullpreaction replay retain recipients."
     },
     {
       "capability_id": "zone.mill.event_recipient",
@@ -136903,26 +136903,6 @@
         "commander_review"
       ],
       "applicability_note": "Original Shriekgeist and Crosstown Courier real combat mill the damaged player, Nemesis of Reason actual attack mills its defending player, and Memory Erosion observes a real foreign spellcast and mills that caster. Pendingload, privateprojection, wrongprincipal rejection and fullpreaction replay retain recipients."
-    },
-    {
-      "capability_id": "zone.mill.fixed",
-      "evidence_class": "interaction",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
-      "official_rule_ids": [
-        "400.7",
-        "701.17",
-        "701.17a",
-        "701.17b",
-        "701.17c",
-        "608.2f",
-        "101.4"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Original Psychic Corrosion is cast, actual Divination draws twice, departed C is excluded, and B/D each mill as many as available through two simultaneous batches. Controller A is never milled; private hand projection, pending load and full pre-action replay agree."
     },
     {
       "capability_id": "zone.mill.fixed",
@@ -136986,7 +136966,7 @@
     },
     {
       "capability_id": "zone.mill.fixed",
-      "evidence_class": "multiplayer",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
       "official_rule_ids": [
         "400.7",
@@ -137063,6 +137043,26 @@
         "commander_review"
       ],
       "applicability_note": "Resolve a target-player Mill instruction in four-player state while applying an opponent-owned public replacement source and returning priority normally."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Psychic Corrosion is cast, actual Divination draws twice, departed C is excluded, and B/D each mill as many as available through two simultaneous batches. Controller A is never milled; private hand projection, pending load and full pre-action replay agree."
     },
     {
       "capability_id": "zone.mill.fixed",
@@ -137143,26 +137143,6 @@
         "commander_review"
       ],
       "applicability_note": "Typed opponent mill scope closes whole-program admission, excludes controller/departed seats and empty-roster actor fallback, preserves all-player controls, rejects malformed count/fields/scope, withdraws dependency and kills compiler omission."
-    },
-    {
-      "capability_id": "zone.mill.fixed",
-      "evidence_class": "negative",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
-      "official_rule_ids": [
-        "400.7",
-        "701.17",
-        "701.17a",
-        "701.17b",
-        "701.17c",
-        "608.2f",
-        "101.4"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Original Psychic Corrosion is cast, actual Divination draws twice, departed C is excluded, and B/D each mill as many as available through two simultaneous batches. Controller A is never milled; private hand projection, pending load and full pre-action replay agree."
     },
     {
       "capability_id": "zone.mill.fixed",
@@ -137286,6 +137266,26 @@
     },
     {
       "capability_id": "zone.mill.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Psychic Corrosion is cast, actual Divination draws twice, departed C is excluded, and B/D each mill as many as available through two simultaneous batches. Controller A is never milled; private hand projection, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
       "evidence_class": "positive",
       "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_zero_mill_and_scry_consume_price_without_library_mutation",
       "official_rule_ids": [
@@ -137303,26 +137303,6 @@
         "commander_review"
       ],
       "applicability_note": "Zero Mill snapshots no cards, pays the actual announced spell cost, leaves all four libraries unchanged and exactly replays."
-    },
-    {
-      "capability_id": "zone.mill.fixed",
-      "evidence_class": "positive",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
-      "official_rule_ids": [
-        "400.7",
-        "701.17",
-        "701.17a",
-        "701.17b",
-        "701.17c",
-        "608.2f",
-        "101.4"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Original Psychic Corrosion is cast, actual Divination draws twice, departed C is excluded, and B/D each mill as many as available through two simultaneous batches. Controller A is never milled; private hand projection, pending load and full pre-action replay agree."
     },
     {
       "capability_id": "zone.mill.fixed",
@@ -137446,7 +137426,7 @@
     },
     {
       "capability_id": "zone.mill.fixed",
-      "evidence_class": "privacy",
+      "evidence_class": "positive",
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
       "official_rule_ids": [
         "400.7",
@@ -137506,6 +137486,26 @@
     },
     {
       "capability_id": "zone.mill.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Psychic Corrosion is cast, actual Divination draws twice, departed C is excluded, and B/D each mill as many as available through two simultaneous batches. Controller A is never milled; private hand projection, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
       "evidence_class": "property",
       "test_id": "tests.test_mill_rules.FixedMillCompilerTests.test_all_player_mill_scope_shape_rejects_conflicting_or_variable_recipients",
       "official_rule_ids": [
@@ -137523,26 +137523,6 @@
         "commander_review"
       ],
       "applicability_note": "Conflicting player/scope fields, variable recipients, malformed integer counts, unsupported scopes and target schemas cannot receive Mill trust."
-    },
-    {
-      "capability_id": "zone.mill.fixed",
-      "evidence_class": "replay",
-      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
-      "official_rule_ids": [
-        "400.7",
-        "701.17",
-        "701.17a",
-        "701.17b",
-        "701.17c",
-        "608.2f",
-        "101.4"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Original Psychic Corrosion is cast, actual Divination draws twice, departed C is excluded, and B/D each mill as many as available through two simultaneous batches. Controller A is never milled; private hand projection, pending load and full pre-action replay agree."
     },
     {
       "capability_id": "zone.mill.fixed",
@@ -137603,6 +137583,26 @@
         "commander_review"
       ],
       "applicability_note": "Replay target selection, simultaneous replacement-aware movement, actual public destinations, priority, and final authoritative hash."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Psychic Corrosion is cast, actual Divination draws twice, departed C is excluded, and B/D each mill as many as available through two simultaneous batches. Controller A is never milled; private hand projection, pending load and full pre-action replay agree."
     },
     {
       "capability_id": "zone.mill.fixed",
@@ -140314,5 +140314,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "063f7335acce4ed3f145fc35b9e6110ee941c87b2f232716ca45eee60da12f05"
+  "fingerprint": "f0e40fc09de299fb8679ee83820ea6cba1882f84009a780b8a3ed77d964e4439"
 }

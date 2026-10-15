@@ -13804,7 +13804,7 @@
       "covered_high_risk_pairs": 411,
       "covered_piece_pairs": 1293,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "ce447edc8b446d666f5bffd59456e5fab40363019bc9aec00c844076f9c1bab3",
+      "source_fingerprint": "ededfda8ac25149cdc4ddecef500e4f6308f68d2135baa235341b1e5fcb3d1ce",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -34608,7 +34608,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 57,
+        "primary_test_count": 58,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_as_unblocked_assignment",
@@ -34648,6 +34648,7 @@
           "test_object_query",
           "test_prowess_rules",
           "test_public_activation_conditions",
+          "test_public_state_quantity_actions",
           "test_query_power_toughness_definitions",
           "test_repeatable_object_action_triggers",
           "test_riot_rules",
@@ -37616,7 +37617,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 37,
+        "primary_test_count": 38,
         "primary_tests": [
           "test_aggregated_zone_event_triggers",
           "test_attack_counter_triggers",
@@ -37646,6 +37647,7 @@
           "test_prevention_trigger_stack",
           "test_public_history_condition_closure",
           "test_public_query_effect_amounts",
+          "test_public_state_event_actions",
           "test_resolution_public_conditions",
           "test_saga_counter_progression",
           "test_suspend_rules",
@@ -38045,7 +38047,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 245,
+        "primary_test_count": 247,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_aerial_blocking",
@@ -39011,8 +39013,8 @@
           "rollback": 130
         },
         "declaration_count": 6637,
-        "declaration_source_fingerprint": "d920bca02e01190cfde9b72f65938643235157c881aaa6595a3c43955922b68b",
-        "fingerprint": "063f7335acce4ed3f145fc35b9e6110ee941c87b2f232716ca45eee60da12f05",
+        "declaration_source_fingerprint": "2bfde17cbf2ccab3698f7b4a4631849caebcc622cd45c8deb2fbb3acbfcb968e",
+        "fingerprint": "f0e40fc09de299fb8679ee83820ea6cba1882f84009a780b8a3ed77d964e4439",
         "registry_fingerprint": "1b4acbf973471b3f1f6bdacf130d5df083d6638b244a24433c04a613469aaaf8"
       },
       "fingerprint": "1b4acbf973471b3f1f6bdacf130d5df083d6638b244a24433c04a613469aaaf8",
@@ -39378,7 +39380,7 @@
         "contract_fingerprint": "e485004b19b7f21621ab02543231419cfb5f3e92722b9d10129a1b44819bc4bd",
         "exact_cards_with_template": 744,
         "exact_nodes": 908,
-        "fingerprint": "a48d31e959413104fbadf25c43174fdad17f51a1911768b47369a0859162cfa3",
+        "fingerprint": "fa85cfca059d173a34cd9f79bd1df025a0a00dd8cec2e795e71e84b3e823927e",
         "grammar_source_fingerprint": "ba9ae320c5615887ab1b5b872620cb5c121194ce6e84d9ac854e4e418f40f8ce",
         "identity_fingerprint": "23cb162c9dd942a7e05a10237e8ebd1ae1b0d46a6c9d86e14b431bf1f1a81a65",
         "present": true,
@@ -39390,7 +39392,7 @@
         "contract_fingerprint": "e485004b19b7f21621ab02543231419cfb5f3e92722b9d10129a1b44819bc4bd",
         "exact_cards_with_template": 766,
         "exact_nodes": 941,
-        "fingerprint": "f4d447d54fd98cbbe9e077aa8b3bf1f892ea2668dbcbf33e682dcb13e474d90b",
+        "fingerprint": "88ddce18589f394420cc14744c78de43d5f41b373b8567b608c0a158d8364c4c",
         "grammar_source_fingerprint": "ba9ae320c5615887ab1b5b872620cb5c121194ce6e84d9ac854e4e418f40f8ce",
         "identity_fingerprint": "30ee37558d0568aa8d4eece75cd94f960987e1ca5836e4643b3d144795167a82",
         "present": true,
@@ -39409,7 +39411,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "f650c740d9744e23984aff013e2f45b759ecb021d4cb423d9d91f9a9a57a67b1",
+      "fingerprint": "54e5c74bc9dd1156940f9e025ce0c233b24086188da053cf49bc1d614df98481",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -40278,7 +40280,7 @@
         "server_named": 51
       },
       "reconciles": true,
-      "test_files": 440
+      "test_files": 444
     }
   }
 }

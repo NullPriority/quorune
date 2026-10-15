@@ -6290,57 +6290,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "batched-public-events-conditions-tokens-and-quantities",
+      "transition_id": "public-state-test-scheduling-reference-relocation",
       "compiler_version": "oracle-ir-v365",
-      "bundle_id": "bundle:batched-public-events-conditions-tokens-and-quantities",
-      "candidate_ids": [
-        "bundle:batched-public-events-conditions-tokens-and-quantities"
-      ],
-      "family_ids": [
-        "activated_effect:create-token",
-        "continuous_layer:continuous-effect-layers-and-dependencies",
-        "effect_clause:create-token",
-        "effect_clause:ordered-effect-composition",
-        "event_binding:normalized-event-binding",
-        "keyword_dependency:rampage",
-        "quantity_expression:dynamic-quantity"
-      ],
-      "capability_ids": [
-        "card.return.own_graveyard_to_owner_hand",
-        "casting.disguise.fixed_mana",
-        "casting.megamorph.fixed_mana",
-        "casting.morph.fixed_mana",
-        "combat.trigger.rampage",
-        "continuous.characteristics.query_count_modifier",
-        "continuous.characteristics.query_power_toughness_definition",
-        "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
-        "cost.energy.fixed_resolution_payment",
-        "counter.producer.dynamic_self_entry",
-        "counter.producer.fixed_effect",
-        "counter.producer.fixed_event_trigger",
-        "counter.producer.fixed_public_source_event",
-        "counter.producer.fixed_public_target_event",
-        "effect.choice.optional_fixed",
-        "effect.choice.optional_fixed_mana_payment",
-        "keyword_action.manifest.card",
-        "keyword_action.manifest_dread",
-        "quantity_expression.live_battlefield_count",
-        "quantity_expression.public_query_effect_amount",
-        "resolution.effect_program.closed_components",
-        "state_based.role_attachment.uniqueness",
-        "token.ability.fixed_blood",
-        "token.ability.fixed_lander",
-        "token.ability.fixed_mutagen",
-        "token.creation.fixed_definition",
-        "token.creation.predefined_role",
-        "trigger.condition.fixed_public_state",
-        "trigger.event.normalized_anywhere_graveyard",
-        "trigger.event.normalized_zone_change",
-        "trigger.event.qualified_damage_singular",
-        "trigger.event.source_damage_death_history"
-      ],
-      "measurement_id": "measurement:batched-public-events-conditions-tokens-and-quantities",
-      "non_harvest_reason": null
+      "bundle_id": null,
+      "candidate_ids": [],
+      "family_ids": [],
+      "capability_ids": [],
+      "expected_complete_card_gain": null,
+      "non_harvest_reason": "Relocate unchanged existing public-state action tests into coherent independently scheduled modules and update their qualified evidence identities; complete support, runtime behavior and compiler semantics remain unchanged."
     },
 
     "forecast_corrections": [
