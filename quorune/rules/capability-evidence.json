@@ -3776,7 +3776,7 @@
     {
       "capability_id": "activation.selected_tap.fixed",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
       "official_rule_ids": [
         "205.1a",
         "205.1b",
@@ -3830,7 +3830,7 @@
     {
       "capability_id": "activation.selected_tap.fixed",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
       "official_rule_ids": [
         "205.1a",
         "205.1b",
@@ -3956,7 +3956,7 @@
     {
       "capability_id": "activation.selected_tap.fixed",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
       "official_rule_ids": [
         "205.1a",
         "205.1b",
@@ -4046,7 +4046,7 @@
     {
       "capability_id": "activation.selected_tap.fixed",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
       "official_rule_ids": [
         "205.1a",
         "205.1b",
@@ -4082,7 +4082,7 @@
     {
       "capability_id": "activation.selected_tap.fixed",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
       "official_rule_ids": [
         "205.1a",
         "205.1b",
@@ -4136,7 +4136,7 @@
     {
       "capability_id": "activation.selected_tap.fixed",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
       "official_rule_ids": [
         "205.1a",
         "205.1b",
@@ -4282,7 +4282,7 @@
     {
       "capability_id": "activation.selected_zone_change.fixed",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
       "official_rule_ids": [
         "400.2",
         "400.7",
@@ -4392,7 +4392,7 @@
     {
       "capability_id": "activation.selected_zone_change.fixed",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
       "official_rule_ids": [
         "400.2",
         "400.7",
@@ -4656,7 +4656,7 @@
     {
       "capability_id": "activation.selected_zone_change.fixed",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
       "official_rule_ids": [
         "400.2",
         "400.7",
@@ -4898,7 +4898,7 @@
     {
       "capability_id": "activation.selected_zone_change.fixed",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
       "official_rule_ids": [
         "400.2",
         "400.7",
@@ -4986,7 +4986,7 @@
     {
       "capability_id": "activation.selected_zone_change.fixed",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
       "official_rule_ids": [
         "400.2",
         "400.7",
@@ -5140,7 +5140,7 @@
     {
       "capability_id": "activation.selected_zone_change.fixed",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
       "official_rule_ids": [
         "400.2",
         "400.7",
@@ -13567,7 +13567,7 @@
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
       "official_rule_ids": [
         "601.2f",
         "601.2h",
@@ -13729,7 +13729,7 @@
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
       "official_rule_ids": [
         "601.2f",
         "601.2h",
@@ -13819,7 +13819,7 @@
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
       "official_rule_ids": [
         "601.2f",
         "601.2h",
@@ -13927,7 +13927,7 @@
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
       "official_rule_ids": [
         "601.2f",
         "601.2h",
@@ -13963,7 +13963,7 @@
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
       "official_rule_ids": [
         "601.2f",
         "601.2h",
@@ -31905,7 +31905,7 @@
     {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
       "official_rule_ids": [
         "604.1",
         "611.3a",
@@ -31924,7 +31924,7 @@
     {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
       "official_rule_ids": [
         "604.1",
         "611.3a",
@@ -32019,7 +32019,7 @@
     {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
       "official_rule_ids": [
         "604.1",
         "611.3a",
@@ -32038,7 +32038,7 @@
     {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
       "official_rule_ids": [
         "604.1",
         "611.3a",
@@ -32190,7 +32190,7 @@
     {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
       "official_rule_ids": [
         "604.1",
         "611.3a",
@@ -32304,7 +32304,7 @@
     {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
       "official_rule_ids": [
         "604.1",
         "611.3a",
@@ -32323,7 +32323,7 @@
     {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
       "official_rule_ids": [
         "604.1",
         "611.3a",
@@ -32399,7 +32399,7 @@
     {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
       "official_rule_ids": [
         "604.1",
         "611.3a",
@@ -32456,7 +32456,7 @@
     {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
       "official_rule_ids": [
         "604.1",
         "611.3a",
@@ -32475,7 +32475,7 @@
     {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay",
       "official_rule_ids": [
         "604.1",
         "611.3a",
@@ -35656,7 +35656,7 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
       "official_rule_ids": [
         "301.5",
         "303.4",
@@ -35771,7 +35771,7 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
       "official_rule_ids": [
         "301.5",
         "303.4",
@@ -36369,7 +36369,7 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
       "official_rule_ids": [
         "301.5",
         "303.4",
@@ -36484,7 +36484,7 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
       "official_rule_ids": [
         "301.5",
         "303.4",
@@ -36622,7 +36622,7 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
       "official_rule_ids": [
         "301.5",
         "303.4",
@@ -54350,7 +54350,7 @@
     {
       "capability_id": "counter.producer.fixed_effect",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
       "official_rule_ids": [
         "115.1",
         "608.2b",
@@ -54396,7 +54396,7 @@
     {
       "capability_id": "counter.producer.fixed_effect",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
       "official_rule_ids": [
         "115.1",
         "608.2b",
@@ -54603,7 +54603,7 @@
     {
       "capability_id": "counter.producer.fixed_effect",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
       "official_rule_ids": [
         "115.1",
         "608.2b",
@@ -54718,7 +54718,7 @@
     {
       "capability_id": "counter.producer.fixed_effect",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
       "official_rule_ids": [
         "115.1",
         "608.2b",
@@ -54787,7 +54787,7 @@
     {
       "capability_id": "counter.producer.fixed_effect",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
       "official_rule_ids": [
         "115.1",
         "608.2b",
@@ -54879,7 +54879,7 @@
     {
       "capability_id": "counter.producer.fixed_effect",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
       "official_rule_ids": [
         "115.1",
         "608.2b",
@@ -54902,7 +54902,7 @@
     {
       "capability_id": "counter.producer.fixed_event_object",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
       "official_rule_ids": [
         "113.7a",
         "400.7",
@@ -54921,7 +54921,7 @@
     {
       "capability_id": "counter.producer.fixed_event_object",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
       "official_rule_ids": [
         "113.7a",
         "400.7",
@@ -54940,7 +54940,7 @@
     {
       "capability_id": "counter.producer.fixed_event_object",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
       "official_rule_ids": [
         "113.7a",
         "400.7",
@@ -54959,7 +54959,7 @@
     {
       "capability_id": "counter.producer.fixed_event_object",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
       "official_rule_ids": [
         "113.7a",
         "400.7",
@@ -55016,7 +55016,7 @@
     {
       "capability_id": "counter.producer.fixed_event_object",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
       "official_rule_ids": [
         "113.7a",
         "400.7",
@@ -55035,7 +55035,7 @@
     {
       "capability_id": "counter.producer.fixed_event_object",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
       "official_rule_ids": [
         "113.7a",
         "400.7",
@@ -55092,7 +55092,7 @@
     {
       "capability_id": "counter.producer.fixed_event_object",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
       "official_rule_ids": [
         "113.7a",
         "400.7",
@@ -55111,7 +55111,7 @@
     {
       "capability_id": "counter.producer.fixed_event_object",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
       "official_rule_ids": [
         "113.7a",
         "400.7",
@@ -55168,7 +55168,7 @@
     {
       "capability_id": "counter.producer.fixed_event_object",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
       "official_rule_ids": [
         "113.7a",
         "400.7",
@@ -55187,7 +55187,7 @@
     {
       "capability_id": "counter.producer.fixed_event_object",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
       "official_rule_ids": [
         "113.7a",
         "400.7",
@@ -55206,7 +55206,7 @@
     {
       "capability_id": "counter.producer.fixed_event_object",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
       "official_rule_ids": [
         "113.7a",
         "400.7",
@@ -55225,7 +55225,7 @@
     {
       "capability_id": "counter.producer.fixed_event_object",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
       "official_rule_ids": [
         "113.7a",
         "400.7",
@@ -57930,7 +57930,7 @@
     {
       "capability_id": "counter.producer.fixed_permanent_set_effect",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
       "official_rule_ids": [
         "115.1",
         "122.1",
@@ -57974,7 +57974,7 @@
     {
       "capability_id": "counter.producer.fixed_permanent_set_effect",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
       "official_rule_ids": [
         "115.1",
         "122.1",
@@ -58106,7 +58106,7 @@
     {
       "capability_id": "counter.producer.fixed_permanent_set_effect",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
       "official_rule_ids": [
         "115.1",
         "122.1",
@@ -58194,7 +58194,7 @@
     {
       "capability_id": "counter.producer.fixed_permanent_set_effect",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
       "official_rule_ids": [
         "115.1",
         "122.1",
@@ -58260,7 +58260,7 @@
     {
       "capability_id": "counter.producer.fixed_permanent_set_effect",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
       "official_rule_ids": [
         "115.1",
         "122.1",
@@ -58304,7 +58304,7 @@
     {
       "capability_id": "counter.producer.fixed_permanent_set_effect",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
+      "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
       "official_rule_ids": [
         "115.1",
         "122.1",
@@ -59856,7 +59856,7 @@
     {
       "capability_id": "counter.producer.fixed_self_entry",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
       "official_rule_ids": [
         "122.1",
         "122.1a",
@@ -59919,7 +59919,7 @@
     {
       "capability_id": "counter.producer.fixed_self_entry",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
       "official_rule_ids": [
         "122.1",
         "122.1a",
@@ -60003,7 +60003,7 @@
     {
       "capability_id": "counter.producer.fixed_self_entry",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
       "official_rule_ids": [
         "122.1",
         "122.1a",
@@ -60108,7 +60108,7 @@
     {
       "capability_id": "counter.producer.fixed_self_entry",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
       "official_rule_ids": [
         "122.1",
         "122.1a",
@@ -60192,7 +60192,7 @@
     {
       "capability_id": "counter.producer.fixed_self_entry",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
       "official_rule_ids": [
         "122.1",
         "122.1a",
@@ -60276,7 +60276,7 @@
     {
       "capability_id": "counter.producer.fixed_self_entry",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
       "official_rule_ids": [
         "122.1",
         "122.1a",
@@ -66819,7 +66819,7 @@
     {
       "capability_id": "damage.amount.positive",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
       "official_rule_ids": [
         "120.1",
         "120.2"
@@ -66879,7 +66879,7 @@
     {
       "capability_id": "damage.amount.positive",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
       "official_rule_ids": [
         "120.1",
         "120.2"
@@ -66984,7 +66984,7 @@
     {
       "capability_id": "damage.amount.positive",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
       "official_rule_ids": [
         "120.1",
         "120.2"
@@ -67104,7 +67104,7 @@
     {
       "capability_id": "damage.amount.positive",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
       "official_rule_ids": [
         "120.1",
         "120.2"
@@ -67149,7 +67149,7 @@
     {
       "capability_id": "damage.amount.positive",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
       "official_rule_ids": [
         "120.1",
         "120.2"
@@ -67209,7 +67209,7 @@
     {
       "capability_id": "damage.amount.positive",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
       "official_rule_ids": [
         "120.1",
         "120.2"
@@ -70713,7 +70713,7 @@
     {
       "capability_id": "damage.prevention.static_fixed",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
       "official_rule_ids": [
         "120.4b",
         "615.1",
@@ -70755,7 +70755,7 @@
     {
       "capability_id": "damage.prevention.static_fixed",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
       "official_rule_ids": [
         "120.4b",
         "615.1",
@@ -70839,7 +70839,7 @@
     {
       "capability_id": "damage.prevention.static_fixed",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
       "official_rule_ids": [
         "120.4b",
         "615.1",
@@ -70923,7 +70923,7 @@
     {
       "capability_id": "damage.prevention.static_fixed",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
       "official_rule_ids": [
         "120.4b",
         "615.1",
@@ -71007,7 +71007,7 @@
     {
       "capability_id": "damage.prevention.static_fixed",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
       "official_rule_ids": [
         "120.4b",
         "615.1",
@@ -71049,7 +71049,7 @@
     {
       "capability_id": "damage.prevention.static_fixed",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
       "official_rule_ids": [
         "120.4b",
         "615.1",
@@ -82204,7 +82204,7 @@
     {
       "capability_id": "mana.activated.fixed_output",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
       "official_rule_ids": [
         "106.1",
         "106.4",
@@ -82223,7 +82223,7 @@
     {
       "capability_id": "mana.activated.fixed_output",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
       "official_rule_ids": [
         "106.1",
         "106.4",
@@ -82261,7 +82261,7 @@
     {
       "capability_id": "mana.activated.fixed_output",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
       "official_rule_ids": [
         "106.1",
         "106.4",
@@ -82280,7 +82280,7 @@
     {
       "capability_id": "mana.activated.fixed_output",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
       "official_rule_ids": [
         "106.1",
         "106.4",
@@ -82470,7 +82470,7 @@
     {
       "capability_id": "mana.activated.fixed_output",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
       "official_rule_ids": [
         "106.1",
         "106.4",
@@ -82489,7 +82489,7 @@
     {
       "capability_id": "mana.activated.fixed_output",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
       "official_rule_ids": [
         "106.1",
         "106.4",
@@ -82641,7 +82641,7 @@
     {
       "capability_id": "mana.activated.fixed_output",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
       "official_rule_ids": [
         "106.1",
         "106.4",
@@ -82660,7 +82660,7 @@
     {
       "capability_id": "mana.activated.fixed_output",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
       "official_rule_ids": [
         "106.1",
         "106.4",
@@ -82736,7 +82736,7 @@
     {
       "capability_id": "mana.activated.fixed_output",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
       "official_rule_ids": [
         "106.1",
         "106.4",
@@ -82755,7 +82755,7 @@
     {
       "capability_id": "mana.activated.fixed_output",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
       "official_rule_ids": [
         "106.1",
         "106.4",
@@ -82812,7 +82812,7 @@
     {
       "capability_id": "mana.activated.fixed_output",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
       "official_rule_ids": [
         "106.1",
         "106.4",
@@ -82831,7 +82831,7 @@
     {
       "capability_id": "mana.activated.fixed_output",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
       "official_rule_ids": [
         "106.1",
         "106.4",
@@ -87647,7 +87647,7 @@
     {
       "capability_id": "permanent.regeneration.self_activation",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
       "official_rule_ids": [
         "506.4",
         "701.19",
@@ -87715,7 +87715,7 @@
     {
       "capability_id": "permanent.regeneration.self_activation",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
       "official_rule_ids": [
         "506.4",
         "701.19",
@@ -87783,7 +87783,7 @@
     {
       "capability_id": "permanent.regeneration.self_activation",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
       "official_rule_ids": [
         "506.4",
         "701.19",
@@ -87851,7 +87851,7 @@
     {
       "capability_id": "permanent.regeneration.self_activation",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
       "official_rule_ids": [
         "506.4",
         "701.19",
@@ -87936,7 +87936,7 @@
     {
       "capability_id": "permanent.regeneration.self_activation",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays",
       "official_rule_ids": [
         "506.4",
         "701.19",
@@ -91202,7 +91202,7 @@
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
       "official_rule_ids": [
         "107.1b",
         "208.3",
@@ -91222,7 +91222,7 @@
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
       "official_rule_ids": [
         "107.1b",
         "208.3",
@@ -91242,7 +91242,7 @@
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
       "official_rule_ids": [
         "107.1b",
         "208.3",
@@ -91262,7 +91262,7 @@
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
       "official_rule_ids": [
         "107.1b",
         "208.3",
@@ -91282,7 +91282,7 @@
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
       "official_rule_ids": [
         "107.1b",
         "208.3",
@@ -91302,7 +91302,7 @@
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
       "official_rule_ids": [
         "107.1b",
         "208.3",
@@ -91342,7 +91342,7 @@
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
       "official_rule_ids": [
         "107.1b",
         "208.3",
@@ -91362,7 +91362,7 @@
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
       "official_rule_ids": [
         "107.1b",
         "208.3",
@@ -91382,7 +91382,7 @@
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
       "official_rule_ids": [
         "107.1b",
         "208.3",
@@ -91482,7 +91482,7 @@
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
       "official_rule_ids": [
         "107.1b",
         "208.3",
@@ -91502,7 +91502,7 @@
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
       "official_rule_ids": [
         "107.1b",
         "208.3",
@@ -91522,7 +91522,7 @@
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
       "official_rule_ids": [
         "107.1b",
         "208.3",
@@ -91622,7 +91622,7 @@
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
       "official_rule_ids": [
         "107.1b",
         "208.3",
@@ -91642,7 +91642,7 @@
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
       "official_rule_ids": [
         "107.1b",
         "208.3",
@@ -91662,7 +91662,7 @@
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
       "official_rule_ids": [
         "107.1b",
         "208.3",
@@ -91682,7 +91682,7 @@
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
       "official_rule_ids": [
         "107.1b",
         "208.3",
@@ -91702,7 +91702,7 @@
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays",
       "official_rule_ids": [
         "107.1b",
         "208.3",
@@ -91722,7 +91722,7 @@
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays",
       "official_rule_ids": [
         "107.1b",
         "208.3",
@@ -91742,7 +91742,7 @@
     {
       "capability_id": "quantity_expression.public_player_count",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
       "official_rule_ids": [
         "102.2",
         "102.3",
@@ -91761,7 +91761,7 @@
     {
       "capability_id": "quantity_expression.public_player_count",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
       "official_rule_ids": [
         "102.2",
         "102.3",
@@ -91799,7 +91799,7 @@
     {
       "capability_id": "quantity_expression.public_player_count",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
       "official_rule_ids": [
         "102.2",
         "102.3",
@@ -91856,7 +91856,7 @@
     {
       "capability_id": "quantity_expression.public_player_count",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
       "official_rule_ids": [
         "102.2",
         "102.3",
@@ -91913,7 +91913,7 @@
     {
       "capability_id": "quantity_expression.public_player_count",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
       "official_rule_ids": [
         "102.2",
         "102.3",
@@ -91932,7 +91932,7 @@
     {
       "capability_id": "quantity_expression.public_player_count",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
       "official_rule_ids": [
         "102.2",
         "102.3",
@@ -91951,7 +91951,7 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
       "official_rule_ids": [
         "109.2",
         "109.2a",
@@ -91976,7 +91976,7 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
       "official_rule_ids": [
         "109.2",
         "109.2a",
@@ -92451,7 +92451,7 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
       "official_rule_ids": [
         "109.2",
         "109.2a",
@@ -92476,7 +92476,7 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
       "official_rule_ids": [
         "109.2",
         "109.2a",
@@ -92826,7 +92826,7 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
       "official_rule_ids": [
         "109.2",
         "109.2a",
@@ -93276,7 +93276,7 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
       "official_rule_ids": [
         "109.2",
         "109.2a",
@@ -93301,7 +93301,7 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
       "official_rule_ids": [
         "109.2",
         "109.2a",
@@ -93651,7 +93651,7 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
       "official_rule_ids": [
         "109.2",
         "109.2a",
@@ -93676,7 +93676,7 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
       "official_rule_ids": [
         "109.2",
         "109.2a",
@@ -93826,7 +93826,7 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
       "official_rule_ids": [
         "109.2",
         "109.2a",
@@ -93851,7 +93851,7 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
       "official_rule_ids": [
         "109.2",
         "109.2a",
@@ -94176,7 +94176,7 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
       "official_rule_ids": [
         "107.1b",
         "107.2",
@@ -94296,7 +94296,7 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
       "official_rule_ids": [
         "107.1b",
         "107.2",
@@ -94436,7 +94436,7 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_damage_amount_subscription_diagnostic_excludes_noncombat_incoming_and_foreign_sources",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_damage_amount_subscription_diagnostic_excludes_noncombat_incoming_and_foreign_sources",
       "official_rule_ids": [
         "107.1b",
         "107.2",
@@ -94456,7 +94456,7 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
       "official_rule_ids": [
         "107.1b",
         "107.2",
@@ -94596,7 +94596,7 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
       "official_rule_ids": [
         "107.1b",
         "107.2",
@@ -94756,7 +94756,7 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
       "official_rule_ids": [
         "107.1b",
         "107.2",
@@ -94816,7 +94816,7 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
       "official_rule_ids": [
         "107.1b",
         "107.2",
@@ -99017,7 +99017,7 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
       "official_rule_ids": [
         "113.7a",
         "120.3a",
@@ -99037,7 +99037,7 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
       "official_rule_ids": [
         "113.7a",
         "120.3a",
@@ -99057,7 +99057,7 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
       "official_rule_ids": [
         "113.7a",
         "120.3a",
@@ -99077,7 +99077,7 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
       "official_rule_ids": [
         "113.7a",
         "120.3a",
@@ -99097,7 +99097,7 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
       "official_rule_ids": [
         "113.7a",
         "120.3a",
@@ -99117,7 +99117,7 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
       "official_rule_ids": [
         "113.7a",
         "120.3a",
@@ -99157,7 +99157,7 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
       "official_rule_ids": [
         "113.7a",
         "120.3a",
@@ -99177,7 +99177,7 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
       "official_rule_ids": [
         "113.7a",
         "120.3a",
@@ -99197,7 +99197,7 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
       "official_rule_ids": [
         "113.7a",
         "120.3a",
@@ -99277,7 +99277,7 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
       "official_rule_ids": [
         "113.7a",
         "120.3a",
@@ -99297,7 +99297,7 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
       "official_rule_ids": [
         "113.7a",
         "120.3a",
@@ -99317,7 +99317,7 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
       "official_rule_ids": [
         "113.7a",
         "120.3a",
@@ -99397,7 +99397,7 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
       "official_rule_ids": [
         "113.7a",
         "120.3a",
@@ -99417,7 +99417,7 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
       "official_rule_ids": [
         "113.7a",
         "120.3a",
@@ -99437,7 +99437,7 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
       "official_rule_ids": [
         "113.7a",
         "120.3a",
@@ -99457,7 +99457,7 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
       "official_rule_ids": [
         "113.7a",
         "120.3a",
@@ -99477,7 +99477,7 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
       "official_rule_ids": [
         "113.7a",
         "120.3a",
@@ -99497,7 +99497,7 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
       "official_rule_ids": [
         "113.7a",
         "120.3a",
@@ -101507,7 +101507,7 @@
     {
       "capability_id": "state_query.devotion.current",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
       "official_rule_ids": [
         "700.5",
         "700.5a",
@@ -101525,7 +101525,7 @@
     {
       "capability_id": "state_query.devotion.current",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_daxos_devotion_cast_uses_live_modifier_ability_and_departure_with_replay",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_daxos_devotion_cast_uses_live_modifier_ability_and_departure_with_replay",
       "official_rule_ids": [
         "700.5",
         "700.5a",
@@ -101543,7 +101543,7 @@
     {
       "capability_id": "state_query.devotion.current",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_karametra_acolyte_mana_uses_devotion_and_current_modifier_with_replay",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_karametra_acolyte_mana_uses_devotion_and_current_modifier_with_replay",
       "official_rule_ids": [
         "700.5",
         "700.5a",
@@ -101561,7 +101561,7 @@
     {
       "capability_id": "state_query.devotion.current",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_nylea_disciple_devotion_life_gain_resolves_after_actual_cast_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_nylea_disciple_devotion_life_gain_resolves_after_actual_cast_and_replays",
       "official_rule_ids": [
         "700.5",
         "700.5a",
@@ -101579,7 +101579,7 @@
     {
       "capability_id": "state_query.devotion.current",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_daxos_devotion_cast_uses_live_modifier_ability_and_departure_with_replay",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_daxos_devotion_cast_uses_live_modifier_ability_and_departure_with_replay",
       "official_rule_ids": [
         "700.5",
         "700.5a",
@@ -101597,7 +101597,7 @@
     {
       "capability_id": "state_query.devotion.current",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_nylea_disciple_devotion_life_gain_resolves_after_actual_cast_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_nylea_disciple_devotion_life_gain_resolves_after_actual_cast_and_replays",
       "official_rule_ids": [
         "700.5",
         "700.5a",
@@ -101633,7 +101633,7 @@
     {
       "capability_id": "state_query.devotion.current",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
       "official_rule_ids": [
         "700.5",
         "700.5a",
@@ -101651,7 +101651,7 @@
     {
       "capability_id": "state_query.devotion.current",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_daxos_devotion_cast_uses_live_modifier_ability_and_departure_with_replay",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_daxos_devotion_cast_uses_live_modifier_ability_and_departure_with_replay",
       "official_rule_ids": [
         "700.5",
         "700.5a",
@@ -101705,7 +101705,7 @@
     {
       "capability_id": "state_query.devotion.current",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
       "official_rule_ids": [
         "700.5",
         "700.5a",
@@ -101723,7 +101723,7 @@
     {
       "capability_id": "state_query.devotion.current",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_daxos_devotion_cast_uses_live_modifier_ability_and_departure_with_replay",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_daxos_devotion_cast_uses_live_modifier_ability_and_departure_with_replay",
       "official_rule_ids": [
         "700.5",
         "700.5a",
@@ -101741,7 +101741,7 @@
     {
       "capability_id": "state_query.devotion.current",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_karametra_acolyte_mana_uses_devotion_and_current_modifier_with_replay",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_karametra_acolyte_mana_uses_devotion_and_current_modifier_with_replay",
       "official_rule_ids": [
         "700.5",
         "700.5a",
@@ -101759,7 +101759,7 @@
     {
       "capability_id": "state_query.devotion.current",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_nylea_disciple_devotion_life_gain_resolves_after_actual_cast_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_nylea_disciple_devotion_life_gain_resolves_after_actual_cast_and_replays",
       "official_rule_ids": [
         "700.5",
         "700.5a",
@@ -101813,7 +101813,7 @@
     {
       "capability_id": "state_query.devotion.current",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
       "official_rule_ids": [
         "700.5",
         "700.5a",
@@ -101831,7 +101831,7 @@
     {
       "capability_id": "state_query.devotion.current",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_daxos_devotion_cast_uses_live_modifier_ability_and_departure_with_replay",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_daxos_devotion_cast_uses_live_modifier_ability_and_departure_with_replay",
       "official_rule_ids": [
         "700.5",
         "700.5a",
@@ -101849,7 +101849,7 @@
     {
       "capability_id": "state_query.devotion.current",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
       "official_rule_ids": [
         "700.5",
         "700.5a",
@@ -101867,7 +101867,7 @@
     {
       "capability_id": "state_query.devotion.current",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_daxos_devotion_cast_uses_live_modifier_ability_and_departure_with_replay",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_daxos_devotion_cast_uses_live_modifier_ability_and_departure_with_replay",
       "official_rule_ids": [
         "700.5",
         "700.5a",
@@ -101885,7 +101885,7 @@
     {
       "capability_id": "state_query.devotion.current",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_karametra_acolyte_mana_uses_devotion_and_current_modifier_with_replay",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_karametra_acolyte_mana_uses_devotion_and_current_modifier_with_replay",
       "official_rule_ids": [
         "700.5",
         "700.5a",
@@ -101903,7 +101903,7 @@
     {
       "capability_id": "state_query.devotion.current",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_nylea_disciple_devotion_life_gain_resolves_after_actual_cast_and_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_nylea_disciple_devotion_life_gain_resolves_after_actual_cast_and_replays",
       "official_rule_ids": [
         "700.5",
         "700.5a",
@@ -109330,7 +109330,7 @@
     {
       "capability_id": "token.creation.quantity_replacement",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
       "official_rule_ids": [
         "111.2",
         "614.1",
@@ -109351,7 +109351,7 @@
     {
       "capability_id": "token.creation.quantity_replacement",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_token_doubler_owner_diagnostic_respects_controller_and_current_ability_removal",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_token_doubler_owner_diagnostic_respects_controller_and_current_ability_removal",
       "official_rule_ids": [
         "111.2",
         "614.1",
@@ -109393,7 +109393,7 @@
     {
       "capability_id": "token.creation.quantity_replacement",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
       "official_rule_ids": [
         "111.2",
         "614.1",
@@ -109414,7 +109414,7 @@
     {
       "capability_id": "token.creation.quantity_replacement",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_token_doubler_owner_diagnostic_respects_controller_and_current_ability_removal",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_token_doubler_owner_diagnostic_respects_controller_and_current_ability_removal",
       "official_rule_ids": [
         "111.2",
         "614.1",
@@ -109477,7 +109477,7 @@
     {
       "capability_id": "token.creation.quantity_replacement",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_token_doubler_owner_diagnostic_respects_controller_and_current_ability_removal",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_token_doubler_owner_diagnostic_respects_controller_and_current_ability_removal",
       "official_rule_ids": [
         "111.2",
         "614.1",
@@ -109519,7 +109519,7 @@
     {
       "capability_id": "token.creation.quantity_replacement",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
       "official_rule_ids": [
         "111.2",
         "614.1",
@@ -109603,7 +109603,7 @@
     {
       "capability_id": "token.creation.quantity_replacement",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
       "official_rule_ids": [
         "111.2",
         "614.1",
@@ -109645,7 +109645,7 @@
     {
       "capability_id": "token.creation.quantity_replacement",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+      "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
       "official_rule_ids": [
         "111.2",
         "614.1",
@@ -115875,7 +115875,7 @@
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
       "official_rule_ids": [
         "120.4",
         "603.2",
@@ -115913,7 +115913,7 @@
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
       "official_rule_ids": [
         "120.4",
         "603.2",
@@ -116008,7 +116008,7 @@
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_damage_amount_subscription_diagnostic_excludes_noncombat_incoming_and_foreign_sources",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_damage_amount_subscription_diagnostic_excludes_noncombat_incoming_and_foreign_sources",
       "official_rule_ids": [
         "120.4",
         "603.2",
@@ -116027,7 +116027,7 @@
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
       "official_rule_ids": [
         "120.4",
         "603.2",
@@ -116122,7 +116122,7 @@
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
       "official_rule_ids": [
         "120.4",
         "603.2",
@@ -116198,7 +116198,7 @@
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
       "official_rule_ids": [
         "120.4",
         "603.2",
@@ -116236,7 +116236,7 @@
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
       "official_rule_ids": [
         "120.4",
         "603.2",
@@ -134798,7 +134798,7 @@
     {
       "capability_id": "zone.entry.tapped_state",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
       "official_rule_ids": [
         "119.4",
         "614.1c",
@@ -134945,7 +134945,7 @@
     {
       "capability_id": "zone.entry.tapped_state",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
       "official_rule_ids": [
         "119.4",
         "614.1c",
@@ -135008,7 +135008,7 @@
     {
       "capability_id": "zone.entry.tapped_state",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
       "official_rule_ids": [
         "119.4",
         "614.1c",
@@ -135113,7 +135113,7 @@
     {
       "capability_id": "zone.entry.tapped_state",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
       "official_rule_ids": [
         "119.4",
         "614.1c",
@@ -135197,7 +135197,7 @@
     {
       "capability_id": "zone.entry.tapped_state",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
       "official_rule_ids": [
         "119.4",
         "614.1c",
@@ -135239,7 +135239,7 @@
     {
       "capability_id": "zone.entry.tapped_state",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "test_id": "tests.test_public_state_mana_actions.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
       "official_rule_ids": [
         "119.4",
         "614.1c",
@@ -136718,7 +136718,7 @@
     {
       "capability_id": "zone.mill.event_recipient",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
       "official_rule_ids": [
         "101.4",
         "113.7a",
@@ -136739,7 +136739,7 @@
     {
       "capability_id": "zone.mill.event_recipient",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
       "official_rule_ids": [
         "101.4",
         "113.7a",
@@ -136781,7 +136781,7 @@
     {
       "capability_id": "zone.mill.event_recipient",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
       "official_rule_ids": [
         "101.4",
         "113.7a",
@@ -136823,7 +136823,7 @@
     {
       "capability_id": "zone.mill.event_recipient",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
       "official_rule_ids": [
         "101.4",
         "113.7a",
@@ -136865,7 +136865,7 @@
     {
       "capability_id": "zone.mill.event_recipient",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
       "official_rule_ids": [
         "101.4",
         "113.7a",
@@ -136886,7 +136886,7 @@
     {
       "capability_id": "zone.mill.event_recipient",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay",
       "official_rule_ids": [
         "101.4",
         "113.7a",
@@ -136907,7 +136907,7 @@
     {
       "capability_id": "zone.mill.fixed",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
       "official_rule_ids": [
         "400.7",
         "701.17",
@@ -136987,7 +136987,7 @@
     {
       "capability_id": "zone.mill.fixed",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
       "official_rule_ids": [
         "400.7",
         "701.17",
@@ -137147,7 +137147,7 @@
     {
       "capability_id": "zone.mill.fixed",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
       "official_rule_ids": [
         "400.7",
         "701.17",
@@ -137307,7 +137307,7 @@
     {
       "capability_id": "zone.mill.fixed",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
       "official_rule_ids": [
         "400.7",
         "701.17",
@@ -137447,7 +137447,7 @@
     {
       "capability_id": "zone.mill.fixed",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
       "official_rule_ids": [
         "400.7",
         "701.17",
@@ -137527,7 +137527,7 @@
     {
       "capability_id": "zone.mill.fixed",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
+      "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
       "official_rule_ids": [
         "400.7",
         "701.17",

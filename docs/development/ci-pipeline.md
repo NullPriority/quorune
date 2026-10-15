@@ -99,6 +99,12 @@ a scheduling bottleneck. Simplifying labels or metadata is useful when it
 removes measured rework, but it must preserve the source and risk evidence
 those fields carry. Finish one measured improvement before combining unrelated
 changes so its payoff and regressions remain attributable.
+When one file dominates a `loadfile` worker, divide its tests by coherent rules
+owner while retaining the existing primary shard and worker limit. Public-state
+action witnesses use separate mana, counter, event and quantity modules with a
+shared fixture that has no `TestCase` ancestry. Relocation preserves test bodies,
+decorators, assertions, exact collection membership and capability references;
+public per-module timings determine whether scheduling actually improves.
 
 ## Two development slots
 
