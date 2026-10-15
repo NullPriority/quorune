@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Constructed subject-binding controls for complete native combat consequences",
+  "cards": [
+    {
+      "oracle_id": "c190bc39-1647-4bf0-9cdc-7100f1af7f01",
+      "name": "Generic Event Creature Controller Observer",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Enchantment",
+      "oracle_text": "Whenever a creature you control deals combat damage to a player, that creature's controller draws a card.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "c190bc39-1647-4bf0-9cdc-7100f1af7f02",
+      "name": "Generic Event Damaged Player Observer",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Enchantment",
+      "oracle_text": "Whenever a creature you control deals combat damage to a player, that player draws a card.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "c190bc39-1647-4bf0-9cdc-7100f1af7f03",
+      "name": "Generic Event Trigger Controller Observer",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Creature \u2014 Human",
+      "oracle_text": "Whenever a creature you control deals combat damage to a player, you draw a card.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "1",
+      "toughness": "4"
+    },
+    {
+      "oracle_id": "c190bc39-1647-4bf0-9cdc-7100f1af7f04",
+      "name": "Generic Event Global Creature Controller Observer",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Enchantment",
+      "oracle_text": "Whenever a creature deals combat damage to a player, that creature's controller draws a card.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "c190bc39-1647-4bf0-9cdc-7100f1af7f05",
+      "name": "Generic Event Subject Control",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Gain control of target creature until end of turn. Untap that creature. It gains haste until end of turn.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "c190bc39-1647-4bf0-9cdc-7100f1af7f06",
+      "name": "Generic Event Subject Return",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Return target creature card from your graveyard to the battlefield.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "c190bc39-1647-4bf0-9cdc-7100f1af7f07",
+      "name": "Generic Event Death Controller Observer",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Enchantment",
+      "oracle_text": "Whenever a creature dies, that creature's controller draws a card.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

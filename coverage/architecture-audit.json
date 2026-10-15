@@ -9060,7 +9060,7 @@
           "module": "quorune.zone_transitions"
         }
       ],
-      "internal_edges": 4826,
+      "internal_edges": 4828,
       "modules": [
         {
           "fan_in": 2,
@@ -9959,7 +9959,7 @@
         },
         {
           "fan_in": 2,
-          "fan_out": 1,
+          "fan_out": 2,
           "module": "quorune.compiler.event_player_results"
         },
         {
@@ -12164,11 +12164,11 @@
         },
         {
           "fan_in": 2,
-          "fan_out": 2,
+          "fan_out": 3,
           "module": "quorune.rules.event_player_result_shapes"
         },
         {
-          "fan_in": 6,
+          "fan_in": 8,
           "fan_out": 1,
           "module": "quorune.rules.event_subscriptions"
         },
@@ -13816,7 +13816,7 @@
       "covered_high_risk_pairs": 411,
       "covered_piece_pairs": 1293,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "98d62327a58822fefb1f0c6c6c178c73f48f150266b0225965c36236eaf51ed7",
+      "source_fingerprint": "a4e69cc5389a56f677a72d4fb95c5d72b297bdf0d23b3efe1c840094a29e8ca9",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -14205,7 +14205,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 256051,
+      "logical_lines": 256073,
       "methods": {
         "dunder": 652,
         "private": 995,
@@ -19170,6 +19170,13 @@
           "physical_lines": 74
         },
         {
+          "file": "quorune/compiler/event_player_results.py",
+          "functions_and_methods": 5,
+          "language": "python",
+          "logical_lines": 58,
+          "physical_lines": 74
+        },
+        {
           "file": "quorune/rules/stack_controller_payment_cost.py",
           "functions_and_methods": 6,
           "language": "python",
@@ -19520,13 +19527,6 @@
           "physical_lines": 50
         },
         {
-          "file": "quorune/compiler/event_player_results.py",
-          "functions_and_methods": 4,
-          "language": "python",
-          "logical_lines": 46,
-          "physical_lines": 57
-        },
-        {
           "file": "quorune/compiler/exert_nodes.py",
           "functions_and_methods": 1,
           "language": "python",
@@ -19546,6 +19546,13 @@
           "language": "python",
           "logical_lines": 44,
           "physical_lines": 64
+        },
+        {
+          "file": "quorune/rules/event_player_result_shapes.py",
+          "functions_and_methods": 5,
+          "language": "python",
+          "logical_lines": 44,
+          "physical_lines": 56
         },
         {
           "file": "quorune/semantic_runtime/whole_hand_discard.py",
@@ -19945,13 +19952,6 @@
           "language": "python",
           "logical_lines": 34,
           "physical_lines": 42
-        },
-        {
-          "file": "quorune/rules/event_player_result_shapes.py",
-          "functions_and_methods": 4,
-          "language": "python",
-          "logical_lines": 34,
-          "physical_lines": 44
         },
         {
           "file": "quorune/rules/transform_capability_shapes.py",
@@ -21307,7 +21307,7 @@
           "physical_lines": 1690
         }
       ],
-      "physical_lines": 280692,
+      "physical_lines": 280721,
       "python_file_count": 949,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -21325,7 +21325,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 4168,
+      "top_level_functions": 4170,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -27528,7 +27528,7 @@
         {
           "condition": "effect.get('op') not in layouts",
           "file": "quorune/compiler/event_player_results.py",
-          "line": 44,
+          "line": 61,
           "string_literals": [
             "op"
           ],
@@ -27537,7 +27537,7 @@
         {
           "condition": "set(effect)!=fields or effect.get('player')!='$controller' or type(effect.get(field)) is not int or effect[field]<=0 or effect['op']=='draw' and effect['private'] is not True",
           "file": "quorune/compiler/event_player_results.py",
-          "line": 46,
+          "line": 63,
           "string_literals": [
             "$controller",
             "draw",
@@ -38739,7 +38739,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1499,
     "compiler_module_physical_lines": 1561,
-    "compiler_version": "oracle-ir-v366",
+    "compiler_version": "oracle-ir-v367",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -39016,22 +39016,22 @@
       "effective_date": "2026-08-07",
       "evidence": {
         "class_counts": {
-          "interaction": 1374,
-          "multiplayer": 644,
+          "interaction": 1378,
+          "multiplayer": 648,
           "mutation": 564,
-          "negative": 1152,
-          "positive": 1224,
-          "privacy": 546,
+          "negative": 1155,
+          "positive": 1229,
+          "privacy": 550,
           "property": 20,
-          "replay": 983,
+          "replay": 987,
           "rollback": 130
         },
-        "declaration_count": 6637,
-        "declaration_source_fingerprint": "dafb44b97a3f18396342b322d3b9b7360fbd182c923bfb70648421a7a4960479",
-        "fingerprint": "99d5c1af12a7e25cdb67d53101d674ece3c9ba7abbec1d64ad3d16e011d41d1a",
-        "registry_fingerprint": "1b4acbf973471b3f1f6bdacf130d5df083d6638b244a24433c04a613469aaaf8"
+        "declaration_count": 6661,
+        "declaration_source_fingerprint": "09cf0413953ce1736676c416dab81bd958e443c184d2a6b8be2be183d33e9b67",
+        "fingerprint": "ce7d5eafc2273e46d3c2758fd156102152b7d57b474c87a005fd328556cfdad1",
+        "registry_fingerprint": "58f608759ed1cbe1ba261b33f5a600b2853eea3b33127efdbb37c529b302c617"
       },
-      "fingerprint": "1b4acbf973471b3f1f6bdacf130d5df083d6638b244a24433c04a613469aaaf8",
+      "fingerprint": "58f608759ed1cbe1ba261b33f5a600b2853eea3b33127efdbb37c529b302c617",
       "implementation_mutation_status_counts": {
         "killed": 388,
         "not_run": 4
@@ -39041,7 +39041,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "registry_version": 295,
+      "registry_version": 296,
       "schema_version": 1,
       "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
       "status_counts": {
@@ -39394,7 +39394,7 @@
         "contract_fingerprint": "e485004b19b7f21621ab02543231419cfb5f3e92722b9d10129a1b44819bc4bd",
         "exact_cards_with_template": 744,
         "exact_nodes": 908,
-        "fingerprint": "45a33d9ad066464723e354f93d5695d808178505a8464bfd7251adb91f156401",
+        "fingerprint": "a395f7ea1b714e10a251071f8ed65d864d8a7e2965a0a2ab66085dca815c99f3",
         "grammar_source_fingerprint": "ba9ae320c5615887ab1b5b872620cb5c121194ce6e84d9ac854e4e418f40f8ce",
         "identity_fingerprint": "23cb162c9dd942a7e05a10237e8ebd1ae1b0d46a6c9d86e14b431bf1f1a81a65",
         "present": true,
@@ -39406,7 +39406,7 @@
         "contract_fingerprint": "e485004b19b7f21621ab02543231419cfb5f3e92722b9d10129a1b44819bc4bd",
         "exact_cards_with_template": 766,
         "exact_nodes": 941,
-        "fingerprint": "08133afdfbd84c985a9b20035e299dc98a473c1b8d6a274ff1be72918f913163",
+        "fingerprint": "1e7bdcba1b3242166022c4de2dbfb12b728c6eb519f60b3576a0da877b9be9ca",
         "grammar_source_fingerprint": "ba9ae320c5615887ab1b5b872620cb5c121194ce6e84d9ac854e4e418f40f8ce",
         "identity_fingerprint": "30ee37558d0568aa8d4eece75cd94f960987e1ca5836e4643b3d144795167a82",
         "present": true,
@@ -39425,7 +39425,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "4dd9e7e512da5aa2f9625c70a5bb1bffa88eeb629d6211f1931a23d81e7372d1",
+      "fingerprint": "77d61a27e3edfd224ae49b028f1a2b1f913f3429332b359657935f157bb641fe",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -40283,15 +40283,15 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 6290,
-      "discovered_total": 9599,
+      "conventional_ast_cases": 6297,
+      "discovered_total": 9606,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 273,
         "fuzz_named": 1,
         "privacy_or_projection_named": 100,
         "replay_named": 682,
-        "server_named": 51
+        "server_named": 52
       },
       "reconciles": true,
       "test_files": 450

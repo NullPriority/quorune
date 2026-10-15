@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Mapping
+from ..rules.event_subscriptions import FixedEventSubscriptionSet
 
 EVENT_PLAYER_RESULT_CAPABILITY='resolution.event_player.fixed_result'
 EVENT_PLAYER_RESULT_MECHANIC='fixed-event-player-result'
@@ -15,16 +16,32 @@ def _damage_guarantees_player(condition):
 
 
 def _event_player(binding,subject):
+    try:
+        subscriptions=FixedEventSubscriptionSet.from_condition(binding.event_condition)
+    except (TypeError,ValueError):return None
+    occurrences=((binding.event.value,binding.event_condition),) if subscriptions is None else tuple(
+        (entry.event,entry.condition) for entry in subscriptions.subscriptions)
+    if binding.event.value not in {event for event,_condition in occurrences}:return None
+    players=tuple(_occurrence_player(event,condition,binding.variant,subject) for event,condition in occurrences)
+    return players[0] if players and players[0] is not None and all(player==players[0] for player in players) else None
+
+
+def _occurrence_player(event,condition,variant,subject):
     if subject=='you':return '$controller'
+    if subject.replace('\u2019', "'")=="that creature's controller":
+        # CR 608.2h: an object-controller read is not an occurrence player.
+        # Death supplies that departed incarnation's LKI; other events would
+        # require a current/LKI object reference absent from this closed family.
+        return '$context.previous_controller' if event=='creature.dies' else None
     if subject=='defending player':
-        if binding.event.value=='creature.attacks' and (binding.variant=='source_attacks' or binding.variant.startswith('public_attack_')):player='$context.defending_player'
+        if event=='creature.attacks' and (variant=='source_attacks' or variant.startswith('public_attack_')):player='$context.defending_player'
         else:return None
-    elif binding.event.value=='card.discarded':player='$context.previous_controller'
-    elif binding.event.value in {'land.enter','creature.enter','permanent.enter','artifact.enter','enchantment.enter'}:player='$context.controller'
-    elif binding.event.value=='creature.dies':player='$context.previous_controller'
-    elif binding.event.value in {'spell.cast','card.drawn','player.scried','player.surveilled'}:
+    elif event=='card.discarded':player='$context.previous_controller'
+    elif event in {'land.enter','creature.enter','permanent.enter','artifact.enter','enchantment.enter'}:player='$context.controller'
+    elif event=='creature.dies':player='$context.previous_controller'
+    elif event in {'spell.cast','card.drawn','player.scried','player.surveilled'}:
         player='$context.player'
-    elif binding.event.value in {'damage.dealt','damage.dealt.self'} and _damage_guarantees_player(binding.event_condition):
+    elif event in {'damage.dealt','damage.dealt.self'} and _damage_guarantees_player(condition):
         player='$context.target'
     else:return None
     return player

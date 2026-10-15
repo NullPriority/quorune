@@ -36,9 +36,21 @@ def is_closed_fixed_event_player_result_program(program):
 
 def _event_player_reference_is_closed(program,player):
     if player=='$controller':return True
-    if player=='$context.player':return program.event in {'spell.cast','card.drawn','player.scried','player.surveilled'}
-    if player=='$context.previous_controller':return program.event in {'card.discarded','creature.dies'}
-    if player=='$context.controller':return program.event in {'land.enter','creature.enter','permanent.enter','artifact.enter','enchantment.enter'}
+    from .event_subscriptions import FixedEventSubscriptionSet
+    try:
+        subscriptions=FixedEventSubscriptionSet.from_condition(program.event_condition)
+    except (TypeError,ValueError):return False
+    occurrences=((program.event,program.event_condition),) if subscriptions is None else tuple(
+        (entry.event,entry.condition) for entry in subscriptions.subscriptions)
+    if program.event not in {event for event,_condition in occurrences}:return False
+    return all(_occurrence_player_reference_is_closed(event,condition,program.coverage,player)
+        for event,condition in occurrences)
+
+
+def _occurrence_player_reference_is_closed(event,condition,coverage,player):
+    if player=='$context.player':return event in {'spell.cast','card.drawn','player.scried','player.surveilled'}
+    if player=='$context.previous_controller':return event in {'card.discarded','creature.dies'}
+    if player=='$context.controller':return event in {'land.enter','creature.enter','permanent.enter','artifact.enter','enchantment.enter'}
     from ..compiler.event_player_results import _damage_guarantees_player
-    if player=='$context.target':return program.event in {'damage.dealt','damage.dealt.self'} and _damage_guarantees_player(program.event_condition)
-    return program.event=='creature.attacks' and 'trigger-event-normalized-public-action' in program.coverage and 'one_or_more_event_batch' not in program.coverage
+    if player=='$context.target':return event in {'damage.dealt','damage.dealt.self'} and _damage_guarantees_player(condition)
+    return player=='$context.defending_player' and event=='creature.attacks' and 'trigger-event-normalized-public-action' in coverage and 'one_or_more_event_batch' not in coverage

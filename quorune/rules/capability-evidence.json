@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "1b4acbf973471b3f1f6bdacf130d5df083d6638b244a24433c04a613469aaaf8",
-  "declaration_source_fingerprint": "dafb44b97a3f18396342b322d3b9b7360fbd182c923bfb70648421a7a4960479",
+  "registry_fingerprint": "58f608759ed1cbe1ba261b33f5a600b2853eea3b33127efdbb37c529b302c617",
+  "declaration_source_fingerprint": "09cf0413953ce1736676c416dab81bd958e443c184d2a6b8be2be183d33e9b67",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -99020,17 +99020,22 @@
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Original Kambal observes a foreign noncreature cast, loses two for the caster then gains two for its own controller; an actual creature cast does not trigger. Original Agate-Blade Assassin actual attack loses one for defender then gains one for controller; rollback, privacy, pending load and full replay agree."
     },
@@ -99040,17 +99045,22 @@
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Original Forced Fruition observes a foreign caster and drawsseven for thatcasterprivately; originalLilianaCaress observes realMindRotdiscard2 and causestwodistinctlife2losses todiscarder. Complete consequences, wrongprincipalrollback, pendingload andfullreplay agree."
     },
@@ -99060,19 +99070,124 @@
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Original PollutedBonds observesactualforeignlandplay usingsealed enteringcontroller forloss/gain. Original CampaignVengeance twoactualattackers towarddifferentdefenders createstwotriggers withseparatelifeconsequences; wrongprincipalrollback, pendingordering/load andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_damaged_player_draw_keeps_its_locked_recipient_in_actual_combat",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual observer cast and combat damage draw privately for the damaged player; complete consequences, four-seat projection, wrong-principal rollback, pending reload and pre-action replay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_death_controller_uses_departure_lki_after_actual_control_and_reentry",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "An actual control spell, destruction and graveyard return separate observer, departed creature controller and new incarnation controller. The pending death trigger retains the old logical identity and draws privately for its departure controller after reload and full pre-action replay."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_you_draw_keeps_locked_trigger_controller_distinct_from_damaged_player",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual observer cast and combat damage draw privately for the locked trigger controller rather than the damaged player; rollback, pending reload and complete pre-action replay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_you_draw_remains_with_locked_controller_after_actual_observer_control_change",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "An actual control spell moves the observer to a third seat while its damage trigger is pending; the old trigger still draws for its original controller, with private projection, pending reload and complete pre-action replay."
     },
     {
       "capability_id": "resolution.event_player.fixed_result",
@@ -99080,17 +99195,22 @@
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Original Kambal observes a foreign noncreature cast, loses two for the caster then gains two for its own controller; an actual creature cast does not trigger. Original Agate-Blade Assassin actual attack loses one for defender then gains one for controller; rollback, privacy, pending load and full replay agree."
     },
@@ -99100,17 +99220,22 @@
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Original Forced Fruition observes a foreign caster and drawsseven for thatcasterprivately; originalLilianaCaress observes realMindRotdiscard2 and causestwodistinctlife2losses todiscarder. Complete consequences, wrongprincipalrollback, pendingload andfullreplay agree."
     },
@@ -99120,19 +99245,124 @@
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Original PollutedBonds observesactualforeignlandplay usingsealed enteringcontroller forloss/gain. Original CampaignVengeance twoactualattackers towarddifferentdefenders createstwotriggers withseparatelifeconsequences; wrongprincipalrollback, pendingordering/load andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_damaged_player_draw_keeps_its_locked_recipient_in_actual_combat",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual observer cast and combat damage draw privately for the damaged player; complete consequences, four-seat projection, wrong-principal rollback, pending reload and pre-action replay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_death_controller_uses_departure_lki_after_actual_control_and_reentry",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "An actual control spell, destruction and graveyard return separate observer, departed creature controller and new incarnation controller. The pending death trigger retains the old logical identity and draws privately for its departure controller after reload and full pre-action replay."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_you_draw_keeps_locked_trigger_controller_distinct_from_damaged_player",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual observer cast and combat damage draw privately for the locked trigger controller rather than the damaged player; rollback, pending reload and complete pre-action replay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_you_draw_remains_with_locked_controller_after_actual_observer_control_change",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "An actual control spell moves the observer to a third seat while its damage trigger is pending; the old trigger still draws for its original controller, with private projection, pending reload and complete pre-action replay."
     },
     {
       "capability_id": "resolution.event_player.fixed_result",
@@ -99140,17 +99370,22 @@
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_fixed_event_player_result_partial_domain_dependency_and_omission_fail_closed",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Existing fixeddraw/lifeleaf binds only independentlyguaranteed eventplayerfields, closeswholeprogramwithfinecap/resultowner, rejects partial/newobject/globalattack/unrestricteddamage domains and killsomittedlowering."
     },
@@ -99160,17 +99395,22 @@
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Original Kambal observes a foreign noncreature cast, loses two for the caster then gains two for its own controller; an actual creature cast does not trigger. Original Agate-Blade Assassin actual attack loses one for defender then gains one for controller; rollback, privacy, pending load and full replay agree."
     },
@@ -99180,17 +99420,22 @@
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Original Forced Fruition observes a foreign caster and drawsseven for thatcasterprivately; originalLilianaCaress observes realMindRotdiscard2 and causestwodistinctlife2losses todiscarder. Complete consequences, wrongprincipalrollback, pendingload andfullreplay agree."
     },
@@ -99200,19 +99445,49 @@
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Original PollutedBonds observesactualforeignlandplay usingsealed enteringcontroller forloss/gain. Original CampaignVengeance twoactualattackers towarddifferentdefenders createstwotriggers withseparatelifeconsequences; wrongprincipalrollback, pendingordering/load andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_unrepresented_creature_controller_subject_has_no_trusted_program",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Standard provisional registration does not promote residual creature-controller damage forms to a trusted complete program; unauthorized commands roll back and the constructed checkpoint reloads and replays."
     },
     {
       "capability_id": "resolution.event_player.fixed_result",
@@ -99220,17 +99495,22 @@
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_event_controller_and_individual_attack_recipient_results_preserve_fields",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Entrycurrentcontroller/deathpreviouscontroller andindividualattackdefender preserved. Programmutation to unsupportedevent, aggregateattackambiguousdefender andvariable resultreject while wholeprogramadmission remainsstrict."
     },
@@ -99240,19 +99520,49 @@
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_event_player_fixed_sequence_rejects_partial_and_unknown_recipient_clauses",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Two complete fixed leaves retain each explicitly printed recipient and order. Partial, unknown recipient, third clause, optional or variable result rejects; promotion verifies all event references and requires at least one event player."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_event_result_subject_and_occurrence_compatibility_matrix",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "The damage, entry, discard and cast creature-controller forms remain residual; death uses departure LKI. Broad and opponent damage prefixes remain unrepresented."
     },
     {
       "capability_id": "resolution.event_player.fixed_result",
@@ -99260,19 +99570,49 @@
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_fixed_event_player_result_partial_domain_dependency_and_omission_fail_closed",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Existing fixeddraw/lifeleaf binds only independentlyguaranteed eventplayerfields, closeswholeprogramwithfinecap/resultowner, rejects partial/newobject/globalattack/unrestricteddamage domains and killsomittedlowering."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_typed_event_player_shapes_check_every_subscribed_occurrence",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Typed binder and closure controls reject incompatible, malformed or primary-event-omitting subscription sets; this isolated shape test is not gameplay admission."
     },
     {
       "capability_id": "resolution.event_player.fixed_result",
@@ -99280,17 +99620,22 @@
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Original Kambal observes a foreign noncreature cast, loses two for the caster then gains two for its own controller; an actual creature cast does not trigger. Original Agate-Blade Assassin actual attack loses one for defender then gains one for controller; rollback, privacy, pending load and full replay agree."
     },
@@ -99300,17 +99645,22 @@
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Original Forced Fruition observes a foreign caster and drawsseven for thatcasterprivately; originalLilianaCaress observes realMindRotdiscard2 and causestwodistinctlife2losses todiscarder. Complete consequences, wrongprincipalrollback, pendingload andfullreplay agree."
     },
@@ -99320,19 +99670,124 @@
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Original PollutedBonds observesactualforeignlandplay usingsealed enteringcontroller forloss/gain. Original CampaignVengeance twoactualattackers towarddifferentdefenders createstwotriggers withseparatelifeconsequences; wrongprincipalrollback, pendingordering/load andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_damaged_player_draw_keeps_its_locked_recipient_in_actual_combat",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual observer cast and combat damage draw privately for the damaged player; complete consequences, four-seat projection, wrong-principal rollback, pending reload and pre-action replay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_death_controller_uses_departure_lki_after_actual_control_and_reentry",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "An actual control spell, destruction and graveyard return separate observer, departed creature controller and new incarnation controller. The pending death trigger retains the old logical identity and draws privately for its departure controller after reload and full pre-action replay."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_you_draw_keeps_locked_trigger_controller_distinct_from_damaged_player",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual observer cast and combat damage draw privately for the locked trigger controller rather than the damaged player; rollback, pending reload and complete pre-action replay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_you_draw_remains_with_locked_controller_after_actual_observer_control_change",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "An actual control spell moves the observer to a third seat while its damage trigger is pending; the old trigger still draws for its original controller, with private projection, pending reload and complete pre-action replay."
     },
     {
       "capability_id": "resolution.event_player.fixed_result",
@@ -99340,17 +99795,22 @@
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_event_controller_and_individual_attack_recipient_results_preserve_fields",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Entrycurrentcontroller/deathpreviouscontroller andindividualattackdefender preserved. Programmutation to unsupportedevent, aggregateattackambiguousdefender andvariable resultreject while wholeprogramadmission remainsstrict."
     },
@@ -99360,19 +99820,49 @@
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_event_player_fixed_sequence_retains_each_recipient_and_printed_order",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Two complete fixed leaves retain each explicitly printed recipient and order. Partial, unknown recipient, third clause, optional or variable result rejects; promotion verifies all event references and requires at least one event player."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_event_result_subject_and_occurrence_compatibility_matrix",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Compiler controls preserve damage recipient, locked trigger controller, entry, death, discard and spell-cast player fields while rejecting unsupported object-controller subjects."
     },
     {
       "capability_id": "resolution.event_player.fixed_result",
@@ -99380,17 +99870,22 @@
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_fixed_event_player_draw_and_life_results_are_untargeted_and_bound",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Existing fixeddraw/lifeleaf binds only independentlyguaranteed eventplayerfields, closeswholeprogramwithfinecap/resultowner, rejects partial/newobject/globalattack/unrestricteddamage domains and killsomittedlowering."
     },
@@ -99400,17 +99895,22 @@
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Original Kambal observes a foreign noncreature cast, loses two for the caster then gains two for its own controller; an actual creature cast does not trigger. Original Agate-Blade Assassin actual attack loses one for defender then gains one for controller; rollback, privacy, pending load and full replay agree."
     },
@@ -99420,17 +99920,22 @@
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Original Forced Fruition observes a foreign caster and drawsseven for thatcasterprivately; originalLilianaCaress observes realMindRotdiscard2 and causestwodistinctlife2losses todiscarder. Complete consequences, wrongprincipalrollback, pendingload andfullreplay agree."
     },
@@ -99440,19 +99945,124 @@
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Original PollutedBonds observesactualforeignlandplay usingsealed enteringcontroller forloss/gain. Original CampaignVengeance twoactualattackers towarddifferentdefenders createstwotriggers withseparatelifeconsequences; wrongprincipalrollback, pendingordering/load andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_damaged_player_draw_keeps_its_locked_recipient_in_actual_combat",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual observer cast and combat damage draw privately for the damaged player; complete consequences, four-seat projection, wrong-principal rollback, pending reload and pre-action replay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_death_controller_uses_departure_lki_after_actual_control_and_reentry",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "An actual control spell, destruction and graveyard return separate observer, departed creature controller and new incarnation controller. The pending death trigger retains the old logical identity and draws privately for its departure controller after reload and full pre-action replay."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_you_draw_keeps_locked_trigger_controller_distinct_from_damaged_player",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual observer cast and combat damage draw privately for the locked trigger controller rather than the damaged player; rollback, pending reload and complete pre-action replay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_you_draw_remains_with_locked_controller_after_actual_observer_control_change",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "An actual control spell moves the observer to a third seat while its damage trigger is pending; the old trigger still draws for its original controller, with private projection, pending reload and complete pre-action replay."
     },
     {
       "capability_id": "resolution.event_player.fixed_result",
@@ -99460,17 +100070,22 @@
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Original Kambal observes a foreign noncreature cast, loses two for the caster then gains two for its own controller; an actual creature cast does not trigger. Original Agate-Blade Assassin actual attack loses one for defender then gains one for controller; rollback, privacy, pending load and full replay agree."
     },
@@ -99480,17 +100095,22 @@
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Original Forced Fruition observes a foreign caster and drawsseven for thatcasterprivately; originalLilianaCaress observes realMindRotdiscard2 and causestwodistinctlife2losses todiscarder. Complete consequences, wrongprincipalrollback, pendingload andfullreplay agree."
     },
@@ -99500,19 +100120,124 @@
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
       "official_rule_ids": [
         "113.7a",
+        "113.8",
         "120.3a",
         "121.2",
+        "400.7",
         "603.2",
+        "603.3a",
         "603.3d",
+        "603.6c",
         "608.2c",
+        "608.2h",
         "701.8"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Original PollutedBonds observesactualforeignlandplay usingsealed enteringcontroller forloss/gain. Original CampaignVengeance twoactualattackers towarddifferentdefenders createstwotriggers withseparatelifeconsequences; wrongprincipalrollback, pendingordering/load andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_damaged_player_draw_keeps_its_locked_recipient_in_actual_combat",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual observer cast and combat damage draw privately for the damaged player; complete consequences, four-seat projection, wrong-principal rollback, pending reload and pre-action replay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_death_controller_uses_departure_lki_after_actual_control_and_reentry",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "An actual control spell, destruction and graveyard return separate observer, departed creature controller and new incarnation controller. The pending death trigger retains the old logical identity and draws privately for its departure controller after reload and full pre-action replay."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_you_draw_keeps_locked_trigger_controller_distinct_from_damaged_player",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual observer cast and combat damage draw privately for the locked trigger controller rather than the damaged player; rollback, pending reload and complete pre-action replay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scalar_effect_amounts.EventPlayerSubjectActionTests.test_you_draw_remains_with_locked_controller_after_actual_observer_control_change",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.3a",
+        "121.2",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "603.3d",
+        "603.6c",
+        "608.2c",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "An actual control spell moves the observer to a third seat while its damage trigger is pending; the old trigger still draws for its original controller, with private projection, pending reload and complete pre-action replay."
     },
     {
       "capability_id": "stack.counter.controller_payment",
@@ -140314,5 +141039,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "99d5c1af12a7e25cdb67d53101d674ece3c9ba7abbec1d64ad3d16e011d41d1a"
+  "fingerprint": "ce7d5eafc2273e46d3c2758fd156102152b7d57b474c87a005fd328556cfdad1"
 }

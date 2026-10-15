@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 295,
+  "registry_version": 296,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -613,7 +613,7 @@
     },
     {
       "id": "resolution.event_player.fixed_result",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "113.7a",
         "120.3a",
@@ -621,7 +621,12 @@
         "603.2",
         "603.3d",
         "608.2c",
-        "701.8"
+        "701.8",
+        "113.8",
+        "400.7",
+        "603.3a",
+        "603.6c",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -629,11 +634,12 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "One or two complete fixed draw/life instructions for explicitly identified event player/controller, including sealed zone controller and individual attacker defender.",
+        "summary": "One or two complete fixed draw/life instructions addressed to an occurrence player or locked trigger controller; a referenced creature controller is represented only by departure LKI on a death event.",
         "inputs": [
           "complete independent event binding",
           "typed event player reference",
-          "closed existing positive fixed draw/life leaf"
+          "closed existing positive fixed draw/life leaf",
+          "all subscribed occurrences supply the same referenced player field"
         ],
         "outputs": [
           "untargeted existing draw/life intent addressed to occurrenceplayer"
@@ -643,7 +649,8 @@
           "damage without guaranteed player",
           "global attack defender ambiguity",
           "new-object antecedents",
-          "unsupported event context"
+          "unsupported event context",
+          "object-controller subjects without represented current or last-known object information"
         ]
       },
       "dependencies": [],
@@ -672,7 +679,12 @@
         "test_fixed_event_player_draw_and_life_results_are_untargeted_and_bound",
         "test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
         "test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
-        "test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay"
+        "test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
+        "test_event_result_subject_and_occurrence_compatibility_matrix",
+        "test_damaged_player_draw_keeps_its_locked_recipient_in_actual_combat",
+        "test_you_draw_keeps_locked_trigger_controller_distinct_from_damaged_player",
+        "test_you_draw_remains_with_locked_controller_after_actual_observer_control_change",
+        "test_death_controller_uses_departure_lki_after_actual_control_and_reentry"
       ],
       "negative_tests": [
         "test_event_controller_and_individual_attack_recipient_results_preserve_fields",
@@ -680,27 +692,46 @@
         "test_fixed_event_player_result_partial_domain_dependency_and_omission_fail_closed",
         "test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
         "test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
-        "test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay"
+        "test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
+        "test_event_result_subject_and_occurrence_compatibility_matrix",
+        "test_typed_event_player_shapes_check_every_subscribed_occurrence",
+        "test_unrepresented_creature_controller_subject_has_no_trusted_program"
       ],
       "interaction_tests": [
         "test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
         "test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
-        "test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay"
+        "test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
+        "test_damaged_player_draw_keeps_its_locked_recipient_in_actual_combat",
+        "test_you_draw_keeps_locked_trigger_controller_distinct_from_damaged_player",
+        "test_you_draw_remains_with_locked_controller_after_actual_observer_control_change",
+        "test_death_controller_uses_departure_lki_after_actual_control_and_reentry"
       ],
       "multiplayer_tests": [
         "test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
         "test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
-        "test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay"
+        "test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
+        "test_damaged_player_draw_keeps_its_locked_recipient_in_actual_combat",
+        "test_you_draw_keeps_locked_trigger_controller_distinct_from_damaged_player",
+        "test_you_draw_remains_with_locked_controller_after_actual_observer_control_change",
+        "test_death_controller_uses_departure_lki_after_actual_control_and_reentry"
       ],
       "privacy_tests": [
         "test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
         "test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
-        "test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay"
+        "test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
+        "test_damaged_player_draw_keeps_its_locked_recipient_in_actual_combat",
+        "test_you_draw_keeps_locked_trigger_controller_distinct_from_damaged_player",
+        "test_you_draw_remains_with_locked_controller_after_actual_observer_control_change",
+        "test_death_controller_uses_departure_lki_after_actual_control_and_reentry"
       ],
       "replay_tests": [
         "test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
         "test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
-        "test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay"
+        "test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
+        "test_damaged_player_draw_keeps_its_locked_recipient_in_actual_combat",
+        "test_you_draw_keeps_locked_trigger_controller_distinct_from_damaged_player",
+        "test_you_draw_remains_with_locked_controller_after_actual_observer_control_change",
+        "test_death_controller_uses_departure_lki_after_actual_control_and_reentry"
       ]
     },
     {
