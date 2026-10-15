@@ -11065,5 +11065,24 @@
       "interaction_order": 2,
       "assertion": "Native original Cloudshift changes the chosen target incarnation after Mutagen activation; target revalidation prevents the new creature from receiving the old fixed counter."
     }
+,
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_mutagen_trigger_beside_unsupported_squad_replacement_fails_closed_at_admission",
+      "piece_ids": ["capability.token.ability.fixed_mutagen", "residual.replacement.replacement-applicability"],
+      "capability_ids": ["token.ability.fixed_mutagen"],
+      "interaction_order": 2,
+      "assertion": "A constructed printed Mutagen trigger remains exact beside unsupported Squad replacement applicability, while the complete CardProgram rejects strict and compatible runtime admission. This proves a fail-closed boundary rather than gameplay support for Roadkill Rodney."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_mutagen_trigger_beside_unsupported_squad_replacement_fails_closed_at_admission",
+      "piece_ids": ["capability.token.ability.fixed_mutagen", "residual.replacement.self-replacement-and-prevention-ordering"],
+      "capability_ids": ["token.ability.fixed_mutagen"],
+      "interaction_order": 2,
+      "assertion": "A constructed printed Mutagen trigger does not bypass the unsupported Squad replacement-ordering sibling: both complete-card admission modes reject the unresolved program and preserve its material replacement blockers."
+    }
   ]
 }

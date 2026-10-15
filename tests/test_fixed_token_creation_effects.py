@@ -168,6 +168,44 @@ class PredefinedBloodTokenCompilerTests(unittest.TestCase):
 
 
 class AdditionalPredefinedTokenCompilerTests(unittest.TestCase):
+    def test_mutagen_trigger_beside_unsupported_squad_replacement_fails_closed_at_admission(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.compiler.unlock_frontier import analyze_card_unlocks
+
+        record = token_record('Generic Mutagen Replacement Boundary',
+            'Squad {3} (As an additional cost to cast this spell, you may pay {3} any number of times. '
+            'When this creature enters, create that many tokens that are copies of it.)\n'
+            'Deathtouch\nWhenever this creature deals combat damage to a player, create a Mutagen token.',
+            365209001, type_line='Artifact Creature — Robot')
+        registry = load_default_capability_registry()
+        ir = compile_oracle_card(record, capability_registry=registry, capability_profile='commander_review')
+        self.assertTrue(any(node.exact and 'token.ability.fixed_mutagen' in node.capability_dependencies
+                            for face in ir.faces for node in face.nodes))
+        # This boundary needs only printed rules; an empty fixture database
+        # supplies the ordinary rulings interface without an incidental card.
+        from quorune.carddb import CardDatabase
+        from scripts.build_test_database import build_fixture_database
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'mutagen-admission.sqlite3'
+            fixture = Path(directory) / 'empty.json'
+            fixture.write_text('{"schema_version":1,"cards":[],"rulings":[]}', encoding='utf-8')
+            build_fixture_database([fixture], path)
+            with CardDatabase(path) as database:
+                program = compile_best_available_card_program(database, record,
+                    semantic_registry=SemanticRegistry(), capability_registry=registry,
+                    capability_profile='commander_review')
+        frontier = analyze_card_unlocks(ir, program=program, program_error=None,
+            capabilities=registry, profile='commander_review')
+        self.assertEqual('residual', frontier['card_program_status'])
+        self.assertTrue({'replacement:replacement-applicability',
+                         'replacement:self-replacement-and-prevention-ordering'}
+                        <= set(frontier['minimum_known_blocker_set']))
+        binding = bind_card_program_runtime(program, capability_registry=registry, profile='commander_review')
+        self.assertFalse(binding['strict_capability_ready'])
+        self.assertFalse(binding['compatible_ready'])
+        self.assertIn('trust_basis:unresolved', binding['blockers'])
+
     def test_lander_and_mutagen_profiles_results_and_dependency_mutants_fail_closed(self):
         from quorune.standard_token_abilities import standard_token_characteristics
         from quorune.abilities import ActivatedAbility

@@ -1273,7 +1273,7 @@ def fixed_counter_event_trigger_node(
     else:
         compiled, requires_current_ability = _binding_effect_template(binding,body,card_name=card_name,effect_template=effect_template)
     template, effects, target_schema, body_mechanics = compiled
-    if optional_match is not None and {'fixed-public-event-source-counter', 'fixed-public-event-target-counter'}.intersection(body_mechanics):
+    if optional_match is not None and {'fixed-public-event-source-counter', 'fixed-public-event-target-counter'}.intersection(body_mechanics) and binding.event not in {FixedCounterTriggerEvent.PERMANENT_SACRIFICED, FixedCounterTriggerEvent.CARD_DISCARDED}:
         return None
     nested_counter_operations = _COUNTER_PLACEMENT_OPERATIONS.intersection(
         _nested_operations(effects)

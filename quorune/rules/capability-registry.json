@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 293,
+  "registry_version": 294,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -433,7 +433,7 @@
     },
     {
       "id": "counter.producer.fixed_public_source_event",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "113.7a",
         "122.1a",
@@ -492,22 +492,26 @@
       "blockers": [],
       "status": "trusted",
       "positive_tests": [
+        "test_original_mortician_beetle_optional_counter_uses_sacrifice_occurrence",
         "test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
         "test_original_public_source_counter_controller_ordering_and_replay",
         "test_public_event_fixed_source_counter_preserves_subscription_and_incarnation"
       ],
       "negative_tests": [
+        "test_original_mortician_beetle_optional_counter_uses_sacrifice_occurrence",
         "test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
         "test_original_public_source_counter_controller_ordering_and_replay",
         "test_public_event_source_counter_dependency_omission_and_open_result_fail_closed",
         "test_public_source_counter_current_ability_diagnostic_stops_later_occurrences"
       ],
       "interaction_tests": [
+        "test_original_mortician_beetle_optional_counter_uses_sacrifice_occurrence",
         "test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
         "test_original_public_source_counter_controller_ordering_and_replay",
         "test_public_source_counter_current_ability_diagnostic_stops_later_occurrences"
       ],
       "multiplayer_tests": [
+        "test_original_mortician_beetle_optional_counter_uses_sacrifice_occurrence",
         "test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
         "test_original_public_source_counter_controller_ordering_and_replay"
       ],
@@ -516,6 +520,7 @@
         "test_original_public_source_counter_controller_ordering_and_replay"
       ],
       "replay_tests": [
+        "test_original_mortician_beetle_optional_counter_uses_sacrifice_occurrence",
         "test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
         "test_original_public_source_counter_controller_ordering_and_replay"
       ]
@@ -10851,7 +10856,7 @@
     },
     {
       "id": "mana.production.public_quantity",
-      "version": 2,
+      "version": 3,
       "official_rules": [
         "106.1",
         "106.4",
@@ -10907,35 +10912,39 @@
         "quorune.rules.activation.counter_costs.preview_source_counter_removal_cost"
       ],
       "positive_tests": [
-        "test_quantity_mana_compiler_and_codec_close_existing_producers",
-        "test_quantity_mana_controller_query_is_offered_accepted_and_replayed",
+        "test_counter_price_zero_output_is_read_only_offered_and_paid_once",
+        "test_original_baldurs_gate_excludes_itself_from_offered_and_paid_mana",
         "test_projected_lotus_form_accepts_legal_dynamic_allocation_in_real_browser_validator",
         "test_projected_postcost_allocation_agrees_with_browser_and_command",
-        "test_counter_price_zero_output_is_read_only_offered_and_paid_once"
+        "test_quantity_mana_compiler_and_codec_close_existing_producers",
+        "test_quantity_mana_controller_query_is_offered_accepted_and_replayed"
       ],
       "negative_tests": [
+        "test_projected_dynamic_allocation_rejects_same_malformed_browser_and_server_values",
         "test_quantity_mana_grammar_cost_and_codec_boundaries",
-        "test_quantity_mana_invalid_allocation_rolls_back",
-        "test_projected_dynamic_allocation_rejects_same_malformed_browser_and_server_values"
+        "test_quantity_mana_invalid_allocation_rolls_back"
       ],
       "interaction_tests": [
-        "test_quantity_mana_source_cost_uses_postcost_and_predeparture_values",
+        "test_counter_price_zero_output_is_read_only_offered_and_paid_once",
+        "test_original_baldurs_gate_excludes_itself_from_offered_and_paid_mana",
         "test_projected_lotus_form_accepts_legal_dynamic_allocation_in_real_browser_validator",
         "test_projected_postcost_allocation_agrees_with_browser_and_command",
-        "test_counter_price_zero_output_is_read_only_offered_and_paid_once"
+        "test_quantity_mana_source_cost_uses_postcost_and_predeparture_values"
       ],
       "multiplayer_tests": [
+        "test_original_baldurs_gate_excludes_itself_from_offered_and_paid_mana",
         "test_quantity_mana_controller_query_is_offered_accepted_and_replayed"
       ],
       "privacy_tests": [
         "test_quantity_mana_controller_query_is_offered_accepted_and_replayed"
       ],
       "replay_tests": [
-        "test_quantity_mana_controller_query_is_offered_accepted_and_replayed",
-        "test_quantity_mana_source_cost_uses_postcost_and_predeparture_values",
+        "test_counter_price_zero_output_is_read_only_offered_and_paid_once",
+        "test_original_baldurs_gate_excludes_itself_from_offered_and_paid_mana",
         "test_projected_lotus_form_accepts_legal_dynamic_allocation_in_real_browser_validator",
         "test_projected_postcost_allocation_agrees_with_browser_and_command",
-        "test_counter_price_zero_output_is_read_only_offered_and_paid_once"
+        "test_quantity_mana_controller_query_is_offered_accepted_and_replayed",
+        "test_quantity_mana_source_cost_uses_postcost_and_predeparture_values"
       ],
       "required_evidence": [
         "positive",

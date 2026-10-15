@@ -9,6 +9,12 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Public-quantity mana keeps its existing typed source-excluding count producer
+before consulting the newer live resolution count fallback. Existing optional
+source counters on admitted sacrifice and discard subscriptions keep the
+ordinary put-or-decline choice; that composition does not admit optional bodies
+for independently unclosed public-event families.
+
 Fixed positive Rampage values lower to typed combat-trigger fragments, preserving
 each printed instance. The existing block-transition and continuous-effect
 owners execute the trigger; variable values and unrepresented sibling abilities

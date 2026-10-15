@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "313d64c3184d06c8ef946e7b837598bf7e9b735d32a3573d508c8b0466cc8389",
-  "declaration_source_fingerprint": "d849f5e3e6c1b90b28a6cfa05595d27390ca77586e28b4019d32231f797858a1",
+  "registry_fingerprint": "c5d9b4e79f11abcafc321d2662b5eefdebcc9faf47cd9a35d457b3f3fe6a8028",
+  "declaration_source_fingerprint": "6d50f06be4ca34c4012571c54394f4e5fad52e5f9c86b0b60d0ede931339bcad",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -58791,6 +58791,28 @@
     {
       "capability_id": "counter.producer.fixed_public_source_event",
       "evidence_class": "interaction",
+      "test_id": "tests.test_batch_retained_owner_composition.RetainedOwnerCompositionActionTests.test_original_mortician_beetle_optional_counter_uses_sacrifice_occurrence",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Retained original mana source-exclusion and optional sacrifice source counter compose through existing producers; actual price, targets, put/decline, principal rollback and pending/full replay."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
       "official_rule_ids": [
         "113.7a",
@@ -58853,6 +58875,28 @@
         "commander_review"
       ],
       "applicability_note": "Labeled current-ability diagnostic inserts a typed ability-removal effect after a native destruction queued its result. That result still places one counter; a second native destruction after removal queues none. This constructed temporal control does not replace original-card command and replay witnesses."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_batch_retained_owner_composition.RetainedOwnerCompositionActionTests.test_original_mortician_beetle_optional_counter_uses_sacrifice_occurrence",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Retained original mana source-exclusion and optional sacrifice source counter compose through existing producers; actual price, targets, put/decline, principal rollback and pending/full replay."
     },
     {
       "capability_id": "counter.producer.fixed_public_source_event",
@@ -58923,6 +58967,28 @@
     {
       "capability_id": "counter.producer.fixed_public_source_event",
       "evidence_class": "negative",
+      "test_id": "tests.test_batch_retained_owner_composition.RetainedOwnerCompositionActionTests.test_original_mortician_beetle_optional_counter_uses_sacrifice_occurrence",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Retained original mana source-exclusion and optional sacrifice source counter compose through existing producers; actual price, targets, put/decline, principal rollback and pending/full replay."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_event_source_counter_dependency_omission_and_open_result_fail_closed",
       "official_rule_ids": [
         "113.7a",
@@ -59007,6 +59073,28 @@
         "commander_review"
       ],
       "applicability_note": "Labeled current-ability diagnostic inserts a typed ability-removal effect after a native destruction queued its result. That result still places one counter; a second native destruction after removal queues none. This constructed temporal control does not replace original-card command and replay witnesses."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_batch_retained_owner_composition.RetainedOwnerCompositionActionTests.test_original_mortician_beetle_optional_counter_uses_sacrifice_occurrence",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Retained original mana source-exclusion and optional sacrifice source counter compose through existing producers; actual price, targets, put/decline, principal rollback and pending/full replay."
     },
     {
       "capability_id": "counter.producer.fixed_public_source_event",
@@ -59117,6 +59205,28 @@
         "commander_review"
       ],
       "applicability_note": "Original Starfield Mystic observers contrast own and foreign enchantments destroyed simultaneously by an accepted Tranquility cast. Authentic controller ordering places two active-controller triggers below the nonactive-controller result. Rejected foreign ordering preserves state; pending reload and complete replay preserve one counter per observer and private hand projection."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_batch_retained_owner_composition.RetainedOwnerCompositionActionTests.test_original_mortician_beetle_optional_counter_uses_sacrifice_occurrence",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Retained original mana source-exclusion and optional sacrifice source counter compose through existing producers; actual price, targets, put/decline, principal rollback and pending/full replay."
     },
     {
       "capability_id": "counter.producer.fixed_public_source_event",
@@ -84393,6 +84503,26 @@
     {
       "capability_id": "mana.production.public_quantity",
       "evidence_class": "interaction",
+      "test_id": "tests.test_batch_retained_owner_composition.RetainedOwnerCompositionActionTests.test_original_baldurs_gate_excludes_itself_from_offered_and_paid_mana",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Retained original mana source-exclusion and optional sacrifice source counter compose through existing producers; actual price, targets, put/decline, principal rollback and pending/full replay."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_counter_price_zero_output_is_read_only_offered_and_paid_once",
       "official_rule_ids": [
         "106.1",
@@ -84533,6 +84663,26 @@
     {
       "capability_id": "mana.production.public_quantity",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_batch_retained_owner_composition.RetainedOwnerCompositionActionTests.test_original_baldurs_gate_excludes_itself_from_offered_and_paid_mana",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Retained original mana source-exclusion and optional sacrifice source counter compose through existing producers; actual price, targets, put/decline, principal rollback and pending/full replay."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_quantity_mana_controller_query_is_offered_accepted_and_replayed",
       "official_rule_ids": [
         "106.1",
@@ -84653,6 +84803,26 @@
     {
       "capability_id": "mana.production.public_quantity",
       "evidence_class": "positive",
+      "test_id": "tests.test_batch_retained_owner_composition.RetainedOwnerCompositionActionTests.test_original_baldurs_gate_excludes_itself_from_offered_and_paid_mana",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Retained original mana source-exclusion and optional sacrifice source counter compose through existing producers; actual price, targets, put/decline, principal rollback and pending/full replay."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "positive",
       "test_id": "tests.test_public_quantity_mana.PublicQuantityManaCompilerTests.test_quantity_mana_compiler_and_codec_close_existing_producers",
       "official_rule_ids": [
         "106.1",
@@ -84769,6 +84939,26 @@
         "commander_review"
       ],
       "applicability_note": "Closed public quantities, postcost source information, allowed allocations and transactional trusted actions."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_batch_retained_owner_composition.RetainedOwnerCompositionActionTests.test_original_baldurs_gate_excludes_itself_from_offered_and_paid_mana",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Retained original mana source-exclusion and optional sacrifice source counter compose through existing producers; actual price, targets, put/decline, principal rollback and pending/full replay."
     },
     {
       "capability_id": "mana.production.public_quantity",
@@ -140047,5 +140237,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "ce1843d5862fd435b3f4df931580a105f9a6db5d79b874a4bc67b0fafdcd7812"
+  "fingerprint": "ed6097343d6275c854eab6510ac2dd23e5d001c4a654b5146153835ab1e121f6"
 }
