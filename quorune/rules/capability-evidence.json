@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "687efa9f95794ea87838fe4e286cdf24727ff12b0156c62ded2ef8872695cfb6",
-  "declaration_source_fingerprint": "4173ed662dcd3a472beb997f03f882b6312ed5d161f522fc665253d9107263d9",
+  "registry_fingerprint": "d4e5217e5ddc1b742e0a4f065915d47690e6513affc85a6a2b6f26ff7564ac28",
+  "declaration_source_fingerprint": "31bf64fc4cd8da16df6e3b89d3ae62d74641b4000ac52a03d4c3677fe3fde6d9",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -30678,6 +30678,226 @@
         "commander_review"
       ],
       "applicability_note": "Replay the distinct-opponent amount and source identity exactly."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_rampage_rules.RampageActionTests.test_original_craw_giant_samples_blockers_at_resolution_and_retains_bonus_after",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current Rampage instances share complete block declaration and ordinary APNAP placement; resolution counts remaining blockers once and pins original source."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_rampage_rules.RampageActionTests.test_original_craw_giant_samples_blockers_at_resolution_and_retains_bonus_after",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current Rampage instances share complete block declaration and ordinary APNAP placement; resolution counts remaining blockers once and pins original source."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_rampage_rules.RampageModelTests.test_rampage_derives_per_instance_only_when_attacking_and_samples_current_blockers",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current Rampage instances share complete block declaration and ordinary APNAP placement; resolution counts remaining blockers once and pins original source."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "negative",
+      "test_id": "tests.test_rampage_rules.RampageActionTests.test_original_rampage_removed_before_blocks_produces_no_occurrence",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current ability removal before blocks prevents occurrence; missing producer and unsupported values remain untrusted."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "negative",
+      "test_id": "tests.test_rampage_rules.RampageCompilerTests.test_rampage_dependency_omission_and_unknown_amount_fail_closed",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current ability removal before blocks prevents occurrence; missing producer and unsupported values remain untrusted."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "negative",
+      "test_id": "tests.test_rampage_rules.RampageModelTests.test_rampage_count_mutation_and_malformed_amount_are_rejected",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current Rampage instances share complete block declaration and ordinary APNAP placement; resolution counts remaining blockers once and pins original source."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "positive",
+      "test_id": "tests.test_rampage_rules.RampageCompilerTests.test_fixed_rampage_is_typed_and_preserves_multiple_instances",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current Rampage instances share complete block declaration and ordinary APNAP placement; resolution counts remaining blockers once and pins original source."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "positive",
+      "test_id": "tests.test_rampage_rules.RampageModelTests.test_rampage_derives_per_instance_only_when_attacking_and_samples_current_blockers",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current Rampage instances share complete block declaration and ordinary APNAP placement; resolution counts remaining blockers once and pins original source."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_rampage_rules.RampageActionTests.test_original_craw_giant_samples_blockers_at_resolution_and_retains_bonus_after",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current Rampage instances share complete block declaration and ordinary APNAP placement; resolution counts remaining blockers once and pins original source."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "replay",
+      "test_id": "tests.test_rampage_rules.RampageActionTests.test_original_craw_giant_samples_blockers_at_resolution_and_retains_bonus_after",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current Rampage instances share complete block declaration and ordinary APNAP placement; resolution counts remaining blockers once and pins original source."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "replay",
+      "test_id": "tests.test_rampage_rules.RampageActionTests.test_original_horrible_hordes_one_blocker_has_zero_bonus_and_source_blink_is_stale",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current Rampage instances share complete block declaration and ordinary APNAP placement; resolution counts remaining blockers once and pins original source."
     },
     {
       "capability_id": "compiler.oracle.nonexecuting_reminder_line",
@@ -139593,5 +139813,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "387552ce9e3333d6dffca94e35e1e44839e3a7d8139dd135b67f9688640bb0bb"
+  "fingerprint": "bd281ac16a8b8cb7029c8b8ff72f3912c5747442f2adf509375faafe22f97e63"
 }

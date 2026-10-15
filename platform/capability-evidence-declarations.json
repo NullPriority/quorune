@@ -17468,6 +17468,226 @@
       "applicability_note": "Replay the distinct-opponent amount and source identity exactly."
     },
     {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_rampage_rules.RampageActionTests.test_original_craw_giant_samples_blockers_at_resolution_and_retains_bonus_after",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current Rampage instances share complete block declaration and ordinary APNAP placement; resolution counts remaining blockers once and pins original source."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_rampage_rules.RampageActionTests.test_original_craw_giant_samples_blockers_at_resolution_and_retains_bonus_after",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current Rampage instances share complete block declaration and ordinary APNAP placement; resolution counts remaining blockers once and pins original source."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_rampage_rules.RampageModelTests.test_rampage_derives_per_instance_only_when_attacking_and_samples_current_blockers",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current Rampage instances share complete block declaration and ordinary APNAP placement; resolution counts remaining blockers once and pins original source."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "negative",
+      "test_id": "tests.test_rampage_rules.RampageActionTests.test_original_rampage_removed_before_blocks_produces_no_occurrence",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current ability removal before blocks prevents occurrence; missing producer and unsupported values remain untrusted."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "negative",
+      "test_id": "tests.test_rampage_rules.RampageCompilerTests.test_rampage_dependency_omission_and_unknown_amount_fail_closed",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current ability removal before blocks prevents occurrence; missing producer and unsupported values remain untrusted."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "negative",
+      "test_id": "tests.test_rampage_rules.RampageModelTests.test_rampage_count_mutation_and_malformed_amount_are_rejected",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current Rampage instances share complete block declaration and ordinary APNAP placement; resolution counts remaining blockers once and pins original source."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "positive",
+      "test_id": "tests.test_rampage_rules.RampageCompilerTests.test_fixed_rampage_is_typed_and_preserves_multiple_instances",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current Rampage instances share complete block declaration and ordinary APNAP placement; resolution counts remaining blockers once and pins original source."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "positive",
+      "test_id": "tests.test_rampage_rules.RampageModelTests.test_rampage_derives_per_instance_only_when_attacking_and_samples_current_blockers",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current Rampage instances share complete block declaration and ordinary APNAP placement; resolution counts remaining blockers once and pins original source."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_rampage_rules.RampageActionTests.test_original_craw_giant_samples_blockers_at_resolution_and_retains_bonus_after",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current Rampage instances share complete block declaration and ordinary APNAP placement; resolution counts remaining blockers once and pins original source."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "replay",
+      "test_id": "tests.test_rampage_rules.RampageActionTests.test_original_craw_giant_samples_blockers_at_resolution_and_retains_bonus_after",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current Rampage instances share complete block declaration and ordinary APNAP placement; resolution counts remaining blockers once and pins original source."
+    },
+    {
+      "capability_id": "combat.trigger.rampage",
+      "evidence_class": "replay",
+      "test_id": "tests.test_rampage_rules.RampageActionTests.test_original_horrible_hordes_one_blocker_has_zero_bonus_and_source_blink_is_stale",
+      "official_rule_ids": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current Rampage instances share complete block declaration and ordinary APNAP placement; resolution counts remaining blockers once and pins original source."
+    },
+    {
       "capability_id": "compiler.oracle.nonexecuting_reminder_line",
       "evidence_class": "interaction",
       "test_id": "tests.test_class_lifecycle.ClassLifecycleCompilerTests.test_class_structure_compiles_three_lifecycle_nodes_and_scoped_children",

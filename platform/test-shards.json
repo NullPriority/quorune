@@ -243,6 +243,7 @@
       "test_predefined_roles",
       "test_proliferate_rules",
       "test_prototype_rules",
+      "test_rampage_rules",
       "test_semantic_handlers",
       "test_shared_characteristic_queries",
       "test_station_rules",

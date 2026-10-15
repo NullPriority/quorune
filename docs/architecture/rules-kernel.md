@@ -569,7 +569,7 @@ Combat declaration relationships commit through
 `combat_relationship_state.py`. After a complete declaration, the engine
 adapts public combat facts into immutable canonical attack or block transition
 values. Typed transition derivation owns ordinary printed Exalted, Battle Cry,
-Melee, Mentor, Flanking, and positive-integer Bushido occurrences; the shared trigger
+Melee, Mentor, Flanking, and positive-integer Bushido and Rampage occurrences; the shared trigger
 batch owns APNAP placement, and the continuous-effect journal owns their
 identity-pinned layer 7c results. Mentor instead emits a typed targeted counter
 result: `relative_power_target.py` owns current and predeparture source-power
@@ -580,6 +580,13 @@ characteristics and delegate commits to the declared combat, trigger,
 continuous-effect, target, and counter owners. Conditional or prose-equivalent
 variants, unsupported granted or copied fragments, trigger multiplication, and
 broader attack/block transition triggers remain explicit residuals.
+
+Rampage uses the same sealed becomes-blocked transition and retains each typed
+instance independently. Its rules helper counts the original attacker's current
+blockers beyond the first only when that occurrence resolves. The existing
+continuous-effect journal freezes the resulting bonus through end of turn;
+later blocker departures do not change it. A departed or returned source
+incarnation receives no modifier. Blocking with Rampage does not trigger it.
 
 `ObjectQuerySpec` is a strict immutable predicate shared by those live effects
 and other represented rules families. Its current schema distinguishes

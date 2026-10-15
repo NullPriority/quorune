@@ -9,6 +9,11 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Fixed positive Rampage values lower to typed combat-trigger fragments, preserving
+each printed instance. The existing block-transition and continuous-effect
+owners execute the trigger; variable values and unrepresented sibling abilities
+remain residual. The bonus samples current blockers at resolution.
+
 Intrinsic Exploit lowers to one entry trigger with an optional creature
 sacrifice. The separately printed “When this creature exploits a creature”
 ability subscribes to the committed source-incarnation occurrence and composes

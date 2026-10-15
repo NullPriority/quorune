@@ -338,7 +338,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     _SHADOW_MECHANIC: ("combat.block.shadow",),
     _SKULK_MECHANIC: ("combat.block.skulk",),
     _FLANKING_MECHANIC: ("combat.trigger.flanking",),
-    _BUSHIDO_MECHANIC: ("combat.trigger.bushido",),
+    _BUSHIDO_MECHANIC: ("combat.trigger.bushido",), 'rampage': ('combat.trigger.rampage',),
     _EXALTED_MECHANIC: ("combat.trigger.exalted",),
     _BATTLE_CRY_MECHANIC: ("combat.trigger.battle_cry",),
     _MELEE_MECHANIC: ("combat.trigger.melee",),

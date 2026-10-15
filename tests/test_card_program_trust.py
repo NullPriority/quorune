@@ -265,6 +265,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.static.umbra_armor",
                 "ability.static.trigger_multiplier",
                 "ability.trigger.bushido",
+                "ability.trigger.rampage",
                 "ability.trigger.battle_cry",
                 "ability.trigger.cascade",
                 "ability.trigger.dethrone",

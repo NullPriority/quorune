@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 291,
+  "registry_version": 292,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -21925,6 +21925,90 @@
         "test_original_eddytrail_hawk_selects_target_before_energy_choice",
         "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
         "test_original_thriving_rhino_cast_attack_payment_decline_and_pending_replay"
+      ]
+    },
+    {
+      "id": "combat.trigger.rampage",
+      "version": 1,
+      "official_rules": [
+        "400.7",
+        "509.1h",
+        "603.3",
+        "608.2h",
+        "702.23a",
+        "702.23b",
+        "702.23c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Fixed Rampage N instances trigger once when the attacking source becomes blocked and sample current blockers beyond the first at resolution.",
+        "inputs": [
+          "sealed complete block declaration",
+          "current exact typed Rampage instances",
+          "current blockers and source incarnation at resolution"
+        ],
+        "outputs": [
+          "one APNAP stack occurrence per instance",
+          "fixed until-end-of-turn layer7c modifier",
+          "zero bonus with at most one remaining blocker"
+        ],
+        "exclusions": [
+          "variable X Rampage",
+          "unrepresented quoted or granted keywords",
+          "unrepresented combat mechanics and whole-card siblings"
+        ]
+      },
+      "dependencies": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.compiler.rampage_fragments.rampage_fragment_lowering",
+        "quorune.semantic_runtime.rampage_fragment.RampageFragmentHandler",
+        "quorune.rampage.rampage_occurrence_drafts",
+        "quorune.rampage.rampage_resolution_bonus",
+        "quorune.block_transitions.derive_block_keyword_trigger_occurrences",
+        "quorune.block_transitions.resolve_block_keyword_trigger"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Ordinary trigger placement and continuous effect authority remain required.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Counting all blockers instead of blockers beyond the first fails distinguishing pure model case.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_fixed_rampage_is_typed_and_preserves_multiple_instances",
+        "test_rampage_derives_per_instance_only_when_attacking_and_samples_current_blockers"
+      ],
+      "negative_tests": [
+        "test_rampage_count_mutation_and_malformed_amount_are_rejected",
+        "test_rampage_dependency_omission_and_unknown_amount_fail_closed",
+        "test_original_rampage_removed_before_blocks_produces_no_occurrence"
+      ],
+      "interaction_tests": [
+        "test_original_craw_giant_samples_blockers_at_resolution_and_retains_bonus_after"
+      ],
+      "multiplayer_tests": [
+        "test_original_craw_giant_samples_blockers_at_resolution_and_retains_bonus_after"
+      ],
+      "privacy_tests": [
+        "test_original_craw_giant_samples_blockers_at_resolution_and_retains_bonus_after"
+      ],
+      "replay_tests": [
+        "test_original_craw_giant_samples_blockers_at_resolution_and_retains_bonus_after",
+        "test_original_horrible_hordes_one_blocker_has_zero_bonus_and_source_blink_is_stale"
       ]
     }
   ]
