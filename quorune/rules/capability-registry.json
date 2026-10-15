@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 296,
+  "registry_version": 297,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -22132,6 +22132,120 @@
         "test_original_blood_cultist_ping_then_sacrifice_counts_only_matching_source",
         "test_original_cultist_simultaneous_death_uses_lki_but_cannot_counter_departed_source",
         "test_original_rot_wolf_combat_death_draw_is_private_and_replays_from_actions"
+      ]
+    },
+    {
+      "id": "continuous.characteristics.conditional_creature_type_removal",
+      "version": 1,
+      "official_rules": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability": {
+        "summary": "Remove only the source incarnation's Creature card type in layer4 under an independently represented public condition, including devotion read after copy/control/text. Retain creature subtypes when Kindred still shares that subtype set.",
+        "inputs": [
+          "source-spanned self-only type-removal clause",
+          "closed independently available public condition",
+          "current source incarnation",
+          "existing current-devotion quantity owner",
+          "pre-entry facts exclude the incoming permanent",
+          "source-component participation through copy/control/text before layer4"
+        ],
+        "outputs": [
+          "source-bound layer4 removal effect",
+          "live creature classification and legality",
+          "pre-entry replacement subject types separated from post-entry trigger classification",
+          "earlier type changes retained through later ability removal"
+        ],
+        "exclusions": [
+          "unrepresented characteristic-dependent conditions",
+          "other-object or target antecedents",
+          "arbitrary type removal or callbacks",
+          "Global entry replacements without their independently represented owners"
+        ]
+      },
+      "dependencies": [
+        "continuous.characteristics.fixed_public_state",
+        "state_query.devotion.current"
+      ],
+      "implementation_components": [
+        "quorune.compiler.fixed_characteristic_settings.fixed_characteristic_setting_handler",
+        "quorune.compiler.public_state_queries.fixed_public_state_condition",
+        "quorune.semantic_runtime.fixed_characteristic_settings.ConditionalCreatureTypeRemovalHandler",
+        "quorune.continuous_effects.evaluate_continuous_effects",
+        "quorune.semantic_runtime.fixed_characteristic_settings.prospective_creature_type_characteristics",
+        "quorune.semantic_runtime.continuous_components.ContinuousEffectComponentRegistry.source_component_layer",
+        "quorune.compiler.collection_quantity_templates.fixed_devotion_condition",
+        "quorune.semantic_runtime.zone_replacement_inputs.zone_change_subject_characteristics"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawn type-removal or devotion authority prevents exact admission; invalid object subjects, malformed payloads and unavailable quantity information reject.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Replacing the registered type-removal lowerer with an empty layer4 plan fails the independent source-type and incarnation witness.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_type_removal_retains_only_subtypes_correlated_with_remaining_types",
+        "test_conditional_type_component_validates_information_layers_and_incarnation",
+        "test_devotion_type_removal_compiles_the_complete_generic_condition",
+        "test_actual_original_thassa_devotion_threshold_retains_abilities_counters_and_replays",
+        "test_actual_hybrid_devotion_control_change_and_reentry_keep_new_incarnation",
+        "test_actual_original_thassa_entry_replacement_and_post_entry_event_use_distinct_devotion",
+        "test_actual_devotion_type_removal_precedes_persistent_ability_loss",
+        "test_actual_attacking_god_leaves_combat_and_does_not_rejoin_after_devotion_returns"
+      ],
+      "negative_tests": [
+        "test_type_removal_operation_round_trips_and_rejects_payloads",
+        "test_conditional_type_component_validates_information_layers_and_incarnation",
+        "test_devotion_type_subject_domain_and_withdrawn_dependencies_fail_closed",
+        "test_actual_attacking_god_leaves_combat_and_does_not_rejoin_after_devotion_returns"
+      ],
+      "interaction_tests": [
+        "test_actual_original_thassa_devotion_threshold_retains_abilities_counters_and_replays",
+        "test_actual_hybrid_devotion_control_change_and_reentry_keep_new_incarnation",
+        "test_actual_original_thassa_entry_replacement_and_post_entry_event_use_distinct_devotion",
+        "test_actual_devotion_type_removal_precedes_persistent_ability_loss",
+        "test_actual_attacking_god_leaves_combat_and_does_not_rejoin_after_devotion_returns"
+      ],
+      "multiplayer_tests": [
+        "test_actual_original_thassa_devotion_threshold_retains_abilities_counters_and_replays",
+        "test_actual_hybrid_devotion_control_change_and_reentry_keep_new_incarnation",
+        "test_actual_original_thassa_entry_replacement_and_post_entry_event_use_distinct_devotion",
+        "test_actual_attacking_god_leaves_combat_and_does_not_rejoin_after_devotion_returns"
+      ],
+      "privacy_tests": [
+        "test_actual_original_thassa_devotion_threshold_retains_abilities_counters_and_replays",
+        "test_actual_hybrid_devotion_control_change_and_reentry_keep_new_incarnation",
+        "test_actual_original_thassa_entry_replacement_and_post_entry_event_use_distinct_devotion",
+        "test_actual_attacking_god_leaves_combat_and_does_not_rejoin_after_devotion_returns"
+      ],
+      "replay_tests": [
+        "test_actual_original_thassa_devotion_threshold_retains_abilities_counters_and_replays",
+        "test_actual_hybrid_devotion_control_change_and_reentry_keep_new_incarnation",
+        "test_actual_original_thassa_entry_replacement_and_post_entry_event_use_distinct_devotion",
+        "test_actual_devotion_type_removal_precedes_persistent_ability_loss",
+        "test_actual_attacking_god_leaves_combat_and_does_not_rejoin_after_devotion_returns"
       ]
     }
   ]

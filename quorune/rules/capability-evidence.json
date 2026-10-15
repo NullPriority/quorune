@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "58f608759ed1cbe1ba261b33f5a600b2853eea3b33127efdbb37c529b302c617",
-  "declaration_source_fingerprint": "09cf0413953ce1736676c416dab81bd958e443c184d2a6b8be2be183d33e9b67",
+  "registry_fingerprint": "8c16f81e3105458f15540e46e5da6e5d233c3f37c9f0ed5cf14c6efdbd741a15",
+  "declaration_source_fingerprint": "25bc65e665f2ca5fefc8e484c876780e16e7d100913b5f13bc6dfff133f7a21f",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -37366,6 +37366,719 @@
         "commander_review"
       ],
       "applicability_note": "Printed copy makes a fresh entry choice, rejects a stale selection atomically and replays; duplicated linked choices and departed incarnations do not retain admission or choice state."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_attacking_god_leaves_combat_and_does_not_rejoin_after_devotion_returns",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attack, bounce and flash recast remove the God from combat without rejoining; no player takes damage, wrong-principal rollback, private projection, pending reload and complete replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_devotion_type_removal_precedes_persistent_ability_loss",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted permanent ability-loss Aura suppresses the activation while the earlier layer4 devotion type change persists; bouncing the Aura restores the offered activation, pending reload and pre-action replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_hybrid_devotion_control_change_and_reentry_keep_new_incarnation",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Thassa and generic dual-color God actions distinguish devotion, control, re-entry and immutable pre-entry replacement snapshots versus actual post-entry event timing."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_original_thassa_devotion_threshold_retains_abilities_counters_and_replays",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Thassa and generic dual-color God actions distinguish devotion, control, re-entry and immutable pre-entry replacement snapshots versus actual post-entry event timing."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_original_thassa_entry_replacement_and_post_entry_event_use_distinct_devotion",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Thassa and generic dual-color God actions distinguish devotion, control, re-entry and immutable pre-entry replacement snapshots versus actual post-entry event timing."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_attacking_god_leaves_combat_and_does_not_rejoin_after_devotion_returns",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attack, bounce and flash recast remove the God from combat without rejoining; no player takes damage, wrong-principal rollback, private projection, pending reload and complete replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_hybrid_devotion_control_change_and_reentry_keep_new_incarnation",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Four-seat actual actions keep controller-relative devotion separate from foreign permanents and preserve complete consequences."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_original_thassa_devotion_threshold_retains_abilities_counters_and_replays",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Four-seat actual actions keep controller-relative devotion separate from foreign permanents and preserve complete consequences."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_original_thassa_entry_replacement_and_post_entry_event_use_distinct_devotion",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Four-seat actual actions keep controller-relative devotion separate from foreign permanents and preserve complete consequences."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_static_characteristic_settings.ConditionalCreatureTypeRemovalTests.test_conditional_type_component_validates_information_layers_and_incarnation",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Executed omitted-lowerer mutation fails the independent component witness (one failure, no errors); source incarnation and subtype rules are independently asserted."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_characteristic_settings.ConditionalCreatureTypeRemovalTests.test_conditional_type_component_validates_information_layers_and_incarnation",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Unsupported antecedents, malformed descriptors, unavailable condition information and withdrawn fine dependencies fail closed; early-layer reads validate before excluding the layer4-only component."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_characteristic_settings.ConditionalCreatureTypeRemovalTests.test_devotion_type_subject_domain_and_withdrawn_dependencies_fail_closed",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Unsupported antecedents, malformed descriptors, unavailable condition information and withdrawn fine dependencies fail closed; early-layer reads validate before excluding the layer4-only component."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_characteristic_settings.ConditionalCreatureTypeRemovalTests.test_type_removal_operation_round_trips_and_rejects_payloads",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Unsupported antecedents, malformed descriptors, unavailable condition information and withdrawn fine dependencies fail closed; early-layer reads validate before excluding the layer4-only component."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_attacking_god_leaves_combat_and_does_not_rejoin_after_devotion_returns",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attack, bounce and flash recast remove the God from combat without rejoining; no player takes damage, wrong-principal rollback, private projection, pending reload and complete replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_characteristic_settings.ConditionalCreatureTypeRemovalTests.test_conditional_type_component_validates_information_layers_and_incarnation",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Independent layer4 source/type contract, typed devotion authority and actual registered casts retain abilities and counters while switching creature status at the exact threshold."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_characteristic_settings.ConditionalCreatureTypeRemovalTests.test_devotion_type_removal_compiles_the_complete_generic_condition",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Independent layer4 source/type contract, typed devotion authority and actual registered casts retain abilities and counters while switching creature status at the exact threshold."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_characteristic_settings.ConditionalCreatureTypeRemovalTests.test_type_removal_retains_only_subtypes_correlated_with_remaining_types",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Independent layer4 source/type contract, typed devotion authority and actual registered casts retain abilities and counters while switching creature status at the exact threshold."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_attacking_god_leaves_combat_and_does_not_rejoin_after_devotion_returns",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attack, bounce and flash recast remove the God from combat without rejoining; no player takes damage, wrong-principal rollback, private projection, pending reload and complete replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_devotion_type_removal_precedes_persistent_ability_loss",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted permanent ability-loss Aura suppresses the activation while the earlier layer4 devotion type change persists; bouncing the Aura restores the offered activation, pending reload and pre-action replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_hybrid_devotion_control_change_and_reentry_keep_new_incarnation",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Independent layer4 source/type contract, typed devotion authority and actual registered casts retain abilities and counters while switching creature status at the exact threshold."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_original_thassa_devotion_threshold_retains_abilities_counters_and_replays",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Independent layer4 source/type contract, typed devotion authority and actual registered casts retain abilities and counters while switching creature status at the exact threshold."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_original_thassa_entry_replacement_and_post_entry_event_use_distinct_devotion",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Independent layer4 source/type contract, typed devotion authority and actual registered casts retain abilities and counters while switching creature status at the exact threshold."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_attacking_god_leaves_combat_and_does_not_rejoin_after_devotion_returns",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attack, bounce and flash recast remove the God from combat without rejoining; no player takes damage, wrong-principal rollback, private projection, pending reload and complete replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_hybrid_devotion_control_change_and_reentry_keep_new_incarnation",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Four-seat packet/draw projection and unauthorized rollback accompany actual casts, control and re-entry."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_original_thassa_devotion_threshold_retains_abilities_counters_and_replays",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Four-seat packet/draw projection and unauthorized rollback accompany actual casts, control and re-entry."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_original_thassa_entry_replacement_and_post_entry_event_use_distinct_devotion",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Four-seat packet/draw projection and unauthorized rollback accompany actual casts, control and re-entry."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_attacking_god_leaves_combat_and_does_not_rejoin_after_devotion_returns",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual attack, bounce and flash recast remove the God from combat without rejoining; no player takes damage, wrong-principal rollback, private projection, pending reload and complete replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_devotion_type_removal_precedes_persistent_ability_loss",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted permanent ability-loss Aura suppresses the activation while the earlier layer4 devotion type change persists; bouncing the Aura restores the offered activation, pending reload and pre-action replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_hybrid_devotion_control_change_and_reentry_keep_new_incarnation",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Pending load and complete pre-action replay preserve actual characteristic, mana, counter, zone and controller consequences."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_original_thassa_devotion_threshold_retains_abilities_counters_and_replays",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Pending load and complete pre-action replay preserve actual characteristic, mana, counter, zone and controller consequences."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_creature_type_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_original_thassa_entry_replacement_and_post_entry_event_use_distinct_devotion",
+      "official_rule_ids": [
+        "205.1a",
+        "400.7",
+        "506.4",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6",
+        "614.12",
+        "700.5",
+        "700.5a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Pending load and complete pre-action replay preserve actual characteristic, mana, counter, zone and controller consequences."
     },
     {
       "capability_id": "continuous.characteristics.conditional_keyword",
@@ -141039,5 +141752,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "ce7d5eafc2273e46d3c2758fd156102152b7d57b474c87a005fd328556cfdad1"
+  "fingerprint": "fe9d6cd18e76d9ff30652be4f689edb988ba86bb42ef3be5d761658294a164cd"
 }

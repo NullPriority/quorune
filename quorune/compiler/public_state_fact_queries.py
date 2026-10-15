@@ -135,6 +135,10 @@ def fixed_graveyard_condition_query(
 def fixed_public_condition_query_extension(
     normalized: str,
 ) -> FixedPublicStateConditionSpec | None:
+    from .collection_quantity_templates import fixed_devotion_condition
+    devotion = fixed_devotion_condition(normalized)
+    if devotion is not None:
+        return devotion
     attached = re.fullmatch(
         r"(?P<count>two|three|four|five|[0-9]+) or more Equipment are "
         r"attached to it",

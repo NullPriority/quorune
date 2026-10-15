@@ -93,6 +93,17 @@ def fixed_characteristic_setting_handler(text: str, *, source_name: str | None =
         parsed = fixed_public_state_parts(text, source_name=source_name)
         if parsed is not None:
             source_condition, text = parsed
+            if re.fullmatch(rf"(?:This (?:creature|artifact|enchantment|permanent)|{SourceReferenceSpec(source_name).regex_pattern}) isn['’]t a creature\.?", text.strip(), re.I):
+                from ..semantic_runtime.fixed_characteristic_settings import (
+                    ConditionalCreatureTypeRemovalHandler, CREATURE_TYPE_REMOVAL_HANDLER, CREATURE_TYPE_REMOVAL_CAPABILITY,
+                )
+                descriptor = {'handler_id': CREATURE_TYPE_REMOVAL_HANDLER, 'schema_version': 1,
+                    'event': 'characteristics.evaluate', 'source_condition': source_condition.to_dict()}
+                try:
+                    ConditionalCreatureTypeRemovalHandler().validate(descriptor)
+                except (TypeError, ValueError):
+                    return None
+                return 'static-conditional-creature-type-removal-v1', descriptor, (CREATURE_TYPE_REMOVAL_CAPABILITY,)
             from ..semantic_runtime.fixed_characteristic_settings import validate_setting_condition
             try:
                 validate_setting_condition(source_condition.to_dict())

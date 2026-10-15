@@ -24,6 +24,7 @@ from .ability_fragments import (
 )
 from .abilities import ActivatedAbility
 from .replacement.immutable import thaw_value
+from .creature_subtypes import canonical_creature_subtype
 
 
 _SUBLAYER_ORDER = {
@@ -418,6 +419,16 @@ def _apply_operation(
         # output. Until that grammar is compiled, do not retain a descriptor
         # for the pre-change text.
         state.activated_abilities = []
+        return
+    if op == "remove_creature_card_type":
+        state.card_types.difference_update(
+            kind for kind in tuple(state.card_types) if kind.casefold() == "creature"
+        )
+        if not any(kind.casefold() == "kindred" for kind in state.card_types):
+            state.subtypes.difference_update(
+                subtype for subtype in tuple(state.subtypes)
+                if canonical_creature_subtype(subtype) is not None
+            )
         return
     if op in {"set_types", "add_types", "remove_types"}:
         target = (

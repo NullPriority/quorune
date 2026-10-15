@@ -91,6 +91,7 @@ _OPERATION_LAYERS = {
     "set_types": Layer.TYPE,
     "add_types": Layer.TYPE,
     "remove_types": Layer.TYPE,
+    "remove_creature_card_type": Layer.TYPE,
     "set_colors": Layer.COLOR,
     "add_colors": Layer.COLOR,
     "remove_colors": Layer.COLOR,
@@ -327,6 +328,7 @@ def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
     elif op in {
         "remove_all_abilities",
         "remove_all_colors",
+        "remove_creature_card_type",
         "switch_power_toughness",
     }:
         if field is not None or value is not None:

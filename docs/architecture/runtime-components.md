@@ -210,6 +210,21 @@ participation. Source departure or phasing ends a static effect, and reciprocal
 attachment identities prevent it from following a different incarnation.
 Printed and copied values remain separate from these live characteristics.
 
+`continuous.characteristics.conditional-creature-type-removal.v1` removes only
+the source incarnation's Creature card type in layer 4 under a represented
+public condition. Correlated creature subtypes disappear unless a remaining
+Kindred card type still shares them. Its source ability participates through
+copy, control and text effects; a later ability-removal effect does not undo
+the earlier type change. Other component owners retain their ordinary
+participation boundary. Missing condition information and malformed descriptors
+fail closed.
+
+The entry-replacement snapshot projects this typed self effect against the
+pre-entry battlefield without inserting a live object. The incoming permanent's
+mana symbols do not contribute to that devotion read. After entry, the ordinary
+characteristic and event owners include the new permanent, so pre-entry
+replacement classification and post-entry creature triggers can differ.
+
 `ability.activated.mana.public-quantity.v1` shares the existing activated mana
 registry and fixed-family cost boundary. Its versioned output reads a closed
 public zone quantity, source counter quantity, source power or toughness, or
@@ -569,8 +584,9 @@ before later characteristic changes. One hybrid symbol contributes once to a
 two-color union. Typed fixed static increases use the existing current ability
 component map and cease after ability removal, phasing or source departure.
 Characteristic definitions, resolution amounts, mana production and self cast-
-cost reductions share this owner. Every newly compiled consumer declares the
-devotion capability separately from its result capability.
+cost reductions and closed devotion comparisons share this owner. Every newly
+compiled consumer declares the devotion capability separately from its result
+capability.
 
 Compiled token quantity replacements participate only while their source's
 current static component is present. The shared token discovery path reads

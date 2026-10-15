@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
-from ..continuous_effect_model import ContinuousEffectOrigin, ContinuousEffectRelation, ContinuousObjectIdentity
+from ..continuous_effect_model import ContinuousEffect, ContinuousEffectOrigin, ContinuousEffectRelation, ContinuousObjectIdentity, ContinuousOperation, Layer
 from ..continuous_conditions import FixedPublicStateConditionSpec, FixedPublicStateConditionKind
 from ..characteristic_fragments import CharacteristicQuantityReduction
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
@@ -19,9 +19,11 @@ from .continuous_components import ContinuousEffectSourceContext, _fixed_query_e
 FIXED_SETTING_HANDLER_ID = "continuous.characteristics.fixed-public-setting.v1"
 CONDITIONAL_SETTING_HANDLER_ID = "continuous.characteristics.fixed-public-setting.v2"
 FIXED_SETTING_CAPABILITY = "continuous.characteristics.fixed_public_setting"
+CREATURE_TYPE_REMOVAL_HANDLER = 'continuous.characteristics.conditional-creature-type-removal.v1'
+CREATURE_TYPE_REMOVAL_CAPABILITY = 'continuous.characteristics.conditional_creature_type_removal'
 
 
-def validate_setting_condition(condition: Mapping[str, Any]) -> FixedPublicStateConditionSpec:
+def validate_setting_condition(condition: Mapping[str, Any], *, allow_devotion=False) -> FixedPublicStateConditionSpec:
     parsed = FixedPublicStateConditionSpec.from_dict(condition)
     for leaf in parsed.leaf_conditions():
         if leaf.kind in {
@@ -31,6 +33,10 @@ def validate_setting_condition(condition: Mapping[str, Any]) -> FixedPublicState
         }:
             raise SemanticNodeError('Conditional type settings require non-characteristic public facts')
         if leaf.quantity is not None:
+            if allow_devotion and leaf.quantity.reduction is CharacteristicQuantityReduction.DEVOTION:
+                if leaf.quantity.multiplier != 1 or leaf.quantity.offset != 0:
+                    raise SemanticNodeError('Devotion settings require the unscaled current devotion')
+                continue
             if leaf.quantity.query is None or leaf.quantity.query.zones != ('graveyard',) or leaf.quantity.query.keywords_all:
                 raise SemanticNodeError('Conditional setting quantities require public graveyard objects')
             if leaf.quantity.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT:
@@ -141,3 +147,82 @@ class ConditionalCharacteristicSettingsHandler(FixedCharacteristicSettingsHandle
     capability_dependencies: tuple[str, ...] = (
         FIXED_SETTING_CAPABILITY, 'continuous.characteristics.fixed_public_state',
     )
+
+
+@dataclass(frozen=True, slots=True)
+class ConditionalCreatureTypeRemovalHandler:
+    handler_id: str = CREATURE_TYPE_REMOVAL_HANDLER
+    schema_version: int = 1
+    family: str = CREATURE_TYPE_REMOVAL_CAPABILITY
+    event: str = 'characteristics.evaluate'
+    source_component_layer: Layer = Layer.TEXT
+    rule_references: tuple[str, ...] = ('205.1a', '611.3a', '611.3b', '613.1d', '613.6', '614.12', '700.5', '700.5a')
+    capability_dependencies: tuple[str, ...] = (CREATURE_TYPE_REMOVAL_CAPABILITY,)
+
+    def validate(self, descriptor):
+        exact_fields(descriptor, {'handler_id', 'schema_version', 'event', 'source_condition'},
+            field='Conditional creature-card-type removal')
+        if (descriptor['handler_id'] != self.handler_id or type(descriptor['schema_version']) is not int
+                or descriptor['schema_version'] != self.schema_version or descriptor['event'] != self.event):
+            raise SemanticNodeError('Conditional creature-card-type removal identity changed')
+        return validate_setting_condition(descriptor['source_condition'], allow_devotion=True)
+
+    def lower(self, descriptor, context):
+        condition = self.validate(descriptor)
+        if context.public_state is None:
+            raise SemanticNodeError('Creature-card-type removal requires current public facts')
+        leaves = condition.terms or (condition,)
+        snapshots = context.public_state.term_snapshots if condition.terms else (context.public_state,)
+        if len(leaves) != len(snapshots) or any(
+                (leaf.quantity is not None or leaf.kind is FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST)
+                and snapshot.condition_quantity is None for leaf, snapshot in zip(leaves, snapshots)):
+            raise SemanticNodeError('Creature-card-type removal condition information is unavailable')
+        if not condition.matches(context.public_state):
+            return ()
+        if not context.source_logical_object_id:
+            raise SemanticNodeError('Creature-card-type removal requires the source incarnation')
+        return (ContinuousEffect(effect_id=f'{context.source_object_id}:{context.component_id}:4',
+            source_id=context.source_object_id, layer=Layer.TYPE, sublayer='4', timestamp=context.source_timestamp,
+            operations=(ContinuousOperation('remove_creature_card_type'),), origin=ContinuousEffectOrigin.STATIC_ABILITY,
+            applies=ObjectQuerySpec(zones=('battlefield',)), relation=ContinuousEffectRelation.SOURCE_OBJECT,
+            related_object=ContinuousObjectIdentity(context.source_object_id, context.source_logical_object_id)),)
+
+
+def prospective_creature_type_characteristics(host, card, characteristics, *, destination_controller):
+    """CR 614.12/700.5a: evaluate the entering source against pre-entry facts."""
+    import copy
+    from ..ability_fragments import static_component_keys
+    from ..card_program_faces import program_matches_face
+    from ..characteristic_evaluation import evaluate_card_characteristics
+    from ..dynamic_characteristics import query_characteristic_count
+    from ..entry_copy import copiable_oracle_id
+    from ..card_programs.runtime import _FixedPublicStateSnapshotResolver
+
+    keys = set(static_component_keys(characteristics.get('ability_fragments', ())))
+    programs = tuple(program for program in host.semantics.runtime_handler_programs_for_oracle(
+        copiable_oracle_id(card, characteristics), active_zone='battlefield', event='characteristics.evaluate')
+        if program.key in keys and host.semantic_program_is_current_trusted(program))
+    if not programs:
+        return characteristics
+    prospective = copy.copy(card)
+    prospective.zone = 'battlefield'
+    prospective.controller = destination_controller
+    record = host.card_record(card)
+    handler = ConditionalCreatureTypeRemovalHandler()
+    resolver = _FixedPublicStateSnapshotResolver(state=host.state, public_object_resolver=None,
+        quantity_resolver=lambda source, quantity: query_characteristic_count(host, source, quantity))
+    effects = []
+    for program in programs:
+        if not program_matches_face(record, program, card, prospective_name=characteristics.get('name')):
+            continue
+        for index, descriptor in enumerate(program.handlers):
+            if descriptor.get('handler_id') != CREATURE_TYPE_REMOVAL_HANDLER:
+                continue
+            condition = handler.validate(descriptor)
+            context = ContinuousEffectSourceContext(source_object_id=card.object_id, source_ref=card.ref,
+                source_controller=destination_controller, source_timestamp=max(0, card.zone_timestamp),
+                source_logical_object_id=card.logical_object_id, component_id=f'{program.key}:{index}',
+                public_state=resolver.snapshot(prospective, condition))
+            effects.extend(handler.lower(descriptor, context))
+    return (evaluate_card_characteristics(prospective, characteristics, runtime_effects=effects,
+        maximum_layer=Layer.TYPE) if effects else characteristics)

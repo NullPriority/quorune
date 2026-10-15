@@ -60,6 +60,18 @@ def prospective_destination_controller(
     )
 
 
+def zone_change_subject_characteristics(host, card, destination, entry_characteristics, destination_controllers):
+    """Prepare one immutable prospective subject before replacement discovery."""
+    characteristics = dict(entry_characteristics.get(card.object_id, host._effective_card_data(card)))
+    controller = prospective_destination_controller(card, destination_controllers)
+    if destination == 'battlefield':
+        from .fixed_characteristic_settings import prospective_creature_type_characteristics
+        characteristics = prospective_creature_type_characteristics(host, card, characteristics,
+            destination_controller=controller)
+    card_types, subtypes, supertypes = host._type_parts(str(characteristics.get('type_line') or ''))
+    return characteristics, controller, card_types, subtypes, supertypes
+
+
 def validated_zone_change_snapshot_inputs(
     host: Any,
     changes: Sequence[tuple[str, str]],

@@ -1351,6 +1351,18 @@ class ContinuousEffectComponentRegistry(
         ContinuousEffect,
     ]
 ):
+    def source_component_layer(self, descriptor: Mapping[str, Any]) -> Layer:
+        """Read source ability participation at the layer declared by its owner."""
+        handler = self._handlers.get(str(descriptor.get('handler_id') or ''))
+        if handler is None:
+            return Layer.ABILITY
+        layer = getattr(handler, 'source_component_layer', Layer.ABILITY)
+        if not isinstance(layer, Layer):
+            raise SemanticNodeError('Continuous source participation requires a typed layer')
+        if layer < Layer.ABILITY:
+            handler.validate(descriptor)
+        return layer
+
     def may_affect_static_components(self, descriptor: Mapping[str, Any]) -> bool:
         """Only an explicit handler-owned exclusion can narrow a presence scan."""
         predicate = getattr(self._handler(descriptor), "may_affect_static_components", None)
@@ -1364,7 +1376,7 @@ def default_continuous_effect_component_registry(
 ) -> ContinuousEffectComponentRegistry:
     from .chosen_characteristics import ChosenCharacteristicsHandler
     from .attached_continuous import AttachedFixedCharacteristicsHandler
-    from .fixed_characteristic_settings import FixedCharacteristicSettingsHandler, ConditionalCharacteristicSettingsHandler
+    from .fixed_characteristic_settings import FixedCharacteristicSettingsHandler, ConditionalCharacteristicSettingsHandler, ConditionalCreatureTypeRemovalHandler
     from .attached_control import AttachedControlHandler
     from .conditional_continuous import (
         FixedPublicStateCharacteristicsHandler,
@@ -1403,6 +1415,7 @@ def default_continuous_effect_component_registry(
             AttachedFixedCharacteristicsHandler(),
             FixedCharacteristicSettingsHandler(),
             ConditionalCharacteristicSettingsHandler(),
+            ConditionalCreatureTypeRemovalHandler(),
             AttachedControlHandler(),
         )
     )

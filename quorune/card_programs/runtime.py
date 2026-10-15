@@ -25,6 +25,7 @@ from ..object_query import ObjectQueryResult, object_matches_query
 from ..permanent_designations import permanent_numeric_designations
 from ..rules.player_speed_model import player_speed
 from ..replacement.immutable import FrozenMap
+from ..semantic_runtime.context import SemanticNodeError
 from ..semantic_runtime import (
     ATTACHED_FIXED_CHARACTERISTICS_HANDLER_ID,
     ContinuousEffectSourceContext,
@@ -552,17 +553,31 @@ def _continuous_programs_for_source(
     semantics: "SemanticRegistry",
     source: Any,
     static_component_resolver: Callable[[Any], Sequence[str]] | None,
+    early_static_component_resolver: Callable[[Any, Layer], Sequence[str]] | None = None,
+    maximum_layer: Layer | None = None,
 ) -> tuple["SemanticProgram", ...]:
     if source.zone == 'graveyard':
         return tuple(p for p in semantics.runtime_handler_programs_for_oracle(source.oracle_id,
             active_zone='graveyard', event='characteristics.evaluate') if any(
             d.get('handler_id') == 'continuous.characteristics.graveyard-public-state.v1' for d in p.handlers))
     if static_component_resolver is not None:
-        return _applicable_static_programs(
-            semantics,
-            source,
-            static_component_resolver(source),
-        )
+        programs = {program.key: program for program in _applicable_static_programs(
+            semantics, source, static_component_resolver(source))}
+        registry = default_continuous_effect_component_registry()
+        for program in _continuous_programs_for_source(semantics, source, None):
+            layer = min((registry.source_component_layer(descriptor) for descriptor in program.handlers),
+                default=Layer.ABILITY)
+            if layer >= Layer.ABILITY:
+                continue
+            if maximum_layer is not None and maximum_layer <= layer:
+                programs.pop(program.key, None)
+                continue
+            if early_static_component_resolver is None:
+                raise SemanticNodeError('Early-layer static components require their source-layer query')
+            programs.pop(program.key, None)
+            if program.key in early_static_component_resolver(source, layer):
+                programs[program.key] = program
+        return tuple(programs[key] for key in sorted(programs))
     copy_overrides = (getattr(source, "annotations", {}) or {}).get(
         "copy_overrides"
     )
@@ -601,6 +616,15 @@ def _component_public_state_snapshot(
 ):
     """Keep early-layer settings separate from characteristic query conditions."""
     handler_id = descriptor.get('handler_id')
+    if handler_id == 'continuous.characteristics.conditional-creature-type-removal.v1':
+        from ..semantic_runtime.fixed_characteristic_settings import ConditionalCreatureTypeRemovalHandler
+        ConditionalCreatureTypeRemovalHandler().validate(descriptor)
+        # Devotion reads through layer 3 (CR 700.5a); this component emits
+        # only layer 4, so its live condition cannot participate in that read.
+        if maximum_layer is not None and maximum_layer < Layer.TYPE:
+            return True, None
+        return False, setting_state_resolver.snapshot(source,
+            FixedPublicStateConditionSpec.from_dict(descriptor['source_condition']))
     is_setting = handler_id == 'continuous.characteristics.fixed-public-setting.v2'
     if is_setting:
         raw_condition = descriptor.get('source_condition')
@@ -634,6 +658,7 @@ def collect_card_program_continuous_effects(
     | None = None,
     setting_quantity_resolver: Callable[[Any, CharacteristicQuantitySpec], int] | None = None,
     static_component_resolver: Callable[[Any], Sequence[str]] | None = None,
+    early_static_component_resolver: Callable[[Any, Layer], Sequence[str]] | None = None,
     static_component_presence_only: bool = False,
 ) -> tuple[ContinuousEffect, ...]:
     registry = default_continuous_effect_component_registry()
@@ -669,7 +694,7 @@ def collect_card_program_continuous_effects(
                 from ..continuous_conditions import OwnerRelativeConditionSource
                 source = OwnerRelativeConditionSource(source)
             programs = _continuous_programs_for_source(
-                semantics, source, static_component_resolver
+                semantics, source, static_component_resolver, early_static_component_resolver, maximum_layer
             )
             if metrics is not None:
                 metrics.card_program_lookups += 1
