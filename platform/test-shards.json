@@ -239,6 +239,7 @@
       "test_live_battlefield_quantities",
       "test_manifest",
       "test_morph_rules",
+      "test_multisentence_effect_components",
       "test_predefined_roles",
       "test_proliferate_rules",
       "test_prototype_rules",

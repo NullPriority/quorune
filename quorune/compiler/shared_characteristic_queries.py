@@ -6,6 +6,8 @@ from ..characteristic_fragments import CharacteristicQuantityScope, Characterist
 
 
 def shared_characteristic_quantity(text: str):
+    if text.casefold() in {'creature', 'creatures', 'artifact', 'artifacts', 'land', 'lands', 'permanent', 'permanents'}:
+        return None
     from .public_state_queries import fixed_battlefield_query_subject
     parsed = fixed_battlefield_query_subject(text)
     if parsed is None:

@@ -24,6 +24,8 @@ def resolution_quantity(value: str, *, source_name: str, complete_value: bool = 
             return None
         text = match['objects']
     from .public_state_queries import fixed_battlefield_query_subject
+    if text.casefold() in {'creature', 'creatures', 'artifact', 'artifacts', 'land', 'lands', 'permanent', 'permanents'}:
+        return None
     parsed = fixed_battlefield_query_subject(text)
     if parsed is None:
         return None

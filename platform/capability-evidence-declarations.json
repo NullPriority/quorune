@@ -60664,6 +60664,40 @@
     {
       "capability_id": "resolution.effect_program.closed_components",
       "evidence_class": "interaction",
+      "test_id": "tests.test_multisentence_effect_components.MultisentenceEffectActionTests.test_original_augury_resumes_into_current_proliferate_choice_once",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete independently typed multi-sentence instructions retain printed component order across private library choices and Proliferate; actual Bond/Ral/Augury actions, stale target rejection, pending load and full replay."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multisentence_effect_components.MultisentenceEffectActionTests.test_original_rals_damage_precedes_private_choice_and_invalid_target_stops_all",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete independently typed multi-sentence instructions retain printed component order across private library choices and Proliferate; actual Bond/Ral/Augury actions, stale target rejection, pending load and full replay."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "interaction",
       "test_id": "tests.test_ordered_quantity_results.OrderedQuantityRuntimeTests.test_actual_union_counts_hand_after_its_draw_and_replays",
       "official_rule_ids": [
         "608.2b",
@@ -60698,6 +60732,23 @@
     {
       "capability_id": "resolution.effect_program.closed_components",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_multisentence_effect_components.MultisentenceEffectActionTests.test_original_augury_resumes_into_current_proliferate_choice_once",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete independently typed multi-sentence instructions retain printed component order across private library choices and Proliferate; actual Bond/Ral/Augury actions, stale target rejection, pending load and full replay."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_ordered_quantity_results.OrderedQuantityRuntimeTests.test_actual_rotwidow_created_token_contributes_to_later_opponent_loss",
       "official_rule_ids": [
         "608.2b",
@@ -60728,6 +60779,23 @@
         "commander_review"
       ],
       "applicability_note": "Remove the closed program production and prove the exact source returns to a material residual with changed semantic and CardProgram fingerprints."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_multisentence_effect_components.MultisentenceEffectCompilerTests.test_multisentence_component_omission_and_dependency_withdrawal_fail_closed",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete independently typed multi-sentence instructions retain printed component order across private library choices and Proliferate; actual Bond/Ral/Augury actions, stale target rejection, pending load and full replay."
     },
     {
       "capability_id": "resolution.effect_program.closed_components",
@@ -60783,6 +60851,23 @@
     {
       "capability_id": "resolution.effect_program.closed_components",
       "evidence_class": "negative",
+      "test_id": "tests.test_multisentence_effect_components.MultisentenceEffectCompilerTests.test_multisentence_component_omission_and_dependency_withdrawal_fail_closed",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete independently typed multi-sentence instructions retain printed component order across private library choices and Proliferate; actual Bond/Ral/Augury actions, stale target rejection, pending load and full replay."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "negative",
       "test_id": "tests.test_ordered_quantity_results.OrderedQuantityCompilerTests.test_conditional_linked_and_ambiguous_sequences_remain_residual",
       "official_rule_ids": [
         "608.2b",
@@ -60834,6 +60919,23 @@
     {
       "capability_id": "resolution.effect_program.closed_components",
       "evidence_class": "positive",
+      "test_id": "tests.test_multisentence_effect_components.MultisentenceEffectCompilerTests.test_independent_multisentence_selection_keeps_complete_component_and_printed_order",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete independently typed multi-sentence instructions retain printed component order across private library choices and Proliferate; actual Bond/Ral/Augury actions, stale target rejection, pending load and full replay."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "positive",
       "test_id": "tests.test_ordered_quantity_results.OrderedQuantityCompilerTests.test_independent_query_results_share_ordered_program_owner",
       "official_rule_ids": [
         "608.2b",
@@ -60868,6 +60970,23 @@
     {
       "capability_id": "resolution.effect_program.closed_components",
       "evidence_class": "privacy",
+      "test_id": "tests.test_multisentence_effect_components.MultisentenceEffectActionTests.test_original_bond_private_partition_finishes_before_life_gain_and_replays",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete independently typed multi-sentence instructions retain printed component order across private library choices and Proliferate; actual Bond/Ral/Augury actions, stale target rejection, pending load and full replay."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "privacy",
       "test_id": "tests.test_ordered_quantity_results.OrderedQuantityRuntimeTests.test_actual_union_counts_hand_after_its_draw_and_replays",
       "official_rule_ids": [
         "608.2b",
@@ -60898,6 +61017,57 @@
         "commander_review"
       ],
       "applicability_note": "Replay private Scry response, subsequent draws, life loss, and stack completion to the identical authoritative final hash."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multisentence_effect_components.MultisentenceEffectActionTests.test_original_augury_resumes_into_current_proliferate_choice_once",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete independently typed multi-sentence instructions retain printed component order across private library choices and Proliferate; actual Bond/Ral/Augury actions, stale target rejection, pending load and full replay."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multisentence_effect_components.MultisentenceEffectActionTests.test_original_bond_private_partition_finishes_before_life_gain_and_replays",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete independently typed multi-sentence instructions retain printed component order across private library choices and Proliferate; actual Bond/Ral/Augury actions, stale target rejection, pending load and full replay."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multisentence_effect_components.MultisentenceEffectActionTests.test_original_rals_damage_precedes_private_choice_and_invalid_target_stops_all",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete independently typed multi-sentence instructions retain printed component order across private library choices and Proliferate; actual Bond/Ral/Augury actions, stale target rejection, pending load and full replay."
     },
     {
       "capability_id": "resolution.effect_program.closed_components",

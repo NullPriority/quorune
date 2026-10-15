@@ -4096,6 +4096,22 @@
         "test_card_program_trust"
       ]
     }
+,
+    {
+      "id": "multisentence-effect-composition-contract",
+      "patterns": [
+        "quorune/compiler/multisentence_effect_components.py",
+        "quorune/compiler/effect_template_composition.py",
+        "tests/fixtures/multisentence-effect-cards.json"
+      ],
+      "test_modules": [
+        "test_multisentence_effect_components",
+        "test_closed_effect_programs",
+        "test_fixed_library_selection",
+        "test_library_selection_remainders",
+        "test_card_program_trust"
+      ]
+    }
   ],
   "symbol_rules": [
     {

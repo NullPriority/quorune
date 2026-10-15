@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 290,
+  "registry_version": 291,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -12202,7 +12202,7 @@
     },
     {
       "id": "resolution.effect_program.closed_components",
-      "version": 2,
+      "version": 3,
       "official_rules": [
         "608.2b",
         "608.2c",
@@ -12246,37 +12246,47 @@
         "quorune.compiler.closed_effect_programs.closed_effect_program_template",
         "quorune.rules.closed_effect_program_shapes.closed_effect_program_node_capabilities",
         "CommanderEngine._continue_resolution",
-        "quorune.compiler.query_counter_sequences.ordered_quantity_sequence_template"
+        "quorune.compiler.query_counter_sequences.ordered_quantity_sequence_template",
+        "quorune.compiler.multisentence_effect_components.multisentence_effect_program"
       ],
       "positive_tests": [
         "test_closed_program_compiles_across_contexts_and_component_shapes",
+        "test_independent_multisentence_selection_keeps_complete_component_and_printed_order",
+        "test_independent_query_results_share_ordered_program_owner",
         "test_measured_corpus_lower_bound_is_capability_closed",
-        "test_private_scry_suspends_draw_and_life_then_replays",
-        "test_independent_query_results_share_ordered_program_owner"
+        "test_private_scry_suspends_draw_and_life_then_replays"
       ],
       "negative_tests": [
+        "test_conditional_linked_and_ambiguous_sequences_remain_residual",
+        "test_multisentence_component_omission_and_dependency_withdrawal_fail_closed",
         "test_parser_shape_and_compiler_fail_closed",
-        "test_stale_target_fizzles_every_three_component_effect",
-        "test_conditional_linked_and_ambiguous_sequences_remain_residual"
+        "test_stale_target_fizzles_every_three_component_effect"
       ],
       "interaction_tests": [
-        "test_private_scry_suspends_draw_and_life_then_replays",
-        "test_target_characteristics_commit_before_private_scry",
-        "test_actual_union_counts_hand_after_its_draw_and_replays",
         "test_actual_mind_unbound_counter_is_counted_by_later_draw",
-        "test_actual_rotwidow_created_token_contributes_to_later_opponent_loss"
+        "test_actual_rotwidow_created_token_contributes_to_later_opponent_loss",
+        "test_actual_union_counts_hand_after_its_draw_and_replays",
+        "test_original_augury_resumes_into_current_proliferate_choice_once",
+        "test_original_rals_damage_precedes_private_choice_and_invalid_target_stops_all",
+        "test_private_scry_suspends_draw_and_life_then_replays",
+        "test_target_characteristics_commit_before_private_scry"
       ],
       "multiplayer_tests": [
-        "test_private_scry_suspends_draw_and_life_then_replays",
-        "test_actual_rotwidow_created_token_contributes_to_later_opponent_loss"
+        "test_actual_rotwidow_created_token_contributes_to_later_opponent_loss",
+        "test_original_augury_resumes_into_current_proliferate_choice_once",
+        "test_private_scry_suspends_draw_and_life_then_replays"
       ],
       "privacy_tests": [
-        "test_private_scry_suspends_draw_and_life_then_replays",
-        "test_actual_union_counts_hand_after_its_draw_and_replays"
+        "test_actual_union_counts_hand_after_its_draw_and_replays",
+        "test_original_bond_private_partition_finishes_before_life_gain_and_replays",
+        "test_private_scry_suspends_draw_and_life_then_replays"
       ],
       "replay_tests": [
-        "test_private_scry_suspends_draw_and_life_then_replays",
-        "test_pending_counter_replacement_resumes_once_before_later_quantity"
+        "test_original_augury_resumes_into_current_proliferate_choice_once",
+        "test_original_bond_private_partition_finishes_before_life_gain_and_replays",
+        "test_original_rals_damage_precedes_private_choice_and_invalid_target_stops_all",
+        "test_pending_counter_replacement_resumes_once_before_later_quantity",
+        "test_private_scry_suspends_draw_and_life_then_replays"
       ],
       "required_evidence": [
         "positive",

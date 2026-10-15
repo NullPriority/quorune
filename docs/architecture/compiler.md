@@ -946,8 +946,13 @@ printed order, and permits at most one shared direct target group. The
 corresponding capability shape revalidates every flattened component through
 the existing effect capability resolvers before admitting the program. The
 older exact two-sentence owner retains precedence for historical semantic
-identity. Independently exact optional atomic components may use the fixed
-optional-effect owner without changing sibling scope. Conditional, random,
+identity. The multi-sentence component owner groups an existing leaf's complete
+selection or other instruction. The bounded grouping passes every flattened
+effect through the same capability resolver before composition. Private library
+choices finish before later siblings; preceding damage does not repeat after
+save/load. Unsupported cross-component references stay residual. Independently
+exact optional atomic components may use the fixed optional-effect owner
+without changing sibling scope. Conditional, random,
 repeated, variable, linked-result, unsupported optional,
 shared-subject, multi-target-group, quoted-boundary, parenthetical-boundary,
 and more-than-four-component programs remain source-spanned residuals.

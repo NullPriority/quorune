@@ -32,7 +32,7 @@ class SharedCharacteristicQueryCompilerTests(unittest.TestCase):
                 self.assertEqual(expected, getattr(value.query, field))
                 self.assertEqual(other, value.exclude_source)
         for text in ('creatures you control with flying', 'creatures you control without flying',
-                'creatures you control with power 4 or greater', 'chosen creatures you control'):
+                'creatures you control with power 4 or greater', 'chosen creatures you control', 'creature'):
             self.assertIsNone(query_characteristic_quantity(text, source_name='Generic'))
 
 
