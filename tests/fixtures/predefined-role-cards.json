@@ -834,6 +834,150 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000311070",
+      "name": "Generic Monster Role Spell",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "type_line": "Sorcery",
+      "oracle_text": "Create a Monster Role token attached to target creature you control.",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000311071",
+      "name": "Generic Sorcerer Role Spell",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "type_line": "Sorcery",
+      "oracle_text": "Create a Sorcerer Role token attached to target creature you control.",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000311072",
+      "name": "Generic Virtuous Role Spell",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "type_line": "Sorcery",
+      "oracle_text": "Create a Virtuous Role token attached to target creature you control.",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000311073",
+      "name": "Generic Wicked Role Spell",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "type_line": "Sorcery",
+      "oracle_text": "Create a Wicked Role token attached to target creature you control.",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000311074",
+      "name": "Generic Young Hero Role Spell",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "type_line": "Sorcery",
+      "oracle_text": "Create a Young Hero Role token attached to target creature you control.",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000311075",
+      "name": "Generic Role Small Creature",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "type_line": "Creature — Human",
+      "oracle_text": "Haste",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Haste"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000311082",
+      "name": "Generic Public Monster Role Spell",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "type_line": "Sorcery",
+      "oracle_text": "Create a Monster Role token attached to target creature.",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
     }
   ],
   "rulings": []

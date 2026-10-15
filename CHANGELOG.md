@@ -12,7 +12,8 @@ maintenance: "hand-maintained"
 ## Unreleased
 
 - Pin all predefined Role definitions into existing typed static and triggered
-  child programs while keeping attached creation untrusted until closure.
+  child programs; create represented attached Roles through explicit
+  replacement-adjusted timestamp ordering and canonical state-based checks.
 
 - Evaluate fixed source power and toughness intervening conditions against full
   current characteristics at discovery and resolution.

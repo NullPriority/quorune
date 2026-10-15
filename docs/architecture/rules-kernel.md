@@ -419,10 +419,16 @@ characteristic, controller, attachment and timestamp view for the pure
 state-based evaluator. The engine's compatibility facade delegates that query.
 Role grouping keeps the unique latest Role for each controller and attachment;
 older Roles receive ordinary nondestruction graveyard actions. Missing facts or
-an unrepresented timestamp tie fail closed. This preparatory rule does not close
-original Role token definitions, creation, layers or simultaneous timestamp
-ordering; its capability remains implemented and untrusted until their native composition and
-replay evidence exists.
+an unrepresented timestamp tie fail closed.
+Role token creation retains the canonical token owner. The compiler pins
+Enchant and child programs into the token characteristics; a typed choice
+previews replacements before choosing relative timestamps. The commit owner
+rechecks the attachment incarnation and exact replacement preview, reserves
+ordered timestamps without reordering identity allocation, and attaches each
+Aura before entry events. Same-controller Role uniqueness follows those
+explicit timestamps; different controllers retain their separate Roles.
+
+
 
 Triggers consume normalized events; replacements transform represented events
 before final mutation; state-based actions run to a fixed point. Mandatory

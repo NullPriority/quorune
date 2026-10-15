@@ -330,6 +330,9 @@ def _apply_create_token(
     operation: str,
     reason: str,
 ) -> Any:
+    if '_role_order' in effect:
+        from ..role_token_creation import create_ordered_role_token
+        return create_ordered_role_token(host, effect, actor=actor, reason=reason)
     op = operation
     if "copy_spec" in effect:
         from ..token_copy_runtime import apply_copy_recipe

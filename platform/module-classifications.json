@@ -7807,6 +7807,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/role_token_creation.py",
+      "layer": "rules",
+      "owning_subsystem": "legacy_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/rule_conformance.py",
       "layer": "rules",
       "owning_subsystem": "legacy_rules",
@@ -10647,6 +10661,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_choices/role_tokens.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_choices",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_choices/scalar.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_choices",
@@ -13398,5 +13427,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "f483d86b91b7416866cf449199b64c5e58a8a59fd881f949bb56d6bfbf284550"
+  "fingerprint": "72c919ef137cdd9e69534e14a9cc9c95f6f695b0e734dbd87745a9d238ec6c3a"
 }

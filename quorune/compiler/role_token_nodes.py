@@ -107,7 +107,14 @@ def role_definition_children(*, role: str, record: Any, face_id: str, node_id: s
         return value
     result = []
     for child in children:
-        result.append(replace(child, text=line, handlers=tuple(rewrite(dict(d)) for d in child.handlers)))
+        handlers = [rewrite(dict(d)) for d in child.handlers]
+        for descriptor in handlers:
+            modifier = descriptor.get('modifier', {})
+            grants = modifier.get('add_ability_fragments', [])
+            for grant in tuple(grants):
+                if grant.get('kind') == 'granted_triggered':
+                    grants.append(ability_fragment_to_dict(StaticComponentSpec(grant['value']['semantic_key'])))
+        result.append(replace(child, text=line, handlers=tuple(handlers)))
     return fragments, tuple(result)
 
 
@@ -140,11 +147,23 @@ def role_token_nodes(*, record, face_id, node_id, line, material_line, span, sou
             return ('create-predefined-role-v1', (effect,), target_schema,
                 (ROLE_TOKEN_MECHANIC, 'cr-111-tokens', 'cr-115-targets') if target_schema else (ROLE_TOKEN_MECHANIC, 'cr-111-tokens'))
         return effect_template(text, **kwargs)
+    def role_grants(*args):
+        ordinary, triggered = grant_effect_templates(*args)
+        def wrap(fallback):
+            return lambda text, **kwargs: role_effect(text, **kwargs) if text.strip().casefold() == match[0].casefold() else fallback(text, **kwargs)
+        return wrap(ordinary), wrap(triggered)
     from .typed_token_ability_nodes import _outer_nodes
+    def role_trigger(**kwargs):
+        from functools import partial
+        underlying = trigger_node.func if isinstance(trigger_node, partial) else trigger_node
+        bound = dict(trigger_node.keywords or {}) if isinstance(trigger_node, partial) else {}
+        bound.update(kwargs)
+        bound['effect_template'] = role_grants(True, printed_card_types, source_attachment_relation)[1]
+        return underlying(**bound)
     outer = _outer_nodes(node_id=node_id, line=line, shell=material_line, span=span,
         source_name=source_name, printed_card_types=printed_card_types, keywords=keywords,
         source_attachment_relation=source_attachment_relation, effect_template=role_effect,
-        compile_inner=compile_inner, trigger_node=trigger_node, grant_effect_templates=grant_effect_templates,
+        compile_inner=compile_inner, trigger_node=role_trigger, grant_effect_templates=role_grants,
         trusted_mechanics=trusted_mechanics, capability_registry=capability_registry, capability_profile=capability_profile)
     if outer is None:
         return None

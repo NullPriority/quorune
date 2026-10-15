@@ -467,6 +467,9 @@ def fixed_token_creation_node_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: set[str],
 ) -> tuple[str, ...]:
+    if 'predefined-role-token' in mechanic_ids:
+        from .role_token_shapes import role_token_node_capabilities
+        return role_token_node_capabilities(effects=effects, target_schema=target_schema, mechanics=set(mechanic_ids))
     """Recognize a compiler-owned fixed token creation instruction."""
 
     if len(effects) != 1:

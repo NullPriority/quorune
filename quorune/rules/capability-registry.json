@@ -21329,17 +21329,25 @@
         "quorune.state_based_execution.permanent_sba_snapshots"
       ],
       "positive_tests": [
-        "test_role_rule_keeps_latest_per_controller_and_attachment"
+        "test_role_rule_keeps_latest_per_controller_and_attachment",
+        "test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness"
       ],
       "negative_tests": [
         "test_role_rule_requires_complete_controller_and_ordered_timestamp_facts"
       ],
-      "interaction_tests": [],
-      "multiplayer_tests": [
-        "test_role_rule_keeps_latest_per_controller_and_attachment"
+      "interaction_tests": [
+        "test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness"
       ],
-      "privacy_tests": [],
-      "replay_tests": [],
+      "multiplayer_tests": [
+        "test_role_rule_keeps_latest_per_controller_and_attachment",
+        "test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness"
+      ],
+      "privacy_tests": [
+        "test_sorcerer_grant_attacks_for_private_scry_and_other_controller_role_coexists"
+      ],
+      "replay_tests": [
+        "test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness"
+      ],
       "required_evidence": [
         "positive",
         "negative",
@@ -21348,14 +21356,12 @@
         "privacy",
         "replay"
       ],
-      "dependency_fail_closed_status": "not_applicable",
-      "dependency_fail_closed_rationale": "Preparatory pure rule and snapshot capture; no original Role CardProgram is promoted by this partial capability.",
-      "implementation_mutation_status": "not_run",
-      "implementation_mutation_rationale": "Full native Role composition and focused implementation mutation evidence remain required before trust.",
-      "blockers": [
-        "Complete original Role definitions, native timestamp ordering and result/replay evidence are pending."
-      ],
-      "status": "implemented"
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Complete Role definition and attachment/timestamp shape plus child closure required before admission; runtime stale choices rejected.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Pure timestamp/childwithdrawal and native modifiedcreation distinguish ordering and complete definition consequences.",
+      "blockers": [],
+      "status": "trusted"
     },
     {
       "id": "trigger.event.qualified_damage_singular",
@@ -21471,7 +21477,7 @@
         "exclusions": [
           "unknownRoledefinitions",
           "openlinkedsubjectgrammar",
-          "unimplementedcreationcontinuations"
+          "replacementsthatcreateunrepresentedattachedtokendefinitions"
         ]
       },
       "dependencies": [
@@ -21482,19 +21488,50 @@
       ],
       "implementation_components": [
         "quorune.compiler.role_token_nodes.role_definition_children",
-        "quorune.rules.role_token_shapes.role_token_node_capabilities"
+        "quorune.rules.role_token_shapes.role_token_node_capabilities",
+        "quorune.semantic_choices.role_tokens.RoleTokenChoiceHandler",
+        "quorune.role_token_creation.create_ordered_role_token"
       ],
       "positive_tests": [
         "test_complete_role_definitions_keep_source_spans_and_child_authority",
-        "test_role_static_children_lower_through_existing_program_identity"
+        "test_role_static_children_lower_through_existing_program_identity",
+        "test_original_cursed_courtier_creates_attached_role_with_complete_characteristics",
+        "test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness",
+        "test_typed_role_spells_execute_monster_virtuous_and_young_hero_children",
+        "test_wicked_replaced_role_loses_each_opponents_life_with_lki_and_replay",
+        "test_sorcerer_grant_attacks_for_private_scry_and_other_controller_role_coexists",
+        "test_original_target_blink_prevents_role_attachment_to_new_incarnation"
       ],
       "negative_tests": [
         "test_role_definition_withdrawal_and_creator_fragment_isolation"
       ],
-      "interaction_tests": [],
-      "multiplayer_tests": [],
-      "privacy_tests": [],
-      "replay_tests": [],
+      "interaction_tests": [
+        "test_original_cursed_courtier_creates_attached_role_with_complete_characteristics",
+        "test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness",
+        "test_typed_role_spells_execute_monster_virtuous_and_young_hero_children",
+        "test_wicked_replaced_role_loses_each_opponents_life_with_lki_and_replay",
+        "test_sorcerer_grant_attacks_for_private_scry_and_other_controller_role_coexists",
+        "test_original_target_blink_prevents_role_attachment_to_new_incarnation"
+      ],
+      "multiplayer_tests": [
+        "test_original_cursed_courtier_creates_attached_role_with_complete_characteristics",
+        "test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness",
+        "test_typed_role_spells_execute_monster_virtuous_and_young_hero_children",
+        "test_wicked_replaced_role_loses_each_opponents_life_with_lki_and_replay",
+        "test_sorcerer_grant_attacks_for_private_scry_and_other_controller_role_coexists",
+        "test_original_target_blink_prevents_role_attachment_to_new_incarnation"
+      ],
+      "privacy_tests": [
+        "test_sorcerer_grant_attacks_for_private_scry_and_other_controller_role_coexists"
+      ],
+      "replay_tests": [
+        "test_original_cursed_courtier_creates_attached_role_with_complete_characteristics",
+        "test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness",
+        "test_typed_role_spells_execute_monster_virtuous_and_young_hero_children",
+        "test_wicked_replaced_role_loses_each_opponents_life_with_lki_and_replay",
+        "test_sorcerer_grant_attacks_for_private_scry_and_other_controller_role_coexists",
+        "test_original_target_blink_prevents_role_attachment_to_new_incarnation"
+      ],
       "required_evidence": [
         "positive",
         "negative",
@@ -21503,14 +21540,12 @@
         "privacy",
         "replay"
       ],
-      "dependency_fail_closed_status": "not_run",
-      "dependency_fail_closed_rationale": "Complete runtime attachedcreationandtimestampcontinuationspending",
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Complete Role definition and attachment/timestamp shape plus child closure required before admission; runtime stale choices rejected.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Withdrawing complete child definitions and leaking granted-only creator fragments fail the distinguishing compile/consumer witnesses.",
-      "blockers": [
-        "Attachedcreationruntime,timestamporderingandnativeoriginalproofinprogress"
-      ],
-      "status": "specified"
+      "implementation_mutation_rationale": "Pure timestamp/childwithdrawal and native modifiedcreation distinguish ordering and complete definition consequences.",
+      "blockers": [],
+      "status": "trusted"
     }
   ]
 }

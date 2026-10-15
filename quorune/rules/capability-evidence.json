@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "b32387fb7c680e2214c63771a761041abb3400ccab37f075cc298c11790128fa",
-  "declaration_source_fingerprint": "df23745c51e69cb5392987e3e871d480ec4c10350dc08988368d5001f2e63085",
+  "registry_fingerprint": "d5b79d2aba132d3cb00463274fa149c570348f7b15386ce2eb7c116be60e8afb",
+  "declaration_source_fingerprint": "b113e1099981a39efcdcebbd0d90525608e2c17745dd26a1cbcf2f9b17cd1a66",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -98489,6 +98489,134 @@
       "applicability_note": "Reject a boolean maximum in the complete immutable snapshot before producing or committing any counter removal."
     },
     {
+      "capability_id": "state_based.role_attachment.uniqueness",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness",
+      "official_rule_ids": [
+        "303.7a",
+        "613.7",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Cursed Courtier or Redtooth Genealogist casts through advertised/accepted authority. Complete Role definition enters legally attached, Anointed Procession expands the event before principalcorrect exact ordering; latest samecontrollerRole survives statebasedaction, rejectedtarget/foreignprincipal/duplicateorder retainstate. Pending save/load/fullreplay cover completecharacteristics."
+    },
+    {
+      "capability_id": "state_based.role_attachment.uniqueness",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness",
+      "official_rule_ids": [
+        "303.7a",
+        "613.7",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Cursed Courtier or Redtooth Genealogist casts through advertised/accepted authority. Complete Role definition enters legally attached, Anointed Procession expands the event before principalcorrect exact ordering; latest samecontrollerRole survives statebasedaction, rejectedtarget/foreignprincipal/duplicateorder retainstate. Pending save/load/fullreplay cover completecharacteristics."
+    },
+    {
+      "capability_id": "state_based.role_attachment.uniqueness",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_predefined_roles.RoleTimestampChoiceTests.test_ordered_plans_assign_relative_timestamps_without_guessing",
+      "official_rule_ids": [
+        "303.7a",
+        "613.7",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Focused owner withdrawal and incorrect/malformed relative timestamp ordering fail the independent definition/order expectation; no silent input or creator fragment fallback."
+    },
+    {
+      "capability_id": "state_based.role_attachment.uniqueness",
+      "evidence_class": "negative",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness",
+      "official_rule_ids": [
+        "303.7a",
+        "613.7",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Cursed Courtier or Redtooth Genealogist casts through advertised/accepted authority. Complete Role definition enters legally attached, Anointed Procession expands the event before principalcorrect exact ordering; latest samecontrollerRole survives statebasedaction, rejectedtarget/foreignprincipal/duplicateorder retainstate. Pending save/load/fullreplay cover completecharacteristics."
+    },
+    {
+      "capability_id": "state_based.role_attachment.uniqueness",
+      "evidence_class": "positive",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness",
+      "official_rule_ids": [
+        "303.7a",
+        "613.7",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Cursed Courtier or Redtooth Genealogist casts through advertised/accepted authority. Complete Role definition enters legally attached, Anointed Procession expands the event before principalcorrect exact ordering; latest samecontrollerRole survives statebasedaction, rejectedtarget/foreignprincipal/duplicateorder retainstate. Pending save/load/fullreplay cover completecharacteristics."
+    },
+    {
+      "capability_id": "state_based.role_attachment.uniqueness",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_sorcerer_grant_attacks_for_private_scry_and_other_controller_role_coexists",
+      "official_rule_ids": [
+        "303.7a",
+        "613.7",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compiler-authored typed spell witnesses execute completeMonstertrample,Virtuouscurrentenchantmentcount,YoungHeroattackcounter,WickedsamecontrollerRoledeparturelifeeachopponent,andSorcererprivateScrygrant.DifferentcontrollerRolescoexist;originalRedtoothGenealogisttargetCloudshiftresponsepreventsattachmenttonewincarnation. Pending/fullreplayandprivacyassertionshaveexactscope;syntheticcarriersarenotoriginalcardgainclaims."
+    },
+    {
+      "capability_id": "state_based.role_attachment.uniqueness",
+      "evidence_class": "replay",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness",
+      "official_rule_ids": [
+        "303.7a",
+        "613.7",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Cursed Courtier or Redtooth Genealogist casts through advertised/accepted authority. Complete Role definition enters legally attached, Anointed Procession expands the event before principalcorrect exact ordering; latest samecontrollerRole survives statebasedaction, rejectedtarget/foreignprincipal/duplicateorder retainstate. Pending save/load/fullreplay cover completecharacteristics."
+    },
+    {
+      "capability_id": "state_based.role_attachment.uniqueness",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness",
+      "official_rule_ids": [
+        "303.7a",
+        "613.7",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Cursed Courtier or Redtooth Genealogist casts through advertised/accepted authority. Complete Role definition enters legally attached, Anointed Procession expands the event before principalcorrect exact ordering; latest samecontrollerRole survives statebasedaction, rejectedtarget/foreignprincipal/duplicateorder retainstate. Pending save/load/fullreplay cover completecharacteristics."
+    },
+    {
       "capability_id": "state_based.saga_final_chapter",
       "evidence_class": "interaction",
       "test_id": "tests.test_saga_counter_progression.SagaCounterProgressionTests.test_countered_final_chapter_uses_the_next_sba_check",
@@ -105951,6 +106079,726 @@
         "commander_review"
       ],
       "applicability_note": "Reject a replacement identifier outside the issued schema without changing the authoritative state hash or committing any token."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_cursed_courtier_creates_attached_role_with_complete_characteristics",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Cursed Courtier or Redtooth Genealogist casts through advertised/accepted authority. Complete Role definition enters legally attached, Anointed Procession expands the event before principalcorrect exact ordering; latest samecontrollerRole survives statebasedaction, rejectedtarget/foreignprincipal/duplicateorder retainstate. Pending save/load/fullreplay cover completecharacteristics."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Cursed Courtier or Redtooth Genealogist casts through advertised/accepted authority. Complete Role definition enters legally attached, Anointed Procession expands the event before principalcorrect exact ordering; latest samecontrollerRole survives statebasedaction, rejectedtarget/foreignprincipal/duplicateorder retainstate. Pending save/load/fullreplay cover completecharacteristics."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_target_blink_prevents_role_attachment_to_new_incarnation",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compiler-authored typed spell witnesses execute completeMonstertrample,Virtuouscurrentenchantmentcount,YoungHeroattackcounter,WickedsamecontrollerRoledeparturelifeeachopponent,andSorcererprivateScrygrant.DifferentcontrollerRolescoexist;originalRedtoothGenealogisttargetCloudshiftresponsepreventsattachmenttonewincarnation. Pending/fullreplayandprivacyassertionshaveexactscope;syntheticcarriersarenotoriginalcardgainclaims."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_sorcerer_grant_attacks_for_private_scry_and_other_controller_role_coexists",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compiler-authored typed spell witnesses execute completeMonstertrample,Virtuouscurrentenchantmentcount,YoungHeroattackcounter,WickedsamecontrollerRoledeparturelifeeachopponent,andSorcererprivateScrygrant.DifferentcontrollerRolescoexist;originalRedtoothGenealogisttargetCloudshiftresponsepreventsattachmenttonewincarnation. Pending/fullreplayandprivacyassertionshaveexactscope;syntheticcarriersarenotoriginalcardgainclaims."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_typed_role_spells_execute_monster_virtuous_and_young_hero_children",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compiler-authored typed spell witnesses execute completeMonstertrample,Virtuouscurrentenchantmentcount,YoungHeroattackcounter,WickedsamecontrollerRoledeparturelifeeachopponent,andSorcererprivateScrygrant.DifferentcontrollerRolescoexist;originalRedtoothGenealogisttargetCloudshiftresponsepreventsattachmenttonewincarnation. Pending/fullreplayandprivacyassertionshaveexactscope;syntheticcarriersarenotoriginalcardgainclaims."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_wicked_replaced_role_loses_each_opponents_life_with_lki_and_replay",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compiler-authored typed spell witnesses execute completeMonstertrample,Virtuouscurrentenchantmentcount,YoungHeroattackcounter,WickedsamecontrollerRoledeparturelifeeachopponent,andSorcererprivateScrygrant.DifferentcontrollerRolescoexist;originalRedtoothGenealogisttargetCloudshiftresponsepreventsattachmenttonewincarnation. Pending/fullreplayandprivacyassertionshaveexactscope;syntheticcarriersarenotoriginalcardgainclaims."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_cursed_courtier_creates_attached_role_with_complete_characteristics",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Cursed Courtier or Redtooth Genealogist casts through advertised/accepted authority. Complete Role definition enters legally attached, Anointed Procession expands the event before principalcorrect exact ordering; latest samecontrollerRole survives statebasedaction, rejectedtarget/foreignprincipal/duplicateorder retainstate. Pending save/load/fullreplay cover completecharacteristics."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Cursed Courtier or Redtooth Genealogist casts through advertised/accepted authority. Complete Role definition enters legally attached, Anointed Procession expands the event before principalcorrect exact ordering; latest samecontrollerRole survives statebasedaction, rejectedtarget/foreignprincipal/duplicateorder retainstate. Pending save/load/fullreplay cover completecharacteristics."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_target_blink_prevents_role_attachment_to_new_incarnation",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compiler-authored typed spell witnesses execute completeMonstertrample,Virtuouscurrentenchantmentcount,YoungHeroattackcounter,WickedsamecontrollerRoledeparturelifeeachopponent,andSorcererprivateScrygrant.DifferentcontrollerRolescoexist;originalRedtoothGenealogisttargetCloudshiftresponsepreventsattachmenttonewincarnation. Pending/fullreplayandprivacyassertionshaveexactscope;syntheticcarriersarenotoriginalcardgainclaims."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_sorcerer_grant_attacks_for_private_scry_and_other_controller_role_coexists",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compiler-authored typed spell witnesses execute completeMonstertrample,Virtuouscurrentenchantmentcount,YoungHeroattackcounter,WickedsamecontrollerRoledeparturelifeeachopponent,andSorcererprivateScrygrant.DifferentcontrollerRolescoexist;originalRedtoothGenealogisttargetCloudshiftresponsepreventsattachmenttonewincarnation. Pending/fullreplayandprivacyassertionshaveexactscope;syntheticcarriersarenotoriginalcardgainclaims."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_typed_role_spells_execute_monster_virtuous_and_young_hero_children",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compiler-authored typed spell witnesses execute completeMonstertrample,Virtuouscurrentenchantmentcount,YoungHeroattackcounter,WickedsamecontrollerRoledeparturelifeeachopponent,andSorcererprivateScrygrant.DifferentcontrollerRolescoexist;originalRedtoothGenealogisttargetCloudshiftresponsepreventsattachmenttonewincarnation. Pending/fullreplayandprivacyassertionshaveexactscope;syntheticcarriersarenotoriginalcardgainclaims."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_wicked_replaced_role_loses_each_opponents_life_with_lki_and_replay",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compiler-authored typed spell witnesses execute completeMonstertrample,Virtuouscurrentenchantmentcount,YoungHeroattackcounter,WickedsamecontrollerRoledeparturelifeeachopponent,andSorcererprivateScrygrant.DifferentcontrollerRolescoexist;originalRedtoothGenealogisttargetCloudshiftresponsepreventsattachmenttonewincarnation. Pending/fullreplayandprivacyassertionshaveexactscope;syntheticcarriersarenotoriginalcardgainclaims."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleCompilerTests.test_role_definition_withdrawal_and_creator_fragment_isolation",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Focused owner withdrawal and incorrect/malformed relative timestamp ordering fail the independent definition/order expectation; no silent input or creator fragment fallback."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "negative",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_cursed_courtier_creates_attached_role_with_complete_characteristics",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Cursed Courtier or Redtooth Genealogist casts through advertised/accepted authority. Complete Role definition enters legally attached, Anointed Procession expands the event before principalcorrect exact ordering; latest samecontrollerRole survives statebasedaction, rejectedtarget/foreignprincipal/duplicateorder retainstate. Pending save/load/fullreplay cover completecharacteristics."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "negative",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Cursed Courtier or Redtooth Genealogist casts through advertised/accepted authority. Complete Role definition enters legally attached, Anointed Procession expands the event before principalcorrect exact ordering; latest samecontrollerRole survives statebasedaction, rejectedtarget/foreignprincipal/duplicateorder retainstate. Pending save/load/fullreplay cover completecharacteristics."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "positive",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_cursed_courtier_creates_attached_role_with_complete_characteristics",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Cursed Courtier or Redtooth Genealogist casts through advertised/accepted authority. Complete Role definition enters legally attached, Anointed Procession expands the event before principalcorrect exact ordering; latest samecontrollerRole survives statebasedaction, rejectedtarget/foreignprincipal/duplicateorder retainstate. Pending save/load/fullreplay cover completecharacteristics."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "positive",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Cursed Courtier or Redtooth Genealogist casts through advertised/accepted authority. Complete Role definition enters legally attached, Anointed Procession expands the event before principalcorrect exact ordering; latest samecontrollerRole survives statebasedaction, rejectedtarget/foreignprincipal/duplicateorder retainstate. Pending save/load/fullreplay cover completecharacteristics."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "positive",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_target_blink_prevents_role_attachment_to_new_incarnation",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compiler-authored typed spell witnesses execute completeMonstertrample,Virtuouscurrentenchantmentcount,YoungHeroattackcounter,WickedsamecontrollerRoledeparturelifeeachopponent,andSorcererprivateScrygrant.DifferentcontrollerRolescoexist;originalRedtoothGenealogisttargetCloudshiftresponsepreventsattachmenttonewincarnation. Pending/fullreplayandprivacyassertionshaveexactscope;syntheticcarriersarenotoriginalcardgainclaims."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "positive",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_sorcerer_grant_attacks_for_private_scry_and_other_controller_role_coexists",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compiler-authored typed spell witnesses execute completeMonstertrample,Virtuouscurrentenchantmentcount,YoungHeroattackcounter,WickedsamecontrollerRoledeparturelifeeachopponent,andSorcererprivateScrygrant.DifferentcontrollerRolescoexist;originalRedtoothGenealogisttargetCloudshiftresponsepreventsattachmenttonewincarnation. Pending/fullreplayandprivacyassertionshaveexactscope;syntheticcarriersarenotoriginalcardgainclaims."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "positive",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_typed_role_spells_execute_monster_virtuous_and_young_hero_children",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compiler-authored typed spell witnesses execute completeMonstertrample,Virtuouscurrentenchantmentcount,YoungHeroattackcounter,WickedsamecontrollerRoledeparturelifeeachopponent,andSorcererprivateScrygrant.DifferentcontrollerRolescoexist;originalRedtoothGenealogisttargetCloudshiftresponsepreventsattachmenttonewincarnation. Pending/fullreplayandprivacyassertionshaveexactscope;syntheticcarriersarenotoriginalcardgainclaims."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "positive",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_wicked_replaced_role_loses_each_opponents_life_with_lki_and_replay",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compiler-authored typed spell witnesses execute completeMonstertrample,Virtuouscurrentenchantmentcount,YoungHeroattackcounter,WickedsamecontrollerRoledeparturelifeeachopponent,andSorcererprivateScrygrant.DifferentcontrollerRolescoexist;originalRedtoothGenealogisttargetCloudshiftresponsepreventsattachmenttonewincarnation. Pending/fullreplayandprivacyassertionshaveexactscope;syntheticcarriersarenotoriginalcardgainclaims."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_sorcerer_grant_attacks_for_private_scry_and_other_controller_role_coexists",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compiler-authored typed spell witnesses execute completeMonstertrample,Virtuouscurrentenchantmentcount,YoungHeroattackcounter,WickedsamecontrollerRoledeparturelifeeachopponent,andSorcererprivateScrygrant.DifferentcontrollerRolescoexist;originalRedtoothGenealogisttargetCloudshiftresponsepreventsattachmenttonewincarnation. Pending/fullreplayandprivacyassertionshaveexactscope;syntheticcarriersarenotoriginalcardgainclaims."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "replay",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_cursed_courtier_creates_attached_role_with_complete_characteristics",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Cursed Courtier or Redtooth Genealogist casts through advertised/accepted authority. Complete Role definition enters legally attached, Anointed Procession expands the event before principalcorrect exact ordering; latest samecontrollerRole survives statebasedaction, rejectedtarget/foreignprincipal/duplicateorder retainstate. Pending save/load/fullreplay cover completecharacteristics."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "replay",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Cursed Courtier or Redtooth Genealogist casts through advertised/accepted authority. Complete Role definition enters legally attached, Anointed Procession expands the event before principalcorrect exact ordering; latest samecontrollerRole survives statebasedaction, rejectedtarget/foreignprincipal/duplicateorder retainstate. Pending save/load/fullreplay cover completecharacteristics."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "replay",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_target_blink_prevents_role_attachment_to_new_incarnation",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compiler-authored typed spell witnesses execute completeMonstertrample,Virtuouscurrentenchantmentcount,YoungHeroattackcounter,WickedsamecontrollerRoledeparturelifeeachopponent,andSorcererprivateScrygrant.DifferentcontrollerRolescoexist;originalRedtoothGenealogisttargetCloudshiftresponsepreventsattachmenttonewincarnation. Pending/fullreplayandprivacyassertionshaveexactscope;syntheticcarriersarenotoriginalcardgainclaims."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "replay",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_sorcerer_grant_attacks_for_private_scry_and_other_controller_role_coexists",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compiler-authored typed spell witnesses execute completeMonstertrample,Virtuouscurrentenchantmentcount,YoungHeroattackcounter,WickedsamecontrollerRoledeparturelifeeachopponent,andSorcererprivateScrygrant.DifferentcontrollerRolescoexist;originalRedtoothGenealogisttargetCloudshiftresponsepreventsattachmenttonewincarnation. Pending/fullreplayandprivacyassertionshaveexactscope;syntheticcarriersarenotoriginalcardgainclaims."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "replay",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_typed_role_spells_execute_monster_virtuous_and_young_hero_children",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compiler-authored typed spell witnesses execute completeMonstertrample,Virtuouscurrentenchantmentcount,YoungHeroattackcounter,WickedsamecontrollerRoledeparturelifeeachopponent,andSorcererprivateScrygrant.DifferentcontrollerRolescoexist;originalRedtoothGenealogisttargetCloudshiftresponsepreventsattachmenttonewincarnation. Pending/fullreplayandprivacyassertionshaveexactscope;syntheticcarriersarenotoriginalcardgainclaims."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "replay",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_wicked_replaced_role_loses_each_opponents_life_with_lki_and_replay",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compiler-authored typed spell witnesses execute completeMonstertrample,Virtuouscurrentenchantmentcount,YoungHeroattackcounter,WickedsamecontrollerRoledeparturelifeeachopponent,andSorcererprivateScrygrant.DifferentcontrollerRolescoexist;originalRedtoothGenealogisttargetCloudshiftresponsepreventsattachmenttonewincarnation. Pending/fullreplayandprivacyassertionshaveexactscope;syntheticcarriersarenotoriginalcardgainclaims."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_cursed_courtier_creates_attached_role_with_complete_characteristics",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Cursed Courtier or Redtooth Genealogist casts through advertised/accepted authority. Complete Role definition enters legally attached, Anointed Procession expands the event before principalcorrect exact ordering; latest samecontrollerRole survives statebasedaction, rejectedtarget/foreignprincipal/duplicateorder retainstate. Pending save/load/fullreplay cover completecharacteristics."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Cursed Courtier or Redtooth Genealogist casts through advertised/accepted authority. Complete Role definition enters legally attached, Anointed Procession expands the event before principalcorrect exact ordering; latest samecontrollerRole survives statebasedaction, rejectedtarget/foreignprincipal/duplicateorder retainstate. Pending save/load/fullreplay cover completecharacteristics."
     },
     {
       "capability_id": "token.creation.quantity_replacement",
@@ -136726,5 +137574,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "741b8e8accc3972eceb10183ebfdaf9fe025091777b820823763e27810d0b388"
+  "fingerprint": "e1cfa698345b84827b40e3709abb2f70fe0dc3837eab90b05789c93a14845e8d"
 }

@@ -51,7 +51,11 @@ def role_token_node_capabilities(*, effects, target_schema, mechanics):
         except (TypeError, ValueError):
             return ()
         if (effect['aura_target_ref'] != '$target.0' or group.zones != ('battlefield',)
-                or group.categories != ('permanent',) or group.types_all != ('creature',)
+                or group.categories != ('permanent',) or (group.types_all, group.types_any) not in {
+                    (('creature',), ()), ((), ('creature',))}
                 or group.min_targets not in {0, 1} or group.max_targets != 1):
             return ()
-    return (ROLE_TOKEN_CAPABILITY, 'attachment.aura.simple_object', 'state_based.role_attachment.uniqueness')
+    return (ROLE_TOKEN_CAPABILITY, 'attachment.aura.simple_object', 'state_based.role_attachment.uniqueness',
+        'token.creation.fixed_definition', *(('target.revalidate_resolution',) if target_schema is not None else ()),
+        *(('trigger.placement.apnap',) if 'cr-603-handling-triggered-abilities' in mechanics else ()),
+        *(('trigger.event.normalized_zone_change',) if 'trigger-event-normalized-zone-change' in mechanics else ()))

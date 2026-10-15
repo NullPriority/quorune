@@ -335,6 +335,7 @@ def commit_aura_entry_attachment(
     host: AuraRuntimeHost,
     aura: CardInstance,
     plan: AuraEntryPlan,
+    *, source_timestamp: int | None = None,
 ) -> None:
     if plan.outcome is not AuraEntryOutcome.ENTER_ATTACHED:
         raise AuraRuleError("Only an entering Aura plan can be committed")
@@ -362,7 +363,7 @@ def commit_aura_entry_attachment(
             host.state.cards,
             aura,
             target,
-            source_timestamp=host._next_zone_timestamp(),
+            source_timestamp=host._next_zone_timestamp() if source_timestamp is None else source_timestamp,
             players=host.state.players,
         )
         return
@@ -375,7 +376,7 @@ def commit_aura_entry_attachment(
             host.state.players,
             aura,
             plan.target_ref,
-            source_timestamp=host._next_zone_timestamp(),
+            source_timestamp=host._next_zone_timestamp() if source_timestamp is None else source_timestamp,
         )
         return
     raise AuraRuleError("Aura entry target left before attachment")

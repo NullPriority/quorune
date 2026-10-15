@@ -3996,6 +3996,11 @@
     {
       "id": "predefined-role-token-contract",
       "patterns": [
+        "quorune/role_token_creation.py",
+        "quorune/semantic_choices/role_tokens.py",
+        "quorune/aura/runtime.py",
+        "quorune/token_creation.py",
+        "quorune/selection/targeting.py",
         "quorune/compiler/role_token_nodes.py",
         "quorune/rules/role_token_shapes.py",
         "quorune/compiler/generated_program_identity.py",

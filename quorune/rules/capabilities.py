@@ -287,6 +287,7 @@ _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
     "fixed-counter-controller-effect-sequence"
 )
 MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    'predefined-role-token': ('token.creation.predefined_role',),
     CLASS_MECHANIC_ID: (CLASS_LIFECYCLE_CAPABILITY_ID,),
     AFTERLIFE_MECHANIC_ID: (AFTERLIFE_CAPABILITY_ID,), **{keyword: (f"trigger.keyword.{keyword}.fixed",) for keyword in ("afflict", "annihilator", "firebending", "ingest", "mobilize", "soulshift")},
     INVESTIGATE_MECHANIC_ID: (INVESTIGATE_CAPABILITY_ID,),

@@ -867,8 +867,9 @@ forms remain source-spanned residuals.
 Predefined Role definitions compile into separate granted-only static and
 triggered child programs. Enchant and child references are explicit token
 fragments pinned to the creating card program. These child programs cannot
-become abilities of the creator. Attached creation and timestamp choice
-closure remain required before Role creation receives gameplay trust.
+become abilities of the creator. Closed source and direct-creature attachment clauses enter through the
+replacement-aware Role choice owner. Every Role definition retains its full
+child capability closure; unknown or linked creation grammar remains residual.
 
 Source power and toughness intervening conditions use one fixed numeric
 battlefield creature predicate. Discovery and resolution both read complete
