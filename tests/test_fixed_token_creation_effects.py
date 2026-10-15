@@ -390,10 +390,21 @@ class FixedTokenCreationCompilerTests(unittest.TestCase):
             capability_registry=self.capabilities, capability_profile="commander_review")
         self.assertEqual("exact", promoted.status, promoted.material_residuals)
         self.assertIn("token.creation.fixed_copy", promoted.faces[0].nodes[0].capability_dependencies)
+        role_text = 'Create a Wicked Role token attached to target creature you control.'
+        self.assertIsNone(fixed_token_creation_effect_template(role_text))
+        role = compile_oracle_card(token_record('Generic Role Integration', role_text, 365211001),
+            capability_registry=self.capabilities, capability_profile='commander_review')
+        self.assertEqual('exact', role.status, role.material_residuals)
+        outer = next(node for node in role.faces[0].nodes if node.kind == 'spell_ability')
+        self.assertEqual('create_role_token', outer.effects[0]['op'])
+        self.assertEqual('Wicked', outer.effects[0]['name'])
+        self.assertEqual('$target.0', outer.effects[0]['aura_target_ref'])
+        self.assertEqual('you', outer.target_schema['controller_relation'])
+        self.assertIn('token.creation.predefined_role', outer.capability_dependencies)
         unsupported = (
             "Create X 1/1 green Saproling creature tokens.",
             "Create a token that's a copy of the chosen creature you control.",
-            "Create a Wicked Role token attached to target creature you control.",
+            "Create an Unrepresented Role token attached to target creature you control.",
             "Create two 1/1 white Soldier creature tokens that are tapped and attacking.",
             "Create a 1/1 blue and red Otter creature token with prowess.",
             "Create a 3/3 colorless Golem artifact artifact creature token.",

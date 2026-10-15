@@ -324,6 +324,17 @@ class TargetedReturnToHandTemplateTests(unittest.TestCase):
 
 
 class TargetedReturnToHandCompilerTests(unittest.TestCase):
+    def test_shared_return_fixture_reuses_canonical_existing_card_payloads(self):
+        import json
+        canonical = json.loads((ROOT / 'tests/fixtures/scryfall-exact-lists.json').read_text(encoding='utf-8'))
+        focused = json.loads((ROOT / 'tests/fixtures/targeted-return-to-hand-cards.json').read_text(encoding='utf-8'))
+        by_id = {card['oracle_id']: card for card in canonical['cards']}
+        shared = [card for card in focused['cards'] if card['oracle_id'] in by_id]
+        self.assertTrue(shared)
+        for card in shared:
+            with self.subTest(card=card['name']):
+                self.assertEqual(by_id[card['oracle_id']], card)
+
     @classmethod
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()

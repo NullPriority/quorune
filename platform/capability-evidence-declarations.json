@@ -8114,6 +8114,32 @@
       "applicability_note": "Lower one source-spanned fixed ordinary-mana Disguise line to its method-pinned runtime descriptor."
     },
     {
+  "capability_id": "casting.disguise.fixed_mana",
+  "evidence_class": "positive",
+  "test_id": "tests.test_morph_rules.FixedManaMorphModelTests.test_printed_turn_up_method_preserves_advertised_identity_and_fingerprint",
+  "official_rule_ids": [
+    "116.2b",
+    "601.2b",
+    "601.2f",
+    "601.2h",
+    "702.21",
+    "702.168",
+    "702.168a",
+    "702.168b",
+    "708.2",
+    "708.4",
+    "708.5",
+    "708.8",
+    "708.9"
+  ],
+  "supported_profiles": [
+    "traditional",
+    "commander_duel",
+    "commander_review"
+  ],
+  "applicability_note": "Ordinary printed Morph, Megamorph and Disguise offers rebuild the same signed unsuffixed action identity from the advertised method; explicitly selected Manifest alternatives retain distinct method identities."
+},
+    {
       "capability_id": "casting.disguise.fixed_mana",
       "evidence_class": "privacy",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_disguise_ward_uses_face_down_characteristics_only",
@@ -8896,6 +8922,31 @@
       "applicability_note": "Lower one source-spanned fixed ordinary-mana Megamorph line to its method-pinned runtime descriptor."
     },
     {
+  "capability_id": "casting.megamorph.fixed_mana",
+  "evidence_class": "positive",
+  "test_id": "tests.test_morph_rules.FixedManaMorphModelTests.test_printed_turn_up_method_preserves_advertised_identity_and_fingerprint",
+  "official_rule_ids": [
+    "116.2b",
+    "601.2b",
+    "601.2f",
+    "601.2h",
+    "702.37",
+    "702.37c",
+    "702.37e",
+    "708.2",
+    "708.4",
+    "708.5",
+    "708.8",
+    "708.9"
+  ],
+  "supported_profiles": [
+    "traditional",
+    "commander_duel",
+    "commander_review"
+  ],
+  "applicability_note": "Ordinary printed Morph, Megamorph and Disguise offers rebuild the same signed unsuffixed action identity from the advertised method; explicitly selected Manifest alternatives retain distinct method identities."
+},
+    {
       "capability_id": "casting.megamorph.fixed_mana",
       "evidence_class": "privacy",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_megamorph_counter_replacement_suspends_and_replays",
@@ -8991,6 +9042,32 @@
       "supported_profiles": ["traditional","commander_duel","commander_review"],
       "applicability_note": "Lower one source-spanned ordinary fixed-mana Morph line to a trusted immutable descriptor and exact CardProgram ability."
     },
+    {
+  "capability_id": "casting.morph.fixed_mana",
+  "evidence_class": "positive",
+  "test_id": "tests.test_morph_rules.FixedManaMorphModelTests.test_printed_turn_up_method_preserves_advertised_identity_and_fingerprint",
+  "official_rule_ids": [
+    "116.2b",
+    "601.2b",
+    "601.2f",
+    "601.2h",
+    "702.37",
+    "702.37a",
+    "702.37c",
+    "702.37e",
+    "708.2",
+    "708.4",
+    "708.5",
+    "708.8",
+    "708.9"
+  ],
+  "supported_profiles": [
+    "traditional",
+    "commander_duel",
+    "commander_review"
+  ],
+  "applicability_note": "Ordinary printed Morph, Megamorph and Disguise offers rebuild the same signed unsuffixed action identity from the advertised method; explicitly selected Manifest alternatives retain distinct method identities."
+},
     {
       "capability_id": "casting.morph.fixed_mana",
       "evidence_class": "positive",

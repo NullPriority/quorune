@@ -2528,8 +2528,8 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "At the beginning of your upkeep, move a charge counter from this artifact onto target creature.",
             "At the beginning of your upkeep, remove a charge counter from this artifact.",
             "Whenever one or more creatures die, put a +1/+1 counter on each of them.",
-            "Whenever another creature you control enters or dies, put a +1/+1 counter on this creature.",
-            "Whenever another creature you control leaves the battlefield, put a +1/+1 counter on this creature.",
+            "Whenever another creature of the chosen type you control enters or dies, put a +1/+1 counter on this creature.",
+            "Whenever another creature of the chosen type you control leaves the battlefield, put a +1/+1 counter on this creature.",
             "Whenever another creature with a counter on it dies, put a +1/+1 counter on this creature.",
             "Whenever another legendary Human you control enters, put a +1/+1 counter on this creature.",
         )
@@ -2544,6 +2544,30 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 )
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+
+    def test_public_counter_results_compose_with_paired_and_departure_events(self):
+        cases = (
+            ('Whenever another creature you control enters or dies, put a +1/+1 counter on this creature.',
+             'permanent.enter', 'fixed-qualified-zone-event-pair-v1'),
+            ('Whenever another creature you control leaves the battlefield, put a +1/+1 counter on this creature.',
+             'permanent.leave', 'fixed-counter-public-zone-trigger-v1'),
+        )
+        for text, event, template in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line='Creature — Fixture')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(template, node.template_id)
+                self.assertEqual(event, node.event)
+                self.assertEqual('$source.zone_object', node.effects[0]['card'])
+                self.assertEqual('place_counters', node.effects[0]['op'])
+                self.assertEqual(1, node.effects[0]['amount'])
+                if event == 'permanent.enter':
+                    self.assertEqual(['permanent.enter', 'creature.dies'],
+                        [row['event'] for row in node.event_condition['event_subscriptions']])
+                else:
+                    self.assertIn({'field': 'previous_controller', 'op': 'eq', 'value': '$source.controller'},
+                        node.event_condition['all'])
 
     def test_qualified_public_zone_carriers_promote_prior_leaf_boundaries(self):
         from quorune.compiler.fixed_counter_trigger_nodes import _zone_change_trigger_binding
@@ -3697,7 +3721,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         exclusions = (
             "Whenever this creature attacks or blocks, it gets +1/+1 until end of turn.",
             "Whenever this creature attacks, it gets +X/+X until end of turn.",
-            "Whenever this creature attacks, it gets +0/+0 until end of turn.",
+            "Whenever this creature attacks, it gets +X/+0 until end of turn.",
             "Whenever this creature attacks, you may put a +1/+1 counter on it. If you do, draw a card.",
             "Whenever this creature attacks, put X +1/+1 counters on it.",
             "Whenever this creature attacks, put a charge counter on it for each creature that attacked this way.",
@@ -3720,7 +3744,20 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 "Whenever this creature attacks, it gets +2/+0 until end of turn.",
                 type_line="Creature — Test",
             )
-        self.assertNotEqual("exact", mutated.status)
+        # The legacy specialized leaf stays narrow, while the complete generic
+        # source-pronoun result independently owns the same fixed instruction.
+        self.assertEqual('exact', mutated.status, mutated.material_residuals)
+        self.assertEqual('fixed-typed-effect-source-attacks-trigger-v1', mutated.faces[0].nodes[0].template_id)
+        self.assertEqual('$source.zone_object', mutated.faces[0].nodes[0].effects[0]['card'])
+        with patch('quorune.compiler.source_self_effect_templates.normalized_source_result_body', return_value=None), patch(
+            'quorune.compiler.trigger_result_templates.fixed_source_combat_growth_effect_template',
+            return_value=(None, (), None, ())):
+            unavailable = self.compile('Whenever this creature attacks, it gets +2/+0 until end of turn.',
+                type_line='Creature — Test')
+        self.assertNotEqual('exact', unavailable.status)
+        zero = self.compile('Whenever this creature attacks, it gets +0/+0 until end of turn.', type_line='Creature — Test')
+        self.assertEqual('exact', zero.status, zero.material_residuals)
+        self.assertEqual((0, 0), (zero.faces[0].nodes[0].effects[0]['power'], zero.faces[0].nodes[0].effects[0]['toughness']))
 
     def test_fixed_entry_return_requirements_compile_exactly_and_fail_closed(self):
         cases = (

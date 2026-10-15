@@ -44,7 +44,15 @@ class VariableLibraryCountCompilerTests(unittest.TestCase):
             self.assertEqual('public_query_effect_amount',node.effects[0]['count']['kind'])
             self.assertIn('quantity_expression.public_query_effect_amount',node.capability_dependencies)
             self.assertIn('library.scry.fixed_controller' if action=='Scry' else 'library.surveil.fixed_controller',node.capability_dependencies)
-        for text in ('Scry X.','Surveil X, where X is the number of creatures with flying you control.',
+        for action in ('Scry', 'Surveil'):
+            ir = compile_oracle_card(record(action + ' X, where X is the number of creatures with flying you control.', 'Sorcery'),
+                capability_registry=cap, capability_profile='commander_review')
+            self.assertEqual('exact', ir.status, ir.material_residuals)
+            quantity = ir.faces[0].nodes[0].effects[0]['count']['quantity']
+            self.assertEqual('live_battlefield_quantity', quantity['kind'])
+            self.assertEqual('source_controller', quantity['controller_relation'])
+            self.assertEqual(['flying'], quantity['query']['keywords_all'])
+        for text in ('Scry X.','Surveil X, where X is the number of creatures with an unrepresented ability you control.',
                      'Scry X, where X is the number of cards in an opponent\'s hand.',
                      'Scry X, where X is the greatest mana value among permanents you control, then draw X cards.',
                      'Scry X, where X is the greatest mana value among permanents you control, then draw three cards if you control an artifact.'):

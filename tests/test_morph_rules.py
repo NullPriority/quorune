@@ -86,6 +86,24 @@ def focused_card_database(directory: str) -> CardDatabase:
 
 
 class FixedManaMorphModelTests(unittest.TestCase):
+    def test_printed_turn_up_method_preserves_advertised_identity_and_fingerprint(self):
+        from types import SimpleNamespace
+        from quorune.rules.morph_actions import build_turn_face_up_offer
+        host = SimpleNamespace(state=SimpleNamespace(revision=8), _cost_is_affordable=lambda *_args, **_kwargs: True)
+        card = SimpleNamespace(ref='FACE-DOWN', printed_name='Generic printed creature')
+        for method in ('morph', 'megamorph', 'disguise'):
+            spec = SimpleNamespace(cost_text='{2}{G}', requirements_dict={'GENERIC': 2, 'G': 1}, method=method)
+            with mock.patch('quorune.rules.morph_actions._eligible_spec', return_value=spec), mock.patch(
+                'quorune.manifest.is_manifested', return_value=False):
+                advertised = build_turn_face_up_offer(host, 'A', card)
+                rebuilt = build_turn_face_up_offer(host, 'A', card, method=method)
+            self.assertEqual('turn-face-up:FACE-DOWN', advertised.action_id)
+            self.assertEqual(advertised.fingerprint, rebuilt.fingerprint)
+            with mock.patch('quorune.rules.morph_actions._eligible_spec', return_value=spec), mock.patch(
+                'quorune.manifest.is_manifested', return_value=True):
+                alternative = build_turn_face_up_offer(host, 'A', card, method=method)
+            self.assertEqual('turn-face-up:FACE-DOWN:' + method, alternative.action_id)
+
     def test_fixed_mana_morph_descriptor_is_strict_and_registered(self):
         spec = compile_fixed_mana_morph("Morph {2}{W}.")
         self.assertIsNotNone(spec)

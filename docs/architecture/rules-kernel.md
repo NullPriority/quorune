@@ -9,6 +9,12 @@ maintenance: "hand-maintained"
 
 # Rules kernel
 
+Ordinary Morph, Megamorph and Disguise turn-up offers keep their canonical
+unsuffixed action identity when acceptance reads the printed method from the
+offer payload. Manifested permanents expose distinct suffixed method choices.
+Both paths retain the same expiry and proposal-fingerprint validation before
+payment, including special actions taken while Split Second is on the stack.
+
 Normalized event discovery orders both live and explicitly captured source
 lists by zone timestamp and stable object identity. Checkpoint hydration cannot
 change pending trigger identities through dictionary insertion order. APNAP

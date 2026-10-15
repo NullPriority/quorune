@@ -4820,24 +4820,24 @@
           "classification": "rules_value",
           "file": "quorune/rules/morph_actions.py",
           "flow_id": "card-identity-flow:6ff0b4ede57db5fc6f8e",
-          "line": 138,
+          "line": 140,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 138,
+          "source_line": 140,
           "symbol": "build_turn_face_up_offer"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/morph_actions.py",
           "flow_id": "card-identity-flow:1e09b32a184d236bc645",
-          "line": 254,
+          "line": 256,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 254,
+          "source_line": 256,
           "symbol": "commit_turn_face_up"
         },
         {
@@ -13804,7 +13804,7 @@
       "covered_high_risk_pairs": 411,
       "covered_piece_pairs": 1293,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "2ce150fd3839cd298a6db9d96b956961e401636def5aae2cedd38b3c3df7b001",
+      "source_fingerprint": "ce447edc8b446d666f5bffd59456e5fab40363019bc9aec00c844076f9c1bab3",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -14193,7 +14193,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 256004,
+      "logical_lines": 256005,
       "methods": {
         "dunder": 652,
         "private": 995,
@@ -16109,8 +16109,8 @@
           "file": "quorune/rules/morph_actions.py",
           "functions_and_methods": 11,
           "language": "python",
-          "logical_lines": 266,
-          "physical_lines": 287
+          "logical_lines": 267,
+          "physical_lines": 289
         },
         {
           "file": "quorune/card_programs/reviewed_overlay.py",
@@ -21295,7 +21295,7 @@
           "physical_lines": 1690
         }
       ],
-      "physical_lines": 280641,
+      "physical_lines": 280643,
       "python_file_count": 949,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -39004,18 +39004,18 @@
           "multiplayer": 644,
           "mutation": 564,
           "negative": 1152,
-          "positive": 1221,
+          "positive": 1224,
           "privacy": 546,
           "property": 20,
           "replay": 983,
           "rollback": 130
         },
-        "declaration_count": 6634,
-        "declaration_source_fingerprint": "6d50f06be4ca34c4012571c54394f4e5fad52e5f9c86b0b60d0ede931339bcad",
-        "fingerprint": "ed6097343d6275c854eab6510ac2dd23e5d001c4a654b5146153835ab1e121f6",
-        "registry_fingerprint": "c5d9b4e79f11abcafc321d2662b5eefdebcc9faf47cd9a35d457b3f3fe6a8028"
+        "declaration_count": 6637,
+        "declaration_source_fingerprint": "d920bca02e01190cfde9b72f65938643235157c881aaa6595a3c43955922b68b",
+        "fingerprint": "063f7335acce4ed3f145fc35b9e6110ee941c87b2f232716ca45eee60da12f05",
+        "registry_fingerprint": "1b4acbf973471b3f1f6bdacf130d5df083d6638b244a24433c04a613469aaaf8"
       },
-      "fingerprint": "c5d9b4e79f11abcafc321d2662b5eefdebcc9faf47cd9a35d457b3f3fe6a8028",
+      "fingerprint": "1b4acbf973471b3f1f6bdacf130d5df083d6638b244a24433c04a613469aaaf8",
       "implementation_mutation_status_counts": {
         "killed": 388,
         "not_run": 4
@@ -39025,7 +39025,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "registry_version": 294,
+      "registry_version": 295,
       "schema_version": 1,
       "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
       "status_counts": {
@@ -39378,7 +39378,7 @@
         "contract_fingerprint": "e485004b19b7f21621ab02543231419cfb5f3e92722b9d10129a1b44819bc4bd",
         "exact_cards_with_template": 744,
         "exact_nodes": 908,
-        "fingerprint": "a58623443a282152718b3ab742aeb1d3f74d429a14fde42b11db0fb006515575",
+        "fingerprint": "a48d31e959413104fbadf25c43174fdad17f51a1911768b47369a0859162cfa3",
         "grammar_source_fingerprint": "ba9ae320c5615887ab1b5b872620cb5c121194ce6e84d9ac854e4e418f40f8ce",
         "identity_fingerprint": "23cb162c9dd942a7e05a10237e8ebd1ae1b0d46a6c9d86e14b431bf1f1a81a65",
         "present": true,
@@ -39390,7 +39390,7 @@
         "contract_fingerprint": "e485004b19b7f21621ab02543231419cfb5f3e92722b9d10129a1b44819bc4bd",
         "exact_cards_with_template": 766,
         "exact_nodes": 941,
-        "fingerprint": "10063bac713825c5f916b606ecdf48dfdf23733e14d33549a7b9bb6a3c16cd09",
+        "fingerprint": "f4d447d54fd98cbbe9e077aa8b3bf1f892ea2668dbcbf33e682dcb13e474d90b",
         "grammar_source_fingerprint": "ba9ae320c5615887ab1b5b872620cb5c121194ce6e84d9ac854e4e418f40f8ce",
         "identity_fingerprint": "30ee37558d0568aa8d4eece75cd94f960987e1ca5836e4643b3d144795167a82",
         "present": true,
@@ -39409,7 +39409,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "ae46687e75474a6d11f9555e9e04865ba071cc1361c9172f974913f7273076d1",
+      "fingerprint": "f650c740d9744e23984aff013e2f45b759ecb021d4cb423d9d91f9a9a57a67b1",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -40267,8 +40267,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 6269,
-      "discovered_total": 9578,
+      "conventional_ast_cases": 6278,
+      "discovered_total": 9587,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 273,

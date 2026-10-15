@@ -124,6 +124,8 @@ def build_turn_face_up_offer(
     card: Any,
     *, method: str | None = None,
 ) -> ActionOffer | None:
+    from ..manifest import is_manifested
+
     spec = _eligible_spec(host, seat, card, method=method)
     if spec is None or not host._cost_is_affordable(
         seat,
@@ -132,7 +134,7 @@ def build_turn_face_up_offer(
     ):
         return None
     return ActionOffer(
-        action_id=f"turn-face-up:{card.ref}" + (f':{method}' if method is not None else ''),
+        action_id=f"turn-face-up:{card.ref}" + (f':{method}' if method is not None and is_manifested(card) else ''),
         action="turn_face_up",
         seat=seat,
         label=f"Turn {card.printed_name} face up — {spec.cost_text}",

@@ -4020,6 +4020,39 @@ class RulesSchedulerTests(unittest.TestCase):
                 self.assertEqual('original-frontier', _source_checkpoint_frontier(revised['transition_id'])['fingerprint'])
             self.assertEqual(['git', 'cat-file', 'blob', 'a' * 40], git.call_args.args[0])
 
+    def test_unpublished_legacy_prediction_upgrade_keeps_authenticated_base_frontier(self):
+        import scripts.update_work_selection_cohort_measurements as owner
+        base = {'fingerprint': 'original-base', 'cards': []}
+        raw = gzip.compress(json.dumps(base).encode('utf-8'), mtime=0)
+        entry = {'transition_id': 'same-batch', 'bundle_id': 'bundle:batch',
+            'candidate_ids': ['bundle:batch'], 'receipt_identity_kind': 'semantic_content',
+            'base_receipt': {'blobs': {'coverage/card-unlock-frontier.json.gz': {'git_blob_oid': 'a' * 40}}},
+            'head_receipt': {'blobs': {'coverage/card-unlock-frontier.json.gz': {'git_blob_oid': 'b' * 40}}}}
+        with tempfile.TemporaryDirectory() as directory:
+            history = Path(directory) / 'history.json'
+            policy = Path(directory) / 'policy.json'
+            history.write_text(json.dumps({'entries': [entry]}), encoding='utf-8')
+            policy.write_text(json.dumps({'work_selection': {'semantic_transition_declaration': {
+                'transition_id': 'same-batch', 'bundle_id': 'bundle:batch', 'candidate_ids': ['bundle:batch'],
+                'measurement_id': 'measurement:batch'}}}), encoding='utf-8')
+            with mock.patch.object(owner, 'HARVEST_HISTORY', history), mock.patch.object(owner, 'POLICY', policy), mock.patch.object(
+                owner, '_legacy_upgrade_is_checkpoint_bound', return_value=True):
+                with mock.patch.object(owner, '_prior_frontier_is_current_main', return_value=False), mock.patch.object(
+                    owner.subprocess, 'run', side_effect=[SimpleNamespace(returncode=0, stdout=('b' * 40 + '\n').encode()),
+                        SimpleNamespace(returncode=0, stdout=raw), SimpleNamespace(returncode=0, stdout=raw)]):
+                    self.assertEqual('original-base', owner._source_checkpoint_frontier('same-batch')['fingerprint'])
+                with mock.patch.object(owner, '_prior_frontier_is_current_main', return_value=False), mock.patch.object(
+                    owner.subprocess, 'run', return_value=SimpleNamespace(returncode=0, stdout=('c' * 40 + '\n').encode())):
+                    with self.assertRaisesRegex(ValueError, 'immutable base-frontier'):
+                        owner._source_checkpoint_frontier('same-batch')
+                with mock.patch.object(owner, '_prior_frontier_is_current_main', return_value=True):
+                    with self.assertRaisesRegex(ValueError, 'immutable base-frontier'):
+                        owner._source_checkpoint_frontier('same-batch')
+                with mock.patch.object(owner, '_prior_frontier_is_current_main', return_value=False), mock.patch.object(
+                    owner, '_legacy_upgrade_is_checkpoint_bound', return_value=False):
+                    with self.assertRaisesRegex(ValueError, 'immutable base-frontier'):
+                        owner._source_checkpoint_frontier('same-batch')
+
     def test_compiler_revision_matches_only_the_same_unmerged_harvest_bundle(self):
         from scripts.harvest_outcome_history import _declaration_revises_unlanded_content_entry
         entry = {'transition_id': 'compiler-before', 'bundle_id': 'bundle:combined', 'candidate_ids': ['component:a', 'component:b']}

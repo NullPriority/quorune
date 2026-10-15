@@ -44,8 +44,18 @@ class QueryScaledCounterCompilerTests(unittest.TestCase):
                 if 'graveyard' in text:self.assertEqual(('artifact','creature'),amount.quantity.query.types_any)
                 self.assertIn('counter.producer.fixed_effect',ir.faces[0].nodes[0].capability_dependencies)
 
+    def test_query_counter_composes_current_flying_count(self):
+        text = 'Put a +1/+1 counter on target creature for each creature with flying you control.'
+        ir = compile_oracle_card(replace(query_record(text), type_line='Sorcery'),
+            capability_registry=load_default_capability_registry())
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        amount = ir.faces[0].nodes[0].effects[0]['amount']
+        self.assertEqual('live_battlefield_quantity', amount['quantity']['kind'])
+        self.assertEqual('source_controller', amount['quantity']['controller_relation'])
+        self.assertEqual(['flying'], amount['quantity']['query']['keywords_all'])
+
     def test_query_counter_unknown_quantities_and_blocked_owner_fail_closed(self):
-        for text in ('Put a +1/+1 counter on target creature for each creature with flying you control.',
+        for text in ('Put a +1/+1 counter on target creature for each creature with an unrepresented ability you control.',
             'Put a +1/+1 counter on this creature for each sticker you own.',
             'Put a +1/+1 counter on this creature for each creature you control. You win the game.'):
             ir=compile_oracle_card(replace(query_record(text if 'target creature' in text else '{1}: '+text),type_line='Sorcery' if 'target creature' in text else 'Creature'),capability_registry=load_default_capability_registry())

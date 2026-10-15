@@ -892,6 +892,7 @@
         "quorune/event_counter_reference.py"
       ],
       "test_modules": [
+        "test_qualified_zone_event_queries",
         "test_scalar_effect_amounts",
         "test_declared_effect_amounts",
         "test_public_query_effect_amounts",
@@ -2936,6 +2937,7 @@
         "tests/test_ability_word_event_triggers.py"
       ],
       "test_modules": [
+        "test_qualified_zone_event_queries",
         "test_ability_word_event_triggers",
         "test_attack_transitions",
         "test_block_transitions",
@@ -4008,6 +4010,8 @@
         "tests/fixtures/predefined-role-cards.json"
       ],
       "test_modules": [
+        "test_fixed_token_creation_effects",
+        "test_fixed_token_production",
         "test_predefined_roles",
         "test_token_entry_boundaries",
         "test_token_creation_replacements",
@@ -4033,6 +4037,8 @@
         "tests/fixtures/manifest-cards.json"
       ],
       "test_modules": [
+        "test_split_second_rules",
+        "test_fixed_counter_player_cast_triggers",
         "test_manifest",
         "test_morph_rules",
         "test_zone_object_lifecycle",
@@ -4055,6 +4061,9 @@
         "tests/fixtures/live-battlefield-quantity-cards.json"
       ],
       "test_modules": [
+        "test_declared_effect_amounts",
+        "test_query_scaled_counters",
+        "test_variable_library_counts",
         "test_live_battlefield_quantities",
         "test_public_query_effect_amounts",
         "test_public_quantity_mana",
@@ -4090,6 +4099,9 @@
         "tests/fixtures/shared-characteristic-query-cards.json"
       ],
       "test_modules": [
+        "test_declared_effect_amounts",
+        "test_query_scaled_counters",
+        "test_variable_library_counts",
         "test_shared_characteristic_queries",
         "test_typed_dynamic_characteristics",
         "test_public_query_effect_amounts",
@@ -4105,6 +4117,7 @@
         "tests/fixtures/multisentence-effect-cards.json"
       ],
       "test_modules": [
+        "test_fixed_impulse_access",
         "test_multisentence_effect_components",
         "test_closed_effect_programs",
         "test_fixed_library_selection",

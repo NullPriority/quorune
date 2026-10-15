@@ -357,11 +357,21 @@ class FixedTokenProductionTests(unittest.TestCase):
             "Create a token that's a copy of this creature.",
             "Create a token that's a copy of target creature, except it has an unrepresented ability.",
             "Create a 1/1 red Warrior creature token tapped and attacking.",
-            "Create a Wicked Role token attached to target creature.",
+            "Create an Unrepresented Role token attached to target creature.",
             "Create an Incubator token.",
             "Create a 1/1 blue Fish creature token with \"This token has hexproof.\"",
             "Create a 1/1 white Spirit creature token at the beginning of your next end step.",
         )
+        role = self.compile(compiler_record('Generic Role Integration',
+            'Create a Wicked Role token attached to target creature.', 365211002))
+        self.assertEqual('exact', role.status, role.material_residuals)
+        outer = next(node for node in role.faces[0].nodes if node.kind == 'spell_ability')
+        self.assertEqual('create_role_token', outer.effects[0]['op'])
+        self.assertEqual('Wicked', outer.effects[0]['name'])
+        self.assertEqual('$target.0', outer.effects[0]['aura_target_ref'])
+        self.assertEqual(['creature'], outer.target_schema['types_any'])
+        self.assertNotIn('controller_relation', outer.target_schema)
+        self.assertIn('token.creation.predefined_role', outer.capability_dependencies)
         base = compiler_record("Unsupported Production", unsupported[0], 1110900)
         for index, text in enumerate(unsupported):
             with self.subTest(text=text):

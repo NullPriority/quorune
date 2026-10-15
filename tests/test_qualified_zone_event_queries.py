@@ -85,13 +85,24 @@ class QualifiedZoneEventCompilerTests(unittest.TestCase):
                 self.assertEqual(text, nodes[0].text)
                 self.assertEqual(1, nodes[0].span.line)
 
+    def test_anywhere_graveyard_arrival_uses_destination_subject_predicate(self):
+        text = 'Whenever a creature card is put into your graveyard from anywhere, draw a card.'
+        ir = self.compile(text)
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertIn('trigger.event.normalized_anywhere_graveyard', node.capability_dependencies)
+        self.assertEqual(1, len(node.effects))
+        self.assertEqual('draw', node.effects[0]['op'])
+        self.assertTrue(node.effects[0]['private'])
+        self.assertIsNotNone(node.event_condition)
+
     def test_qualified_zone_event_exclusions_remain_residual(self):
         excluded = (
             "Whenever one or more legendary creatures you control enter, draw a card for each of them.",
             "Whenever a creature with two +1/+1 counters on it dies, draw a card.",
             "Whenever a creature of the chosen type enters, draw a card.",
             "Whenever a creature with power greater than this creature's power dies, draw a card.",
-            "Whenever a creature card is put into your graveyard from anywhere, draw a card.",
+            "Whenever a creature card of the chosen type is put into your graveyard from anywhere, draw a card.",
             "Whenever another red creature you control enters, draw a card. This ability triggers only once during your turn.",
             "Whenever another legendary creature you control enters, choose a card at random.",
         )

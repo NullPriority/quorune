@@ -375,6 +375,84 @@
       },
       "candidate_bundles": [
         {
+          "bundle_id": "bundle:batched-public-events-conditions-tokens-and-quantities",
+          "member_family_ids": [
+            "activated_effect:create-token",
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "effect_clause:create-token",
+            "effect_clause:ordered-effect-composition",
+            "event_binding:normalized-event-binding",
+            "keyword_dependency:rampage",
+            "quantity_expression:dynamic-quantity"
+          ],
+          "canonical_owner_ids": [
+            "capability:card.return.own_graveyard_to_owner_hand",
+            "capability:casting.disguise.fixed_mana",
+            "capability:casting.megamorph.fixed_mana",
+            "capability:casting.morph.fixed_mana",
+            "capability:combat.trigger.rampage",
+            "capability:continuous.characteristics.query_count_modifier",
+            "capability:continuous.characteristics.query_power_toughness_definition",
+            "capability:continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+            "capability:cost.energy.fixed_resolution_payment",
+            "capability:counter.producer.dynamic_self_entry",
+            "capability:counter.producer.fixed_effect",
+            "capability:counter.producer.fixed_event_trigger",
+            "capability:counter.producer.fixed_public_source_event",
+            "capability:counter.producer.fixed_public_target_event",
+            "capability:effect.choice.optional_fixed",
+            "capability:effect.choice.optional_fixed_mana_payment",
+            "capability:keyword_action.manifest.card",
+            "capability:keyword_action.manifest_dread",
+            "capability:quantity_expression.live_battlefield_count",
+            "capability:quantity_expression.public_query_effect_amount",
+            "capability:resolution.effect_program.closed_components",
+            "capability:state_based.role_attachment.uniqueness",
+            "capability:token.ability.fixed_blood",
+            "capability:token.ability.fixed_lander",
+            "capability:token.ability.fixed_mutagen",
+            "capability:token.creation.fixed_definition",
+            "capability:token.creation.predefined_role",
+            "capability:trigger.condition.fixed_public_state",
+            "capability:trigger.event.normalized_anywhere_graveyard",
+            "capability:trigger.event.normalized_zone_change",
+            "capability:trigger.event.qualified_damage_singular",
+            "capability:trigger.event.source_damage_death_history"
+          ],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "static",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "current-public-quantity",
+            "distinct-original-oracle-id",
+            "incarnation-pinned-events",
+            "predefined-token-definitions",
+            "strict-whole-program-binding"
+          ],
+          "shared_dependencies": [
+            "counter.placement.quantity_replacement",
+            "resolution.effect_program.closed_components",
+            "target.revalidate_resolution",
+            "trigger.placement.apnap",
+            "zone.change.destination_replacement"
+          ],
+          "shared_grammar": "Independently bounded public-event counter results, destination graveyard arrivals, source-pronoun conditions, predefined token activations and attached Roles, Manifest and dread, live battlefield counts, fixed energy payments, complete ordered effect components, fixed Rampage and source-damage death history. Each original complete card closes every sibling and all typed runtime owners.",
+          "estimated_implementation_hours": 80,
+          "estimated_probe_hours": 2,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "One consolidated delivery meets the net distinct capability-closed Commander-card floor through the canonical current-census measurement and immutable base/head receipts.",
+          "explicit_exclusions": [
+            "Duplicate Oracle IDs count once and lost support reduces net gain",
+            "Independent unsupported cost, condition, target, duration and effect siblings remain residual",
+            "Recognition and replay do not substitute for independently established semantics"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "batched-card-support-current-census-v2"
+        },
+        {
           "bundle_id": "bundle:batched-characteristic-permission-event-and-mana-closure-v363",
           "member_family_ids": [
             "activated_cost:complete-alternate-additional-cost-grammar",
@@ -6229,6 +6307,9 @@
       ],
       "capability_ids": [
         "card.return.own_graveyard_to_owner_hand",
+        "casting.disguise.fixed_mana",
+        "casting.megamorph.fixed_mana",
+        "casting.morph.fixed_mana",
         "combat.trigger.rampage",
         "continuous.characteristics.query_count_modifier",
         "continuous.characteristics.query_power_toughness_definition",
@@ -6258,7 +6339,7 @@
         "trigger.event.qualified_damage_singular",
         "trigger.event.source_damage_death_history"
       ],
-      "expected_complete_card_gain": 205,
+      "measurement_id": "measurement:batched-public-events-conditions-tokens-and-quantities",
       "non_harvest_reason": null
     },
 

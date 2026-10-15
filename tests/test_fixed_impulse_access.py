@@ -115,13 +115,25 @@ class FixedImpulseAccessCompilerTests(unittest.TestCase):
 
     def test_open_and_restricted_impulse_access_remain_residual(self) -> None:
         base = self.db.lookup("Fixed Impulse Spark")
+        from test_public_query_effect_amounts import query_amount_record
+        promoted = compile_oracle_card(query_amount_record(
+            'Exile the top two cards of your library. You may play them this turn. Draw a card.',
+            suffix=365211003), capability_registry=self.capabilities, capability_profile='commander_review')
+        self.assertEqual('exact', promoted.status, promoted.material_residuals)
+        node = promoted.faces[0].nodes[0]
+        self.assertEqual(['fixed_impulse_access', 'draw'], [effect['op'] for effect in node.effects])
+        self.assertEqual(2, node.effects[0]['count'])
+        self.assertEqual('until_end_of_turn', node.effects[0]['duration'])
+        self.assertEqual(1, node.effects[1]['count'])
+        self.assertTrue(node.effects[1]['private'])
+        self.assertIn('resolution.effect_program.closed_components', node.capability_dependencies)
         variants = (
             "Exile the top X cards of your library. You may play them this turn.",
             "Exile the top two cards of target player's library. You may play them this turn.",
             "Exile the top two cards of your library. You may cast them this turn.",
             "Exile the top two cards of your library. You may play them without paying their mana costs.",
             "Exile the top two cards of your library. You may play one of them this turn.",
-            "Exile the top two cards of your library. You may play them this turn. Draw a card.",
+            "Exile the top two cards of your library. You may play them this turn. Draw cards equal to the number played this way.",
             "During your turn, exile the top two cards of your library. You may play them this turn.",
             "Exile the top card of your library. You may play them this turn.",
         )
