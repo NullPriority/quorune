@@ -19,6 +19,9 @@ from quorune.util import stable_json
 ROOT = Path(__file__).resolve().parents[1]
 DB_PATH = Path(os.environ.get("MTG_CARD_DB", ROOT / "data" / "scryfall-20260728-compact.sqlite3"))
 
+# Include Node startup and TypeScript loading under the four-worker CI shards.
+NODE_CHOICE_VALIDATION_TIMEOUT_SECONDS = 60
+
 
 @contextmanager
 def without_direct_resolution_compiler(name: str):
