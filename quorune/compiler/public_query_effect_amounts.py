@@ -12,6 +12,7 @@ from ..query_effect_amount_model import (
 )
 from ..rules.source_references import SourceReferenceSpec
 from .query_characteristic_templates import query_characteristic_quantity, query_characteristic_value
+from .live_battlefield_quantities import resolution_quantity
 from .fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
 from .declared_effect_amounts import (
     DECLARED_EFFECT_AMOUNT_MECHANIC,
@@ -73,13 +74,13 @@ _DRAW_PATTERNS = (
     ),
 )
 _TOKEN_PATTERN = re.compile(
-    r"^Create X (?P<definition>.+? tokens?), where X is the number of "
+    r"^Create X (?P<definition>.+? tokens?(?: with .+?)?), where X is the number of "
     r"(?P<quantity>.+?)\.?$",
     re.IGNORECASE,
 )
 _TOKEN_FOR_EACH = re.compile(
     r"^Create (?P<coefficient>a|an|one|two|three|four|five|[1-9]\d*) "
-    r"(?P<definition>.+? tokens?) for each (?P<quantity>.+?)\.?$",
+    r"(?P<definition>.+? tokens?(?: with .+?)?) for each (?P<quantity>.+?)\.?$",
     re.IGNORECASE,
 )
 _TOKEN_COMPLETE_VALUE = re.compile(
@@ -340,11 +341,7 @@ def public_query_effect_amount_template(
         subject, keyword_suffix, power, toughness, quantity_text = (
             characteristic
         )
-        quantity = query_characteristic_quantity(
-            quantity_text,
-            source_name=source_name,
-            definition_extensions=True,
-        )
+        quantity = resolution_quantity(quantity_text, source_name=source_name)
         if quantity is None:
             return None
         try:
@@ -405,12 +402,7 @@ def public_query_effect_amount_template(
         )
     assert candidate is not None
     family, quantity_text, coefficient, fixed_text, complete_value = candidate
-    quantity = (
-        query_characteristic_value(quantity_text, source_name=source_name)
-        if complete_value else query_characteristic_quantity(
-            quantity_text, source_name=source_name, definition_extensions=True,
-        )
-    )
+    quantity = resolution_quantity(quantity_text, source_name=source_name, complete_value=complete_value)
     if quantity is None:
         return None
     try:

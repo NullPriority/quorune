@@ -44,6 +44,38 @@ def occurrence(**changes) -> ZoneChangeOccurrence:
 
 
 class ZoneTriggerEventModelTests(unittest.TestCase):
+    def test_anywhere_graveyard_event_reads_destination_facts_and_observers(self):
+        for origin, transition_kind in (
+            ('battlefield', ZoneTransitionKind.ORDINARY),
+            ('library', ZoneTransitionKind.ORDINARY),
+            ('hand', ZoneTransitionKind.DISCARD),
+            ('stack', ZoneTransitionKind.COUNTERED_SPELL),
+        ):
+            with self.subTest(origin=origin):
+                entered = [event for event in normalized_zone_trigger_events(occurrence(
+                    origin=origin, destination='graveyard', transition_kind=transition_kind,
+                    previous_controller='B', current_controller='A',
+                    previous_characteristics={'type_line': 'Artifact Creature — Golem', 'colors': ['U']},
+                    current_characteristics={'type_line': 'Land — Forest', 'colors': []},
+                    previous_copy_snapshot={'before': True}, current_copy_snapshot={'after': True},
+                )) if event.kind == 'card.enter_graveyard']
+                self.assertEqual(1, len(entered))
+                event = entered[0]
+                self.assertEqual('after', event.source_timing)
+                self.assertEqual('A', event.context['owner'])
+                self.assertEqual('A', event.context['controller'])
+                self.assertEqual(['land'], list(event.context['types']))
+                self.assertEqual(['forest'], list(event.context['subtypes']))
+                self.assertEqual([], list(event.context['colors']))
+                self.assertEqual('object-1:1', event.context['card_object_identity'])
+                self.assertEqual({'after': True}, dict(event.context['copiable_snapshot']))
+        for changes in ({'token': True}, {'card_object': False}, {'destination': 'exile'}, {'origin': 'graveyard'}):
+            with self.subTest(excluded=changes):
+                events = normalized_zone_trigger_events(occurrence(
+                    **{'origin': 'battlefield', 'destination': 'graveyard', **changes},
+                ))
+                self.assertFalse(any(event.kind == 'card.enter_graveyard' for event in events))
+
     def test_copiable_event_snapshots_use_entry_or_departure_incarnation(self):
         entered = normalized_zone_trigger_events(occurrence(
             previous_copy_snapshot={"marker":"before"}, current_copy_snapshot={"marker":"after"}))
@@ -53,6 +85,10 @@ class ZoneTriggerEventModelTests(unittest.TestCase):
         departed = normalized_zone_trigger_events(occurrence(origin="battlefield", destination="graveyard",
             previous_copy_snapshot={"marker":"before"}, current_copy_snapshot=None))
         for event in departed:
+            if event.kind == 'card.enter_graveyard':
+                self.assertEqual('object-1:1', event.context['card_object_identity'])
+                self.assertNotIn('copiable_snapshot', event.context)
+                continue
             self.assertEqual("object-1:0", event.context["card_object_identity"])
             self.assertEqual("before", event.context["copiable_snapshot"]["marker"])
 
@@ -91,12 +127,14 @@ class ZoneTriggerEventModelTests(unittest.TestCase):
                 "creature.dies",
                 "artifact.graveyard",
                 "permanent.graveyard",
+                "card.enter_graveyard",
             ],
             [event.kind for event in died],
         )
-        self.assertTrue(all(event.source_timing == "before" for event in died))
+        self.assertEqual('after', died[-1].source_timing)
+        self.assertTrue(all(event.source_timing == "before" for event in died[:-1]))
         self.assertTrue(
-            all(event.context["controller"] == "B" for event in died)
+            all(event.context["controller"] == "B" for event in died[:-1])
         )
         self.assertEqual(
             ["artifact", "creature"],
@@ -116,12 +154,13 @@ class ZoneTriggerEventModelTests(unittest.TestCase):
         )
 
         self.assertEqual(
-            ["permanent.leave", "permanent.graveyard"],
+            ["permanent.leave", "permanent.graveyard", "card.enter_graveyard"],
             [event.kind for event in departed],
         )
-        self.assertEqual(["goblin"], list(departed[-1].context["subtypes"]))
-        self.assertIn("kindred", departed[-1].context["types"])
-        self.assertNotIn("creature", departed[-1].context["types"])
+        self.assertEqual(["goblin"], list(departed[-2].context["subtypes"]))
+        self.assertEqual(["cleric", "human"], list(departed[-1].context["subtypes"]))
+        self.assertIn("kindred", departed[-2].context["types"])
+        self.assertNotIn("creature", departed[-2].context["types"])
 
     def test_occurrence_rejects_malformed_and_non_event_moves_are_empty(self):
         with self.assertRaisesRegex(
@@ -191,13 +230,17 @@ class ZoneTriggerEventModelTests(unittest.TestCase):
 
         events = normalized_zone_trigger_events(countered)
 
+        self.assertEqual('card.enter_graveyard', events[-1].kind)
+        self.assertEqual('after', events[-1].source_timing)
+        historical_events = [event for event in events if event.kind != 'card.enter_graveyard']
+
         self.assertEqual(
             ["spell.countered", "card.graveyard"],
-            [event.kind for event in events],
+            [event.kind for event in historical_events],
         )
         self.assertEqual(
             ["before", "after"],
-            [event.source_timing for event in events],
+            [event.source_timing for event in historical_events],
         )
         self.assertEqual(
             ZoneTransitionKind.COUNTERED_SPELL.value,
@@ -216,7 +259,7 @@ class ZoneTriggerEventModelTests(unittest.TestCase):
         events = normalized_zone_trigger_events(countered)
 
         self.assertEqual(["spell.countered"], [event.kind for event in events])
-        self.assertEqual("before", events[0].source_timing)
+        self.assertEqual("before", events[-1].source_timing)
 
     def test_counter_transition_kind_is_closed_and_typed(self):
         with self.assertRaisesRegex(ZoneTriggerEventError, "supported typed value"):

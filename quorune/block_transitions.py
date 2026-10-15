@@ -592,7 +592,7 @@ class BlockKeywordTriggerOccurrence:
             raise BlockTransitionError(
                 "Unsupported block-trigger occurrence schema version"
             )
-        if not isinstance(self.kind, CombatKeywordTriggerKind):
+        if self.kind not in {CombatKeywordTriggerKind.FLANKING, CombatKeywordTriggerKind.BUSHIDO, CombatKeywordTriggerKind.RAMPAGE}:
             raise BlockTransitionError("Unsupported block-trigger kind")
         _identity(self.controller, field="Block trigger controller")
         if not isinstance(self.source, BlockObjectIdentity) or not isinstance(
@@ -609,7 +609,7 @@ class BlockKeywordTriggerOccurrence:
         if self.kind is CombatKeywordTriggerKind.FLANKING and self.amount != 1:
             raise BlockTransitionError("Each Flanking occurrence has amount 1")
         if (
-            self.kind is CombatKeywordTriggerKind.BUSHIDO
+            self.kind in {CombatKeywordTriggerKind.BUSHIDO, CombatKeywordTriggerKind.RAMPAGE}
             and self.source != self.affected
         ):
             raise BlockTransitionError("Bushido modifies its own source object")
@@ -648,7 +648,7 @@ class BlockKeywordTriggerOccurrence:
     def label(self) -> str:
         if self.kind is CombatKeywordTriggerKind.FLANKING:
             return f"{self.source.reference} — Flanking"
-        return f"{self.source.reference} — Bushido {self.amount}"
+        return f"{self.source.reference} — {self.kind.value.title()} {self.amount}"
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -782,6 +782,8 @@ def derive_block_keyword_trigger_occurrences(
         ):
             drafts.append((spec.kind, source, source, spec.amount, index))
 
+    from .rampage import rampage_occurrence_drafts
+    drafts.extend(rampage_occurrence_drafts(event))
     drafts.sort(
         key=lambda value: (
             value[1].reference,
@@ -877,7 +879,9 @@ def resolve_block_keyword_trigger(
         and card.zone == "battlefield"
         and card.logical_object_id == occurrence.affected.logical_object_id
     )
-    if still_present:
+    from .rampage import rampage_resolution_bonus
+    delta = rampage_resolution_bonus(host, occurrence) if occurrence.kind is CombatKeywordTriggerKind.RAMPAGE else occurrence.power_delta
+    if still_present and delta:
         effect = create_resolution_continuous_effect(
             host,
             source=ResolutionEffectSource(
@@ -892,7 +896,7 @@ def resolve_block_keyword_trigger(
             operations=(
                 ContinuousOperation(
                     "modify_power_toughness",
-                    [occurrence.power_delta, occurrence.toughness_delta],
+                    [delta, delta],
                 ),
             ),
             duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,

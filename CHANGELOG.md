@@ -9,10 +9,57 @@ maintenance: "hand-maintained"
 
 # Changelog
 
+- Add typed current battlefield counts for resolution and mana instructions,
+  preserving combat membership, current keywords, controller scope, and source
+  exclusion while retaining the static quantity layer boundary.
+
 ## Unreleased
+
+- Execute typed Manifest and Manifest dread through private choices and
+  face-down entry views, with controller-bound printed-mana turn-up authority.
+
+- Admit exact attached Role activation bodies through the existing typed
+  activation cost and capability gate.
+
+- Pin all predefined Role definitions into existing typed static and triggered
+  child programs; create represented attached Roles through explicit
+  replacement-adjusted timestamp ordering and canonical state-based checks.
+
+- Evaluate fixed source power and toughness intervening conditions against full
+  current characteristics at discovery and resolution.
 
 - Preserve independent library-selection card slots and qualified card types,
   and reject unrepresented qualifiers that previously became subtype names.
+
+- Compile singular qualified damage subscriptions with sealed source predicates,
+  keeping their per-source multiplicity distinct from one-or-more batches.
+
+- Compile fixed mana-value limits on owned graveyard returns through the
+  existing target predicate and resolution revalidation owners.
+
+- Compose source-action pronoun modifiers with the existing typed keyword and
+  public-characteristic scalar owners, preserving the source incarnation.
+
+- Capture state-based public facts through the existing rules owner and
+  evaluate Role uniqueness for explicit controller, attachment and ordered timestamps.
+
+- Create predefined Lander and Mutagen tokens with complete activation prices,
+  private search and target-counter results, preserving timing and incarnation rules.
+
+- Create predefined Blood tokens with complete typed activation costs and
+  private draw consequences through existing activation and zone owners.
+
+- Normalize fixed optional "you may have" results through existing effect
+  owners, preserving early target selection and resolution-time acceptance.
+
+- Observe cards entering a graveyard from anywhere through destination facts
+  and surviving observers, with closed type, color and graveyard-owner predicates.
+
+- Compose closed public event subscriptions with fixed direct-target counters,
+  preserving target choice and resolution-time incarnation checks.
+
+- Compose closed public event subscriptions with fixed counter results on the
+  observing source incarnation, preserving controller and current-ability rules.
 
 - Register added public-characteristic fixture cards per session instead of
   compiling unused fixture records, preserving existing action and replay checks.

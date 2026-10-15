@@ -69,6 +69,7 @@ class CombatKeywordTriggerKind(str, Enum):
 
     FLANKING = "flanking"
     BUSHIDO = "bushido"
+    RAMPAGE = 'rampage'
     EXALTED = "exalted"
     BATTLE_CRY = "battle_cry"
     MELEE = "melee"
@@ -758,7 +759,7 @@ class CombatKeywordTriggerSpec:
                 "Combat keyword-trigger amounts must be positive integers"
             )
         if (
-            self.kind is not CombatKeywordTriggerKind.BUSHIDO
+            self.kind not in {CombatKeywordTriggerKind.BUSHIDO, CombatKeywordTriggerKind.RAMPAGE}
             and self.amount != 1
         ):
             raise AbilityFragmentError(

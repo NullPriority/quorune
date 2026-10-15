@@ -79,7 +79,11 @@ class MorphActionHost(Protocol):
         self, *, zones: set[str] | None = None
     ) -> Sequence[Any]: ...
 
-def _eligible_spec(host: MorphActionHost, seat: str, card: Any) -> Any | None:
+def _eligible_spec(host: MorphActionHost, seat: str, card: Any, *, method: str | None = None) -> Any | None:
+    from ..manifest import manifest_turn_up_spec, is_manifested
+    manifested = is_manifested(card)
+    if manifested and method in {None, 'manifest'}:
+        return manifest_turn_up_spec(host, seat, card)
     if (
         card.zone != "battlefield"
         or card.controller != seat
@@ -90,7 +94,7 @@ def _eligible_spec(host: MorphActionHost, seat: str, card: Any) -> Any | None:
     ):
         return None
     marker = card.annotations.get("face_down_method")
-    method = marker.get("kind") if isinstance(marker, Mapping) else None
+    method = method if manifested else marker.get("kind") if isinstance(marker, Mapping) else None
     if method not in FACE_DOWN_CAST_METHODS:
         return None
     spec = compiled_fixed_mana_face_down_method_spec(
@@ -101,7 +105,8 @@ def _eligible_spec(host: MorphActionHost, seat: str, card: Any) -> Any | None:
     if spec is None:
         return None
     try:
-        validate_morph_face_down_state(card, spec)
+        if not manifested:
+            validate_morph_face_down_state(card, spec)
         if not current_face_up_has_face_down_method(
             host,
             card,
@@ -117,8 +122,11 @@ def build_turn_face_up_offer(
     host: MorphActionHost,
     seat: str,
     card: Any,
+    *, method: str | None = None,
 ) -> ActionOffer | None:
-    spec = _eligible_spec(host, seat, card)
+    from ..manifest import is_manifested
+
+    spec = _eligible_spec(host, seat, card, method=method)
     if spec is None or not host._cost_is_affordable(
         seat,
         spec.requirements_dict,
@@ -126,7 +134,7 @@ def build_turn_face_up_offer(
     ):
         return None
     return ActionOffer(
-        action_id=f"turn-face-up:{card.ref}",
+        action_id=f"turn-face-up:{card.ref}" + (f':{method}' if method is not None and is_manifested(card) else ''),
         action="turn_face_up",
         seat=seat,
         label=f"Turn {card.printed_name} face up — {spec.cost_text}",
@@ -142,6 +150,13 @@ def build_turn_face_up_offer(
             }
         ),
     )
+
+
+def build_turn_face_up_offers(host, seat, card):
+    from ..manifest import is_manifested
+    methods = ('manifest', *FACE_DOWN_CAST_METHODS) if is_manifested(card) else (None,)
+    return tuple(offer for method in methods
+        if (offer := build_turn_face_up_offer(host, seat, card, method=method)) is not None)
 
 
 def commit_turn_face_up(
@@ -160,7 +175,8 @@ def commit_turn_face_up(
         zones={"battlefield"},
         controlled_only=True,
     )
-    offer = build_turn_face_up_offer(host, seat, card)
+    method = response.get('method')
+    offer = build_turn_face_up_offer(host, seat, card, method=method)
     if offer is None:
         raise GameRuleError("This permanent cannot currently be turned face up")
     supplied = response.get("proposal_fingerprint")
@@ -173,7 +189,7 @@ def commit_turn_face_up(
             != replace(offer, expiry_revision=expiry).fingerprint
         ):
             raise GameRuleError("The advertised turn-face-up action is stale")
-    spec = _eligible_spec(host, seat, card)
+    spec = _eligible_spec(host, seat, card, method=method)
     if spec is None:
         raise GameRuleError("The face-down method contract changed before payment")
     clear_mana_undo_stack(host.state.players[seat].stats)

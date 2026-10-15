@@ -210,6 +210,16 @@ def _durable_main_frontier(*, expected_fingerprint: str) -> dict:
     )
 
 
+def _legacy_upgrade_is_checkpoint_bound(entry: dict) -> bool:
+    from scripts.harvest_outcome_history import (
+        _content_transition_is_landed, _receipt, _semantic_receipts_match,
+        _validate_content_entry,
+    )
+    _validate_content_entry(entry)
+    return (not _content_transition_is_landed(ROOT, str(entry['transition_id']))
+        and _semantic_receipts_match(entry['head_receipt'], _receipt(ROOT, 'HEAD'), repository=ROOT))
+
+
 def _source_checkpoint_frontier(transition_id: str) -> dict:
     try:
         history = json.loads(HARVEST_HISTORY.read_text(encoding="utf-8"))
@@ -226,6 +236,24 @@ def _source_checkpoint_frontier(transition_id: str) -> dict:
         None,
     )
     inherited_unmerged = False
+    if landed is not None and not isinstance(landed.get('measurement_frontier_fingerprint'), str):
+        # An unpublished legacy prediction may be upgraded to the generated
+        # measurement contract only while its exact committed head is current.
+        catalog = json.loads(POLICY.read_text(encoding='utf-8'))
+        declaration = catalog.get('work_selection', {}).get('semantic_transition_declaration')
+        if (isinstance(declaration, dict)
+                and declaration.get('transition_id') == transition_id
+                and declaration.get('bundle_id') == landed.get('bundle_id')
+                and declaration.get('candidate_ids') == landed.get('candidate_ids')
+                and declaration.get('measurement_id') == 'measurement:' + str(landed.get('bundle_id') or '').split(':', 1)[-1]
+                and landed.get('receipt_identity_kind') == 'semantic_content'
+                and not _prior_frontier_is_current_main(landed)
+                and _legacy_upgrade_is_checkpoint_bound(landed)):
+            head = landed.get('head_receipt', {}).get('blobs', {}).get('coverage/card-unlock-frontier.json.gz', {})
+            checkpoint = subprocess.run(['git', 'rev-parse', 'HEAD:coverage/card-unlock-frontier.json.gz'],
+                cwd=ROOT, check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            inherited_unmerged = (checkpoint.returncode == 0
+                and checkpoint.stdout.decode('ascii').strip() == head.get('git_blob_oid'))
     if landed is None:
         catalog = json.loads(POLICY.read_text(encoding="utf-8"))
         declaration = catalog.get("work_selection", {}).get("semantic_transition_declaration")

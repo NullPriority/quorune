@@ -8,6 +8,7 @@ from ..fixed_effect_payment import FixedEffectPaymentSpec
 from ..object_query import object_matches_query
 from ..replacement.immutable import FrozenMap
 from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent, PayLifeIntent, PayManaCostIntent
+from ..semantic_runtime.energy_payment import PayEnergyIntent
 from ..zone_trigger_events import ZoneTransitionKind
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
@@ -88,6 +89,7 @@ def prepare_fixed_payment_cost(
     else:
         payable = (
             context.query.player_life(actor) >= spec.amount if spec.kind == 'life'
+            else context.query.player_counter(actor, 'energy') >= spec.amount if spec.kind == 'energy'
             else context.query.cost_is_affordable(actor, spec.requirements)
         )
         choice = ScalarChoice(field_name='pay', legal_values=(True, False) if payable else (False,))
@@ -170,6 +172,10 @@ def complete_fixed_payment_cost(
             if query.player_life(actor) < spec.amount:
                 raise SemanticChoiceError('Fixed life payment is no longer payable')
             intent = PayLifeIntent(actor=actor, player=actor, amount=spec.amount, reason=label)
+        elif spec.kind == 'energy':
+            if query.player_counter(actor, 'energy') < spec.amount:
+                raise SemanticChoiceError('Fixed energy payment is no longer payable')
+            intent = PayEnergyIntent(actor=actor, player=actor, amount=spec.amount, reason=label)
         else:
             if not query.cost_is_affordable(actor, spec.requirements):
                 raise SemanticChoiceError('Fixed mana payment is no longer payable')

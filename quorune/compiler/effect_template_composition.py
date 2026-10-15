@@ -151,4 +151,6 @@ def reviewed_effect_template_composition(
         text,
         compile_component=compile_atomic,
     )
-    return program.compiled() if program is not None else atomic
+    if program is not None:return program.compiled()
+    from .multisentence_effect_components import multisentence_effect_program
+    return multisentence_effect_program(text, compile_component=compile_atomic) or atomic

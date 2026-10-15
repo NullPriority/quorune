@@ -95,6 +95,13 @@ class _FixedPublicStateSnapshotResolver:
         assert condition.predicate is not None
         row = self._public_object(candidate)
         assert row is not None
+        numeric = condition.predicate.numeric_characteristic
+        if numeric is not None and row.zone == 'battlefield' and not row.phased_out and 'creature' in row.types:
+            from ..target_numeric import TargetNumericCharacteristic
+            value = (row.effective_power if numeric.characteristic is TargetNumericCharacteristic.POWER
+                else row.effective_toughness)
+            if value is None:
+                return None
         return object_matches_query(row, condition.predicate)
 
     def _condition_quantity(
@@ -574,6 +581,7 @@ def _continuous_programs_for_source(
                 event="characteristics.evaluate",
             )
         )
+        if not program.provenance.get('granted_only')
     }
     programs.update(
         {

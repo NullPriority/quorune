@@ -435,7 +435,7 @@ class CounterMaximumRuntimeTests(unittest.TestCase):
 
         assert_runtime(7045110)
         with patch(
-            "quorune.engine.counter_maximum_values",
+            "quorune.state_based_execution.counter_maximum_values",
             return_value={},
         ):
             with self.assertRaises(AssertionError):

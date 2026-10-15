@@ -85,7 +85,9 @@ class CounterQualifiedZoneCompilerTests(unittest.TestCase):
         self.assertEqual({'+1/+1': 2, 'bounty': 0}, dict(event.previous_counters))
         self.assertEqual(event, ZoneChangeOccurrence(**event.to_dict()))
         died = normalized_zone_trigger_events(event)
-        self.assertTrue(all(tuple(e.context['counter_names']) == ('+1/+1',) for e in died))
+        self.assertTrue(all(tuple(e.context['counter_names']) == ('+1/+1',) for e in died if e.source_timing == 'before'))
+        after = next(e for e in died if e.kind == 'card.enter_graveyard')
+        self.assertEqual((), tuple(after.context['counter_names']))
         entered = normalized_zone_trigger_events(occurrence(schema_version=2,
             previous_counters={'bounty': 3}, current_counters={'+1/+1': 1}))
         self.assertTrue(all(tuple(e.context['counter_names']) == ('+1/+1',) for e in entered))

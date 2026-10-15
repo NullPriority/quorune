@@ -14,6 +14,23 @@ from scripts.change_impact import (
 
 
 class ChangeImpactTests(unittest.TestCase):
+    def test_batched_composition_sources_select_existing_integration_boundaries(self):
+        cases = {
+            'quorune/compiler/live_battlefield_quantities.py': {
+                'test_declared_effect_amounts', 'test_public_query_effect_amounts',
+                'test_query_scaled_counters', 'test_variable_library_counts'},
+            'quorune/compiler/shared_characteristic_queries.py': {
+                'test_declared_effect_amounts', 'test_query_scaled_counters', 'test_variable_library_counts'},
+            'quorune/compiler/role_token_nodes.py': {
+                'test_fixed_token_creation_effects', 'test_fixed_token_production'},
+            'quorune/compiler/multisentence_effect_components.py': {'test_fixed_impulse_access'},
+            'quorune/compiler/fixed_public_event_trigger_bindings.py': {'test_qualified_zone_event_queries'},
+            'quorune/rules/morph_actions.py': {'test_split_second_rules', 'test_fixed_counter_player_cast_triggers'},
+        }
+        for path, consumers in cases.items():
+            with self.subTest(path=path):
+                self.assertLessEqual(consumers, set(classify_changes([path]).test_modules))
+
     def test_component_source_validation_selects_its_trust_consumers(self):
         for owner in ("quorune/rules/component_resolution.py", "quorune/rules/evidence.py"):
             with self.subTest(owner=owner):

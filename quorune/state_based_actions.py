@@ -58,6 +58,8 @@ class PermanentSnapshot:
     counter_maximums: Mapping[str, int] = field(
         default_factory=dict
     )
+    controller: str | None = None
+    timestamp: int | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -116,6 +118,38 @@ def _completed_saga(
     return (saga,) if saga.requires_sacrifice else ()
 
 
+def _role_rule_object_ids(permanents: Iterable[PermanentSnapshot]) -> set[str]:
+    """CR 303.7a/704.5z groups current Roles by controller and attachment."""
+    groups: dict[tuple[str, str], list[PermanentSnapshot]] = {}
+    for permanent in permanents:
+        if (permanent.phased_out or 'role' not in {s.casefold() for s in permanent.subtypes}
+                or permanent.attached_to is None or permanent.attachment_legal is False):
+            continue
+        if (type(permanent.controller) is not str or not permanent.controller
+                or type(permanent.timestamp) is not int or permanent.timestamp < 0):
+            raise ValueError('Attached Role requires current controller and ordered timestamp facts')
+        groups.setdefault((permanent.controller, permanent.attached_to), []).append(permanent)
+    moving: set[str] = set()
+    for group in groups.values():
+        if len(group) < 2:
+            continue
+        latest = max(permanent.timestamp for permanent in group)
+        if sum(permanent.timestamp == latest for permanent in group) != 1:
+            raise ValueError('Simultaneous Role timestamps require explicit ordering')
+        moving.update(permanent.object_id for permanent in group if permanent.timestamp < latest)
+    return moving
+
+
+def _world_rule_object_ids(permanents: Iterable[PermanentSnapshot]) -> set[str]:
+    """CR 704.5k keeps a unique newest World and removes every tied World."""
+    values = tuple(permanents)
+    if len(values) < 2:
+        return set()
+    latest = max(int(permanent.world_timestamp) for permanent in values)
+    newest = [permanent for permanent in values if int(permanent.world_timestamp) == latest]
+    return {permanent.object_id for permanent in values if len(newest) != 1 or permanent is not newest[0]}
+
+
 def evaluate_permanent_state_based_actions(
     permanents: Iterable[PermanentSnapshot],
 ) -> StateBasedActionBatch:
@@ -126,7 +160,8 @@ def evaluate_permanent_state_based_actions(
     correctly.  Unknown attachment legality is intentionally not guessed.
     """
 
-    put_in_graveyard: set[str] = set()
+    permanents = tuple(permanents)
+    put_in_graveyard: set[str] = _role_rule_object_ids(permanents)
     destroy: set[str] = set()
     detach: set[str] = set()
     counter_pairs: dict[str, int] = {}
@@ -225,30 +260,7 @@ def evaluate_permanent_state_based_actions(
                     (permanent.object_id, kind)
                 ] = current - maximum
 
-    world_rule: set[str] = set()
-    if len(world_permanents) >= 2:
-        newest_timestamp = max(
-            int(permanent.world_timestamp)
-            for permanent in world_permanents
-        )
-        newest = [
-            permanent
-            for permanent in world_permanents
-            if int(permanent.world_timestamp) == newest_timestamp
-        ]
-        if len(newest) == 1:
-            world_rule.update(
-                permanent.object_id
-                for permanent in world_permanents
-                if permanent is not newest[0]
-            )
-        else:
-            # CR 704.5k: if the shortest-held duration is tied, every World
-            # permanent goes to its owner's graveyard.
-            world_rule.update(
-                permanent.object_id
-                for permanent in world_permanents
-            )
+    world_rule = _world_rule_object_ids(world_permanents)
 
     # A permanent moving zones is detached as part of that zone change.  Do
     # not emit a second independent detach operation for the same object.

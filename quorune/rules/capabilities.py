@@ -287,6 +287,7 @@ _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
     "fixed-counter-controller-effect-sequence"
 )
 MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    **{name: ('keyword_action.manifest.card',) for name in ('manifest', 'cr-701-manifest')}, 'manifest dread': ('keyword_action.manifest_dread',), 'predefined-role-token': ('token.creation.predefined_role',),
     CLASS_MECHANIC_ID: (CLASS_LIFECYCLE_CAPABILITY_ID,),
     AFTERLIFE_MECHANIC_ID: (AFTERLIFE_CAPABILITY_ID,), **{keyword: (f"trigger.keyword.{keyword}.fixed",) for keyword in ("afflict", "annihilator", "firebending", "ingest", "mobilize", "soulshift")},
     INVESTIGATE_MECHANIC_ID: (INVESTIGATE_CAPABILITY_ID,),
@@ -337,7 +338,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     _SHADOW_MECHANIC: ("combat.block.shadow",),
     _SKULK_MECHANIC: ("combat.block.skulk",),
     _FLANKING_MECHANIC: ("combat.trigger.flanking",),
-    _BUSHIDO_MECHANIC: ("combat.trigger.bushido",),
+    _BUSHIDO_MECHANIC: ("combat.trigger.bushido",), 'rampage': ('combat.trigger.rampage',),
     _EXALTED_MECHANIC: ("combat.trigger.exalted",),
     _BATTLE_CRY_MECHANIC: ("combat.trigger.battle_cry",),
     _MELEE_MECHANIC: ("combat.trigger.melee",),

@@ -69,6 +69,7 @@ def _fixture(players: int, permanents: int, descriptors: int):
             programs[oracle_id] = (
                 SimpleNamespace(
                     key=f"program:{oracle_id}",
+                    provenance={},
                     handlers=[_descriptor() for _ in range(descriptors)],
                 ),
             )

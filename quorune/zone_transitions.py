@@ -221,6 +221,7 @@ class ZoneTransitionOwner:
         transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY,
         characteristic_lki_prepared: bool = False,
         defer_control_sync: bool = False,
+        manifest_entry: bool = False,
     ) -> CardInstance:
         if type(defer_control_sync) is not bool:
             raise GameRuleError("Zone-move control synchronization policy must be boolean")
@@ -230,6 +231,8 @@ class ZoneTransitionOwner:
             destination,
             transition_kind,
         )
+        if type(manifest_entry) is not bool or manifest_entry and (card.zone != 'library' or destination != 'battlefield' or card.object_kind != 'card'):
+            raise GameRuleError('Manifest entry requires one library card entering the battlefield')
         plan_or_card = self._prepare_move(
             card,
             destination,
@@ -247,6 +250,7 @@ class ZoneTransitionOwner:
             replacement_selections=replacement_selections,
             prepared_replacement=prepared_replacement,
             transition_kind=transition_kind,
+            manifest_entry=manifest_entry,
         )
         if isinstance(plan_or_card, CardInstance):
             return plan_or_card
@@ -304,10 +308,11 @@ class ZoneTransitionOwner:
         replacement_selections: Sequence[str | None | Mapping[str, Any]],
         prepared_replacement: PreparedZoneChange | None,
         transition_kind: ZoneTransitionKind,
+        manifest_entry: bool = False,
     ) -> ZoneMovePlan | CardInstance:
         requested_destination = destination
         origin = card.zone
-        if destination == "battlefield":
+        if destination == "battlefield" and not manifest_entry:
             record = self.host.card_record(card)
             if (
                 enter_face is None
@@ -336,11 +341,7 @@ class ZoneTransitionOwner:
         ):
             self._log_prevented_token(card, origin, requested_destination, log=log)
             return card
-        entry_characteristics, destination_type_line = capture_prospective_entry_characteristics(
-            self.host,
-            card=card,
-            enter_face=enter_face,
-        )
+        entry_characteristics, destination_type_line = self._entry_characteristics(card, enter_face, manifest_entry)
         if (
             destination == "battlefield"
             and card.is_card_object
@@ -356,19 +357,10 @@ class ZoneTransitionOwner:
                 log=log,
             )
             return card
-        replacement = prepare_zone_change_replacement(
-            self.host,
-            card,
-            destination,
-            destination_controller=controller,
-            entry_characteristics=entry_characteristics,
-            requested_tapped=bool(tapped) if tapped is not None else False,
-            entry_pay_life=entry_pay_life,
-            transition_kind=transition_kind,
-            selections=tuple(replacement_selections),
-            prepared=prepared_replacement,
-            error_type=GameRuleError,
-        )
+        replacement = self._prepare_entry_replacement(card, destination, controller=controller,
+            entry_characteristics=entry_characteristics, tapped=tapped, entry_pay_life=entry_pay_life,
+            transition_kind=transition_kind, replacement_selections=replacement_selections,
+            prepared_replacement=prepared_replacement, manifest_entry=manifest_entry)
         destination = replacement.destination
         from .entry_copy import copied_entry_preview
         copied = copied_entry_preview(card, replacement)
@@ -434,7 +426,37 @@ class ZoneTransitionOwner:
             prepared_life_payment=prepared_life_payment,
             prospective_battle_protector=prospective_protector,
             aura_entry_plan=aura_move.entry_plan,
+            manifest_entry=manifest_entry,
         )
+
+    def _entry_characteristics(self, card, enter_face, manifest_entry):
+        if manifest_entry:
+            return ({'name': '', 'type_line': 'Creature', 'mana_cost': '', 'mana_value': 0,
+                'text': '', 'colors': [], 'keywords': [], 'ability_fragments': [], 'power': '2', 'toughness': '2'}, 'Creature')
+        return capture_prospective_entry_characteristics(self.host, card=card, enter_face=enter_face)
+
+    def _prepare_entry_replacement(self, card, destination, *, controller, entry_characteristics,
+            tapped, entry_pay_life, transition_kind, replacement_selections, prepared_replacement, manifest_entry):
+        if manifest_entry:
+            from .manifest import prepare_manifest_entry_replacement
+            prepared_replacement = prepare_manifest_entry_replacement(self.host, card,
+                controller=controller or card.owner, characteristics=entry_characteristics,
+                selections=tuple(replacement_selections))
+            replacement_selections = ()
+        replacement = prepare_zone_change_replacement(
+            self.host,
+            card,
+            destination,
+            destination_controller=controller,
+            entry_characteristics=entry_characteristics,
+            requested_tapped=bool(tapped) if tapped is not None else False,
+            entry_pay_life=entry_pay_life,
+            transition_kind=transition_kind,
+            selections=tuple(replacement_selections),
+            prepared=prepared_replacement,
+            error_type=GameRuleError,
+        )
+        return replacement
 
     def _capture_departure(
         self,
@@ -525,6 +547,9 @@ class ZoneTransitionOwner:
             zone_timestamp=zone_timestamp,
         )
         card.zone = plan.destination
+        if plan.manifest_entry and plan.destination == 'battlefield':
+            from .zone_object_state import mark_card_manifested
+            mark_card_manifested(card, controller=controller or card.owner)
         if enter_face is not None and plan.destination == "battlefield":
             card.active_face = enter_face
         if plan.destination == "battlefield":

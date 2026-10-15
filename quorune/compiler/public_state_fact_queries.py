@@ -16,6 +16,7 @@ from ..continuous_conditions import (
 from ..creature_subtypes import canonical_creature_subtype_surface
 from ..rules.source_references import SourceReferenceSpec
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
+from ..target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 
 
@@ -265,14 +266,32 @@ def _fixed_history_fact(normalized: str) -> FixedPublicStateConditionSpec | None
     )
 
 
+def fixed_source_numeric_condition(normalized: str, *, source_pattern: str | None):
+    subject = source_pattern or SourceReferenceSpec('This source').regex_pattern
+    numeric = re.fullmatch(
+        rf"(?:its|{subject}['’]s) (?P<stat>power|toughness) is "
+        r"(?P<amount>[0-9]+) or (?P<bound>greater|less)", normalized, re.I)
+    if numeric is None:
+        return None
+    return FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
+        predicate=ObjectQuerySpec(zones=('battlefield',), types_all=('creature',), numeric_characteristic=TargetNumericCharacteristicSpec(
+            TargetNumericCharacteristic(numeric['stat'].casefold()),
+            TargetNumericComparison.AT_LEAST if numeric['bound'].casefold() == 'greater' else TargetNumericComparison.AT_MOST,
+            int(numeric['amount']))), schema_version=2)
+
+
 def fixed_public_fact_condition(
     text: str,
     *,
-    source_name: str,
+    source_name: str, source_pattern: str | None = None,
 ) -> FixedPublicStateConditionSpec | None:
     """Parse one closed current public-fact threshold."""
 
     normalized = " ".join(text.strip().rstrip(".").split())
+    numeric = fixed_source_numeric_condition(normalized, source_pattern=source_pattern)
+    if numeric is not None:
+        return numeric
     distinct = re.fullmatch(
         r"there are (?P<count>four|five|[0-9]+) or more "
         r"(?P<field>card types|mana values) among cards in your graveyard",

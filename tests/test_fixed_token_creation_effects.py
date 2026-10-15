@@ -76,6 +76,195 @@ def token_record(
     )
 
 
+class PredefinedBloodTokenCompilerTests(unittest.TestCase):
+    def test_blood_typed_profile_preserves_all_costs_and_availability(self):
+        from types import SimpleNamespace
+        from quorune.standard_token_abilities import standard_token_characteristics
+        from quorune.abilities import ActivatedAbility
+        from quorune.rules.activation.availability import activation_availability
+
+        payload = standard_token_characteristics({
+            'activated_ability_profile': 'one_tap_discard_sac_draw_card_v1'})
+        ability = ActivatedAbility.from_dict(payload['activated_abilities'][0])
+        self.assertEqual(1, ability.mana['GENERIC'])
+        self.assertEqual(1, sum(ability.mana.values()))
+        self.assertTrue(ability.tap_source)
+        self.assertTrue(ability.sacrifice_source)
+        self.assertFalse(ability.mana_ability)
+        self.assertFalse(ability.sorcery_speed)
+        self.assertEqual('builtin:draw:1', ability.builtin_semantic_key)
+        self.assertEqual(1, len(ability.choices))
+        choice = ability.choices[0]
+        self.assertEqual('discard_one', choice.kind)
+        self.assertEqual(1, choice.count)
+        self.assertEqual('hand', choice.zone)
+        self.assertEqual('$actor', choice.predicate['owner'])
+        source = SimpleNamespace(zone='battlefield', tapped=False, object_id='typed-blood-source',
+            controller='A', entered_turn=0)
+        host = SimpleNamespace(state=SimpleNamespace(players={'A': SimpleNamespace()},
+            stack=[], active_player='A', turn_number=1),
+            _effective_card_data=lambda card: {'type_line': 'Token Artifact — Blood'},
+            _type_parts=lambda text: ({'artifact'}, {'blood'}, set()),
+            _ability_choice_payable=lambda *args: True,
+            _may_activate_creature_as_haste=lambda *args: False,
+            _crew_threshold=lambda *args: None, _legendary_creatures_controlled=lambda seat: 0,
+            _cost_is_affordable=lambda *args, **kwargs: True)
+        with patch('quorune.semantic_runtime.static_cast_rules.split_second_is_active', return_value=False), \
+                patch('quorune.rules.activation.availability.current_activation_prohibitions', return_value=()), \
+                patch('quorune.rules.activation.availability.activation_condition_status', return_value=('payable', None)):
+            self.assertEqual(('payable', None), activation_availability(host, 'A', source, ability))
+            host._ability_choice_payable = lambda *args: False
+            self.assertEqual(('unpayable', 'mandatory_cost_object_unavailable'),
+                activation_availability(host, 'A', source, ability))
+            host._ability_choice_payable = lambda *args: True
+            source.tapped = True
+            self.assertEqual(('unavailable', 'source_tapped'), activation_availability(host, 'A', source, ability))
+            source.tapped = False
+            host._cost_is_affordable = lambda *args, **kwargs: False
+            self.assertEqual(('unpayable', 'insufficient_mana'),
+                activation_availability(host, 'A', source, ability))
+
+    def test_fixed_blood_definition_requires_complete_activation_profile(self):
+        registry = load_default_capability_registry()
+        for text, kind in (
+            ('Create a Blood token.', 'spell_ability'),
+            ('When this creature enters, create two Blood tokens.', 'triggered_ability'),
+        ):
+            with self.subTest(text=text):
+                ir = compile_oracle_card(token_record('Predefined Token Compiler Fixture', text, 3640501,
+                    type_line='Creature — Human' if kind == 'triggered_ability' else 'Sorcery'),
+                    capability_registry=registry, capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(kind, node.kind)
+                self.assertEqual('Token Artifact — Blood', node.effects[0]['characteristics']['type_line'])
+                self.assertEqual('one_tap_discard_sac_draw_card_v1',
+                    node.effects[0]['characteristics']['activated_ability_profile'])
+                self.assertIn('token.ability.fixed_blood', node.capability_dependencies)
+
+    def test_blood_profile_definition_and_dependency_mutants_fail_closed(self):
+        registry = load_default_capability_registry()
+        record = token_record('Predefined Token Compiler Fixture', 'Create a Blood token.', 3640502)
+        from quorune.compiler import token_templates
+        with patch.dict(token_templates._PREDEFINED_CREATION_DEFINITIONS, {'blood token': {
+            'name': 'Blood', 'type_line': 'Token Artifact — Blood',
+            'display_text': 'Draw a card.', 'activated_ability_profile': 'two_sac_draw_card_v1',
+        }}):
+            changed = token_templates.fixed_token_creation_effect_template(record.oracle_text)
+        from quorune.rules.token_creation_capability_shapes import fixed_token_creation_node_capabilities
+        self.assertFalse(fixed_token_creation_node_capabilities(
+            effects=(changed.effect,), target_schema=None, mechanic_ids=changed.mechanics))
+        with patch.object(token_templates, '_FIXED_PREDEFINED_TOKEN') as parser:
+            parser.fullmatch.return_value = None
+            self.assertNotEqual('exact', compile_oracle_card(record, capability_registry=registry,
+                capability_profile='commander_review').status)
+        raw = json.loads(CAPABILITY_REGISTRY_PATH.read_text(encoding='utf-8'))
+        cap = next(row for row in raw['capabilities'] if row['id'] == 'token.ability.fixed_blood')
+        cap.update(status='blocked', blockers=['withdrawn Blood activation producer'])
+        withdrawn = CapabilityRegistry(raw)
+        withdrawn.mark_evidence_verified('0' * 64)
+        self.assertNotEqual('exact', compile_oracle_card(record, capability_registry=withdrawn,
+            capability_profile='commander_review').status)
+
+
+class AdditionalPredefinedTokenCompilerTests(unittest.TestCase):
+    def test_mutagen_trigger_beside_unsupported_squad_replacement_fails_closed_at_admission(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.compiler.unlock_frontier import analyze_card_unlocks
+
+        record = token_record('Generic Mutagen Replacement Boundary',
+            'Squad {3} (As an additional cost to cast this spell, you may pay {3} any number of times. '
+            'When this creature enters, create that many tokens that are copies of it.)\n'
+            'Deathtouch\nWhenever this creature deals combat damage to a player, create a Mutagen token.',
+            365209001, type_line='Artifact Creature — Robot')
+        registry = load_default_capability_registry()
+        ir = compile_oracle_card(record, capability_registry=registry, capability_profile='commander_review')
+        self.assertTrue(any(node.exact and 'token.ability.fixed_mutagen' in node.capability_dependencies
+                            for face in ir.faces for node in face.nodes))
+        # This boundary needs only printed rules; an empty fixture database
+        # supplies the ordinary rulings interface without an incidental card.
+        from quorune.carddb import CardDatabase
+        from scripts.build_test_database import build_fixture_database
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'mutagen-admission.sqlite3'
+            fixture = Path(directory) / 'empty.json'
+            fixture.write_text('{"schema_version":1,"cards":[],"rulings":[]}', encoding='utf-8')
+            build_fixture_database([fixture], path)
+            with CardDatabase(path) as database:
+                program = compile_best_available_card_program(database, record,
+                    semantic_registry=SemanticRegistry(), capability_registry=registry,
+                    capability_profile='commander_review')
+        frontier = analyze_card_unlocks(ir, program=program, program_error=None,
+            capabilities=registry, profile='commander_review')
+        self.assertEqual('residual', frontier['card_program_status'])
+        self.assertTrue({'replacement:replacement-applicability',
+                         'replacement:self-replacement-and-prevention-ordering'}
+                        <= set(frontier['minimum_known_blocker_set']))
+        binding = bind_card_program_runtime(program, capability_registry=registry, profile='commander_review')
+        self.assertFalse(binding['strict_capability_ready'])
+        self.assertFalse(binding['compatible_ready'])
+        self.assertIn('trust_basis:unresolved', binding['blockers'])
+
+    def test_lander_and_mutagen_profiles_results_and_dependency_mutants_fail_closed(self):
+        from quorune.standard_token_abilities import standard_token_characteristics
+        from quorune.abilities import ActivatedAbility
+        from quorune.rules.activation.resolution import builtin_activation_resolution
+        from quorune.rules.token_creation_capability_shapes import fixed_token_creation_node_capabilities
+        for name, profile, mana, result in (
+            ('Lander', 'two_tap_sac_basic_land_search_v1', 2, 'search'),
+            ('Mutagen', 'one_tap_sac_target_counter_v1', 1, 'place_counters'),
+        ):
+            with self.subTest(name=name):
+                ability = ActivatedAbility.from_dict(standard_token_characteristics({
+                    'activated_ability_profile': profile})['activated_abilities'][0])
+                self.assertEqual(mana, sum(ability.mana.values()))
+                self.assertTrue(ability.tap_source)
+                self.assertTrue(ability.sacrifice_source)
+                self.assertEqual(name == 'Mutagen', ability.sorcery_speed)
+                resolution = builtin_activation_resolution(ability.builtin_semantic_key, 'B')
+                self.assertEqual(result, resolution.effects[0]['op'])
+                if name == 'Lander':
+                    self.assertEqual(('basic',), resolution.effects[0]['selector']['supertypes'])
+                    self.assertTrue(resolution.effects[0]['shuffle_after'])
+                    self.assertTrue(resolution.effects[0]['enters_tapped_override'])
+                else:
+                    self.assertEqual('$target.0', resolution.effects[0]['card'])
+                    self.assertEqual('+1/+1', resolution.effects[0]['counter'])
+                    self.assertEqual(1, resolution.effects[0]['amount'])
+                    self.assertEqual(('creature',), ability.target_schema['types_any'])
+                template = fixed_token_creation_effect_template(f'Create a {name} token.')
+                mutant = copy.deepcopy(template.effect)
+                mutant['characteristics']['activated_ability_profile'] = 'two_sac_draw_card_v1'
+                self.assertFalse(fixed_token_creation_node_capabilities(effects=(mutant,), target_schema=None,
+                    mechanic_ids=template.mechanics))
+                raw = json.loads(CAPABILITY_REGISTRY_PATH.read_text(encoding='utf-8'))
+                cap = next(row for row in raw['capabilities'] if row['id'] == 'token.ability.fixed_'+name.lower())
+                cap.update(status='blocked', blockers=['withdrawn predefined activation profile'])
+                withdrawn = CapabilityRegistry(raw)
+                withdrawn.mark_evidence_verified('0' * 64)
+                card = token_record('Predefined Token Compiler Fixture', f'Create a {name} token.', 3640602)
+                self.assertNotEqual('exact', compile_oracle_card(card, capability_registry=withdrawn,
+                    capability_profile='commander_review').status)
+        for key in ('builtin:fixed-basic-land-search:2:tapped', 'builtin:fixed-target-counter:+1/+1:2'):
+            self.assertIsNone(builtin_activation_resolution(key, 'A'))
+
+    def test_lander_and_mutagen_definitions_require_complete_specific_profiles(self):
+        registry = load_default_capability_registry()
+        for name, profile in (
+            ('Lander', 'two_tap_sac_basic_land_search_v1'),
+            ('Mutagen', 'one_tap_sac_target_counter_v1'),
+        ):
+            with self.subTest(name=name):
+                card = token_record('Predefined Token Compiler Fixture', f'Create a {name} token.', 3640601)
+                ir = compile_oracle_card(card, capability_registry=registry, capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                effect = ir.faces[0].nodes[0].effects[0]
+                self.assertEqual('Token Artifact — '+name, effect['characteristics']['type_line'])
+                self.assertEqual(profile, effect['characteristics']['activated_ability_profile'])
+                self.assertIn('token.ability.fixed_'+name.lower(), ir.faces[0].nodes[0].capability_dependencies)
+
+
 class FixedTokenCreationCompilerTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -201,10 +390,21 @@ class FixedTokenCreationCompilerTests(unittest.TestCase):
             capability_registry=self.capabilities, capability_profile="commander_review")
         self.assertEqual("exact", promoted.status, promoted.material_residuals)
         self.assertIn("token.creation.fixed_copy", promoted.faces[0].nodes[0].capability_dependencies)
+        role_text = 'Create a Wicked Role token attached to target creature you control.'
+        self.assertIsNone(fixed_token_creation_effect_template(role_text))
+        role = compile_oracle_card(token_record('Generic Role Integration', role_text, 365211001),
+            capability_registry=self.capabilities, capability_profile='commander_review')
+        self.assertEqual('exact', role.status, role.material_residuals)
+        outer = next(node for node in role.faces[0].nodes if node.kind == 'spell_ability')
+        self.assertEqual('create_role_token', outer.effects[0]['op'])
+        self.assertEqual('Wicked', outer.effects[0]['name'])
+        self.assertEqual('$target.0', outer.effects[0]['aura_target_ref'])
+        self.assertEqual('you', outer.target_schema['controller_relation'])
+        self.assertIn('token.creation.predefined_role', outer.capability_dependencies)
         unsupported = (
             "Create X 1/1 green Saproling creature tokens.",
             "Create a token that's a copy of the chosen creature you control.",
-            "Create a Wicked Role token attached to target creature you control.",
+            "Create an Unrepresented Role token attached to target creature you control.",
             "Create two 1/1 white Soldier creature tokens that are tapped and attacking.",
             "Create a 1/1 blue and red Otter creature token with prowess.",
             "Create a 3/3 colorless Golem artifact artifact creature token.",

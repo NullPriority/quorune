@@ -129,3 +129,5 @@ deployment modes, or architecture review thresholds.
 - [ADR 0112 — bounded target characteristics](0112-bounded-target-characteristics.md)
 - [ADR 0113 — typed Extort and simultaneous life-loss batches](0113-typed-extort-and-life-loss-batches.md)
 - [ADR 0114 — player speed and Max Speed applicability](0114-player-speed-and-max-speed-applicability.md)
+- [ADR 0115 — typed Manifest entry and turn-up](0115-typed-manifest-entry-and-turn-up.md)
+- [ADR 0116 — typed fixed energy payments](0116-typed-fixed-energy-payments.md)

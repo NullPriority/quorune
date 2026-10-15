@@ -9,6 +9,7 @@ from .characteristic_fragments import (
     CharacteristicQuantitySpec,
 )
 from .object_predicate import ObjectQueryError, ObjectQuerySpec
+from .live_battlefield_quantity_model import LiveBattlefieldQuantitySpec, LIVE_BATTLEFIELD_QUANTITY_KIND
 
 
 PUBLIC_QUERY_AMOUNT_KIND = "public_query_effect_amount"
@@ -53,7 +54,9 @@ def _query_is_layer_five_closed(query: ObjectQuerySpec) -> bool:
     return True
 
 
-def _quantity_is_public_amount_closed(quantity: CharacteristicQuantitySpec) -> bool:
+def _quantity_is_public_amount_closed(quantity: CharacteristicQuantitySpec | LiveBattlefieldQuantitySpec) -> bool:
+    if isinstance(quantity, LiveBattlefieldQuantitySpec):
+        return True
     if quantity.scope is CharacteristicQuantityScope.CONTROLLER_OPPONENT_COUNT:
         return True  # The versioned producer codec excludes object/hidden fields.
     if quantity.schema_version == 3:
@@ -67,7 +70,7 @@ def _quantity_is_public_amount_closed(quantity: CharacteristicQuantitySpec) -> b
 class PublicQueryAmountSpec:
     """One signed coefficient over a current public object-query count."""
 
-    quantity: CharacteristicQuantitySpec
+    quantity: CharacteristicQuantitySpec | LiveBattlefieldQuantitySpec
     coefficient: int = 1
     schema_version: int = 1
     binding_id: str | None = None
@@ -89,7 +92,7 @@ class PublicQueryAmountSpec:
             )
         if self.schema_version == 2 and self.coefficient not in {-1, 1}:
             raise PublicQueryAmountError("Declared result coefficients are exactly one or minus one")
-        if not isinstance(self.quantity, CharacteristicQuantitySpec):
+        if not isinstance(self.quantity, (CharacteristicQuantitySpec, LiveBattlefieldQuantitySpec)):
             raise PublicQueryAmountError(
                 "Public query effect amount requires a typed quantity"
             )
@@ -128,7 +131,10 @@ class PublicQueryAmountSpec:
                 "Public query effect amount kind is unsupported"
             )
         try:
-            quantity = CharacteristicQuantitySpec.from_dict(value["quantity"])
+            raw = value['quantity']
+            quantity = (LiveBattlefieldQuantitySpec.from_dict(raw)
+                if isinstance(raw, Mapping) and raw.get('kind') == LIVE_BATTLEFIELD_QUANTITY_KIND
+                else CharacteristicQuantitySpec.from_dict(raw))
         except (CharacteristicFragmentError, ObjectQueryError, TypeError, ValueError) as exc:
             raise PublicQueryAmountError(str(exc)) from exc
         return cls(

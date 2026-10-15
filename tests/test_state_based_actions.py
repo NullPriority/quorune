@@ -50,6 +50,38 @@ from quorune.saga_lifecycle import (
 
 
 class StateBasedActionPrimitiveTests(unittest.TestCase):
+    def test_role_rule_keeps_latest_per_controller_and_attachment(self):
+        from dataclasses import asdict
+        # Constructed public facts isolate CR 303.7a/704.5z; no token/card
+        # admission or end-to-end creation is inferred from this diagnostic.
+        def role(oid, controller, target, timestamp, *, phased=False):
+            fields = asdict(PermanentSnapshot(object_id=oid,
+                card_types=frozenset({'enchantment'}), subtypes=frozenset({'aura', 'role'}),
+                attached_to=target, attachment_legal=True, phased_out=phased))
+            fields.update(controller=controller, timestamp=timestamp)
+            return PermanentSnapshot(**fields)
+        facts = (
+            role('old-a', 'A', 'creature-one', 1),
+            role('new-a', 'A', 'creature-one', 4),
+            role('foreign-b', 'B', 'creature-one', 2),
+            role('other-target-a', 'A', 'creature-two', 3),
+            role('phased-newer-a', 'A', 'creature-one', 5, phased=True),
+        )
+        for ordered in (facts, tuple(reversed(facts))):
+            self.assertEqual(('old-a',), evaluate_permanent_state_based_actions(ordered).put_in_graveyard)
+
+    def test_role_rule_requires_complete_controller_and_ordered_timestamp_facts(self):
+        def role(oid, controller='A', timestamp=1):
+            return PermanentSnapshot(object_id=oid, card_types=frozenset({'enchantment'}),
+                subtypes=frozenset({'aura', 'role'}), attached_to='creature', attachment_legal=True,
+                controller=controller, timestamp=timestamp)
+        for value in (role('missing-controller', controller=None), role('missing-time', timestamp=None),
+                      role('bool-time', timestamp=True), role('negative-time', timestamp=-1)):
+            with self.assertRaisesRegex(ValueError, 'controller and ordered timestamp'):
+                evaluate_permanent_state_based_actions((value,))
+        with self.assertRaisesRegex(ValueError, 'explicit ordering'):
+            evaluate_permanent_state_based_actions((role('one'), role('two')))
+
     def test_contract_is_pinned_to_the_current_rules_snapshot(self):
         root = Path(__file__).resolve().parents[1]
         manifest = json.loads(

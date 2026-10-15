@@ -1008,6 +1008,7 @@ def _commit_token_specs(
     creation_timestamp: int,
     prepared_counters: PreparedCounterPlacements,
     prepared_entries: Mapping[str, PreparedZoneChange] | None = None,
+    ordered_role_timestamps: bool = False,
 ) -> tuple[list[str], list[dict[str, Any]]]:
     if plans:
         allocated_timestamp = host._next_zone_timestamp()
@@ -1015,6 +1016,10 @@ def _commit_token_specs(
             raise TokenCreationError(
                 "Prospective token timestamp changed before commit"
             )
+        if ordered_role_timestamps:
+            for expected in range(creation_timestamp + 1, creation_timestamp + len(plans)):
+                if host._next_zone_timestamp() != expected:
+                    raise TokenCreationError('Ordered Role timestamps changed before commit')
     created: list[str] = []
     applied_components: list[dict[str, Any]] = []
     for plan in plans:
@@ -1046,7 +1051,8 @@ def _commit_token_specs(
                     target_ref=plan.aura_target_ref,
                     resolving_as_spell=False,
                 )
-                commit_aura_entry_attachment(host, token, aura_plan)
+                commit_aura_entry_attachment(host, token, aura_plan,
+                    source_timestamp=plan.zone_timestamp if ordered_role_timestamps else None)
             except AuraRuleError as exc:
                 raise TokenCreationError(str(exc)) from exc
     try:
@@ -1230,6 +1236,7 @@ def _commit_resolved_token_specs(
     base_name: str,
     base_quantity: int,
     reason: str,
+    role_timestamp_order: Sequence[int] | None = None,
 ) -> list[str]:
     resolved_specs = _preflight_aura_token_specs(
         host,
@@ -1245,6 +1252,9 @@ def _commit_resolved_token_specs(
         resolved_specs,
         creation_timestamp=creation_timestamp,
     )
+    if role_timestamp_order is not None:
+        from .role_token_creation import ordered_role_plans
+        plans = ordered_role_plans(plans, role_timestamp_order, creation_timestamp)
     try:
         plans, prepared_counters, prepared_entries = _prepare_token_entry_counters(
             host, controller, plans, resolved.remaining_selections,
@@ -1258,6 +1268,7 @@ def _commit_resolved_token_specs(
         creation_timestamp=creation_timestamp,
         prepared_counters=prepared_counters,
         prepared_entries=prepared_entries,
+        ordered_role_timestamps=role_timestamp_order is not None,
     )
     from .token_copy_runtime import finish_copy_aftercare
     _record_and_dispatch_token_creation(

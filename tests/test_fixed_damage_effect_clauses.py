@@ -713,8 +713,14 @@ class FixedDamageEffectCompilerTests(unittest.TestCase):
         effect_programs = [
             program
             for program in registry.programs()
-            if program.effects
+            if program.effects and not str(program.ability_id).startswith('trigger:')
         ]
+        # Only effect promotion is enabled here. A newly compiled whole-card
+        # trigger remains provisional until the separate trigger path is enabled.
+        trigger_programs = [program for program in registry.programs()
+            if str(program.ability_id).startswith('trigger:')]
+        self.assertEqual(1, len(trigger_programs))
+        self.assertEqual('provisional', trigger_programs[0].trust_level)
         self.assertEqual(
             3,
             result["exact_fixed_damage_programs_promoted"],

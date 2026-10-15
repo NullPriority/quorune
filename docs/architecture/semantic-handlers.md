@@ -60,6 +60,10 @@ and source-scalar result amounts. Each instruction reads its quantity at its
 printed resolution position: an earlier draw, counter placement, or token
 creation affects a later count. A declaration retains its own binding and
 continuation cache; the program never evaluates all quantities in advance.
+Explicit live battlefield quantities use the same applied-instruction boundary
+for current combat state and currently applicable keywords. Their independent
+producer capability and closed codec keep these reads separate from static
+layer-5 quantities. Mana production calls the same read-only count owner.
 Pending replacement choices resume at the same cursor without repeating prior
 mutations. Linked-result, conditional, ambiguous shared subjects, and multiple
 independent target groups retain their unsupported boundaries.
@@ -196,7 +200,11 @@ instructions still require their target, and offers and commands share the
 same typed target schema.
 
 The existing optional-payment choice also accepts a closed v2 fixed-cost
-descriptor. It uses the ordinary private/public object choice and resource
+descriptor. Fixed positive energy payments read the locked actor's current
+energy, then commit exactly that cost through the canonical counter transaction
+before continuing the represented result. Decline retains energy; insufficient
+energy rejects atomically. Counter-placement replacements do not apply to this
+cost. The descriptor uses the ordinary private/public object choice and resource
 affordability snapshot, pins selected zone incarnations, and returns only
 canonical full-payment intents before prepending independently represented
 consequences. A redirected discard or sacrifice still pays the chosen cost;

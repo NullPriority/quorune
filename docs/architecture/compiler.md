@@ -9,6 +9,25 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Public-quantity mana keeps its existing typed source-excluding count producer
+before consulting the newer live resolution count fallback. Existing optional
+source counters on admitted sacrifice and discard subscriptions keep the
+ordinary put-or-decline choice; that composition does not admit optional bodies
+for independently unclosed public-event families.
+
+Fixed positive Rampage values lower to typed combat-trigger fragments, preserving
+each printed instance. The existing block-transition and continuous-effect
+owners execute the trigger; variable values and unrepresented sibling abilities
+remain residual. The bonus samples current blockers at resolution.
+
+Source-damage death subscriptions combine a normalized creature death with the
+existing committed current-turn damage journal. The condition matches both the
+damage source's logical incarnation and the departing creature's sealed prior
+incarnation. Repeated damage still creates one occurrence for that death;
+another source, a returned object, zero damage, or an unavailable journal cannot
+substitute. Existing source counter and optional draw owners execute the result,
+including ordinary death look-back and principal-correct replay.
+
 Intrinsic Exploit lowers to one entry trigger with an optional creature
 sacrifice. The separately printed “When this creature exploits a creature”
 ability subscribes to the committed source-incarnation occurrence and composes
@@ -452,7 +471,10 @@ graveyard-exile clause into one interchangeable public target set. The grammar
 accepts exact counts from two through six, one-or-two, and up-to one through
 six. Battlefield returns reuse every closed direct-permanent predicate;
 own-graveyard returns reuse fixed card types, type intersections and unions,
-subtypes, supertypes, colors, and color cardinality. Qualified permanent-card
+subtypes, supertypes, colors, color cardinality, and fixed mana-value upper
+bounds from zero through twenty. The numeric clause preserves the complete
+card predicate and passes through shared offer and resolution target checks.
+Qualified permanent-card
 predicates retain that explicit card domain when the battlefield parser's
 permanent zone would otherwise make it implicit. The owner adds only one
 shared count and resolution-revalidation capability, and supports a single-
@@ -861,6 +883,30 @@ attachment, counter, tapped/combat, chosen, named-card, distinct-value,
 total-power, source-relative, historical, compound, and unsupported timing
 forms remain source-spanned residuals.
 
+Predefined Role definitions compile into separate granted-only static and
+triggered child programs. Enchant and child references are explicit token
+fragments pinned to the creating card program. These child programs cannot
+become abilities of the creator. Closed source and direct-creature attachment clauses enter through the
+replacement-aware Role choice owner. Every Role definition retains its full
+child capability closure. Activated clauses remove only compiler-recognized
+reminder text before the existing typed cost and Role effect gates. Unknown
+or linked creation grammar remains residual.
+
+Manifest instructions are represented as a separate controller-private choice
+family. Normal top-card entry and Manifest dread retain distinct modes. Dread
+selects one private looked-at card, manifests it, and then moves the remainder
+to the graveyard. Manifested normal-layout creatures with current whole-card
+closure may turn face up for an ordinary printed mana cost; represented Morph,
+Megamorph and Disguise alternatives retain separate offers. Complex mana and
+unsupported card-form or face-up behavior remain explicitly unavailable. See
+[ADR 0115](../adr/0115-typed-manifest-entry-and-turn-up.md).
+
+Source power and toughness intervening conditions use one fixed numeric
+battlefield creature predicate. Discovery and resolution both read complete
+effective characteristics; unknown statistics remain unavailable. Static
+conditions using these numeric source facts remain residual until a separate
+layer timing contract is represented.
+
 The same compiler owner separately lowers fixed static characteristic bodies
 gated by one closed public-state condition. A versioned descriptor combines a
 source-controller turn, fixed public hand or graveyard query, life total,
@@ -919,8 +965,13 @@ printed order, and permits at most one shared direct target group. The
 corresponding capability shape revalidates every flattened component through
 the existing effect capability resolvers before admitting the program. The
 older exact two-sentence owner retains precedence for historical semantic
-identity. Independently exact optional atomic components may use the fixed
-optional-effect owner without changing sibling scope. Conditional, random,
+identity. The multi-sentence component owner groups an existing leaf's complete
+selection or other instruction. The bounded grouping passes every flattened
+effect through the same capability resolver before composition. Private library
+choices finish before later siblings; preceding damage does not repeat after
+save/load. Unsupported cross-component references stay residual. Independently
+exact optional atomic components may use the fixed optional-effect owner
+without changing sibling scope. Conditional, random,
 repeated, variable, linked-result, unsupported optional,
 shared-subject, multi-target-group, quoted-boundary, parenthetical-boundary,
 and more-than-four-component programs remain source-spanned residuals.
@@ -951,7 +1002,11 @@ independently exact atomic effect. It preserves the nested effect's target
 schema and mechanic dependencies, adds only the generic controller choice,
 and is shared by spell, normalized-trigger, activated, and bounded sequence
 contexts. Existing specialized optional owners retain precedence and semantic
-identity. Optional costs, permissions, replacements, pay-or-have wording,
+identity. Finite `You may have` clauses with an explicit source or target subject
+and deal, gain, get, or lose normalize to that same independently closed atomic
+body. Targets are chosen before the resolution-time apply-or-decline choice;
+target reentry cannot substitute a new incarnation. Optional costs, permissions,
+replacements, pay wording, unbound event pronouns,
 modal or repeated choices, linked or conditional results, multiple effects in
 one optional body, and bodies without an independently exact typed owner remain
 source-spanned residuals.
@@ -994,6 +1049,12 @@ Fixed optional payment shapes also recognize the target origin retained by a
 typed token-copy recipe. String target placeholders and recipe origins share
 the same independently closed target/copy authority; an unsupported recipe
 still fails its canonical shape validator.
+
+The versioned fixed payment descriptor also represents a positive printed
+energy cost before independently closed effects. Event-aware composition
+retains the source incarnation inside its paid result and preserves targets
+chosen at trigger placement. Variable or repeated energy, combined resource
+prices, reflexive triggers, and unrepresented result leaves remain residual.
 
 `compiler/power_up_templates.py` specializes the parser's explicit Power-up
 marker into a typed price descriptor and once-only activation limit. Both the
@@ -1766,7 +1827,15 @@ with up to three colors, optional Artifact and Enchantment card types, a
 proper name or Legendary supertype, and capability-backed keywords. Changeling
 and the exact can't-block or can't-be-blocked token sentences lower to the
 shared typed characteristic and declaration fragments rather than executable
-display text. The same owner lowers canonical fixed Investigate, fixed
+display text. A predefined Blood definition additionally requires
+`token.ability.fixed_blood`: its explicit activation profile retains all four
+costs and delegates owned-hand selection, source departure and private draw to
+existing generic owners. The token's name or display text does not select its
+runtime ability. Lander and Mutagen have separate predefined-profile capabilities.
+Lander preserves a private basic-land search, tapped entry and mandatory shuffle,
+including legal failure to find. Mutagen retains sorcery timing and one current
+creature target for its fixed counter. Both pay their complete source costs
+before an independent queued result. The same owner lowers canonical fixed Investigate, fixed
 Afterlife through permanent-graveyard LKI, one current-target copy token, and
 one source-independent next-end-step creation. `compiler/token_copy_templates.py`
 adds fixed copy recipes referencing the source, one qualified public permanent
@@ -2123,7 +2192,14 @@ effects are added. Bare creature subtypes constrain the subtype independently
 of card type, so matching Kindred permanents and cards participate in their
 represented public-zone counts. Explicit Creature card-type predicates retain
 their separate type constraint. Represented type and color changes feed the count without
-later-layer recursion. Current compilation uses the source's current controller
+later-layer recursion. Compilation reuses the shared fixed battlefield grammar when the earlier count grammar
+does not match. Subtype unions count an object once; explicit subtype exclusions
+remain independent of the creature type constraint. Named counter and modified
+state predicates use the existing static quantity form. Attachment facts retain
+the enclosing evaluation's ability-applicability boundary, include only current
+phased-in attachments, and make an Aura controller-relative for modified state.
+Keyword and numeric-characteristic predicates remain outside static counts.
+Current compilation uses the source's current controller
 for “your” zones. Fixed public battlefield and graveyard thresholds accept
 prefix or suffix self wording and may add only power/toughness, only supported
 keywords, or both through that same descriptor. Inverted existence wording,
@@ -2135,6 +2211,18 @@ replay-readable only. See
 Required and excluded keyword predicates are both outside this layer-5 quantity
 boundary. Typed descriptor decoding rejects them before counting, including for
 a known-empty collection; they cannot silently produce a zero result.
+
+Resolution and mana instructions may instead carry an explicit
+`LiveBattlefieldQuantitySpec` through the existing amount codec. The compiler
+reuses the fixed public battlefield query grammar for current attacking or
+blocking objects, current keywords, and source exclusion. The read-only count
+uses current characteristics when that instruction applies and retains its
+locked controller; it does not widen static characteristic quantities.
+Attachment-state, numeric feedback, hidden identities, and unsupported query
+forms remain residuals. The live count has its own required producer capability.
+Counted token instructions retain supported trailing keyword abilities as part
+of the complete fixed token definition before lowering the separate quantity.
+The existing token compiler still rejects unrepresented abilities and definitions.
 
 `compiler/declared_effect_amounts.py` binds ordinary announced spell-cost X or
 one complete public count definition to numeric result slots in existing typed
@@ -2288,6 +2376,11 @@ Ordinary program registration validates the same scalar projection and the
 unchanged fixed effect and target shape before promoting a spell or activation.
 It requires the quantity capability and the full original dependency closure;
 a scalar descriptor alone cannot grant trust.
+Source attacks, blocks, and becomes-blocked results may use a source pronoun
+with a complete fixed keyword/modifier body or an independently closed public
+characteristic scalar. The child result retains its original source span and
+full capability closure; target, created-token, and event-object pronouns do
+not become source references.
 Source-self results lower through the existing source-characteristic operation
 and logical-object-aware source reference. A departed or re-entered source
 cannot receive the old ability's modifier. A valid quantity resolving to zero
@@ -2351,6 +2444,12 @@ one-or-more attack, combat-damage, token-entry, and graveyard-departure
 batches. These predicates consume only the existing attack, damage, Cycling,
 and cause-preserving zone occurrences. First-time, once-per-turn, aggregate
 sacrifice, source-token damage, chosen and modified forms remain residual.
+Singular source-qualified damage subjects reuse the sealed type, subtype union,
+supertype, and color predicates of the batch owner. Each qualifying source and
+player recipient yields its own trigger; the one-or-more descriptor alone
+coalesces that committed batch. Both retain combat and opponent restrictions
+and current observer ability checks. Unsupported source state, token, chosen,
+and ability-dependent qualifiers remain residual.
 Repeatable sacrifice and discard subscriptions also compose with independently
 exact counter-placement bodies. "Another" excludes the current source reference;
 sacrifice predicates consume pre-event custody and characteristics, while typed
@@ -2358,6 +2457,35 @@ discard retains its cause after a visible destination replacement. Noncreature,
 nonland discard requires both type exclusions. The existing current ability,
 APNAP, source-incarnation and counter transaction owners execute the result;
 no aggregate or per-turn limiter is inferred.
+
+An already closed public subscription also composes with one mandatory fixed
+positive source-counter instruction through
+`counter.producer.fixed_public_source_event`. The result names the observer,
+independently from the event object, and pins its battlefield incarnation.
+Printed event/controller predicates, one-or-more aggregation and current-ability
+discovery remain unchanged. A queued result survives later ability removal;
+it skips a source that departed or reentered. Optional, variable, linked,
+multi-effect and ambiguous event-object counter results retain their separate
+admission boundaries.
+
+`counter.producer.fixed_public_target_event` separately composes one mandatory
+positive direct-target counter leaf with those closed public subscriptions.
+The leaf retains its complete printed target schema, authentic controller
+selection and ordinary target-incarnation revalidation. Source disappearance
+does not cancel a legal independent target result; target blink or reentry
+cannot substitute a new object. Optional, variable, multitarget and compound
+results remain outside this producer.
+
+`trigger.event.normalized_anywhere_graveyard` separately admits a physical card
+entering own, an opponent's, or any graveyard from anywhere, optionally qualified
+by one fixed public card type or color. The subscription consumes
+`card.enter_graveyard` with destination characteristics and current incarnation;
+it discovers only observers present after the committed transition. Existing
+independently closed results, including optional draw, retain their own grammar
+and capability checks. Tokens, replacement destinations outside the graveyard,
+source-self shuffle, chosen qualifiers and one-or-more batch grammar are outside
+this subscription. Death and battlefield-departure predicates continue to use
+their distinct last-known-information events.
 
 `compiler/qualified_zone_event_bindings.py` adds closed single-object public
 entry, death, graveyard, and leave subjects through that same event-effect

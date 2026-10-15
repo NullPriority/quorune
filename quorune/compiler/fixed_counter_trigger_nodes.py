@@ -41,7 +41,7 @@ from .public_state_queries import fixed_public_state_condition
 from .qualified_zone_event_bindings import QUALIFIED_ZONE_VARIANT, qualified_public_zone_event_binding_spec, public_binding_from_spec
 from .aggregated_zone_event_bindings import AGGREGATED_ZONE_VARIANT, aggregated_public_zone_event_binding_spec
 from .counter_placement_event_bindings import COUNTER_EVENT_VARIANTS
-from .fixed_public_action_event_bindings import QUALIFIED_DAMAGE_BATCH_VARIANT
+from .fixed_public_action_event_bindings import QUALIFIED_DAMAGE_BATCH_VARIANT, QUALIFIED_DAMAGE_SINGULAR_VARIANT
 from .tap_state_event_bindings import (
     TAP_STATE_EVENT_VARIANT, TAP_STATE_EVENT_VARIANTS,
     public_trigger_binding_spec, tap_state_bound_result,
@@ -133,7 +133,7 @@ _ABILITY_WORD_PUBLIC_EVENT_VARIANTS = frozenset(
 )
 PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
-        QUALIFIED_DAMAGE_BATCH_VARIANT,
+        QUALIFIED_DAMAGE_BATCH_VARIANT, QUALIFIED_DAMAGE_SINGULAR_VARIANT,
         TAP_STATE_EVENT_VARIANT,
         "source_" + TAP_STATE_EVENT_VARIANT,
         "controller_attack_batch",
@@ -209,24 +209,7 @@ MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "source_attacks_or_blocks_with_controlled_dinosaur",
     }
 )
-PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
-    {
-        "another_controlled_colorless_creature_enters",
-        "another_controlled_creature_power_at_most",
-        "controlled_enchantment_graveyard",
-        "controller_cycles_another",
-        "enchanted_creature_damage_an_opponent",
-        "enchanted_creature_dies",
-        "equipped_creature_attacks",
-        "equipped_creature_combat_damage_a_player",
-        "equipped_creature_dies",
-        "one_or_more_controller_creature_cards_leave_graveyard",
-        "source_or_controlled_creature_or_artifact_dies",
-        "this_creature_becomes_blocked_by_creature",
-        "the end step",
-        "each combat",
-    }
-)
+from .public_event_closure_variants import PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
 _ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
         *PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
@@ -236,7 +219,7 @@ _ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     }
 )
 _NONCOUNTER_PUBLIC_EVENT_VARIANTS = (_ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
-    - TAP_STATE_EVENT_VARIANTS - COUNTER_EVENT_VARIANTS - {QUALIFIED_DAMAGE_BATCH_VARIANT})
+    - TAP_STATE_EVENT_VARIANTS - COUNTER_EVENT_VARIANTS - {QUALIFIED_DAMAGE_BATCH_VARIANT, QUALIFIED_DAMAGE_SINGULAR_VARIANT})
 _ONE_OR_MORE_PUBLIC_EVENT_VARIANTS = frozenset(
     {
         QUALIFIED_DAMAGE_BATCH_VARIANT,
@@ -352,6 +335,7 @@ class FixedCounterTriggerEvent(str, Enum):
     CARD_CYCLED = "card.cycled"
     SOURCE_CYCLED = "card.cycled.self"
     CARD_LEAVE_GRAVEYARD = "card.leave_graveyard"
+    CARD_ENTER_GRAVEYARD = 'card.enter_graveyard'
     CARD_DISCARDED = "card.discarded"
     TARGET_ANNOUNCED = 'object.became_target'
     PERMANENT_LEAVE = "permanent.leave"
@@ -1212,9 +1196,7 @@ def _event_runtime_coverage(
     if current_ability or binding.variant in {QUALIFIED_ZONE_VARIANT, AGGREGATED_ZONE_VARIANT} or binding.variant in {
         'your first main phase','your precombat main phase','your second main phase','your postcombat main phase',
         *_ABILITY_WORD_PUBLIC_EVENT_VARIANTS,
-        *PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
-        *PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS,
-        *MULTI_EVENT_BINDING_CLOSURE_VARIANTS,
+        *(_ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS - COUNTER_EVENT_VARIANTS),
         "class_level_changed",
     }:
         values.append(CURRENT_ABILITY_FRAGMENT_COVERAGE)
@@ -1233,11 +1215,13 @@ def _event_runtime_coverage(
     return tuple(dict.fromkeys(values))
 
 
-_binding_effect_template = binding_effect_template
+def _binding_effect_template(binding, body, *, card_name, effect_template):
+    return binding_effect_template(binding, body, card_name=card_name,
+        effect_template=effect_template, source_counter_variants=_NONCOUNTER_PUBLIC_EVENT_VARIANTS)
 
 
 def _counter_binding_accepts_result(binding,body_mechanics):
-    return ('fixed-entry-event-object-counter' in body_mechanics
+    return (bool({'fixed-entry-event-object-counter', 'fixed-public-event-source-counter', 'fixed-public-event-target-counter'}.intersection(body_mechanics))
         or binding.variant not in _NONCOUNTER_PUBLIC_EVENT_VARIANTS
         or binding.event in {FixedCounterTriggerEvent.PERMANENT_SACRIFICED,FixedCounterTriggerEvent.CARD_DISCARDED}
         and binding.variant in PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS)
@@ -1289,6 +1273,8 @@ def fixed_counter_event_trigger_node(
     else:
         compiled, requires_current_ability = _binding_effect_template(binding,body,card_name=card_name,effect_template=effect_template)
     template, effects, target_schema, body_mechanics = compiled
+    if optional_match is not None and {'fixed-public-event-source-counter', 'fixed-public-event-target-counter'}.intersection(body_mechanics) and binding.event not in {FixedCounterTriggerEvent.PERMANENT_SACRIFICED, FixedCounterTriggerEvent.CARD_DISCARDED}:
+        return None
     nested_counter_operations = _COUNTER_PLACEMENT_OPERATIONS.intersection(
         _nested_operations(effects)
     )
@@ -1328,6 +1314,10 @@ def fixed_counter_event_trigger_node(
         capability_registry=capability_registry,
         capability_profile=capability_profile,
         explicit_capabilities=(
+            *(('counter.producer.fixed_public_source_event',)
+              if 'fixed-public-event-source-counter' in body_mechanics else ()),
+            *(('counter.producer.fixed_public_target_event',)
+              if 'fixed-public-event-target-counter' in body_mechanics else ()),
             *binding.explicit_capabilities,
             *(
                 (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, *(('condition.creature.fixed_numeric_exists',) if binding.public_state_condition.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS else ()))

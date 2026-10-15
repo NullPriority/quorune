@@ -892,6 +892,7 @@
         "quorune/event_counter_reference.py"
       ],
       "test_modules": [
+        "test_qualified_zone_event_queries",
         "test_scalar_effect_amounts",
         "test_declared_effect_amounts",
         "test_public_query_effect_amounts",
@@ -1343,6 +1344,7 @@
         "test_fixed_impulse_access",
         "test_fixed_mana_abilities",
         "test_fixed_token_creation_effects",
+        "test_fixed_public_state_characteristics",
         "test_fixed_token_production",
         "test_rules_scheduler",
         "test_token_creation_replacements",
@@ -2274,6 +2276,7 @@
         "quorune/rules/resolution_condition_shapes.py"
       ],
       "test_modules": [
+        "test_public_history_condition_closure",
         "test_resolution_public_conditions",
         "test_public_activation_conditions",
         "test_fixed_public_state_characteristics",
@@ -2656,6 +2659,7 @@
         "test_fixed_counter_zone_triggers",
         "test_fixed_effect_clause_sequences",
         "test_fixed_optional_effect_choices",
+        "test_fixed_public_state_characteristics",
         "test_optional_draw_choices"
       ]
     },
@@ -2933,6 +2937,7 @@
         "tests/test_ability_word_event_triggers.py"
       ],
       "test_modules": [
+        "test_qualified_zone_event_queries",
         "test_ability_word_event_triggers",
         "test_attack_transitions",
         "test_block_transitions",
@@ -3988,6 +3993,188 @@
         "test_fixed_counter_event_triggers",
         "test_card_program_trust",
         "test_game_record_v3"
+      ]
+    },
+    {
+      "id": "predefined-role-token-contract",
+      "patterns": [
+        "quorune/role_token_creation.py",
+        "quorune/semantic_choices/role_tokens.py",
+        "quorune/aura/runtime.py",
+        "quorune/token_creation.py",
+        "quorune/selection/targeting.py",
+        "quorune/compiler/role_token_nodes.py",
+        "quorune/rules/role_token_shapes.py",
+        "quorune/compiler/generated_program_identity.py",
+        "quorune/compiled_ability_fragments.py",
+        "tests/fixtures/predefined-role-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_token_creation_effects",
+        "test_fixed_token_production",
+        "test_predefined_roles",
+        "test_token_entry_boundaries",
+        "test_token_creation_replacements",
+        "test_attached_static_characteristics",
+        "test_source_pronoun_results",
+        "test_public_history_condition_closure",
+        "test_card_program_trust",
+        "test_state_based_actions"
+      ]
+    },
+    {
+      "id": "manifest-entry-and-faceup-contract",
+      "patterns": [
+        "quorune/manifest.py",
+        "quorune/compiler/manifest_templates.py",
+        "quorune/rules/manifest_shapes.py",
+        "quorune/semantic_choices/manifest.py",
+        "quorune/zone_transitions.py",
+        "quorune/zone_transition_model.py",
+        "quorune/zone_object_state.py",
+        "quorune/semantic_runtime/zone_move_intent.py",
+        "quorune/rules/morph_actions.py",
+        "tests/fixtures/manifest-cards.json"
+      ],
+      "test_modules": [
+        "test_split_second_rules",
+        "test_fixed_counter_player_cast_triggers",
+        "test_manifest",
+        "test_morph_rules",
+        "test_zone_object_lifecycle",
+        "test_zone_transitions",
+        "test_semantic_choice_characterization",
+        "test_card_program_trust"
+      ]
+    }
+,
+    {
+      "id": "live-battlefield-resolution-quantity-contract",
+      "patterns": [
+        "quorune/live_battlefield_quantities.py",
+        "quorune/live_battlefield_quantity_model.py",
+        "quorune/compiler/live_battlefield_quantities.py",
+        "quorune/query_effect_amount_model.py",
+        "quorune/semantic_runtime/query_effect_amounts.py",
+        "quorune/public_quantity_mana_model.py",
+        "quorune/public_quantity_mana_runtime.py",
+        "tests/fixtures/live-battlefield-quantity-cards.json"
+      ],
+      "test_modules": [
+        "test_declared_effect_amounts",
+        "test_query_scaled_counters",
+        "test_variable_library_counts",
+        "test_live_battlefield_quantities",
+        "test_public_query_effect_amounts",
+        "test_public_quantity_mana",
+        "test_ordered_quantity_results",
+        "test_card_program_trust"
+      ]
+    }
+,
+    {
+      "id": "fixed-energy-resolution-payment-contract",
+      "patterns": [
+        "quorune/energy_payment.py",
+        "quorune/semantic_runtime/energy_payment.py",
+        "quorune/fixed_effect_payment.py",
+        "quorune/compiler/fixed_effect_payment_templates.py",
+        "quorune/compiler/optional_payment_templates.py",
+        "quorune/semantic_choices/fixed_effect_payment.py",
+        "tests/fixtures/fixed-energy-payment-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_energy_payments",
+        "test_fixed_optional_mana_payment_triggers",
+        "test_card_program_trust"
+      ]
+    }
+,
+    {
+      "id": "shared-static-characteristic-query-contract",
+      "patterns": [
+        "quorune/compiler/shared_characteristic_queries.py",
+        "quorune/compiler/query_characteristic_templates.py",
+        "quorune/dynamic_characteristics.py",
+        "tests/fixtures/shared-characteristic-query-cards.json"
+      ],
+      "test_modules": [
+        "test_declared_effect_amounts",
+        "test_query_scaled_counters",
+        "test_variable_library_counts",
+        "test_shared_characteristic_queries",
+        "test_typed_dynamic_characteristics",
+        "test_public_query_effect_amounts",
+        "test_card_program_trust"
+      ]
+    }
+,
+    {
+      "id": "multisentence-effect-composition-contract",
+      "patterns": [
+        "quorune/compiler/multisentence_effect_components.py",
+        "quorune/compiler/effect_template_composition.py",
+        "tests/fixtures/multisentence-effect-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_impulse_access",
+        "test_multisentence_effect_components",
+        "test_closed_effect_programs",
+        "test_fixed_library_selection",
+        "test_library_selection_remainders",
+        "test_card_program_trust"
+      ]
+    }
+,
+    {
+      "id": "rampage-block-transition-contract",
+      "patterns": [
+        "quorune/rampage.py",
+        "quorune/compiler/rampage_fragments.py",
+        "quorune/semantic_runtime/rampage_fragment.py",
+        "quorune/block_transitions.py",
+        "tests/fixtures/rampage-cards.json"
+      ],
+      "test_modules": [
+        "test_rampage_rules",
+        "test_block_transitions",
+        "test_block_keyword_compiler",
+        "test_block_keyword_triggers",
+        "test_attack_keyword_compiler",
+        "test_card_program_trust"
+      ]
+    }
+,
+    {
+      "id": "source-damage-qualified-death-contract",
+      "patterns": [
+        "quorune/source_damage_death.py",
+        "quorune/compiler/source_damage_death_bindings.py",
+        "quorune/compiler/public_event_closure_variants.py",
+        "tests/fixtures/source-damage-death-cards.json"
+      ],
+      "test_modules": [
+        "test_source_damage_death_triggers",
+        "test_fixed_counter_event_triggers",
+        "test_damage_result_events",
+        "test_fixed_damage_effect_clauses",
+        "test_zone_trigger_events",
+        "test_card_program_trust"
+      ]
+    }
+,
+    {
+      "id": "retained-mana-and-optional-counter-composition",
+      "patterns": [
+        "quorune/compiler/public_quantity_mana.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "tests/fixtures/retained-owner-composition-cards.json"
+      ],
+      "test_modules": [
+        "test_batch_retained_owner_composition",
+        "test_public_quantity_mana",
+        "test_fixed_counter_event_triggers",
+        "test_card_program_trust"
       ]
     }
   ],

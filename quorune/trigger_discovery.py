@@ -375,6 +375,9 @@ def _semantic_condition_actual(
                 or list(names) != sorted(set(names))):
             raise GameRuleError("Counter-qualified zone event requires sealed counter facts")
         return names
+    if field == 'source_dealt_damage_to_dead_incarnation_this_turn':
+        from .source_damage_death import source_damage_death_matches
+        return source_damage_death_matches(host, source, context)
     if field == FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD:
         return _public_state_intervening_actual(
             host,

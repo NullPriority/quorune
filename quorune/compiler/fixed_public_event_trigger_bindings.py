@@ -23,6 +23,36 @@ _PUBLIC_DAMAGE_TRIGGER = re.compile(
     r"deals combat damage to an opponent|deals damage to a player|"
     r"deals damage to an opponent), (?P<body>.+)$",
 )
+
+ANYWHERE_GRAVEYARD_VARIANT = 'public_anywhere_graveyard_card'
+ANYWHERE_GRAVEYARD_CAPABILITY = 'trigger.event.normalized_anywhere_graveyard'
+_ANYWHERE_GRAVEYARD = re.compile(
+    r'^(?:When|Whenever) a(?:n)? (?P<quality>(?:(?:white|blue|black|red|green|colorless|'
+    r'nonland|noncreature|artifact|battle|creature|enchantment|instant|kindred|land|planeswalker|sorcery) )?)'
+    r'card is put into (?P<owner>your|an opponent\'s|a) graveyard from anywhere, (?P<body>.+)$', re.I,
+)
+
+
+def _anywhere_graveyard_spec(material_line):
+    match = _ANYWHERE_GRAVEYARD.fullmatch(material_line)
+    if match is None:
+        return None
+    quality = match['quality'].strip().casefold()
+    conditions = [{'field': 'token', 'op': 'eq', 'value': False}]
+    colors = {'white': 'W', 'blue': 'U', 'black': 'B', 'red': 'R', 'green': 'G'}
+    if quality in colors:
+        conditions.append({'field': 'colors', 'op': 'contains_any', 'value': [colors[quality]]})
+    elif quality == 'colorless':
+        conditions.append({'field': 'colors', 'op': 'eq', 'value': []})
+    elif quality:
+        condition = {'field': 'types', 'op': 'contains_any', 'value': [quality.removeprefix('non')]}
+        conditions.append({'not': condition} if quality.startswith('non') else condition)
+    if match['owner'].casefold() != 'a':
+        conditions.append({'field': 'owner', 'op': 'eq' if match['owner'].casefold() == 'your' else 'ne',
+                           'value': '$source.controller'})
+    return _spec('card.enter_graveyard', ANYWHERE_GRAVEYARD_VARIANT, match['body'],
+        'fixed-counter-public-anywhere-graveyard-trigger-v1', 'trigger-event-normalized-zone-change',
+        condition={'all': conditions}, capabilities=(ANYWHERE_GRAVEYARD_CAPABILITY,))
 _PUBLIC_ATTACK_TRIGGER = re.compile(
     r"^Whenever (?P<subject>this Vehicle|a creature|"
     r"a creature you control|a creature with flying) "
@@ -1068,7 +1098,8 @@ def fixed_public_event_binding_spec(
             'fixed-source-exploit-result-v1','fixed-exploit-result',capabilities=('trigger.keyword.exploit.creature_sacrifice',))
 
     return (
-        _source_any_damage_spec(material_line,card_name=card_name)
+        _anywhere_graveyard_spec(material_line)
+        or _source_any_damage_spec(material_line,card_name=card_name)
         or _class_level_spec(material_line)
         or _public_spell_action_spec(material_line, card_name=card_name)
         or _attachment_event_spec(material_line)

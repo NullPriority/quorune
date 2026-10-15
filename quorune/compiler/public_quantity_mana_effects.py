@@ -3,6 +3,7 @@ from __future__ import annotations
 """Resolution-time fixed-color mana through existing amount expressions."""
 
 from ..characteristic_fragments import CharacteristicQuantitySpec
+from ..live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
 from ..query_effect_amount_model import PublicQueryAmountSpec, PublicQueryAmountError
 from .public_quantity_mana import public_quantity_mana_template
 
@@ -11,7 +12,7 @@ def public_quantity_mana_effect_template(text, *, source_name):
     output = public_quantity_mana_template(text, source_name=source_name)
     if output is None or output.selection != 'fixed' or output.restriction is not None:
         return None
-    if isinstance(output.amount, CharacteristicQuantitySpec):
+    if isinstance(output.amount, (CharacteristicQuantitySpec, LiveBattlefieldQuantitySpec)):
         try:
             amount = PublicQueryAmountSpec(output.amount).to_dict()
         except PublicQueryAmountError:

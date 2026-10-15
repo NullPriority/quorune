@@ -14,7 +14,7 @@ from ..query_effect_amount_model import (
     CastXAmountSpec, PublicQueryAmountError, PublicQueryAmountSpec,
     DECLARED_AMOUNT_CAPABILITY, scope_declared_amount_bindings,
 )
-from .query_characteristic_templates import query_characteristic_value
+from .live_battlefield_quantities import resolution_quantity
 from ..util import mana_cost_to_vector
 
 
@@ -78,7 +78,7 @@ def declared_effect_amount_template(
         # This definition belongs to one instruction, not arbitrary statements.
         if "." in body or len(re.findall(r"\bwhere X\b", normalized, re.I)) != 1:
             return None
-        quantity = query_characteristic_value(definition["quantity"], source_name=source_name)
+        quantity = resolution_quantity(definition['quantity'], source_name=source_name, complete_value=True)
         if quantity is None:
             return None
         try:

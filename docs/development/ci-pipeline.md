@@ -421,6 +421,11 @@ original base-frontier identity remains available. A changed measurement
 contract uses a new registered probe version while retaining the previous
 version for historical receipts. The cohort owner then measures the corrected
 programs against that original frontier instead of reusing the older bound.
+Upgrading an unpublished legacy prediction to generated measurement preserves
+that same transition identity only when its complete semantic receipt matches
+the committed checkpoint and durable main does not contain the transition.
+A mismatched checkpoint or a landed row lacking its measurement identity fails
+closed; the history owner alone replaces the authenticated unpublished row.
 The cloud job publishes and restores this safe owner's content-keyed receipt
 across commits just like the other reusable owners. A generated-output-only
 follow-up therefore reuses the source checkpoint's cohort measurement instead

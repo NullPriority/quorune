@@ -377,6 +377,7 @@
       "input_paths": [],
       "implementation_inputs": [
         "scripts/update_work_selection_cohort_measurements.py",
+        "scripts/harvest_outcome_history.py",
         "scripts/work_selection_cohort_measurements.py",
         "scripts/controller_program_measurement.py",
         "scripts/batched_support_measurement.py",

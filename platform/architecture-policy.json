@@ -116,6 +116,12 @@
     ]
   },
   "protected_rules_modules": [
+    "quorune/source_damage_death.py",
+    "quorune/rampage.py",
+    "quorune/energy_payment.py",
+    "quorune/live_battlefield_quantities.py",
+    "quorune/manifest.py",
+    "quorune/role_token_creation.py",
     "quorune/attached_control.py",
     "quorune/scheduled_player.py",
     "quorune/control_effects.py",
@@ -369,6 +375,10 @@
       ,"quorune/rules/player_speed_state.py": "canonical typed persistent player speed and inherent once-per-own-turn trigger usage owner behind state-based stabilization and committed life transactions"
     },
     "read_only_consumers": {
+      "quorune/source_damage_death.py": "read-only exact source/victim incarnation predicate over typed committed current-turn damage history",
+      "quorune/rampage.py": "read-only sealed block occurrence derivation and current blocker count",
+      "quorune/energy_payment.py": "fixed energy cost coordinator delegates counter mutation to the canonical counter transaction",
+      "quorune/live_battlefield_quantities.py": "typed read-only current public battlefield counts at applied instructions and mana production",
       "quorune/projection.py": "principal-scoped projection",
       "quorune/__init__.py": "public type re-export",
       "quorune/replacement_decisions.py": "replacement continuation validation and stack lookup",

@@ -130,4 +130,11 @@ def fixed_populate_keyword_node(*, node_id: str, line: str, material_line: str, 
         capability_profile=gate.closure.profile, capability_fingerprint=gate.closure.fingerprint)
 
 
-__all__ = ["fixed_afterlife_keyword_node", "fixed_populate_keyword_node"]
+def fixed_token_action_keyword_node(**values):
+    if values['mechanics'] in {('manifest',), ('manifest dread',)}:
+        from .manifest_templates import manifest_keyword_node
+        return manifest_keyword_node(**values)
+    return fixed_populate_keyword_node(**values)
+
+
+__all__ = ["fixed_afterlife_keyword_node", "fixed_populate_keyword_node", "fixed_token_action_keyword_node"]

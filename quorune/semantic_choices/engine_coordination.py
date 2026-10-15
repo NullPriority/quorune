@@ -436,7 +436,10 @@ class SemanticChoiceCoordinationMixin:
     ) -> tuple[FrozenMap, ...]:
         operation = str(effect.get("op") or "")
         common: dict[str, Any]
-        if operation == "choose_attacking_token_destinations":
+        if operation == 'create_role_token':
+            common = {'name': str(effect.get('name') or ''), 'quantity': 1, 'attacking_groups': (),
+                'characteristics': dict(effect.get('characteristics') or {})}
+        elif operation == "choose_attacking_token_destinations":
             quantity = effect.get("quantity")
             if type(quantity) is not int or quantity < 0:
                 return ()

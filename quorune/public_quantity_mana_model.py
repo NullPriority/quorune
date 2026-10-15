@@ -9,6 +9,7 @@ from .scalar_effect_amount_model import ScalarEffectAmountSpec, ScalarAmountOrig
 from .mana_restrictions import valid_mana_spend_restriction
 from .characteristic_fragments import CharacteristicQuantityScope
 from .query_effect_amount_model import PublicQueryAmountSpec
+from .live_battlefield_quantity_model import LiveBattlefieldQuantitySpec, LIVE_BATTLEFIELD_QUANTITY_KIND
 
 PUBLIC_QUANTITY_MANA_KIND = 'public_quantity_mana'
 PUBLIC_QUANTITY_MANA_CAPABILITY = 'mana.production.public_quantity'
@@ -18,7 +19,7 @@ PUBLIC_QUANTITY_MANA_CAPABILITY = 'mana.production.public_quantity'
 class PublicQuantityManaOutput:
     selection: str
     colors: tuple[str, ...]
-    amount: CharacteristicQuantitySpec | ScalarEffectAmountSpec
+    amount: CharacteristicQuantitySpec | ScalarEffectAmountSpec | LiveBattlefieldQuantitySpec
     restriction: str | None = None
     schema_version: int = 1
 
@@ -34,7 +35,7 @@ class PublicQuantityManaOutput:
             raise ValueError('Public quantity mana color selection is malformed')
         if self.selection!='fixed' and 'C' in colors:
             raise ValueError('Any-color selection cannot include colorless')
-        if not isinstance(self.amount,(CharacteristicQuantitySpec,ScalarEffectAmountSpec)):
+        if not isinstance(self.amount,(CharacteristicQuantitySpec,ScalarEffectAmountSpec,LiveBattlefieldQuantitySpec)):
             raise ValueError('Public quantity mana requires an existing typed producer')
         if isinstance(self.amount,CharacteristicQuantitySpec) and self.amount.scope is not CharacteristicQuantityScope.SOURCE_COUNTER:
             PublicQueryAmountSpec(replace(self.amount,exclude_source=False))
@@ -60,7 +61,9 @@ class PublicQuantityManaOutput:
         if not isinstance(value['colors'],(list,tuple)) or not isinstance(value['amount'],Mapping):
             raise ValueError('Public quantity mana colors and amount are malformed')
         raw=value['amount']
-        amount=ScalarEffectAmountSpec.from_dict(raw) if raw.get('kind')==SCALAR_AMOUNT_KIND else CharacteristicQuantitySpec.from_dict(raw)
+        amount=(ScalarEffectAmountSpec.from_dict(raw) if raw.get('kind')==SCALAR_AMOUNT_KIND
+            else LiveBattlefieldQuantitySpec.from_dict(raw) if raw.get('kind')==LIVE_BATTLEFIELD_QUANTITY_KIND
+            else CharacteristicQuantitySpec.from_dict(raw))
         return cls(value['selection'],tuple(value['colors']),amount,value['restriction'],value['schema_version'])
 
 

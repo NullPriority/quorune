@@ -140,6 +140,170 @@ def focused_database(directory: str) -> CardDatabase:
 
 
 class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
+    def test_anywhere_graveyard_subscription_withdrawal_omission_and_open_grammar_fail_closed(self):
+        from test_bound_effect_programs import record
+        from quorune.rules.capabilities import CapabilityRegistry
+        text = 'Whenever a land card is put into your graveyard from anywhere, you gain 1 life.'
+        card = record(text, 'Creature — Satyr Druid')
+        raw = json.loads(REGISTRY_PATH.read_text(encoding='utf-8'))
+        cap = next(r for r in raw['capabilities'] if r['id'] == 'trigger.event.normalized_anywhere_graveyard')
+        cap.update(status='blocked', blockers=['withdrawn graveyard destination producer'])
+        withdrawn = CapabilityRegistry(raw)
+        withdrawn.mark_evidence_verified('0' * 64)
+        self.assertNotEqual('exact', compile_oracle_card(card, capability_registry=withdrawn,
+            capability_profile='commander_review').status)
+        with patch('quorune.compiler.fixed_public_event_trigger_bindings._anywhere_graveyard_spec', return_value=None):
+            self.assertNotEqual('exact', compile_oracle_card(card, capability_registry=self.capabilities,
+                capability_profile='commander_review').status)
+        for text in (
+            'Whenever one or more land cards are put into your graveyard from anywhere, you gain 2 life.',
+            'Whenever a card with the chosen name is put into your graveyard from anywhere, draw a card.',
+            'Whenever a card is put into the chosen player\'s graveyard from anywhere, draw a card.',
+            'Whenever a token is put into your graveyard from anywhere, draw a card.',
+        ):
+            with self.subTest(unrepresented=text):
+                self.assertNotEqual('exact', self.compile(text, type_line='Enchantment').status)
+
+    def test_anywhere_graveyard_public_subscription_requires_destination_event(self):
+        for text, predicate in (
+            ('Whenever a land card is put into your graveyard from anywhere, you gain 1 life.',
+             {'field': 'owner', 'op': 'eq', 'value': '$source.controller'}),
+            ("Whenever a black card is put into an opponent's graveyard from anywhere, draw a card.",
+             {'field': 'owner', 'op': 'ne', 'value': '$source.controller'}),
+            ('Whenever a creature card is put into a graveyard from anywhere, you gain 1 life.', None),
+        ):
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line='Enchantment')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual('card.enter_graveyard', node.event)
+                self.assertIn('trigger.event.normalized_anywhere_graveyard', node.capability_dependencies)
+                if predicate is not None:
+                    self.assertIn(predicate, node.event_condition['all'])
+
+    def test_public_target_counter_missing_producer_open_body_and_schema_mutant_fail_closed(self):
+        from test_bound_effect_programs import record
+        from quorune.rules.capabilities import CapabilityRegistry
+        text = 'Whenever one or more cards leave your graveyard, put a +1/+1 counter on target creature you control.'
+        card = record(text, 'Enchantment')
+        raw = json.loads(REGISTRY_PATH.read_text(encoding='utf-8'))
+        cap = next(r for r in raw['capabilities'] if r['id'] == 'counter.producer.fixed_public_target_event')
+        cap.update(status='blocked', blockers=['withdrawn public target-counter producer'])
+        withdrawn = CapabilityRegistry(raw)
+        withdrawn.mark_evidence_verified('0' * 64)
+        self.assertNotEqual('exact', compile_oracle_card(card, capability_registry=withdrawn,
+            capability_profile='commander_review').status)
+        with patch('quorune.compiler.event_counter_results.public_event_target_counter_result', return_value=None):
+            self.assertNotEqual('exact', compile_oracle_card(card, capability_registry=self.capabilities,
+                capability_profile='commander_review').status)
+        for body in ('put X +1/+1 counters on target creature you control.',
+                     'you may put a +1/+1 counter on target creature you control.',
+                     'put a +1/+1 counter on target creature you control, then draw a card.'):
+            with self.subTest(body=body):
+                boundary = record('Whenever one or more cards leave your graveyard, '+body, 'Enchantment')
+                self.assertNotEqual('exact', compile_oracle_card(boundary, capability_registry=self.capabilities,
+                    capability_profile='commander_review').status)
+        from quorune.compiler.event_counter_results import public_event_target_counter_result
+        binding = fixed_counter_trigger_binding(text, card_name=card.name)
+        effect = {'op': 'place_counters', 'card': '$target.0', 'counter': '+1/+1', 'amount': 1, 'source': '$source'}
+        schema = {'zones': ['battlefield'], 'categories': ['permanent'], 'count': 1, 'types_any': ['creature']}
+        for changes in ({'count': True}, {'zones': ['hand']}, {'unknown': 1}):
+            with self.subTest(schema=changes):
+                self.assertIsNone(public_event_target_counter_result(binding, binding.body, card_name=card.name,
+                    accepted_variants=(binding.variant,), effect_template=lambda *_args, **_kwargs:
+                        ('test', (effect,), {**schema, **changes}, ('cr-122-counters', 'cr-115-targets'))))
+
+    def test_public_event_fixed_target_counter_preserves_complete_target_schema(self):
+        from test_bound_effect_programs import record
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.semantics import SemanticRegistry
+        text = ('Whenever one or more artifact and/or creature cards leave your graveyard during your turn, '
+                'put a +1/+1 counter on target creature you control.')
+        card = record(text, 'Enchantment')
+        ir = compile_oracle_card(card, capability_registry=self.capabilities, capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertEqual('$target.0', node.effects[0]['card'])
+        self.assertEqual('you', node.target_schema['controller_relation'])
+        self.assertEqual(['creature'], node.target_schema['types_any'])
+        self.assertIn('one_or_more_event_batch', node.runtime_coverage)
+        self.assertIn('counter.producer.fixed_public_target_event', node.capability_dependencies)
+        self.assertIn('target.revalidate_resolution', node.capability_dependencies)
+        program = compile_best_available_card_program(self.db, card, capability_registry=self.capabilities,
+            capability_profile='commander_review', semantic_registry=SemanticRegistry())
+        self.assertTrue(bind_card_program_runtime(program, capability_registry=self.capabilities,
+            profile='commander_review')['strict_capability_ready'])
+
+    def test_public_event_source_counter_dependency_omission_and_open_result_fail_closed(self):
+        from test_bound_effect_programs import record
+        from quorune.rules.capabilities import CapabilityRegistry
+        text = 'Whenever another creature you control leaves the battlefield, put a +1/+1 counter on this creature.'
+        card = record(text, 'Creature — Human Scout')
+        raw = json.loads(REGISTRY_PATH.read_text(encoding='utf-8'))
+        capability = next(r for r in raw['capabilities'] if r['id'] == 'counter.producer.fixed_public_source_event')
+        capability.update(status='blocked', blockers=['withdrawn public source-counter producer'])
+        withdrawn = CapabilityRegistry(raw)
+        withdrawn.mark_evidence_verified('0' * 64)
+        self.assertNotEqual('exact', compile_oracle_card(card, capability_registry=withdrawn,
+                                                        capability_profile='commander_review').status)
+        with patch('quorune.compiler.event_counter_results.public_event_source_counter_result', return_value=None):
+            self.assertNotEqual('exact', compile_oracle_card(card, capability_registry=self.capabilities,
+                                                            capability_profile='commander_review').status)
+        for body in ('put a +1/+1 counter on that creature.',
+                     'put X +1/+1 counters on this creature.',
+                     'put a +1/+1 counter on this creature, then draw a card.',
+                     'you may put a +1/+1 counter on this creature.'):
+            with self.subTest(body=body):
+                boundary = record('Whenever another creature you control leaves the battlefield, '+body,
+                                  'Creature — Human Scout')
+                ir = compile_oracle_card(boundary, capability_registry=self.capabilities,
+                                         capability_profile='commander_review')
+                self.assertNotEqual('exact', ir.status)
+                self.assertTrue(ir.material_residuals)
+        from quorune.compiler.event_counter_results import public_event_source_counter_result
+        binding = fixed_counter_trigger_binding(text, card_name=card.name)
+        valid = {'op': 'place_counters', 'card': '$source.zone_object', 'source': '$source',
+                 'counter': '+1/+1', 'amount': 1}
+        for changes in ({'amount': True}, {'card': {}}, {'counter': []}, {'source': '$target.0'}, {'extra': 1}):
+            with self.subTest(malformed=changes):
+                self.assertIsNone(public_event_source_counter_result(
+                    binding, binding.body, card_name=card.name, accepted_variants=(binding.variant,),
+                    effect_template=lambda *_args, **_kwargs: ('test', ({**valid, **changes},), None, ('cr-122-counters',)),
+                ))
+
+    def test_public_event_fixed_source_counter_preserves_subscription_and_incarnation(self):
+        from test_bound_effect_programs import record
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.semantics import SemanticRegistry
+
+        cases = (
+            'Whenever another creature you control leaves the battlefield, put a +1/+1 counter on this creature.',
+            'Whenever you cycle another card, put a +1/+1 counter on this creature.',
+            'Whenever an enchantment you control is put into a graveyard from the battlefield, put an oil counter on this creature.',
+            'Whenever one or more cards leave your graveyard, put a +1/+1 counter on this creature.',
+        )
+        for text in cases:
+            with self.subTest(text=text):
+                card = record(text, 'Creature — Human Scout')
+                binding = fixed_counter_trigger_binding(text, card_name=card.name)
+                ir = compile_oracle_card(card, capability_registry=self.capabilities,
+                                         capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(binding.event.value, node.event)
+                self.assertEqual(binding.event_condition, node.event_condition)
+                self.assertEqual('$source.zone_object', node.effects[0]['card'])
+                self.assertIn('counter.producer.fixed_public_source_event', node.capability_dependencies)
+                program = compile_best_available_card_program(
+                    self.db, card, semantic_registry=SemanticRegistry(),
+                    capability_registry=self.capabilities, capability_profile='commander_review',
+                )
+                self.assertTrue(bind_card_program_runtime(
+                    program, capability_registry=self.capabilities, profile='commander_review',
+                )['strict_capability_ready'])
+
     def test_main_phase_schedules_bind_phase_step_and_controller_independently(self):
         from test_bound_effect_programs import record
         for schedule,phase in [('your first main phase','precombat_main'),('your precombat main phase','precombat_main'),
@@ -2364,8 +2528,8 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "At the beginning of your upkeep, move a charge counter from this artifact onto target creature.",
             "At the beginning of your upkeep, remove a charge counter from this artifact.",
             "Whenever one or more creatures die, put a +1/+1 counter on each of them.",
-            "Whenever another creature you control enters or dies, put a +1/+1 counter on this creature.",
-            "Whenever another creature you control leaves the battlefield, put a +1/+1 counter on this creature.",
+            "Whenever another creature of the chosen type you control enters or dies, put a +1/+1 counter on this creature.",
+            "Whenever another creature of the chosen type you control leaves the battlefield, put a +1/+1 counter on this creature.",
             "Whenever another creature with a counter on it dies, put a +1/+1 counter on this creature.",
             "Whenever another legendary Human you control enters, put a +1/+1 counter on this creature.",
         )
@@ -2380,6 +2544,30 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 )
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+
+    def test_public_counter_results_compose_with_paired_and_departure_events(self):
+        cases = (
+            ('Whenever another creature you control enters or dies, put a +1/+1 counter on this creature.',
+             'permanent.enter', 'fixed-qualified-zone-event-pair-v1'),
+            ('Whenever another creature you control leaves the battlefield, put a +1/+1 counter on this creature.',
+             'permanent.leave', 'fixed-counter-public-zone-trigger-v1'),
+        )
+        for text, event, template in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line='Creature — Fixture')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(template, node.template_id)
+                self.assertEqual(event, node.event)
+                self.assertEqual('$source.zone_object', node.effects[0]['card'])
+                self.assertEqual('place_counters', node.effects[0]['op'])
+                self.assertEqual(1, node.effects[0]['amount'])
+                if event == 'permanent.enter':
+                    self.assertEqual(['permanent.enter', 'creature.dies'],
+                        [row['event'] for row in node.event_condition['event_subscriptions']])
+                else:
+                    self.assertIn({'field': 'previous_controller', 'op': 'eq', 'value': '$source.controller'},
+                        node.event_condition['all'])
 
     def test_qualified_public_zone_carriers_promote_prior_leaf_boundaries(self):
         from quorune.compiler.fixed_counter_trigger_nodes import _zone_change_trigger_binding
@@ -3533,7 +3721,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         exclusions = (
             "Whenever this creature attacks or blocks, it gets +1/+1 until end of turn.",
             "Whenever this creature attacks, it gets +X/+X until end of turn.",
-            "Whenever this creature attacks, it gets +0/+0 until end of turn.",
+            "Whenever this creature attacks, it gets +X/+0 until end of turn.",
             "Whenever this creature attacks, you may put a +1/+1 counter on it. If you do, draw a card.",
             "Whenever this creature attacks, put X +1/+1 counters on it.",
             "Whenever this creature attacks, put a charge counter on it for each creature that attacked this way.",
@@ -3556,7 +3744,20 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 "Whenever this creature attacks, it gets +2/+0 until end of turn.",
                 type_line="Creature — Test",
             )
-        self.assertNotEqual("exact", mutated.status)
+        # The legacy specialized leaf stays narrow, while the complete generic
+        # source-pronoun result independently owns the same fixed instruction.
+        self.assertEqual('exact', mutated.status, mutated.material_residuals)
+        self.assertEqual('fixed-typed-effect-source-attacks-trigger-v1', mutated.faces[0].nodes[0].template_id)
+        self.assertEqual('$source.zone_object', mutated.faces[0].nodes[0].effects[0]['card'])
+        with patch('quorune.compiler.source_self_effect_templates.normalized_source_result_body', return_value=None), patch(
+            'quorune.compiler.trigger_result_templates.fixed_source_combat_growth_effect_template',
+            return_value=(None, (), None, ())):
+            unavailable = self.compile('Whenever this creature attacks, it gets +2/+0 until end of turn.',
+                type_line='Creature — Test')
+        self.assertNotEqual('exact', unavailable.status)
+        zero = self.compile('Whenever this creature attacks, it gets +0/+0 until end of turn.', type_line='Creature — Test')
+        self.assertEqual('exact', zero.status, zero.material_residuals)
+        self.assertEqual((0, 0), (zero.faces[0].nodes[0].effects[0]['power'], zero.faces[0].nodes[0].effects[0]['toughness']))
 
     def test_fixed_entry_return_requirements_compile_exactly_and_fail_closed(self):
         cases = (

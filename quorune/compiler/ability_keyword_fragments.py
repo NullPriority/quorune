@@ -277,6 +277,10 @@ def lower_ability_keyword_fragments(
         return combat
     handlers = list(ward.handlers if ward is not None else ())
     handlers.extend(combat.handlers)
+    from .rampage_fragments import rampage_fragment_lowering
+    rampage = rampage_fragment_lowering(material_line, mechanics)
+    if rampage.residual_kind is not None:return rampage
+    handlers.extend(rampage.handlers)
 
     if "protection" in mechanics:
         protection_parts = tuple(

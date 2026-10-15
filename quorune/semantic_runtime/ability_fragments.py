@@ -1354,11 +1354,13 @@ class AbilityFragmentRegistry(
 
 @lru_cache(maxsize=1)
 def default_ability_fragment_registry() -> AbilityFragmentRegistry:
+    from .rampage_fragment import RampageFragmentHandler
     registry = AbilityFragmentRegistry(
         (
             AllCreatureTypesCharacteristicDefinitionAbilityFragmentHandler(),
             BattleCryAbilityFragmentHandler(),
             BushidoAbilityFragmentHandler(),
+            RampageFragmentHandler(),
             CascadeAbilityFragmentHandler(),
             CounterMaximumAbilityFragmentHandler(),
             DeclarationCostAbilityFragmentHandler(),

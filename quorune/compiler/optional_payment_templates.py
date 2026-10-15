@@ -184,6 +184,10 @@ def binding_aware_optional_mana_payment_template(
         return compiled
 
     payment = fixed_optional_mana_payment_template(text, compile_effect=compile_body)
+    if payment is None and re.match(r'you may pay \{E\}', text, re.I):
+        from .fixed_effect_payment_templates import fixed_effect_payment_template
+        compiled = fixed_effect_payment_template(text, compile_effect=compile_body)
+        if compiled is not None:return compiled, requires_current_ability
     if payment is None:
         return None
     return payment.compiled(), requires_current_ability

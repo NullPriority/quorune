@@ -118,13 +118,29 @@ class DeclaredEffectAmountCompilerTests(unittest.TestCase):
             generic_spell("Destroy target creature with mana value X."),
             generic_spell("Return target creature card with mana value X or less from your graveyard to the battlefield."),
             generic_spell("Draw X cards, where X is the number of creatures you control plus the chosen number.", mana_cost="{2}{G}"),
-            generic_spell("Draw X cards, where X is the number of creatures with flying you control.", mana_cost="{2}{G}"),
+            generic_spell("Draw X cards, where X is the number of creatures with an unrepresented ability you control.", mana_cost="{2}{G}"),
             generic_spell("Draw X cards, where X is the number of cards in target player's hand.", mana_cost="{2}{G}"),
         ):
             with self.subTest(text=record.oracle_text):
                 compiled = self.compile(record)
                 self.assertNotEqual("exact", compiled.status)
                 self.assertTrue(compiled.material_residuals)
+
+    def test_declared_public_definition_preserves_live_keyword_query(self):
+        compiled = self.compile(generic_spell(
+            "Draw X cards, where X is the number of creatures with flying you control.",
+            mana_cost="{2}{G}"))
+        self.assertEqual('exact', compiled.status, compiled.material_residuals)
+        amount = compiled.faces[0].nodes[0].effects[0]['count']
+        self.assertEqual('public_query_effect_amount', amount['kind'])
+        self.assertEqual(2, amount['schema_version'])
+        self.assertTrue(amount['binding_id'])
+        quantity = amount['quantity']
+        self.assertEqual('live_battlefield_quantity', quantity['kind'])
+        self.assertEqual('source_controller', quantity['controller_relation'])
+        self.assertEqual(['battlefield'], quantity['query']['zones'])
+        self.assertEqual(['creature'], quantity['query']['types_all'])
+        self.assertEqual(['flying'], quantity['query']['keywords_all'])
 
     def test_closed_fixed_offset_declaration_retains_its_quantity(self):
         compiled = self.compile(generic_spell(

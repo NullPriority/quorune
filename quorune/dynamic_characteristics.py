@@ -107,7 +107,7 @@ def query_characteristic_count(
                 raise ValueError("A public collection member is unavailable")
             continue
         candidate = host.state.cards[object_id]
-        if quantity.schema_version == 2 and candidate.phased_out:
+        if (quantity.schema_version == 2 or quantity.query.state_predicate is not None) and candidate.phased_out:
             continue
         if quantity.schema_version == 2 and quantity.query.zones == ("graveyard",) and quantity.query.token is False and candidate.object_kind != "card":
             continue
@@ -138,10 +138,21 @@ def query_characteristic_count(
             ),
             known_to_actor=True,
             attached_to_ref=attached.ref if attached is not None else None,
+            **_quantity_attachment_state(host, candidate, quantity,
+                enforce_applicability=_enforce_static_component_applicability),
         )
         if object_matches_query(row, quantity.query):
             matched.append((row, effective, candidate.object_kind if quantity.schema_version == 2 else ""))
     return reduce_public_quantity(matched, quantity.reduction, mana_colors=quantity.mana_colors) * quantity.multiplier + quantity.offset
+
+
+def _quantity_attachment_state(host, candidate, quantity, *, enforce_applicability):
+    predicate = quantity.query.state_predicate
+    if predicate is None or all(getattr(predicate, field) is None for field in ('enchanted', 'equipped', 'modified')):
+        return {}
+    enchanted, equipped, modified = host._attachment_public_state(candidate,
+        _enforce_static_component_applicability=enforce_applicability)
+    return {'enchanted': enchanted, 'equipped': equipped, 'modified': modified}
 
 
 def current_opponent_count(state,controller: str) -> int:

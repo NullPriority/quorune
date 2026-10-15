@@ -9,6 +9,12 @@ maintenance: "hand-maintained"
 
 # Rules kernel
 
+Ordinary Morph, Megamorph and Disguise turn-up offers keep their canonical
+unsuffixed action identity when acceptance reads the printed method from the
+offer payload. Manifested permanents expose distinct suffixed method choices.
+Both paths retain the same expiry and proposal-fingerprint validation before
+payment, including special actions taken while Split Second is on the stack.
+
 Normalized event discovery orders both live and explicitly captured source
 lists by zone timestamp and stable object identity. Checkpoint hydration cannot
 change pending trigger identities through dictionary insertion order. APNAP
@@ -394,6 +400,16 @@ copies, and next-end-step creation all converge on that same transaction.
 Token Changeling and declaration restrictions are serialized as typed
 characteristic fragments, while Powerstone, Junk, and Vibranium use closed
 ability profiles; token display text never becomes runtime authority.
+The Blood profile requires one generic mana, tapping and sacrificing its source,
+and discarding one selected owned hand card. Shared activation availability and
+cost validation reject missing hand cards, tapped sources and unpaid costs.
+The complete payment precedes an independent private draw on the stack; token
+departure does not remove that queued result.
+Lander delegates its fixed basic-land search and shuffle to the ordinary private
+search owner. Mutagen delegates its fixed counter to the counter transaction
+owner and shares ordinary target-incarnation revalidation. Their finite builtin
+result keys carry no variable effect grammar; the explicit token profiles own
+their mana, source tap and sacrifice, and Mutagen's sorcery timing.
 For each committed token instruction, the owner first publishes the complete
 group's identity/controller/type history, then seals the final entry-time
 characteristics used by entry predicates. History-dependent static power,
@@ -404,6 +420,22 @@ replacement preparation or departure-time last-known information.
 `replacement_decisions.py` persists competing
 affected-seat choices as ordinary Game Record v3 continuations, and represented
 zone-destination changes use the same exact selection journal before mutation.
+`state_based_execution.permanent_sba_snapshots` captures one current public
+characteristic, controller, attachment and timestamp view for the pure
+state-based evaluator. The engine's compatibility facade delegates that query.
+Role grouping keeps the unique latest Role for each controller and attachment;
+older Roles receive ordinary nondestruction graveyard actions. Missing facts or
+an unrepresented timestamp tie fail closed.
+Role token creation retains the canonical token owner. The compiler pins
+Enchant and child programs into the token characteristics; a typed choice
+previews replacements before choosing relative timestamps. The commit owner
+rechecks the attachment incarnation and exact replacement preview, reserves
+ordered timestamps without reordering identity allocation, and attaches each
+Aura before entry events. Same-controller Role uniqueness follows those
+explicit timestamps; different controllers retain their separate Roles.
+
+
+
 Triggers consume normalized events; replacements transform represented events
 before final mutation; state-based actions run to a fixed point. Mandatory
 direct counters now use a closed typed stack-target grammar and an exact
@@ -415,6 +447,15 @@ intrinsic alternate destinations, broader prohibitions, and universal draw,
 damage, prevention, and entry participation remain blocked. New rules work must
 identify event/replacement participation and use capability IDs from the
 versioned registry.
+
+Every committed move of a physical nontoken card into a graveyard from another
+zone also emits `card.enter_graveyard`. This after-transition occurrence seals
+the destination characteristics, current logical incarnation and graveyard
+owner, and discovers surviving observers through the current ability query.
+It represents "from anywhere" subscriptions independently from predeparture
+death or leaves-battlefield LKI, including during simultaneous deaths. A
+replacement to another destination emits no graveyard-entry occurrence.
+The historical countered-spell `card.graveyard` event remains distinct.
 
 The simultaneous zone-transition owner separates history publication from
 trigger discovery. After every replacement-aware move in a batch commits, it
@@ -534,7 +575,7 @@ Combat declaration relationships commit through
 `combat_relationship_state.py`. After a complete declaration, the engine
 adapts public combat facts into immutable canonical attack or block transition
 values. Typed transition derivation owns ordinary printed Exalted, Battle Cry,
-Melee, Mentor, Flanking, and positive-integer Bushido occurrences; the shared trigger
+Melee, Mentor, Flanking, and positive-integer Bushido and Rampage occurrences; the shared trigger
 batch owns APNAP placement, and the continuous-effect journal owns their
 identity-pinned layer 7c results. Mentor instead emits a typed targeted counter
 result: `relative_power_target.py` owns current and predeparture source-power
@@ -545,6 +586,13 @@ characteristics and delegate commits to the declared combat, trigger,
 continuous-effect, target, and counter owners. Conditional or prose-equivalent
 variants, unsupported granted or copied fragments, trigger multiplication, and
 broader attack/block transition triggers remain explicit residuals.
+
+Rampage uses the same sealed becomes-blocked transition and retains each typed
+instance independently. Its rules helper counts the original attacker's current
+blockers beyond the first only when that occurrence resolves. The existing
+continuous-effect journal freezes the resulting bonus through end of turn;
+later blocker departures do not change it. A departed or returned source
+incarnation receives no modifier. Blocking with Rampage does not trigger it.
 
 `ObjectQuerySpec` is a strict immutable predicate shared by those live effects
 and other represented rules families. Its current schema distinguishes

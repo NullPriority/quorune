@@ -41,6 +41,43 @@ def record(text: str) -> CardRecord:
 
 
 class PublicHistoryConditionCompilerTests(unittest.TestCase):
+    def test_source_numeric_intervening_condition_preserves_characteristic_and_bound(self):
+        from quorune.continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
+        registry = load_default_capability_registry()
+        for wording, characteristic, bound in (
+            ('its toughness is 3 or less', 'toughness', 'at_most'),
+            ('its power is 6 or greater', 'power', 'at_least'),
+            ("this creature's power is 6 or greater", 'power', 'at_least'),
+        ):
+            with self.subTest(wording=wording):
+                parsed = fixed_public_state_condition(wording, source_name='Generic Public History Fixture')
+                self.assertIsNotNone(parsed)
+                self.assertEqual(FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY, parsed.kind)
+                self.assertEqual(characteristic, parsed.predicate.numeric_characteristic.characteristic.value)
+                self.assertEqual(bound, parsed.predicate.numeric_characteristic.comparison.value)
+                self.assertEqual(parsed, FixedPublicStateConditionSpec.from_dict(parsed.to_dict()))
+                text = 'Whenever this creature attacks, if ' + wording + ', put a +1/+1 counter on it.'
+                ir = compile_oracle_card(record(text), capability_registry=registry, capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                self.assertEqual(text, ir.faces[0].nodes[0].text)
+        for wording in ("that creature's toughness is 3 or less", 'its toughness is X or less',
+            'its toughness is 3 or greater than another creature', 'its mana value is 3 or less'):
+            self.assertIsNone(fixed_public_state_condition(wording, source_name='Generic Public History Fixture'))
+        text = 'As long as its toughness is 3 or less, this creature gets +1/+1.'
+        self.assertNotEqual('exact', compile_oracle_card(record(text), capability_registry=registry).status)
+        from unittest.mock import patch
+        with patch('quorune.compiler.public_state_fact_queries.fixed_source_numeric_condition', return_value=None):
+            self.assertNotEqual('exact', compile_oracle_card(record(
+                'Whenever this creature attacks, if its toughness is 3 or less, put a +1/+1 counter on it.'),
+                capability_registry=registry).status)
+        from quorune.rules.capabilities import CapabilityRegistry
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(row for row in raw['capabilities'] if row['id'] == 'trigger.condition.fixed_public_state').update(
+            status='blocked', blockers=['source condition authority withdrawn'])
+        self.assertNotEqual('exact', compile_oracle_card(record(
+            'Whenever this creature attacks, if its toughness is 3 or less, put a +1/+1 counter on it.'),
+            capability_registry=CapabilityRegistry(raw)).status)
+
     def test_shared_history_conditions_compile_with_exact_thresholds(self):
         expected = (
             ("a creature died this turn", "any_creature_died_this_turn", 1),
@@ -93,6 +130,20 @@ class PublicHistoryConditionCompilerTests(unittest.TestCase):
 
 
 class PublicHistoryConditionRuntimeContractTests(unittest.TestCase):
+    def test_source_numeric_query_distinguishes_missing_stat_and_threshold(self):
+        from dataclasses import replace
+        from quorune.object_query import ObjectQueryResult
+        condition = fixed_public_state_condition('its toughness is 3 or less', source_name='Generic')
+        candidate = SimpleNamespace(object_id='body')
+        row = ObjectQueryResult(object_id='body', ref='body', printed_name='Generic',
+            owner='A', controller='A', zone='battlefield', types=('creature',), effective_toughness=3)
+        query = _FixedPublicStateSnapshotResolver(SimpleNamespace(), lambda _card: row, None)
+        self.assertTrue(query._query_matches(candidate, condition))
+        query = _FixedPublicStateSnapshotResolver(SimpleNamespace(), lambda _card: replace(row, effective_toughness=4), None)
+        self.assertFalse(query._query_matches(candidate, condition))
+        query = _FixedPublicStateSnapshotResolver(SimpleNamespace(), lambda _card: replace(row, effective_toughness=None), None)
+        self.assertIsNone(query._query_matches(candidate, condition))
+
     def test_history_facts_use_sealed_actor_and_target_not_current_objects(self):
         history = TurnHistory(turn_sequence=4, departure_history_version=1, events=[
             TurnHistoryEvent("creature_died", actor="B", object_incarnation="gone@1"),
@@ -183,6 +234,131 @@ class PublicHistoryConditionRuntimeContractTests(unittest.TestCase):
         state.turn_history.departure_history_version = None
         record_zone_change_history(host, event)
         self.assertEqual([], changes)
+
+
+class SourceNumericConditionTrustedActionTests(unittest.TestCase):
+    from test_bound_effect_programs import BoundEffectProgramRuntimeTests as _Actions
+    from test_source_pronoun_results import SourcePronounRuntimeTests as _Combat
+    session = _Actions.session
+    add = _Actions.add
+    ready = _Actions.ready
+    checkpoint = _Actions.checkpoint
+    replay = _Actions.replay
+    resolve = _Actions.resolve
+    start_source_combat = _Combat.start_source_combat
+    register_fixture_cards_on_add = True
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'source-numeric.sqlite3'
+        build_fixture_database([ROOT / 'tests/fixtures/bound-effect-program-cards.json',
+            ROOT / 'tests/fixtures/public-history-condition-cards.json'], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('Numeric condition', [DeckEntry('Generic Bound Commander', 1, 'commander'),
+            DeckEntry('Generic Bound Plains', 30)], ['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        for mode in ('within', 'above', 'growth_response', 'blink_response'):
+            with self.subTest(mode=mode):
+                session = self.session(311040 + ('within', 'above', 'growth_response', 'blink_response').index(mode))
+                engine = session.engine
+                source = self.add(engine, 'Generic Source Numeric Attacker', zone='hand')
+                response = self.add(engine, 'Cloudshift' if mode == 'blink_response' else 'Giant Growth', zone='hand')
+                offered = self.ready(session, source, {'G': 2, 'W': 1})
+                self.checkpoint(session)
+                accepted = session.act('pilot:A', {'action_id': offered['id'], 'pay': 'auto'})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.resolve(session)
+                self.replay(session)
+                program = compile_best_available_card_program(self.db, self.db.lookup(source.printed_name),
+                    semantic_registry=engine.semantics, capability_registry=self.registry, capability_profile='commander_review')
+                self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+                    profile='commander_review')['strict_capability_ready'])
+                if mode == 'above':
+                    source.counters['+1/+1'] = 1
+                self.start_source_combat(session)
+                self.checkpoint(session)
+                before = authoritative_state_hash(session.state)
+                denied = session.act('pilot:D', {'action_id': 'attack', 'attackers': {source.ref: 'B'}})
+                self.assertFalse(denied.ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                accepted = session.act('pilot:A', {'action_id': 'attack', 'attackers': {source.ref: 'B'}})
+                self.assertTrue(accepted.ok, accepted.summary)
+                triggers = [item for item in session.state.stack if item.source_object_id == source.object_id]
+                self.assertEqual(0 if mode == 'above' else 1, len(triggers))
+                if mode == 'above':
+                    self.replay(session)
+                    continue
+                session = self.replay(session, load=True)
+                engine = session.engine
+                if mode.endswith('response'):
+                    actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+                    offered = next(a for a in actions if a.get('card') == response.ref)
+                    accepted = session.act('pilot:A', {'action_id': offered['id'], 'targets': [source.ref], 'pay': 'auto'})
+                    self.assertTrue(accepted.ok, accepted.summary)
+                self.resolve(session)
+                self.assertEqual(1 if mode == 'within' else 0, engine.state.cards[source.object_id].counters.get('+1/+1', 0))
+                for seat in 'BCD':
+                    rendered = str(session.packet('pilot:' + seat, full=True))
+                    for oid in engine.state.players['A'].zones['hand']:
+                        self.assertNotIn(engine.state.cards[oid].ref, rendered)
+                self.replay(session)
+
+
+    def test_original_angelic_sell_sword_checks_attack_power_again_after_response(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        for reduce_power in (False, True):
+            with self.subTest(reduce_power=reduce_power):
+                session = self.session(311050 + int(reduce_power))
+                engine = session.engine
+                source = self.add(engine, 'Angelic Sell-Sword', zone='hand')
+                response = self.add(engine, 'Snakeform', zone='hand')
+                offered = self.ready(session, source, {'W': 1, 'U': 1, 'C': 6})
+                self.checkpoint(session)
+                accepted = session.act('pilot:A', {'action_id': offered['id'], 'pay': 'auto'})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.resolve(session)
+                tokens = [card for card in engine.state.cards.values() if card.zone == 'battlefield' and card.is_token]
+                self.assertEqual(1, len(tokens))
+                self.assertEqual((1, 1), (engine._numeric_stat(tokens[0].object_id, 'power'), engine._numeric_stat(tokens[0].object_id, 'toughness')))
+                self.assertIn('Mercenary', engine._effective_card_data(tokens[0])['type_line'])
+                self.replay(session)
+                program = compile_best_available_card_program(self.db, self.db.lookup(source.printed_name),
+                    semantic_registry=engine.semantics, capability_registry=self.registry, capability_profile='commander_review')
+                self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+                    profile='commander_review')['strict_capability_ready'])
+                source.counters['+1/+1'] = 2
+                self.start_source_combat(session)
+                self.checkpoint(session)
+                hand_size = len(engine.state.players['A'].zones['hand'])
+                accepted = session.act('pilot:A', {'action_id': 'attack', 'attackers': {source.ref: 'B'}})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual(1, len(engine.state.stack))
+                session = self.replay(session, load=True)
+                engine = session.engine
+                if reduce_power:
+                    offered = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+                        if a.get('card') == response.ref)
+                    accepted = session.act('pilot:A', {'action_id': offered['id'], 'targets': [source.ref], 'pay': 'auto'})
+                    self.assertTrue(accepted.ok, accepted.summary)
+                self.resolve(session)
+                self.assertEqual(hand_size + 1 - int(reduce_power), len(engine.state.players['A'].zones['hand']))
+                self.assertEqual(int(reduce_power), sum(event.code == 'stack.trigger.removed' for event in engine.state.events))
+                for seat in 'BCD':
+                    projected = str(session.packet('pilot:' + seat, full=True))
+                    for oid in engine.state.players['A'].zones['hand']:
+                        self.assertNotIn(engine.state.cards[oid].ref, projected)
+                self.replay(session)
 
 
 class PublicHistoryTrustedActionTests(unittest.TestCase):

@@ -161,6 +161,10 @@ def typed_resolution_effect_template(
     source_attachment_relation: AttachmentReferenceKind | None = None,
 ) -> CompiledEffectTemplate | None:
     """Lower closed typed resolution-effect families."""
+    from .manifest_templates import manifest_effect_template
+    manifest = manifest_effect_template(text)
+    if manifest is not None:
+        return manifest
 
     contextual = _source_context_resolution_template(text, card_name=card_name, source_is_permanent=source_is_permanent, source_card_types=source_card_types)
     if contextual is not None:

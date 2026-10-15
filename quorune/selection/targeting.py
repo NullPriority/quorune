@@ -945,7 +945,7 @@ class TargetSelectionOwnerMixin:
             program,
             targets,
             modes=modes,
-            source_ref=item.ref,
+            source_ref=self._stack_source_ref(item) if continuation_payload.get('trigger_creation') else item.ref,
             target_schema=target_schema,
         )
         item.targets = validated

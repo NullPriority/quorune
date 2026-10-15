@@ -26,7 +26,7 @@ class FixedEffectPaymentSpec:
     def __post_init__(self) -> None:
         if type(self.schema_version) is not int or self.schema_version != 2:
             raise ValueError("Fixed effect payments require version 2")
-        if self.kind not in {"mana", "life", "discard", "sacrifice"}:
+        if self.kind not in {"mana", "life", "discard", "sacrifice", "energy"}:
             raise ValueError("Fixed effect payment kind is unsupported")
         if type(self.amount) is not int or self.amount <= 0:
             raise ValueError("Fixed effect payment amount must be positive")
@@ -79,6 +79,7 @@ class FixedEffectPaymentSpec:
     @property
     def capabilities(self) -> tuple[str, ...]:
         costs = {"mana":(), "life":("casting.additional_cost.fixed_life_payment",),
+                 'energy':('cost.energy.fixed_resolution_payment',),
                  "discard":("choice.affected_player.fixed_discard", "zone.change.destination_replacement"),
                  "sacrifice":("choice.affected_player.fixed_sacrifice", "zone.change.destination_replacement")}
         return (FIXED_EFFECT_PAYMENT_CAPABILITY, *costs[self.kind])

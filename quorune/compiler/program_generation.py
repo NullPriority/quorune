@@ -568,6 +568,10 @@ def _is_closed_fixed_token_creation_program(
     program: SemanticProgram,
 ) -> bool:
     """Recognize one compiler-owned fixed token-definition instruction."""
+    if all(effect.get('op') == 'manifest_card' for effect in program.effects):
+        from ..rules.manifest_shapes import manifest_node_capabilities
+        return bool(manifest_node_capabilities(effects=program.effects, target_schema=program.target_schema,
+            mechanics=set(program.coverage)))
 
     return _node_capabilities_close_program(
         program,
@@ -744,7 +748,7 @@ def _is_closed_fixed_counter_placement_program(
             mechanic_ids=(
                 value
                 for value in program.coverage
-                if value in {"cr-122-counters", "cr-115-targets", "named-counter-doubling", "fixed-entry-event-object-counter"}
+                if value in {"cr-122-counters", "cr-115-targets", "named-counter-doubling", "fixed-entry-event-object-counter", "fixed-public-event-source-counter", "fixed-public-event-target-counter"}
             ),
         )
     )

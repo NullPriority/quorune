@@ -97,6 +97,20 @@ def builtin_activation_resolution(
             ),
             note="Built-in Equip ability resolved",
         )
+    if semantic_key == "builtin:fixed-basic-land-search:1:tapped":
+        return BuiltinActivationResolution(
+            effects=(FrozenMap({"op": "search", "zone": "library",
+                "selector": {"types": ["land"], "supertypes": ["basic"]},
+                "count": {"minimum": 1, "maximum": 1}, "destination": "battlefield",
+                "shuffle_after": True, "enters_tapped_override": True}),),
+            note="Built-in basic land search resolved",
+        )
+    if semantic_key == "builtin:fixed-target-counter:+1/+1:1":
+        return BuiltinActivationResolution(
+            effects=(FrozenMap({"op": "place_counters", "card": "$target.0",
+                "counter": "+1/+1", "amount": 1, "source": "$source"}),),
+            note="Built-in fixed target counter resolved",
+        )
     return None
 
 

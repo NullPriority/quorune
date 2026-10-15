@@ -5,7 +5,8 @@ from __future__ import annotations
 from enum import Enum
 from typing import Any, Mapping
 
-from .abilities import ActivatedAbility
+from .abilities import ActivatedAbility, CostChoice
+from .object_predicate import ObjectQuerySpec
 from .fixed_mana_abilities import FixedManaMode
 from .replacement.immutable import FrozenMap
 from .util import normalize_mana_bundle
@@ -20,6 +21,9 @@ class StandardTokenAbilityProfile(str, Enum):
     )
     TAP_COLORLESS_RESTRICTED = "tap_colorless_restricted_v1"
     TAP_SAC_IMPULSE_ONE = "tap_sac_impulse_one_v1"
+    ONE_TAP_DISCARD_SAC_DRAW_CARD = "one_tap_discard_sac_draw_card_v1"
+    TWO_TAP_SAC_BASIC_LAND_SEARCH = "two_tap_sac_basic_land_search_v1"
+    ONE_TAP_SAC_TARGET_COUNTER = "one_tap_sac_target_counter_v1"
 
 
 TOKEN_ABILITY_PROFILE_FIELD = "activated_ability_profile"
@@ -69,6 +73,43 @@ def _draw_card() -> ActivatedAbility:
         mana={"GENERIC": 2},
         sacrifice_source=True,
         builtin_semantic_key="builtin:draw:1",
+    )
+
+
+def _discard_and_draw_card() -> ActivatedAbility:
+    return ActivatedAbility(
+        ability_id="ab1", line_index=0,
+        oracle_line="{1}, {T}, Discard a card, Sacrifice this token: Draw a card.",
+        cost_text="{1}, {T}, Discard a card, Sacrifice this token",
+        effect_text="Draw a card.", zones=("battlefield",),
+        mana={"GENERIC": 1}, tap_source=True, sacrifice_source=True,
+        choices=(CostChoice(kind="discard_one", zone="hand",
+            predicate=FrozenMap(ObjectQuerySpec(zones=("hand",), owner="$actor", known_to_actor=True).to_dict())),),
+        builtin_semantic_key="builtin:draw:1",
+    )
+
+
+def _basic_land_search() -> ActivatedAbility:
+    return ActivatedAbility(
+        ability_id="ab1", line_index=0,
+        oracle_line="{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+        cost_text="{2}, {T}, Sacrifice this token",
+        effect_text="Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+        zones=("battlefield",), mana={"GENERIC": 2}, tap_source=True, sacrifice_source=True,
+        builtin_semantic_key="builtin:fixed-basic-land-search:1:tapped",
+    )
+
+
+def _target_counter() -> ActivatedAbility:
+    return ActivatedAbility(
+        ability_id="ab1", line_index=0,
+        oracle_line="{1}, {T}, Sacrifice this token: Put a +1/+1 counter on target creature. Activate only as a sorcery.",
+        cost_text="{1}, {T}, Sacrifice this token",
+        effect_text="Put a +1/+1 counter on target creature. Activate only as a sorcery.",
+        zones=("battlefield",), mana={"GENERIC": 1}, tap_source=True, sacrifice_source=True,
+        sorcery_speed=True, builtin_semantic_key="builtin:fixed-target-counter:+1/+1:1",
+        target_schema=FrozenMap({"zones": ["battlefield"], "categories": ["permanent"],
+            "types_any": ["creature"], "count": 1}),
     )
 
 
@@ -164,6 +205,11 @@ _STANDARD_TOKEN_ABILITIES = {
     StandardTokenAbilityProfile.TAP_SAC_IMPULSE_ONE: (
         _junk_impulse_one(),
     ),
+    StandardTokenAbilityProfile.ONE_TAP_DISCARD_SAC_DRAW_CARD: (
+        _discard_and_draw_card(),
+    ),
+    StandardTokenAbilityProfile.TWO_TAP_SAC_BASIC_LAND_SEARCH: (_basic_land_search(),),
+    StandardTokenAbilityProfile.ONE_TAP_SAC_TARGET_COUNTER: (_target_counter(),),
 }
 
 

@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "7bae9c6cfa4b75e175699e59c88adb93eb912eed2d3107f171f91c04965e70ce"
+verified: "b990aee50524b3e79e8fc69fe83cdbd76d9dd4fbe11eaa3e17a1a685e00c8da4"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -21,11 +21,11 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Terra, Magical Adept // Esper Terra | 224 | 22 | 8 | 6 | 12 | 14 | `blocked` |
 | Hidetsugu Consumes All // Vessel of the All-Consuming | 223 | 30 | 7 | 7 | 8 | 10 | `blocked` |
 | Jin-Gitaxias // The Great Synthesis | 223 | 28 | 7 | 7 | 11 | 6 | `blocked` |
-| Jugan Defends the Temple // Remnant of the Rising Star | 223 | 29 | 8 | 7 | 8 | 9 | `blocked` |
 | Starscream, Power Hungry // Starscream, Seeker Leader | 223 | 29 | 7 | 8 | 4 | 19 | `blocked` |
 | Joshua, Phoenix's Dominant // Phoenix, Warden of Fire | 222 | 24 | 8 | 6 | 12 | 10 | `blocked` |
 | The Legend of Kyoshi // Avatar Kyoshi | 222 | 28 | 8 | 6 | 6 | 14 | `blocked` |
 | Clive, Ifrit's Dominant // Ifrit, Warden of Inferno | 217 | 18 | 7 | 5 | 12 | 21 | `blocked` |
+| Jugan Defends the Temple // Remnant of the Rising Star | 217 | 27 | 8 | 7 | 8 | 9 | `blocked` |
 | The Shattered States Era // Nameless Conqueror | 217 | 33 | 8 | 5 | 6 | 6 | `blocked` |
 | The Kami War // O-Kagachi Made Manifest | 216 | 28 | 8 | 7 | 9 | 6 | `blocked` |
 | Vorinclex // The Grand Evolution | 216 | 26 | 8 | 7 | 10 | 4 | `blocked` |
@@ -35,7 +35,9 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Inventive Iteration // Living Breakthrough | 208 | 26 | 8 | 6 | 8 | 8 | `blocked` |
 | Jill, Shiva's Dominant // Shiva, Warden of Ice | 208 | 25 | 7 | 5 | 10 | 8 | `blocked` |
 | The Legend of Kuruk // Avatar Kuruk | 208 | 30 | 6 | 6 | 10 | 5 | `blocked` |
+| Twisted Fealty | 208 | 40 | 6 | 5 | 1 | 9 | `blocked` |
 | Emet-Selch, Unsundered // Hades, Sorcerer of Eld | 207 | 30 | 6 | 6 | 6 | 13 | `blocked` |
+| Tovolar, Dire Overlord // Tovolar, the Midnight Scourge | 206 | 34 | 6 | 6 | 5 | 12 | `blocked` |
 | Invasion of Kaldheim // Pyre of the World Tree | 205 | 25 | 7 | 4 | 5 | 22 | `blocked` |
 | Ugin, Eye of the Storms | 205 | 41 | 5 | 5 | 11 | 3 | `blocked` |
 | Invasion of New Phyrexia // Teferi Akosa of Zhalfir | 204 | 19 | 6 | 5 | 14 | 18 | `blocked` |
@@ -56,11 +58,9 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Crystal Fragments // Summon: Alexander | 189 | 27 | 6 | 7 | 4 | 8 | `blocked` |
 | Invasion of Segovia // Caetus, Sea Tyrant of Segovia | 189 | 20 | 6 | 4 | 6 | 23 | `blocked` |
 | Okiba Reckoner Raid // Nezumi Road Captain | 189 | 24 | 7 | 6 | 6 | 6 | `blocked` |
+| Conceited Witch // Price of Beauty | 188 | 28 | 6 | 4 | 0 | 20 | `exact` |
 | Invasion of Ulgrotha // Grandmother Ravi Sengir | 187 | 24 | 6 | 4 | 5 | 17 | `blocked` |
 | Arlinn, the Pack's Hope // Arlinn, the Moon's Fury | 185 | 31 | 5 | 6 | 5 | 12 | `blocked` |
 | Artist's Talent | 185 | 28 | 5 | 8 | 3 | 10 | `blocked` |
 | Invasion of Ixalan // Belligerent Regisaur | 185 | 24 | 6 | 4 | 5 | 16 | `blocked` |
-| Befriending the Moths // Imperial Moth | 184 | 22 | 8 | 5 | 6 | 6 | `blocked` |
-| Flamewar, Brash Veteran // Flamewar, Streetwise Operative | 184 | 22 | 6 | 6 | 9 | 15 | `blocked` |
-| Ticket Booth // Tunnel of Hate | 184 | 19 | 5 | 4 | 3 | 32 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |

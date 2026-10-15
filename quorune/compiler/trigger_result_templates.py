@@ -10,7 +10,19 @@ from .fixed_source_combat_growth import fixed_source_combat_growth_effect_templa
 from .fixed_entry_return_requirements import fixed_entry_return_effect_template
 
 
-def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True):
+def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=()):
+    from .event_counter_results import public_event_source_counter_result
+    source_counter = public_event_source_counter_result(
+        binding, body, effect_template=effect_template, card_name=card_name,
+        accepted_variants=source_counter_variants,
+    )
+    if source_counter is not None:return source_counter
+    from .event_counter_results import public_event_target_counter_result
+    target_counter = public_event_target_counter_result(
+        binding, body, effect_template=effect_template, card_name=card_name,
+        accepted_variants=source_counter_variants,
+    )
+    if target_counter is not None:return target_counter
     from .event_counter_results import entry_event_counter_result
     counter=entry_event_counter_result(binding,body,effect_template=effect_template,card_name=card_name)
     if counter is not None:return counter
@@ -35,6 +47,7 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
             compile_result=lambda text: binding_effect_template(
                 binding, text, card_name=card_name,
                 effect_template=effect_template, _allow_payment=False,
+                source_counter_variants=source_counter_variants,
             ),
         )
         if payment is not None:
@@ -52,7 +65,7 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     if binding.event.value.endswith('.self') or binding.variant in {'source_attacks','this_creature_blocks','this_creature_becomes_blocked','source_public_tap_state_transition','source_dealt_damage'}:
         from .source_self_effect_templates import normalized_source_result_body, pin_source_result_incarnation
         normalized=normalized_source_result_body(body)
-        if normalized is not None and not body.casefold().startswith(('it gets','him gets','her gets')):
+        if normalized is not None:
             value=effect_template(normalized,card_name=card_name)
             if value[0] is not None:return pin_source_result_incarnation(value),True
     from .scheduled_player_triggers import scheduled_player_result

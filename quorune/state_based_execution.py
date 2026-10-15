@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Protocol, Sequence
+from typing import Any, Mapping, Protocol, Sequence
 from .control_effects import ControlEffectHost, synchronize_control_effects
 
 from .counter_removal import (
@@ -24,9 +24,113 @@ from .destruction import (
     prepare_destructions,
     request_for_card,
 )
-from .state_based_actions import StateBasedActionBatch, player_loss_seats
+from .state_based_actions import PermanentSnapshot, StateBasedActionBatch, player_loss_seats
+from .keyword_abilities import normalized_characteristic_keywords
+from .ability_fragments import counter_maximum_values
+from .saga_progression import saga_final_chapter_snapshot
 from .zone_trigger_events import ZoneTransitionKind
 from .util import unique_preserving_order
+
+
+class StateBasedSnapshotHost(Protocol):
+    state: Any
+    active_seats: Sequence[str]
+
+    def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
+    def _type_parts(self, type_line: str) -> tuple[set[str], set[str], set[str]]: ...
+    def _numeric_stat(self, object_id: str, field: str) -> int: ...
+    def _battle_trigger_pending(self, card: Any) -> bool: ...
+    def _attachment_is_legal(self, card: Any, *, subtypes: set[str]) -> bool: ...
+
+
+def permanent_sba_snapshots(host: StateBasedSnapshotHost) -> list[PermanentSnapshot]:
+    """Capture one current public view before any state-based mutation."""
+    snapshots: list[PermanentSnapshot] = []
+    seen: set[str] = set()
+    for seat in host.active_seats:
+        for object_id in host.state.players[seat].zones["battlefield"]:
+            if object_id in seen:
+                continue
+            seen.add(object_id)
+            card = host.state.cards[object_id]
+            if card.zone != "battlefield":
+                continue
+            if card.phased_out:
+                snapshots.append(
+                    PermanentSnapshot(
+                        object_id=card.object_id,
+                        deathtouch_damage=card.deathtouch_damage,
+                        phased_out=True,
+                    )
+                )
+                continue
+            data = host._effective_card_data(card)
+            card_types, subtypes, supertypes = host._type_parts(
+                str(data.get("type_line") or "")
+            )
+            keywords = normalized_characteristic_keywords(data)
+            snapshots.append(
+                PermanentSnapshot(
+                    object_id=card.object_id,
+                    controller=card.controller,
+                    timestamp=card.zone_timestamp,
+                    card_types=frozenset(card_types),
+                    subtypes=frozenset(subtypes),
+                    world="world" in supertypes,
+                    world_timestamp=(
+                        card.world_supertype_timestamp
+                    ),
+                    toughness=(
+                        host._numeric_stat(object_id, "toughness")
+                        if "creature" in card_types
+                        else None
+                    ),
+                    marked_damage=card.marked_damage,
+                    deathtouch_damage=card.deathtouch_damage,
+                    indestructible="indestructible" in keywords,
+                    loyalty=(
+                        int(card.counters.get("loyalty", 0))
+                        if (
+                            "planeswalker" in card_types
+                            and (
+                                "loyalty" in card.counters
+                                or card.annotations.get(
+                                    "loyalty_initialized"
+                                )
+                                or card.counters.get(
+                                    "loyalty_initialized"
+                                )
+                            )
+                        )
+                        else None
+                    ),
+                    defense=(
+                        int(card.counters.get("defense", 0))
+                        if "battle" in card_types
+                        else None
+                    ),
+                    battle_trigger_pending=(
+                        host._battle_trigger_pending(card)
+                        if "battle" in card_types
+                        else False
+                    ),
+                    saga=saga_final_chapter_snapshot(host, card),
+                    attached_to=card.attached_to,
+                    attachment_legal=(
+                        host._attachment_is_legal(
+                            card,
+                            subtypes=subtypes,
+                        )
+                        if card.attached_to is not None
+                        else False
+                    ),
+                    counters=dict(card.counters),
+                    counter_maximums=counter_maximum_values(
+                        data.get("ability_fragments", ())
+                    ),
+                )
+            )
+    return snapshots
 
 
 class StateBasedExecutionError(ValueError):
@@ -393,6 +497,8 @@ def commit_state_based_counter_removals(
 
 
 __all__ = [
+    "permanent_sba_snapshots",
+    "StateBasedSnapshotHost",
     "commit_state_based_counter_removals",
     "commit_state_based_zone_changes",
     "CounterMaximumRemoval",
