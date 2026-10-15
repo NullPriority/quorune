@@ -244,12 +244,49 @@ class StaticComponentPresenceCollectionTests(unittest.TestCase):
                 self.assertEqual(expected, len(self.presence_effects(candidates)))
                 self.assertEqual(self.presence_effects(full), self.presence_effects(candidates))
                 self.assertEqual(4, quantity.call_count)
+        programs[0].handlers[0]['modifier']['add_ability_fragments'] = []
+        with self.assertRaisesRegex(SemanticNodeError, 'exactly one'):
+            collect_card_program_continuous_effects(
+                state, semantics, lambda _program: True, quantity_resolver=lambda *_args: 0,
+                static_component_presence_only=True)
         for program, descriptor in zip(programs, originals):
             program.handlers = [descriptor]
         programs[0].handlers[0]['modifier']['power'] = '1'
         with self.assertRaisesRegex(SemanticNodeError, 'integers'):
             collect_card_program_continuous_effects(
                 state, semantics, lambda _program: True, static_component_presence_only=True)
+
+    def test_presence_candidates_do_not_repeat_retained_fragment_validation(self):
+        from quorune.semantic_runtime.conditional_continuous import (
+            FixedPublicStateCharacteristicsHandler, FixedPublicStateGrantedAbilityHandler)
+        from test_continuous_effect_components import ability_grant_descriptor
+
+        state, semantics, programs = self.fixture()
+        handler = FixedPublicStateGrantedAbilityHandler()
+        fragment = ability_grant_descriptor()['modifier']['add_ability_fragments'][0]
+        for program in programs:
+            descriptor = program.handlers[0]
+            descriptor.update(handler_id=handler.handler_id, schema_version=handler.schema_version)
+            descriptor['modifier']['add_ability_fragments'] = [deepcopy(fragment)]
+        collect = lambda **kwargs: collect_card_program_continuous_effects(
+            state, semantics, lambda _program: True, maximum_layer=Layer.ABILITY,
+            quantity_resolver=lambda *_args: 3, **kwargs)
+        collect()
+        validations = []
+        original = FixedPublicStateCharacteristicsHandler.validate
+
+        def observe(current, descriptor):
+            validations.append(current.handler_id)
+            return original(current, descriptor)
+
+        with mock.patch.object(FixedPublicStateCharacteristicsHandler, 'validate', observe):
+            full = collect()
+            full_validations = list(validations)
+            self.assertEqual(len(programs), len(full_validations))
+            validations.clear()
+            candidates = collect(static_component_presence_only=True)
+            self.assertEqual(full, candidates)
+            self.assertEqual(full_validations, validations)
 
     def test_presence_filter_retains_unclassified_or_overridden_handlers(self):
         from quorune.semantic_runtime.conditional_continuous import FixedPublicStateCharacteristicsHandler

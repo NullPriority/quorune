@@ -162,9 +162,10 @@ requesting principal's authorized projection.
 
 The layer-6 component-presence scan asks the registered continuous handler
 whether a descriptor can affect static components before evaluating its live
-condition. Fixed public-state modifiers validate their complete descriptor and
-exclude shapes containing only ordinary keywords and power/toughness bonuses.
-Conditional fragment grants remain in the scan. Handlers without this query,
+condition. Every excluded public-state modifier validates its complete descriptor
+and contains only ordinary keywords and power/toughness bonuses. Conditional
+fragment variants remain conservative candidates and validate once through their
+ordinary lowerer. Handlers without this query,
 and subclasses with a different lowering implementation, remain conservative
 candidates. Ordinary characteristic collection still evaluates every applicable
 condition; each invocation reads current descriptors and state.

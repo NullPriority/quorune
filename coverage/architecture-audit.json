@@ -14205,7 +14205,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 256049,
+      "logical_lines": 256051,
       "methods": {
         "dunder": 652,
         "private": 995,
@@ -15372,8 +15372,8 @@
           "file": "quorune/semantic_runtime/conditional_continuous.py",
           "functions_and_methods": 7,
           "language": "python",
-          "logical_lines": 466,
-          "physical_lines": 505
+          "logical_lines": 468,
+          "physical_lines": 507
         },
         {
           "file": "quorune/compiler/fixed_owner_zone_move_templates.py",
@@ -21307,7 +21307,7 @@
           "physical_lines": 1690
         }
       ],
-      "physical_lines": 280690,
+      "physical_lines": 280692,
       "python_file_count": 949,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -39425,7 +39425,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "b3d9b66cfa9461eff625c2b157c4e1f314b32e0b1f38f0d6a7d0e9d62bc1b347",
+      "fingerprint": "c89228004cbd3b6a9c8379c461e92dfe541e2dafc7743dd4c5ef13ed4bc12070",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -40283,8 +40283,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 6284,
-      "discovered_total": 9593,
+      "conventional_ast_cases": 6285,
+      "discovered_total": 9594,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 273,
