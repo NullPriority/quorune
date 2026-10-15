@@ -502,6 +502,12 @@ class SemanticChoiceIntentHostMixin:
             thaw_value(value) for value in intent.replacement_selections
         )
         prepared_replacement = None
+        if intent.manifest_entry:
+            from ..zone_transitions import ZoneTransitionOwner
+            ZoneTransitionOwner(self).move_card(card.object_id, 'battlefield', controller=intent.actor,
+                manifest_entry=True, reason=intent.reason, semantic_events=True,
+                replacement_selections=replacement_selections)
+            return card.ref if card.zone == 'battlefield' and card.face_down else ''
         if intent.effect_entry_counters:
             prepared_replacement = prepare_zone_change_replacement(
                 self,

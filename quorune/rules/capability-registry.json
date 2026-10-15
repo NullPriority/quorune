@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 285,
+  "registry_version": 286,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -21549,6 +21549,189 @@
       "implementation_mutation_rationale": "Pure timestamp/childwithdrawal and native modifiedcreation distinguish ordering and complete definition consequences.",
       "blockers": [],
       "status": "trusted"
+    },
+    {
+      "version": 1,
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Typed Manifestcardentrywithcontrollerprivateidentityandprincipalcorrectturnupauthority;dreadlooksattop2andmovesremainderaftermanifest.",
+        "inputs": [
+          "currentlibrarycardincarnations",
+          "manifest/dreadmode",
+          "privatecontrollerlook",
+          "typedfacedownentrycharacteristics"
+        ],
+        "outputs": [
+          "hidden2/2facedowncreature",
+          "privatedreadchoice",
+          "wholecardgatedturnupaction"
+        ],
+        "exclusions": [
+          "otherplayerorigins",
+          "unrepresentedentryprohibitions",
+          "variablelinkedgrammar",
+          "unsupportedfaceupcardprogram",
+          "complexmanaandnonnormalfaceupforms"
+        ]
+      },
+      "positive_tests": [
+        "test_normal_and_dread_manifest_are_distinct_typed_instructions",
+        "test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
+        "test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
+        "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
+        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action"
+      ],
+      "negative_tests": [
+        "test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
+        "test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
+        "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
+        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action"
+      ],
+      "interaction_tests": [
+        "test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
+        "test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
+        "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
+        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action"
+      ],
+      "multiplayer_tests": [
+        "test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger"
+      ],
+      "privacy_tests": [
+        "test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger"
+      ],
+      "replay_tests": [
+        "test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
+        "test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
+        "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
+        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Typedmode/originallibraryincarnationandwholefaceupcardclosuregatebeforemutation/payment",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Unknownmode,privateforeignselection/staleincarnationsfailindependentchoiceandentrywitnesses",
+      "blockers": [],
+      "status": "trusted",
+      "id": "keyword_action.manifest.card",
+      "official_rules": [
+        "701.40a",
+        "701.40b",
+        "701.40c",
+        "701.40d",
+        "701.40e",
+        "701.40f",
+        "701.40g",
+        "116.2b",
+        "708.2",
+        "708.5"
+      ],
+      "dependencies": [
+        "zone.change.destination_replacement",
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.manifest.prepare_manifest_entry_replacement",
+        "quorune.rules.morph_actions.build_turn_face_up_offer",
+        "quorune.semantic_choices.manifest.ManifestChoiceHandler"
+      ]
+    },
+    {
+      "version": 1,
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Typed Manifestcardentrywithcontrollerprivateidentityandprincipalcorrectturnupauthority;dreadlooksattop2andmovesremainderaftermanifest.",
+        "inputs": [
+          "currentlibrarycardincarnations",
+          "manifest/dreadmode",
+          "privatecontrollerlook",
+          "typedfacedownentrycharacteristics"
+        ],
+        "outputs": [
+          "hidden2/2facedowncreature",
+          "privatedreadchoice",
+          "wholecardgatedturnupaction"
+        ],
+        "exclusions": [
+          "otherplayerorigins",
+          "unrepresentedentryprohibitions",
+          "variablelinkedgrammar",
+          "unsupportedfaceupcardprogram",
+          "complexmanaandnonnormalfaceupforms"
+        ]
+      },
+      "positive_tests": [
+        "test_normal_and_dread_manifest_are_distinct_typed_instructions",
+        "test_original_manifest_dread_privately_selects_then_moves_remainder_and_replays",
+        "test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
+        "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
+        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action"
+      ],
+      "negative_tests": [
+        "test_original_manifest_dread_privately_selects_then_moves_remainder_and_replays",
+        "test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
+        "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
+        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action"
+      ],
+      "interaction_tests": [
+        "test_original_manifest_dread_privately_selects_then_moves_remainder_and_replays",
+        "test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
+        "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
+        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action"
+      ],
+      "multiplayer_tests": [
+        "test_original_manifest_dread_privately_selects_then_moves_remainder_and_replays"
+      ],
+      "privacy_tests": [
+        "test_original_manifest_dread_privately_selects_then_moves_remainder_and_replays"
+      ],
+      "replay_tests": [
+        "test_original_manifest_dread_privately_selects_then_moves_remainder_and_replays",
+        "test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
+        "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
+        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Typedmode/originallibraryincarnationandwholefaceupcardclosuregatebeforemutation/payment",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Unknownmode,privateforeignselection/staleincarnationsfailindependentchoiceandentrywitnesses",
+      "blockers": [],
+      "status": "trusted",
+      "id": "keyword_action.manifest_dread",
+      "official_rules": [
+        "701.62a",
+        "701.40a",
+        "701.40b",
+        "708.5"
+      ],
+      "dependencies": [
+        "keyword_action.manifest.card"
+      ],
+      "implementation_components": [
+        "quorune.semantic_choices.manifest.ManifestChoiceHandler"
+      ]
     }
   ]
 }

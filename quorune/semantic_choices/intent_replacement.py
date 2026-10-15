@@ -471,6 +471,8 @@ def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
                     ],
                 }
             )
+        if intent.manifest_entry:
+            identity['manifest_entry'] = True
         return (
             "zone_move",
             identity,
@@ -783,9 +785,16 @@ def validate_semantic_intent_identity(
         return _validate_simultaneous_move_intent_identity(value)
     if kind != "zone_move":
         raise SemanticChoiceError("Unknown semantic intent continuation kind")
+    return _validate_zone_move_intent_identity(value)
+
+
+def _validate_zone_move_intent_identity(value):
     if not isinstance(value, Mapping):
         raise SemanticChoiceError("Zone-move intent identity must be an object")
-    actual = set(value)
+    manifest_entry = value.get('manifest_entry', False)
+    if type(manifest_entry) is not bool:
+        raise SemanticChoiceError('Manifest intent entry flag must be boolean')
+    actual = set(value) - {'manifest_entry'}
     if (
         actual != _ZONE_MOVE_FIELDS
         and actual != _ZONE_MOVE_EFFECT_ENTRY_FIELDS
@@ -851,6 +860,11 @@ def validate_semantic_intent_identity(
         "semantic_events": value["semantic_events"],
         "optional_if_missing": value["optional_if_missing"],
     }
+    if manifest_entry:
+        if (value['expected_zones'] != ['library'] or destination != 'battlefield' or new_controller != actor
+                or type(value.get('expected_zone_change_counter')) is not int):
+            raise SemanticChoiceError('Manifest intent library/controller binding is malformed')
+        result['manifest_entry'] = True
     if actual == _ZONE_MOVE_EFFECT_ENTRY_FIELDS:
         incarnation = value["expected_zone_change_counter"]
         if incarnation is not None and (

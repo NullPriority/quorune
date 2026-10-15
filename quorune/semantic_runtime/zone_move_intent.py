@@ -56,8 +56,13 @@ class ZoneMoveIntent:
     effect_entry_counters: tuple[EffectEntryCounter, ...] = ()
     replacement_selections: tuple[str | FrozenMap, ...] = ()
     transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY
+    manifest_entry: bool = False
 
     def __post_init__(self) -> None:
+        if type(self.manifest_entry) is not bool or (self.manifest_entry and (
+                self.expected_zones != ('library',) or self.destination != 'battlefield'
+                or self.expected_zone_change_counter is None or self.new_controller != self.actor)):
+            raise ValueError('Manifest zone intent requires one controller-bound library incarnation')
         if not isinstance(self.transition_kind, ZoneTransitionKind):
             raise ValueError("Zone move transition kind must be typed")
         if self.expected_zone_change_counter is not None and (

@@ -3503,6 +3503,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/manifest_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/max_speed_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -6807,6 +6822,20 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/manifest.py",
+      "layer": "rules",
+      "owning_subsystem": "legacy_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/maximum_hand_size.py",
       "layer": "rules",
       "owning_subsystem": "turn_priority_and_decisions",
@@ -9137,6 +9166,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/manifest_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/mill_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -10467,6 +10510,21 @@
     },
     {
       "file": "quorune/semantic_choices/madness.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_choices",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/semantic_choices/manifest.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_choices",
       "allowed_dependency_layers": [
@@ -13427,5 +13485,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "72c919ef137cdd9e69534e14a9cc9c95f6f695b0e734dbd87745a9d238ec6c3a"
+  "fingerprint": "0bede6b8476b2cc095261c2f653d3a3d5791ac5bc1194d3c48efc954822caaa0"
 }

@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Execute typed Manifest and Manifest dread through private choices and
+  face-down entry views, with controller-bound printed-mana turn-up authority.
+
 - Admit exact attached Role activation bodies through the existing typed
   activation cost and capability gate.
 

@@ -152,6 +152,17 @@ def mark_card_face_down_for_morph(
     card.revealed_to = []
 
 
+def mark_card_manifested(card: CardInstance, *, controller: str) -> None:
+    from .manifest import manifest_characteristics, MANIFEST_MARKER
+    if card.zone != 'battlefield' or card.object_kind != 'card' or not controller:
+        raise ZoneObjectStateError('Manifest state requires one entering physical card')
+    card.face_down = True
+    card.annotations[MORPH_FACE_DOWN_ANNOTATION] = manifest_characteristics()
+    card.annotations[MANIFEST_MARKER] = {'schema_version': 1}
+    card.known_to = [controller]
+    card.revealed_to = []
+
+
 def turn_card_face_up(
     card: CardInstance,
     *,
@@ -168,6 +179,7 @@ def turn_card_face_up(
     ):
         raise ZoneObjectStateError("Turn-face-up state is malformed")
     card.face_down = False
+    card.annotations.pop('manifested_card', None)
     card.annotations.pop(MORPH_FACE_DOWN_ANNOTATION, None)
     card.annotations.pop(MORPH_METHOD_ANNOTATION, None)
     card.known_to = list(viewers)

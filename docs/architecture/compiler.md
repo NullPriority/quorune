@@ -873,6 +873,15 @@ child capability closure. Activated clauses remove only compiler-recognized
 reminder text before the existing typed cost and Role effect gates. Unknown
 or linked creation grammar remains residual.
 
+Manifest instructions are represented as a separate controller-private choice
+family. Normal top-card entry and Manifest dread retain distinct modes. Dread
+selects one private looked-at card, manifests it, and then moves the remainder
+to the graveyard. Manifested normal-layout creatures with current whole-card
+closure may turn face up for an ordinary printed mana cost; represented Morph,
+Megamorph and Disguise alternatives retain separate offers. Complex mana and
+unsupported card-form or face-up behavior remain explicitly unavailable. See
+[ADR 0115](../adr/0115-typed-manifest-entry-and-turn-up.md).
+
 Source power and toughness intervening conditions use one fixed numeric
 battlefield creature predicate. Discovery and resolution both read complete
 effective characteristics; unknown statistics remain unavailable. Static

@@ -781,7 +781,7 @@ def _zone_change_snapshot_subjects(
             subjects.append(
                 ZoneChangeSubjectSnapshot(
                     object_id=card.object_id,
-                    prospective_subject=card.object_id in prospective_objects,
+                    prospective_subject=card.object_id in prospective_objects and card.object_id not in host.state.cards,
                     object_ref=card.ref,
                     logical_object_id=card.logical_object_id,
                     owner=card.owner,
@@ -1035,6 +1035,7 @@ def capture_zone_change_replacement_snapshot(
     source_zones: Mapping[str, str] | None = None,
     error_type: type[Exception] = ZoneReplacementError,
     prospective_objects: Mapping[str, Any] | None = None,
+    face_down_entry_objects: Mapping[str, Any] | None = None,
 ) -> ZoneChangeReplacementSnapshot:
     """Capture every represented source and affected object before mutation."""
 
@@ -1074,6 +1075,16 @@ def capture_zone_change_replacement_snapshot(
         raise error_type(
             "Prospective entry objects must be new outside-zone tokens bound to this batch"
         )
+    face_down = dict(face_down_entry_objects or {})
+    for key, card in face_down.items():
+        current = host.state.cards.get(key)
+        if (key not in supplied_ids or current is None or key in prospective
+                or card.object_id != key or card.logical_object_id != current.logical_object_id
+                or current.zone != 'library' or card.zone != 'library' or card.face_down is not True
+                or card.annotations.get('manifested_card') != {'schema_version': 1}
+                or (key, 'battlefield') not in supplied):
+            raise error_type('Face-down entry views require the current bound library-card incarnation')
+    prospective.update(face_down)
     if any(
         object_id not in supplied_ids
         or not isinstance(amounts, Mapping)

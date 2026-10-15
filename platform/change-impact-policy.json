@@ -4017,6 +4017,29 @@
         "test_card_program_trust",
         "test_state_based_actions"
       ]
+    },
+    {
+      "id": "manifest-entry-and-faceup-contract",
+      "patterns": [
+        "quorune/manifest.py",
+        "quorune/compiler/manifest_templates.py",
+        "quorune/rules/manifest_shapes.py",
+        "quorune/semantic_choices/manifest.py",
+        "quorune/zone_transitions.py",
+        "quorune/zone_transition_model.py",
+        "quorune/zone_object_state.py",
+        "quorune/semantic_runtime/zone_move_intent.py",
+        "quorune/rules/morph_actions.py",
+        "tests/fixtures/manifest-cards.json"
+      ],
+      "test_modules": [
+        "test_manifest",
+        "test_morph_rules",
+        "test_zone_object_lifecycle",
+        "test_zone_transitions",
+        "test_semantic_choice_characterization",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

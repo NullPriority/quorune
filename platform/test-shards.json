@@ -235,6 +235,7 @@
       "test_fixed_choose_one_modal_spells",
       "test_fixed_public_alternative_costs",
       "test_flashback_rules",
+      "test_manifest",
       "test_morph_rules",
       "test_predefined_roles",
       "test_proliferate_rules",

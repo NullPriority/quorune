@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "55481920d8b5cf4018bbc1a9cab1b9179df87a4b0330234c0946145b6a42ce05",
-  "declaration_source_fingerprint": "2ad2b92791994f568f4acd4a24b254c8205973c45e90e16637068b8282cc23b2",
+  "registry_fingerprint": "c9ede3648695c5e0c6843b65696388b8dadf46274b105e4d37df98704fcd2095",
+  "declaration_source_fingerprint": "0ae4fa187eafe2cd13e3ee2230e33094ae989734fee5b78685de95bd0fb9f1bb",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -75502,6 +75502,562 @@
       "applicability_note": "Replay the activated Investigate cost, Clue identity, token events, and final authoritative hash."
     },
     {
+      "capability_id": "keyword_action.manifest.card",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_manifested_instant_has_no_turn_up_offer_or_accepted_action",
+      "official_rule_ids": [
+        "701.40a",
+        "701.40b",
+        "701.40c",
+        "701.40d",
+        "701.40e",
+        "701.40f",
+        "701.40g",
+        "116.2b",
+        "708.2",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsmanifestsAerieBowmasterswithbothManifestandMegamorphoffers;onlyMegamorphpaymentaddscounter. OriginalSultaiEmissarysacrificetriggercreateshidden2/2aftercost. Manifestedinstantoffersandacceptsnoturnupaction;rejectedattemptpreservesstate. Pending/fullreplaycovercompleteconsequences."
+    },
+    {
+      "capability_id": "keyword_action.manifest.card",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
+      "official_rule_ids": [
+        "701.40a",
+        "701.40b",
+        "701.40c",
+        "701.40d",
+        "701.40e",
+        "701.40f",
+        "701.40g",
+        "116.2b",
+        "708.2",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsmanifestsAerieBowmasterswithbothManifestandMegamorphoffers;onlyMegamorphpaymentaddscounter. OriginalSultaiEmissarysacrificetriggercreateshidden2/2aftercost. Manifestedinstantoffersandacceptsnoturnupaction;rejectedattemptpreservesstate. Pending/fullreplaycovercompleteconsequences."
+    },
+    {
+      "capability_id": "keyword_action.manifest.card",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
+      "official_rule_ids": [
+        "701.40a",
+        "701.40b",
+        "701.40c",
+        "701.40d",
+        "701.40e",
+        "701.40f",
+        "701.40g",
+        "116.2b",
+        "708.2",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsorManifestDreadactualcastusesrealtrustedregistration,manifested2/2hiddenentrybeforeevents,controllerprivatechoice,foreignorunknownsubmissionrollback,pendingload/fullreplay. Printedmanafaceupactiondoesnotrepeatentrytrigger;unclosedfaceupbehaviorremainsgated."
+    },
+    {
+      "capability_id": "keyword_action.manifest.card",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
+      "official_rule_ids": [
+        "701.40a",
+        "701.40b",
+        "701.40c",
+        "701.40d",
+        "701.40e",
+        "701.40f",
+        "701.40g",
+        "116.2b",
+        "708.2",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsmanifestsAerieBowmasterswithbothManifestandMegamorphoffers;onlyMegamorphpaymentaddscounter. OriginalSultaiEmissarysacrificetriggercreateshidden2/2aftercost. Manifestedinstantoffersandacceptsnoturnupaction;rejectedattemptpreservesstate. Pending/fullreplaycovercompleteconsequences."
+    },
+    {
+      "capability_id": "keyword_action.manifest.card",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
+      "official_rule_ids": [
+        "701.40a",
+        "701.40b",
+        "701.40c",
+        "701.40d",
+        "701.40e",
+        "701.40f",
+        "701.40g",
+        "116.2b",
+        "708.2",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsorManifestDreadactualcastusesrealtrustedregistration,manifested2/2hiddenentrybeforeevents,controllerprivatechoice,foreignorunknownsubmissionrollback,pendingload/fullreplay. Printedmanafaceupactiondoesnotrepeatentrytrigger;unclosedfaceupbehaviorremainsgated."
+    },
+    {
+      "capability_id": "keyword_action.manifest.card",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_manifest.ManifestChoiceModelTests.test_manifest_producer_withdrawal_and_malformed_fields_fail_closed",
+      "official_rule_ids": [
+        "701.40a",
+        "701.40b",
+        "701.40c",
+        "701.40d",
+        "701.40e",
+        "701.40f",
+        "701.40g",
+        "116.2b",
+        "708.2",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OmittingManifestcompilerproducerpreventscurrentexactadmission;unknownmode,foreignplayerandunknownfielddonotmaptocapabilityauthority."
+    },
+    {
+      "capability_id": "keyword_action.manifest.card",
+      "evidence_class": "negative",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_manifested_instant_has_no_turn_up_offer_or_accepted_action",
+      "official_rule_ids": [
+        "701.40a",
+        "701.40b",
+        "701.40c",
+        "701.40d",
+        "701.40e",
+        "701.40f",
+        "701.40g",
+        "116.2b",
+        "708.2",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsmanifestsAerieBowmasterswithbothManifestandMegamorphoffers;onlyMegamorphpaymentaddscounter. OriginalSultaiEmissarysacrificetriggercreateshidden2/2aftercost. Manifestedinstantoffersandacceptsnoturnupaction;rejectedattemptpreservesstate. Pending/fullreplaycovercompleteconsequences."
+    },
+    {
+      "capability_id": "keyword_action.manifest.card",
+      "evidence_class": "negative",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
+      "official_rule_ids": [
+        "701.40a",
+        "701.40b",
+        "701.40c",
+        "701.40d",
+        "701.40e",
+        "701.40f",
+        "701.40g",
+        "116.2b",
+        "708.2",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsmanifestsAerieBowmasterswithbothManifestandMegamorphoffers;onlyMegamorphpaymentaddscounter. OriginalSultaiEmissarysacrificetriggercreateshidden2/2aftercost. Manifestedinstantoffersandacceptsnoturnupaction;rejectedattemptpreservesstate. Pending/fullreplaycovercompleteconsequences."
+    },
+    {
+      "capability_id": "keyword_action.manifest.card",
+      "evidence_class": "negative",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
+      "official_rule_ids": [
+        "701.40a",
+        "701.40b",
+        "701.40c",
+        "701.40d",
+        "701.40e",
+        "701.40f",
+        "701.40g",
+        "116.2b",
+        "708.2",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsorManifestDreadactualcastusesrealtrustedregistration,manifested2/2hiddenentrybeforeevents,controllerprivatechoice,foreignorunknownsubmissionrollback,pendingload/fullreplay. Printedmanafaceupactiondoesnotrepeatentrytrigger;unclosedfaceupbehaviorremainsgated."
+    },
+    {
+      "capability_id": "keyword_action.manifest.card",
+      "evidence_class": "negative",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
+      "official_rule_ids": [
+        "701.40a",
+        "701.40b",
+        "701.40c",
+        "701.40d",
+        "701.40e",
+        "701.40f",
+        "701.40g",
+        "116.2b",
+        "708.2",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsmanifestsAerieBowmasterswithbothManifestandMegamorphoffers;onlyMegamorphpaymentaddscounter. OriginalSultaiEmissarysacrificetriggercreateshidden2/2aftercost. Manifestedinstantoffersandacceptsnoturnupaction;rejectedattemptpreservesstate. Pending/fullreplaycovercompleteconsequences."
+    },
+    {
+      "capability_id": "keyword_action.manifest.card",
+      "evidence_class": "positive",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_manifested_instant_has_no_turn_up_offer_or_accepted_action",
+      "official_rule_ids": [
+        "701.40a",
+        "701.40b",
+        "701.40c",
+        "701.40d",
+        "701.40e",
+        "701.40f",
+        "701.40g",
+        "116.2b",
+        "708.2",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsmanifestsAerieBowmasterswithbothManifestandMegamorphoffers;onlyMegamorphpaymentaddscounter. OriginalSultaiEmissarysacrificetriggercreateshidden2/2aftercost. Manifestedinstantoffersandacceptsnoturnupaction;rejectedattemptpreservesstate. Pending/fullreplaycovercompleteconsequences."
+    },
+    {
+      "capability_id": "keyword_action.manifest.card",
+      "evidence_class": "positive",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
+      "official_rule_ids": [
+        "701.40a",
+        "701.40b",
+        "701.40c",
+        "701.40d",
+        "701.40e",
+        "701.40f",
+        "701.40g",
+        "116.2b",
+        "708.2",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsmanifestsAerieBowmasterswithbothManifestandMegamorphoffers;onlyMegamorphpaymentaddscounter. OriginalSultaiEmissarysacrificetriggercreateshidden2/2aftercost. Manifestedinstantoffersandacceptsnoturnupaction;rejectedattemptpreservesstate. Pending/fullreplaycovercompleteconsequences."
+    },
+    {
+      "capability_id": "keyword_action.manifest.card",
+      "evidence_class": "positive",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
+      "official_rule_ids": [
+        "701.40a",
+        "701.40b",
+        "701.40c",
+        "701.40d",
+        "701.40e",
+        "701.40f",
+        "701.40g",
+        "116.2b",
+        "708.2",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsorManifestDreadactualcastusesrealtrustedregistration,manifested2/2hiddenentrybeforeevents,controllerprivatechoice,foreignorunknownsubmissionrollback,pendingload/fullreplay. Printedmanafaceupactiondoesnotrepeatentrytrigger;unclosedfaceupbehaviorremainsgated."
+    },
+    {
+      "capability_id": "keyword_action.manifest.card",
+      "evidence_class": "positive",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
+      "official_rule_ids": [
+        "701.40a",
+        "701.40b",
+        "701.40c",
+        "701.40d",
+        "701.40e",
+        "701.40f",
+        "701.40g",
+        "116.2b",
+        "708.2",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsmanifestsAerieBowmasterswithbothManifestandMegamorphoffers;onlyMegamorphpaymentaddscounter. OriginalSultaiEmissarysacrificetriggercreateshidden2/2aftercost. Manifestedinstantoffersandacceptsnoturnupaction;rejectedattemptpreservesstate. Pending/fullreplaycovercompleteconsequences."
+    },
+    {
+      "capability_id": "keyword_action.manifest.card",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
+      "official_rule_ids": [
+        "701.40a",
+        "701.40b",
+        "701.40c",
+        "701.40d",
+        "701.40e",
+        "701.40f",
+        "701.40g",
+        "116.2b",
+        "708.2",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsorManifestDreadactualcastusesrealtrustedregistration,manifested2/2hiddenentrybeforeevents,controllerprivatechoice,foreignorunknownsubmissionrollback,pendingload/fullreplay. Printedmanafaceupactiondoesnotrepeatentrytrigger;unclosedfaceupbehaviorremainsgated."
+    },
+    {
+      "capability_id": "keyword_action.manifest.card",
+      "evidence_class": "replay",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_manifested_instant_has_no_turn_up_offer_or_accepted_action",
+      "official_rule_ids": [
+        "701.40a",
+        "701.40b",
+        "701.40c",
+        "701.40d",
+        "701.40e",
+        "701.40f",
+        "701.40g",
+        "116.2b",
+        "708.2",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsmanifestsAerieBowmasterswithbothManifestandMegamorphoffers;onlyMegamorphpaymentaddscounter. OriginalSultaiEmissarysacrificetriggercreateshidden2/2aftercost. Manifestedinstantoffersandacceptsnoturnupaction;rejectedattemptpreservesstate. Pending/fullreplaycovercompleteconsequences."
+    },
+    {
+      "capability_id": "keyword_action.manifest.card",
+      "evidence_class": "replay",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
+      "official_rule_ids": [
+        "701.40a",
+        "701.40b",
+        "701.40c",
+        "701.40d",
+        "701.40e",
+        "701.40f",
+        "701.40g",
+        "116.2b",
+        "708.2",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsmanifestsAerieBowmasterswithbothManifestandMegamorphoffers;onlyMegamorphpaymentaddscounter. OriginalSultaiEmissarysacrificetriggercreateshidden2/2aftercost. Manifestedinstantoffersandacceptsnoturnupaction;rejectedattemptpreservesstate. Pending/fullreplaycovercompleteconsequences."
+    },
+    {
+      "capability_id": "keyword_action.manifest.card",
+      "evidence_class": "replay",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
+      "official_rule_ids": [
+        "701.40a",
+        "701.40b",
+        "701.40c",
+        "701.40d",
+        "701.40e",
+        "701.40f",
+        "701.40g",
+        "116.2b",
+        "708.2",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsorManifestDreadactualcastusesrealtrustedregistration,manifested2/2hiddenentrybeforeevents,controllerprivatechoice,foreignorunknownsubmissionrollback,pendingload/fullreplay. Printedmanafaceupactiondoesnotrepeatentrytrigger;unclosedfaceupbehaviorremainsgated."
+    },
+    {
+      "capability_id": "keyword_action.manifest.card",
+      "evidence_class": "replay",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
+      "official_rule_ids": [
+        "701.40a",
+        "701.40b",
+        "701.40c",
+        "701.40d",
+        "701.40e",
+        "701.40f",
+        "701.40g",
+        "116.2b",
+        "708.2",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsmanifestsAerieBowmasterswithbothManifestandMegamorphoffers;onlyMegamorphpaymentaddscounter. OriginalSultaiEmissarysacrificetriggercreateshidden2/2aftercost. Manifestedinstantoffersandacceptsnoturnupaction;rejectedattemptpreservesstate. Pending/fullreplaycovercompleteconsequences."
+    },
+    {
+      "capability_id": "keyword_action.manifest_dread",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_original_manifest_dread_privately_selects_then_moves_remainder_and_replays",
+      "official_rule_ids": [
+        "701.62a",
+        "701.40a",
+        "701.40b",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsorManifestDreadactualcastusesrealtrustedregistration,manifested2/2hiddenentrybeforeevents,controllerprivatechoice,foreignorunknownsubmissionrollback,pendingload/fullreplay. Printedmanafaceupactiondoesnotrepeatentrytrigger;unclosedfaceupbehaviorremainsgated."
+    },
+    {
+      "capability_id": "keyword_action.manifest_dread",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_original_manifest_dread_privately_selects_then_moves_remainder_and_replays",
+      "official_rule_ids": [
+        "701.62a",
+        "701.40a",
+        "701.40b",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsorManifestDreadactualcastusesrealtrustedregistration,manifested2/2hiddenentrybeforeevents,controllerprivatechoice,foreignorunknownsubmissionrollback,pendingload/fullreplay. Printedmanafaceupactiondoesnotrepeatentrytrigger;unclosedfaceupbehaviorremainsgated."
+    },
+    {
+      "capability_id": "keyword_action.manifest_dread",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_manifest.ManifestChoiceModelTests.test_manifest_producer_withdrawal_and_malformed_fields_fail_closed",
+      "official_rule_ids": [
+        "701.62a",
+        "701.40a",
+        "701.40b",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OmittingManifestcompilerproducerpreventscurrentexactadmission;unknownmode,foreignplayerandunknownfielddonotmaptocapabilityauthority."
+    },
+    {
+      "capability_id": "keyword_action.manifest_dread",
+      "evidence_class": "negative",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_original_manifest_dread_privately_selects_then_moves_remainder_and_replays",
+      "official_rule_ids": [
+        "701.62a",
+        "701.40a",
+        "701.40b",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsorManifestDreadactualcastusesrealtrustedregistration,manifested2/2hiddenentrybeforeevents,controllerprivatechoice,foreignorunknownsubmissionrollback,pendingload/fullreplay. Printedmanafaceupactiondoesnotrepeatentrytrigger;unclosedfaceupbehaviorremainsgated."
+    },
+    {
+      "capability_id": "keyword_action.manifest_dread",
+      "evidence_class": "positive",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_original_manifest_dread_privately_selects_then_moves_remainder_and_replays",
+      "official_rule_ids": [
+        "701.62a",
+        "701.40a",
+        "701.40b",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsorManifestDreadactualcastusesrealtrustedregistration,manifested2/2hiddenentrybeforeevents,controllerprivatechoice,foreignorunknownsubmissionrollback,pendingload/fullreplay. Printedmanafaceupactiondoesnotrepeatentrytrigger;unclosedfaceupbehaviorremainsgated."
+    },
+    {
+      "capability_id": "keyword_action.manifest_dread",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_original_manifest_dread_privately_selects_then_moves_remainder_and_replays",
+      "official_rule_ids": [
+        "701.62a",
+        "701.40a",
+        "701.40b",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsorManifestDreadactualcastusesrealtrustedregistration,manifested2/2hiddenentrybeforeevents,controllerprivatechoice,foreignorunknownsubmissionrollback,pendingload/fullreplay. Printedmanafaceupactiondoesnotrepeatentrytrigger;unclosedfaceupbehaviorremainsgated."
+    },
+    {
+      "capability_id": "keyword_action.manifest_dread",
+      "evidence_class": "replay",
+      "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_original_manifest_dread_privately_selects_then_moves_remainder_and_replays",
+      "official_rule_ids": [
+        "701.62a",
+        "701.40a",
+        "701.40b",
+        "708.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalSoulSummonsorManifestDreadactualcastusesrealtrustedregistration,manifested2/2hiddenentrybeforeevents,controllerprivatechoice,foreignorunknownsubmissionrollback,pendingload/fullreplay. Printedmanafaceupactiondoesnotrepeatentrytrigger;unclosedfaceupbehaviorremainsgated."
+    },
+    {
       "capability_id": "keyword_action.monstrosity.fixed",
       "evidence_class": "interaction",
       "test_id": "tests.test_self_counter_keyword_actions.PermanentDesignationTests.test_zero_counter_commit_result_still_creates_monstrous_designation",
@@ -137646,5 +138202,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "5701454fd77a26f240f0e6cc6d747523cc0512d38afbe618095409ce24229b49"
+  "fingerprint": "774b71e02bd9b1a7eaccf766b159a8579a03da461e9583d259a2fbd32761040b"
 }

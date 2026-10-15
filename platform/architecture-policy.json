@@ -116,6 +116,7 @@
     ]
   },
   "protected_rules_modules": [
+    "quorune/manifest.py",
     "quorune/role_token_creation.py",
     "quorune/attached_control.py",
     "quorune/scheduled_player.py",

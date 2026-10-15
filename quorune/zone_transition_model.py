@@ -142,6 +142,7 @@ class ZoneMovePlan:
     prepared_life_payment: PreparedLifePayment | None
     prospective_battle_protector: str | None
     aura_entry_plan: Any
+    manifest_entry: bool = False
 
 
 __all__ = [

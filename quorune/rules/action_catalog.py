@@ -22,7 +22,7 @@ from .activation_costs import activation_choice_candidates
 from .casting.proposal import build_cast_offer
 from .casting.face_queries import offered_cast_methods,candidate_zone_cast_permission
 from ..morph import FACE_DOWN_CAST_METHODS
-from .morph_actions import build_turn_face_up_offer
+from .morph_actions import build_turn_face_up_offers
 from ..suspend import build_suspend_offer
 from .staged_cast_lifecycles import build_staged_cast_offer
 
@@ -350,11 +350,11 @@ def _turn_face_up_offers(
         card = host.state.cards[object_id]
         if card.controller != seat:
             continue
-        offer = build_turn_face_up_offer(host, seat, card)
-        if offer is None:
+        current = build_turn_face_up_offers(host, seat, card)
+        if not current:
             continue
         refs.append(card.ref)
-        offers.append(offer.to_dict())
+        offers.extend(offer.to_dict() for offer in current)
     return refs, offers
 
 
