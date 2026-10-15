@@ -300,6 +300,7 @@
     ],
     "functional-09": [
       "test_aerial_blocking",
+      "test_attached_permanent_modifiers",
       "test_color_set_mana_abilities",
       "test_controller_sacrifices",
       "test_damage_replacement_model",

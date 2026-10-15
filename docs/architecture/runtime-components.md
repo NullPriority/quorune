@@ -200,6 +200,9 @@ fixed colors, keyword additions, ability removal, base power/toughness and
 fixed modifiers. Attached and live-set producers share the fixed keyword
 vocabulary. Printed and granted Skulk use the existing blocking owner, which
 compares the holder's and blocker's current power when blocks are validated.
+Pure fixed P/T and keyword modifiers also apply to attached permanents without
+changing their types. A noncreature's P/T modifier is retained for any later
+creature state; an independent base-stat animation applies before that bonus.
 Creature subtype replacement removes only creature subtypes,
 preserving unrelated artifact or enchantment subtypes. Unknown subjects,
 chosen values, names, dynamic definitions and quoted grants remain residual.

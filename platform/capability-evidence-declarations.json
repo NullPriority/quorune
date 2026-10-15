@@ -24796,10 +24796,40 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
       "evidence_class": "interaction",
+      "test_id": "tests.test_attached_permanent_modifiers.AttachedPermanentModifierRuntimeTests.test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Lightwheel cast onto a foreign noncreature Vehicle preserves creature-target exclusion, later5/5animation plusbonus6/6/vigilance, source departure5/5, unauthorized rollback, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "interaction",
       "test_id": "tests.test_static_characteristic_settings.StaticSettingCompilerTests.test_conditional_source_settings_keep_layers_live_and_source_incarnation_exact",
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -24826,6 +24856,8 @@
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -24852,6 +24884,8 @@
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -24878,6 +24912,8 @@
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -24904,6 +24940,8 @@
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -24930,6 +24968,8 @@
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -24956,6 +24996,8 @@
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -24982,6 +25024,8 @@
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -25004,10 +25048,40 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_permanent_modifiers.AttachedPermanentModifierRuntimeTests.test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Lightwheel cast onto a foreign noncreature Vehicle preserves creature-target exclusion, later5/5animation plusbonus6/6/vigilance, source departure5/5, unauthorized rollback, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_counter_qualified_static_set_distinguishes_controller_and_enemy",
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -25034,6 +25108,8 @@
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -25060,6 +25136,8 @@
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -25082,10 +25160,40 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
       "evidence_class": "mutation",
+      "test_id": "tests.test_attached_permanent_modifiers.AttachedPermanentModifierCompilerTests.test_pure_fixed_modifiers_declare_shape_and_consumer_without_type_setting",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Executed fixed-setting producer omission is killed by all three independently expected source cases (three failures, no errors)."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "mutation",
       "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_static_setting_mutant_is_killed",
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -25108,10 +25216,68 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
       "evidence_class": "negative",
+      "test_id": "tests.test_attached_permanent_modifiers.AttachedPermanentModifierCompilerTests.test_empty_or_unknown_modifier_clauses_remain_residual",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Empty modifiers, unknown keywords and trailing unrepresented clauses remain residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_permanent_modifiers.AttachedPermanentModifierRuntimeTests.test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Lightwheel cast onto a foreign noncreature Vehicle preserves creature-target exclusion, later5/5animation plusbonus6/6/vigilance, source departure5/5, unauthorized rollback, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "negative",
       "test_id": "tests.test_static_characteristic_settings.StaticSettingCompilerTests.test_conditional_setting_grammar_schema_and_dependency_mutants_fail_closed",
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -25138,6 +25304,8 @@
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -25164,6 +25332,8 @@
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -25190,6 +25360,8 @@
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -25212,10 +25384,68 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
       "evidence_class": "positive",
+      "test_id": "tests.test_attached_permanent_modifiers.AttachedPermanentModifierCompilerTests.test_pure_fixed_modifiers_declare_shape_and_consumer_without_type_setting",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete pure modifiers retain source spans, attachment type, fine consumers and constant layers without inventing a type/base operation."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_permanent_modifiers.AttachedPermanentModifierRuntimeTests.test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Lightwheel cast onto a foreign noncreature Vehicle preserves creature-target exclusion, later5/5animation plusbonus6/6/vigilance, source departure5/5, unauthorized rollback, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
       "test_id": "tests.test_static_characteristic_settings.StaticSettingCompilerTests.test_conditional_source_setting_preserves_public_condition_and_layer_contract",
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -25242,6 +25472,8 @@
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -25268,6 +25500,8 @@
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -25294,6 +25528,8 @@
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -25316,10 +25552,40 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
       "evidence_class": "privacy",
+      "test_id": "tests.test_attached_permanent_modifiers.AttachedPermanentModifierRuntimeTests.test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Lightwheel cast onto a foreign noncreature Vehicle preserves creature-target exclusion, later5/5animation plusbonus6/6/vigilance, source departure5/5, unauthorized rollback, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "privacy",
       "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_ensoul_offer_animation_counters_source_departure_and_replay",
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -25346,6 +25612,8 @@
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -25368,10 +25636,40 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
       "evidence_class": "replay",
+      "test_id": "tests.test_attached_permanent_modifiers.AttachedPermanentModifierRuntimeTests.test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Lightwheel cast onto a foreign noncreature Vehicle preserves creature-target exclusion, later5/5animation plusbonus6/6/vigilance, source departure5/5, unauthorized rollback, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "replay",
       "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_ensoul_offer_animation_counters_source_departure_and_replay",
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -25398,6 +25696,8 @@
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -25424,6 +25724,8 @@
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
@@ -25450,6 +25752,8 @@
       "official_rule_ids": [
         "205.1a",
         "205.1b",
+        "208.3",
+        "208.3a",
         "611.3a",
         "611.3b",
         "611.3c",
