@@ -11,7 +11,7 @@ import shutil
 import subprocess
 from unittest.mock import patch
 
-from common import ROOT
+from common import ROOT, NODE_CHOICE_VALIDATION_TIMEOUT_SECONDS
 from quorune.abilities import ActivatedAbility, parse_activated_abilities
 from quorune.carddb import CardDatabase
 from quorune.compiler.public_quantity_mana import public_quantity_mana_template
@@ -162,7 +162,8 @@ class PublicQuantityManaRuntimeTests(unittest.TestCase):
         """
         result = subprocess.run([node, '--experimental-strip-types', '--input-type=module', '-e', script],
             input=json.dumps({'form': action['form'], 'allocation': allocation}),
-            text=True, capture_output=True, cwd=ROOT, check=True)
+            text=True, capture_output=True, cwd=ROOT, check=True,
+            timeout=NODE_CHOICE_VALIDATION_TIMEOUT_SECONDS)
         return json.loads(result.stdout)
 
     def test_projected_lotus_form_accepts_legal_dynamic_allocation_in_real_browser_validator(self):

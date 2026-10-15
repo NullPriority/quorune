@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from unittest import mock
 
-from common import keep_all, load_assets, make_session
+from common import keep_all, load_assets, make_session, NODE_CHOICE_VALIDATION_TIMEOUT_SECONDS
 from quorune.carddb import CardRecord
 from quorune.compiler.optional_payment_templates import (
     FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY,
@@ -817,7 +817,8 @@ class FixedResolutionPaymentActionTests(unittest.TestCase):
             client = subprocess.run(
                 [node, '--experimental-strip-types', '--input-type=module', '-e', validator],
                 cwd=ROOT, input=json.dumps({'form': form, 'values': {'cards': refs}}),
-                text=True, encoding='utf-8', stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=20,
+                text=True, encoding='utf-8', stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                timeout=NODE_CHOICE_VALIDATION_TIMEOUT_SECONDS,
             )
             self.assertEqual(0, client.returncode, client.stderr)
             client_results[len(refs)] = json.loads(client.stdout)

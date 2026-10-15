@@ -1656,6 +1656,22 @@
         "test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_set_query_fans_into_layers_and_resolution"
       ],
       "resolution": "Assert exact temporary predicates and source exclusion for all supported public sets, preserving keyword-qualified and type-union negative controls. The existing shared-public-battlefield-query-contract impact edge already selects this consumer; no selection widening or production change is needed."
+    },
+    {
+      "run_id": 38753370109,
+      "head_sha": "2b6606caccb5cd955fde2a9aaeb61f595608ac54",
+      "category": "windows_compatibility",
+      "deterministic": false,
+      "impact_edge_status": "not_applicable",
+      "id": "ci-20261015-515-windows-node-choice-budget",
+      "summary": "The complete Windows functional-12 shard timed out after 20 seconds in the real Node TypeScript choice-validator subprocess, before a cardinality assertion failed. The unchanged exact witness passes locally on Node 24; a deterministic validation error was not reproduced.",
+      "failed_surfaces": [
+        "Main / Broad / Python / windows / functional-12"
+      ],
+      "regressions": [
+        "test_fixed_optional_mana_payment_triggers.FixedResolutionPaymentActionTests.test_two_card_payment_published_form_and_command_cardinalities_agree"
+      ],
+      "resolution": "Use one bounded Node choice-validation process budget shared by both real TypeScript validator consumers, covering startup, type stripping and validation under shard worker load. Preserve all test identities, decorators, return-code checks, cardinality/allocation assertions, accepted/rejected commands and replay evidence. The Windows-only incident uses the complete exact-base fix-forward route; no unchanged-head CI rerun or narrowed recovery evidence is used."
     }
   ],
   "recent_pull_requests": [

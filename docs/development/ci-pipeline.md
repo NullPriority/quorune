@@ -123,6 +123,11 @@ TypeScript choice validator. Their existing Python owner shards install Node 24;
 cross-platform and nightly workflows derive that requirement from the canonical
 shard manifest. Browser jobs continue to use the same pinned Node major version.
 
+Real TypeScript choice-validator witnesses share a bounded process budget for
+Node startup, type stripping and validation under the functional shard's worker
+load. They retain their canonical validator, return-code checks and cardinality
+or allocation assertions. Expiring that budget still fails the witness.
+
 Keep at most two substantive branches active:
 
 - Slot A is pushed and undergoing pull-request certification.

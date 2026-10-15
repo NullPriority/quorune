@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "7af23309aabb4e14eb5c0ff8f49d777f63273ee760ba41e573305387508eb9ca"
+verified: "72825ac92503aeec8a47b02c0ec1a9b29ecdd14208d463370608ca89e7e317f9"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,7 +15,7 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 100
+- Escapes: 101
 - Deterministic escapes: 93
 - Current missing impact edges: 0
 - Known flaky tests: 0
@@ -129,6 +129,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20261013-505-subtype-assurance-inventory` | [38324804400](https://github.com/NullPriority/quorune/actions/runs/38324804400) | `missing_affected_test` | `added` | Compare the existing independent sequence dimensions plus the authoritative closed noncreature subtype inventory; keep accepted and rejected case generation unchanged. Add the direct-target and assurance owner paths to this integration consumer impact rule. |
 | `ci-20261013-505-interaction-evidence-completeness` | [38324804400](https://github.com/NullPriority/quorune/actions/runs/38324804400) | `missing_affected_test` | `added` | Retain correctness-first ranking. Add real original Abduction departure/LKI return and Flamekin private-entry/target-revalidation action witnesses with replay, plus a constructed copy/unsupported-target whole-admission boundary. Declare the actual new and existing copied-Aura and Feign/Demonic interactions, then regenerate the reusable matrix and scheduler through registered owners. |
 | `ci-20261013-505-bare-subtype-resolution-expectation` | [38324804400](https://github.com/NullPriority/quorune/actions/runs/38324804400) | `missing_affected_test` | `not_applicable` | Assert exact temporary predicates and source exclusion for all supported public sets, preserving keyword-qualified and type-union negative controls. The existing shared-public-battlefield-query-contract impact edge already selects this consumer; no selection widening or production change is needed. |
+| `ci-20261015-515-windows-node-choice-budget` | [38753370109](https://github.com/NullPriority/quorune/actions/runs/38753370109) | `windows_compatibility` | `not_applicable` | Use one bounded Node choice-validation process budget shared by both real TypeScript validator consumers, covering startup, type stripping and validation under shard worker load. Preserve all test identities, decorators, return-code checks, cardinality/allocation assertions, accepted/rejected commands and replay evidence. The Windows-only incident uses the complete exact-base fix-forward route; no unchanged-head CI rerun or narrowed recovery evidence is used. |
 
 ## Measurement limitations
 
