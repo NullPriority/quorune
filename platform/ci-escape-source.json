@@ -1672,6 +1672,23 @@
         "test_fixed_optional_mana_payment_triggers.FixedResolutionPaymentActionTests.test_two_card_payment_published_form_and_command_cardinalities_agree"
       ],
       "resolution": "Use one bounded Node choice-validation process budget shared by both real TypeScript validator consumers, covering startup, type stripping and validation under shard worker load. Preserve all test identities, decorators, return-code checks, cardinality/allocation assertions, accepted/rejected commands and replay evidence. The Windows-only incident uses the complete exact-base fix-forward route; no unchanged-head CI rerun or narrowed recovery evidence is used."
+    },
+    {
+      "run_id": 38773388505,
+      "head_sha": "15718adeca3109450e39319361fcda84d5e5f8a2",
+      "category": "windows_compatibility",
+      "deterministic": true,
+      "impact_edge_status": "not_applicable",
+      "id": "ci-20261015-517-dependency-syntax-short-path-fixtures",
+      "summary": "Both new dependency syntax-scope controls failed in the complete Windows generated-validation shard because TemporaryDirectory exposed a short-path root while helper discovery returned resolved long paths. The same ValueError is reproduced locally in both unchanged tests using native Windows short-path aliases.",
+      "failed_surfaces": [
+        "PR / Windows / generated-validation"
+      ],
+      "regressions": [
+        "test_compact_ci_dependencies.DependencySyntaxScopeTests.test_new_scope_rereads_helper_and_preserves_malformed_missing_and_unreadable_errors",
+        "test_compact_ci_dependencies.DependencySyntaxScopeTests.test_one_build_shares_syntax_but_keeps_wrapper_and_provenance_contexts"
+      ],
+      "resolution": "Resolve each temporary fixture root before creating sources and comparing canonical helper provenance. Preserve every test identity, decorator, assertion, cache-count control and malformed/missing/unreadable-input check; production dependency analysis and complete cross-platform CI selection remain unchanged. The exact two tests pass under the same native short-path harness after the fixture correction."
     }
   ],
   "recent_pull_requests": [

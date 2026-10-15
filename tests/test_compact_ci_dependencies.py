@@ -113,7 +113,7 @@ class DependencySyntaxScopeTests(unittest.TestCase):
         from scripts import compact_ci_dependencies as owner
 
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             self.sources(root)
             scope = owner.DependencySourceScope()
             parse = ast.parse
@@ -134,7 +134,7 @@ class DependencySyntaxScopeTests(unittest.TestCase):
         from scripts import compact_ci_dependencies as owner
 
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             helper = self.sources(root)
             first, _, errors = owner.discover_module_requirements('test_first', root=root)
             self.assertFalse(errors)
