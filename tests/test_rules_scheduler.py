@@ -208,6 +208,52 @@ class BundleFingerprintBatchTests(unittest.TestCase):
         with self.assertRaisesRegex(owner.WorkSelectionBundleError, "complete bundle"):
             owner._bundle_measurement_fingerprints({"cards": {}}, bundles)
 
+    def test_overlapping_bundles_serialize_each_distinct_card_projection_once(self):
+        owner, frontier, bundles = self.fixture()
+        bundles.append({**bundles[0], 'bundle_id': 'fixture:alias'})
+        serialized = []
+        original = owner.stable_json
+        def observe(value):
+            if isinstance(value, dict) and 'oracle_id' in value and 'abilities' in value:
+                serialized.append(original(value))
+            return original(value)
+        with mock.patch.object(owner, 'stable_json', side_effect=observe):
+            actual = owner._bundle_measurement_fingerprints(frontier, bundles)
+        self.assertEqual(len(set(serialized)), len(serialized))
+        for bundle in bundles:
+            self.assertEqual(self.reference(owner, frontier, bundle), actual[bundle['bundle_id']])
+
+
+class RuleCapabilityIndexTests(unittest.TestCase):
+    def test_rule_mapping_preserves_dotted_ancestry_duplicates_and_current_inputs(self):
+        import quorune.rules_scheduler as owner
+        rules = ['100', '100.1', '100.1a', '100.1.a', '100.10', '200', '200.1', 'other']
+        rows = [
+            {'id': 'z', 'official_rules': ['100.1', '200.1']},
+            {'id': 'a', 'official_rules': ['100', '100.1.a']},
+            {'id': 'a', 'official_rules': ['100.1a']},
+            {'id': '', 'official_rules': ['100']},
+            {'id': 'empty', 'official_rules': []},
+        ]
+        def reference():
+            return {rule: sorted(str(row['id']) for row in rows if row.get('id') and any(
+                rule == official or rule.startswith(official + '.') or official.startswith(rule + '.')
+                for official in row['official_rules'])) for rule in rules}
+        registry = {'capabilities': rows}
+        self.assertEqual(reference(), owner._capability_ids_by_rule(rules, registry))
+        rows[0]['official_rules'] = ['other.child']
+        self.assertEqual(reference(), owner._capability_ids_by_rule(rules, registry))
+
+    def test_rule_mapping_avoids_rule_capability_cross_product(self):
+        import quorune.rules_scheduler as owner
+        rules = [f'{chapter}.{section}' for chapter in range(10) for section in range(10)]
+        registry = {'capabilities': [{'id': f'cap:{chapter}', 'official_rules': [str(chapter)]}
+            for chapter in range(10)]}
+        with mock.patch.object(owner, '_rules_related', wraps=owner._rules_related) as related:
+            result = owner._capability_ids_by_rule(rules, registry)
+        self.assertEqual({rule: ['cap:' + rule.split('.')[0]] for rule in rules}, result)
+        self.assertLessEqual(related.call_count, len(rules) + len(registry['capabilities']))
+
 
 class NonHarvestSupersessionTests(unittest.TestCase):
     def proposals(self):

@@ -440,9 +440,13 @@ follow-up therefore reuses the source checkpoint's cohort measurement instead
 of repeating the database-backed probe.
 During one selection invocation, fingerprint validation indexes the current
 frontier's blocker and residual family references once. It hashes each relevant
-card projection once while preserving the existing canonical payload, sorting
-and fingerprint identity. A later invocation rebuilds that index from current
-inputs; stale measurement rejection still compares the full declared cohort.
+card projection once for each distinct selected ability set, sharing its
+canonical serialization across overlapping bundles while preserving the existing
+payload, sorting and fingerprint identity. A later invocation rebuilds those
+indexes from current inputs; stale measurement rejection still compares the full
+declared cohort. Rule-to-capability mapping indexes exact and dotted ancestor
+references within the same report build, preserving duplicate capability rows
+and the existing relation in both directions.
 Query-characteristic probes also reject lines lacking their required `for each`,
 `as long as`, or `equal to` grammar marker before constructing source-specific
 regular expressions. The original named parser, unsupported grammar boundaries

@@ -482,7 +482,12 @@ def _bundle_measurement_fingerprint(
                 (str(projected.get("oracle_id") or ""), stable_json(projected))
             )
     relevant_cards.sort()
-    payload = {
+    payload = _bundle_measurement_payload(frontier, bundle_policy, member_ids, family_rows)
+    return _measurement_payload_fingerprint(payload, relevant_cards)
+
+
+def _bundle_measurement_payload(frontier, bundle_policy, member_ids, family_rows):
+    return {
         "schema_version": _MEASUREMENT_FINGERPRINT_SCHEMA,
         "measurement_method": _MEASUREMENT_METHOD,
         "frontier_contract": {
@@ -513,7 +518,6 @@ def _bundle_measurement_fingerprint(
         "family_rows": [family_rows.get(member_id) for member_id in member_ids],
         "cards": [],
     }
-    return _measurement_payload_fingerprint(payload, relevant_cards)
 
 
 def _measurement_payload_fingerprint(
@@ -549,16 +553,22 @@ def _bundle_measurement_fingerprints(
             "Card frontier lacks complete bundle card rows"
         )
     family_cards: dict[str, set[int]] = {}
+    ability_families: list[tuple[set[str], ...]] = []
     for index, card in enumerate(cards):
         families = set(card.get("minimum_known_blocker_set", []))
+        current_ability_families = []
         for ability in card.get("abilities", []):
-            families.update(
-                ability.get("blockers", {}).get("canonical_family_ids", [])
-            )
+            referenced = set(ability.get('blockers', {}).get('canonical_family_ids', []))
             for residual in ability.get("residuals", []):
-                families.update(residual.get("family_ids", []))
+                referenced.update(residual.get('family_ids', []))
+            current_ability_families.append(referenced)
+            families.update(referenced)
+        ability_families.append(tuple(current_ability_families))
         for family in families:
             family_cards.setdefault(family, set()).add(index)
+    family_rows = {str(row.get('family_id') or ''): row
+        for row in frontier.get('family_candidates', [])}
+    serialized_projections: dict[tuple[int, tuple[int, ...]], tuple[str, str]] = {}
     fingerprints = {}
     for bundle in bundle_policies:
         if bundle.get("measurement_probe_id") is None:
@@ -566,9 +576,24 @@ def _bundle_measurement_fingerprints(
         indices: set[int] = set()
         for family in bundle["member_family_ids"]:
             indices.update(family_cards.get(str(family), ()))
-        fingerprints[str(bundle["bundle_id"])] = _bundle_measurement_fingerprint(
-            frontier, bundle, [cards[index] for index in sorted(indices)]
-        )
+        members = sorted(str(value) for value in bundle['member_family_ids'])
+        member_set = set(members)
+        relevant_cards = []
+        for index in sorted(indices):
+            selected = tuple(position for position, families in enumerate(ability_families[index])
+                if families & member_set)
+            key = (index, selected)
+            if key not in serialized_projections:
+                card = cards[index]
+                projected = {field: card.get(field) for field in
+                    ('oracle_id', 'card_name', 'hard_construction_failure')}
+                projected['minimum_known_blocker_set'] = card.get('minimum_known_blocker_set', [])
+                projected['abilities'] = [card['abilities'][position] for position in selected]
+                serialized_projections[key] = (str(projected.get('oracle_id') or ''), stable_json(projected))
+            relevant_cards.append(serialized_projections[key])
+        relevant_cards.sort()
+        fingerprints[str(bundle['bundle_id'])] = _measurement_payload_fingerprint(
+            _bundle_measurement_payload(frontier, bundle, members, family_rows), relevant_cards)
     return fingerprints
 
 

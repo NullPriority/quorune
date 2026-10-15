@@ -151,18 +151,25 @@ def _capability_ids_by_rule(
     rule_ids: Sequence[str],
     capability_registry: Mapping[str, Any],
 ) -> dict[str, list[str]]:
+    exact: dict[str, set[int]] = defaultdict(set)
+    descendants: dict[str, set[int]] = defaultdict(set)
+    capabilities = list(capability_registry.get('capabilities', []))
+    for index, capability in enumerate(capabilities):
+        if not capability.get('id'):
+            continue
+        for official in capability.get('official_rules', []):
+            official = str(official)
+            exact[official].add(index)
+            for position, character in enumerate(official):
+                if character == '.':
+                    descendants[official[:position]].add(index)
     result: dict[str, list[str]] = {}
-    capabilities = list(capability_registry.get("capabilities", []))
     for rule_id in rule_ids:
-        result[rule_id] = sorted(
-            str(capability.get("id"))
-            for capability in capabilities
-            if capability.get("id")
-            and any(
-                _rules_related(rule_id, str(official_rule))
-                for official_rule in capability.get("official_rules", [])
-            )
-        )
+        matching = exact.get(rule_id, set()) | descendants.get(rule_id, set())
+        for position, character in enumerate(rule_id):
+            if character == '.':
+                matching.update(exact.get(rule_id[:position], ()))
+        result[rule_id] = sorted(str(capabilities[index]['id']) for index in matching)
     return result
 
 
