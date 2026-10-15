@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from types import SimpleNamespace
 import unittest
+from unittest import mock
 
 from quorune.card_programs.runtime import (
     ContinuousEffectCollectionMetrics,
@@ -171,6 +173,146 @@ class ContinuousEffectPerformanceTests(unittest.TestCase):
         )
         self.assertEqual(("type-change", "anthem"), result.applied_effects)
         self.assertEqual(2, result.characteristics["power"])
+
+
+class StaticComponentPresenceCollectionTests(unittest.TestCase):
+    def fixture(self):
+        from quorune.compiler.continuous_templates import fixed_public_state_characteristics_handler
+
+        compiled = fixed_public_state_characteristics_handler(
+            "As long as you control three or more creatures, creatures you control get +1/+0 and have vigilance.",
+            source_name="Source",
+        )
+        self.assertIsNotNone(compiled)
+        descriptor = compiled[1]
+        state, semantics = _fixture(players=2, permanents_per_player=1)
+        for player in state.players.values():
+            player.zones['hand'] = []
+            player.life = 40
+            player.in_game = True
+        programs = []
+        for source in state.cards.values():
+            source.counters = {}
+            program = semantics.runtime_handler_programs_for_oracle(
+                source.oracle_id, active_zone='battlefield', event='characteristics.evaluate')[0]
+            program.handlers = [deepcopy(descriptor)]
+            programs.append(program)
+        return state, semantics, programs
+
+    @staticmethod
+    def presence_effects(effects):
+        return tuple(effect for effect in effects if any(operation.op in {
+            'add_ability_fragment', 'remove_ability_fragment', 'remove_all_abilities',
+        } for operation in effect.operations))
+
+    def test_presence_candidates_preserve_result_and_avoid_irrelevant_live_queries(self):
+        state, semantics, _programs = self.fixture()
+        quantity = mock.Mock(return_value=3)
+        full = collect_card_program_continuous_effects(
+            state, semantics, lambda _program: True, quantity_resolver=quantity)
+        self.assertEqual(4, len(full))
+        self.assertEqual({Layer.ABILITY, Layer.POWER_TOUGHNESS}, {effect.layer for effect in full})
+        self.assertEqual(2, quantity.call_count)
+        quantity.reset_mock()
+        candidates = collect_card_program_continuous_effects(
+            state, semantics, lambda _program: True, maximum_layer=Layer.ABILITY,
+            quantity_resolver=quantity, static_component_presence_only=True)
+        self.assertEqual(self.presence_effects(full), self.presence_effects(candidates))
+        quantity.assert_not_called()
+
+    def test_presence_candidates_retain_fragments_and_recheck_current_descriptor(self):
+        from quorune.semantic_runtime.conditional_continuous import FixedPublicStateGrantedAbilityHandler
+        from quorune.semantic_runtime.context import SemanticNodeError
+        from test_continuous_effect_components import ability_grant_descriptor
+
+        state, semantics, programs = self.fixture()
+        handler = FixedPublicStateGrantedAbilityHandler()
+        fragment = ability_grant_descriptor()['modifier']['add_ability_fragments'][0]
+        originals = [deepcopy(program.handlers[0]) for program in programs]
+        for program in programs:
+            descriptor = program.handlers[0]
+            descriptor.update(handler_id=handler.handler_id, schema_version=handler.schema_version)
+            descriptor['modifier']['add_ability_fragments'] = [deepcopy(fragment)]
+        for count, expected in ((3, 2), (0, 0)):
+            with self.subTest(current_count=count):
+                quantity = mock.Mock(return_value=count)
+                full = collect_card_program_continuous_effects(
+                    state, semantics, lambda _program: True, quantity_resolver=quantity)
+                candidates = collect_card_program_continuous_effects(
+                    state, semantics, lambda _program: True, maximum_layer=Layer.ABILITY,
+                    quantity_resolver=quantity, static_component_presence_only=True)
+                self.assertEqual(expected, len(self.presence_effects(candidates)))
+                self.assertEqual(self.presence_effects(full), self.presence_effects(candidates))
+                self.assertEqual(4, quantity.call_count)
+        programs[0].handlers[0]['modifier']['add_ability_fragments'] = []
+        with self.assertRaisesRegex(SemanticNodeError, 'exactly one'):
+            collect_card_program_continuous_effects(
+                state, semantics, lambda _program: True, quantity_resolver=lambda *_args: 0,
+                static_component_presence_only=True)
+        for program, descriptor in zip(programs, originals):
+            program.handlers = [descriptor]
+        programs[0].handlers[0]['modifier']['power'] = '1'
+        with self.assertRaisesRegex(SemanticNodeError, 'integers'):
+            collect_card_program_continuous_effects(
+                state, semantics, lambda _program: True, static_component_presence_only=True)
+
+    def test_presence_candidates_do_not_repeat_retained_fragment_validation(self):
+        from quorune.semantic_runtime.conditional_continuous import (
+            FixedPublicStateCharacteristicsHandler, FixedPublicStateGrantedAbilityHandler)
+        from test_continuous_effect_components import ability_grant_descriptor
+
+        state, semantics, programs = self.fixture()
+        handler = FixedPublicStateGrantedAbilityHandler()
+        fragment = ability_grant_descriptor()['modifier']['add_ability_fragments'][0]
+        for program in programs:
+            descriptor = program.handlers[0]
+            descriptor.update(handler_id=handler.handler_id, schema_version=handler.schema_version)
+            descriptor['modifier']['add_ability_fragments'] = [deepcopy(fragment)]
+        collect = lambda **kwargs: collect_card_program_continuous_effects(
+            state, semantics, lambda _program: True, maximum_layer=Layer.ABILITY,
+            quantity_resolver=lambda *_args: 3, **kwargs)
+        collect()
+        validations = []
+        original = FixedPublicStateCharacteristicsHandler.validate
+
+        def observe(current, descriptor):
+            validations.append(current.handler_id)
+            return original(current, descriptor)
+
+        with mock.patch.object(FixedPublicStateCharacteristicsHandler, 'validate', observe):
+            full = collect()
+            full_validations = list(validations)
+            self.assertEqual(len(programs), len(full_validations))
+            validations.clear()
+            candidates = collect(static_component_presence_only=True)
+            self.assertEqual(full, candidates)
+            self.assertEqual(full_validations, validations)
+
+    def test_presence_filter_retains_unclassified_or_overridden_handlers(self):
+        from quorune.semantic_runtime.conditional_continuous import FixedPublicStateCharacteristicsHandler
+        from quorune.semantic_runtime.continuous_components import (
+            ContinuousEffectComponentRegistry, FixedPowerToughnessAnthemHandler)
+
+        class FutureHandler(FixedPublicStateCharacteristicsHandler):
+            def lower(self, descriptor, context):
+                self.validate(descriptor)
+                return (ContinuousEffect(
+                    effect_id=context.component_id, source_id=context.source_object_id,
+                    layer=Layer.ABILITY, sublayer='6', timestamp=context.source_timestamp,
+                    operations=(ContinuousOperation('remove_all_abilities'),)),)
+
+        handler = FutureHandler(handler_id='fixture.future-presence')
+        registry = ContinuousEffectComponentRegistry((handler, FixedPowerToughnessAnthemHandler())).freeze()
+        self.assertTrue(registry.may_affect_static_components(_descriptor()))
+        state, semantics, programs = self.fixture()
+        for program in programs:
+            program.handlers[0]['handler_id'] = handler.handler_id
+        with mock.patch('quorune.card_programs.runtime.default_continuous_effect_component_registry', return_value=registry):
+            full = collect_card_program_continuous_effects(state, semantics, lambda _program: True)
+            candidates = collect_card_program_continuous_effects(
+                state, semantics, lambda _program: True, static_component_presence_only=True)
+        self.assertEqual(2, len(self.presence_effects(candidates)))
+        self.assertEqual(full, candidates)
 
 
 if __name__ == "__main__":

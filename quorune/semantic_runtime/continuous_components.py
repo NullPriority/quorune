@@ -1351,7 +1351,12 @@ class ContinuousEffectComponentRegistry(
         ContinuousEffect,
     ]
 ):
-    pass
+    def may_affect_static_components(self, descriptor: Mapping[str, Any]) -> bool:
+        """Only an explicit handler-owned exclusion can narrow a presence scan."""
+        predicate = getattr(self._handler(descriptor), "may_affect_static_components", None)
+        if predicate is None:
+            return True
+        return predicate(descriptor) is not False
 
 
 @lru_cache(maxsize=1)

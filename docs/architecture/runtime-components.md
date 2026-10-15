@@ -160,6 +160,16 @@ failing its declared predicate stops participating according to the family
 contract. Discovery must be deterministic and may not expose facts outside the
 requesting principal's authorized projection.
 
+The layer-6 component-presence scan asks the registered continuous handler
+whether a descriptor can affect static components before evaluating its live
+condition. Every excluded public-state modifier validates its complete descriptor
+and contains only ordinary keywords and power/toughness bonuses. Conditional
+fragment variants remain conservative candidates and validate once through their
+ordinary lowerer. Handlers without this query,
+and subclasses with a different lowering implementation, remain conservative
+candidates. Ordinary characteristic collection still evaluates every applicable
+condition; each invocation reads current descriptors and state.
+
 Live subtype queries preserve noncreature Kindred recipients when the source
 uses a bare creature subtype. An explicit creature noun retains that type
 restriction. Keyword grants and fixed modifiers share the query, while a

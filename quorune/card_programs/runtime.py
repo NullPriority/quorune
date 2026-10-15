@@ -634,6 +634,7 @@ def collect_card_program_continuous_effects(
     | None = None,
     setting_quantity_resolver: Callable[[Any, CharacteristicQuantitySpec], int] | None = None,
     static_component_resolver: Callable[[Any], Sequence[str]] | None = None,
+    static_component_presence_only: bool = False,
 ) -> tuple[ContinuousEffect, ...]:
     registry = default_continuous_effect_component_registry()
     registered_handler_ids = frozenset(
@@ -683,6 +684,8 @@ def collect_card_program_continuous_effects(
                     if str(
                         descriptor.get("handler_id") or ""
                     ) not in registered_handler_ids:
+                        continue
+                    if static_component_presence_only and not registry.may_affect_static_components(descriptor):
                         continue
                     skip, public_state = _component_public_state_snapshot(source, descriptor,
                         maximum_layer=maximum_layer, public_state_resolver=public_state_resolver,

@@ -6290,14 +6290,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "public-state-owner-test-scheduling-reference-relocation",
-      "compiler_version": "oracle-ir-v365",
+      "transition_id": "static-component-presence-query-prefilter",
+      "compiler_version": "oracle-ir-v366",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Relocate unchanged existing public-state action tests into coherent independently scheduled modules and update their qualified evidence identities; complete support, runtime behavior and compiler semantics remain unchanged."
+      "non_harvest_reason": "Skip live condition evaluation only for validated conditional modifiers whose unchanged lowerer cannot emit static-component presence operations; preserve ordinary characteristic effects, trust closure and complete-card support."
     },
 
     "forecast_corrections": [

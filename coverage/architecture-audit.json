@@ -13816,7 +13816,7 @@
       "covered_high_risk_pairs": 411,
       "covered_piece_pairs": 1293,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "b5b48ee47ea693d3be0f32d6a18af60eb0538d18b32c2fb18b6ca913d54b6111",
+      "source_fingerprint": "98d62327a58822fefb1f0c6c6c178c73f48f150266b0225965c36236eaf51ed7",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -14205,12 +14205,12 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 256035,
+      "logical_lines": 256051,
       "methods": {
         "dunder": 652,
         "private": 995,
-        "public": 2453,
-        "total": 4100
+        "public": 2455,
+        "total": 4102
       },
       "modules": [
         {
@@ -14410,18 +14410,18 @@
           "physical_lines": 1456
         },
         {
+          "file": "quorune/semantic_runtime/continuous_components.py",
+          "functions_and_methods": 20,
+          "language": "python",
+          "logical_lines": 1346,
+          "physical_lines": 1412
+        },
+        {
           "file": "quorune/damage_results.py",
           "functions_and_methods": 48,
           "language": "python",
           "logical_lines": 1344,
           "physical_lines": 1469
-        },
-        {
-          "file": "quorune/semantic_runtime/continuous_components.py",
-          "functions_and_methods": 19,
-          "language": "python",
-          "logical_lines": 1341,
-          "physical_lines": 1407
         },
         {
           "file": "quorune/trigger_discovery.py",
@@ -14875,8 +14875,8 @@
           "file": "quorune/card_programs/runtime.py",
           "functions_and_methods": 16,
           "language": "python",
-          "logical_lines": 725,
-          "physical_lines": 762
+          "logical_lines": 728,
+          "physical_lines": 765
         },
         {
           "file": "quorune/targets.py",
@@ -14973,8 +14973,8 @@
           "file": "quorune/characteristic_evaluation_host.py",
           "functions_and_methods": 14,
           "language": "python",
-          "logical_lines": 649,
-          "physical_lines": 691
+          "logical_lines": 650,
+          "physical_lines": 692
         },
         {
           "file": "quorune/rules/casting_additional_costs.py",
@@ -15369,6 +15369,13 @@
           "physical_lines": 500
         },
         {
+          "file": "quorune/semantic_runtime/conditional_continuous.py",
+          "functions_and_methods": 7,
+          "language": "python",
+          "logical_lines": 468,
+          "physical_lines": 507
+        },
+        {
           "file": "quorune/compiler/fixed_owner_zone_move_templates.py",
           "functions_and_methods": 13,
           "language": "python",
@@ -15388,13 +15395,6 @@
           "language": "python",
           "logical_lines": 462,
           "physical_lines": 492
-        },
-        {
-          "file": "quorune/semantic_runtime/conditional_continuous.py",
-          "functions_and_methods": 6,
-          "language": "python",
-          "logical_lines": 461,
-          "physical_lines": 499
         },
         {
           "file": "quorune/runtime.py",
@@ -21307,7 +21307,7 @@
           "physical_lines": 1690
         }
       ],
-      "physical_lines": 280675,
+      "physical_lines": 280692,
       "python_file_count": 949,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -35622,7 +35622,7 @@
             "visibility": "private"
           }
         ],
-        "primary_test_count": 280,
+        "primary_test_count": 281,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_activated_draw_abilities",
@@ -35670,6 +35670,7 @@
           "test_continuous_compiler_hardening",
           "test_continuous_effect_components",
           "test_continuous_effect_duration",
+          "test_continuous_effect_performance",
           "test_controller_sacrifices",
           "test_convoke_rules",
           "test_copied_self_entry_counters",
@@ -35722,8 +35723,7 @@
           "test_fixed_counter_placement_sets",
           "test_fixed_counter_placement_target_sets",
           "test_fixed_counter_player_cast_triggers",
-          "test_fixed_counter_removal_effects",
-          "test_fixed_counter_zone_triggers"
+          "test_fixed_counter_removal_effects"
         ],
         "privacy_sensitivity": "not explicitly declared",
         "prohibited_runtime_oracle_text_accesses": 0,
@@ -37087,7 +37087,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 148,
+        "primary_test_count": 149,
         "primary_tests": [
           "test_activation_restrictions",
           "test_additional_token_compiler",
@@ -37109,6 +37109,7 @@
           "test_conditional_exile",
           "test_continuous_effect_components",
           "test_continuous_effect_duration",
+          "test_continuous_effect_performance",
           "test_convoke_rules",
           "test_copy_objects",
           "test_counter_placement_replacements",
@@ -37187,8 +37188,7 @@
           "test_mill_rules",
           "test_morph_rules",
           "test_optional_draw_choices",
-          "test_ordinary_crew",
-          "test_ordinary_cycling"
+          "test_ordinary_crew"
         ],
         "privacy_sensitivity": "not explicitly declared",
         "prohibited_runtime_oracle_text_accesses": 0,
@@ -38739,7 +38739,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1499,
     "compiler_module_physical_lines": 1561,
-    "compiler_version": "oracle-ir-v365",
+    "compiler_version": "oracle-ir-v366",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -39394,7 +39394,7 @@
         "contract_fingerprint": "e485004b19b7f21621ab02543231419cfb5f3e92722b9d10129a1b44819bc4bd",
         "exact_cards_with_template": 744,
         "exact_nodes": 908,
-        "fingerprint": "f9388e1ba40d816fa90a938fac689cdf6d5221a54abe087344d04f6abcc15df3",
+        "fingerprint": "45a33d9ad066464723e354f93d5695d808178505a8464bfd7251adb91f156401",
         "grammar_source_fingerprint": "ba9ae320c5615887ab1b5b872620cb5c121194ce6e84d9ac854e4e418f40f8ce",
         "identity_fingerprint": "23cb162c9dd942a7e05a10237e8ebd1ae1b0d46a6c9d86e14b431bf1f1a81a65",
         "present": true,
@@ -39406,7 +39406,7 @@
         "contract_fingerprint": "e485004b19b7f21621ab02543231419cfb5f3e92722b9d10129a1b44819bc4bd",
         "exact_cards_with_template": 766,
         "exact_nodes": 941,
-        "fingerprint": "1cb70100d731ee267fd3bade1990e030f7125fea19319fcc54d4d78f43861823",
+        "fingerprint": "08133afdfbd84c985a9b20035e299dc98a473c1b8d6a274ff1be72918f913163",
         "grammar_source_fingerprint": "ba9ae320c5615887ab1b5b872620cb5c121194ce6e84d9ac854e4e418f40f8ce",
         "identity_fingerprint": "30ee37558d0568aa8d4eece75cd94f960987e1ca5836e4643b3d144795167a82",
         "present": true,
@@ -39425,7 +39425,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "20a28e12a5900ea00f4ed53828c7cea978d7c1f719601bb1e88d144a0a31ef7c",
+      "fingerprint": "c89228004cbd3b6a9c8379c461e92dfe541e2dafc7743dd4c5ef13ed4bc12070",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -40275,7 +40275,7 @@
         "earlier_layer_subtype_change"
       ],
       "schema_version": 1,
-      "source_sha256": "7ca36efb9ebba75bbef15391a6664a69227c719c7c7b3b4c374b54a99f0547dc"
+      "source_sha256": "6f36de172830dd9bce12a9eb52befb1f892dc818f30e61b651b15a0fb1d24351"
     },
     "property_and_fuzz": {
       "dedicated_property_suite": false,
@@ -40283,8 +40283,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 6281,
-      "discovered_total": 9590,
+      "conventional_ast_cases": 6285,
+      "discovered_total": 9594,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 273,
