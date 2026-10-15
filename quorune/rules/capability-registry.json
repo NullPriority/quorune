@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 284,
+  "registry_version": 285,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -21433,6 +21433,84 @@
       "implementation_mutation_rationale": "Omitting singular production or changing source subtype/combat/controller/recipient rejects the exact distinguishing predicate contract.",
       "blockers": [],
       "status": "trusted"
+    },
+    {
+      "id": "token.creation.predefined_role",
+      "version": 1,
+      "official_rules": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Complete source-pinned predefined Aura Role child definitions, legal attached creation and explicitly ordered simultaneous timestamps.",
+        "inputs": [
+          "closedRoledefinition",
+          "typedattachedsourceortargetincarnation",
+          "tokenreplacementadjustedmultiplicity",
+          "currentcontrollerandtimestampordering"
+        ],
+        "outputs": [
+          "completeAuraRoleenterattached",
+          "Roleuniquenessatstatebasedcheck",
+          "privateprincipalcorrectpendingreplay"
+        ],
+        "exclusions": [
+          "unknownRoledefinitions",
+          "openlinkedsubjectgrammar",
+          "unimplementedcreationcontinuations"
+        ]
+      },
+      "dependencies": [
+        "token.creation.fixed_definition",
+        "attachment.aura.simple_object",
+        "state_based.role_attachment.uniqueness",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.compiler.role_token_nodes.role_definition_children",
+        "quorune.rules.role_token_shapes.role_token_node_capabilities"
+      ],
+      "positive_tests": [
+        "test_complete_role_definitions_keep_source_spans_and_child_authority",
+        "test_role_static_children_lower_through_existing_program_identity"
+      ],
+      "negative_tests": [
+        "test_role_definition_withdrawal_and_creator_fragment_isolation"
+      ],
+      "interaction_tests": [],
+      "multiplayer_tests": [],
+      "privacy_tests": [],
+      "replay_tests": [],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_run",
+      "dependency_fail_closed_rationale": "Complete runtime attachedcreationandtimestampcontinuationspending",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Withdrawing complete child definitions and leaking granted-only creator fragments fail the distinguishing compile/consumer witnesses.",
+      "blockers": [
+        "Attachedcreationruntime,timestamporderingandnativeoriginalproofinprogress"
+      ],
+      "status": "specified"
     }
   ]
 }

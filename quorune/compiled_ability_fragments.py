@@ -118,6 +118,8 @@ def compiled_static_ability_fragments(
     for program in (
         programs_by_key[key] for key in sorted(programs_by_key)
     ):
+        if program.provenance.get('granted_only'):
+            continue
         if not host.semantic_program_is_current_trusted(program):
             continue
         program_face = str(program.provenance.get("face_id") or "")

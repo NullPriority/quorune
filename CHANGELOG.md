@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Pin all predefined Role definitions into existing typed static and triggered
+  child programs while keeping attached creation untrusted until closure.
+
 - Evaluate fixed source power and toughness intervening conditions against full
   current characteristics at discovery and resolution.
 

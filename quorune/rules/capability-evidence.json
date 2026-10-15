@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "e941642bf64ab6c44736e921fa99312563defe04431b1e4670dfa6d231f2a253",
+  "registry_fingerprint": "b32387fb7c680e2214c63771a761041abb3400ccab37f075cc298c11790128fa",
   "declaration_source_fingerprint": "df23745c51e69cb5392987e3e871d480ec4c10350dc08988368d5001f2e63085",
   "declarations": [
     {
@@ -136726,5 +136726,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "683be7d6054d27d6eafa82cf03805b75d5fe9a55277b0abda4bde2d5c6a3bfed"
+  "fingerprint": "741b8e8accc3972eceb10183ebfdaf9fe025091777b820823763e27810d0b388"
 }

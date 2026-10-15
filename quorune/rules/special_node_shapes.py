@@ -3,6 +3,9 @@ from __future__ import annotations
 
 def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None):
     """Route independently owned special shapes before ordinary leaf composition."""
+    if 'predefined-role-token' in mechanics:
+        from .role_token_shapes import role_token_node_capabilities
+        return role_token_node_capabilities(effects=effects, target_schema=target_schema, mechanics=mechanics)
     if 'transmute' in mechanics:
         from ..transmute import transmute_node_capabilities
         return transmute_node_capabilities(effects=effects, target_schema=target_schema,

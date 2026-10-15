@@ -864,6 +864,12 @@ attachment, counter, tapped/combat, chosen, named-card, distinct-value,
 total-power, source-relative, historical, compound, and unsupported timing
 forms remain source-spanned residuals.
 
+Predefined Role definitions compile into separate granted-only static and
+triggered child programs. Enchant and child references are explicit token
+fragments pinned to the creating card program. These child programs cannot
+become abilities of the creator. Attached creation and timestamp choice
+closure remain required before Role creation receives gameplay trust.
+
 Source power and toughness intervening conditions use one fixed numeric
 battlefield creature predicate. Discovery and resolution both read complete
 effective characteristics; unknown statistics remain unavailable. Static

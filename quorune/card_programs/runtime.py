@@ -581,6 +581,7 @@ def _continuous_programs_for_source(
                 event="characteristics.evaluate",
             )
         )
+        if not program.provenance.get('granted_only')
     }
     programs.update(
         {

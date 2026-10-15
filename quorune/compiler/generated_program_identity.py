@@ -31,6 +31,11 @@ def generated_ability_id(
     static_declaration: bool,
     node_id: str | None = None,
 ) -> str | None:
+    if kind == 'granted_static_ability':
+        slot = str(node_id or '').rsplit(':role-static:', 1)
+        if len(slot) == 2 and slot[1].isdigit():
+            return f'static:{face_id}:n{line}:role:{slot[1]}'
+        return None
     granted = attached_granted_program_ability_id(
         kind=kind,
         face_id=face_id,

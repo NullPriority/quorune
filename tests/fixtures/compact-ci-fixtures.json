@@ -105,6 +105,7 @@
     "tests/fixtures/player-speed-cards.json",
     "tests/fixtures/player-target-protection-cards.json",
     "tests/fixtures/power-up-cards.json",
+    "tests/fixtures/predefined-role-cards.json",
     "tests/fixtures/prevention-composition-cards.json",
     "tests/fixtures/prototype-cards.json",
     "tests/fixtures/prowess-cards.json",

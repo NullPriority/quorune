@@ -236,6 +236,7 @@
       "test_fixed_public_alternative_costs",
       "test_flashback_rules",
       "test_morph_rules",
+      "test_predefined_roles",
       "test_proliferate_rules",
       "test_prototype_rules",
       "test_semantic_handlers",
