@@ -1026,6 +1026,12 @@ typed token-copy recipe. String target placeholders and recipe origins share
 the same independently closed target/copy authority; an unsupported recipe
 still fails its canonical shape validator.
 
+The versioned fixed payment descriptor also represents a positive printed
+energy cost before independently closed effects. Event-aware composition
+retains the source incarnation inside its paid result and preserves targets
+chosen at trigger placement. Variable or repeated energy, combined resource
+prices, reflexive triggers, and unrepresented result leaves remain residual.
+
 `compiler/power_up_templates.py` specializes the parser's explicit Power-up
 marker into a typed price descriptor and once-only activation limit. Both the
 Oracle node and runtime catalog use that same specialization. Entry-turn

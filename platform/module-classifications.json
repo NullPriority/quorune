@@ -6100,6 +6100,20 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/energy_payment.py",
+      "layer": "rules",
+      "owning_subsystem": "legacy_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/engine.py",
       "layer": "rules",
       "owning_subsystem": "legacy_rules",
@@ -11540,6 +11554,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/energy_payment.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/enlist.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -13526,5 +13555,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "aadbc16804f1780c430e97ed0b7483a849b6f6f2fedf8bae66b76e3cbd6108f6"
+  "fingerprint": "40d1251d989443a9a08aa72bc28f136ff7090e3549a4e3d1be5f2a9c5b50da15"
 }

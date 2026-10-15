@@ -144,6 +144,14 @@ class FixedCounterPlacementHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        if effect.get('card', '') is None:
+            if 'cards' in effect:
+                raise SemanticNodeError('Counter placement cannot combine single and group subjects')
+            # Resolved source-incarnation references can be unavailable. The
+            # existing group validator already validates and omits those rows.
+            grouped = {key: value for key, value in effect.items() if key != 'card'}
+            grouped['cards'] = [None, None]
+            return self.lower(grouped, context)
         if "cards" in effect:
             return IntentPlan(
                 operation=self.operation,

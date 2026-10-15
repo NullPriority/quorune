@@ -200,7 +200,11 @@ instructions still require their target, and offers and commands share the
 same typed target schema.
 
 The existing optional-payment choice also accepts a closed v2 fixed-cost
-descriptor. It uses the ordinary private/public object choice and resource
+descriptor. Fixed positive energy payments read the locked actor's current
+energy, then commit exactly that cost through the canonical counter transaction
+before continuing the represented result. Decline retains energy; insufficient
+energy rejects atomically. Counter-placement replacements do not apply to this
+cost. The descriptor uses the ordinary private/public object choice and resource
 affordability snapshot, pins selected zone incarnations, and returns only
 canonical full-payment intents before prepending independently represented
 consequences. A redirected discard or sacrifice still pays the chosen cost;

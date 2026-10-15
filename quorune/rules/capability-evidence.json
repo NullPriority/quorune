@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "6d8a6b7442e2b19b070d6f5138236c43dc19cef0d1cf32a7a1013149f81b9200",
-  "declaration_source_fingerprint": "20b35ebbfb50e634a7d95eb187640409f9b5198541aba15e42dde068e09778ff",
+  "registry_fingerprint": "264bfb1d51b75067ad3bf83504658ff1cf52dcd913261005d53116822e0ebd10",
+  "declaration_source_fingerprint": "24ae28beecb42820c1d5a19831f504c3bbc0a41dfb8559ede07481ae6765220c",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -48839,6 +48839,272 @@
       "applicability_note": "Illegal targets and insufficient X payment leave state unchanged; resolution cannot modify a returned target incarnation."
     },
     {
+      "capability_id": "cost.energy.fixed_resolution_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_eddytrail_hawk_selects_target_before_energy_choice",
+      "official_rule_ids": [
+        "107.14",
+        "118.3",
+        "118.12",
+        "122.1",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed energy choice retains payment and original-source identity across blink, insufficient resource and selected trigger targets; strict unavailable-counter shape remains validated."
+    },
+    {
+      "capability_id": "cost.energy.fixed_resolution_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
+      "official_rule_ids": [
+        "107.14",
+        "118.3",
+        "118.12",
+        "122.1",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed energy choice retains payment and original-source identity across blink, insufficient resource and selected trigger targets; strict unavailable-counter shape remains validated."
+    },
+    {
+      "capability_id": "cost.energy.fixed_resolution_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_thriving_rhino_cast_attack_payment_decline_and_pending_replay",
+      "official_rule_ids": [
+        "107.14",
+        "118.3",
+        "118.12",
+        "122.1",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed energy resolution cost through existing optional payment and canonical player-counter transaction; source-bound consequence and pending/full replay."
+    },
+    {
+      "capability_id": "cost.energy.fixed_resolution_payment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_aether_chaser_pays_energy_then_creates_exact_servo",
+      "official_rule_ids": [
+        "107.14",
+        "118.3",
+        "118.12",
+        "122.1",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed energy resolution cost through existing optional payment and canonical player-counter transaction; source-bound consequence and pending/full replay."
+    },
+    {
+      "capability_id": "cost.energy.fixed_resolution_payment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_eddytrail_hawk_selects_target_before_energy_choice",
+      "official_rule_ids": [
+        "107.14",
+        "118.3",
+        "118.12",
+        "122.1",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed energy choice retains payment and original-source identity across blink, insufficient resource and selected trigger targets; strict unavailable-counter shape remains validated."
+    },
+    {
+      "capability_id": "cost.energy.fixed_resolution_payment",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentModelTests.test_energy_payment_counter_transaction_mutant_is_killed",
+      "official_rule_ids": [
+        "107.14",
+        "118.3",
+        "118.12",
+        "122.1",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact full-energy spending and dependency fail-closed evidence."
+    },
+    {
+      "capability_id": "cost.energy.fixed_resolution_payment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
+      "official_rule_ids": [
+        "107.14",
+        "118.3",
+        "118.12",
+        "122.1",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed energy choice retains payment and original-source identity across blink, insufficient resource and selected trigger targets; strict unavailable-counter shape remains validated."
+    },
+    {
+      "capability_id": "cost.energy.fixed_resolution_payment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentCompilerTests.test_energy_payment_missing_producer_and_open_cost_remain_untrusted",
+      "official_rule_ids": [
+        "107.14",
+        "118.3",
+        "118.12",
+        "122.1",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact full-energy spending and dependency fail-closed evidence."
+    },
+    {
+      "capability_id": "cost.energy.fixed_resolution_payment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentModelTests.test_energy_cost_requires_full_resource_and_preserves_unrelated_counters",
+      "official_rule_ids": [
+        "107.14",
+        "118.3",
+        "118.12",
+        "122.1",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed energy resolution cost through existing optional payment and canonical player-counter transaction; source-bound consequence and pending/full replay."
+    },
+    {
+      "capability_id": "cost.energy.fixed_resolution_payment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentCompilerTests.test_fixed_energy_payment_binds_cost_before_source_result",
+      "official_rule_ids": [
+        "107.14",
+        "118.3",
+        "118.12",
+        "122.1",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed energy resolution cost through existing optional payment and canonical player-counter transaction; source-bound consequence and pending/full replay."
+    },
+    {
+      "capability_id": "cost.energy.fixed_resolution_payment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_thriving_rhino_cast_attack_payment_decline_and_pending_replay",
+      "official_rule_ids": [
+        "107.14",
+        "118.3",
+        "118.12",
+        "122.1",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed energy resolution cost through existing optional payment and canonical player-counter transaction; source-bound consequence and pending/full replay."
+    },
+    {
+      "capability_id": "cost.energy.fixed_resolution_payment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_eddytrail_hawk_selects_target_before_energy_choice",
+      "official_rule_ids": [
+        "107.14",
+        "118.3",
+        "118.12",
+        "122.1",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed energy choice retains payment and original-source identity across blink, insufficient resource and selected trigger targets; strict unavailable-counter shape remains validated."
+    },
+    {
+      "capability_id": "cost.energy.fixed_resolution_payment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
+      "official_rule_ids": [
+        "107.14",
+        "118.3",
+        "118.12",
+        "122.1",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed energy choice retains payment and original-source identity across blink, insufficient resource and selected trigger targets; strict unavailable-counter shape remains validated."
+    },
+    {
+      "capability_id": "cost.energy.fixed_resolution_payment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_thriving_rhino_cast_attack_payment_decline_and_pending_replay",
+      "official_rule_ids": [
+        "107.14",
+        "118.3",
+        "118.12",
+        "122.1",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed energy resolution cost through existing optional payment and canonical player-counter transaction; source-bound consequence and pending/full replay."
+    },
+    {
       "capability_id": "counter.characteristic.keyword",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_counter_replacement_suspends_and_resumes_remaining_sequence_exactly",
@@ -53392,6 +53658,29 @@
     {
       "capability_id": "counter.producer.fixed_effect",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed energy choice retains payment and original-source identity across blink, insufficient resource and selected trigger targets; strict unavailable-counter shape remains validated."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
       "official_rule_ids": [
         "115.1",
@@ -53595,6 +53884,52 @@
         "commander_review"
       ],
       "applicability_note": "Reject boolean, zero, missing, empty, and unknown typed operation fields before authoritative mutation."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed energy choice retains payment and original-source identity across blink, insufficient resource and selected trigger targets; strict unavailable-counter shape remains validated."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentModelTests.test_unavailable_counter_subject_is_empty_after_complete_shape_validation",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed energy choice retains payment and original-source identity across blink, insufficient resource and selected trigger targets; strict unavailable-counter shape remains validated."
     },
     {
       "capability_id": "counter.producer.fixed_effect",
@@ -53848,6 +54183,29 @@
         "commander_review"
       ],
       "applicability_note": "Replay four priority passes and the affected-seat replacement choice to the identical authoritative state hash."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed energy choice retains payment and original-source identity across blink, insufficient resource and selected trigger targets; strict unavailable-counter shape remains validated."
     },
     {
       "capability_id": "counter.producer.fixed_effect",
@@ -72746,6 +73104,50 @@
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_eddytrail_hawk_selects_target_before_energy_choice",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed energy choice retains payment and original-source identity across blink, insufficient resource and selected trigger targets; strict unavailable-counter shape remains validated."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed energy choice retains payment and original-source identity across blink, insufficient resource and selected trigger targets; strict unavailable-counter shape remains validated."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.BoundEventPaymentRuntimeTests.test_original_mirrorworks_copies_departed_entering_object_information",
       "official_rule_ids": [
         "109.5",
@@ -72966,6 +73368,28 @@
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_eddytrail_hawk_selects_target_before_energy_choice",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed energy choice retains payment and original-source identity across blink, insufficient resource and selected trigger targets; strict unavailable-counter shape remains validated."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.BoundEventPaymentRuntimeTests.test_original_cricket_payment_is_private_affordable_and_replays",
       "official_rule_ids": [
         "109.5",
@@ -73116,6 +73540,28 @@
         "commander_review"
       ],
       "applicability_note": "Removing the dedicated counter-trigger carrier kills paid counter admission rather than shifting it into an inappropriate generic body."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed energy choice retains payment and original-source identity across blink, insufficient resource and selected trigger targets; strict unavailable-counter shape remains validated."
     },
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
@@ -73556,6 +74002,50 @@
         "commander_review"
       ],
       "applicability_note": "The actor-private payment choice excludes other players' hand references and nonacting seats receive no payment decision."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_eddytrail_hawk_selects_target_before_energy_choice",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed energy choice retains payment and original-source identity across blink, insufficient resource and selected trigger targets; strict unavailable-counter shape remains validated."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed energy choice retains payment and original-source identity across blink, insufficient resource and selected trigger targets; strict unavailable-counter shape remains validated."
     },
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
@@ -138561,5 +139051,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "cde99a605e7c2f4989144022b342aaaceee2556b426fc83d1890533299fc03e0"
+  "fingerprint": "168796146602fe21e48896c69ad8b7b3353112805a1cb1bd28882d5e416419b6"
 }

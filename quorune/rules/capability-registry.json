@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 288,
+  "registry_version": 289,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -5986,7 +5986,7 @@
     },
     {
       "id": "counter.producer.fixed_effect",
-      "version": 2,
+      "version": 3,
       "official_rules": [
         "115.1",
         "608.2b",
@@ -6049,14 +6049,17 @@
         "test_typed_fixed_counter_handler_places_counters_without_domain_dispatch"
       ],
       "negative_tests": [
+        "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
         "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
         "test_source_damage_counter_pronoun_reuses_incarnation_pinned_leaf",
         "test_stale_fixed_counter_target_fails_before_mutation",
         "test_typed_fixed_counter_handler_rejects_malformed_effects",
+        "test_unavailable_counter_subject_is_empty_after_complete_shape_validation",
         "test_unsupported_fixed_counter_variants_remain_material_residuals"
       ],
       "interaction_tests": [
         "test_fixed_counter_effect_suspends_for_quantity_replacement",
+        "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
         "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay"
       ],
       "multiplayer_tests": [
@@ -6069,6 +6072,7 @@
       ],
       "replay_tests": [
         "test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
+        "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
         "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay"
       ],
       "required_evidence": [
@@ -16548,7 +16552,7 @@
     },
     {
       "id": "effect.choice.optional_fixed_mana_payment",
-      "version": 5,
+      "version": 6,
       "official_rules": [
         "109.5",
         "118.12",
@@ -16566,10 +16570,10 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Resolve a complete fixed mana, life, owned-card discard or controlled-permanent sacrifice payment with independently typed consequences through the existing optional-payment choice, preserving v1 payloads and explicit mandatory-prefix scope.",
+        "summary": "Resolve a complete fixed mana, energy, life, owned-card discard or controlled-permanent sacrifice payment with independently typed consequences through the existing optional-payment choice, preserving v1 payloads and explicit mandatory-prefix scope.",
         "inputs": [
           "one source-spanned spell, activation or existing normalized trigger",
-          "one positive fixed ordinary mana or life cost, one or two unqualified discards, one qualified discard or one controlled sacrifice",
+          "one positive fixed ordinary mana, energy or life cost, one or two unqualified discards, one qualified discard or one controlled sacrifice",
           "independently exact typed consequence owners",
           "locked resolving controller, bound source or event-object results and current selected zone incarnations",
           "body-owned targets chosen at normal placement"
@@ -16619,24 +16623,28 @@
         "test_fixed_payment_target_copy_retains_typed_origin_and_closure"
       ],
       "negative_tests": [
-        "test_nonfixed_nested_and_nonexact_forms_remain_residual",
-        "test_compiler_shape_and_handler_mutants_fail_closed",
-        "test_runtime_wrapper_rejects_wrong_actor_extra_fields_and_nesting",
-        "test_fixed_resolution_payment_rejects_partial_nested_and_linked_grammar",
         "test_bound_payment_nested_variable_and_reflexive_forms_remain_residual",
-        "test_original_cricket_unaffordable_payment_rejects_without_result"
+        "test_compiler_shape_and_handler_mutants_fail_closed",
+        "test_fixed_resolution_payment_rejects_partial_nested_and_linked_grammar",
+        "test_nonfixed_nested_and_nonexact_forms_remain_residual",
+        "test_original_cricket_unaffordable_payment_rejects_without_result",
+        "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
+        "test_runtime_wrapper_rejects_wrong_actor_extra_fields_and_nesting"
       ],
       "interaction_tests": [
-        "test_real_card_payment_is_private_commits_before_draw_and_replays",
-        "test_payment_replacement_choice_resumes_once_after_save_load_and_replays",
-        "test_trusted_life_activation_and_declined_prefix_preserve_cost_scope",
+        "test_original_eddytrail_hawk_selects_target_before_energy_choice",
+        "test_original_mirrorworks_copies_departed_entering_object_information",
+        "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
         "test_paid_attack_result_does_not_affect_reentered_source",
-        "test_original_mirrorworks_copies_departed_entering_object_information"
+        "test_payment_replacement_choice_resumes_once_after_save_load_and_replays",
+        "test_real_card_payment_is_private_commits_before_draw_and_replays",
+        "test_trusted_life_activation_and_declined_prefix_preserve_cost_scope"
       ],
       "multiplayer_tests": [
+        "test_original_cricket_payment_is_private_affordable_and_replays",
+        "test_original_eddytrail_hawk_selects_target_before_energy_choice",
         "test_real_card_payment_is_private_commits_before_draw_and_replays",
-        "test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay",
-        "test_original_cricket_payment_is_private_affordable_and_replays"
+        "test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay"
       ],
       "privacy_tests": [
         "test_real_card_payment_is_private_commits_before_draw_and_replays",
@@ -16644,11 +16652,13 @@
         "test_original_cricket_payment_is_private_affordable_and_replays"
       ],
       "replay_tests": [
-        "test_real_card_payment_is_private_commits_before_draw_and_replays",
-        "test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay",
-        "test_payment_replacement_choice_resumes_once_after_save_load_and_replays",
         "test_original_cricket_payment_is_private_affordable_and_replays",
-        "test_original_mirrorworks_paid_entry_creates_exact_copy_and_replays"
+        "test_original_eddytrail_hawk_selects_target_before_energy_choice",
+        "test_original_mirrorworks_paid_entry_creates_exact_copy_and_replays",
+        "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
+        "test_payment_replacement_choice_resumes_once_after_save_load_and_replays",
+        "test_real_card_payment_is_private_commits_before_draw_and_replays",
+        "test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay"
       ],
       "required_evidence": [
         "positive",
@@ -21816,6 +21826,89 @@
       "replay_tests": [
         "test_original_battlement_advertises_and_commits_live_defender_mana_without_stack",
         "test_original_chaplain_counts_current_defenders_and_creates_flying_birds"
+      ]
+    },
+    {
+      "id": "cost.energy.fixed_resolution_payment",
+      "version": 1,
+      "official_rules": [
+        "107.14",
+        "118.3",
+        "118.12",
+        "122.1",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Fixed positive energy payment at one optional resolving instruction, followed by independently closed consequences.",
+        "inputs": [
+          "locked payment actor and current player energy",
+          "fixed positive printed energy symbols",
+          "closed existing result leaves"
+        ],
+        "outputs": [
+          "atomic exact energy cost followed by effects once or unchanged resource on decline"
+        ],
+        "exclusions": [
+          "variable or repeated energy",
+          "compound resource prices",
+          "reflexive when-you-do target timing",
+          "unrepresented source/result references"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.semantic_runtime.energy_payment.PayEnergyIntent",
+        "quorune.energy_payment.execute_energy_payment",
+        "quorune.compiler.fixed_effect_payment_templates.fixed_effect_payment_spec",
+        "quorune.semantic_choices.fixed_effect_payment.prepare_fixed_payment_cost",
+        "quorune.semantic_choices.fixed_effect_payment.complete_fixed_payment_cost",
+        "quorune.counter_state.plan_counter_changes",
+        "quorune.counter_state.commit_counter_changes"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Full resource and closed producer dependency required before payment.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Suppressing the counter commit fails the exact resource-spending consequence.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_fixed_energy_payment_binds_cost_before_source_result"
+      ],
+      "negative_tests": [
+        "test_energy_cost_requires_full_resource_and_preserves_unrelated_counters",
+        "test_energy_payment_missing_producer_and_open_cost_remain_untrusted",
+        "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects"
+      ],
+      "interaction_tests": [
+        "test_original_eddytrail_hawk_selects_target_before_energy_choice",
+        "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
+        "test_original_thriving_rhino_cast_attack_payment_decline_and_pending_replay"
+      ],
+      "multiplayer_tests": [
+        "test_original_aether_chaser_pays_energy_then_creates_exact_servo",
+        "test_original_eddytrail_hawk_selects_target_before_energy_choice"
+      ],
+      "privacy_tests": [
+        "test_original_thriving_rhino_cast_attack_payment_decline_and_pending_replay"
+      ],
+      "replay_tests": [
+        "test_original_eddytrail_hawk_selects_target_before_energy_choice",
+        "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
+        "test_original_thriving_rhino_cast_attack_payment_decline_and_pending_replay"
       ]
     }
   ]

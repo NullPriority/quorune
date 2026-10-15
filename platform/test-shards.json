@@ -233,6 +233,7 @@
       "test_exact_mana_families",
       "test_exact_zimone_closure",
       "test_fixed_choose_one_modal_spells",
+      "test_fixed_energy_payments",
       "test_fixed_public_alternative_costs",
       "test_flashback_rules",
       "test_live_battlefield_quantities",

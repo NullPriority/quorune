@@ -4062,6 +4062,24 @@
         "test_card_program_trust"
       ]
     }
+,
+    {
+      "id": "fixed-energy-resolution-payment-contract",
+      "patterns": [
+        "quorune/energy_payment.py",
+        "quorune/semantic_runtime/energy_payment.py",
+        "quorune/fixed_effect_payment.py",
+        "quorune/compiler/fixed_effect_payment_templates.py",
+        "quorune/compiler/optional_payment_templates.py",
+        "quorune/semantic_choices/fixed_effect_payment.py",
+        "tests/fixtures/fixed-energy-payment-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_energy_payments",
+        "test_fixed_optional_mana_payment_triggers",
+        "test_card_program_trust"
+      ]
+    }
   ],
   "symbol_rules": [
     {

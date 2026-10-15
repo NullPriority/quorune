@@ -24,6 +24,8 @@ Compiled = tuple[str | None, tuple[Mapping[str, Any], ...], Mapping[str, Any] | 
 
 def fixed_effect_payment_spec(text: str) -> FixedEffectPaymentSpec | None:
     value=text.strip()
+    energy=re.fullmatch(r'pay (?P<symbols>(?:\{E\})+)',value,re.I)
+    if energy is not None:return FixedEffectPaymentSpec('energy',amount=len(energy['symbols'])//3)
     mana=re.fullmatch(r"pay (?P<cost>(?:\{(?:[0-9]+|[WUBRGC])\})+)",value,re.I)
     if mana is not None:
         requirements,symbols=mana_cost_to_vector(mana['cost'])
