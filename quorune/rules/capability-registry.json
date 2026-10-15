@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 289,
+  "registry_version": 290,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -6607,7 +6607,7 @@
     },
     {
       "id": "counter.producer.dynamic_self_entry",
-      "version": 3,
+      "version": 4,
       "official_rules": ["107.3m", "122.6", "614.1c", "614.12", "614.16", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
@@ -6617,13 +6617,13 @@
         "exclusions": ["counter choices, optional placement, multiple counter kinds, and entry counters on another object", "multikicker and repeated-kicker quantities", "history absent or stale in the bounded turn journal, previous-turn facts, and unavailable departure-history modes", "mana spent by color count, devotion, power, toughness, mana value, greatest, noted, chosen, random, and arithmetic expressions outside the typed amount model", "dynamic characteristic queries outside the cycle-safe layer-5 boundary", "additional entry counters applied to other permanents", "granted or text-changing dynamic entry abilities outside current or prospective typed source-component discovery", "unrepresented off-battlefield ability applicability or characteristic changes outside the typed continuous-effect owner", "independently unsupported sibling abilities and replacement families" ]
       },
       "dependencies": ["counter.placement.quantity_replacement", "state_query.permanent.public_state_predicate"],
-      "implementation_components": ["quorune.entry_counter_model.DynamicEntryCounterAmountSpec", "quorune.compiler.fixed_self_entry_counter_templates.dynamic_self_entry_counter_handler", "quorune.rules.casting.commit.commit_cast", "quorune.entry_counter_coordination.prepare_resolving_entry_replacement", "quorune.entry_counters.dynamic_entry_counter_amount", "quorune.semantic_runtime.self_entry_counters.dynamic_self_entry_counter_amounts_from_programs", "quorune.semantic_runtime.self_entry_counters.program_static_component_is_applicable", "quorune.semantic_runtime.self_entry_counters.DynamicSelfEntryCounterHandler", "quorune.semantic_runtime.zone_replacements.capture_zone_change_replacement_snapshot", "quorune.semantic_runtime.zone_replacements.commit_counter_events_from_resolution", "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._effective_static_component_keys", "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._prospective_static_component_keys", "quorune.dynamic_characteristics.query_characteristic_count"],
-      "positive_tests": ["test_dynamic_self_entry_counter_grammar_and_capability_closure", "test_dynamic_amount_model_covers_each_closed_public_fact", "test_dynamic_entry_ignores_origin_only_ability_removal", "test_dynamic_entry_spell_copy_preserves_x_without_cast_provenance", "test_dynamic_entry_uses_committed_cast_x_and_payment_provenance", "test_dynamic_x_and_query_amounts_use_frozen_preentry_state", "test_dynamic_history_and_cast_provenance_gate_entry_counters", "test_permanent_spell_characteristic_change_carries_through_entry", "test_history_entry_grammar_has_exact_value_sources_and_spans"],
-      "negative_tests": ["test_dynamic_entry_obeys_prospective_battlefield_ability_removal", "test_dynamic_entry_removed_current_ability_is_inapplicable", "test_dynamic_self_entry_counter_exclusions_fail_closed", "test_dynamic_zero_and_stale_entry_leave_no_counter_mutation", "test_adjacent_unknown_history_and_open_quantities_remain_residual", "test_new_history_amounts_reject_missing_or_stale_journal_before_entry", "test_missing_departure_history_mutant_is_killed_by_actual_revolt_cast"],
-      "interaction_tests": ["test_dynamic_amount_model_covers_each_closed_public_fact", "test_dynamic_entry_ignores_origin_only_ability_removal", "test_dynamic_entry_obeys_prospective_battlefield_ability_removal", "test_dynamic_entry_spell_copy_preserves_x_without_cast_provenance", "test_dynamic_entry_uses_committed_cast_x_and_payment_provenance", "test_dynamic_x_and_query_amounts_use_frozen_preentry_state", "test_dynamic_entry_replacement_choice_is_private_and_replays", "test_permanent_spell_characteristic_change_carries_through_entry", "test_actual_revolt_cast_uses_prior_departure_controller_and_replays", "test_actual_wurm_entry_counts_life_gained_independently_of_later_payment", "test_controller_death_amount_uses_committed_death_not_replaced_departure", "test_actual_history_entry_quantity_replacement_adds_once_and_replays", "test_history_entry_competing_replacements_pending_save_load_preserves_frozen_amount"],
-      "multiplayer_tests": ["test_dynamic_entry_replacement_choice_is_private_and_replays", "test_actual_revolt_cast_uses_prior_departure_controller_and_replays", "test_controller_death_amount_uses_committed_death_not_replaced_departure", "test_history_entry_competing_replacements_pending_save_load_preserves_frozen_amount"],
+      "implementation_components": ["quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._effective_static_component_keys", "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._prospective_static_component_keys", "quorune.compiler.fixed_self_entry_counter_templates.dynamic_self_entry_counter_handler", "quorune.compiler.shared_characteristic_queries.shared_characteristic_quantity", "quorune.dynamic_characteristics.query_characteristic_count", "quorune.entry_counter_coordination.prepare_resolving_entry_replacement", "quorune.entry_counter_model.DynamicEntryCounterAmountSpec", "quorune.entry_counters.dynamic_entry_counter_amount", "quorune.rules.casting.commit.commit_cast", "quorune.semantic_runtime.self_entry_counters.DynamicSelfEntryCounterHandler", "quorune.semantic_runtime.self_entry_counters.dynamic_self_entry_counter_amounts_from_programs", "quorune.semantic_runtime.self_entry_counters.program_static_component_is_applicable", "quorune.semantic_runtime.zone_replacements.capture_zone_change_replacement_snapshot", "quorune.semantic_runtime.zone_replacements.commit_counter_events_from_resolution"],
+      "positive_tests": ["test_dynamic_amount_model_covers_each_closed_public_fact", "test_dynamic_entry_ignores_origin_only_ability_removal", "test_dynamic_entry_spell_copy_preserves_x_without_cast_provenance", "test_dynamic_entry_uses_committed_cast_x_and_payment_provenance", "test_dynamic_history_and_cast_provenance_gate_entry_counters", "test_dynamic_self_entry_counter_grammar_and_capability_closure", "test_dynamic_x_and_query_amounts_use_frozen_preentry_state", "test_history_entry_grammar_has_exact_value_sources_and_spans", "test_permanent_spell_characteristic_change_carries_through_entry", "test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary"],
+      "negative_tests": ["test_adjacent_unknown_history_and_open_quantities_remain_residual", "test_dynamic_entry_obeys_prospective_battlefield_ability_removal", "test_dynamic_entry_removed_current_ability_is_inapplicable", "test_dynamic_self_entry_counter_exclusions_fail_closed", "test_dynamic_zero_and_stale_entry_leave_no_counter_mutation", "test_missing_departure_history_mutant_is_killed_by_actual_revolt_cast", "test_new_history_amounts_reject_missing_or_stale_journal_before_entry", "test_shared_query_producer_mutation_and_unknown_terms_fail_closed"],
+      "interaction_tests": ["test_actual_history_entry_quantity_replacement_adds_once_and_replays", "test_actual_revolt_cast_uses_prior_departure_controller_and_replays", "test_actual_wurm_entry_counts_life_gained_independently_of_later_payment", "test_controller_death_amount_uses_committed_death_not_replaced_departure", "test_dynamic_amount_model_covers_each_closed_public_fact", "test_dynamic_entry_ignores_origin_only_ability_removal", "test_dynamic_entry_obeys_prospective_battlefield_ability_removal", "test_dynamic_entry_replacement_choice_is_private_and_replays", "test_dynamic_entry_spell_copy_preserves_x_without_cast_provenance", "test_dynamic_entry_uses_committed_cast_x_and_payment_provenance", "test_dynamic_x_and_query_amounts_use_frozen_preentry_state", "test_history_entry_competing_replacements_pending_save_load_preserves_frozen_amount", "test_original_avatar_and_sentinels_use_other_current_counter_creatures", "test_permanent_spell_characteristic_change_carries_through_entry"],
+      "multiplayer_tests": ["test_actual_revolt_cast_uses_prior_departure_controller_and_replays", "test_controller_death_amount_uses_committed_death_not_replaced_departure", "test_dynamic_entry_replacement_choice_is_private_and_replays", "test_history_entry_competing_replacements_pending_save_load_preserves_frozen_amount", "test_original_avatar_and_sentinels_use_other_current_counter_creatures"],
       "privacy_tests": ["test_dynamic_entry_replacement_choice_is_private_and_replays", "test_actual_revolt_cast_uses_prior_departure_controller_and_replays", "test_history_entry_competing_replacements_pending_save_load_preserves_frozen_amount"],
-      "replay_tests": ["test_dynamic_entry_replacement_choice_is_private_and_replays", "test_actual_revolt_cast_uses_prior_departure_controller_and_replays", "test_actual_wurm_entry_counts_life_gained_independently_of_later_payment", "test_actual_history_entry_quantity_replacement_adds_once_and_replays", "test_history_entry_competing_replacements_pending_save_load_preserves_frozen_amount"],
+      "replay_tests": ["test_actual_history_entry_quantity_replacement_adds_once_and_replays", "test_actual_revolt_cast_uses_prior_departure_controller_and_replays", "test_actual_wurm_entry_counts_life_gained_independently_of_later_payment", "test_dynamic_entry_replacement_choice_is_private_and_replays", "test_history_entry_competing_replacements_pending_save_load_preserves_frozen_amount", "test_original_avatar_and_sentinels_use_other_current_counter_creatures"],
       "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The source-spanned replacement remains material when the canonical counter-quantity or cycle-safe public-query capability is blocked, even for amount sources that do not use a query.",
@@ -8105,7 +8105,7 @@
     },
     {
       "id": "continuous.characteristics.query_count_modifier",
-      "version": 4,
+      "version": 5,
       "official_rules": [
         "109.2",
         "109.2a",
@@ -8149,48 +8149,54 @@
       },
       "dependencies": [],
       "implementation_components": [
-        "quorune.compiler.query_characteristic_templates.query_self_characteristics_handler",
-        "quorune.characteristic_fragments.QueryCharacteristicModifierSpec",
-        "quorune.semantic_runtime.ability_fragments.QueryCharacteristicModifierAbilityFragmentHandler",
-        "quorune.dynamic_characteristics.query_characteristic_count",
         "quorune.characteristic_evaluation.evaluate_card_characteristics",
         "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin",
-        "quorune.continuous_effects.evaluate_continuous_effects",
-        "quorune.public_quantity_reductions.reduce_public_quantity",
+        "quorune.characteristic_fragments.QueryCharacteristicModifierSpec",
         "quorune.compiler.collection_quantity_templates.collection_quantity",
         "quorune.compiler.collection_quantity_templates.fixed_quantity_arithmetic",
-        "quorune.compiler.query_characteristic_templates._self_collection_quantity"
+        "quorune.compiler.query_characteristic_templates._self_collection_quantity",
+        "quorune.compiler.query_characteristic_templates.query_self_characteristics_handler",
+        "quorune.compiler.shared_characteristic_queries.shared_characteristic_quantity",
+        "quorune.continuous_effects.evaluate_continuous_effects",
+        "quorune.dynamic_characteristics.query_characteristic_count",
+        "quorune.public_quantity_reductions.reduce_public_quantity",
+        "quorune.semantic_runtime.ability_fragments.QueryCharacteristicModifierAbilityFragmentHandler"
       ],
       "positive_tests": [
         "test_query_characteristic_grammar_compiles_closed_fragments",
         "test_query_gated_prefix_and_keyword_only_grammar_is_closed",
         "test_query_quantities_recompute_controller_correct_characteristics",
-        "test_self_modifiers_compose_existing_collection_values_without_repeating_dual_type_cards"
+        "test_self_modifiers_compose_existing_collection_values_without_repeating_dual_type_cards",
+        "test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary"
       ],
       "negative_tests": [
-        "test_query_characteristic_grammar_keeps_ambiguous_families_residual",
         "test_query_characteristic_descriptors_fail_closed_without_behavior",
+        "test_query_characteristic_grammar_keeps_ambiguous_families_residual",
         "test_query_gated_grammar_rejects_nonquery_and_open_modifiers",
-        "test_self_collection_quantity_requires_precise_owner_and_complete_producer"
+        "test_self_collection_quantity_requires_precise_owner_and_complete_producer",
+        "test_shared_query_producer_mutation_and_unknown_terms_fail_closed"
       ],
       "interaction_tests": [
+        "test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts",
+        "test_original_upriser_counts_controller_aura_and_counter_modifications_once",
+        "test_query_ability_removal_sibling_withholds_runtime_admission",
         "test_query_counts_use_layer_five_types_and_compose_in_layer_seven_c",
         "test_query_fragment_copy_uses_current_source_and_controller",
-        "test_query_ability_removal_sibling_withholds_runtime_admission",
-        "test_query_gate_recomputes_layer_six_and_seven_characteristics",
-        "test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts"
+        "test_query_gate_recomputes_layer_six_and_seven_characteristics"
       ],
       "multiplayer_tests": [
-        "test_query_quantities_recompute_controller_correct_characteristics",
-        "test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts"
+        "test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts",
+        "test_original_upriser_counts_controller_aura_and_counter_modifications_once",
+        "test_query_quantities_recompute_controller_correct_characteristics"
       ],
       "privacy_tests": [
         "test_query_hand_count_projects_and_replays_without_hidden_identity",
         "test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts"
       ],
       "replay_tests": [
-        "test_query_hand_count_projects_and_replays_without_hidden_identity",
-        "test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts"
+        "test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts",
+        "test_original_upriser_counts_controller_aura_and_counter_modifications_once",
+        "test_query_hand_count_projects_and_replays_without_hidden_identity"
       ],
       "required_evidence": [
         "positive",
@@ -8489,7 +8495,7 @@
     },
     {
       "id": "continuous.characteristics.query_power_toughness_definition",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "109.2",
         "109.2a",
@@ -8507,13 +8513,13 @@
         "exclusions": ["chosen players, types, colors, names, and private object identities", "Devotion and its modifiers, party, sticker, history, tapped, face-down, linked-exile, and aggregate-counter quantities", "negative/open arithmetic, nested or more-than-two sums, comparisons, conditional/combat-state and quoted or granted definitions", "ability-addition or ability-removal applicability outside the shared layer-6 ability-presence query"]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.compiler.query_characteristic_templates.query_power_toughness_definition_handler", "quorune.characteristic_fragments.QueryPowerToughnessDefinitionSpec", "quorune.semantic_runtime.ability_fragments.QueryPowerToughnessDefinitionAbilityFragmentHandler", "quorune.dynamic_characteristics.query_characteristic_count", "quorune.characteristic_evaluation.evaluate_card_characteristics", "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin", "quorune.continuous_effects.evaluate_continuous_effects", "quorune.public_quantity_reductions.reduce_public_quantity", "quorune.compiler.collection_quantity_templates.collection_quantity", "quorune.compiler.collection_quantity_templates.fixed_quantity_arithmetic"],
-      "positive_tests": ["test_query_power_toughness_definition_grammar_compiles_closed_fragments", "test_query_definitions_apply_in_every_zone_and_preserve_undefined_field"],
-      "negative_tests": ["test_query_power_toughness_definition_grammar_keeps_open_families_residual", "test_query_power_toughness_definition_descriptors_fail_closed"],
-      "interaction_tests": ["test_query_definition_counts_layer_five_types_and_orders_in_layer_seven_a", "test_query_definition_copy_and_control_change_use_current_source", "test_query_definition_ability_removal_sibling_withholds_runtime_admission"],
-      "multiplayer_tests": ["test_query_definition_copy_and_control_change_use_current_source"],
+      "implementation_components": ["quorune.characteristic_evaluation.evaluate_card_characteristics", "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin", "quorune.characteristic_fragments.QueryPowerToughnessDefinitionSpec", "quorune.compiler.collection_quantity_templates.collection_quantity", "quorune.compiler.collection_quantity_templates.fixed_quantity_arithmetic", "quorune.compiler.query_characteristic_templates.query_power_toughness_definition_handler", "quorune.compiler.shared_characteristic_queries.shared_characteristic_quantity", "quorune.continuous_effects.evaluate_continuous_effects", "quorune.dynamic_characteristics.query_characteristic_count", "quorune.public_quantity_reductions.reduce_public_quantity", "quorune.semantic_runtime.ability_fragments.QueryPowerToughnessDefinitionAbilityFragmentHandler"],
+      "positive_tests": ["test_query_definitions_apply_in_every_zone_and_preserve_undefined_field", "test_query_power_toughness_definition_grammar_compiles_closed_fragments", "test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary"],
+      "negative_tests": ["test_query_power_toughness_definition_descriptors_fail_closed", "test_query_power_toughness_definition_grammar_keeps_open_families_residual", "test_shared_query_producer_mutation_and_unknown_terms_fail_closed"],
+      "interaction_tests": ["test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer", "test_query_definition_ability_removal_sibling_withholds_runtime_admission", "test_query_definition_copy_and_control_change_use_current_source", "test_query_definition_counts_layer_five_types_and_orders_in_layer_seven_a"],
+      "multiplayer_tests": ["test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer", "test_query_definition_copy_and_control_change_use_current_source"],
       "privacy_tests": ["test_query_definition_hand_count_projects_without_hidden_identity"],
-      "replay_tests": ["test_query_definition_save_load_and_replay_exactly"],
+      "replay_tests": ["test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer", "test_query_definition_save_load_and_replay_exactly"],
       "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "The definition consumes one closed typed quantity through the shared cycle-safe layer-5 characteristic boundary and has no capability dependency.",

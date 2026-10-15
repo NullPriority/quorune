@@ -11,7 +11,12 @@ def resolution_quantity(value: str, *, source_name: str, complete_value: bool = 
     quantity = (query_characteristic_value(value, source_name=source_name) if complete_value
         else query_characteristic_quantity(value, source_name=source_name, definition_extensions=True))
     if quantity is not None:
-        return quantity
+        from ..query_effect_amount_model import PublicQueryAmountSpec
+        try:
+            PublicQueryAmountSpec(quantity)
+            return quantity
+        except ValueError:
+            pass
     text = value.strip().rstrip('.')
     if complete_value:
         match = re.fullmatch(r'(?:the )?number of (?P<objects>.+)', text, re.I)

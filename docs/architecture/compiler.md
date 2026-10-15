@@ -2168,7 +2168,14 @@ effects are added. Bare creature subtypes constrain the subtype independently
 of card type, so matching Kindred permanents and cards participate in their
 represented public-zone counts. Explicit Creature card-type predicates retain
 their separate type constraint. Represented type and color changes feed the count without
-later-layer recursion. Current compilation uses the source's current controller
+later-layer recursion. Compilation reuses the shared fixed battlefield grammar when the earlier count grammar
+does not match. Subtype unions count an object once; explicit subtype exclusions
+remain independent of the creature type constraint. Named counter and modified
+state predicates use the existing static quantity form. Attachment facts retain
+the enclosing evaluation's ability-applicability boundary, include only current
+phased-in attachments, and make an Aura controller-relative for modified state.
+Keyword and numeric-characteristic predicates remain outside static counts.
+Current compilation uses the source's current controller
 for “your” zones. Fixed public battlefield and graveyard thresholds accept
 prefix or suffix self wording and may add only power/toughness, only supported
 keywords, or both through that same descriptor. Inverted existence wording,

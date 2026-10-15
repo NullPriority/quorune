@@ -4080,6 +4080,22 @@
         "test_card_program_trust"
       ]
     }
+,
+    {
+      "id": "shared-static-characteristic-query-contract",
+      "patterns": [
+        "quorune/compiler/shared_characteristic_queries.py",
+        "quorune/compiler/query_characteristic_templates.py",
+        "quorune/dynamic_characteristics.py",
+        "tests/fixtures/shared-characteristic-query-cards.json"
+      ],
+      "test_modules": [
+        "test_shared_characteristic_queries",
+        "test_typed_dynamic_characteristics",
+        "test_public_query_effect_amounts",
+        "test_card_program_trust"
+      ]
+    }
   ],
   "symbol_rules": [
     {

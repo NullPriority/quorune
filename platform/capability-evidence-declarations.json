@@ -24981,6 +24981,29 @@
       ],
       "applicability_note": "An actual land-return response changes the pending public quantity from three distinct basic types to one, and rejected target submission preserves authoritative state."
     },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryActionTests.test_original_upriser_counts_controller_aura_and_counter_modifications_once",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
     {"capability_id":"continuous.characteristics.query_count_modifier","evidence_class":"interaction","test_id":"tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones","official_rule_ids":["109.2","109.2a","205.3m","604.1","611.3a","613.1d","613.1e","613.1f","613.1g","613.4b"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."},
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
@@ -25060,6 +25083,29 @@
       ],
       "applicability_note": "Four-player trusted command witnesses keep controller-relative and all-graveyard quantities distinct."
     },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryActionTests.test_original_upriser_counts_controller_aura_and_counter_modifications_once",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
     {"capability_id":"continuous.characteristics.query_count_modifier","evidence_class":"multiplayer","test_id":"tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones","official_rule_ids":["109.2","109.2a","205.3m","604.1","611.3a","613.1d","613.1e","613.1f","613.1g","613.4b"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."},
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
@@ -25091,6 +25137,29 @@
       "official_rule_ids": ["109.2", "109.2a", "205.3m", "604.1", "611.3a", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Count only the current controller's objects or all three in-game opponents after a four-player control change."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryCompilerTests.test_shared_query_producer_mutation_and_unknown_terms_fail_closed",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {"capability_id":"continuous.characteristics.query_count_modifier","evidence_class":"mutation","test_id":"tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_implied_creature_type_omission_mutant_is_killed_by_original_soulless_one","official_rule_ids":["109.2","109.2a","205.3m","604.1","611.3a","613.1d","613.1e","613.1f","613.1g","613.4b"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Reintroducing the implied Creature card-type restriction breaks the independently expected original Soulless One quantities."},
     {"capability_id": "continuous.characteristics.query_count_modifier", "evidence_class": "mutation", "test_id": "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests.test_collection_object_count_mutant_is_killed", "official_rule_ids": ["109.2", "109.2a", "205.3m", "604.1", "611.3a", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Kill replacement of the distinct public reduction with raw object count while preserving the shared layer-safe quantity owner."},
@@ -25124,6 +25193,29 @@
         "commander_review"
       ],
       "applicability_note": "Complete fixed self collection modifiers preserve layer-5 union, sum, maximum and controller quantities with actual original cast/replay evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "negative",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryCompilerTests.test_shared_query_producer_mutation_and_unknown_terms_fail_closed",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {"capability_id":"continuous.characteristics.query_count_modifier","evidence_class":"negative","test_id":"tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityCompilerTests.test_bare_subtype_quantities_do_not_add_a_creature_card_type","official_rule_ids":["109.2","109.2a","205.3m","604.1","611.3a","613.1d","613.1e","613.1f","613.1g","613.4b"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Explicit Creature card-type predicates remain separate from creature subtypes, and unrecognized subtype vocabulary fails closed."},
     {
@@ -25218,6 +25310,29 @@
         "commander_review"
       ],
       "applicability_note": "Real trusted casts and activations consume current maximum and distinct-type quantities; live CDA and static modifiers use the same counted land-type set."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "positive",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryCompilerTests.test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {"capability_id":"continuous.characteristics.query_count_modifier","evidence_class":"positive","test_id":"tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityCompilerTests.test_bare_subtype_quantities_do_not_add_a_creature_card_type","official_rule_ids":["109.2","109.2a","205.3m","604.1","611.3a","613.1d","613.1e","613.1f","613.1g","613.4b"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Bare subtype and represented subtype-union quantities retain only subtype predicates; explicit Creature card-type wording stays constrained and unknown subtypes stay residual."},
     {
@@ -25345,6 +25460,29 @@
       ],
       "applicability_note": "Save/load and exact pre-action command replay retain versioned quantities, paired CDA offsets and full resulting consequences."
     },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "replay",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryActionTests.test_original_upriser_counts_controller_aura_and_counter_modifications_once",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
     {"capability_id":"continuous.characteristics.query_count_modifier","evidence_class":"replay","test_id":"tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones","official_rule_ids":["109.2","109.2a","205.3m","604.1","611.3a","613.1d","613.1e","613.1f","613.1g","613.4b"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."},
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
@@ -25422,6 +25560,26 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Count a layer-4 type result through layer 5, set the definition in layer 7a, and compose with an ordinary layer-7c modifier."
     },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryActionTests.test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
     {"capability_id":"continuous.characteristics.query_power_toughness_definition","evidence_class":"interaction","test_id":"tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones","official_rule_ids":["109.2","109.2a","205.3m","604.3","611.3a","613.1g","613.4a"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."},
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
@@ -25451,6 +25609,26 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Recompute controller-relative quantities after a four-player control change and on an independently controlled copy."
     },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryActionTests.test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
     {"capability_id":"continuous.characteristics.query_power_toughness_definition","evidence_class":"multiplayer","test_id":"tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones","official_rule_ids":["109.2","109.2a","205.3m","604.3","611.3a","613.1g","613.4a"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."},
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
@@ -25459,6 +25637,26 @@
       "official_rule_ids": ["109.2", "109.2a", "205.3m", "604.3", "611.3a", "613.1g", "613.4a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill removal of the all-zone typed definition compiler production at its exact source span."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryCompilerTests.test_shared_query_producer_mutation_and_unknown_terms_fail_closed",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {"capability_id":"continuous.characteristics.query_power_toughness_definition","evidence_class":"mutation","test_id":"tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_implied_creature_type_omission_mutant_is_killed_by_original_soulless_one","official_rule_ids":["109.2","109.2a","205.3m","604.3","611.3a","613.1g","613.4a"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Reintroducing the implied Creature card-type restriction breaks the independently expected original Soulless One quantities."},
     {"capability_id": "continuous.characteristics.query_power_toughness_definition", "evidence_class": "mutation", "test_id": "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests.test_collection_object_count_mutant_is_killed", "official_rule_ids": ["109.2", "109.2a", "205.3m", "604.3", "611.3a", "613.1g", "613.4a"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Kill replacement of the distinct public reduction with raw object count while preserving the shared layer-safe quantity owner."},
@@ -25477,6 +25675,26 @@
       "official_rule_ids": ["109.2", "109.2a", "205.3m", "604.3", "611.3a", "613.1g", "613.4a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep summed, distinct, chosen, tapped, linked, arithmetic, and color-cardinality quantities residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryCompilerTests.test_shared_query_producer_mutation_and_unknown_terms_fail_closed",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {"capability_id":"continuous.characteristics.query_power_toughness_definition","evidence_class":"negative","test_id":"tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityCompilerTests.test_bare_subtype_quantities_do_not_add_a_creature_card_type","official_rule_ids":["109.2","109.2a","205.3m","604.3","611.3a","613.1g","613.4a"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Explicit Creature card-type predicates remain separate from creature subtypes, and unrecognized subtype vocabulary fails closed."},
     {
@@ -25535,6 +25753,26 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Apply one copied definition in every represented zone while preserving a printed sibling field the definition does not set."
     },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryCompilerTests.test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
     {"capability_id":"continuous.characteristics.query_power_toughness_definition","evidence_class":"positive","test_id":"tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityCompilerTests.test_bare_subtype_quantities_do_not_add_a_creature_card_type","official_rule_ids":["109.2","109.2a","205.3m","604.3","611.3a","613.1g","613.4a"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Bare subtype and represented subtype-union quantities retain only subtype predicates; explicit Creature card-type wording stays constrained and unknown subtypes stay residual."},
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
@@ -25592,6 +25830,26 @@
       "official_rule_ids": ["109.2", "109.2a", "205.3m", "604.3", "611.3a", "613.1g", "613.4a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reload the typed all-zone definition and replay subsequent priority commands to the exact authoritative hash."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryActionTests.test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {"capability_id":"continuous.characteristics.query_power_toughness_definition","evidence_class":"replay","test_id":"tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones","official_rule_ids":["109.2","109.2a","205.3m","604.3","611.3a","613.1g","613.4a"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."},
     {"capability_id":"continuous.characteristics.query_power_toughness_definition","evidence_class":"rollback","test_id":"tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones","official_rule_ids":["109.2","109.2a","205.3m","604.3","611.3a","613.1g","613.4a"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."},
@@ -33044,11 +33302,49 @@
     },
     {
       "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryActionTests.test_original_avatar_and_sentinels_use_other_current_counter_creatures",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_replacement_choice_is_private_and_replays",
       "official_rule_ids": ["107.3m", "122.6", "614.1c", "614.12", "614.16", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Route competing entry-counter replacement choices to the prospective controller in four-player state."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryActionTests.test_original_avatar_and_sentinels_use_other_current_counter_creatures",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {
       "capability_id": "counter.producer.dynamic_self_entry",
@@ -33065,6 +33361,25 @@
       "official_rule_ids": ["107.3m", "122.6", "614.1c", "614.12", "614.16", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Corrupt the frozen X amount before replacement preparation and require the committed counter total to reject the survivor."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryCompilerTests.test_shared_query_producer_mutation_and_unknown_terms_fail_closed",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {
       "capability_id": "counter.producer.dynamic_self_entry",
@@ -33097,6 +33412,25 @@
       "official_rule_ids": ["107.3m", "122.6", "614.1c", "614.12", "614.16", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Produce no child counter event for zero or noncast X and preserve an already-departed source without counter mutation."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "negative",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryCompilerTests.test_shared_query_producer_mutation_and_unknown_terms_fail_closed",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {
       "capability_id": "counter.producer.dynamic_self_entry",
@@ -33164,6 +33498,25 @@
     },
     {
       "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryCompilerTests.test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_replacement_choice_is_private_and_replays",
       "official_rule_ids": ["107.3m", "122.6", "614.1c", "614.12", "614.16", "616.1"],
@@ -33177,6 +33530,25 @@
       "official_rule_ids": ["107.3m", "122.6", "614.1c", "614.12", "614.16", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Persist the frozen component amount and pending replacement journal, then replay the selected ordering to the same authoritative hash."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryActionTests.test_original_avatar_and_sentinels_use_other_current_counter_creatures",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {
       "capability_id": "counter.producer.dynamic_self_entry",

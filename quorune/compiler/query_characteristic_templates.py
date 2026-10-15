@@ -353,14 +353,15 @@ def query_characteristic_quantity(
             definition_extensions=definition_extensions,
         )
         if parsed is None:
-            return None
+            continue
         query, exclude_source = parsed
         return CharacteristicQuantitySpec(
             scope=scope,
             query=query,
             exclude_source=exclude_source,
         )
-    return None
+    from .shared_characteristic_queries import shared_characteristic_quantity
+    return shared_characteristic_quantity(text)
 
 
 def query_characteristic_value(value: str, *, source_name: str) -> CharacteristicQuantitySpec | None:

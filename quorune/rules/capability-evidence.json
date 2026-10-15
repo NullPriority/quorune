@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "264bfb1d51b75067ad3bf83504658ff1cf52dcd913261005d53116822e0ebd10",
-  "declaration_source_fingerprint": "24ae28beecb42820c1d5a19831f504c3bbc0a41dfb8559ede07481ae6765220c",
+  "registry_fingerprint": "7a6f7f97526ebee736d9779d7d18a7bf21a2ce5e0d8e83f30c46ea789e77f7eb",
+  "declaration_source_fingerprint": "6a4cb5f946f25d1f8b2108b0fc40abcdae20edd0ec1dd556aade7e749eb50e09",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -40460,6 +40460,29 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "interaction",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryActionTests.test_original_upriser_counts_controller_aura_and_counter_modifications_once",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "interaction",
       "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones",
       "official_rule_ids": [
         "109.2",
@@ -40621,6 +40644,29 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryActionTests.test_original_upriser_counts_controller_aura_and_counter_modifications_once",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones",
       "official_rule_ids": [
         "109.2",
@@ -40686,6 +40732,29 @@
         "commander_review"
       ],
       "applicability_note": "Count only the current controller's objects or all three in-game opponents after a four-player control change."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryCompilerTests.test_shared_query_producer_mutation_and_unknown_terms_fail_closed",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
@@ -40778,6 +40847,29 @@
         "commander_review"
       ],
       "applicability_note": "Complete fixed self collection modifiers preserve layer-5 union, sum, maximum and controller quantities with actual original cast/replay evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "negative",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryCompilerTests.test_shared_query_producer_mutation_and_unknown_terms_fail_closed",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
@@ -40939,6 +41031,29 @@
         "commander_review"
       ],
       "applicability_note": "Real trusted casts and activations consume current maximum and distinct-type quantities; live CDA and static modifiers use the same counted land-type set."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "positive",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryCompilerTests.test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
@@ -41173,6 +41288,29 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "replay",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryActionTests.test_original_upriser_counts_controller_aura_and_counter_modifications_once",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "replay",
       "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones",
       "official_rule_ids": [
         "109.2",
@@ -41345,6 +41483,26 @@
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
       "evidence_class": "interaction",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryActionTests.test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "interaction",
       "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones",
       "official_rule_ids": [
         "109.2",
@@ -41405,6 +41563,26 @@
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryActionTests.test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones",
       "official_rule_ids": [
         "109.2",
@@ -41441,6 +41619,26 @@
         "commander_review"
       ],
       "applicability_note": "Kill removal of the all-zone typed definition compiler production at its exact source span."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryCompilerTests.test_shared_query_producer_mutation_and_unknown_terms_fail_closed",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
@@ -41521,6 +41719,26 @@
         "commander_review"
       ],
       "applicability_note": "Keep summed, distinct, chosen, tapped, linked, arithmetic, and color-cardinality quantities residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryCompilerTests.test_shared_query_producer_mutation_and_unknown_terms_fail_closed",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
@@ -41621,6 +41839,26 @@
         "commander_review"
       ],
       "applicability_note": "Apply one copied definition in every represented zone while preserving a printed sibling field the definition does not set."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryCompilerTests.test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
@@ -41741,6 +41979,26 @@
         "commander_review"
       ],
       "applicability_note": "Reload the typed all-zone definition and replay subsequent priority commands to the exact authoritative hash."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryActionTests.test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
@@ -52398,6 +52656,25 @@
     },
     {
       "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryActionTests.test_original_avatar_and_sentinels_use_other_current_counter_creatures",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_replacement_choice_is_private_and_replays",
       "official_rule_ids": [
@@ -52414,6 +52691,25 @@
         "commander_review"
       ],
       "applicability_note": "Route competing entry-counter replacement choices to the prospective controller in four-player state."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryActionTests.test_original_avatar_and_sentinels_use_other_current_counter_creatures",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {
       "capability_id": "counter.producer.dynamic_self_entry",
@@ -52452,6 +52748,25 @@
         "commander_review"
       ],
       "applicability_note": "Corrupt the frozen X amount before replacement preparation and require the committed counter total to reject the survivor."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryCompilerTests.test_shared_query_producer_mutation_and_unknown_terms_fail_closed",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {
       "capability_id": "counter.producer.dynamic_self_entry",
@@ -52528,6 +52843,25 @@
         "commander_review"
       ],
       "applicability_note": "Produce no child counter event for zero or noncast X and preserve an already-departed source without counter mutation."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "negative",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryCompilerTests.test_shared_query_producer_mutation_and_unknown_terms_fail_closed",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {
       "capability_id": "counter.producer.dynamic_self_entry",
@@ -52683,6 +53017,25 @@
     },
     {
       "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryCompilerTests.test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_replacement_choice_is_private_and_replays",
       "official_rule_ids": [
@@ -52718,6 +53071,25 @@
         "commander_review"
       ],
       "applicability_note": "Persist the frozen component amount and pending replacement journal, then replay the selected ordering to the same authoritative hash."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryActionTests.test_original_avatar_and_sentinels_use_other_current_counter_creatures",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {
       "capability_id": "counter.producer.dynamic_self_entry",
@@ -139051,5 +139423,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "168796146602fe21e48896c69ad8b7b3353112805a1cb1bd28882d5e416419b6"
+  "fingerprint": "078d977d270271f75a6850885cfe69d2b901059af0b2cdc7ad355193e620ebd9"
 }
