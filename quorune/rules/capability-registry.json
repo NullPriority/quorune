@@ -21500,7 +21500,8 @@
         "test_typed_role_spells_execute_monster_virtuous_and_young_hero_children",
         "test_wicked_replaced_role_loses_each_opponents_life_with_lki_and_replay",
         "test_sorcerer_grant_attacks_for_private_scry_and_other_controller_role_coexists",
-        "test_original_target_blink_prevents_role_attachment_to_new_incarnation"
+        "test_original_target_blink_prevents_role_attachment_to_new_incarnation",
+        "test_original_embereth_veteran_pays_sacrifice_and_grants_young_hero_attack"
       ],
       "negative_tests": [
         "test_role_definition_withdrawal_and_creator_fragment_isolation"
@@ -21511,7 +21512,8 @@
         "test_typed_role_spells_execute_monster_virtuous_and_young_hero_children",
         "test_wicked_replaced_role_loses_each_opponents_life_with_lki_and_replay",
         "test_sorcerer_grant_attacks_for_private_scry_and_other_controller_role_coexists",
-        "test_original_target_blink_prevents_role_attachment_to_new_incarnation"
+        "test_original_target_blink_prevents_role_attachment_to_new_incarnation",
+        "test_original_embereth_veteran_pays_sacrifice_and_grants_young_hero_attack"
       ],
       "multiplayer_tests": [
         "test_original_cursed_courtier_creates_attached_role_with_complete_characteristics",
@@ -21530,7 +21532,8 @@
         "test_typed_role_spells_execute_monster_virtuous_and_young_hero_children",
         "test_wicked_replaced_role_loses_each_opponents_life_with_lki_and_replay",
         "test_sorcerer_grant_attacks_for_private_scry_and_other_controller_role_coexists",
-        "test_original_target_blink_prevents_role_attachment_to_new_incarnation"
+        "test_original_target_blink_prevents_role_attachment_to_new_incarnation",
+        "test_original_embereth_veteran_pays_sacrifice_and_grants_young_hero_attack"
       ],
       "required_evidence": [
         "positive",

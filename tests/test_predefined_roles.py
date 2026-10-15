@@ -364,6 +364,33 @@ class PredefinedRoleNativeTests(unittest.TestCase):
         self.assertFalse(any(card.is_token for card in session.state.cards.values()))
         self.replay(session)
 
+    def test_original_embereth_veteran_pays_sacrifice_and_grants_young_hero_attack(self):
+        from test_source_pronoun_results import SourcePronounRuntimeTests
+        session = self.session(311085)
+        engine = session.engine
+        veteran = self.add(engine, 'Embereth Veteran')
+        body = self.add(engine, 'Generic Role Small Creature', ref='hero-body')
+        self.assert_strict(session, veteran)
+        offered = self.ready(session, veteran, {'C': 1})
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id': offered['id'], 'targets': [body.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual('graveyard', engine.state.cards[veteran.object_id].zone)
+        self.assertEqual(0, sum(engine.state.players['A'].mana_pool.values()))
+        session = self.replay(session, load=True)
+        self.resolve(session)
+        roles = [card for card in session.state.cards.values() if card.is_token and card.zone == 'battlefield']
+        self.assertEqual(1, len(roles))
+        self.assertEqual(body.object_id, roles[0].attached_to)
+        self.replay(session)
+        SourcePronounRuntimeTests.start_source_combat(self, session)
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id': 'attack', 'attackers': {body.ref: 'B'}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual(1, session.state.cards[body.object_id].counters.get('+1/+1', 0))
+        self.replay(session)
+
 
 if __name__ == '__main__':
     unittest.main()

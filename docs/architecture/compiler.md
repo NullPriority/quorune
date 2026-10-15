@@ -869,7 +869,9 @@ triggered child programs. Enchant and child references are explicit token
 fragments pinned to the creating card program. These child programs cannot
 become abilities of the creator. Closed source and direct-creature attachment clauses enter through the
 replacement-aware Role choice owner. Every Role definition retains its full
-child capability closure; unknown or linked creation grammar remains residual.
+child capability closure. Activated clauses remove only compiler-recognized
+reminder text before the existing typed cost and Role effect gates. Unknown
+or linked creation grammar remains residual.
 
 Source power and toughness intervening conditions use one fixed numeric
 battlefield creature predicate. Discovery and resolution both read complete

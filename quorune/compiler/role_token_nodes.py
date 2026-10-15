@@ -143,14 +143,16 @@ def role_token_nodes(*, record, face_id, node_id, line, material_line, span, sou
         'aura_target_ref': target_ref, 'characteristics': {'type_line': 'Token Enchantment — Aura Role',
             'colors': [], 'ability_fragments': fragments}}
     def role_effect(text, **kwargs):
-        if text.strip().casefold() == match[0].casefold():
+        from ..oracle_ir import _without_parenthetical_reminder
+        material = _without_parenthetical_reminder(text).strip()
+        if material.rstrip('.').casefold() == match[0].rstrip('.').casefold():
             return ('create-predefined-role-v1', (effect,), target_schema,
                 (ROLE_TOKEN_MECHANIC, 'cr-111-tokens', 'cr-115-targets') if target_schema else (ROLE_TOKEN_MECHANIC, 'cr-111-tokens'))
-        return effect_template(text, **kwargs)
+        return effect_template(material, **kwargs)
     def role_grants(*args):
         ordinary, triggered = grant_effect_templates(*args)
         def wrap(fallback):
-            return lambda text, **kwargs: role_effect(text, **kwargs) if text.strip().casefold() == match[0].casefold() else fallback(text, **kwargs)
+            return lambda text, **kwargs: role_effect(text, **kwargs) if 'Role token' in text else fallback(text, **kwargs)
         return wrap(ordinary), wrap(triggered)
     from .typed_token_ability_nodes import _outer_nodes
     def role_trigger(**kwargs):

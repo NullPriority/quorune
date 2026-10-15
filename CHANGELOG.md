@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Admit exact attached Role activation bodies through the existing typed
+  activation cost and capability gate.
+
 - Pin all predefined Role definitions into existing typed static and triggered
   child programs; create represented attached Roles through explicit
   replacement-adjusted timestamp ordering and canonical state-based checks.

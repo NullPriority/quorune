@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "d5b79d2aba132d3cb00463274fa149c570348f7b15386ce2eb7c116be60e8afb",
-  "declaration_source_fingerprint": "b113e1099981a39efcdcebbd0d90525608e2c17745dd26a1cbcf2f9b17cd1a66",
+  "registry_fingerprint": "55481920d8b5cf4018bbc1a9cab1b9179df87a4b0330234c0946145b6a42ce05",
+  "declaration_source_fingerprint": "2ad2b92791994f568f4acd4a24b254c8205973c45e90e16637068b8282cc23b2",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -106107,6 +106107,30 @@
     {
       "capability_id": "token.creation.predefined_role",
       "evidence_class": "interaction",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_embereth_veteran_pays_sacrifice_and_grants_young_hero_attack",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Embereth Veteran whole-programstrictadmission advertisesandacceptsactivation,pays1genericandsacrificesoriginalsource,createscompleteYoungHeroAuraRoleonchosencreature,thenrealattackplacesonecounterthroughitsownnumericinterveningcondition.Pendingactivationloadandfullreplaybeginbeforeactualcommands."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "interaction",
       "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness",
       "official_rule_ids": [
         "111.10j",
@@ -106467,6 +106491,30 @@
     {
       "capability_id": "token.creation.predefined_role",
       "evidence_class": "positive",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_embereth_veteran_pays_sacrifice_and_grants_young_hero_attack",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Embereth Veteran whole-programstrictadmission advertisesandacceptsactivation,pays1genericandsacrificesoriginalsource,createscompleteYoungHeroAuraRoleonchosencreature,thenrealattackplacesonecounterthroughitsownnumericinterveningcondition.Pendingactivationloadandfullreplaybeginbeforeactualcommands."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "positive",
       "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_royal_creation_orders_doubled_roles_before_state_based_uniqueness",
       "official_rule_ids": [
         "111.10j",
@@ -106631,6 +106679,30 @@
         "commander_review"
       ],
       "applicability_note": "Original Cursed Courtier or Redtooth Genealogist casts through advertised/accepted authority. Complete Role definition enters legally attached, Anointed Procession expands the event before principalcorrect exact ordering; latest samecontrollerRole survives statebasedaction, rejectedtarget/foreignprincipal/duplicateorder retainstate. Pending save/load/fullreplay cover completecharacteristics."
+    },
+    {
+      "capability_id": "token.creation.predefined_role",
+      "evidence_class": "replay",
+      "test_id": "tests.test_predefined_roles.PredefinedRoleNativeTests.test_original_embereth_veteran_pays_sacrifice_and_grants_young_hero_attack",
+      "official_rule_ids": [
+        "111.10j",
+        "111.10k",
+        "111.10m",
+        "111.10n",
+        "111.10p",
+        "111.10q",
+        "111.10r",
+        "303.4g",
+        "303.7a",
+        "613.7m",
+        "704.5z"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Embereth Veteran whole-programstrictadmission advertisesandacceptsactivation,pays1genericandsacrificesoriginalsource,createscompleteYoungHeroAuraRoleonchosencreature,thenrealattackplacesonecounterthroughitsownnumericinterveningcondition.Pendingactivationloadandfullreplaybeginbeforeactualcommands."
     },
     {
       "capability_id": "token.creation.predefined_role",
@@ -137574,5 +137646,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "e1cfa698345b84827b40e3709abb2f70fe0dc3837eab90b05789c93a14845e8d"
+  "fingerprint": "5701454fd77a26f240f0e6cc6d747523cc0512d38afbe618095409ce24229b49"
 }
