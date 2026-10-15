@@ -6290,7 +6290,7 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "public-state-test-scheduling-reference-relocation",
+      "transition_id": "public-state-owner-test-scheduling-reference-relocation",
       "compiler_version": "oracle-ir-v365",
       "bundle_id": null,
       "candidate_ids": [],

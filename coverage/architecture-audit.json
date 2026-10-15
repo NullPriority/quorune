@@ -13804,7 +13804,7 @@
       "covered_high_risk_pairs": 411,
       "covered_piece_pairs": 1293,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "ededfda8ac25149cdc4ddecef500e4f6308f68d2135baa235341b1e5fcb3d1ce",
+      "source_fingerprint": "b5b48ee47ea693d3be0f32d6a18af60eb0538d18b32c2fb18b6ca913d54b6111",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -33751,7 +33751,7 @@
             "visibility": "public"
           }
         ],
-        "primary_test_count": 342,
+        "primary_test_count": 344,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_activated_draw_abilities",
@@ -34380,7 +34380,6 @@
           "test_fixed_entry_return_triggers",
           "test_fixed_keyword_event_effects",
           "test_fixed_public_alternative_costs",
-          "test_fixed_public_state_characteristics",
           "test_fixed_query_keyword_grants",
           "test_fixed_source_combat_growth_triggers",
           "test_fixed_token_creation_effects",
@@ -34390,6 +34389,7 @@
           "test_oracle_ir",
           "test_prevention_immediate_sequencing",
           "test_prevention_trigger_stack",
+          "test_public_state_condition_compiler",
           "test_renown_rules",
           "test_replacement_event_ordering",
           "test_scoped_damage_prevention",
@@ -34608,7 +34608,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 58,
+        "primary_test_count": 59,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_as_unblocked_assignment",
@@ -34633,7 +34633,6 @@
           "test_fixed_counter_zone_triggers",
           "test_fixed_entry_return_triggers",
           "test_fixed_keyword_event_effects",
-          "test_fixed_public_state_characteristics",
           "test_fixed_query_keyword_grants",
           "test_fixed_source_characteristic_effects",
           "test_fixed_source_combat_growth_triggers",
@@ -34648,6 +34647,8 @@
           "test_object_query",
           "test_prowess_rules",
           "test_public_activation_conditions",
+          "test_public_state_condition_runtime",
+          "test_public_state_event_counter_actions",
           "test_public_state_quantity_actions",
           "test_query_power_toughness_definitions",
           "test_repeatable_object_action_triggers",
@@ -35609,7 +35610,7 @@
             "visibility": "private"
           }
         ],
-        "primary_test_count": 278,
+        "primary_test_count": 280,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_activated_draw_abilities",
@@ -37074,7 +37075,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 146,
+        "primary_test_count": 148,
         "primary_tests": [
           "test_activation_restrictions",
           "test_additional_token_compiler",
@@ -37617,7 +37618,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 38,
+        "primary_test_count": 39,
         "primary_tests": [
           "test_aggregated_zone_event_triggers",
           "test_attack_counter_triggers",
@@ -37647,6 +37648,7 @@
           "test_prevention_trigger_stack",
           "test_public_history_condition_closure",
           "test_public_query_effect_amounts",
+          "test_public_state_condition_compiler",
           "test_public_state_event_actions",
           "test_resolution_public_conditions",
           "test_saga_counter_progression",
@@ -37857,10 +37859,10 @@
           "test_declared_effect_amounts",
           "test_fixed_control_effects",
           "test_fixed_extra_turns",
-          "test_fixed_public_state_characteristics",
           "test_fixed_query_keyword_grants",
           "test_interactions_v070",
           "test_public_query_action_registration",
+          "test_public_state_condition_runtime",
           "test_turn_priority_owner"
         ],
         "privacy_sensitivity": "Decision capabilities and private projected alternatives are principal scoped.",
@@ -38047,7 +38049,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 247,
+        "primary_test_count": 248,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_aerial_blocking",
@@ -39013,8 +39015,8 @@
           "rollback": 130
         },
         "declaration_count": 6637,
-        "declaration_source_fingerprint": "2bfde17cbf2ccab3698f7b4a4631849caebcc622cd45c8deb2fbb3acbfcb968e",
-        "fingerprint": "f0e40fc09de299fb8679ee83820ea6cba1882f84009a780b8a3ed77d964e4439",
+        "declaration_source_fingerprint": "dafb44b97a3f18396342b322d3b9b7360fbd182c923bfb70648421a7a4960479",
+        "fingerprint": "99d5c1af12a7e25cdb67d53101d674ece3c9ba7abbec1d64ad3d16e011d41d1a",
         "registry_fingerprint": "1b4acbf973471b3f1f6bdacf130d5df083d6638b244a24433c04a613469aaaf8"
       },
       "fingerprint": "1b4acbf973471b3f1f6bdacf130d5df083d6638b244a24433c04a613469aaaf8",
@@ -39380,7 +39382,7 @@
         "contract_fingerprint": "e485004b19b7f21621ab02543231419cfb5f3e92722b9d10129a1b44819bc4bd",
         "exact_cards_with_template": 744,
         "exact_nodes": 908,
-        "fingerprint": "fa85cfca059d173a34cd9f79bd1df025a0a00dd8cec2e795e71e84b3e823927e",
+        "fingerprint": "f9388e1ba40d816fa90a938fac689cdf6d5221a54abe087344d04f6abcc15df3",
         "grammar_source_fingerprint": "ba9ae320c5615887ab1b5b872620cb5c121194ce6e84d9ac854e4e418f40f8ce",
         "identity_fingerprint": "23cb162c9dd942a7e05a10237e8ebd1ae1b0d46a6c9d86e14b431bf1f1a81a65",
         "present": true,
@@ -39392,7 +39394,7 @@
         "contract_fingerprint": "e485004b19b7f21621ab02543231419cfb5f3e92722b9d10129a1b44819bc4bd",
         "exact_cards_with_template": 766,
         "exact_nodes": 941,
-        "fingerprint": "88ddce18589f394420cc14744c78de43d5f41b373b8567b608c0a158d8364c4c",
+        "fingerprint": "1cb70100d731ee267fd3bade1990e030f7125fea19319fcc54d4d78f43861823",
         "grammar_source_fingerprint": "ba9ae320c5615887ab1b5b872620cb5c121194ce6e84d9ac854e4e418f40f8ce",
         "identity_fingerprint": "30ee37558d0568aa8d4eece75cd94f960987e1ca5836e4643b3d144795167a82",
         "present": true,
@@ -39411,7 +39413,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "54e5c74bc9dd1156940f9e025ce0c233b24086188da053cf49bc1d614df98481",
+      "fingerprint": "2c8db01e67e3d58590cb2c55231b211cf1625f8f6eb2f86d08c8560880443405",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -40280,7 +40282,7 @@
         "server_named": 51
       },
       "reconciles": true,
-      "test_files": 444
+      "test_files": 450
     }
   }
 }

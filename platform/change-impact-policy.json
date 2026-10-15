@@ -108,7 +108,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -153,7 +159,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -183,7 +195,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -207,7 +225,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -301,7 +325,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ],
       "browser_focuses": [
         "mana-action"
@@ -428,7 +458,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -591,7 +627,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -663,7 +705,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -814,7 +862,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -954,7 +1008,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -1152,7 +1212,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -1202,7 +1268,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -1397,7 +1469,13 @@
         "test_rules_scheduler",
         "test_token_creation_replacements",
         "test_trigger_batches",
-        "test_zone_trigger_events"
+        "test_zone_trigger_events",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -1505,7 +1583,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -1567,7 +1651,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -1690,7 +1780,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ],
       "test_suites": [
         "casting-costs-mana",
@@ -1785,7 +1881,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ],
       "test_suites": [
         "counter-continuous-effects",
@@ -1856,7 +1958,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ],
       "test_suites": [
         "casting-costs-mana",
@@ -1976,7 +2084,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -2229,7 +2343,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -2362,7 +2482,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -2551,7 +2677,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -2744,7 +2876,13 @@
         "test_fixed_effect_clause_sequences",
         "test_fixed_optional_effect_choices",
         "test_fixed_public_state_characteristics",
-        "test_optional_draw_choices"
+        "test_optional_draw_choices",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -2867,7 +3005,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -2904,7 +3048,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -3048,7 +3198,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -3153,7 +3309,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -3251,7 +3413,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -3390,7 +3558,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -3745,7 +3919,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -3768,7 +3948,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -3830,7 +4016,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -3911,7 +4103,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -3932,7 +4130,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -3986,7 +4190,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -4074,7 +4284,13 @@
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
         "test_public_state_mana_actions",
-        "test_public_state_quantity_actions"
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {

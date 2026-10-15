@@ -2,7 +2,7 @@
 title: "Compact CI card dependencies"
 status: "generated"
 authoritative_source: "tests/fixtures/compact-ci-fixtures.json and platform/test-shards.json"
-verified: "8e582143a2c9c7ec0832796af4d7cad0d6c240179e4a2208bd382e899953134a"
+verified: "60078eeb6d5ab0b96a3495466a97e80255c21da835534f8ec8a97b897e746195"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -20,8 +20,8 @@ Overall closure: **closed**.
 | Fixture files | 167 |
 | Cards | 1760 |
 | Rulings | 2668 |
-| Modules inspected | 444 |
-| Static requirements | 1347 |
+| Modules inspected | 450 |
+| Static requirements | 1359 |
 | Declared dynamic requirements | 43 |
 | Unresolved dynamic sites | 0 |
 | Missing cards | 0 |
@@ -36,14 +36,14 @@ Overall closure: **closed**.
 | combat-declarations | 22 | closed |
 | compiler-cardprogram | 62 | closed |
 | core-domain | 14 | closed |
-| counter-continuous-effects | 40 | closed |
+| counter-continuous-effects | 46 | closed |
 | deterministic-game-regressions | 6 | closed |
 | events-replacement-zone | 40 | closed |
 | functional-01 | 18 | closed |
 | functional-02 | 61 | closed |
 | functional-03 | 31 | closed |
 | functional-04 | 31 | closed |
-| functional-05 | 30 | closed |
+| functional-05 | 36 | closed |
 | functional-06 | 29 | closed |
 | functional-07 | 27 | closed |
 | functional-08 | 31 | closed |
