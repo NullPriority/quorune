@@ -574,9 +574,12 @@ counts. It reads current copy/type/color data only through layer 5. Exactly two
 leaf quantities may be added without conflating them with a union; fixed
 positive multipliers and nonnegative offsets remain explicit. Paired all-zone
 power/toughness definitions retain independent field offsets. Legacy count and
-definition payloads retain their existing codecs. Hidden characteristic reads,
-power/toughness aggregates and open or nested
-arithmetic remain unsupported rather than using an incorrect boundary.
+definition payloads retain their existing codecs. Controller hand-size arithmetic
+reads only the unfiltered zone cardinality. Source-counter values support fixed
+positive multipliers and nonnegative offsets, including their composition.
+All-graveyard definitions also count instant or sorcery cards through the public
+query boundary. Hidden characteristic reads, power/toughness aggregates and
+arithmetic outside the represented fixed forms remain unsupported.
 
 `controller_opponent_count` is a versioned public-roster quantity for the
 represented free-for-all profiles. It counts other players still in the game

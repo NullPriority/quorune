@@ -27912,6 +27912,66 @@
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
       "evidence_class": "interaction",
+      "test_id": "tests.test_public_scalar_stat_definitions.PublicScalarStatRuntimeTests.test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Magnivore cast and subsequent sorcery/instant casts distinguish all-player graveyard card types; life consequences, unauthorized rollback, private projection, pending load and replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_scalar_stat_definitions.PublicScalarStatRuntimeTests.test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Masumaro cast, private draw, foreign control and destruction retain current controller hand cardinality and return to owner-relative all-zone stats with pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_scalar_stat_definitions.PublicScalarStatRuntimeTests.test_actual_mwonvuli_uses_nested_counter_arithmetic_before_later_modifiers",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Mwonvuli cast, later modifier and age-counter placement apply1+2*N in layer7a before the layer7c bonus; full pre-action replay agrees."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "interaction",
       "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionCompilerTests.test_query_definition_ability_removal_sibling_withholds_runtime_admission",
       "official_rule_ids": ["109.2", "109.2a", "205.3m", "604.3", "611.3a", "613.1g", "613.4a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -27977,6 +28037,46 @@
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_scalar_stat_definitions.PublicScalarStatRuntimeTests.test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Magnivore cast and subsequent sorcery/instant casts distinguish all-player graveyard card types; life consequences, unauthorized rollback, private projection, pending load and replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_scalar_stat_definitions.PublicScalarStatRuntimeTests.test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Masumaro cast, private draw, foreign control and destruction retain current controller hand cardinality and return to owner-relative all-zone stats with pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionRuntimeTests.test_query_definition_copy_and_control_change_use_current_source",
       "official_rule_ids": ["109.2", "109.2a", "205.3m", "604.3", "611.3a", "613.1g", "613.4a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -28003,6 +28103,26 @@
       "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
     },
     {"capability_id":"continuous.characteristics.query_power_toughness_definition","evidence_class":"multiplayer","test_id":"tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones","official_rule_ids":["109.2","109.2a","205.3m","604.3","611.3a","613.1g","613.4a"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."},
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_scalar_stat_definitions.PublicScalarStatCompilerTests.test_definitions_preserve_complete_nested_public_arithmetic",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Executed omission of the complete characteristic-value producer fails all four independent source cases (four failures, no errors)."
+    },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
       "evidence_class": "mutation",
@@ -28033,6 +28153,26 @@
     },
     {"capability_id":"continuous.characteristics.query_power_toughness_definition","evidence_class":"mutation","test_id":"tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_implied_creature_type_omission_mutant_is_killed_by_original_soulless_one","official_rule_ids":["109.2","109.2a","205.3m","604.3","611.3a","613.1g","613.4a"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Reintroducing the implied Creature card-type restriction breaks the independently expected original Soulless One quantities."},
     {"capability_id": "continuous.characteristics.query_power_toughness_definition", "evidence_class": "mutation", "test_id": "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests.test_collection_object_count_mutant_is_killed", "official_rule_ids": ["109.2", "109.2a", "205.3m", "604.3", "611.3a", "613.1g", "613.4a"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Kill replacement of the distinct public reduction with raw object count while preserving the shared layer-safe quantity owner."},
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_scalar_stat_definitions.PublicScalarStatCompilerTests.test_hand_arithmetic_reads_only_cardinality_and_counter_arithmetic_remains_closed",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "A poisoned hidden-card map is never read; filtered-hand queries, unsupported reductions and malformed arithmetic reject."
+    },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
       "evidence_class": "negative",
@@ -28113,6 +28253,86 @@
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
       "evidence_class": "positive",
+      "test_id": "tests.test_public_scalar_stat_definitions.PublicScalarStatCompilerTests.test_definitions_preserve_complete_nested_public_arithmetic",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "All-zone P/T definitions retain complete fixed arithmetic on raw hand counts, named source counters and singular spell-card graveyard queries."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_scalar_stat_definitions.PublicScalarStatRuntimeTests.test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Magnivore cast and subsequent sorcery/instant casts distinguish all-player graveyard card types; life consequences, unauthorized rollback, private projection, pending load and replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_scalar_stat_definitions.PublicScalarStatRuntimeTests.test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Masumaro cast, private draw, foreign control and destruction retain current controller hand cardinality and return to owner-relative all-zone stats with pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_scalar_stat_definitions.PublicScalarStatRuntimeTests.test_actual_mwonvuli_uses_nested_counter_arithmetic_before_later_modifiers",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Mwonvuli cast, later modifier and age-counter placement apply1+2*N in layer7a before the layer7c bonus; full pre-action replay agrees."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "positive",
       "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionCompilerTests.test_query_power_toughness_definition_grammar_compiles_closed_fragments",
       "official_rule_ids": ["109.2", "109.2a", "205.3m", "604.3", "611.3a", "613.1g", "613.4a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -28170,6 +28390,46 @@
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
       "evidence_class": "privacy",
+      "test_id": "tests.test_public_scalar_stat_definitions.PublicScalarStatRuntimeTests.test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Magnivore cast and subsequent sorcery/instant casts distinguish all-player graveyard card types; life consequences, unauthorized rollback, private projection, pending load and replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_scalar_stat_definitions.PublicScalarStatRuntimeTests.test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Masumaro cast, private draw, foreign control and destruction retain current controller hand cardinality and return to owner-relative all-zone stats with pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "privacy",
       "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionRuntimeTests.test_query_definition_hand_count_projects_without_hidden_identity",
       "official_rule_ids": ["109.2", "109.2a", "205.3m", "604.3", "611.3a", "613.1g", "613.4a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -28195,6 +28455,66 @@
         "commander_review"
       ],
       "applicability_note": "Save/load and exact pre-action command replay retain versioned quantities, paired CDA offsets and full resulting consequences."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_scalar_stat_definitions.PublicScalarStatRuntimeTests.test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Magnivore cast and subsequent sorcery/instant casts distinguish all-player graveyard card types; life consequences, unauthorized rollback, private projection, pending load and replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_scalar_stat_definitions.PublicScalarStatRuntimeTests.test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Masumaro cast, private draw, foreign control and destruction retain current controller hand cardinality and return to owner-relative all-zone stats with pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_scalar_stat_definitions.PublicScalarStatRuntimeTests.test_actual_mwonvuli_uses_nested_counter_arithmetic_before_later_modifiers",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Mwonvuli cast, later modifier and age-counter placement apply1+2*N in layer7a before the layer7c bonus; full pre-action replay agrees."
     },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",

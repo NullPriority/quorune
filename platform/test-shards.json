@@ -395,6 +395,7 @@
       "test_life_state",
       "test_monarch_rules",
       "test_player_speed",
+      "test_public_scalar_stat_definitions",
       "test_query_power_toughness_definitions",
       "test_replacement_event_tree",
       "test_replacement_model_hardening",

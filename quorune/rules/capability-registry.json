@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 300,
+  "registry_version": 301,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -8543,7 +8543,7 @@
     },
     {
       "id": "continuous.characteristics.query_power_toughness_definition",
-      "version": 4,
+      "version": 5,
       "official_rules": [
         "109.2",
         "109.2a",
@@ -8553,22 +8553,97 @@
         "613.1g",
         "613.4a"
       ],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Define one or both printed power/toughness fields in all zones from closed layer-5 public quantities. Versioned reductions preserve distinctness, mana-value and colored-symbol meaning, fixed arithmetic, two independent leaf sums and separate paired-field offsets. Bare creature-subtype queries include Kindred objects; explicit Creature card-type predicates remain separate.",
-        "inputs": ["one source-spanned source-possessive power, toughness, or paired definition", "copied typed all-zone definition fragment", "controller, opponent, global, public-graveyard, raw hand-size, or source-counter quantity", "layer-5 object types, subtypes, supertypes, colors, token state, and source exclusion"],
-        "outputs": ["controller-correct and multiplayer-correct live quantity", "cycle-safe layer-5 characteristic predicate", "all-zone characteristic-defining layer-7a power and/or toughness setting", "copiable executable fragment", "hidden-identity-free hand count"],
-        "exclusions": ["chosen players, types, colors, names, and private object identities", "Devotion and its modifiers, party, sticker, history, tapped, face-down, linked-exile, and aggregate-counter quantities", "negative/open arithmetic, nested or more-than-two sums, comparisons, conditional/combat-state and quoted or granted definitions", "ability-addition or ability-removal applicability outside the shared layer-6 ability-presence query"]
+        "summary": "Define one or both printed power/toughness fields in all zones from closed layer-5 public quantities. Versioned reductions preserve distinctness, mana-value and colored-symbol meaning, fixed arithmetic, two independent leaf sums and separate paired-field offsets. Bare creature-subtype queries include Kindred objects; explicit Creature card-type predicates remain separate. Closed scalar arithmetic uses unfiltered public hand size and named source counters; singular instant/sorcery graveyard card definitions use the existing all-zone owner.",
+        "inputs": [
+          "one source-spanned source-possessive power, toughness, or paired definition",
+          "copied typed all-zone definition fragment",
+          "controller, opponent, global, public-graveyard, raw hand-size, or source-counter quantity",
+          "layer-5 object types, subtypes, supertypes, colors, token state, and source exclusion"
+        ],
+        "outputs": [
+          "controller-correct and multiplayer-correct live quantity",
+          "cycle-safe layer-5 characteristic predicate",
+          "all-zone characteristic-defining layer-7a power and/or toughness setting",
+          "copiable executable fragment",
+          "hidden-identity-free hand count"
+        ],
+        "exclusions": [
+          "chosen players, types, colors, names, and private object identities",
+          "Devotion and its modifiers, party, sticker, history, tapped, face-down, linked-exile, and aggregate-counter quantities",
+          "negative/open arithmetic, nested or more-than-two sums, comparisons, conditional/combat-state and quoted or granted definitions",
+          "ability-addition or ability-removal applicability outside the shared layer-6 ability-presence query"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.characteristic_evaluation.evaluate_card_characteristics", "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin", "quorune.characteristic_fragments.QueryPowerToughnessDefinitionSpec", "quorune.compiler.collection_quantity_templates.collection_quantity", "quorune.compiler.collection_quantity_templates.fixed_quantity_arithmetic", "quorune.compiler.query_characteristic_templates.query_power_toughness_definition_handler", "quorune.compiler.shared_characteristic_queries.shared_characteristic_quantity", "quorune.continuous_effects.evaluate_continuous_effects", "quorune.dynamic_characteristics.query_characteristic_count", "quorune.public_quantity_reductions.reduce_public_quantity", "quorune.semantic_runtime.ability_fragments.QueryPowerToughnessDefinitionAbilityFragmentHandler"],
-      "positive_tests": ["test_query_definitions_apply_in_every_zone_and_preserve_undefined_field", "test_query_power_toughness_definition_grammar_compiles_closed_fragments", "test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary"],
-      "negative_tests": ["test_query_power_toughness_definition_descriptors_fail_closed", "test_query_power_toughness_definition_grammar_keeps_open_families_residual", "test_shared_query_producer_mutation_and_unknown_terms_fail_closed"],
-      "interaction_tests": ["test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer", "test_query_definition_ability_removal_sibling_withholds_runtime_admission", "test_query_definition_copy_and_control_change_use_current_source", "test_query_definition_counts_layer_five_types_and_orders_in_layer_seven_a"],
-      "multiplayer_tests": ["test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer", "test_query_definition_copy_and_control_change_use_current_source"],
-      "privacy_tests": ["test_query_definition_hand_count_projects_without_hidden_identity"],
-      "replay_tests": ["test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer", "test_query_definition_save_load_and_replay_exactly"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.characteristic_evaluation.evaluate_card_characteristics",
+        "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin",
+        "quorune.characteristic_fragments.QueryPowerToughnessDefinitionSpec",
+        "quorune.compiler.collection_quantity_templates.collection_quantity",
+        "quorune.compiler.collection_quantity_templates.fixed_quantity_arithmetic",
+        "quorune.compiler.query_characteristic_templates.query_power_toughness_definition_handler",
+        "quorune.compiler.shared_characteristic_queries.shared_characteristic_quantity",
+        "quorune.continuous_effects.evaluate_continuous_effects",
+        "quorune.dynamic_characteristics.query_characteristic_count",
+        "quorune.public_quantity_reductions.reduce_public_quantity",
+        "quorune.semantic_runtime.ability_fragments.QueryPowerToughnessDefinitionAbilityFragmentHandler"
+      ],
+      "positive_tests": [
+        "test_query_definitions_apply_in_every_zone_and_preserve_undefined_field",
+        "test_query_power_toughness_definition_grammar_compiles_closed_fragments",
+        "test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary",
+        "test_definitions_preserve_complete_nested_public_arithmetic",
+        "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
+        "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
+        "test_actual_mwonvuli_uses_nested_counter_arithmetic_before_later_modifiers"
+      ],
+      "negative_tests": [
+        "test_query_power_toughness_definition_descriptors_fail_closed",
+        "test_query_power_toughness_definition_grammar_keeps_open_families_residual",
+        "test_shared_query_producer_mutation_and_unknown_terms_fail_closed",
+        "test_hand_arithmetic_reads_only_cardinality_and_counter_arithmetic_remains_closed"
+      ],
+      "interaction_tests": [
+        "test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
+        "test_query_definition_ability_removal_sibling_withholds_runtime_admission",
+        "test_query_definition_copy_and_control_change_use_current_source",
+        "test_query_definition_counts_layer_five_types_and_orders_in_layer_seven_a",
+        "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
+        "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
+        "test_actual_mwonvuli_uses_nested_counter_arithmetic_before_later_modifiers"
+      ],
+      "multiplayer_tests": [
+        "test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
+        "test_query_definition_copy_and_control_change_use_current_source",
+        "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
+        "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone"
+      ],
+      "privacy_tests": [
+        "test_query_definition_hand_count_projects_without_hidden_identity",
+        "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
+        "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone"
+      ],
+      "replay_tests": [
+        "test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
+        "test_query_definition_save_load_and_replay_exactly",
+        "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
+        "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
+        "test_actual_mwonvuli_uses_nested_counter_arithmetic_before_later_modifiers"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "The definition consumes one closed typed quantity through the shared cycle-safe layer-5 characteristic boundary and has no capability dependency.",
       "implementation_mutation_status": "killed",

@@ -120,6 +120,7 @@
     "tests/fixtures/public-collection-quantity-cards.json",
     "tests/fixtures/public-library-action-permission-cards.json",
     "tests/fixtures/public-quantity-mana-cards.json",
+    "tests/fixtures/public-scalar-stat-cards.json",
     "tests/fixtures/public-static-action-rule-cards.json",
     "tests/fixtures/qualified-declaration-cards.json",
     "tests/fixtures/qualified-enchant-cards.json",

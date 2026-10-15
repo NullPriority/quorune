@@ -148,6 +148,9 @@ def fixed_characteristic_setting_handler(text: str, *, source_name: str | None =
         return None
     if not all(_setting_part(modifier, part) for part in parts):
         return None
+    if attached is None and not any((modifier['type_operations'], modifier['color_operations'],
+                                     modifier['base_power'] is not None, modifier['remove_all_abilities'])):
+        return None
     version = 2 if source or source_condition else 1
     descriptor={"handler_id":'continuous.characteristics.fixed-public-setting.v2' if version == 2 else SETTING_HANDLER,
         "schema_version":version,

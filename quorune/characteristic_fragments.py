@@ -143,7 +143,8 @@ class CharacteristicQuantitySpec:
         if (
             type(self.counter_name) is not str or not self.counter_name.strip()
             or self.query is not None or self.exclude_source
-            or self.exclude_attached_object or self.schema_version != 1
+            or self.exclude_attached_object or self.schema_version not in {1, 2}
+            or self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT
         ):
             raise CharacteristicFragmentError("Source-counter quantities require only one counter name")
         try:
@@ -172,11 +173,17 @@ class CharacteristicQuantitySpec:
         ):
             raise CharacteristicFragmentError('Recipient attachment counts require their versioned fixed query')
         if self.schema_version == 2 and (
-            query.zones == ("hand",) or query.state_predicate is not None
+            query.state_predicate is not None
             or query.tapped is not None or query.minimum_color_count is not None
             or query.excluded_controllers
         ):
             raise CharacteristicFragmentError("Collection reductions require a closed layer-5 public query")
+        if query.zones == ('hand',) and self.schema_version == 2 and (
+                query != ObjectQuerySpec(zones=('hand',))
+                or self.scope is not CharacteristicQuantityScope.CONTROLLER_ZONE
+                or self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT
+                or self.exclude_source or self.exclude_attached_object):
+            raise CharacteristicFragmentError('Hand arithmetic exposes only the unfiltered controller hand size')
         if self.reduction is CharacteristicQuantityReduction.DISTINCT_CARD_TYPES and (
             query.zones != ("graveyard",) or query.token is not False
         ):
