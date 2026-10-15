@@ -104,7 +104,17 @@
         "test_card_program_trust",
         "test_high_risk_interaction_assurance",
         "test_scalar_effect_amounts",
-        "test_fixed_public_state_characteristics"
+        "test_fixed_public_state_characteristics",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -145,7 +155,17 @@
         "test_player_target_protection",
         "test_fixed_public_state_characteristics",
         "test_typed_dynamic_characteristics",
-        "test_high_risk_interaction_assurance"
+        "test_high_risk_interaction_assurance",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -171,7 +191,17 @@
         "test_semantic_counter_replacement_continuations",
         "test_high_risk_interaction_assurance",
         "test_fixed_public_state_characteristics",
-        "test_fixed_damage_effect_clauses"
+        "test_fixed_damage_effect_clauses",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -191,7 +221,17 @@
         "test_fixed_query_keyword_grants",
         "test_fixed_query_quoted_ability_grants",
         "test_high_risk_interaction_assurance",
-        "test_prowess_rules"
+        "test_prowess_rules",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -281,7 +321,17 @@
         "test_scalar_effect_amounts",
         "test_typed_activated_ability_catalog",
         "test_typed_untap_step_participation",
-        "test_untap_step_rules"
+        "test_untap_step_rules",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ],
       "browser_focuses": [
         "mana-action"
@@ -404,7 +454,17 @@
         "test_spell_history_transformations",
         "test_card_program_trust",
         "test_rules_scheduler",
-        "test_ci_policy_delta"
+        "test_ci_policy_delta",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -563,7 +623,17 @@
         "test_scalar_effect_amounts",
         "test_fixed_public_state_characteristics",
         "test_fixed_activated_zone_change_costs",
-        "test_fixed_activation_tap_costs"
+        "test_fixed_activation_tap_costs",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -631,7 +701,17 @@
         "test_scalar_effect_amounts",
         "test_fixed_public_state_characteristics",
         "test_fixed_activated_zone_change_costs",
-        "test_fixed_activation_tap_costs"
+        "test_fixed_activation_tap_costs",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -778,7 +858,17 @@
         "test_fixed_public_state_characteristics",
         "test_combat_declaration_restrictions",
         "test_card_program_trust",
-        "test_rules_scheduler"
+        "test_rules_scheduler",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -914,7 +1004,17 @@
         "test_public_quantity_mana",
         "test_fixed_public_state_characteristics",
         "test_fixed_affected_player_discards",
-        "test_fixed_counter_event_triggers"
+        "test_fixed_counter_event_triggers",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -1108,7 +1208,17 @@
         "test_static_characteristic_labels",
         "test_token_creation_replacements",
         "test_turn_history_rules",
-        "test_zone_trigger_events"
+        "test_zone_trigger_events",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -1154,7 +1264,17 @@
         "test_fixed_query_keyword_grants",
         "test_object_query",
         "test_typed_untap_step_participation",
-        "test_untap_step_rules"
+        "test_untap_step_rules",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -1349,7 +1469,13 @@
         "test_rules_scheduler",
         "test_token_creation_replacements",
         "test_trigger_batches",
-        "test_zone_trigger_events"
+        "test_zone_trigger_events",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -1453,7 +1579,17 @@
         "test_fixed_attachment_actions",
         "test_fixed_query_quoted_ability_grants",
         "test_typed_ability_fragments",
-        "test_fixed_public_state_characteristics"
+        "test_fixed_public_state_characteristics",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -1511,7 +1647,17 @@
         "test_query_power_toughness_definitions",
         "test_typed_ability_fragments",
         "test_typed_dynamic_characteristics",
-        "test_typed_query_self_characteristics"
+        "test_typed_query_self_characteristics",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -1630,7 +1776,17 @@
         "test_sunburst_rules",
         "test_unleash_rules",
         "test_whole_hand_discard",
-        "test_zone_replacement_compiler"
+        "test_zone_replacement_compiler",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ],
       "test_suites": [
         "casting-costs-mana",
@@ -1721,7 +1877,17 @@
         "test_fixed_public_state_characteristics",
         "test_fixed_query_keyword_grants",
         "test_fixed_source_characteristic_effects",
-        "test_card_program_trust"
+        "test_card_program_trust",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ],
       "test_suites": [
         "counter-continuous-effects",
@@ -1788,7 +1954,17 @@
         "test_scalar_effect_amounts",
         "test_fixed_public_state_characteristics",
         "test_fixed_activated_zone_change_costs",
-        "test_fixed_activation_tap_costs"
+        "test_fixed_activation_tap_costs",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ],
       "test_suites": [
         "casting-costs-mana",
@@ -1904,7 +2080,17 @@
         "test_scalar_effect_amounts",
         "test_fixed_public_state_characteristics",
         "test_fixed_activated_zone_change_costs",
-        "test_fixed_activation_tap_costs"
+        "test_fixed_activation_tap_costs",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -2153,7 +2339,17 @@
         "test_persist_undying_rules",
         "test_source_maintenance",
         "test_fixed_public_state_characteristics",
-        "test_fixed_damage_effect_clauses"
+        "test_fixed_damage_effect_clauses",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -2282,7 +2478,17 @@
         "test_fixed_public_state_characteristics",
         "test_fixed_counter_event_triggers",
         "test_card_program_trust",
-        "test_object_query"
+        "test_object_query",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -2467,7 +2673,17 @@
         "test_card_program_trust",
         "test_fixed_source_characteristic_effects",
         "test_fixed_public_state_characteristics",
-        "test_fixed_damage_effect_clauses"
+        "test_fixed_damage_effect_clauses",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -2660,7 +2876,13 @@
         "test_fixed_effect_clause_sequences",
         "test_fixed_optional_effect_choices",
         "test_fixed_public_state_characteristics",
-        "test_optional_draw_choices"
+        "test_optional_draw_choices",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -2779,7 +3001,17 @@
         "test_typed_ability_fragments",
         "test_zone_trigger_events",
         "test_scalar_effect_amounts",
-        "test_fixed_public_state_characteristics"
+        "test_fixed_public_state_characteristics",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -2812,7 +3044,17 @@
         "test_resolution_public_conditions",
         "test_rules_scheduler",
         "test_surveil_rules",
-        "test_targeted_return_to_hand_effect_clauses"
+        "test_targeted_return_to_hand_effect_clauses",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -2952,7 +3194,17 @@
         "test_rules_scheduler",
         "test_storm_rules",
         "test_scalar_effect_amounts",
-        "test_fixed_public_state_characteristics"
+        "test_fixed_public_state_characteristics",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -3053,7 +3305,17 @@
         "test_combat_declaration_restrictions",
         "test_fixed_public_state_characteristics",
         "test_high_risk_interaction_assurance",
-        "test_rule_capabilities"
+        "test_rule_capabilities",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -3147,7 +3409,17 @@
         "test_high_risk_interaction_assurance",
         "test_rules_scheduler",
         "test_scalar_effect_amounts",
-        "test_fixed_public_state_characteristics"
+        "test_fixed_public_state_characteristics",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -3282,7 +3554,17 @@
         "test_scalar_effect_amounts",
         "test_fixed_public_state_characteristics",
         "test_fixed_activated_zone_change_costs",
-        "test_fixed_activation_tap_costs"
+        "test_fixed_activation_tap_costs",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -3633,7 +3915,17 @@
         "test_scheduled_player_triggers",
         "test_card_program_trust",
         "test_fixed_public_state_characteristics",
-        "test_fixed_damage_effect_clauses"
+        "test_fixed_damage_effect_clauses",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -3652,7 +3944,17 @@
         "test_bound_effect_programs",
         "test_oracle_corpus_examples",
         "test_fixed_public_state_characteristics",
-        "test_fixed_damage_effect_clauses"
+        "test_fixed_damage_effect_clauses",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -3710,7 +4012,17 @@
         "test_fixed_counter_event_triggers",
         "test_targeted_destruction_effect_clauses",
         "test_oracle_corpus_examples",
-        "test_fixed_public_state_characteristics"
+        "test_fixed_public_state_characteristics",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -3787,7 +4099,17 @@
         "test_game_record_v3",
         "test_fixed_affected_player_discards",
         "test_fixed_public_state_characteristics",
-        "test_scalar_effect_amounts"
+        "test_scalar_effect_amounts",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -3804,7 +4126,17 @@
         "test_draw_step_rules",
         "test_fixed_counter_event_triggers",
         "test_card_program_trust",
-        "test_fixed_public_state_characteristics"
+        "test_fixed_public_state_characteristics",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -3854,7 +4186,17 @@
         "test_fixed_public_state_characteristics",
         "test_query_power_toughness_definitions",
         "test_proliferate_rules",
-        "test_card_program_trust"
+        "test_card_program_trust",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
@@ -3938,7 +4280,17 @@
         "test_card_program_trust",
         "test_game_record_v3",
         "test_fixed_public_state_characteristics",
-        "test_fixed_damage_effect_clauses"
+        "test_fixed_damage_effect_clauses",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
+        "test_public_state_mana_actions",
+        "test_public_state_quantity_actions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_event_counter_actions",
+        "test_public_state_graveyard_arrival_actions",
+        "test_public_state_optional_result_actions",
+        "test_public_state_predefined_token_actions"
       ]
     },
     {
