@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 287,
+  "registry_version": 288,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -8342,7 +8342,7 @@
     },
     {
       "id": "quantity_expression.public_query_effect_amount",
-      "version": 9,
+      "version": 10,
       "official_rules": [
         "109.2",
         "109.2a",
@@ -8407,6 +8407,7 @@
       "positive_tests": [
         "test_compiler_lowers_public_query_amounts_across_contexts",
         "test_compiler_lowers_query_scaled_characteristics_across_contexts",
+        "test_counted_token_definition_retains_trailing_keywords",
         "test_current_trusted_zero_source_quantity_pays_and_replays_without_effect",
         "test_existing_public_quantity_spell_shapes_are_promotable",
         "test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
@@ -8419,6 +8420,7 @@
         "test_tapped_public_quantity_keeps_fixed_current_state_and_full_result"
       ],
       "negative_tests": [
+        "test_counted_token_definition_retains_trailing_keywords",
         "test_library_amount_result_capabilities_cannot_be_omitted",
         "test_number_of_tokens_complete_value_rejects_unknown_quantity_definition_and_missing_producer",
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
@@ -8429,6 +8431,7 @@
         "test_zero_public_count_creates_no_choice_or_scry_surveil_event"
       ],
       "interaction_tests": [
+        "test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
         "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
         "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
@@ -8444,6 +8447,7 @@
         "test_zero_query_amount_and_stale_target_use_existing_target_owner"
       ],
       "multiplayer_tests": [
+        "test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
         "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
         "test_query_amount_four_player_projection_save_load_and_replay",
@@ -8457,6 +8461,7 @@
       ],
       "replay_tests": [
         "test_original_cerebral_download_surveys_current_artifact_count_then_draws_and_replays",
+        "test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
         "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
         "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
@@ -21735,7 +21740,7 @@
     },
     {
       "id": "quantity_expression.live_battlefield_count",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "109.5",
         "506.4",
@@ -21789,23 +21794,28 @@
       "blockers": [],
       "status": "trusted",
       "positive_tests": [
+        "test_counted_token_definition_retains_trailing_keywords",
         "test_resolution_count_preserves_current_keyword_combat_and_source_scope"
       ],
       "negative_tests": [
+        "test_counted_token_definition_retains_trailing_keywords",
         "test_live_count_codec_preserves_legacy_boundary_and_rejects_unknown_domains",
         "test_live_quantity_missing_producer_and_runtime_shape_fail_closed"
       ],
       "interaction_tests": [
+        "test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
         "test_original_vent_sentinel_counts_current_defender_after_snakeform_response"
       ],
       "multiplayer_tests": [
+        "test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
         "test_original_piledriver_excludes_source_and_non_goblin_attackers"
       ],
       "privacy_tests": [
         "test_original_keep_watch_counts_actual_attackers_after_blink_and_replays_privately"
       ],
       "replay_tests": [
-        "test_original_battlement_advertises_and_commits_live_defender_mana_without_stack"
+        "test_original_battlement_advertises_and_commits_live_defender_mana_without_stack",
+        "test_original_chaplain_counts_current_defenders_and_creates_flying_birds"
       ]
     }
   ]

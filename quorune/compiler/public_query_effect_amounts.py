@@ -74,13 +74,13 @@ _DRAW_PATTERNS = (
     ),
 )
 _TOKEN_PATTERN = re.compile(
-    r"^Create X (?P<definition>.+? tokens?), where X is the number of "
+    r"^Create X (?P<definition>.+? tokens?(?: with .+?)?), where X is the number of "
     r"(?P<quantity>.+?)\.?$",
     re.IGNORECASE,
 )
 _TOKEN_FOR_EACH = re.compile(
     r"^Create (?P<coefficient>a|an|one|two|three|four|five|[1-9]\d*) "
-    r"(?P<definition>.+? tokens?) for each (?P<quantity>.+?)\.?$",
+    r"(?P<definition>.+? tokens?(?: with .+?)?) for each (?P<quantity>.+?)\.?$",
     re.IGNORECASE,
 )
 _TOKEN_COMPLETE_VALUE = re.compile(

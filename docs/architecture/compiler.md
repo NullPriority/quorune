@@ -2183,6 +2183,9 @@ uses current characteristics when that instruction applies and retains its
 locked controller; it does not widen static characteristic quantities.
 Attachment-state, numeric feedback, hidden identities, and unsupported query
 forms remain residuals. The live count has its own required producer capability.
+Counted token instructions retain supported trailing keyword abilities as part
+of the complete fixed token definition before lowering the separate quantity.
+The existing token compiler still rejects unrepresented abilities and definitions.
 
 `compiler/declared_effect_amounts.py` binds ordinary announced spell-cost X or
 one complete public count definition to numeric result slots in existing typed

@@ -14,6 +14,18 @@ from quorune.query_effect_amount_model import PublicQueryAmountSpec
 
 
 class LiveBattlefieldQuantityCompilerTests(unittest.TestCase):
+    def test_counted_token_definition_retains_trailing_keywords(self):
+        text = 'Create a 1/1 white Bird creature token with flying for each creature you control with defender.'
+        ir = compile_oracle_card(query_amount_record(text, suffix=365202001),
+            capability_registry=load_default_capability_registry())
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        effect = ir.faces[0].nodes[0].effects[0]
+        self.assertEqual(['Flying'], effect['characteristics']['keywords'])
+        self.assertEqual('live_battlefield_quantity', effect['quantity']['quantity']['kind'])
+        for variant in (text.replace('flying', 'unrepresented ability'), text.replace('defender', 'chosen quality')):
+            self.assertNotEqual('exact', compile_oracle_card(query_amount_record(variant, suffix=365202002),
+                capability_registry=load_default_capability_registry()).status)
+
     def test_live_quantity_missing_producer_and_runtime_shape_fail_closed(self):
         import json
         from common import ROOT
@@ -255,3 +267,35 @@ class LiveBattlefieldQuantityActionTests(unittest.TestCase):
         self.assertEqual([], session.state.stack)
         self.assertTrue(session.state.cards[source.object_id].tapped)
         self.replay(session, load=True)
+
+    def test_original_chaplain_counts_current_defenders_and_creates_flying_birds(self):
+        session = self.session(365202003)
+        engine = session.engine
+        other = self.add(engine, 'Overgrown Battlement')
+        self.add(engine, 'Vent Sentinel', seat='B', ref='enemy-chaplain-defender')
+        source = self.add(engine, 'Wingmantle Chaplain', zone='hand')
+        snake = self.add(engine, 'Snakeform', zone='hand')
+        offer = self.ready(session, source, {'W': 1, 'G': 1, 'C': 6})
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id': offer['id'], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        for _ in range(4):
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        self.assertEqual('battlefield', session.state.cards[source.object_id].zone)
+        self.assertEqual(1, len(session.state.stack))
+        self.action(session, snake, targets=[other.ref])
+        for _ in range(4):
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        session = self.replay(session, load=True)
+        self.resolve(session)
+        tokens = [c for c in session.state.cards.values() if c.zone == 'battlefield' and c.is_token]
+        self.assertEqual(1, len(tokens))
+        bird = tokens[0]
+        data = session.engine._effective_card_data(bird)
+        self.assertEqual('A', bird.controller)
+        self.assertIn('Bird', data['type_line'])
+        self.assertEqual(['W'], data['colors'])
+        self.assertIn('flying', session.engine._combat_keywords(bird))
+        self.assertEqual((1, 1), (session.engine._numeric_stat(bird.object_id, 'power'),
+            session.engine._numeric_stat(bird.object_id, 'toughness')))
+        self.replay(session)

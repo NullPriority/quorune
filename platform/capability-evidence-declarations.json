@@ -56080,6 +56080,24 @@
     {
       "capability_id": "quantity_expression.live_battlefield_count",
       "evidence_class": "interaction",
+      "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityActionTests.test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
+      "official_rule_ids": [
+        "109.5",
+        "506.4",
+        "508.1k",
+        "608.2h",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete represented token definition including trailing fixed keywords is retained; current Defender entry count changes after an actual Snakeform response and creates exact Flying Birds."
+    },
+    {
+      "capability_id": "quantity_expression.live_battlefield_count",
+      "evidence_class": "interaction",
       "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityActionTests.test_original_vent_sentinel_counts_current_defender_after_snakeform_response",
       "official_rule_ids": [
         "109.5",
@@ -56094,6 +56112,24 @@
         "commander_review"
       ],
       "applicability_note": "Resolution-only current public battlefield counts; legacy static layer-5 boundary remains closed."
+    },
+    {
+      "capability_id": "quantity_expression.live_battlefield_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityActionTests.test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
+      "official_rule_ids": [
+        "109.5",
+        "506.4",
+        "508.1k",
+        "608.2h",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete represented token definition including trailing fixed keywords is retained; current Defender entry count changes after an actual Snakeform response and creates exact Flying Birds."
     },
     {
       "capability_id": "quantity_expression.live_battlefield_count",
@@ -56134,6 +56170,24 @@
     {
       "capability_id": "quantity_expression.live_battlefield_count",
       "evidence_class": "negative",
+      "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityCompilerTests.test_counted_token_definition_retains_trailing_keywords",
+      "official_rule_ids": [
+        "109.5",
+        "506.4",
+        "508.1k",
+        "608.2h",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete represented token definition including trailing fixed keywords is retained; current Defender entry count changes after an actual Snakeform response and creates exact Flying Birds."
+    },
+    {
+      "capability_id": "quantity_expression.live_battlefield_count",
+      "evidence_class": "negative",
       "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityCompilerTests.test_live_quantity_missing_producer_and_runtime_shape_fail_closed",
       "official_rule_ids": [
         "109.5",
@@ -56166,6 +56220,24 @@
         "commander_review"
       ],
       "applicability_note": "Resolution-only current public battlefield counts; legacy static layer-5 boundary remains closed."
+    },
+    {
+      "capability_id": "quantity_expression.live_battlefield_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityCompilerTests.test_counted_token_definition_retains_trailing_keywords",
+      "official_rule_ids": [
+        "109.5",
+        "506.4",
+        "508.1k",
+        "608.2h",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete represented token definition including trailing fixed keywords is retained; current Defender entry count changes after an actual Snakeform response and creates exact Flying Birds."
     },
     {
       "capability_id": "quantity_expression.live_battlefield_count",
@@ -56220,6 +56292,24 @@
         "commander_review"
       ],
       "applicability_note": "Resolution-only current public battlefield counts; legacy static layer-5 boundary remains closed."
+    },
+    {
+      "capability_id": "quantity_expression.live_battlefield_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityActionTests.test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
+      "official_rule_ids": [
+        "109.5",
+        "506.4",
+        "508.1k",
+        "608.2h",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete represented token definition including trailing fixed keywords is retained; current Defender entry count changes after an actual Snakeform response and creates exact Flying Birds."
     },
     {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
@@ -57031,6 +57121,31 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityActionTests.test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete represented token definition including trailing fixed keywords is retained; current Defender entry count changes after an actual Snakeform response and creates exact Flying Birds."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
       "official_rule_ids": ["109.2", "109.2a", "205.3m", "608.2h", "611.2c", "613.1d", "613.1e", "613.4c", "701.22a", "701.22b", "701.25a", "701.25c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -57256,6 +57371,31 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityActionTests.test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete represented token definition including trailing fixed keywords is retained; current Defender entry count changes after an actual Snakeform response and creates exact Flying Birds."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
       "official_rule_ids": ["109.2", "109.2a", "205.3m", "608.2h", "611.2c", "613.1d", "613.1e", "613.4c", "701.22a", "701.22b", "701.25a", "701.25c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -57381,6 +57521,31 @@
         "commander_review"
       ],
       "applicability_note": "OriginalCopperhoofVorraccurrentstatsloseonebonusafteractualforeignlandmanaT,but ownlandTdoesnotcontribute. Acompleteconstructed drawspellafteractualHeritage3creaturetapdraws3andexcludeuntappedcreature. Principalprivatehand,pendingloadandfullpreactionreplayagree."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityCompilerTests.test_counted_token_definition_retains_trailing_keywords",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete represented token definition including trailing fixed keywords is retained; current Defender entry count changes after an actual Snakeform response and creates exact Flying Birds."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -57640,6 +57805,31 @@
         "commander_review"
       ],
       "applicability_note": "Actual strictly compiled Master of Waves and Parallel Lives casts create six doubled devotion-count Elementals as 2/1 creatures; native source bounce removes the anthem and state-based actions remove the zero-toughness tokens. Pending save/load, private projection, unauthorized rollback and full pre-action replay agree. The separately labeled owner diagnostic verifies current ability-removal/controller contrasts."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityCompilerTests.test_counted_token_definition_retains_trailing_keywords",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete represented token definition including trailing fixed keywords is retained; current Defender entry count changes after an actual Snakeform response and creates exact Flying Birds."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -57954,6 +58144,31 @@
       "official_rule_ids": ["109.2", "109.2a", "205.3m", "608.2h", "611.2c", "613.1d", "613.1e", "613.4c", "701.22a", "701.22b", "701.25a", "701.25c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the current granted-ability offer, payment, query-scaled layer-7c result, and final authoritative state from the pre-activation checkpoint."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityActionTests.test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete represented token definition including trailing fixed keywords is retained; current Defender entry count changes after an actual Snakeform response and creates exact Flying Birds."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
