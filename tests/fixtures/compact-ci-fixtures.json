@@ -53,6 +53,7 @@
     "tests/fixtures/entry-copy-cards.json",
     "tests/fixtures/entry-designation-cards.json",
     "tests/fixtures/event-card-return.json",
+    "tests/fixtures/event-player-subject-cards.json",
     "tests/fixtures/exert-cards.json",
     "tests/fixtures/explore-cards.json",
     "tests/fixtures/extort-cards.json",
@@ -310,7 +311,6 @@
       "fixture_files": [],
       "rationale": "Actual resolution numeric/bare-subtype gameplay witnesses iterate these precise registered fixture identities."
     },
-
     {
       "source": "tests/test_fixed_query_keyword_grants.py",
       "symbol": "FixedQueryKeywordGrantRuntimeTests.test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires",
@@ -324,7 +324,6 @@
       "fixture_files": [],
       "rationale": "Actual resolution numeric/bare-subtype gameplay witnesses iterate these precise registered fixture identities."
     },
-
     {
       "source": "tests/test_high_risk_interaction_assurance.py",
       "symbol": "HighRiskInteractionAssuranceTests.test_original_batched_scope_expansions_keep_unrepresented_compositions_untrusted",

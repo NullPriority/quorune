@@ -73,10 +73,17 @@ Spell casts, draws and public scry/surveil events supply their player field;
 discard occurrences supply `previous_controller`. Damage must guarantee a
 player recipient and individual source or public attacks supply their defending
 player. Entry events supply the entering `controller`; death events supply
-`previous_controller`. Aggregate attack events do not supply a unique defender. Program
-promotion checks the event against each context reference. One or two complete
+`previous_controller`. Aggregate attack events do not supply a unique defender.
+Each subscribed occurrence must supply the same referenced player field before
+program promotion. One or two complete
 fixed leaves preserve printed order and require an explicit subject per clause;
-`you` retains the resolving trigger controller. Optional, variable and linked
+`that player` addresses the occurrence's player, while `you` retains the locked
+trigger controller, including after a change of control of its source.
+`That creature's controller` is an object-information request under CR 608.2h.
+Only a death occurrence supplies that departed incarnation's controller through
+`previous_controller`; re-entry creates a new object and does not replace it.
+Other events keep this subject residual because the family does not represent
+the required current or last-known object-controller reference. Optional, variable and linked
 results remain outside this family. Fixed affected-player
 discard registration separately verifies its closed choice shape and declared
 dependencies before promoting a generated program.

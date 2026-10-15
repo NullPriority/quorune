@@ -28,6 +28,8 @@ from quorune.oracle_ir import register_generated_programs
 from scripts.build_test_database import build_fixture_database
 from common import ROOT
 import test_linked_exile_return as action_helpers
+import test_bound_effect_programs as bound_actions
+import test_resolution_public_conditions as combat_actions
 from quorune.record import authoritative_state_hash
 
 
@@ -44,6 +46,68 @@ def scalar_record(text: str, *, type_line: str = "Creature — Goblin") -> CardR
 
 
 class ScalarEffectAmountCompilerTests(unittest.TestCase):
+    def test_typed_event_player_shapes_check_every_subscribed_occurrence(self):
+        from quorune.compiler.event_player_results import _event_player, EVENT_PLAYER_RESULT_MECHANIC, EVENT_PLAYER_RESULT_CAPABILITY
+        from quorune.rules.event_subscriptions import FixedEventSubscription, fixed_event_subscription_condition
+        from quorune.rules.event_player_result_shapes import is_closed_fixed_event_player_result_program
+
+        def condition(first, second):
+            return fixed_event_subscription_condition((FixedEventSubscription(first), FixedEventSubscription(second)))
+
+        # These are isolated typed binder/shape controls, not gameplay programs.
+        compatible = condition('spell.cast', 'card.drawn')
+        incompatible = condition('spell.cast', 'permanent.enter')
+        for events, expected in ((compatible, '$context.player'), (incompatible, None)):
+            binding = SimpleNamespace(event=SimpleNamespace(value='spell.cast'), event_condition=events, variant='typed-control')
+            self.assertEqual(expected, _event_player(binding, 'that player'))
+            self.assertEqual('$controller', _event_player(binding, 'you'))
+            program = SimpleNamespace(event='spell.cast', event_condition=events,
+                effects=({'op': 'draw', 'player': '$context.player', 'count': 1, 'private': True},),
+                target_schema=None, coverage=(EVENT_PLAYER_RESULT_MECHANIC,),
+                capability_dependencies=(EVENT_PLAYER_RESULT_CAPABILITY, 'zone.draw.library_to_hand'))
+            self.assertEqual(expected is not None, is_closed_fixed_event_player_result_program(program))
+        death_and_entry = SimpleNamespace(event=SimpleNamespace(value='creature.dies'),
+            event_condition=condition('creature.dies', 'creature.enter'), variant='typed-control')
+        self.assertIsNone(_event_player(death_and_entry, "that creature's controller"))
+        invalid = {'event_subscriptions': [{'event': 'spell.cast', 'condition': None}]}
+        malformed = SimpleNamespace(event=SimpleNamespace(value='spell.cast'), event_condition=invalid, variant='typed-control')
+        self.assertIsNone(_event_player(malformed, 'that player'))
+        missing_primary = SimpleNamespace(event=SimpleNamespace(value='creature.dies'),
+            event_condition=compatible, variant='typed-control')
+        for subject in ('that player', 'you', "that creature's controller"):
+            self.assertIsNone(_event_player(missing_primary, subject))
+        program.event_condition = compatible
+        program.event = 'creature.dies'
+        self.assertFalse(is_closed_fixed_event_player_result_program(program))
+
+    def test_event_result_subject_and_occurrence_compatibility_matrix(self):
+        cases = (
+            ("Whenever a creature you control deals combat damage to a player, that creature's controller draws a card.", None),
+            ("Whenever a creature enters, that creature's controller draws a card.", None),
+            ("Whenever an opponent discards a card, that creature's controller draws a card.", None),
+            ("Whenever an opponent casts a spell, that creature's controller draws a card.", None),
+            ("Whenever a creature dies, that creature's controller draws a card.", '$context.previous_controller'),
+            ("Whenever a creature dies, that creature\u2019s controller draws a card.", '$context.previous_controller'),
+            ('Whenever a creature you control deals combat damage to a player, that player draws a card.', '$context.target'),
+            ('Whenever a creature you control deals combat damage to a player, you draw a card.', '$controller'),
+            ('Whenever a land an opponent controls enters, that player draws a card.', '$context.controller'),
+            ('Whenever an opponent discards a card, that player draws a card.', '$context.previous_controller'),
+            ('Whenever an opponent casts a spell, that player draws a card.', '$context.player'),
+            ('Whenever one or more creatures attack, defending player draws a card.', None),
+            ('Whenever a creature deals combat damage to a player, you draw a card.', None),
+            ('Whenever a creature an opponent controls deals combat damage to a player, you draw a card.', None),
+        )
+        for text, player in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text)
+                if player is None:
+                    self.assertNotEqual('exact', ir.status)
+                    self.assertTrue(ir.material_residuals)
+                else:
+                    self.assertEqual('exact', ir.status, ir.material_residuals)
+                    self.assertEqual(player, ir.faces[0].nodes[0].effects[0]['player'])
+                    self.assertIsNone(ir.faces[0].nodes[0].target_schema)
+
     def test_event_counter_shape_preserves_mapping_attachment_references(self):
         from quorune.attachment_references import AttachmentReferenceSpec,AttachmentReferenceKind
         from quorune.rules.counter_placement_capability_shapes import fixed_counter_placement_node_capabilities
@@ -1086,6 +1150,274 @@ class ScalarEffectAmountActionTests(unittest.TestCase):
         self.assertEqual("graveyard",session.state.cards[source.object_id].zone)
         self.assertEqual(before-1+4,len(session.state.players["A"].zones["hand"]))
         self.replay(session)
+
+
+class EventPlayerSubjectActionTests(unittest.TestCase):
+    """CR 608.2h object information differs from a locked occurrence player."""
+
+    register_fixture_cards_on_add = True
+    session = bound_actions.BoundEffectProgramRuntimeTests.session
+    add = bound_actions.BoundEffectProgramRuntimeTests.add
+    ready = bound_actions.BoundEffectProgramRuntimeTests.ready
+    checkpoint = bound_actions.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = bound_actions.BoundEffectProgramRuntimeTests.resolve
+    replay = bound_actions.BoundEffectProgramRuntimeTests.replay
+    finish_combat = combat_actions.IndependentDualSourceEventRuntimeTests.finish_combat
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name).resolve() / 'event-player-subject.sqlite3'
+        build_fixture_database([ROOT / 'tests/fixtures/bound-effect-program-cards.json',
+                               ROOT / 'tests/fixtures/linked-exile-return-cards.json',
+                               ROOT / 'tests/fixtures/event-player-subject-cards.json'], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('Generic Event Subject Deck',
+            [DeckEntry('Generic Bound Commander', 1, 'commander'), DeckEntry('Generic Bound Plains', 30)],
+            ['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def trusted_binding(self, session, card):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        program = compile_best_available_card_program(self.db, self.db.lookup(card.printed_name),
+            semantic_registry=session.engine.semantics, capability_registry=self.registry,
+            capability_profile='commander_review')
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'], binding)
+        self.assertEqual('capability_closed', binding['trust_basis'])
+        return binding
+
+    def until(self, session, predicate):
+        for _ in range(80):
+            session.engine.pump()
+            if predicate(session):
+                return
+            decision = session.state.pending_decision
+            self.assertIsNotNone(decision)
+            if decision.kind == 'priority':
+                response = {'action_id': 'pass'}
+            elif decision.kind == 'combat.blockers':
+                response = {'action_id': 'block', 'blocks': {}}
+            elif decision.kind == 'trigger.order':
+                response = {'action_id': 'order', 'triggers': [item.ref for item in session.state.pending_trigger_batches[0].items]}
+            else:
+                self.fail('Unexpected subject-control decision ' + decision.kind)
+            result = session.act(session.pending_principals()[0], response)
+            self.assertTrue(result.ok, result.summary)
+        self.fail('Subject-control action did not reach the required state')
+
+    def cast_at_priority(self, session, seat, card, targets):
+        self.trusted_binding(session, card)
+        for _ in range(8):
+            session.engine.pump()
+            self.assertEqual('priority', session.state.pending_decision.kind)
+            if session.pending_principals()[0] == 'pilot:' + seat:
+                break
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        else:
+            self.fail('The casting principal did not receive priority')
+        actions = session.packet('pilot:' + seat, full=True)['decision']['ctx']['legal']['actions']
+        action = next(value for value in actions if value['id'] == 'cast:' + card.ref)
+        accepted = session.act('pilot:' + seat, {'action_id': action['id'], 'targets': list(targets), 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+
+    def combat_draw(self, observer_name, expected, *, active='A', cast_observer=True, steal_observer=False):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        import json
+
+        session = self.session(393001)
+        engine = session.engine
+        observer = self.add(engine, observer_name, zone='hand' if cast_observer else 'battlefield', ref='subject-observer')
+        attacker = self.add(engine, 'Generic Bound Body', seat=active, ref='subject-attacker')
+        attacker.acquired_control_turn_count = -1
+        if steal_observer:
+            control = self.add(engine, 'Generic Event Subject Control', seat='D', zone='hand', ref='subject-control')
+            self.add(engine, 'Generic Bound Plains', seat='D', ref='control-payment-land')
+        if cast_observer:
+            offered = self.ready(session, observer, {'U': 1})
+        else:
+            # A constructed public board isolates three distinct player roles.
+            engine.state.active_player = active
+            engine.state.started = True
+            engine.state.phase = 'precombat_main'
+            engine.state.step = 'main'
+            engine._grant_priority(active)
+            engine.pump()
+        engine.state.phase_index = 3
+        record = self.db.lookup(observer.printed_name)
+        program = compile_best_available_card_program(self.db, record, semantic_registry=engine.semantics,
+            capability_registry=self.registry, capability_profile='commander_review')
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'], binding)
+        self.assertEqual('capability_closed', binding['trust_basis'])
+        self.checkpoint(session)
+        if cast_observer:
+            self.assertTrue(session.act('pilot:A', {'action_id': offered['id'], 'pay': 'auto'}).ok)
+            self.resolve(session)
+        self.assertEqual('battlefield', engine.state.cards[observer.object_id].zone)
+        for _ in range(64):
+            engine.pump()
+            decision = engine.state.pending_decision
+            self.assertIsNotNone(decision)
+            if decision.kind == 'combat.attackers':
+                break
+            self.assertEqual('priority', decision.kind)
+            passed = session.act(session.pending_principals()[0], {'action_id': 'pass'})
+            self.assertTrue(passed.ok, passed.summary)
+        else:
+            self.fail('Actual priority passes did not reach the attackers decision')
+        hands = {seat: set(engine.state.players[seat].zones['hand']) for seat in 'ABCD'}
+        before_life = engine.state.players['B'].life
+        before_hash = authoritative_state_hash(session.state)
+        denied = session.act('pilot:D', {'action_id': 'attack', 'attackers': {attacker.ref: 'B'}})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before_hash, authoritative_state_hash(session.state))
+        accepted = session.act('pilot:' + active, {'action_id': 'attack', 'attackers': {attacker.ref: 'B'}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        if steal_observer:
+            self.until(session, lambda current: any(item.source_object_id == observer.object_id
+                and item.context.get('event') == 'damage.dealt' for item in current.state.stack))
+            self.cast_at_priority(session, 'D', control, [observer.ref])
+            self.until(session, lambda current: current.state.cards[observer.object_id].controller == 'D')
+            pending = next(item for item in session.state.stack if item.source_object_id == observer.object_id)
+            self.assertEqual('A', pending.controller)
+            session = self.replay(session, load=True)
+        session = self.finish_combat(session, pending_reload=not steal_observer)
+        engine = session.engine
+        self.assertEqual(before_life - int(self.db.lookup('Generic Bound Body').power), engine.state.players['B'].life)
+        triggers = [event for event in engine.state.events
+                    if event.code == 'stack.trigger' and event.details.get('source') == observer.ref]
+        self.assertEqual(1, len(triggers))
+        if steal_observer:
+            self.assertEqual('D', engine.state.cards[observer.object_id].controller)
+        for owner in 'ABCD':
+            for object_id in set(engine.state.players[owner].zones['hand']) - hands[owner]:
+                reference = engine.state.cards[object_id].ref
+                for viewer in 'ABCD':
+                    snapshot = session.projector._snapshot('pilot:' + viewer)
+                    self.assertNotIn('authoritative_checkpoint', snapshot)
+                    rendered = json.dumps(snapshot, sort_keys=True)
+                    if owner == viewer:
+                        self.assertIn(reference, rendered)
+                    else:
+                        self.assertNotIn(reference, rendered)
+        self.replay(session, load=True)
+        observed = {seat: len(engine.state.players[seat].zones['hand']) - len(hands[seat]) for seat in 'ABCD'}
+        self.observation = {'strict_capability_ready': binding['strict_capability_ready'],
+            'trust_basis': binding['trust_basis'], 'hand_deltas': observed,
+            'damage': before_life - engine.state.players['B'].life, 'triggers': len(triggers),
+            'pending_reload_and_pre_action_replay': True}
+        self.assertEqual(expected, observed, self.observation)
+
+    def test_damaged_player_draw_keeps_its_locked_recipient_in_actual_combat(self):
+        self.combat_draw('Generic Event Damaged Player Observer', {'A': 0, 'B': 1, 'C': 0, 'D': 0})
+
+    def test_you_draw_keeps_locked_trigger_controller_distinct_from_damaged_player(self):
+        self.combat_draw('Generic Event Trigger Controller Observer', {'A': 1, 'B': 0, 'C': 0, 'D': 0})
+
+    def test_you_draw_remains_with_locked_controller_after_actual_observer_control_change(self):
+        self.combat_draw('Generic Event Trigger Controller Observer', {'A': 1, 'B': 0, 'C': 0, 'D': -1},
+            steal_observer=True)
+
+    def test_death_controller_uses_departure_lki_after_actual_control_and_reentry(self):
+        session = self.session(393020)
+        engine = session.engine
+        observer = self.add(engine, 'Generic Event Death Controller Observer', zone='hand', ref='death-subject-observer')
+        victim = self.add(engine, 'Generic Bound Body', ref='departing-creature')
+        control = self.add(engine, 'Generic Event Subject Control', seat='D', zone='hand', ref='death-subject-control')
+        self.add(engine, 'Generic Bound Plains', seat='D', ref='death-control-payment')
+        destroy = self.add(engine, 'Generic Blink Destroy', zone='hand', ref='death-subject-destroy')
+        return_card = self.add(engine, 'Generic Event Subject Return', zone='hand', ref='death-subject-return')
+        action = self.ready(session, observer, {'U': 1, 'W': 2})
+        engine.state.phase_index = 3
+        self.trusted_binding(session, observer)
+        self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'}).ok)
+        self.resolve(session)
+        self.cast_at_priority(session, 'D', control, [victim.ref])
+        self.resolve(session)
+        self.assertEqual('D', engine.state.cards[victim.object_id].controller)
+        old_identity = engine.state.cards[victim.object_id].logical_object_id
+        hands = {seat: len(engine.state.players[seat].zones['hand']) for seat in 'ABCD'}
+        previous_d_hand = set(engine.state.players['D'].zones['hand'])
+        self.cast_at_priority(session, 'A', destroy, [victim.ref])
+        self.until(session, lambda current: any(item.source_object_id == observer.object_id
+            and item.context.get('event') == 'creature.dies' for item in current.state.stack))
+        pending = next(item for item in session.state.stack if item.source_object_id == observer.object_id)
+        self.assertEqual('A', pending.controller)
+        self.assertEqual('D', pending.context['previous_controller'])
+        self.assertEqual(old_identity, pending.context['card_object_identity'])
+        self.cast_at_priority(session, 'A', return_card, [victim.ref])
+        self.until(session, lambda current: current.state.cards[victim.object_id].zone == 'battlefield')
+        current = session.state.cards[victim.object_id]
+        self.assertNotEqual(old_identity, current.logical_object_id)
+        self.assertEqual('A', current.controller)
+        pending = next(item for item in session.state.stack if item.source_object_id == observer.object_id)
+        self.assertEqual(old_identity, pending.context['card_object_identity'])
+        self.assertEqual('D', pending.context['previous_controller'])
+        session = self.replay(session, load=True)
+        pending = next(item for item in session.state.stack if item.source_object_id == observer.object_id)
+        self.assertEqual(old_identity, pending.context['card_object_identity'])
+        self.assertEqual('D', pending.context['previous_controller'])
+        self.resolve(session)
+        self.assertEqual(hands['D'] + 1, len(session.state.players['D'].zones['hand']))
+        self.assertEqual(hands['A'] - 2, len(session.state.players['A'].zones['hand']))
+        self.assertEqual(hands['B'], len(session.state.players['B'].zones['hand']))
+        self.assertEqual(hands['C'], len(session.state.players['C'].zones['hand']))
+        added = set(session.state.players['D'].zones['hand']) - previous_d_hand
+        self.assertEqual(1, len(added))
+        reference = session.state.cards[next(iter(added))].ref
+        import json
+        for viewer in 'ABCD':
+            rendered = json.dumps(session.projector._snapshot('pilot:' + viewer), sort_keys=True)
+            if viewer == 'D':
+                self.assertIn(reference, rendered)
+            else:
+                self.assertNotIn(reference, rendered)
+        self.replay(session, load=True)
+
+    def test_unrepresented_creature_controller_subject_has_no_trusted_program(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+
+        for index, name in enumerate(('Generic Event Creature Controller Observer',
+                                      'Generic Event Global Creature Controller Observer')):
+            with self.subTest(name=name):
+                session = self.session(393010 + index)
+                engine = session.engine
+                observer = self.add(engine, name, zone='hand', ref='unsupported-subject')
+                program = compile_best_available_card_program(self.db, self.db.lookup(name),
+                    semantic_registry=engine.semantics, capability_registry=self.registry,
+                    capability_profile='commander_review')
+                binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+                self.assertFalse(binding['strict_capability_ready'])
+                self.assertFalse(binding['compatible_ready'])
+                self.assertTrue(program.residuals)
+                self.assertFalse(any(engine.semantic_program_is_current_trusted(value)
+                    for value in engine.semantics.programs_for_oracle(observer.oracle_id)))
+                engine.state.active_player = 'A'
+                engine.state.started = True
+                engine.state.phase = 'precombat_main'
+                engine.state.step = 'main'
+                engine.state.phase_index = 3
+                engine.state.players['A'].mana_pool['U'] = 1
+                engine._grant_priority('A')
+                engine.pump()
+                self.checkpoint(session)
+                for principal in ('pilot:D',):
+                    before = authoritative_state_hash(session.state)
+                    denied = session.act(principal, {'action_id': 'cast:' + observer.ref, 'pay': 'auto'})
+                    self.assertFalse(denied.ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                self.assertEqual('hand', engine.state.cards[observer.object_id].zone)
+                self.replay(session, load=True)
 
 
 if __name__ == "__main__":
