@@ -246,6 +246,7 @@
       "test_rampage_rules",
       "test_semantic_handlers",
       "test_shared_characteristic_queries",
+      "test_source_damage_death_triggers",
       "test_station_rules",
       "test_temporary_declaration_restriction_effects",
       "test_typecycling",

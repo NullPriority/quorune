@@ -77697,6 +77697,240 @@
       ],
       "applicability_note": "The recorded step player draws privately and the locked trigger controller gains public life after source control changes."
     },
+    {
+      "capability_id": "trigger.event.source_damage_death_history",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_damage_death_triggers.SourceDamageDeathActionTests.test_original_blood_cultist_ping_then_sacrifice_counts_only_matching_source",
+      "official_rule_ids": [
+        "400.7",
+        "603.6c",
+        "603.10a",
+        "608.2h",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Damage-qualified death binds exact source and victim incarnations through current committed history; native ping/sacrifice complete consequence and replay."
+    },
+    {
+      "capability_id": "trigger.event.source_damage_death_history",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_damage_death_triggers.SourceDamageDeathActionTests.test_original_cultist_simultaneous_death_uses_lki_but_cannot_counter_departed_source",
+      "official_rule_ids": [
+        "400.7",
+        "603.6c",
+        "603.10a",
+        "608.2h",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual combat infect death optional private draw; source/victim blink exclusions; simultaneous departure look-back; independent same-seat observers ordered before complete consequences and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.source_damage_death_history",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_damage_death_triggers.SourceDamageDeathActionTests.test_original_blood_cultist_ping_then_sacrifice_counts_only_matching_source",
+      "official_rule_ids": [
+        "400.7",
+        "603.6c",
+        "603.10a",
+        "608.2h",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Damage-qualified death binds exact source and victim incarnations through current committed history; native ping/sacrifice complete consequence and replay."
+    },
+    {
+      "capability_id": "trigger.event.source_damage_death_history",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_damage_death_triggers.SourceDamageDeathActionTests.test_original_two_cultists_observe_one_death_and_order_independent_results",
+      "official_rule_ids": [
+        "400.7",
+        "603.6c",
+        "603.10a",
+        "608.2h",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual combat infect death optional private draw; source/victim blink exclusions; simultaneous departure look-back; independent same-seat observers ordered before complete consequences and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.source_damage_death_history",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_source_damage_death_triggers.SourceDamageDeathModelTests.test_history_requires_both_incarnations_positive_damage_and_current_turn",
+      "official_rule_ids": [
+        "400.7",
+        "603.6c",
+        "603.10a",
+        "608.2h",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Damage-qualified death binds exact source and victim incarnations through current committed history; native ping/sacrifice complete consequence and replay."
+    },
+    {
+      "capability_id": "trigger.event.source_damage_death_history",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_damage_death_triggers.SourceDamageDeathActionTests.test_original_cultist_victim_or_source_blink_does_not_reuse_damage_history",
+      "official_rule_ids": [
+        "400.7",
+        "603.6c",
+        "603.10a",
+        "608.2h",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual combat infect death optional private draw; source/victim blink exclusions; simultaneous departure look-back; independent same-seat observers ordered before complete consequences and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.source_damage_death_history",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_damage_death_triggers.SourceDamageDeathCompilerTests.test_source_damage_death_requires_history_producer_and_closed_subject",
+      "official_rule_ids": [
+        "400.7",
+        "603.6c",
+        "603.10a",
+        "608.2h",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual combat infect death optional private draw; source/victim blink exclusions; simultaneous departure look-back; independent same-seat observers ordered before complete consequences and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.source_damage_death_history",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_damage_death_triggers.SourceDamageDeathModelTests.test_history_requires_both_incarnations_positive_damage_and_current_turn",
+      "official_rule_ids": [
+        "400.7",
+        "603.6c",
+        "603.10a",
+        "608.2h",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Damage-qualified death binds exact source and victim incarnations through current committed history; native ping/sacrifice complete consequence and replay."
+    },
+    {
+      "capability_id": "trigger.event.source_damage_death_history",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_damage_death_triggers.SourceDamageDeathCompilerTests.test_source_damage_history_is_part_of_one_normalized_death_subscription",
+      "official_rule_ids": [
+        "400.7",
+        "603.6c",
+        "603.10a",
+        "608.2h",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Damage-qualified death binds exact source and victim incarnations through current committed history; native ping/sacrifice complete consequence and replay."
+    },
+    {
+      "capability_id": "trigger.event.source_damage_death_history",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_source_damage_death_triggers.SourceDamageDeathActionTests.test_original_rot_wolf_combat_death_draw_is_private_and_replays_from_actions",
+      "official_rule_ids": [
+        "400.7",
+        "603.6c",
+        "603.10a",
+        "608.2h",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual combat infect death optional private draw; source/victim blink exclusions; simultaneous departure look-back; independent same-seat observers ordered before complete consequences and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.source_damage_death_history",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_damage_death_triggers.SourceDamageDeathActionTests.test_original_blood_cultist_ping_then_sacrifice_counts_only_matching_source",
+      "official_rule_ids": [
+        "400.7",
+        "603.6c",
+        "603.10a",
+        "608.2h",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Damage-qualified death binds exact source and victim incarnations through current committed history; native ping/sacrifice complete consequence and replay."
+    },
+    {
+      "capability_id": "trigger.event.source_damage_death_history",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_damage_death_triggers.SourceDamageDeathActionTests.test_original_cultist_simultaneous_death_uses_lki_but_cannot_counter_departed_source",
+      "official_rule_ids": [
+        "400.7",
+        "603.6c",
+        "603.10a",
+        "608.2h",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual combat infect death optional private draw; source/victim blink exclusions; simultaneous departure look-back; independent same-seat observers ordered before complete consequences and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.source_damage_death_history",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_damage_death_triggers.SourceDamageDeathActionTests.test_original_rot_wolf_combat_death_draw_is_private_and_replays_from_actions",
+      "official_rule_ids": [
+        "400.7",
+        "603.6c",
+        "603.10a",
+        "608.2h",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual combat infect death optional private draw; source/victim blink exclusions; simultaneous departure look-back; independent same-seat observers ordered before complete consequences and exact replay."
+    },
     {"capability_id": "trigger.event.spell_cast_creature_target", "evidence_class": "interaction", "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_actual_repartee_cast_checks_target_type_controller_and_invalid_command_rollback", "official_rule_ids": ["115.1a", "115.1b", "115.9b", "601.2c", "601.2h", "601.2i", "603.2", "603.3", "707.10"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Public creature-target cast facts retain separate caster and target controllers through actual command rejection and exact replay."},
     {"capability_id": "trigger.event.spell_cast_creature_target", "evidence_class": "interaction", "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_aura_cast_qualifies_controlled_creature_draw_but_not_repartee_with_private_replay", "official_rule_ids": ["115.1a", "115.1b", "115.9b", "601.2c", "601.2h", "601.2i", "603.2", "603.3", "707.10"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "An actual Aura cast targets a controlled opposing-owned creature, triggers the any-spell draw, excludes instant-or-sorcery Repartee and keeps drawn card identity hidden with pre-action replay."},
     {"capability_id": "trigger.event.spell_cast_creature_target", "evidence_class": "interaction", "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_support_cast_with_two_targets_queues_one_trigger_and_zero_targets_queue_none", "official_rule_ids": ["115.1a", "115.1b", "115.9b", "601.2c", "601.2h", "601.2i", "603.2", "603.3", "707.10"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual Support casts targeting two creatures queue one cast qualifier; zero targets queue none, independently of effect resolution, with exact replay."},

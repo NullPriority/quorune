@@ -14,6 +14,14 @@ each printed instance. The existing block-transition and continuous-effect
 owners execute the trigger; variable values and unrepresented sibling abilities
 remain residual. The bonus samples current blockers at resolution.
 
+Source-damage death subscriptions combine a normalized creature death with the
+existing committed current-turn damage journal. The condition matches both the
+damage source's logical incarnation and the departing creature's sealed prior
+incarnation. Repeated damage still creates one occurrence for that death;
+another source, a returned object, zero damage, or an unavailable journal cannot
+substitute. Existing source counter and optional draw owners execute the result,
+including ordinary death look-back and principal-correct replay.
+
 Intrinsic Exploit lowers to one entry trigger with an optional creature
 sacrifice. The separately printed “When this creature exploits a creature”
 ability subscribes to the committed source-incarnation occurrence and composes

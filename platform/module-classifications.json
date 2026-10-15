@@ -3938,6 +3938,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/public_event_closure_variants.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/public_quantity_mana.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -4374,6 +4389,21 @@
     },
     {
       "file": "quorune/compiler/source_counter_anthems.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/source_damage_death_bindings.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -12617,6 +12647,20 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/source_damage_death.py",
+      "layer": "rules",
+      "owning_subsystem": "legacy_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/source_maintenance.py",
       "layer": "rules",
       "owning_subsystem": "legacy_rules",
@@ -13629,5 +13673,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "41d28ad7ff13ca975ac0699e5d1ad9625d8368dd324a03eca9dc671772f3df09"
+  "fingerprint": "ee265caeb821f07fccb39f8e82df2b2e063451e9440a79d6c0f1ce26adca351a"
 }

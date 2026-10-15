@@ -209,25 +209,7 @@ MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "source_attacks_or_blocks_with_controlled_dinosaur",
     }
 )
-PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
-    {
-        'public_anywhere_graveyard_card',
-        "another_controlled_colorless_creature_enters",
-        "another_controlled_creature_power_at_most",
-        "controlled_enchantment_graveyard",
-        "controller_cycles_another",
-        "enchanted_creature_damage_an_opponent",
-        "enchanted_creature_dies",
-        "equipped_creature_attacks",
-        "equipped_creature_combat_damage_a_player",
-        "equipped_creature_dies",
-        "one_or_more_controller_creature_cards_leave_graveyard",
-        "source_or_controlled_creature_or_artifact_dies",
-        "this_creature_becomes_blocked_by_creature",
-        "the end step",
-        "each combat",
-    }
-)
+from .public_event_closure_variants import PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
 _ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
         *PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,

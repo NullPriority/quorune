@@ -4131,6 +4131,23 @@
         "test_card_program_trust"
       ]
     }
+,
+    {
+      "id": "source-damage-qualified-death-contract",
+      "patterns": [
+        "quorune/source_damage_death.py",
+        "quorune/compiler/source_damage_death_bindings.py",
+        "quorune/compiler/public_event_closure_variants.py",
+        "tests/fixtures/source-damage-death-cards.json"
+      ],
+      "test_modules": [
+        "test_source_damage_death_triggers",
+        "test_fixed_counter_event_triggers",
+        "test_damage_result_events",
+        "test_zone_trigger_events",
+        "test_card_program_trust"
+      ]
+    }
   ],
   "symbol_rules": [
     {

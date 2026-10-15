@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 292,
+  "registry_version": 293,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -22009,6 +22009,89 @@
       "replay_tests": [
         "test_original_craw_giant_samples_blockers_at_resolution_and_retains_bonus_after",
         "test_original_horrible_hordes_one_blocker_has_zero_bonus_and_source_blink_is_stale"
+      ]
+    },
+    {
+      "id": "trigger.event.source_damage_death_history",
+      "version": 1,
+      "official_rules": [
+        "400.7",
+        "603.6c",
+        "603.10a",
+        "608.2h",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One normalized creature death qualified by positive committed current-turn damage from this exact source incarnation to the departing creature incarnation.",
+        "inputs": [
+          "sealed death event previous object identity",
+          "current typed permanent-damage history",
+          "source current or death-LKI logical identity"
+        ],
+        "outputs": [
+          "one ordinary occurrence per qualifying creature death",
+          "existing source-bound counter or represented result leaves"
+        ],
+        "exclusions": [
+          "unavailable or stale turn history",
+          "other source or victim incarnations",
+          "variable history windows",
+          "unrepresented result siblings or grants"
+        ]
+      },
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.compiler.source_damage_death_bindings.source_damage_death_binding",
+        "quorune.source_damage_death.source_damage_death_matches",
+        "quorune.damage_turn_history.record_damage_turn_history",
+        "quorune.trigger_discovery.semantic_event_matches",
+        "quorune.compiler.event_counter_results.public_event_source_counter_result"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Exact positive damage and both incarnations required; stale/unavailable journal rejects.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Replacing committed zero-damage history with a positive result fails zero versus positive contrast.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_source_damage_history_is_part_of_one_normalized_death_subscription"
+      ],
+      "negative_tests": [
+        "test_history_requires_both_incarnations_positive_damage_and_current_turn",
+        "test_original_cultist_victim_or_source_blink_does_not_reuse_damage_history",
+        "test_source_damage_death_requires_history_producer_and_closed_subject"
+      ],
+      "interaction_tests": [
+        "test_original_blood_cultist_ping_then_sacrifice_counts_only_matching_source",
+        "test_original_cultist_simultaneous_death_uses_lki_but_cannot_counter_departed_source"
+      ],
+      "multiplayer_tests": [
+        "test_original_blood_cultist_ping_then_sacrifice_counts_only_matching_source",
+        "test_original_two_cultists_observe_one_death_and_order_independent_results"
+      ],
+      "privacy_tests": [
+        "test_original_rot_wolf_combat_death_draw_is_private_and_replays_from_actions"
+      ],
+      "replay_tests": [
+        "test_original_blood_cultist_ping_then_sacrifice_counts_only_matching_source",
+        "test_original_cultist_simultaneous_death_uses_lki_but_cannot_counter_departed_source",
+        "test_original_rot_wolf_combat_death_draw_is_private_and_replays_from_actions"
       ]
     }
   ]
