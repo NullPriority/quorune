@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 301,
+  "registry_version": 302,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -2873,10 +2873,11 @@
     },
     {
       "id": "casting.cost.modifier.fixed_query",
-      "version": 4,
+      "version": 5,
       "official_rules": [
         "601.2f",
-        "601.2h"
+        "601.2h",
+        "601.2i"
       ],
       "supported_profiles": [
         "traditional",
@@ -2884,7 +2885,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply one fixed generic, colored, or public-value increase or reduction from a current battlefield static ability across a closed public caster, spell-characteristic, turn, ordinal, and origin-zone predicate. A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope.",
+        "summary": "Apply one fixed generic, colored, or public-value increase or reduction from a current battlefield static ability across a closed public caster, spell-characteristic, turn, ordinal, and origin-zone predicate. A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope. Closed spell subjects include unqualified first/second ordinals, homogeneous type/color disjunctions and fixed relative color unions; ordinal history remains restricted to card-type predicates.",
         "inputs": [
           "one source-spanned fixed or public-value mana-vector modifier",
           "one phased-in battlefield source with current layer-6 ability presence",
@@ -2930,14 +2931,17 @@
         "test_runtime_cost_reductions_stack_and_floor_generic",
         "test_public_cast_cost_closure_compiles_selected_grammar",
         "test_conditional_spell_cost_keeps_public_condition_and_existing_modifier",
-        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+        "test_unqualified_ordinals_and_type_disjunctions_keep_their_exact_predicates",
+        "test_relative_color_union_is_one_discount_and_open_subjects_remain_residual"
       ],
       "negative_tests": [
         "test_unsupported_spell_reduction_grammar_remains_residual",
         "test_public_static_modifier_near_misses_remain_residual",
         "test_stale_reducer_program_is_ignored",
         "test_conditional_spell_cost_schema_and_dependencies_fail_closed",
-        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+        "test_relative_color_union_is_one_discount_and_open_subjects_remain_residual"
       ],
       "interaction_tests": [
         "test_public_static_modifiers_share_offer_commit_and_current_ability",
@@ -2948,20 +2952,29 @@
         "test_colorless_reducer_uses_devoid_spell_characteristics",
         "test_public_cast_cost_vectors_counts_and_replay_share_total_cost_owner",
         "test_public_cast_tax_uses_caster_turn_and_current_source",
-        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+        "test_actual_bell_ringer_counts_its_own_cast_and_only_discounts_the_second_spell",
+        "test_actual_melek_counts_only_the_casters_instant_or_sorcery_history",
+        "test_actual_anarchomancer_applies_one_discount_to_a_multicolor_spell"
       ],
       "multiplayer_tests": [
         "test_public_static_modifiers_scope_opponents_and_replay",
-        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+        "test_actual_bell_ringer_counts_its_own_cast_and_only_discounts_the_second_spell",
+        "test_actual_melek_counts_only_the_casters_instant_or_sorcery_history"
       ],
       "privacy_tests": [
         "test_public_static_modifiers_scope_opponents_and_replay",
-        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+        "test_actual_bell_ringer_counts_its_own_cast_and_only_discounts_the_second_spell"
       ],
       "replay_tests": [
         "test_public_static_modifiers_scope_opponents_and_replay",
         "test_public_cast_cost_vectors_counts_and_replay_share_total_cost_owner",
-        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+        "test_actual_bell_ringer_counts_its_own_cast_and_only_discounts_the_second_spell",
+        "test_actual_melek_counts_only_the_casters_instant_or_sorcery_history",
+        "test_actual_anarchomancer_applies_one_discount_to_a_multicolor_spell"
       ],
       "required_evidence": [
         "positive",

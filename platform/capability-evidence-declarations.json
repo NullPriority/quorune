@@ -7504,7 +7504,7 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_public_static_modifier_turn_origin_and_ordinal_predicates",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Evaluate current turn, prior committed casts, and cast origin without runtime Oracle parsing."
     },
@@ -7512,7 +7512,7 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_public_static_modifiers_share_offer_commit_and_current_ability",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Use current spell keywords and the shared layer-6 static-component query in the authoritative cost path."
     },
@@ -7520,10 +7520,7 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
-      "official_rule_ids": [
-        "601.2f",
-        "601.2h"
-      ],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": [
         "traditional",
         "commander_duel",
@@ -7535,7 +7532,7 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_aura_reducer_uses_bestow_spell_characteristics",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Evaluate the announced Bestow Aura type through the same fixed predicate before reducing its generic total cost."
     },
@@ -7543,7 +7540,7 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_colorless_reducer_uses_devoid_spell_characteristics",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Use the cycle-safe all-zone Devoid color result when applying an unconditional colorless-spell reduction."
     },
@@ -7551,7 +7548,7 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_fixed_query_reduction_applies_before_convoke_payment",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reduce the announced generic total before one real Convoke contribution and the remaining colored mana payment are planned."
     },
@@ -7559,7 +7556,7 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cast_cost_vectors_counts_and_replay_share_total_cost_owner",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compose colored and source-counter reductions through the same offer and commit total while current source control and party characteristics change."
     },
@@ -7567,7 +7564,7 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cast_tax_uses_caster_turn_and_current_source",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Apply an all-player tax outside each caster's own turn and remove it when the current static source phases out."
     },
@@ -7575,15 +7572,63 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_reduction_applies_to_kicker_total_before_payment",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Apply one static generic reduction after the selected Kicker addition has formed the spell's total cost and before payment."
     },
     {
       "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_cost_subjects.PublicCostSubjectRuntimeTests.test_actual_anarchomancer_applies_one_discount_to_a_multicolor_spell",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed unqualified/typed spell ordinals and relative color unions retain exact source-spanned IR, existing type-only history validation and one total-cost modifier. Native original Bell-Ringer, Melek and Anarchomancer casts verify announced requirements and paid consequences, own reducer cast and foreign-caster/type exclusions, multicolor nonduplication, private four-seat projection, unauthorized rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_cost_subjects.PublicCostSubjectRuntimeTests.test_actual_bell_ringer_counts_its_own_cast_and_only_discounts_the_second_spell",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed unqualified/typed spell ordinals and relative color unions retain exact source-spanned IR, existing type-only history validation and one total-cost modifier. Native original Bell-Ringer, Melek and Anarchomancer casts verify announced requirements and paid consequences, own reducer cast and foreign-caster/type exclusions, multicolor nonduplication, private four-seat projection, unauthorized rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_cost_subjects.PublicCostSubjectRuntimeTests.test_actual_melek_counts_only_the_casters_instant_or_sorcery_history",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed unqualified/typed spell ordinals and relative color unions retain exact source-spanned IR, existing type-only history validation and one total-cost modifier. Native original Bell-Ringer, Melek and Anarchomancer casts verify announced requirements and paid consequences, own reducer cast and foreign-caster/type exclusions, multicolor nonduplication, private four-seat projection, unauthorized rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_public_static_modifiers_scope_opponents_and_replay",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Apply an opponent-scoped tax in four-player state without taxing the source controller."
     },
@@ -7591,10 +7636,7 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
-      "official_rule_ids": [
-        "601.2f",
-        "601.2h"
-      ],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": [
         "traditional",
         "commander_duel",
@@ -7606,23 +7648,71 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_reduced_cast_is_seat_scoped_and_replays",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep a four-player reduced cast offer scoped to the static source's controller while publishing only the committed stack and resolution results."
     },
     {
       "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_cost_subjects.PublicCostSubjectRuntimeTests.test_actual_bell_ringer_counts_its_own_cast_and_only_discounts_the_second_spell",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed unqualified/typed spell ordinals and relative color unions retain exact source-spanned IR, existing type-only history validation and one total-cost modifier. Native original Bell-Ringer, Melek and Anarchomancer casts verify announced requirements and paid consequences, own reducer cast and foreign-caster/type exclusions, multicolor nonduplication, private four-seat projection, unauthorized rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_cost_subjects.PublicCostSubjectRuntimeTests.test_actual_melek_counts_only_the_casters_instant_or_sorcery_history",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed unqualified/typed spell ordinals and relative color unions retain exact source-spanned IR, existing type-only history validation and one total-cost modifier. Native original Bell-Ringer, Melek and Anarchomancer casts verify announced requirements and paid consequences, own reducer cast and foreign-caster/type exclusions, multicolor nonduplication, private four-seat projection, unauthorized rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_compiler_and_runtime_reduction_mutants_are_killed",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Remove compiler production and runtime collection independently so the exact residual and unreduced offer assertions reject both mutants."
     },
     {
       "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_cost_subjects.PublicCostSubjectCompilerTests.test_unqualified_ordinals_and_type_disjunctions_keep_their_exact_predicates",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed unqualified/typed spell ordinals and relative color unions retain exact source-spanned IR, existing type-only history validation and one total-cost modifier. Native original Bell-Ringer, Melek and Anarchomancer casts verify announced requirements and paid consequences, own reducer cast and foreign-caster/type exclusions, multicolor nonduplication, private four-seat projection, unauthorized rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceCompilerTests.test_public_static_modifier_near_misses_remain_residual",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject open variable, next-spell, chosen, target-relative, capped, and unsupported dynamic adjustments."
     },
@@ -7630,10 +7720,7 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
-      "official_rule_ids": [
-        "601.2f",
-        "601.2h"
-      ],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": [
         "traditional",
         "commander_duel",
@@ -7645,10 +7732,7 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_conditional_spell_cost_schema_and_dependencies_fail_closed",
-      "official_rule_ids": [
-        "601.2f",
-        "601.2h"
-      ],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": [
         "traditional",
         "commander_duel",
@@ -7660,7 +7744,7 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_unsupported_spell_reduction_grammar_remains_residual",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep target-relative, power-derived, chosen, capped, open-arithmetic, and unsupported composite reductions material and nonauthoritative."
     },
@@ -7668,15 +7752,31 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_stale_reducer_program_is_ignored",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Ignore a runtime handler that fails the current trusted-program boundary rather than applying an uncertified reduction."
     },
     {
       "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_cost_subjects.PublicCostSubjectCompilerTests.test_relative_color_union_is_one_discount_and_open_subjects_remain_residual",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed unqualified/typed spell ordinals and relative color unions retain exact source-spanned IR, existing type-only history validation and one total-cost modifier. Native original Bell-Ringer, Melek and Anarchomancer casts verify announced requirements and paid consequences, own reducer cast and foreign-caster/type exclusions, multicolor nonduplication, private four-seat projection, unauthorized rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceCompilerTests.test_public_static_modifiers_compile_closed_schema",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile fixed public caster, characteristic, turn, ordinal, origin, increase, and reduction facts into one closed typed modifier."
     },
@@ -7684,10 +7784,7 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
-      "official_rule_ids": [
-        "601.2f",
-        "601.2h"
-      ],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": [
         "traditional",
         "commander_duel",
@@ -7699,10 +7796,7 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_conditional_spell_cost_keeps_public_condition_and_existing_modifier",
-      "official_rule_ids": [
-        "601.2f",
-        "601.2h"
-      ],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": [
         "traditional",
         "commander_duel",
@@ -7710,12 +7804,12 @@
       ],
       "applicability_note": "A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope."
     },
-    {"capability_id":"casting.cost.modifier.fixed_query","evidence_class":"positive","test_id":"tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_current_fixed_reducer_descriptor_binds_registered_schema","official_rule_ids":["601.2f","601.2h"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Generic fixed reducer emission uses the existing current typed conversion and binds the registered handler schema rather than relying on isolated parser acceptance."},
+    {"capability_id":"casting.cost.modifier.fixed_query","evidence_class":"positive","test_id":"tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_current_fixed_reducer_descriptor_binds_registered_schema","official_rule_ids":["601.2f", "601.2h", "601.2i"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Generic fixed reducer emission uses the existing current typed conversion and binds the registered handler schema rather than relying on isolated parser acceptance."},
     {
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_fixed_spell_reducers_compile_typed_query_descriptors",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile fixed type, color, colorless, supertype, subtype, and exclusion subjects into one source-spanned typed predicate descriptor."
     },
@@ -7723,7 +7817,7 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_public_cast_cost_closure_compiles_selected_grammar",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile fixed generic, colored, spell-characteristic, origin, source-counter, public-count, and sealed-history modifier descriptors without runtime Oracle parsing."
     },
@@ -7731,15 +7825,47 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_runtime_cost_reductions_stack_and_floor_generic",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Stack independently applicable trusted sources, reduce only generic mana, and floor the resulting generic total at zero."
     },
     {
       "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_cost_subjects.PublicCostSubjectCompilerTests.test_relative_color_union_is_one_discount_and_open_subjects_remain_residual",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed unqualified/typed spell ordinals and relative color unions retain exact source-spanned IR, existing type-only history validation and one total-cost modifier. Native original Bell-Ringer, Melek and Anarchomancer casts verify announced requirements and paid consequences, own reducer cast and foreign-caster/type exclusions, multicolor nonduplication, private four-seat projection, unauthorized rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_cost_subjects.PublicCostSubjectCompilerTests.test_unqualified_ordinals_and_type_disjunctions_keep_their_exact_predicates",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed unqualified/typed spell ordinals and relative color unions retain exact source-spanned IR, existing type-only history validation and one total-cost modifier. Native original Bell-Ringer, Melek and Anarchomancer casts verify announced requirements and paid consequences, own reducer cast and foreign-caster/type exclusions, multicolor nonduplication, private four-seat projection, unauthorized rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_public_static_modifiers_scope_opponents_and_replay",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep the taxed hidden spell private while exposing only public cost-source state."
     },
@@ -7747,10 +7873,7 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
-      "official_rule_ids": [
-        "601.2f",
-        "601.2h"
-      ],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": [
         "traditional",
         "commander_duel",
@@ -7762,15 +7885,31 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_reduced_cast_is_seat_scoped_and_replays",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Withhold another seat's hand action and physical object identity while retaining the controller's reduced offer."
     },
     {
       "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_cost_subjects.PublicCostSubjectRuntimeTests.test_actual_bell_ringer_counts_its_own_cast_and_only_discounts_the_second_spell",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed unqualified/typed spell ordinals and relative color unions retain exact source-spanned IR, existing type-only history validation and one total-cost modifier. Native original Bell-Ringer, Melek and Anarchomancer casts verify announced requirements and paid consequences, own reducer cast and foreign-caster/type exclusions, multicolor nonduplication, private four-seat projection, unauthorized rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_public_static_modifiers_scope_opponents_and_replay",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the opponent-scoped total, payment, stack transition, and authoritative state exactly."
     },
@@ -7778,10 +7917,7 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
-      "official_rule_ids": [
-        "601.2f",
-        "601.2h"
-      ],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": [
         "traditional",
         "commander_duel",
@@ -7793,7 +7929,7 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cast_cost_vectors_counts_and_replay_share_total_cost_owner",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the public mana-vector reductions, payment, stack transition, resolution, and final authoritative hash."
     },
@@ -7801,17 +7937,81 @@
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_reduced_cast_is_seat_scoped_and_replays",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the reduced cost offer, mana payment, stack transition, draw resolution, and final authoritative hash exactly."
     },
     {
       "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_cost_subjects.PublicCostSubjectRuntimeTests.test_actual_anarchomancer_applies_one_discount_to_a_multicolor_spell",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed unqualified/typed spell ordinals and relative color unions retain exact source-spanned IR, existing type-only history validation and one total-cost modifier. Native original Bell-Ringer, Melek and Anarchomancer casts verify announced requirements and paid consequences, own reducer cast and foreign-caster/type exclusions, multicolor nonduplication, private four-seat projection, unauthorized rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_cost_subjects.PublicCostSubjectRuntimeTests.test_actual_bell_ringer_counts_its_own_cast_and_only_discounts_the_second_spell",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed unqualified/typed spell ordinals and relative color unions retain exact source-spanned IR, existing type-only history validation and one total-cost modifier. Native original Bell-Ringer, Melek and Anarchomancer casts verify announced requirements and paid consequences, own reducer cast and foreign-caster/type exclusions, multicolor nonduplication, private four-seat projection, unauthorized rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_cost_subjects.PublicCostSubjectRuntimeTests.test_actual_melek_counts_only_the_casters_instant_or_sorcery_history",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed unqualified/typed spell ordinals and relative color unions retain exact source-spanned IR, existing type-only history validation and one total-cost modifier. Native original Bell-Ringer, Melek and Anarchomancer casts verify announced requirements and paid consequences, own reducer cast and foreign-caster/type exclusions, multicolor nonduplication, private four-seat projection, unauthorized rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "rollback",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cast_cost_vectors_counts_and_replay_share_total_cost_owner",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject an offered total after its reducer changes controller without spending mana or moving the spell."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_public_cost_subjects.PublicCostSubjectRuntimeTests.test_actual_bell_ringer_counts_its_own_cast_and_only_discounts_the_second_spell",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed unqualified/typed spell ordinals and relative color unions retain exact source-spanned IR, existing type-only history validation and one total-cost modifier. Native original Bell-Ringer, Melek and Anarchomancer casts verify announced requirements and paid consequences, own reducer cast and foreign-caster/type exclusions, multicolor nonduplication, private four-seat projection, unauthorized rollback and pending-load/pre-action replay."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",

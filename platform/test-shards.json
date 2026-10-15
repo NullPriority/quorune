@@ -125,6 +125,7 @@
       "test_oracle_ir",
       "test_ordinary_cycling",
       "test_prowess_rules",
+      "test_public_cost_subjects",
       "test_return_to_hand_rules",
       "test_semantic_choice_characterization",
       "test_state_based_actions",

@@ -551,6 +551,12 @@ modifier with one typed live public-state predicate. The cast-cost collector
 uses the shared condition evaluator before returning the ordinary modifier to
 the total-cost owner. Offer and commit use that same collector, preserving
 current ability presence, source control, generic floors and colored payments.
+Fixed spell subjects also accept disjunctions of represented types and colors.
+An unqualified first or second spell uses the caster's complete committed cast
+history for the turn; a type-qualified ordinal counts only matching spell
+types. A multicolor spell receives one modifier for a matching color union.
+Ordinal predicates that require historical colors, subtypes or payment choices
+remain unsupported by the card-type history schema.
 
 `permission.cast.self-zone-public-state.v1` evaluates an explicit self-graveyard
 permission against the same typed public-state facts. Outside the battlefield,

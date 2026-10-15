@@ -780,7 +780,7 @@ def fixed_spell_predicate(subject: str) -> ObjectQuerySpec | None:
     parts = tuple(
         part.strip()
         for part in re.split(
-            r"\s*(?:,|\band\b)\s*",
+            r"\s*(?:,|\band\b|\bor\b)\s*",
             qualities,
             flags=re.IGNORECASE,
         )

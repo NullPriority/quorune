@@ -1,0 +1,565 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "pinned-original-and-constructed-rule-witness",
+  "source": "Pinned scryfall-current.sqlite3 plus explicitly synthetic rule controls",
+  "cards": [
+    {
+      "oracle_id": "6d2d250b-cdce-4075-8724-b52ad31664fb",
+      "name": "Highspire Bell-Ringer",
+      "mana_cost": "{2}{U}",
+      "type_line": "Creature \u2014 Djinn Monk",
+      "oracle_text": "Flying\nThe second spell you cast each turn costs {1} less to cast.",
+      "power": "1",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "23140c6f-c674-4d13-9b78-bce0ffcb981f",
+      "name": "Melek, Reforged Researcher",
+      "mana_cost": "{3}{U}{R}",
+      "type_line": "Legendary Creature \u2014 Weird Detective",
+      "oracle_text": "Melek's power and toughness are each equal to twice the number of instant and sorcery cards in your graveyard.\nThe first instant or sorcery spell you cast each turn costs {3} less to cast.",
+      "power": "*",
+      "toughness": "*",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 5.0
+    },
+    {
+      "oracle_id": "9ffe4d90-b46c-4606-89cb-1b724104f6ea",
+      "name": "Raging Battle Mouse",
+      "mana_cost": "{1}{R}",
+      "type_line": "Creature \u2014 Mouse",
+      "oracle_text": "The second spell you cast each turn costs {1} less to cast.\nCelebration \u2014 At the beginning of combat on your turn, if two or more nonland permanents entered the battlefield under your control this turn, target creature you control gets +1/+1 until end of turn.",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Celebration"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-09-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "7f51aede-fb86-4b7e-9027-2ba8be62b567",
+      "name": "Uthros Psionicist",
+      "mana_cost": "{2}{U}",
+      "type_line": "Creature \u2014 Jellyfish Scientist",
+      "oracle_text": "The second spell you cast each turn costs {2} less to cast.",
+      "power": "2",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "4bd1d079-314e-4fb5-9b43-c9c83e5528bc",
+      "name": "Alisaie Leveilleur",
+      "mana_cost": "{2}{W}",
+      "type_line": "Legendary Creature \u2014 Elf Wizard",
+      "oracle_text": "Partner with Alphinaud Leveilleur (When this creature enters, target player may put Alphinaud Leveilleur into their hand from their library, then shuffle.)\nFirst strike\nDualcast \u2014 The second spell you cast each turn costs {2} less to cast.",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Dualcast",
+        "Partner with",
+        "First strike",
+        "Partner"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-06-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "e9319f13-1f2b-429c-9d61-e58a3cbec86a",
+      "name": "Goblin Anarchomancer",
+      "mana_cost": "{R}{G}",
+      "type_line": "Creature \u2014 Goblin Shaman",
+      "oracle_text": "Each spell you cast that's red or green costs {1} less to cast.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R"
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-06-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "7e727525-caa4-5445-9a98-a698cad15493",
+      "name": "Generic Ordinal Sorcery",
+      "mana_cost": "{4}{U}",
+      "cmc": 5,
+      "type_line": "Sorcery",
+      "oracle_text": "You gain 1 life.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "af962a42-3ea9-584f-9a52-1c61af45b751",
+      "name": "Generic Ordinal Instant",
+      "mana_cost": "{4}{U}",
+      "cmc": 5,
+      "type_line": "Instant",
+      "oracle_text": "You gain 1 life.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "f7ae2022-0f51-5bb2-a8c7-74a0b8d48e10",
+      "name": "Generic Ordinal Zero Instant",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Instant",
+      "oracle_text": "You gain 1 life.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "7eaaac66-22ec-562c-b19b-b9c1aa4ca469",
+      "name": "Generic Ordinal Red Green",
+      "mana_cost": "{2}{R}{G}",
+      "cmc": 4,
+      "type_line": "Sorcery",
+      "oracle_text": "You gain 1 life.",
+      "colors": [
+        "R",
+        "G"
+      ],
+      "color_identity": [
+        "R",
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "af6929f8-da6b-596f-ab19-f3a598719cae",
+      "name": "Generic Ordinal Colorless",
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "type_line": "Artifact",
+      "oracle_text": "",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "6d2d250b-cdce-4075-8724-b52ad31664fb",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "Spells that were cast before Highspire Bell-Ringer entered the battlefield count. If Highspire Bell-Ringer was the first spell you cast this turn, the next spell you cast this turn is your second spell."
+    },
+    {
+      "oracle_id": "6d2d250b-cdce-4075-8724-b52ad31664fb",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "Highspire Bell-Ringer\u2019s cost-reduction ability doesn\u2019t change the mana cost or mana value of any spell. It changes only the total cost you pay."
+    },
+    {
+      "oracle_id": "6d2d250b-cdce-4075-8724-b52ad31664fb",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "Highspire Bell-Ringer can\u2019t reduce its own cost, even if it\u2019s the second spell you cast in a turn."
+    },
+    {
+      "oracle_id": "6d2d250b-cdce-4075-8724-b52ad31664fb",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "Highspire Bell-Ringer\u2019s cost-reduction ability can only reduce the generic mana component of the cost you pay for a spell."
+    },
+    {
+      "oracle_id": "9ffe4d90-b46c-4606-89cb-1b724104f6ea",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "The permanents that entered the battlefield don't need to remain on the battlefield or under your control. Celebration abilities are checking for past events, not the current game state."
+    },
+    {
+      "oracle_id": "9ffe4d90-b46c-4606-89cb-1b724104f6ea",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Each celebration ability has a different effect."
+    },
+    {
+      "oracle_id": "9ffe4d90-b46c-4606-89cb-1b724104f6ea",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Raging Battle Mouse can't reduce its own cost, even if it's the second spell you cast in a turn."
+    },
+    {
+      "oracle_id": "9ffe4d90-b46c-4606-89cb-1b724104f6ea",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Raging Battle Mouse's cost-reduction ability doesn't change the mana cost or mana value of any spell. It changes only the total cost you pay."
+    },
+    {
+      "oracle_id": "9ffe4d90-b46c-4606-89cb-1b724104f6ea",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Spells that were cast before Raging Battle Mouse entered the battlefield count. If Raging Battle Mouse was the first spell you cast this turn, the next spell you cast this turn is your second spell."
+    },
+    {
+      "oracle_id": "9ffe4d90-b46c-4606-89cb-1b724104f6ea",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Celebration abilities only care if two or more nonland permanents entered the battlefield under your control in a turn. They won't get more powerful if more than two permanents entered the battlefield under your control in a turn."
+    },
+    {
+      "oracle_id": "9ffe4d90-b46c-4606-89cb-1b724104f6ea",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Some celebration abilities trigger at specific parts of the turn and check whether two or more nonland permanents entered the battlefield under your control already in that turn."
+    },
+    {
+      "oracle_id": "9ffe4d90-b46c-4606-89cb-1b724104f6ea",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Others are static abilities that give creatures abilities or power and toughness increases as long as two or more nonland permanents entered the battlefield under your control that turn."
+    },
+    {
+      "oracle_id": "9ffe4d90-b46c-4606-89cb-1b724104f6ea",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Raging Battle Mouse's cost-reduction ability can't reduce the amount of colored mana you pay for a spell. It reduces only the generic mana component of that cost."
+    },
+    {
+      "oracle_id": "7f51aede-fb86-4b7e-9027-2ba8be62b567",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you\u2019re paying, add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "7f51aede-fb86-4b7e-9027-2ba8be62b567",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "Uthros Psionicist\u2019s ability will count any spells you\u2019ve cast this turn, which may include Uthros Psionicist itself. It doesn\u2019t matter if the other spells resolved, didn\u2019t resolve, were countered, or are still on the stack. If Uthros Psionicist was the first spell you cast this turn, the next spell you cast this turn is your second spell."
+    },
+    {
+      "oracle_id": "4bd1d079-314e-4fb5-9b43-c9c83e5528bc",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "The second ability represented by the \"partner with [name]\" keyword modifies the rules for deck construction in the Commander variant and has no function outside of that variant. If a legendary creature card with \"partner with [name]\" is designated as your commander, the named legendary creature card can also be designated as your commander."
+    },
+    {
+      "oracle_id": "4bd1d079-314e-4fb5-9b43-c9c83e5528bc",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "\"Partner with [name]\" represents two abilities. The first is a triggered ability: \"When this permanent enters, target player may search their library for a card named [name], reveal it, put it into their hand, then shuffle.\""
+    },
+    {
+      "oracle_id": "4bd1d079-314e-4fb5-9b43-c9c83e5528bc",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "The cost reduction applies only to generic mana in the total cost of the second spell you cast each turn."
+    },
+    {
+      "oracle_id": "4bd1d079-314e-4fb5-9b43-c9c83e5528bc",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders."
+    },
+    {
+      "oracle_id": "4bd1d079-314e-4fb5-9b43-c9c83e5528bc",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "If your Commander deck has two commanders, you can only include cards whose own color identities are also found in your commanders' combined color identities. If Alisaie Leveilleur and Alphinaud Leveilleur are your commanders, your deck may contain cards with white and/or blue in their color identity, but not black, red, or green."
+    },
+    {
+      "oracle_id": "4bd1d079-314e-4fb5-9b43-c9c83e5528bc",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Note that the target player searches their library (which may be affected by effects such as that of Stranglehold) and that the card they find is revealed, even though these words aren't included in the ability's reminder text."
+    },
+    {
+      "oracle_id": "4bd1d079-314e-4fb5-9b43-c9c83e5528bc",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 damage from one of them, not from both of them combined. Command Beacon's effect puts one into your hand from the command zone, not both."
+    },
+    {
+      "oracle_id": "4bd1d079-314e-4fb5-9b43-c9c83e5528bc",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Spells that were cast before Alisaie Leveilleur entered count. If Alisaie Leveilleur was the first spell you cast this turn, the next spell you cast this turn is your second spell."
+    },
+    {
+      "oracle_id": "4bd1d079-314e-4fb5-9b43-c9c83e5528bc",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "The triggered ability of the \"partner with\" keyword still triggers in a Commander game. If your other commander has somehow ended up in your library, you can find it. You can also target another player, whether or not they have that card in their library."
+    },
+    {
+      "oracle_id": "4bd1d079-314e-4fb5-9b43-c9c83e5528bc",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library."
+    },
+    {
+      "oracle_id": "4bd1d079-314e-4fb5-9b43-c9c83e5528bc",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "To have two commanders, both must have the partner ability or corresponding \"partner with\" abilities as the game begins. A creature with a \"partner with\" ability can't partner with any creature other than its designated partner. Losing a partner ability during the game doesn't cause either to cease to be your commander."
+    },
+    {
+      "oracle_id": "e9319f13-1f2b-429c-9d61-e58a3cbec86a",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "A spell that's both red and green costs {1} less to cast."
+    }
+  ]
+}

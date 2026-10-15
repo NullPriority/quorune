@@ -65,6 +65,13 @@ def _historic_predicates() -> tuple[ObjectQuerySpec, ...]:
 
 def _spell_predicates(subject: str) -> tuple[ObjectQuerySpec, ...] | None:
     normalized = " ".join(subject.split())
+    relative_colors = re.fullmatch(
+        r"Each spell you cast that's (?P<colors>(?:white|blue|black|red|green)"
+        r"(?: or (?:white|blue|black|red|green))+)", normalized, re.IGNORECASE,
+    )
+    if relative_colors is not None:
+        predicate = fixed_spell_predicate(relative_colors['colors'] + ' spells you cast')
+        return (predicate,) if predicate is not None else None
     if normalized.casefold() == "historic spells you cast":
         return _historic_predicates()
     if normalized.casefold() == "creature spells with flying you cast":
@@ -201,16 +208,16 @@ def _subject_spec(
             break
 
     ordinal_match = re.fullmatch(
-        r"The (?P<ordinal>first|second) (?P<quality>.+?) spell you cast each turn",
+        r"The (?P<ordinal>first|second)(?: (?P<quality>.+?))? spell you cast each turn",
         normalized,
         re.IGNORECASE,
     )
     if ordinal_match is not None:
         ordinal = CastCostOrdinal(ordinal_match.group("ordinal").casefold())
-        quality = ordinal_match.group("quality")
+        quality = ordinal_match.group("quality") or ''
         normalized = (
             "Spells you cast"
-            if quality.casefold() == "spell"
+            if quality.casefold() in {"", "spell"}
             else f"{quality} spells you cast"
         )
 
