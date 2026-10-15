@@ -102,8 +102,26 @@ inventory once per report, then applies each subsystem's unchanged import
 matching rule to that snapshot. Later reports reread the files, so edits and
 deletions cannot reuse an older test inventory.
 
+Compact dependency discovery shares parsed source, ordered AST enumerations and
+immutable function inventories within one report build. Alias, wrapper,
+parameter and database-mode contexts still resolve separately for each module.
+Architecture analysis similarly shares each read-only source tree's enumerations
+and parent links across its existing guards. A new invocation reads current
+files again; failed reads and parses are not cached. Complete report and guard
+record parity, node ordering and edited, missing, malformed and unreadable input
+controls protect this optimization.
+Temporary dependency-test repositories resolve their root before comparing
+helper provenance, including when Windows supplies a short-path alias.
+
 Use the existing duration-driven shard rebalance only when module timings show
-a scheduling bottleneck. Simplifying labels or metadata is useful when it
+a scheduling bottleneck. When assignments remain suitable but slow shards start
+late, refresh only the manifest's explicit launch order from complete public
+timing observations. Rank by the slower operating system's median job duration
+across the observation window and keep generated governance first. Preserve
+primary assignments, semantic overlays, worker counts and concurrency budgets;
+fixed-duration scheduling estimates remain predictions until public runs confirm
+them.
+Simplifying labels or metadata is useful when it
 removes measured rework, but it must preserve the source and risk evidence
 those fields carry. Finish one measured improvement before combining unrelated
 changes so its payoff and regressions remain attributable.

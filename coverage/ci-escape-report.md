@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "72825ac92503aeec8a47b02c0ec1a9b29ecdd14208d463370608ca89e7e317f9"
+verified: "72bf5a2d3f20ea05347ce1b59afd9aa574c5531f6e69a472cd22376fe7191275"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 101
-- Deterministic escapes: 93
+- Escapes: 102
+- Deterministic escapes: 94
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -130,6 +130,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20261013-505-interaction-evidence-completeness` | [38324804400](https://github.com/NullPriority/quorune/actions/runs/38324804400) | `missing_affected_test` | `added` | Retain correctness-first ranking. Add real original Abduction departure/LKI return and Flamekin private-entry/target-revalidation action witnesses with replay, plus a constructed copy/unsupported-target whole-admission boundary. Declare the actual new and existing copied-Aura and Feign/Demonic interactions, then regenerate the reusable matrix and scheduler through registered owners. |
 | `ci-20261013-505-bare-subtype-resolution-expectation` | [38324804400](https://github.com/NullPriority/quorune/actions/runs/38324804400) | `missing_affected_test` | `not_applicable` | Assert exact temporary predicates and source exclusion for all supported public sets, preserving keyword-qualified and type-union negative controls. The existing shared-public-battlefield-query-contract impact edge already selects this consumer; no selection widening or production change is needed. |
 | `ci-20261015-515-windows-node-choice-budget` | [38753370109](https://github.com/NullPriority/quorune/actions/runs/38753370109) | `windows_compatibility` | `not_applicable` | Use one bounded Node choice-validation process budget shared by both real TypeScript validator consumers, covering startup, type stripping and validation under shard worker load. Preserve all test identities, decorators, return-code checks, cardinality/allocation assertions, accepted/rejected commands and replay evidence. The Windows-only incident uses the complete exact-base fix-forward route; no unchanged-head CI rerun or narrowed recovery evidence is used. |
+| `ci-20261015-517-dependency-syntax-short-path-fixtures` | [38773388505](https://github.com/NullPriority/quorune/actions/runs/38773388505) | `windows_compatibility` | `not_applicable` | Resolve each temporary fixture root before creating sources and comparing canonical helper provenance. Preserve every test identity, decorator, assertion, cache-count control and malformed/missing/unreadable-input check; production dependency analysis and complete cross-platform CI selection remain unchanged. The exact two tests pass under the same native short-path harness after the fixture correction. |
 
 ## Measurement limitations
 

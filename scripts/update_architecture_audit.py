@@ -16,6 +16,7 @@ import unittest
 from typing import Any, Iterable, Mapping
 
 try:
+    from scripts.source_syntax import SyntaxSnapshot, analysis_syntax
     from scripts.architecture_observability import (
         build_migration_queue,
         build_subsystem_capsules,
@@ -31,6 +32,7 @@ try:
         tracked_worktree_source_fingerprint,
     )
 except ModuleNotFoundError:  # Direct `python scripts/...` execution.
+    from source_syntax import SyntaxSnapshot, analysis_syntax
     from architecture_observability import (
         build_migration_queue,
         build_subsystem_capsules,
@@ -135,6 +137,7 @@ class SourceAnalysis:
     state_writes: tuple[dict[str, Any], ...]
     semantic_branches: tuple[dict[str, Any], ...]
     oracle_id_literals: tuple[dict[str, Any], ...]
+    syntax: SyntaxSnapshot | None = None
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -264,9 +267,10 @@ def _function_records(
     logical_lines: frozenset[int],
     relative: str,
     parents: Mapping[ast.AST, ast.AST],
+    *, syntax: SyntaxSnapshot | None = None,
 ) -> tuple[dict[str, Any], ...]:
     records: list[dict[str, Any]] = []
-    for node in ast.walk(tree):
+    for node in ast.walk(tree) if syntax is None else syntax.walk(tree):
         if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             continue
         parent = parents.get(node)
@@ -296,11 +300,12 @@ def _function_records(
 
 
 def _resolved_imports(
-    tree: ast.Module, module: str, *, is_package: bool = False
+    tree: ast.Module, module: str, *, is_package: bool = False,
+    syntax: SyntaxSnapshot | None = None,
 ) -> tuple[str, ...]:
     imports: set[str] = set()
     current = module.split(".")
-    for node in ast.walk(tree):
+    for node in ast.walk(tree) if syntax is None else syntax.walk(tree):
         if isinstance(node, ast.Import):
             imports.update(alias.name for alias in node.names)
         elif isinstance(node, ast.ImportFrom):
@@ -345,6 +350,7 @@ def _state_write_records(
     relative: str,
     source: Mapping[str, Any],
     parents: Mapping[ast.AST, ast.AST],
+    *, syntax: SyntaxSnapshot | None = None,
 ) -> tuple[dict[str, Any], ...]:
     owner_modules = set(source["scope"]["state_owner_modules"])
     parameter_modules = set(source["scope"]["state_parameter_modules"])
@@ -374,7 +380,7 @@ def _state_write_records(
             "expression": expression,
         }
 
-    for node in ast.walk(tree):
+    for node in ast.walk(tree) if syntax is None else syntax.walk(tree):
         if isinstance(node, ast.Assign):
             for target in node.targets:
                 add(node, "assignment", target)
@@ -396,9 +402,11 @@ def _semantic_branch_records(
     lines: tuple[str, ...],
     relative: str,
     parents: Mapping[ast.AST, ast.AST],
+    *, syntax: SyntaxSnapshot | None = None,
 ) -> tuple[dict[str, Any], ...]:
     records: list[dict[str, Any]] = []
-    for node in ast.walk(tree):
+    walk = ast.walk if syntax is None else syntax.walk
+    for node in walk(tree):
         condition: ast.AST | None = None
         if isinstance(node, ast.If):
             condition = node.test
@@ -412,7 +420,7 @@ def _semantic_branch_records(
         literals = sorted(
             {
                 child.value
-                for child in ast.walk(condition)
+                for child in walk(condition)
                 if isinstance(child, ast.Constant) and isinstance(child.value, str)
             }
         )
@@ -432,20 +440,22 @@ def _string_records(
     tree: ast.Module,
     relative: str,
     parents: Mapping[ast.AST, ast.AST],
+    *, syntax: SyntaxSnapshot | None = None,
 ) -> tuple[tuple[dict[str, Any], ...], tuple[dict[str, Any], ...]]:
     condition_nodes: set[ast.AST] = set()
-    for node in ast.walk(tree):
+    walk = ast.walk if syntax is None else syntax.walk
+    for node in walk(tree):
         if isinstance(node, ast.If):
-            condition_nodes.update(ast.walk(node.test))
+            condition_nodes.update(walk(node.test))
         elif isinstance(node, ast.Match):
-            condition_nodes.update(ast.walk(node.subject))
+            condition_nodes.update(walk(node.subject))
             for case in node.cases:
-                condition_nodes.update(ast.walk(case.pattern))
+                condition_nodes.update(walk(case.pattern))
                 if case.guard:
-                    condition_nodes.update(ast.walk(case.guard))
+                    condition_nodes.update(walk(case.guard))
     strings: list[dict[str, Any]] = []
     oracle_ids: list[dict[str, Any]] = []
-    for node in ast.walk(tree):
+    for node in walk(tree):
         if not isinstance(node, ast.Constant) or not isinstance(node.value, str):
             continue
         record = {
@@ -467,26 +477,29 @@ def _analyze_python(path: Path, source: Mapping[str, Any]) -> SourceAnalysis:
     relative = path.relative_to(ROOT).as_posix()
     text = path.read_text(encoding="utf-8")
     tree = ast.parse(text, filename=relative)
-    parents = _parent_map(tree)
+    syntax = SyntaxSnapshot(tree)
+    parents = syntax.parents
     lines = tuple(text.splitlines(keepends=True))
     logical = _logical_python_lines(text)
-    strings, oracle_ids = _string_records(tree, relative, parents)
+    strings, oracle_ids = _string_records(tree, relative, parents, syntax=syntax)
     return SourceAnalysis(
         relative=relative,
         module=_module_name(relative),
         text=text,
         tree=tree,
         logical_lines=logical,
-        functions=_function_records(tree, logical, relative, parents),
+        functions=_function_records(tree, logical, relative, parents, syntax=syntax),
         imports=_resolved_imports(
             tree,
             _module_name(relative),
             is_package=relative.endswith("/__init__.py"),
+            syntax=syntax,
         ),
         string_literals=strings,
-        state_writes=_state_write_records(tree, lines, relative, source, parents),
-        semantic_branches=_semantic_branch_records(tree, lines, relative, parents),
+        state_writes=_state_write_records(tree, lines, relative, source, parents, syntax=syntax),
+        semantic_branches=_semantic_branch_records(tree, lines, relative, parents, syntax=syntax),
         oracle_id_literals=oracle_ids,
+        syntax=syntax,
     )
 
 
@@ -974,7 +987,7 @@ def _compiler_metrics(
     ).hexdigest()
     symbols: defaultdict[str, list[str]] = defaultdict(list)
     for analysis in analyses.values():
-        for node in ast.walk(analysis.tree):
+        for node in analysis_syntax(analysis).walk():
             if isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
                 symbols[node.name].append(f"{analysis.relative}:{node.lineno}")
         for node in analysis.tree.body:

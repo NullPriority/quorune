@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest import mock
 
 from common import ROOT
 from scripts.compact_ci_report import build_dependency_report
@@ -95,6 +96,60 @@ class TemporaryDependencyRepository:
             root=self.root,
             source_fingerprint="0" * 64,
         )
+
+
+class DependencySyntaxScopeTests(unittest.TestCase):
+    def sources(self, root):
+        tests = root / 'tests'
+        tests.mkdir()
+        helper = tests / 'support.py'
+        helper.write_text('def pick(db, name="Default Card"):\n    return db.lookup(name)\n', encoding='utf-8')
+        (tests / 'test_first.py').write_text('from support import pick\ndef test_case(db):\n    pick(db, "First Card")\n', encoding='utf-8')
+        (tests / 'test_second.py').write_text('import support as alias\ndef test_case(db):\n    alias.pick(db, name="Second Card")\n', encoding='utf-8')
+        return helper
+
+    def test_one_build_shares_syntax_but_keeps_wrapper_and_provenance_contexts(self):
+        import ast
+        from scripts import compact_ci_dependencies as owner
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            self.sources(root)
+            scope = owner.DependencySourceScope()
+            parse = ast.parse
+            inventory = owner._function_inventory
+            with mock.patch('scripts.source_syntax.ast.parse', wraps=parse) as parser, mock.patch.object(owner, '_function_inventory', wraps=inventory) as functions:
+                first, first_dynamic, first_errors = owner.discover_module_requirements('test_first', root=root, sources=scope)
+                second, second_dynamic, second_errors = owner.discover_module_requirements('test_second', root=root, sources=scope)
+                self.assertEqual(3, parser.call_count)
+                self.assertEqual(3, functions.call_count)
+            self.assertEqual([], list(first_errors + second_errors))
+            self.assertEqual([], list(first_dynamic + second_dynamic))
+            self.assertEqual({'First Card'}, {row.value for row in first})
+            self.assertEqual({'Second Card'}, {row.value for row in second})
+            self.assertEqual({'test_first'}, {row.provenance.module for row in first})
+            self.assertEqual({'test_second'}, {row.provenance.module for row in second})
+
+    def test_new_scope_rereads_helper_and_preserves_malformed_missing_and_unreadable_errors(self):
+        from scripts import compact_ci_dependencies as owner
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            helper = self.sources(root)
+            first, _, errors = owner.discover_module_requirements('test_first', root=root)
+            self.assertFalse(errors)
+            self.assertEqual({'First Card'}, {row.value for row in first})
+            helper.write_text('def pick(db, name="Default Card"):\n    return db.lookup("Changed Card")\n', encoding='utf-8')
+            changed, _, errors = owner.discover_module_requirements('test_first', root=root)
+            self.assertFalse(errors)
+            self.assertEqual({'Changed Card'}, {row.value for row in changed})
+            helper.write_text('def (\n', encoding='utf-8')
+            self.assertIn('Cannot parse', owner.discover_module_requirements('test_first', root=root)[2][0])
+            helper.write_text('def pick(db, name):\n    return db.lookup(name)\n', encoding='utf-8')
+            with mock.patch.object(Path, 'read_text', side_effect=PermissionError('unreadable helper')):
+                self.assertIn('unreadable helper', owner.discover_module_requirements('test_first', root=root)[2][0])
+            (root / 'tests/test_first.py').unlink()
+            self.assertIn('Missing test source', owner.discover_module_requirements('test_first', root=root)[2][0])
 
 
 class CompactCIDependencyTests(unittest.TestCase):

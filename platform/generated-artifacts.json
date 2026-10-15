@@ -148,7 +148,8 @@
       ],
       "input_paths": [],
       "implementation_inputs": [
-        "scripts/update_compact_ci_dependencies.py"
+        "scripts/update_compact_ci_dependencies.py",
+        "scripts/source_syntax.py"
       ],
       "database_identity": "none",
       "execution_class": "compact",
@@ -587,7 +588,8 @@
         "web/tests/**/*.ts"
       ],
       "implementation_inputs": [
-        "scripts/update_architecture_audit.py"
+        "scripts/update_architecture_audit.py",
+        "scripts/source_syntax.py"
       ],
       "database_identity": "none",
       "execution_class": "architecture",
