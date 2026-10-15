@@ -1,0 +1,501 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "live-battlefield-quantity-cards",
+  "source": "Pinned Commander Oracle snapshot; existing canonical fixture payloads reused.",
+  "cards": [
+    {
+      "oracle_id": "847b5be5-cb0c-4857-bcd9-c5cfe55fdaeb",
+      "name": "Keep Watch",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Draw a card for each attacking creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2009-09-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "38013607-dd80-4eb9-b0b6-f07e6023c0d0",
+      "name": "Vent Sentinel",
+      "mana_cost": "{3}{R}",
+      "cmc": 4.0,
+      "type_line": "Creature \u2014 Elemental",
+      "oracle_text": "Defender\n{1}{R}, {T}: This creature deals damage to target player or planeswalker equal to the number of creatures you control with defender.",
+      "power": "2",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Defender"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "585f62dc-4461-42f1-a3a4-b19a1e550d2d",
+      "name": "Overgrown Battlement",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Creature \u2014 Wall",
+      "oracle_text": "Defender\n{T}: Add {G} for each creature you control with defender.",
+      "power": "0",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Defender"
+      ],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4d74d12b-1ffb-482f-8bac-635a8d4d32e9",
+      "name": "Goblin Piledriver",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Creature \u2014 Goblin Warrior",
+      "oracle_text": "Protection from blue (This creature can't be blocked, targeted, dealt damage, or enchanted by anything blue.)\nWhenever this creature attacks, it gets +2/+0 until end of turn for each other attacking Goblin.",
+      "power": "1",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Protection"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "24661b81-6bee-4ad8-b3ab-53cb65005c51",
+      "name": "Goblin Rabblemaster",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "type_line": "Creature \u2014 Goblin Warrior",
+      "oracle_text": "Other Goblin creatures you control attack each combat if able.\nAt the beginning of combat on your turn, create a 1/1 red Goblin creature token with haste.\nWhenever this creature attacks, it gets +1/+0 until end of turn for each other attacking Goblin.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-10-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "name": "Cloudshift",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Exile target creature you control, then return that card to the battlefield under your control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-11-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "76ae07ce-ca0c-4308-b8bd-d999eea0a65f",
+      "name": "Snakeform",
+      "mana_cost": "{2}{G/U}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Until end of turn, target creature loses all abilities and becomes a green Snake with base power and toughness 1/1.\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "name": "Lightning Bolt",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "oracle_id": "5f601f48-d24b-4883-9fde-b3f620e7c9ea",
+      "name": "Wall of Omens",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Creature \u2014 Wall",
+      "oracle_text": "Defender\nWhen this creature enters, draw a card.",
+      "power": "0",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Defender"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "585f62dc-4461-42f1-a3a4-b19a1e550d2d",
+      "published_at": "2017-11-17",
+      "source": "wotc",
+      "comment": "Overgrown Battlement's last ability is a mana ability. It doesn't use the stack and can't be responded to (such as by removing creatures with defender you control)."
+    },
+    {
+      "oracle_id": "4d74d12b-1ffb-482f-8bac-635a8d4d32e9",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "The number of Goblins is counted when this ability resolves."
+    },
+    {
+      "oracle_id": "24661b81-6bee-4ad8-b3ab-53cb65005c51",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "If, during your declare attackers step, a creature that must attack if able is tapped, is affected by a spell or ability that says it can't attack, or hasn't been under your control continuously since the turn began (and doesn't have haste), then it doesn't attack. If there's a cost associated with having a creature attack, you're not forced to pay that cost, so it doesn't have to attack in that case either."
+    },
+    {
+      "oracle_id": "24661b81-6bee-4ad8-b3ab-53cb65005c51",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "The number of attacking Goblins is counted as the last ability resolves, and the bonus is locked in at that time."
+    },
+    {
+      "oracle_id": "24661b81-6bee-4ad8-b3ab-53cb65005c51",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "Although Goblin Rabblemaster doesn't force itself to attack, if you control two of them, they'll force each other to attack if able."
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "When an effect returns the exiled card \"under your control,\" you control it indefinitely after that. In a multiplayer game, if a player leaves the game, all cards that player owns leave as well. If you leave the game, any creatures you control from Cloudshift's effect are exiled."
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield."
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "Once the exiled permanent returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled permanent will be put into their owners' graveyards. Equipment attached to the exiled permanent will become unattached and remain on the battlefield. Any counters on the exiled permanent will cease to exist."
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "The returned card won't be the target of any spells or abilities that targeted it before. Any spells that don't target, such as Akroma's Vengeance, will still affect it."
+    },
+    {
+      "oracle_id": "76ae07ce-ca0c-4308-b8bd-d999eea0a65f",
+      "published_at": "2008-08-01",
+      "source": "wotc",
+      "comment": "If the affected creature gains an ability after Snakeform resolves, it will keep that ability."
+    },
+    {
+      "oracle_id": "76ae07ce-ca0c-4308-b8bd-d999eea0a65f",
+      "published_at": "2008-08-01",
+      "source": "wotc",
+      "comment": "Snakeform doesn't counter abilities that have already triggered or been activated. In particular, there is no way to cast this to stop a creature's \"At the beginning of your upkeep\" or \"When this creature enters\" abilities from triggering."
+    },
+    {
+      "oracle_id": "76ae07ce-ca0c-4308-b8bd-d999eea0a65f",
+      "published_at": "2008-08-01",
+      "source": "wotc",
+      "comment": "If Snakeform affects a creature with changeling, the creature will lose its changeling ability, and will no longer be all creature types."
+    },
+    {
+      "oracle_id": "76ae07ce-ca0c-4308-b8bd-d999eea0a65f",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "The power/toughness-setting effect overwrites other effects that set power and toughness only if those effects existed before this spell resolved. It will not overwrite effects that modify power or toughness (whether from a static ability, counters, or a resolved spell or ability), nor will it overwrite effects that set power and toughness which come into existence after this spell resolves. Effects that switch the creature's power and toughness are always applied after any other power or toughness changing effects, including this one, regardless of the order in which they are created."
+    }
+  ]
+}

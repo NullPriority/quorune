@@ -716,6 +716,7 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
         devotion = value.get('reduction') == 'devotion' or (value.get('kind') == 'devotion' and 'color' in value)
         own = ('state_query.devotion.current',) if devotion else ()
         if value.get('scope')=='controller_opponent_count':own=(*own,'quantity_expression.public_player_count')
+        if value.get('kind')=='live_battlefield_quantity':own=(*own,'quantity_expression.live_battlefield_count')
         if value.get('kind')=='controller_is_monarch':own=(*own,'variant.monarch.designate')
         if value.get('kind')=='controller_max_speed':own=(*own,'variant.speed.player')
         if value.get('origin')=='public_characteristic_aggregate' or (value.get('kind')=='public_characteristic_aggregate' and 'aggregate' in value):own=(*own,'quantity_expression.public_characteristic_aggregate')

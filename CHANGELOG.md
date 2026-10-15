@@ -9,6 +9,10 @@ maintenance: "hand-maintained"
 
 # Changelog
 
+- Add typed current battlefield counts for resolution and mana instructions,
+  preserving combat membership, current keywords, controller scope, and source
+  exclusion while retaining the static quantity layer boundary.
+
 ## Unreleased
 
 - Execute typed Manifest and Manifest dread through private choices and

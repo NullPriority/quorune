@@ -13,6 +13,8 @@ from .public_quantity_mana_model import PublicQuantityManaOutput
 from .scalar_effect_amounts import resolve_scalar_effect_amount, scalar_source_context
 from .util import normalize_mana_bundle
 from .replacement.immutable import FrozenMap, thaw_value
+from .live_battlefield_quantities import current_live_battlefield_count
+from .live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
 
 
 @dataclass(frozen=True, slots=True)
@@ -42,7 +44,9 @@ def public_quantity_mana_amount(host, seat, source, output, *, source_informatio
     info = source_information
     locked = info.source if info is not None else replace(source, controller=seat)
     try:
-        if isinstance(output.amount, CharacteristicQuantitySpec):
+        if isinstance(output.amount, LiveBattlefieldQuantitySpec):
+            amount = current_live_battlefield_count(host, seat, output.amount, source_ref=locked.ref)
+        elif isinstance(output.amount, CharacteristicQuantitySpec):
             amount = query_characteristic_count(host, locked, output.amount)
         else:
             context = thaw_value(info.scalar_context) if info is not None else {}

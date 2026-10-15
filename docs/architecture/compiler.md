@@ -2175,6 +2175,15 @@ Required and excluded keyword predicates are both outside this layer-5 quantity
 boundary. Typed descriptor decoding rejects them before counting, including for
 a known-empty collection; they cannot silently produce a zero result.
 
+Resolution and mana instructions may instead carry an explicit
+`LiveBattlefieldQuantitySpec` through the existing amount codec. The compiler
+reuses the fixed public battlefield query grammar for current attacking or
+blocking objects, current keywords, and source exclusion. The read-only count
+uses current characteristics when that instruction applies and retains its
+locked controller; it does not widen static characteristic quantities.
+Attachment-state, numeric feedback, hidden identities, and unsupported query
+forms remain residuals. The live count has its own required producer capability.
+
 `compiler/declared_effect_amounts.py` binds ordinary announced spell-cost X or
 one complete public count definition to numeric result slots in existing typed
 instructions. Two fixed-value compilations must retain identical operations,

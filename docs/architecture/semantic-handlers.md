@@ -60,6 +60,10 @@ and source-scalar result amounts. Each instruction reads its quantity at its
 printed resolution position: an earlier draw, counter placement, or token
 creation affects a later count. A declaration retains its own binding and
 continuation cache; the program never evaluates all quantities in advance.
+Explicit live battlefield quantities use the same applied-instruction boundary
+for current combat state and currently applicable keywords. Their independent
+producer capability and closed codec keep these reads separate from static
+layer-5 quantities. Mana production calls the same read-only count owner.
 Pending replacement choices resume at the same cursor without repeating prior
 mutations. Linked-result, conditional, ambiguous shared subjects, and multiple
 independent target groups retain their unsupported boundaries.

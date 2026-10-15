@@ -56078,6 +56078,150 @@
       "applicability_note": "Library counts use the existing declared quantity result slot and fixed Scry/Surveil owners; inline Scry definition followed by fixed draw preserves one quantity binding and printed action order. Unsupported quantities remain residual."
     },
     {
+      "capability_id": "quantity_expression.live_battlefield_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityActionTests.test_original_vent_sentinel_counts_current_defender_after_snakeform_response",
+      "official_rule_ids": [
+        "109.5",
+        "506.4",
+        "508.1k",
+        "608.2h",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution-only current public battlefield counts; legacy static layer-5 boundary remains closed."
+    },
+    {
+      "capability_id": "quantity_expression.live_battlefield_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityActionTests.test_original_piledriver_excludes_source_and_non_goblin_attackers",
+      "official_rule_ids": [
+        "109.5",
+        "506.4",
+        "508.1k",
+        "608.2h",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution-only current public battlefield counts; legacy static layer-5 boundary remains closed."
+    },
+    {
+      "capability_id": "quantity_expression.live_battlefield_count",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityModelTests.test_live_count_current_membership_controller_and_mutation_contrasts",
+      "official_rule_ids": [
+        "109.5",
+        "506.4",
+        "508.1k",
+        "608.2h",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution-only current public battlefield counts; legacy static layer-5 boundary remains closed."
+    },
+    {
+      "capability_id": "quantity_expression.live_battlefield_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityCompilerTests.test_live_quantity_missing_producer_and_runtime_shape_fail_closed",
+      "official_rule_ids": [
+        "109.5",
+        "506.4",
+        "508.1k",
+        "608.2h",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution-only current public battlefield counts; legacy static layer-5 boundary remains closed."
+    },
+    {
+      "capability_id": "quantity_expression.live_battlefield_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityModelTests.test_live_count_codec_preserves_legacy_boundary_and_rejects_unknown_domains",
+      "official_rule_ids": [
+        "109.5",
+        "506.4",
+        "508.1k",
+        "608.2h",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution-only current public battlefield counts; legacy static layer-5 boundary remains closed."
+    },
+    {
+      "capability_id": "quantity_expression.live_battlefield_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityCompilerTests.test_resolution_count_preserves_current_keyword_combat_and_source_scope",
+      "official_rule_ids": [
+        "109.5",
+        "506.4",
+        "508.1k",
+        "608.2h",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution-only current public battlefield counts; legacy static layer-5 boundary remains closed."
+    },
+    {
+      "capability_id": "quantity_expression.live_battlefield_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityActionTests.test_original_keep_watch_counts_actual_attackers_after_blink_and_replays_privately",
+      "official_rule_ids": [
+        "109.5",
+        "506.4",
+        "508.1k",
+        "608.2h",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution-only current public battlefield counts; legacy static layer-5 boundary remains closed."
+    },
+    {
+      "capability_id": "quantity_expression.live_battlefield_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityActionTests.test_original_battlement_advertises_and_commits_live_defender_mana_without_stack",
+      "official_rule_ids": [
+        "109.5",
+        "506.4",
+        "508.1k",
+        "608.2h",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution-only current public battlefield counts; legacy static layer-5 boundary remains closed."
+    },
+    {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",

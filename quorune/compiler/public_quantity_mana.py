@@ -20,6 +20,7 @@ from .query_characteristic_templates import (
     query_characteristic_value,
 )
 from .scalar_effect_amounts import _HISTORY
+from .live_battlefield_quantities import resolution_quantity
 
 
 from ..public_quantity_mana_model import PublicQuantityManaOutput as PublicQuantityManaTemplate
@@ -27,10 +28,7 @@ from ..public_quantity_mana_model import PublicQuantityManaOutput as PublicQuant
 
 def _amount(value: str, *, source_name: str, count: bool):
     normalized = " ".join(value.rstrip(".").split())
-    quantity = (
-        query_characteristic_quantity(normalized, source_name=source_name, definition_extensions=True)
-        if count else query_characteristic_value(normalized, source_name=source_name)
-    )
+    quantity = resolution_quantity(normalized, source_name=source_name, complete_value=not count)
     if quantity is not None:
         return quantity
     from .public_characteristic_aggregates import public_characteristic_aggregate

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 286,
+  "registry_version": 287,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -21731,6 +21731,81 @@
       ],
       "implementation_components": [
         "quorune.semantic_choices.manifest.ManifestChoiceHandler"
+      ]
+    },
+    {
+      "id": "quantity_expression.live_battlefield_count",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "506.4",
+        "508.1k",
+        "608.2h",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Current public battlefield object counts at resolution and mana production, separate from layer-safe static quantities.",
+        "inputs": [
+          "closed public query and locked controller",
+          "current combat state and currently applicable keywords",
+          "optional physical source exclusion"
+        ],
+        "outputs": [
+          "nonnegative current object count through existing effect and mana owners"
+        ],
+        "exclusions": [
+          "static characteristic quantities",
+          "hidden zones or identities",
+          "numeric characteristic feedback",
+          "attachment-state queries and unknown predicates"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.live_battlefield_quantity_model.LiveBattlefieldQuantitySpec",
+        "quorune.live_battlefield_quantities.current_live_battlefield_count",
+        "quorune.compiler.live_battlefield_quantities.resolution_quantity",
+        "quorune.semantic_runtime.query_effect_amounts.resolve_public_query_amount",
+        "quorune.public_quantity_mana_runtime.public_quantity_mana_amount",
+        "quorune.characteristic_fragments.characteristic_quantity_capabilities"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Typed unknown domains and missing producer capabilities fail exact admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Removing query filtering breaks current keyword/controller and empty-state contrasts.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_resolution_count_preserves_current_keyword_combat_and_source_scope"
+      ],
+      "negative_tests": [
+        "test_live_count_codec_preserves_legacy_boundary_and_rejects_unknown_domains",
+        "test_live_quantity_missing_producer_and_runtime_shape_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_original_vent_sentinel_counts_current_defender_after_snakeform_response"
+      ],
+      "multiplayer_tests": [
+        "test_original_piledriver_excludes_source_and_non_goblin_attackers"
+      ],
+      "privacy_tests": [
+        "test_original_keep_watch_counts_actual_attackers_after_blink_and_replays_privately"
+      ],
+      "replay_tests": [
+        "test_original_battlement_advertises_and_commits_live_defender_mana_without_stack"
       ]
     }
   ]

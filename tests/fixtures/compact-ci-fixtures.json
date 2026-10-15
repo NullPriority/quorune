@@ -92,6 +92,7 @@
     "tests/fixtures/library-search-qualifier-cards.json",
     "tests/fixtures/library-selection-predicate-cards.json",
     "tests/fixtures/limited-event-triggers.json",
+    "tests/fixtures/live-battlefield-quantity-cards.json",
     "tests/fixtures/main-phase-trigger-cards.json",
     "tests/fixtures/manifest-cards.json",
     "tests/fixtures/mayhem-cards.json",
@@ -303,6 +304,7 @@
       "fixture_files": [],
       "rationale": "Actual resolution numeric/bare-subtype gameplay witnesses iterate these precise registered fixture identities."
     },
+
     {
       "source": "tests/test_fixed_query_keyword_grants.py",
       "symbol": "FixedQueryKeywordGrantRuntimeTests.test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires",

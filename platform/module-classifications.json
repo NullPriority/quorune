@@ -3488,6 +3488,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/live_battlefield_quantities.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/madness_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -6674,6 +6689,32 @@
         "domain",
         "rules",
         "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/live_battlefield_quantities.py",
+      "layer": "rules",
+      "owning_subsystem": "continuous_effects",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/live_battlefield_quantity_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
       ],
       "game_state_access": "none",
       "card_specificity_policy": "generic_no_growth",
@@ -13485,5 +13526,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "0bede6b8476b2cc095261c2f653d3a3d5791ac5bc1194d3c48efc954822caaa0"
+  "fingerprint": "aadbc16804f1780c430e97ed0b7483a849b6f6f2fedf8bae66b76e3cbd6108f6"
 }

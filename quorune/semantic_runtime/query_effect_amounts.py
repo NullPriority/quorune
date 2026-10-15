@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from typing import Any, Mapping, Protocol
 
 from ..dynamic_characteristics import query_characteristic_count
+from ..live_battlefield_quantities import current_live_battlefield_count
+from ..live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
 from ..query_effect_amount_model import (
     PublicQueryAmountError,
     PublicQueryAmountSpec,
@@ -61,7 +63,13 @@ def resolve_public_query_amount(
             if not isinstance(previous, Mapping) or set(previous) != {"controller", "quantity", "value"} or previous["controller"] != controller or previous["quantity"] != spec.quantity.to_dict() or type(previous["value"]) is not int or previous["value"] < 0:
                 raise PublicQueryAmountError("Declared amount continuation changed its identity or value")
             return spec.coefficient * previous["value"]
-    count = query_characteristic_count(host, _ResolutionQuantitySource(controller=controller, ref=stack_ref), spec.quantity)
+    if isinstance(spec.quantity, LiveBattlefieldQuantitySpec):
+        source_id = getattr(item, 'source_object_id', None) or getattr(item, 'card_object_id', None)
+        source = host.state.cards.get(source_id)
+        count = current_live_battlefield_count(host, controller, spec.quantity,
+            source_ref=source.ref if source is not None else None)
+    else:
+        count = query_characteristic_count(host, _ResolutionQuantitySource(controller=controller, ref=stack_ref), spec.quantity)
     if type(count) is not int or count < 0:
         raise PublicQueryAmountError("Public quantity is unavailable or malformed")
     if cache is not None:
