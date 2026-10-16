@@ -2635,8 +2635,11 @@ the instance's paid fact through stack-to-battlefield entry. The trigger reuses
 the canonical current/LKI source-copy recipe with a 1/1 exception. Unpaid casts,
 blinked entries and newly created token copies cannot invent paid facts.
 [ADR 0118](../adr/0118-paid-entry-copy-casting-facts.md) defines the cost,
-occurrence and copied-casting-decision boundaries. Broader costs, multiple
-printed instances and Squad remain residual pending their independent owners.
+occurrence and copied-casting-decision boundaries. Fixed ordinary-mana Squad
+adds a separately validated integer payment count and one simultaneous source
+copy batch. Its published count field is independent of printed X and has no
+arbitrary repetition ceiling. See [ADR 0119](../adr/0119-fixed-mana-squad-repetitions.md).
+Broader costs and multiple printed instances remain residual.
 
 ## Commander Learn
 

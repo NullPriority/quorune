@@ -16,7 +16,7 @@ class PaidEntryCopyCostHandler:
     schema_version: int = 1
     family: str = PAID_ENTRY_COPY_CAPABILITY
     event: str = 'cast.cost'
-    rule_references: tuple[str, ...] = ('601.2f', '702.175a', '702.175b')
+    rule_references: tuple[str, ...] = ('601.2f', '702.157a', '702.157b', '702.175a', '702.175b')
     capability_dependencies: tuple[str, ...] = (PAID_ENTRY_COPY_CAPABILITY,)
 
     def validate(self, descriptor):

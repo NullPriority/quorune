@@ -376,6 +376,7 @@
       "test_random_discard_activation_costs",
       "test_reflexive_payments",
       "test_spree_mode_costs",
+      "test_squad_paid_entry_copy",
       "test_support_counter_placement"
     ],
     "functional-11": [

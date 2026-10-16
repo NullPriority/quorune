@@ -133,3 +133,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0116 — typed fixed energy payments](0116-typed-fixed-energy-payments.md)
 - [ADR 0117 — Commander Learn payment boundary](0117-commander-learn-payment-boundary.md)
 - [ADR 0118 — paid entry-copy casting facts](0118-paid-entry-copy-casting-facts.md)
+- [ADR 0119 — fixed-mana Squad repetitions](0119-fixed-mana-squad-repetitions.md)

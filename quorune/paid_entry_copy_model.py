@@ -13,13 +13,17 @@ PAID_ENTRY_COPY_CAPABILITY = 'casting.additional.paid_entry_copy'
 PAID_ENTRY_COPY_HANDLER = 'casting.additional.paid-entry-copy.v1'
 PAID_ENTRY_COPY_FIELD = 'paid_entry_copy'
 PAID_ENTRY_COPY_MECHANIC = 'paid-entry-copy-offspring'
+SQUAD_ENTRY_COPY_MECHANIC = 'paid-entry-copy-squad'
+SQUAD_ENTRY_COPY_CAPABILITY = 'casting.additional.squad_fixed_mana'
+SQUAD_ENTRY_COPY_QUANTITY = '$context.paid_entry_copy_count'
 MANA_KEYS = frozenset({'GENERIC', 'W', 'U', 'B', 'R', 'G', 'C'})
 
 
 def validate_paid_entry_copy_fact(value):
     if (not isinstance(value, Mapping) or set(value) != {'schema_version', 'keyword', 'instance_id', 'count'}
             or type(value['schema_version']) is not int or value['schema_version'] != 1
-            or value['keyword'] != 'offspring' or type(value['count']) is not int or value['count'] != 1
+            or value['keyword'] not in {'offspring', 'squad'} or type(value['count']) is not int or value['count'] < 1
+            or value['keyword'] == 'offspring' and value['count'] != 1
             or type(value['instance_id']) is not str or not re.fullmatch(r'[A-Za-z0-9:_-]+', value['instance_id'])):
         raise ValueError('Paid entry copy fact is malformed or unsupported')
     return dict(value)
@@ -41,9 +45,9 @@ class PaidEntryCopySpec:
         if not isinstance(self.requirements, FrozenMap):
             object.__setattr__(self, 'requirements', FrozenMap(self.requirements))
 
-    def payment_fact(self):
+    def payment_fact(self, count=1):
         return {'schema_version': self.schema_version, 'keyword': self.keyword,
-            'instance_id': self.instance_id, 'count': 1}
+            'instance_id': self.instance_id, 'count': count}
 
     def to_dict(self):
         return {'schema_version': self.schema_version, 'keyword': self.keyword,

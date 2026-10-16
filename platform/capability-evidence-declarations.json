@@ -6808,7 +6808,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -6832,7 +6834,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -6856,7 +6860,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -6880,7 +6886,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -6904,7 +6912,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -6928,7 +6938,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -6952,7 +6964,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -6976,7 +6990,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7000,7 +7016,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7024,7 +7042,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7048,7 +7068,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7072,7 +7094,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7080,6 +7104,32 @@
         "commander_review"
       ],
       "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_actual_sicarian_zero_one_two_and_six_payments_draw_for_each_entry",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10",
+        "702.157a",
+        "702.157b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The shared paid-entry fact discriminates Offspring count-one from reviewed positive Squad counts. The original wire form remains unchanged and the Squad context/instance is server-owned."
     },
     {
       "capability_id": "casting.additional.paid_entry_copy",
@@ -7096,7 +7146,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7120,7 +7172,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7144,7 +7198,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7152,6 +7208,32 @@
         "commander_review"
       ],
       "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadCompilerTests.test_repeat_prices_and_integer_form_have_no_two_payment_limit",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10",
+        "702.157a",
+        "702.157b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The shared paid-entry fact discriminates Offspring count-one from reviewed positive Squad counts. The original wire form remains unchanged and the Squad context/instance is server-owned."
     },
     {
       "capability_id": "casting.additional.paid_entry_copy",
@@ -7168,7 +7250,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7192,7 +7276,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7216,7 +7302,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7240,7 +7328,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7248,6 +7338,32 @@
         "commander_review"
       ],
       "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadCompilerTests.test_fixed_squad_links_one_repeatable_fee_to_a_sealed_copy_count",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10",
+        "702.157a",
+        "702.157b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The shared paid-entry fact discriminates Offspring count-one from reviewed positive Squad counts. The original wire form remains unchanged and the Squad context/instance is server-owned."
     },
     {
       "capability_id": "casting.additional.paid_entry_copy",
@@ -7264,7 +7380,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7288,7 +7406,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7312,7 +7432,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7336,7 +7458,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7360,7 +7484,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7384,7 +7510,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7408,7 +7536,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7432,7 +7562,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7456,7 +7588,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -7464,6 +7598,630 @@
         "commander_review"
       ],
       "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_actual_sicarian_zero_one_two_and_six_payments_draw_for_each_entry",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_reduced_squad_pending_blink_keeps_paid_count_and_private_draws",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The full repeated Squad total is reduced before payment; an actual pending blink creates a fresh unpaid entry while the old paid trigger retains count two and LKI source identity. Original, fresh entry and two copied entry draws finish privately, with pending save/load and exact before-cast replay."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_securitron_two_copies_enter_together_and_each_gets_three_counters",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_actual_sicarian_zero_one_two_and_six_payments_draw_for_each_entry",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_reduced_squad_pending_blink_keeps_paid_count_and_private_draws",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The full repeated Squad total is reduced before payment; an actual pending blink creates a fresh unpaid entry while the old paid trigger retains count two and LKI source identity. Original, fresh entry and two copied entry draws finish privately, with pending save/load and exact before-cast replay."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_securitron_two_copies_enter_together_and_each_gets_three_counters",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_squad_invalid_unaffordable_and_unpaid_count_submissions_roll_back",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadCompilerTests.test_fixed_squad_links_one_repeatable_fee_to_a_sealed_copy_count",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadCompilerTests.test_repeat_prices_and_integer_form_have_no_two_payment_limit",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_actual_sicarian_zero_one_two_and_six_payments_draw_for_each_entry",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_securitron_two_copies_enter_together_and_each_gets_three_counters",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadCompilerTests.test_nonmana_open_and_multiple_instances_or_missing_owners_fail_closed",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadCompilerTests.test_repeat_prices_and_integer_form_have_no_two_payment_limit",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_squad_invalid_unaffordable_and_unpaid_count_submissions_roll_back",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadCompilerTests.test_fixed_squad_links_one_repeatable_fee_to_a_sealed_copy_count",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadCompilerTests.test_repeat_prices_and_integer_form_have_no_two_payment_limit",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_actual_sicarian_zero_one_two_and_six_payments_draw_for_each_entry",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_reduced_squad_pending_blink_keeps_paid_count_and_private_draws",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The full repeated Squad total is reduced before payment; an actual pending blink creates a fresh unpaid entry while the old paid trigger retains count two and LKI source identity. Original, fresh entry and two copied entry draws finish privately, with pending save/load and exact before-cast replay."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_securitron_two_copies_enter_together_and_each_gets_three_counters",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_actual_sicarian_zero_one_two_and_six_payments_draw_for_each_entry",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_reduced_squad_pending_blink_keeps_paid_count_and_private_draws",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The full repeated Squad total is reduced before payment; an actual pending blink creates a fresh unpaid entry while the old paid trigger retains count two and LKI source identity. Original, fresh entry and two copied entry draws finish privately, with pending save/load and exact before-cast replay."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_actual_sicarian_zero_one_two_and_six_payments_draw_for_each_entry",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_reduced_squad_pending_blink_keeps_paid_count_and_private_draws",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The full repeated Squad total is reduced before payment; an actual pending blink creates a fresh unpaid entry while the old paid trigger retains count two and LKI source identity. Original, fresh entry and two copied entry draws finish privately, with pending save/load and exact before-cast replay."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_securitron_two_copies_enter_together_and_each_gets_three_counters",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_squad_invalid_unaffordable_and_unpaid_count_submissions_roll_back",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
+    },
+    {
+      "capability_id": "casting.additional.squad_fixed_mana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_squad_paid_entry_copy.SquadRuntimeTests.test_squad_invalid_unaffordable_and_unpaid_count_submissions_roll_back",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
     },
     {
       "capability_id": "casting.additional_cost.fixed_alternative",

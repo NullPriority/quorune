@@ -5,7 +5,7 @@ from __future__ import annotations
 import copy
 
 
-def expand_optional_mana_costs(host, card, base, schema):
+def expand_optional_mana_costs(host, card, base, schema, *, response=None, hint=False):
     expanded = list(base)
     for raw in schema.get("optional_costs", []):
         additional = dict(raw)
@@ -36,4 +36,4 @@ def expand_optional_mana_costs(host, card, base, schema):
                 }
             )
     from .paid_entry_copy_costs import expand_paid_entry_copy_costs
-    return expand_paid_entry_copy_costs(expanded, schema)
+    return expand_paid_entry_copy_costs(expanded, schema, response=response, hint=hint)

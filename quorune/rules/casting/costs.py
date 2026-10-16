@@ -556,7 +556,7 @@ def _initial_options(
             }
         )
     from .option_expansion import expand_optional_mana_costs
-    expanded = expand_optional_mana_costs(host, card, base, schema)
+    expanded = expand_optional_mana_costs(host, card, base, schema, response=response, hint=hint)
     mandatory = [dict(value) for value in schema.get("additional_costs", [])]
     alternative_expansion = _expand_fixed_alternative_options(
         host,

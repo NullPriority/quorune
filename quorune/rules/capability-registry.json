@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 324,
+  "registry_version": 325,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -245,8 +245,111 @@
   ],
   "capabilities": [
     {
-      "id": "casting.additional.paid_entry_copy",
+      "id": "casting.additional.squad_fixed_mana",
       "version": 1,
+      "official_rules": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "603.6a",
+        "702.157a",
+        "702.157b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One printed positive fixed ordinary-mana Squad instance offers every affordable repetition count, seals the paid casting decision and creates the exact simultaneous source-copy token group.",
+        "inputs": [
+          "complete admitted source cost component",
+          "principal-bound integer squad_count separate from printed X",
+          "current total cost and affordability",
+          "sealed instance/count entry fact",
+          "canonical current or same-incarnation LKI source-copy recipe"
+        ],
+        "outputs": [
+          "zero payments as ordinary cast or positive repeated fee before total modifiers",
+          "one simultaneous token group for the sealed count",
+          "normal inherited entry observers without recursive Squad",
+          "private draw consequences, atomic rejection and replayable pending state"
+        ],
+        "exclusions": [
+          "nonmana, compound, hybrid, variable and multiple printed instances",
+          "arbitrary context quantities or unknown token recipes",
+          "caller-authored paid facts or copy snapshots",
+          "otherwise unadmitted copied-spell producers"
+        ]
+      },
+      "dependencies": [
+        "casting.additional.paid_entry_copy",
+        "token.creation.fixed_copy",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.paid_entry_copy_model.validate_paid_entry_copy_fact",
+        "quorune.compiler.paid_entry_copy_nodes.paid_entry_copy_keyword_nodes",
+        "quorune.rules.casting.paid_entry_copy_costs.expand_paid_entry_copy_costs",
+        "quorune.rules.paid_entry_copy_shapes.paid_entry_copy_node_capabilities"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The Squad, paid-entry and canonical copy owners close independently. Unknown counts, unsupported cost/instance shapes and unaffordable or unpaid-option/count mismatches reject before commitment.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Compiler omission prevents the typed source. Fee multiplier or sealed-quantity omission changes actual Sicarian cost, token and draw counts. Sequential token arrivals violate Securitron mutual entry observer counters.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_fixed_squad_links_one_repeatable_fee_to_a_sealed_copy_count",
+        "test_repeat_prices_and_integer_form_have_no_two_payment_limit",
+        "test_actual_sicarian_zero_one_two_and_six_payments_draw_for_each_entry",
+        "test_securitron_two_copies_enter_together_and_each_gets_three_counters",
+        "test_reduced_squad_pending_blink_keeps_paid_count_and_private_draws"
+      ],
+      "negative_tests": [
+        "test_nonmana_open_and_multiple_instances_or_missing_owners_fail_closed",
+        "test_repeat_prices_and_integer_form_have_no_two_payment_limit",
+        "test_squad_invalid_unaffordable_and_unpaid_count_submissions_roll_back"
+      ],
+      "interaction_tests": [
+        "test_actual_sicarian_zero_one_two_and_six_payments_draw_for_each_entry",
+        "test_securitron_two_copies_enter_together_and_each_gets_three_counters",
+        "test_reduced_squad_pending_blink_keeps_paid_count_and_private_draws"
+      ],
+      "multiplayer_tests": [
+        "test_actual_sicarian_zero_one_two_and_six_payments_draw_for_each_entry",
+        "test_securitron_two_copies_enter_together_and_each_gets_three_counters",
+        "test_squad_invalid_unaffordable_and_unpaid_count_submissions_roll_back",
+        "test_reduced_squad_pending_blink_keeps_paid_count_and_private_draws"
+      ],
+      "privacy_tests": [
+        "test_actual_sicarian_zero_one_two_and_six_payments_draw_for_each_entry",
+        "test_reduced_squad_pending_blink_keeps_paid_count_and_private_draws"
+      ],
+      "replay_tests": [
+        "test_actual_sicarian_zero_one_two_and_six_payments_draw_for_each_entry",
+        "test_securitron_two_copies_enter_together_and_each_gets_three_counters",
+        "test_squad_invalid_unaffordable_and_unpaid_count_submissions_roll_back",
+        "test_reduced_squad_pending_blink_keeps_paid_count_and_private_draws"
+      ]
+    },
+    {
+      "id": "casting.additional.paid_entry_copy",
+      "version": 2,
       "official_rules": [
         "118.8",
         "400.7",
@@ -258,7 +361,9 @@
         "702.175a",
         "702.175b",
         "707.2",
-        "707.10"
+        "707.10",
+        "702.157a",
+        "702.157b"
       ],
       "supported_profiles": [
         "traditional",
@@ -266,7 +371,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "A single printed positive fixed ordinary-mana Offspring instance binds an optional additional cast fee to its exact paid source-entry copy trigger.",
+        "summary": "A single printed fixed ordinary-mana paid-entry keyword binds its independent additional casting decision to its exact source-entry copy trigger. Offspring retains count one; reviewed Squad supplies a positive sealed count through its separate fine capability.",
         "inputs": [
           "current complete-card-admitted source cost component",
           "fixed additional mana vector before total modifiers",
@@ -277,14 +382,13 @@
         "outputs": [
           "ordinary unpaid and explicit fully paid cast branches",
           "sealed instance-bound entry fact",
-          "one normal triggered 1/1 token copy with inherited copiable abilities",
+          "keyword-owned source copy result: Offspring count one with 1/1 exception; reviewed Squad count and unmodified recipe require their separate fine owner",
           "no invented fee for blinked entry or direct token copy",
           "principal-correct persisted and replayed behavior"
         ],
         "exclusions": [
-          "nonmana, variable, hybrid, repeated or multiple printed cost instances",
+          "nonmana, variable, hybrid or multiple printed cost instances; repeated counts without a dedicated fine capability",
           "unsupported face layouts and dynamically granted additional-cost definitions",
-          "Squad repetitions pending their separate extension",
           "unadmitted copied-spell producers are not implemented by the copy-context seam test"
         ]
       },
@@ -322,12 +426,14 @@
         "test_fixed_offspring_emits_separate_cost_and_paid_entry_copy_contracts",
         "test_actual_rampager_paid_and_unpaid_total_price_copy_values_and_replay",
         "test_actual_copied_mage_keeps_its_spell_trigger_without_recursive_offspring",
-        "test_actual_agate_copy_entry_and_later_creature_entry_use_distinct_observers"
+        "test_actual_agate_copy_entry_and_later_creature_entry_use_distinct_observers",
+        "test_fixed_squad_links_one_repeatable_fee_to_a_sealed_copy_count"
       ],
       "negative_tests": [
         "test_open_costs_multiple_instances_and_missing_copy_owners_remain_residual",
         "test_paid_facts_reject_malformed_costs_counts_and_keep_copied_spell_choices",
-        "test_offspring_fee_is_added_before_reduction_and_unaffordable_branch_rejects"
+        "test_offspring_fee_is_added_before_reduction_and_unaffordable_branch_rejects",
+        "test_repeat_prices_and_integer_form_have_no_two_payment_limit"
       ],
       "interaction_tests": [
         "test_actual_rampager_paid_and_unpaid_total_price_copy_values_and_replay",

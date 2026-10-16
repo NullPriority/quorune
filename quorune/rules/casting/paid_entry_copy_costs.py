@@ -37,18 +37,45 @@ def with_paid_entry_copy_cost_schema(host, card, schema, *, suppress_source_cost
     return result
 
 
-def expand_paid_entry_copy_costs(options, schema):
+def _squad_count_schema(existing):
+    result = deepcopy(dict(existing or {}))
+    if 'field' in result:
+        name = result.pop('field')
+        result = {name: result}
+    result['squad_count'] = {'type': 'integer', 'label': 'Squad payments',
+        'minimum': 1, 'default': 1, 'required': True}
+    return result
+
+
+def expand_paid_entry_copy_costs(options, schema, *, response=None, hint=False):
+    response = response or {}
     if PAID_ENTRY_COPY_FIELD not in schema:
-        return options
+        return [] if 'squad_count' in response else options
     spec = PaidEntryCopySpec.from_dict(schema[PAID_ENTRY_COPY_FIELD])
+    count = 1
+    if spec.keyword == 'squad' and not hint and 'squad_count' in response:
+        count = response['squad_count']
+        if type(count) is not int or count < 0:
+            return []
+        selected = response.get('cost_option')
+        if count == 0:
+            return options if selected in (None, '', *(row['id'] for row in options)) else []
+        if selected and selected not in {row['id'] + '+squad:' + spec.instance_id for row in options}:
+            return []
+    elif spec.keyword != 'squad' and 'squad_count' in response:
+        return []
     result = list(options)
+    if spec.keyword == 'squad' and not hint and 'squad_count' in response and not response.get('cost_option'):
+        result = []
     for option in options:
         paid = deepcopy(option)
-        paid['id'] += '+offspring:' + spec.instance_id
-        paid['label'] = str(option.get('label') or 'Cast') + ' with offspring'
-        paid[PAID_ENTRY_COPY_FIELD] = spec.payment_fact()
+        paid['id'] += '+' + spec.keyword + ':' + spec.instance_id
+        paid['label'] = str(option.get('label') or 'Cast') + ' with ' + spec.keyword
+        paid[PAID_ENTRY_COPY_FIELD] = validate_paid_entry_copy_fact(spec.payment_fact(count))
+        if spec.keyword == 'squad':
+            paid['choice_schema'] = _squad_count_schema(paid.get('choice_schema'))
         for symbol, amount in spec.requirements.items():
-            paid['requirements'][symbol] += amount
+            paid['requirements'][symbol] += amount * count
         result.append(paid)
     return result
 
