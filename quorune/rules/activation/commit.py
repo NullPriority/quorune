@@ -31,11 +31,6 @@ from ...life_state import LifeStateError, pay_life_cost
 from ...mana_activation import complete_mana_activation
 from ...mana_restrictions import ability_mana_spend_context
 from ...mana_undo import clear_mana_undo_stack
-from ...activation_usage import (
-    ActivationUsageError,
-    activation_usage_verdict,
-    commit_activation_usage,
-)
 from ...model import StackItem, YieldPolicy
 from ...control_effects import capture_control_duration
 from ...replacement.immutable import thaw_value
@@ -766,38 +761,12 @@ def _commit_activation_costs_and_stack(
     attachment_snapshot = _source_attachment_snapshot(host, source, program)
     if not ability.mana_ability:
         clear_mana_undo_stack(host.state.players[proposal.seat].stats)
-    _commit_symbol_costs(host, proposal, source, ability)
-    paid_objects, activations, spent, special_cost_context = (
-        _pay_object_and_mana_costs(
-            host, proposal, source, ability, response
-        )
+    from ...chosen_color_mana_runtime import capture_chosen_color_mana_source
+    chosen_source_information = capture_chosen_color_mana_source(source, ability)
+    from .payment_commit import commit_activation_payments
+    paid_objects, activations, spent, special_cost_context = commit_activation_payments(
+        host, proposal, source, ability, response, mana_option,
     )
-    _commit_activation_resource_costs(
-        host,
-        proposal,
-        source,
-        ability,
-        response,
-        mana_option,
-    )
-    try:
-        commit_activation_usage(
-            source,
-            ability_id=ability.ability_id,
-            limit=ability.activation_limit,
-            turn_sequence=host.state.turn_sequence,
-        )
-        if ability.activation_limit is not None and activation_usage_verdict(
-            source,
-            ability_id=ability.ability_id,
-            limit=ability.activation_limit,
-            turn_sequence=host.state.turn_sequence,
-        ).available:
-            raise ActivationUsageError(
-                "Activation usage commit did not consume the typed limit"
-            )
-    except ActivationUsageError as exc:
-        raise GameRuleError(str(exc)) from exc
     from ...public_quantity_mana_runtime import capture_mana_source_information
     mana_source_information = capture_mana_source_information(host, proposal.seat, source, ability)
     origin = _commit_source_cost(host, source, ability, response)
@@ -826,7 +795,7 @@ def _commit_activation_costs_and_stack(
             paid_objects=paid_objects,
             payment_activations=activations,
             source_was_snow=source_was_snow,
-            source_information=mana_source_information,
+            source_information=mana_source_information or chosen_source_information,
         )
         return True
     item = _activation_stack_item(

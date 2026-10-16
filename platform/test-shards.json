@@ -350,6 +350,7 @@
       "test_beginning_of_combat_rules",
       "test_block_keyword_triggers",
       "test_bloodthirst_rules",
+      "test_chosen_color_mana",
       "test_combat_declaration_costs",
       "test_commander_match_readiness",
       "test_conditional_query_declarations",

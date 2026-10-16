@@ -60706,6 +60706,351 @@
       "applicability_note": "Closed public quantities, postcost source information, allowed allocations and transactional trusted actions."
     },
     {
+      "capability_id": "mana.production.source_chosen_color",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_chosen_color_mana.ChosenColorManaRuntimeTests.test_actual_coldsteel_tapped_entry_untap_and_reentry_reset_the_color",
+      "official_rule_ids": [
+        "105.1",
+        "106.1",
+        "109.5",
+        "302.6",
+        "602.2b",
+        "605.1a",
+        "605.3a",
+        "605.3b",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact chosen-color output shares complete existing activation costs and shared explicit/automatic mode ownership. Actual Grail/Quirion/Coldsteel casts and choices cover private projections, fresh tap guard, control, entry/tap/re-entry, pending load/replay. Both source and selected-source sacrifice retain original designation and bad output rolls back all costs."
+    },
+    {
+      "capability_id": "mana.production.source_chosen_color",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_chosen_color_mana.ChosenColorManaRuntimeTests.test_actual_grail_cast_choice_explicit_and_automatic_payment_use_only_chosen_color",
+      "official_rule_ids": [
+        "105.1",
+        "106.1",
+        "109.5",
+        "302.6",
+        "602.2b",
+        "605.1a",
+        "605.3a",
+        "605.3b",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact chosen-color output shares complete existing activation costs and shared explicit/automatic mode ownership. Actual Grail/Quirion/Coldsteel casts and choices cover private projections, fresh tap guard, control, entry/tap/re-entry, pending load/replay. Both source and selected-source sacrifice retain original designation and bad output rolls back all costs."
+    },
+    {
+      "capability_id": "mana.production.source_chosen_color",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_chosen_color_mana.ChosenColorManaRuntimeTests.test_actual_quirion_fresh_tap_guard_and_real_control_change_keep_source_color",
+      "official_rule_ids": [
+        "105.1",
+        "106.1",
+        "109.5",
+        "302.6",
+        "602.2b",
+        "605.1a",
+        "605.3a",
+        "605.3b",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact chosen-color output shares complete existing activation costs and shared explicit/automatic mode ownership. Actual Grail/Quirion/Coldsteel casts and choices cover private projections, fresh tap guard, control, entry/tap/re-entry, pending load/replay. Both source and selected-source sacrifice retain original designation and bad output rolls back all costs."
+    },
+    {
+      "capability_id": "mana.production.source_chosen_color",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_chosen_color_mana.ChosenColorManaRuntimeTests.test_source_and_selected_source_sacrifice_keep_original_choice_and_rollback_bad_output",
+      "official_rule_ids": [
+        "105.1",
+        "106.1",
+        "109.5",
+        "302.6",
+        "602.2b",
+        "605.1a",
+        "605.3a",
+        "605.3b",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact chosen-color output shares complete existing activation costs and shared explicit/automatic mode ownership. Actual Grail/Quirion/Coldsteel casts and choices cover private projections, fresh tap guard, control, entry/tap/re-entry, pending load/replay. Both source and selected-source sacrifice retain original designation and bad output rolls back all costs."
+    },
+    {
+      "capability_id": "mana.production.source_chosen_color",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_chosen_color_mana.ChosenColorManaRuntimeTests.test_actual_quirion_fresh_tap_guard_and_real_control_change_keep_source_color",
+      "official_rule_ids": [
+        "105.1",
+        "106.1",
+        "109.5",
+        "302.6",
+        "602.2b",
+        "605.1a",
+        "605.3a",
+        "605.3b",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact chosen-color output shares complete existing activation costs and shared explicit/automatic mode ownership. Actual Grail/Quirion/Coldsteel casts and choices cover private projections, fresh tap guard, control, entry/tap/re-entry, pending load/replay. Both source and selected-source sacrifice retain original designation and bad output rolls back all costs."
+    },
+    {
+      "capability_id": "mana.production.source_chosen_color",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_chosen_color_mana.ChosenColorManaCompilerTests.test_chosen_color_output_costs_and_codec_close_without_any_color_fallback",
+      "official_rule_ids": [
+        "105.1",
+        "106.1",
+        "109.5",
+        "302.6",
+        "602.2b",
+        "605.1a",
+        "605.3a",
+        "605.3b",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact chosen-color output shares complete existing activation costs and shared explicit/automatic mode ownership. Actual Grail/Quirion/Coldsteel casts and choices cover private projections, fresh tap guard, control, entry/tap/re-entry, pending load/replay. Both source and selected-source sacrifice retain original designation and bad output rolls back all costs."
+    },
+    {
+      "capability_id": "mana.production.source_chosen_color",
+      "evidence_class": "negative",
+      "test_id": "tests.test_chosen_color_mana.ChosenColorManaCompilerTests.test_chosen_output_descriptor_and_dependency_withdrawal_fail_closed",
+      "official_rule_ids": [
+        "105.1",
+        "106.1",
+        "109.5",
+        "302.6",
+        "602.2b",
+        "605.1a",
+        "605.3a",
+        "605.3b",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact chosen-color output shares complete existing activation costs and shared explicit/automatic mode ownership. Actual Grail/Quirion/Coldsteel casts and choices cover private projections, fresh tap guard, control, entry/tap/re-entry, pending load/replay. Both source and selected-source sacrifice retain original designation and bad output rolls back all costs."
+    },
+    {
+      "capability_id": "mana.production.source_chosen_color",
+      "evidence_class": "negative",
+      "test_id": "tests.test_chosen_color_mana.ChosenColorManaCompilerTests.test_open_amounts_choices_results_and_mandatory_costs_stay_residual",
+      "official_rule_ids": [
+        "105.1",
+        "106.1",
+        "109.5",
+        "302.6",
+        "602.2b",
+        "605.1a",
+        "605.3a",
+        "605.3b",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact chosen-color output shares complete existing activation costs and shared explicit/automatic mode ownership. Actual Grail/Quirion/Coldsteel casts and choices cover private projections, fresh tap guard, control, entry/tap/re-entry, pending load/replay. Both source and selected-source sacrifice retain original designation and bad output rolls back all costs."
+    },
+    {
+      "capability_id": "mana.production.source_chosen_color",
+      "evidence_class": "positive",
+      "test_id": "tests.test_chosen_color_mana.ChosenColorManaCompilerTests.test_chosen_color_output_costs_and_codec_close_without_any_color_fallback",
+      "official_rule_ids": [
+        "105.1",
+        "106.1",
+        "109.5",
+        "302.6",
+        "602.2b",
+        "605.1a",
+        "605.3a",
+        "605.3b",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact chosen-color output shares complete existing activation costs and shared explicit/automatic mode ownership. Actual Grail/Quirion/Coldsteel casts and choices cover private projections, fresh tap guard, control, entry/tap/re-entry, pending load/replay. Both source and selected-source sacrifice retain original designation and bad output rolls back all costs."
+    },
+    {
+      "capability_id": "mana.production.source_chosen_color",
+      "evidence_class": "positive",
+      "test_id": "tests.test_chosen_color_mana.ChosenColorManaCompilerTests.test_current_designation_modes_and_opponent_land_color_reader_agree",
+      "official_rule_ids": [
+        "105.1",
+        "106.1",
+        "109.5",
+        "302.6",
+        "602.2b",
+        "605.1a",
+        "605.3a",
+        "605.3b",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact chosen-color output shares complete existing activation costs and shared explicit/automatic mode ownership. Actual Grail/Quirion/Coldsteel casts and choices cover private projections, fresh tap guard, control, entry/tap/re-entry, pending load/replay. Both source and selected-source sacrifice retain original designation and bad output rolls back all costs."
+    },
+    {
+      "capability_id": "mana.production.source_chosen_color",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_chosen_color_mana.ChosenColorManaRuntimeTests.test_actual_grail_cast_choice_explicit_and_automatic_payment_use_only_chosen_color",
+      "official_rule_ids": [
+        "105.1",
+        "106.1",
+        "109.5",
+        "302.6",
+        "602.2b",
+        "605.1a",
+        "605.3a",
+        "605.3b",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact chosen-color output shares complete existing activation costs and shared explicit/automatic mode ownership. Actual Grail/Quirion/Coldsteel casts and choices cover private projections, fresh tap guard, control, entry/tap/re-entry, pending load/replay. Both source and selected-source sacrifice retain original designation and bad output rolls back all costs."
+    },
+    {
+      "capability_id": "mana.production.source_chosen_color",
+      "evidence_class": "replay",
+      "test_id": "tests.test_chosen_color_mana.ChosenColorManaRuntimeTests.test_actual_coldsteel_tapped_entry_untap_and_reentry_reset_the_color",
+      "official_rule_ids": [
+        "105.1",
+        "106.1",
+        "109.5",
+        "302.6",
+        "602.2b",
+        "605.1a",
+        "605.3a",
+        "605.3b",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact chosen-color output shares complete existing activation costs and shared explicit/automatic mode ownership. Actual Grail/Quirion/Coldsteel casts and choices cover private projections, fresh tap guard, control, entry/tap/re-entry, pending load/replay. Both source and selected-source sacrifice retain original designation and bad output rolls back all costs."
+    },
+    {
+      "capability_id": "mana.production.source_chosen_color",
+      "evidence_class": "replay",
+      "test_id": "tests.test_chosen_color_mana.ChosenColorManaRuntimeTests.test_actual_grail_cast_choice_explicit_and_automatic_payment_use_only_chosen_color",
+      "official_rule_ids": [
+        "105.1",
+        "106.1",
+        "109.5",
+        "302.6",
+        "602.2b",
+        "605.1a",
+        "605.3a",
+        "605.3b",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact chosen-color output shares complete existing activation costs and shared explicit/automatic mode ownership. Actual Grail/Quirion/Coldsteel casts and choices cover private projections, fresh tap guard, control, entry/tap/re-entry, pending load/replay. Both source and selected-source sacrifice retain original designation and bad output rolls back all costs."
+    },
+    {
+      "capability_id": "mana.production.source_chosen_color",
+      "evidence_class": "replay",
+      "test_id": "tests.test_chosen_color_mana.ChosenColorManaRuntimeTests.test_actual_quirion_fresh_tap_guard_and_real_control_change_keep_source_color",
+      "official_rule_ids": [
+        "105.1",
+        "106.1",
+        "109.5",
+        "302.6",
+        "602.2b",
+        "605.1a",
+        "605.3a",
+        "605.3b",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact chosen-color output shares complete existing activation costs and shared explicit/automatic mode ownership. Actual Grail/Quirion/Coldsteel casts and choices cover private projections, fresh tap guard, control, entry/tap/re-entry, pending load/replay. Both source and selected-source sacrifice retain original designation and bad output rolls back all costs."
+    },
+    {
+      "capability_id": "mana.production.source_chosen_color",
+      "evidence_class": "replay",
+      "test_id": "tests.test_chosen_color_mana.ChosenColorManaRuntimeTests.test_source_and_selected_source_sacrifice_keep_original_choice_and_rollback_bad_output",
+      "official_rule_ids": [
+        "105.1",
+        "106.1",
+        "109.5",
+        "302.6",
+        "602.2b",
+        "605.1a",
+        "605.3a",
+        "605.3b",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact chosen-color output shares complete existing activation costs and shared explicit/automatic mode ownership. Actual Grail/Quirion/Coldsteel casts and choices cover private projections, fresh tap guard, control, entry/tap/re-entry, pending load/replay. Both source and selected-source sacrifice retain original designation and bad output rolls back all costs."
+    },
+    {
       "capability_id": "permanent.class.fixed_lifecycle",
       "evidence_class": "interaction",
       "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_level_trigger_and_no_maximum_hand_size_complete_generic_program",

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 316,
+  "registry_version": 317,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -244,6 +244,105 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "mana.production.source_chosen_color",
+      "version": 1,
+      "official_rules": [
+        "105.1",
+        "106.1",
+        "109.5",
+        "302.6",
+        "602.2b",
+        "605.1a",
+        "605.3a",
+        "605.3b",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Produce a positive literal mana amount of the source current incarnation retained public chosen color, with an optional closed fixed alternative and existing spend restriction. Share typed output modes across explicit activation, automatic payment and land-produced-color queries.",
+        "inputs": [
+          "closed mandatory activation costs and target-free mana classification",
+          "canonical source WUBRG entry designation",
+          "positive literal amount and optional existing fixed mode",
+          "server-owned original source choice captured before all costs"
+        ],
+        "outputs": [
+          "exact current chosen-color modes at offer and automatic payment boundaries",
+          "current activator mana pool receives the validated output immediately",
+          "source/selected sacrifice retains original source choice",
+          "unknown/missing chosen branch contributes no mana mode"
+        ],
+        "exclusions": [
+          "variable amounts or new choice kinds",
+          "unknown restriction or extra result tails",
+          "unrepresented mandatory costs",
+          "colorless or arbitrary any-color fallback"
+        ]
+      },
+      "dependencies": [
+        "zone.entry.public_designation",
+        "mana.activated.fixed_output",
+        "mana.activated.restricted_fixed_output"
+      ],
+      "implementation_components": [
+        "quorune.chosen_color_mana_model.ChosenColorManaOutput",
+        "quorune.chosen_color_mana_abilities.compile_chosen_color_activated_mana_ability",
+        "quorune.chosen_color_mana_abilities.ChosenColorActivatedManaAbilitySpec",
+        "quorune.chosen_color_mana_runtime.capture_chosen_color_mana_source",
+        "quorune.chosen_color_mana_runtime.chosen_color_mana_modes",
+        "quorune.compiler.chosen_color_mana_nodes.chosen_color_activated_mana_node",
+        "quorune.semantic_runtime.chosen_color_mana.ChosenColorActivatedManaHandler",
+        "quorune.mana_ability_runtime.mana_output_for_ability",
+        "quorune.mana_ability_runtime._land_ability_colors",
+        "quorune.rules.activation.payment_commit.commit_activation_payments"
+      ],
+      "positive_tests": [
+        "test_chosen_color_output_costs_and_codec_close_without_any_color_fallback",
+        "test_current_designation_modes_and_opponent_land_color_reader_agree"
+      ],
+      "negative_tests": [
+        "test_open_amounts_choices_results_and_mandatory_costs_stay_residual",
+        "test_chosen_output_descriptor_and_dependency_withdrawal_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_actual_grail_cast_choice_explicit_and_automatic_payment_use_only_chosen_color",
+        "test_actual_quirion_fresh_tap_guard_and_real_control_change_keep_source_color",
+        "test_actual_coldsteel_tapped_entry_untap_and_reentry_reset_the_color",
+        "test_source_and_selected_source_sacrifice_keep_original_choice_and_rollback_bad_output"
+      ],
+      "multiplayer_tests": [
+        "test_actual_quirion_fresh_tap_guard_and_real_control_change_keep_source_color"
+      ],
+      "privacy_tests": [
+        "test_actual_grail_cast_choice_explicit_and_automatic_payment_use_only_chosen_color"
+      ],
+      "replay_tests": [
+        "test_actual_grail_cast_choice_explicit_and_automatic_payment_use_only_chosen_color",
+        "test_actual_quirion_fresh_tap_guard_and_real_control_change_keep_source_color",
+        "test_actual_coldsteel_tapped_entry_untap_and_reentry_reset_the_color",
+        "test_source_and_selected_source_sacrifice_keep_original_choice_and_rollback_bad_output"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The source designation, literal output and existing complete cost contract close independently. Withdrawing the output, entry or shared fixed-mana owner blocks exact admission; missing choice never widens to any-color mana.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting chosen-color compilation rejects all five new output/cost compiler witnesses. Omitting original-source capture makes actual source/selected-source sacrifice unable to produce the original chosen mana. Current modes and opponent-land color queries reject a stale or any-color producer.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "continuous.characteristics.conditional_chosen_designation",
       "version": 1,

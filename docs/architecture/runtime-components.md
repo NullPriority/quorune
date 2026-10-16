@@ -839,3 +839,21 @@ live through control changes; departure clears the choice, and re-entry asks
 again. The shared static-condition validator rejects numeric characteristic
 conditions that would need a separate layer-timing owner. Existing chosen-query
 schema-1 descriptors retain their shape and behavior.
+
+### Source chosen-color mana
+
+`ability.activated.mana.source-chosen-color.v1` combines the shared closed mana
+activation-cost descriptor with `ChosenColorManaOutput`. The output occupies the
+existing tagged `dynamic_mana_output` field; fixed, color-set, and public-quantity
+encodings retain their shapes. Literal amounts, an optional fixed alternative,
+and existing spend restrictions form a closed output contract.
+
+The mana runtime reads the source's retained public WUBRG designation. Explicit
+activation, automatic payment, and land-produced-color discovery use the same
+current modes. The activation owner captures the original source color before
+all costs, so source or selected-source sacrifice cannot erase it. Public
+quantity mana retains its post-object-cost, pre-source-departure snapshot. The
+existing payment/usage transaction is delegated to
+`rules/activation/payment_commit.py` without changing cost order or mutation
+owners. Mana still resolves immediately for the current activator. Departure
+clears the designation and re-entry obtains a fresh choice.

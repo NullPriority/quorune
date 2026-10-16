@@ -41,6 +41,11 @@ def public_quantity_mana_handler_descriptor(spec):
 
 
 def compile_public_quantity_activated_mana_ability(ability,output):
+    costs = compile_mana_activation_costs(ability)
+    return None if costs is None else PublicQuantityActivatedManaAbilitySpec(costs,output)
+
+
+def compile_mana_activation_costs(ability):
     """Use the fixed-family cost boundary without claiming its placeholder output."""
     # This internal fixed output establishes only the already represented cost
     # and activation constraints. The enclosing descriptor owns actual output.
@@ -52,4 +57,4 @@ def compile_public_quantity_activated_mana_ability(ability,output):
     if costs is None:
         return None
     costs=replace(costs,effect_text=ability.effect_text)
-    return PublicQuantityActivatedManaAbilitySpec(costs,output)
+    return costs

@@ -25,6 +25,7 @@
     "tests/fixtures/cast-creature-targets.json",
     "tests/fixtures/casting-activation-metadata-cards.json",
     "tests/fixtures/casting-payment-keywords-cards.json",
+    "tests/fixtures/chosen-color-mana-cards.json",
     "tests/fixtures/classified-interaction-assurance-cards.json",
     "tests/fixtures/closed-effect-program-cards.json",
     "tests/fixtures/combat-goad-prohibition-cards.json",

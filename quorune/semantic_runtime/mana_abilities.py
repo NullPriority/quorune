@@ -16,6 +16,7 @@ from ..rules.capabilities import load_default_capability_registry
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 from .public_quantity_mana import PublicQuantityActivatedManaHandler
+from .chosen_color_mana import ChosenColorActivatedManaHandler
 
 
 @dataclass(frozen=True, slots=True)
@@ -100,6 +101,7 @@ def default_fixed_mana_ability_registry() -> FixedManaAbilityRegistry:
         FixedManaResultAbilityHandler(),
         FixedManaSelectedCostAbilityHandler(),
         PublicQuantityActivatedManaHandler(),
+        ChosenColorActivatedManaHandler(),
     ))
     registry.require_registered_capabilities(load_default_capability_registry())
     return registry.freeze()
