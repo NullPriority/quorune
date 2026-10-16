@@ -31511,7 +31511,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -31535,7 +31541,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -31559,7 +31571,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -31583,7 +31601,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -31607,7 +31631,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -31631,7 +31661,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -31655,7 +31691,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -31679,7 +31721,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -31703,7 +31751,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -31711,6 +31765,96 @@
         "commander_review"
       ],
       "applicability_note": "Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.MostCommonColorRuntimeTests.test_actual_goham_regenerates_when_color_tie_makes_marked_damage_lethal",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Lightning Bolt marks three damage on fully admitted Goham while blue is more common. Its actual regeneration activation resolves; casting a black creature creates a color tie and makes current toughness three. Before priority, canonical state-based destruction consumes regeneration, taps and clears damage while retaining the battlefield incarnation and exact 3/3 stats. Pending load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.MostCommonColorRuntimeTests.test_actual_halam_cast_and_bounce_tracks_all_seats_and_tied_color_counts",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public battlefield colors are counted once per object per color through layer5, across all seats; five-count >= comparison retains ties, excludes hidden/phased objects, and composes with original keywords/regeneration, actual cast/bounce, pending load, privacy and replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.MostCommonColorRuntimeTests.test_all_five_original_djinn_count_their_own_color_and_keep_printed_rules",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public battlefield colors are counted once per object per color through layer5, across all seats; five-count >= comparison retains ties, excludes hidden/phased objects, and composes with original keywords/regeneration, actual cast/bounce, pending load, privacy and replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -31727,7 +31871,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -31751,7 +31901,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -31775,7 +31931,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -31799,7 +31961,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -31823,7 +31991,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -31847,7 +32021,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -31871,7 +32051,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -31895,7 +32081,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -31919,7 +32111,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -31943,7 +32141,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -31967,7 +32171,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -31991,7 +32201,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32015,7 +32231,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32039,7 +32261,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32063,7 +32291,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32087,7 +32321,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32111,7 +32351,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32135,7 +32381,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32159,7 +32411,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32167,6 +32425,36 @@
         "commander_review"
       ],
       "applicability_note": "Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.MostCommonColorRuntimeTests.test_actual_halam_cast_and_bounce_tracks_all_seats_and_tied_color_counts",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public battlefield colors are counted once per object per color through layer5, across all seats; five-count >= comparison retains ties, excludes hidden/phased objects, and composes with original keywords/regeneration, actual cast/bounce, pending load, privacy and replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -32183,7 +32471,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32207,7 +32501,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32231,7 +32531,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32255,7 +32561,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32279,7 +32591,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32303,7 +32621,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32311,6 +32635,36 @@
         "commander_review"
       ],
       "applicability_note": "Omitting additive-body normalization or the fixed public-state capability kills admission."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_public_state_characteristics.MostCommonColorRuntimeTests.test_color_count_omission_is_killed_after_original_admission",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public battlefield colors are counted once per object per color through layer5, across all seats; five-count >= comparison retains ties, excludes hidden/phased objects, and composes with original keywords/regeneration, actual cast/bounce, pending load, privacy and replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -32327,7 +32681,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32351,7 +32711,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32375,7 +32741,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32399,7 +32771,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32423,7 +32801,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32447,7 +32831,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32471,7 +32861,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32495,7 +32891,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32519,7 +32921,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32543,7 +32951,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32567,7 +32981,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32591,7 +33011,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32599,6 +33025,36 @@
         "commander_review"
       ],
       "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.MostCommonColorContractTests.test_color_count_fact_round_trip_parameters_and_legacy_versions_are_strict",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public battlefield colors are counted once per object per color through layer5, across all seats; five-count >= comparison retains ties, excludes hidden/phased objects, and composes with original keywords/regeneration, actual cast/bounce, pending load, privacy and replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -32615,7 +33071,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32639,7 +33101,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32663,7 +33131,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32687,7 +33161,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32711,7 +33191,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32735,7 +33221,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32759,7 +33251,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32783,7 +33281,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32807,7 +33311,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32831,7 +33341,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32855,7 +33371,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32879,7 +33401,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32903,7 +33431,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32927,7 +33461,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32951,7 +33491,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32975,7 +33521,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -32999,7 +33551,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33023,7 +33581,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33047,7 +33611,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33071,7 +33641,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33079,6 +33655,96 @@
         "commander_review"
       ],
       "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.MostCommonColorRuntimeTests.test_actual_goham_regenerates_when_color_tie_makes_marked_damage_lethal",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Lightning Bolt marks three damage on fully admitted Goham while blue is more common. Its actual regeneration activation resolves; casting a black creature creates a color tie and makes current toughness three. Before priority, canonical state-based destruction consumes regeneration, taps and clears damage while retaining the battlefield incarnation and exact 3/3 stats. Pending load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.MostCommonColorRuntimeTests.test_actual_halam_cast_and_bounce_tracks_all_seats_and_tied_color_counts",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public battlefield colors are counted once per object per color through layer5, across all seats; five-count >= comparison retains ties, excludes hidden/phased objects, and composes with original keywords/regeneration, actual cast/bounce, pending load, privacy and replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.MostCommonColorRuntimeTests.test_all_five_original_djinn_count_their_own_color_and_keep_printed_rules",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public battlefield colors are counted once per object per color through layer5, across all seats; five-count >= comparison retains ties, excludes hidden/phased objects, and composes with original keywords/regeneration, actual cast/bounce, pending load, privacy and replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -33095,7 +33761,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33119,7 +33791,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33143,7 +33821,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33167,7 +33851,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33191,7 +33881,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33215,7 +33911,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33239,7 +33941,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33263,7 +33971,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33287,7 +34001,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33311,7 +34031,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33335,7 +34061,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33359,7 +34091,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33383,7 +34121,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33407,7 +34151,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33431,7 +34181,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33455,7 +34211,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33479,7 +34241,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33503,7 +34271,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33527,7 +34301,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33551,7 +34331,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33575,7 +34361,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33599,7 +34391,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33623,7 +34421,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33631,6 +34435,36 @@
         "commander_review"
       ],
       "applicability_note": "Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.MostCommonColorRuntimeTests.test_actual_halam_cast_and_bounce_tracks_all_seats_and_tied_color_counts",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public battlefield colors are counted once per object per color through layer5, across all seats; five-count >= comparison retains ties, excludes hidden/phased objects, and composes with original keywords/regeneration, actual cast/bounce, pending load, privacy and replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -33647,7 +34481,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33671,7 +34511,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33695,7 +34541,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33719,7 +34571,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33743,7 +34601,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33751,6 +34615,36 @@
         "commander_review"
       ],
       "applicability_note": "Use only public counts and effective graveyard characteristics while keeping every hidden hand identity out of opponent projection."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_public_state_characteristics.MostCommonColorContractTests.test_color_ties_multicolor_colorless_phasing_and_public_boundaries",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public battlefield colors are counted once per object per color through layer5, across all seats; five-count >= comparison retains ties, excludes hidden/phased objects, and composes with original keywords/regeneration, actual cast/bounce, pending load, privacy and replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -33767,7 +34661,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33791,7 +34691,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33815,7 +34721,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33839,7 +34751,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33863,7 +34781,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33887,7 +34811,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33911,7 +34841,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33935,7 +34871,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33959,7 +34901,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -33967,6 +34915,96 @@
         "commander_review"
       ],
       "applicability_note": "Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.MostCommonColorRuntimeTests.test_actual_goham_regenerates_when_color_tie_makes_marked_damage_lethal",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Lightning Bolt marks three damage on fully admitted Goham while blue is more common. Its actual regeneration activation resolves; casting a black creature creates a color tie and makes current toughness three. Before priority, canonical state-based destruction consumes regeneration, taps and clears damage while retaining the battlefield incarnation and exact 3/3 stats. Pending load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.MostCommonColorRuntimeTests.test_actual_halam_cast_and_bounce_tracks_all_seats_and_tied_color_counts",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public battlefield colors are counted once per object per color through layer5, across all seats; five-count >= comparison retains ties, excludes hidden/phased objects, and composes with original keywords/regeneration, actual cast/bounce, pending load, privacy and replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.MostCommonColorRuntimeTests.test_all_five_original_djinn_count_their_own_color_and_keep_printed_rules",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public battlefield colors are counted once per object per color through layer5, across all seats; five-count >= comparison retains ties, excludes hidden/phased objects, and composes with original keywords/regeneration, actual cast/bounce, pending load, privacy and replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -33983,7 +35021,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -34007,7 +35051,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -34031,7 +35081,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -34055,7 +35111,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -34079,7 +35141,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -34103,7 +35171,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -34127,7 +35201,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -34151,7 +35231,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -34175,7 +35261,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -34199,7 +35291,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -34223,7 +35321,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",
@@ -34247,7 +35351,13 @@
         "613.6",
         "603.6b",
         "603.10",
-        "303.4"
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e"
       ],
       "supported_profiles": [
         "traditional",

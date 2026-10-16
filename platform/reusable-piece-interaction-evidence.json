@@ -14254,6 +14254,44 @@
       ],
       "interaction_order": 3,
       "assertion": "All seven original fixed-stat otherwise Auras are cast onto real opposing recipients covering color, subtype, enchantment type and nonattacking states. Signed printed results and an existing counter remain exact under the shared attachment lifetime, pending load and full pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "tests.test_fixed_public_state_characteristics.MostCommonColorRuntimeTests.test_actual_halam_cast_and_bounce_tracks_all_seats_and_tied_color_counts",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_state",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.permanent.return.owner_hand"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_state",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "permanent.return.owner_hand"
+      ],
+      "interaction_order": 3,
+      "assertion": "Actual Halam counts public permanents across all seats. Actual Goblin casting, Unsummon departure and recast, then Turn to Frog color change move the live tied-color condition between its exact printed stat branches. The same witness checks unauthorized-command rollback, private four-player projection, pending load and pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "tests.test_fixed_public_state_characteristics.MostCommonColorRuntimeTests.test_actual_goham_regenerates_when_color_tie_makes_marked_damage_lethal",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_state",
+        "capability.damage.amount.positive",
+        "capability.damage.result.multitype_permanent",
+        "capability.permanent.destroy.state_based_damage",
+        "capability.permanent.regeneration.self_activation"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_state",
+        "damage.amount.positive",
+        "damage.result.multitype_permanent",
+        "permanent.destroy.state_based_damage",
+        "permanent.regeneration.self_activation"
+      ],
+      "interaction_order": 5,
+      "assertion": "Actual Lightning Bolt marks three damage on fully admitted Goham while blue is more common. Its actual regeneration activation resolves; casting a black creature creates a color tie and makes current toughness three. Before priority, canonical state-based destruction consumes regeneration, taps and clears damage while retaining the battlefield incarnation and exact 3/3 stats. Pending load and pre-action replay agree."
     }
   ]
 }

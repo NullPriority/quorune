@@ -4653,6 +4653,22 @@
         "test_card_program_trust",
         "test_rule_capabilities"
       ]
+    },
+    {
+      "id": "most-common-public-permanent-color-condition",
+      "patterns": [
+        "quorune/continuous_conditions.py",
+        "quorune/compiler/public_state_fact_queries.py",
+        "quorune/card_programs/runtime.py",
+        "tests/fixtures/fixed-public-state-characteristics-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_public_state_characteristics",
+        "test_public_state_condition_compiler",
+        "test_typed_dynamic_characteristics",
+        "test_regeneration_rules",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

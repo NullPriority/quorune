@@ -949,9 +949,23 @@ a creature currently controlled by the condition player. Event and resolution
 consumers require the explicit numeric-condition capability and read complete
 effective stats. Static characteristic productions, aggregate total power,
 variable thresholds and linked numeric facts remain residual.
-Most-common or tied comparisons, dynamic amounts, top-library, chosen,
+Schema-seven public facts compare one printed color against all five current
+permanent color counts. The layer-5 public query includes each color of a
+multicolored permanent once, excludes phased-out objects, and reads every
+battlefield seat. A tie includes all-zero counts; colorless is not a sixth
+color. The condition follows current color and zone changes before state-based
+stabilization and does not inspect hidden card identities.
+
+Complete enchanted-creature additive stat clauses may also provide a fixed
+otherwise branch. The compiler combines an unconditional otherwise modifier
+with the difference between the two fixed branches under the live recipient
+condition. Both components retain the same source and attachment lifetime.
+Otherwise branches that set base statistics or change permissions remain
+residual.
+
+Other most-common or tied domains, dynamic amounts, top-library, chosen,
 hidden-identity, city blessing, dungeon, initiative, speed, sticker, crime,
-dice, open arithmetic, otherwise branches, per-opponent aggregate, unowned
+dice, open arithmetic, unrepresented otherwise branches, per-opponent aggregate, unowned
 history/designation, quoted-ability, type, color, ability-removal, Class-level,
 Protection, Ward, and unsupported-keyword forms remain source-spanned
 residuals. See
