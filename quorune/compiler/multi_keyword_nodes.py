@@ -15,6 +15,9 @@ from .ir_model import SourceSpan
 
 
 def multi_keyword_nodes(**values: Any):
+    from .paid_entry_copy_nodes import paid_entry_copy_keyword_nodes
+    paid_copy = paid_entry_copy_keyword_nodes(**values)
+    if paid_copy is not None:return paid_copy
     if len(values['mechanics']) > 1 and set(values['mechanics']) == {'cycling'}:
         parts = tuple(re.finditer(r'[^,]+', values['material_line']))
         if len(parts) != len(values['mechanics']):

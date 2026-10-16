@@ -34,7 +34,6 @@ from .life_state import (
     commit_life_payment,
     prepare_life_payment,
 )
-from .kicker import KICKER_ANNOTATION
 from .model import CardInstance, GameState, StackItem
 from .relative_power_target import pin_host_relative_power_source_departures
 from .zone_trigger_processing import _damage_source_characteristics
@@ -48,7 +47,7 @@ from .semantic_runtime import (
 )
 from .semantic_runtime.explore import capture_explore_source_departure
 from .trigger_processing import enqueue_trigger_batch
-from .zone_object_state import reset_card_after_zone_change
+from .zone_object_state import reset_card_after_zone_change, stack_entry_cast_facts
 from .zone_trigger_events import (
     ZoneChangeOccurrence,
     ZoneTransitionKind,
@@ -507,11 +506,7 @@ class ZoneTransitionOwner:
             ),
             copy_snapshot=(token_copy_snapshot(self.host, card)
                            if semantic_events and card.zone == "battlefield" else None),
-            cast_option=(
-                "kicked"
-                if card.annotations.get(KICKER_ANNOTATION) is True
-                else None
-            ),
+            **stack_entry_cast_facts(card),
         )
 
     def _commit_move(
@@ -745,6 +740,7 @@ class ZoneTransitionOwner:
                     plan.prepared_replacement.read_ahead_chapter
                 ),
                 cast_option=departure.cast_option,
+                paid_entry_copy=departure.paid_entry_copy,
                 trigger_batch=trigger_batch,
             )
         if not defer_control_sync:
@@ -924,6 +920,7 @@ class ZoneTransitionOwner:
             transition_kind=transition_kind,
             read_ahead_chapter=read_ahead_chapter,
             cast_option=departure.cast_option if departure.origin == 'stack' and card.zone == 'battlefield' else None,
+            paid_entry_copy=departure.paid_entry_copy if departure.origin == 'stack' and card.zone == 'battlefield' else None,
         )
 
     def move_cards_simultaneously(
@@ -1049,6 +1046,7 @@ class ZoneTransitionOwner:
                 origin_attachments=departure.attachments,
                 origin_attached_to=departure.attached_to,
                 cast_option=departure.cast_option,
+                paid_entry_copy=departure.paid_entry_copy,
                 departure_sources=sources.sources,
                 departure_source_zones=sources.source_zones,
                 departure_source_characteristics=(

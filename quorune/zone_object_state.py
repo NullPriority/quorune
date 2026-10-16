@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 from typing import Sequence
+from .paid_entry_copy_model import PAID_ENTRY_COPY_FIELD, validate_paid_entry_copy_fact
 
 from .model import CardInstance
 from .kicker import KICKER_ANNOTATION
@@ -26,6 +27,22 @@ from .morph import (
 
 class ZoneObjectStateError(ValueError):
     """A zone-object reset request is malformed."""
+
+
+def mark_resolving_paid_entry_copy(card: CardInstance, context) -> None:
+    value = context.get(PAID_ENTRY_COPY_FIELD)
+    if value is None:
+        return
+    if card.zone != 'stack':
+        raise ZoneObjectStateError('Paid entry copy facts require the resolving spell incarnation')
+    card.annotations[PAID_ENTRY_COPY_FIELD] = validate_paid_entry_copy_fact(value)
+
+
+def stack_entry_cast_facts(card: CardInstance):
+    value = card.annotations.get(PAID_ENTRY_COPY_FIELD)
+    return {'cast_option': 'kicked' if card.annotations.get(KICKER_ANNOTATION) is True else None,
+        'paid_entry_copy': validate_paid_entry_copy_fact(value)
+        if card.zone == 'stack' and value is not None else None}
 
 
 def mark_card_kicked(card: CardInstance) -> None:

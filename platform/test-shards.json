@@ -413,6 +413,7 @@
       "test_life_state",
       "test_modal_token_programs",
       "test_monarch_rules",
+      "test_paid_entry_copy",
       "test_player_speed",
       "test_public_scalar_stat_definitions",
       "test_public_self_replacement_results",

@@ -35,4 +35,5 @@ def expand_optional_mana_costs(host, card, base, schema):
                     "base_cost_option": base_option["id"],
                 }
             )
-    return expanded
+    from .paid_entry_copy_costs import expand_paid_entry_copy_costs
+    return expand_paid_entry_copy_costs(expanded, schema)

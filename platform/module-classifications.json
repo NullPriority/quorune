@@ -3989,6 +3989,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/paid_entry_copy_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/permanent_additional_cost_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -7474,6 +7489,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/paid_entry_copy_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/permanent_designations.py",
       "layer": "rules",
       "owning_subsystem": "permanent_designations",
@@ -8939,6 +8966,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/casting/paid_entry_copy_costs.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/casting/proposal.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -9920,6 +9961,20 @@
     },
     {
       "file": "quorune/rules/optional_draw_discard.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/paid_entry_copy_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -12823,6 +12878,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/paid_entry_copy.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/permanent_exile_handlers.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -14402,5 +14472,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "b8325fb47ac12e6647e27c61cb1f4edbb3623a714ca37ea11506006fd406ce9c"
+  "fingerprint": "8f59a77e7779453101b95d47feb0e82965a736dbb7212059058f87d4ddbda126"
 }

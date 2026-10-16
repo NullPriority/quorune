@@ -4,6 +4,8 @@ from __future__ import annotations
 
 
 def nonleaf_effect_program_is_closed(program):
+    from ..rules.paid_entry_copy_shapes import is_closed_paid_entry_copy_program
+    if is_closed_paid_entry_copy_program(program):return True
     from ..rules.city_blessing_shapes import ascend_program_is_closed
     if ascend_program_is_closed(program):return True
     from ..random_discard import random_discard_node_capabilities

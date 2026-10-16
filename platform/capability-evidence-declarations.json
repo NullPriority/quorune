@@ -6794,6 +6794,678 @@
       "applicability_note": "Persist and exactly replay previous-turn counts, designation changes, bound faces, held triggers, and public projections."
     },
     {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_actual_agate_copy_entry_and_later_creature_entry_use_distinct_observers",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual colored Offspring fees create one Agate copy. Only the original observes that entry as another creature; both original and copy observe the later actual creature cast. Correct two-trigger ordering, pending reload and pre-action replay preserve one then two damage per opponent without recursive copying."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_actual_copied_mage_keeps_its_spell_trigger_without_recursive_offspring",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_actual_rampager_paid_and_unpaid_total_price_copy_values_and_replay",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_offspring_fee_is_added_before_reduction_and_unaffordable_branch_rejects",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_pending_offspring_departure_blink_and_control_keep_original_paid_trigger",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_actual_agate_copy_entry_and_later_creature_entry_use_distinct_observers",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual colored Offspring fees create one Agate copy. Only the original observes that entry as another creature; both original and copy observe the later actual creature cast. Correct two-trigger ordering, pending reload and pre-action replay preserve one then two damage per opponent without recursive copying."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_actual_copied_mage_keeps_its_spell_trigger_without_recursive_offspring",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_actual_rampager_paid_and_unpaid_total_price_copy_values_and_replay",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_pending_offspring_departure_blink_and_control_keep_original_paid_trigger",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyCompilerTests.test_fixed_offspring_emits_separate_cost_and_paid_entry_copy_contracts",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_actual_rampager_paid_and_unpaid_total_price_copy_values_and_replay",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_offspring_fee_is_added_before_reduction_and_unaffordable_branch_rejects",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyCompilerTests.test_open_costs_multiple_instances_and_missing_copy_owners_remain_residual",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyCompilerTests.test_paid_facts_reject_malformed_costs_counts_and_keep_copied_spell_choices",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_offspring_fee_is_added_before_reduction_and_unaffordable_branch_rejects",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyCompilerTests.test_fixed_offspring_emits_separate_cost_and_paid_entry_copy_contracts",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_actual_agate_copy_entry_and_later_creature_entry_use_distinct_observers",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual colored Offspring fees create one Agate copy. Only the original observes that entry as another creature; both original and copy observe the later actual creature cast. Correct two-trigger ordering, pending reload and pre-action replay preserve one then two damage per opponent without recursive copying."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_actual_copied_mage_keeps_its_spell_trigger_without_recursive_offspring",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_actual_rampager_paid_and_unpaid_total_price_copy_values_and_replay",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_actual_rampager_paid_and_unpaid_total_price_copy_values_and_replay",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_actual_agate_copy_entry_and_later_creature_entry_use_distinct_observers",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual colored Offspring fees create one Agate copy. Only the original observes that entry as another creature; both original and copy observe the later actual creature cast. Correct two-trigger ordering, pending reload and pre-action replay preserve one then two damage per opponent without recursive copying."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_actual_copied_mage_keeps_its_spell_trigger_without_recursive_offspring",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_actual_rampager_paid_and_unpaid_total_price_copy_values_and_replay",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_offspring_fee_is_added_before_reduction_and_unaffordable_branch_rejects",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_pending_offspring_departure_blink_and_control_keep_original_paid_trigger",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_actual_rampager_paid_and_unpaid_total_price_copy_values_and_replay",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_offspring_fee_is_added_before_reduction_and_unaffordable_branch_rejects",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
+      "capability_id": "casting.additional.paid_entry_copy",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_paid_entry_copy.PaidEntryCopyRuntimeTests.test_pending_offspring_departure_blink_and_control_keep_original_paid_trigger",
+      "official_rule_ids": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Offspring casts bind full optional fees before modifiers and exact paid entry. Rampager 1/1 copies, Mage copied spell triggers, source departure/blink/control, affordability and principal rollback, privacy, pending load and pre-action replay distinguish payment facts from ordinary token copying. The casting-copy seam checks immutable inherited decisions without claiming an unadmitted copy producer."
+    },
+    {
       "capability_id": "casting.additional_cost.fixed_alternative",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_alternative_additional_costs.FixedAlternativeAdditionalCostRuntimeTests.test_fixed_life_and_mana_alternatives_share_total_cost_options",

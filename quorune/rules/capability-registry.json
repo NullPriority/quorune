@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 323,
+  "registry_version": 324,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -244,6 +244,115 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "casting.additional.paid_entry_copy",
+      "version": 1,
+      "official_rules": [
+        "118.8",
+        "400.7",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.4",
+        "702.175a",
+        "702.175b",
+        "707.2",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A single printed positive fixed ordinary-mana Offspring instance binds an optional additional cast fee to its exact paid source-entry copy trigger.",
+        "inputs": [
+          "current complete-card-admitted source cost component",
+          "fixed additional mana vector before total modifiers",
+          "server-selected instance payment fact and authoritative resolving spell",
+          "normalized exact stack-to-battlefield entry",
+          "canonical current or same-incarnation LKI source copy"
+        ],
+        "outputs": [
+          "ordinary unpaid and explicit fully paid cast branches",
+          "sealed instance-bound entry fact",
+          "one normal triggered 1/1 token copy with inherited copiable abilities",
+          "no invented fee for blinked entry or direct token copy",
+          "principal-correct persisted and replayed behavior"
+        ],
+        "exclusions": [
+          "nonmana, variable, hybrid, repeated or multiple printed cost instances",
+          "unsupported face layouts and dynamically granted additional-cost definitions",
+          "Squad repetitions pending their separate extension",
+          "unadmitted copied-spell producers are not implemented by the copy-context seam test"
+        ]
+      },
+      "dependencies": [
+        "token.creation.fixed_copy",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.paid_entry_copy_model.PaidEntryCopySpec",
+        "quorune.paid_entry_copy_model.validate_paid_entry_copy_fact",
+        "quorune.compiler.paid_entry_copy_nodes.paid_entry_copy_keyword_nodes",
+        "quorune.semantic_runtime.paid_entry_copy.PaidEntryCopyCostHandler",
+        "quorune.rules.casting.paid_entry_copy_costs.with_paid_entry_copy_cost_schema",
+        "quorune.rules.casting.paid_entry_copy_costs.expand_paid_entry_copy_costs",
+        "quorune.zone_object_state.mark_resolving_paid_entry_copy",
+        "quorune.zone_object_state.stack_entry_cast_facts",
+        "quorune.rules.paid_entry_copy_shapes.paid_entry_copy_node_capabilities"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Missing payment or canonical copy ownership prevents complete admission. Malformed costs, markers, counts, unsupported instances and unaffordable total costs cannot create paid entry eligibility.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting keyword production prevents the two-node contract. Omitting fee addition or the accepted paid fact changes actual Rampager prices or missing token consequences; a normal-copy P/T substitution violates the native 1/1 assertion.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_fixed_offspring_emits_separate_cost_and_paid_entry_copy_contracts",
+        "test_actual_rampager_paid_and_unpaid_total_price_copy_values_and_replay",
+        "test_actual_copied_mage_keeps_its_spell_trigger_without_recursive_offspring",
+        "test_actual_agate_copy_entry_and_later_creature_entry_use_distinct_observers"
+      ],
+      "negative_tests": [
+        "test_open_costs_multiple_instances_and_missing_copy_owners_remain_residual",
+        "test_paid_facts_reject_malformed_costs_counts_and_keep_copied_spell_choices",
+        "test_offspring_fee_is_added_before_reduction_and_unaffordable_branch_rejects"
+      ],
+      "interaction_tests": [
+        "test_actual_rampager_paid_and_unpaid_total_price_copy_values_and_replay",
+        "test_pending_offspring_departure_blink_and_control_keep_original_paid_trigger",
+        "test_actual_copied_mage_keeps_its_spell_trigger_without_recursive_offspring",
+        "test_offspring_fee_is_added_before_reduction_and_unaffordable_branch_rejects",
+        "test_actual_agate_copy_entry_and_later_creature_entry_use_distinct_observers"
+      ],
+      "multiplayer_tests": [
+        "test_actual_rampager_paid_and_unpaid_total_price_copy_values_and_replay",
+        "test_pending_offspring_departure_blink_and_control_keep_original_paid_trigger",
+        "test_actual_copied_mage_keeps_its_spell_trigger_without_recursive_offspring",
+        "test_actual_agate_copy_entry_and_later_creature_entry_use_distinct_observers"
+      ],
+      "privacy_tests": [
+        "test_actual_rampager_paid_and_unpaid_total_price_copy_values_and_replay"
+      ],
+      "replay_tests": [
+        "test_actual_rampager_paid_and_unpaid_total_price_copy_values_and_replay",
+        "test_pending_offspring_departure_blink_and_control_keep_original_paid_trigger",
+        "test_actual_copied_mage_keeps_its_spell_trigger_without_recursive_offspring",
+        "test_offspring_fee_is_added_before_reduction_and_unaffordable_branch_rejects",
+        "test_actual_agate_copy_entry_and_later_creature_entry_use_distinct_observers"
+      ]
+    },
     {
       "id": "keyword_action.learn.commander",
       "version": 1,

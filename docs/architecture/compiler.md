@@ -2627,6 +2627,17 @@ query. Optional, payment, dynamic, aggregate, combined-event, targeted,
 multi-effect, other-counter, non-self, and broader damage forms remain
 source-spanned residuals.
 
+## Paid entry-copy keywords
+
+A printed fixed ordinary-mana Offspring instance emits an admitted additional
+cost component and its linked entry trigger. The accepted cast option seals
+the instance's paid fact through stack-to-battlefield entry. The trigger reuses
+the canonical current/LKI source-copy recipe with a 1/1 exception. Unpaid casts,
+blinked entries and newly created token copies cannot invent paid facts.
+[ADR 0118](../adr/0118-paid-entry-copy-casting-facts.md) defines the cost,
+occurrence and copied-casting-decision boundaries. Broader costs, multiple
+printed instances and Squad remain residual pending their independent owners.
+
 ## Commander Learn
 
 The complete Learn instruction lowers to the existing optional-payment

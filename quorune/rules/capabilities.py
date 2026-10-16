@@ -291,6 +291,7 @@ _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
     "fixed-counter-controller-effect-sequence"
 )
 MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    'paid-entry-copy-offspring': ('casting.additional.paid_entry_copy',),
     'commander-learn': ('keyword_action.learn.commander',),
     'half-current-player-life-loss': ('life.loss.half_current_player',),
     'half-affected-player-domain-choice': ('choice.affected_player.half_domain',),
@@ -473,6 +474,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
 _SHAPE_GATED_MECHANICS = frozenset(
     {
         'commander-learn',
+        'paid-entry-copy-offspring',
         'half-current-player-life-loss',
         'half-affected-player-domain-choice',
         'fixed-token-typed-ability-definition',
