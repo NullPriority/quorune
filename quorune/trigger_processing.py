@@ -11,6 +11,7 @@ from .model import CardInstance, DelayedTrigger, StackItem
 from .trigger_participation import WardSpec
 from .trigger_targeting import begin_pending_trigger_target_selection
 from .trigger_batches import (
+    PendingTriggerBatch,
     PendingTriggerItem,
     TriggerBatchError,
     begin_pending_trigger_placement,
@@ -388,6 +389,13 @@ def collect_trigger_items(
     return triggered
 
 
+def replace_pending_trigger_batch(host, index: int, batch: PendingTriggerBatch) -> None:
+    """Replace one validated immutable batch through its existing write owner."""
+    if type(index) is not int or not isinstance(batch, PendingTriggerBatch):
+        raise StateInvariantError('Pending trigger replacement requires a typed batch and index')
+    host.state.pending_trigger_batches[index] = batch
+
+
 def enqueue_trigger_batch(
     host: TriggerProcessingHost,
     items: Sequence[StackItem],
@@ -415,7 +423,7 @@ def enqueue_trigger_batch(
         except TriggerBatchError as exc:
             raise StateInvariantError(str(exc)) from exc
         if merged is not None:
-            host.state.pending_trigger_batches[-1] = merged
+            replace_pending_trigger_batch(host, -1, merged)
             return
     batch_ref = host._next_ref("TB")
     try:
@@ -485,7 +493,7 @@ def begin_pending_trigger_batch(host: TriggerProcessingHost) -> bool:
             host.state.pending_trigger_batches.pop(0)
             continue
         if started is not batch:
-            host.state.pending_trigger_batches[0] = started
+            replace_pending_trigger_batch(host, 0, started)
         batch = started
         group = batch.groups[0]
         if len(group.items) > 1:
@@ -510,7 +518,7 @@ def begin_pending_trigger_batch(host: TriggerProcessingHost) -> bool:
         if remaining is None:
             host.state.pending_trigger_batches.pop(0)
         else:
-            host.state.pending_trigger_batches[0] = remaining
+            replace_pending_trigger_batch(host, 0, remaining)
     return False
 
 
@@ -607,7 +615,7 @@ def complete_trigger_order(
     if remaining is None:
         host.state.pending_trigger_batches.pop(batch_index)
     else:
-        host.state.pending_trigger_batches[batch_index] = remaining
+        replace_pending_trigger_batch(host, batch_index, remaining)
     if begin_pending_trigger_batch(host):
         return
     host._grant_priority(host.state.active_player)

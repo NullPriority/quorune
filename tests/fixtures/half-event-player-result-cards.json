@@ -1,0 +1,508 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned half-life event-player originals and real combat/current-life witnesses",
+  "cards": [
+    {
+      "oracle_id": "0ff0a309-9b4a-4f9e-9ea6-c4d07906ebec",
+      "name": "Quietus Spike",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "Equipped creature has deathtouch.\nWhenever equipped creature deals combat damage to a player, that player loses half their life, rounded up.\nEquip {3}",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Equip"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-04-29",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "name": "Virtus the Veiled",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Azra Assassin",
+      "oracle_text": "Partner with Gorm the Great (When this creature enters, target player may put Gorm into their hand from their library, then shuffle.)\nDeathtouch\nWhenever Virtus deals combat damage to a player, that player loses half their life, rounded up.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Partner with",
+        "Partner",
+        "Deathtouch"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-06-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a75ddd9c-2574-46e9-ac85-58082789ff3e",
+      "name": "Scytheclaw",
+      "mana_cost": "{5}",
+      "cmc": 5.0,
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "Living weapon (When this Equipment enters, create a 0/0 black Phyrexian Germ creature token, then attach this to it.)\nEquipped creature gets +1/+1.\nWhenever equipped creature deals combat damage to a player, that player loses half their life, rounded up.\nEquip {3}",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Equip",
+        "Living weapon"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
+      "name": "Havoc Festival",
+      "mana_cost": "{4}{B}{R}",
+      "cmc": 6.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Players can't gain life.\nAt the beginning of each player's upkeep, that player loses half their life, rounded up.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-10-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4d97b9d1-1138-40da-b593-8065ea6ed7b3",
+      "name": "Grievous Wound",
+      "mana_cost": "{3}{B}{B}",
+      "cmc": 5.0,
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant player\nEnchanted player can't gain life.\nWhenever enchanted player is dealt damage, they lose half their life, rounded up.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "6662968e-ca9e-454c-be44-24ad10e43d3e",
+      "name": "Unstoppable Slasher",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Creature — Zombie Assassin",
+      "oracle_text": "Deathtouch\nWhenever this creature deals combat damage to a player, they lose half their life, rounded up.\nWhen this creature dies, if it had no counters on it, return it to the battlefield tapped under its owner's control with two stun counters on it.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Deathtouch"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture:half-event-body",
+      "name": "Generic Half Event Body",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Creature",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture:half-event-gain",
+      "name": "Generic Half Event Gain",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Instant",
+      "oracle_text": "Target player gains 2 life.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "0ff0a309-9b4a-4f9e-9ea6-c4d07906ebec",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "That player loses half their life after combat damage has been subtracted from the player's life total. The amount of life the player loses is determined as the triggered ability resolves."
+    },
+    {
+      "oracle_id": "0ff0a309-9b4a-4f9e-9ea6-c4d07906ebec",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If multiple Quietus Spikes trigger at the same time, that player loses half their life when the first ability resolves, then loses half of the remainder when the next ability resolves, and so on. The player does not lose the same amount each time."
+    },
+    {
+      "oracle_id": "0ff0a309-9b4a-4f9e-9ea6-c4d07906ebec",
+      "published_at": "2010-06-15",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, after combat damage is dealt, Quietus Spike looks at that player's life total (which is the same as the team's life total) when determining how much life the team will lose, which basically means the team's life total is halved. Here's an example of the math: The team has 19 life, so the player has 19 life. Quietus Spike causes the team to lose 10 life (19 divided by 2, rounded up). The team's life total becomes 9 (19 minus 10)."
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "Note that the target player searches their library (which may be affected by effects such as that of Stranglehold) and that the card they find is revealed, even though these words aren't included in the ability's reminder text."
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "\"Partner with [name]\" represents two abilities. The first is a triggered ability: \"When this permanent enters the battlefield, target player may search their library for a card named [name], reveal it, put it into their hand, then shuffle their library.\""
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders."
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards of your deck are shuffled to become your library."
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "If your Commander deck has two commanders, you can only include cards whose own color identities are also found in your commanders' combined color identities. If Khorvath and Sylvia are your commanders, your deck may contain cards with red and/or white in their color identity, but not blue, black, or green."
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, a player's life total is the same as their team's life total."
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "Virtus's last ability triggers and resolves after combat damage is dealt. For example, if Virtus deals 1 combat damage to a player with 10 life, combat damage will reduce that player's life total to 9. Then its ability will cause the player to lose 5 life, leaving the player at 4."
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 damage from one of them, not from both of them combined. Command Beacon's effect puts one into your hand from the command zone, not both."
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "The second ability represented by the \"partner with [name]\" keyword modifies the rules for deck construction in the Commander variant and has no function outside of that variant. If a legendary creature card with \"partner with [name]\" is designated as your commander, the named legendary creature card can also be designated as your commander. For more information on the Commander variant, please visit Wizards.com/Commander."
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "The triggered ability of the \"partner with\" keyword still triggers in a Commander game. If your other commander has somehow ended up in your library, you can find it. You can also target another player who might have that card in their library."
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "To have two commanders, both must have the partner ability (featured in the Magic: The Gathering—Commander™ (2016 Edition) set) or corresponding \"partner with\" abilities as the game begins. A creature with a \"partner with\" ability can't partner with any creature other than its designated partner. Losing a partner ability during the game doesn't cause either to cease to be your commander."
+    },
+    {
+      "oracle_id": "a75ddd9c-2574-46e9-ac85-58082789ff3e",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "Scytheclaw's triggered ability triggers and resolves after combat damage is dealt. For example, if the Germ token deals 1 combat damage to a player with 10 life, combat damage will reduce that player's life total to 9. Then Scytheclaw's ability will cause the player to lose 5 life, leaving the player at 4."
+    },
+    {
+      "oracle_id": "a75ddd9c-2574-46e9-ac85-58082789ff3e",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "If the Germ token is destroyed, the Equipment remains on the battlefield as with any other Equipment."
+    },
+    {
+      "oracle_id": "a75ddd9c-2574-46e9-ac85-58082789ff3e",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "Like other Equipment, each Equipment with living weapon has an equip cost. You can pay this cost to attach an Equipment to another creature you control. Once the Germ token is no longer equipped, it will be put into your graveyard and subsequently cease to exist, unless another effect raises its toughness above 0."
+    },
+    {
+      "oracle_id": "a75ddd9c-2574-46e9-ac85-58082789ff3e",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "If the living weapon trigger causes two Germs to be created (due to an effect such as that of Doubling Season), the Equipment becomes attached to one of them. The other will be put into your graveyard and subsequently cease to exist, unless another effect raises its toughness above 0."
+    },
+    {
+      "oracle_id": "a75ddd9c-2574-46e9-ac85-58082789ff3e",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "The Germ token enters the battlefield as a 0/0 creature and the Equipment becomes attached to it before state-based actions would cause the token to die. Abilities that trigger as the token enters the battlefield see that a 0/0 creature entered the battlefield."
+    },
+    {
+      "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "Effects that would replace gaining life with another effect won’t apply because it’s impossible for players to gain life."
+    },
+    {
+      "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "Spells and abilities that would cause a player to gain life still resolve, but the life-gain part has no effect."
+    },
+    {
+      "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "If an effect says to set a player’s life total to a certain number and that number is higher than the player’s current life total, that part of the effect won’t do anything. (If the number is lower than the player’s current life total, the effect will work as normal.)"
+    },
+    {
+      "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "The amount of life lost is calculated when the triggered ability resolves. For example, if a player has 20 life and there are two Havoc Festivals on the battlefield, the first ability will cause that player to lose 10 life and then the second ability will cause that player to lose 5 life."
+    },
+    {
+      "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, the last ability triggers for each player. Any life loss is applied to the team’s life total. For example, if the team has 30 life, the first ability will cause the player (and thus the team) to lose 15 life and then the second ability will cause the other player (and thus the team) to lose 8 life. The team will end up having 7 life."
+    },
+    {
+      "oracle_id": "4d97b9d1-1138-40da-b593-8065ea6ed7b3",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "If an effect says to set the enchanted player's life total to a number that's higher than their current life total, that player's life total won't change."
+    },
+    {
+      "oracle_id": "4d97b9d1-1138-40da-b593-8065ea6ed7b3",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "Grievous Wound's last ability triggers only once whenever enchanted player is dealt combat damage, no matter how many creatures deal combat damage to them at the same time."
+    },
+    {
+      "oracle_id": "4d97b9d1-1138-40da-b593-8065ea6ed7b3",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "Spells and abilities that cause the enchanted player to gain life still resolve while Grievous Wound is on the battlefield. The enchanted player won't gain life, but any other effects of that spell or ability will still happen."
+    },
+    {
+      "oracle_id": "4d97b9d1-1138-40da-b593-8065ea6ed7b3",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "Grievous Wound's last ability triggers and resolves after the damage is dealt. For example, if the enchanted player has 10 life and is dealt 1 damage, that damage will reduce their life total to 9. Then Grievous Wound's ability will cause that player to lose 5 life, leaving their life total at 4."
+    }
+  ]
+}

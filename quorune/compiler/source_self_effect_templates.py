@@ -55,6 +55,15 @@ def source_self_contextual_effect_template(
 ) -> tuple[Any, ...] | None:
     """Delegate one source-bound body to its closed typed leaf owner."""
 
+    counter_payment = _source_self_counter_payment(text,card_name=card_name,compile_effect=compile_effect)
+    if counter_payment is not None:
+        return counter_payment
+
+    optional = _source_self_optional_result(text, card_name=card_name,
+        event_phrase=event_phrase, compile_effect=compile_effect)
+    if optional is not None:
+        return optional
+
     connive = fixed_connive_effect_template(text, source_name=card_name, source_is_permanent=True,
                                            allow_source_pronoun=True)
     if connive is not None:return connive
@@ -88,6 +97,38 @@ def source_self_contextual_effect_template(
     return declared_effect_amount_template(
         text, source_name=card_name, compile_fixed=compile_fixed,
     )
+
+
+def _source_self_counter_payment(text, *, card_name, compile_effect):
+    if compile_effect is None:return None
+    normalized=re.sub(r'^(you may remove [^.]+? counters? from) (?:it|him|her)(?=\.)',
+        r'\1 this permanent',text,flags=re.I)
+    if normalized==text:return None
+    compiled=compile_effect(normalized,card_name=card_name)
+    return compiled if compiled[0] is not None else None
+
+
+def _source_self_optional_result(text, *, card_name, event_phrase, compile_effect):
+    if compile_effect is None:
+        return None
+    normalized = re.sub(r'^(you may have) (?:it|him|her) (deal|gain|get|lose)\b',
+        r'\1 this permanent \2', text, flags=re.I)
+    if normalized == text:
+        return None
+    from .optional_effect_templates import fixed_optional_effect_template
+    def compile_body(body):
+        leaf = source_self_contextual_effect_template(body, card_name=card_name,
+            event_phrase=event_phrase, compile_effect=compile_effect)
+        if leaf is None or leaf[0] is None:
+            leaf = compile_effect(body, card_name=card_name)
+        if (len(leaf[1]) == 1 and leaf[1][0].get('op') == 'modify_stats_until_end_of_turn'
+                and leaf[1][0].get('card') == '$source'):
+            from .fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
+            leaf = FixedSourceCharacteristicsTemplate(source_kind='permanent',
+                power=leaf[1][0]['power'], toughness=leaf[1][0]['toughness']).compiled()
+        return pin_source_result_incarnation(leaf)
+    optional = fixed_optional_effect_template(normalized, compile_effect=compile_body)
+    return optional.compiled() if optional is not None else None
 
 
 def normalized_source_result_body(body: str) -> str | None:

@@ -1,7 +1,10 @@
 from __future__ import annotations
 from .counter_placement_capability_shapes import counter_placement_covered_mechanics
 from .control_capability_shapes import fixed_control_node_capabilities
+from .city_blessing_shapes import ascend_spell_node_capabilities
+from .public_event_counter_set_shapes import public_event_counter_set_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
+from .destruction_regeneration_capability_shapes import regeneration_covered_mechanics as _regeneration_covered_mechanics
 from .whole_hand_discard_shapes import unchosen_hand_discard_node_capabilities
 from .connive_capability_shapes import fixed_connive_node_capabilities
 from .goad_capability_shapes import fixed_goad_node_capabilities
@@ -157,6 +160,7 @@ from ..compiler.fixed_library_selection_templates import (
     FIXED_LIBRARY_SELECTION_MECHANIC,
 )
 from .closed_effect_program_shapes import CLOSED_EFFECT_PROGRAM_MECHANIC, closed_effect_program_node_capabilities
+from .modal_node_capabilities import fixed_modal_capability_dependencies as _fixed_modal_capability_dependencies
 from .modal_capability_shapes import (
     fixed_choose_one_modal_branches,
     fixed_nonrepeating_modal_branches,
@@ -287,6 +291,15 @@ _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
     "fixed-counter-controller-effect-sequence"
 )
 MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    'paid-entry-copy-offspring': ('casting.additional.paid_entry_copy',),
+    'paid-entry-copy-squad': ('casting.additional.squad_fixed_mana',),
+    'commander-learn': ('keyword_action.learn.commander',),
+    'half-current-player-life-loss': ('life.loss.half_current_player',),
+    'half-affected-player-domain-choice': ('choice.affected_player.half_domain',),
+    'fixed-token-typed-ability-definition': ('token.creation.typed_ability_definition',),
+    'fixed-spree-mode-costs': ('casting.additional_cost.spree_fixed_modes',),
+    'fixed-public-event-set-counter':('counter.producer.fixed_public_set_event',),
+    'ascend':('player.designation.citys_blessing',),
     **{name: ('keyword_action.manifest.card',) for name in ('manifest', 'cr-701-manifest')}, 'manifest dread': ('keyword_action.manifest_dread',), 'predefined-role-token': ('token.creation.predefined_role',),
     CLASS_MECHANIC_ID: (CLASS_LIFECYCLE_CAPABILITY_ID,),
     AFTERLIFE_MECHANIC_ID: (AFTERLIFE_CAPABILITY_ID,), **{keyword: (f"trigger.keyword.{keyword}.fixed",) for keyword in ("afflict", "annihilator", "firebending", "ingest", "mobilize", "soulshift")},
@@ -409,6 +422,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'trigger-event-normalized-counter-placement': ('trigger.event.normalized_counter_placement',),
     "tap-state-event-player-result": ("trigger.event.normalized_public_action",),
     "scheduled-player-event-result": ("trigger.event.scheduled_player_result",),
+    "fixed-action-reflexive-trigger": ("trigger.reflexive.fixed_action_result",),
     "trigger-event-normalized-damage": (
         "trigger.event.normalized_damage",
     ),
@@ -460,6 +474,15 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
 }
 _SHAPE_GATED_MECHANICS = frozenset(
     {
+        'commander-learn',
+        'paid-entry-copy-offspring',
+        'paid-entry-copy-squad',
+        'half-current-player-life-loss',
+        'half-affected-player-domain-choice',
+        'fixed-token-typed-ability-definition',
+        'fixed-spree-mode-costs',
+        'fixed-public-event-set-counter',
+        'ascend',
         "fixed-extra-turn-after-current",
         "declared-effect-amount",
         "cr-121-drawing-a-card",
@@ -471,6 +494,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         "optional-fixed-counter-event-trigger",
         FIXED_OPTIONAL_EFFECT_MECHANIC,
         FIXED_OPTIONAL_MANA_PAYMENT_MECHANIC,
+        "fixed-action-reflexive-trigger",
         "destroy",
         _EXILE_MECHANIC,
         "return-to-owner-hand",
@@ -1063,6 +1087,8 @@ def _targeted_effect_capabilities(
     dependencies: set[str] = set()
     for resolver in (
         fixed_extra_turn_node_capabilities,
+        ascend_spell_node_capabilities,
+        public_event_counter_set_node_capabilities,
         unchosen_hand_discard_node_capabilities,
         fixed_connive_node_capabilities, fixed_goad_node_capabilities, exploit_instruction_node_capabilities,
         fixed_control_node_capabilities,
@@ -1141,67 +1167,6 @@ def _targeted_effect_capabilities(
     return dependencies
 
 
-def _fixed_modal_capability_dependencies(
-    *,
-    effects: Sequence[Mapping[str, Any]],
-    target_schema: Mapping[str, Any] | None,
-    mechanics: Iterable[str],
-) -> tuple[str, ...]:
-    mechanic_values = tuple(str(value).casefold() for value in mechanics)
-    nonrepeating = FIXED_NONREPEATING_MODAL_MECHANIC in mechanic_values
-    branches = (
-        fixed_nonrepeating_modal_branches(
-            effects=effects,
-            target_schema=target_schema,
-            mechanic_ids=mechanic_values,
-        )
-        if nonrepeating
-        else fixed_choose_one_modal_branches(
-            effects=effects,
-            target_schema=target_schema,
-            mechanic_ids=mechanic_values,
-        )
-    )
-    if branches is None:
-        return ()
-    modal_mechanic = (
-        FIXED_NONREPEATING_MODAL_MECHANIC
-        if nonrepeating
-        else FIXED_CHOOSE_ONE_MODAL_MECHANIC
-    )
-    dependencies = {
-        (
-            FIXED_NONREPEATING_MODAL_CAPABILITY
-            if nonrepeating
-            else FIXED_CHOOSE_ONE_MODAL_CAPABILITY
-        )
-    }
-    represented_mechanics = {modal_mechanic}
-    for branch in branches:
-        branch_dependencies = capability_dependencies_for_node(
-            effects=branch.effects,
-            target_schema=branch.target_schema,
-            mechanic_ids=branch.mechanics,
-        )
-        if not branch_dependencies or (
-            set(branch.mechanics)
-            - set(capability_covered_mechanics(branch_dependencies))
-        ):
-            return ()
-        dependencies.update(branch_dependencies)
-        represented_mechanics.update(branch.mechanics)
-    outer_mechanics = set(mechanic_values) - represented_mechanics
-    for mechanic in outer_mechanics:
-        if mechanic == "cr-603-handling-triggered-abilities":
-            dependencies.add("trigger.placement.apnap")
-            continue
-        required = MECHANIC_CAPABILITY_DEPENDENCIES.get(mechanic)
-        if not required:
-            return ()
-        dependencies.update(required)
-    return tuple(sorted(dependencies))
-
-
 def capability_dependencies_for_node(
     *,
     effects: Sequence[Mapping[str, Any]],
@@ -1227,11 +1192,9 @@ def capability_dependencies_for_node(
             FIXED_NONREPEATING_MODAL_MECHANIC,
         }
     ):
-        return _fixed_modal_capability_dependencies(
-            effects=effects,
-            target_schema=target_schema,
-            mechanics=mechanic_values,
-        )
+        from .spree_capability_shapes import modal_cost_capabilities
+        return modal_cost_capabilities(effects=effects, target_schema=target_schema,
+            mechanics=mechanic_values, cost_schema=cost_schema, modal_resolver=_fixed_modal_capability_dependencies)
 
     all_operations = _nested_effect_operations(effects)
     if (shape_context := _query.public_query_amount_shape_context(effects, mechanics)) is None: return ()
@@ -1392,25 +1355,6 @@ def _fixed_modal_covered_mechanics(supplied: set[str]) -> set[str]:
         mechanic
         for capability, mechanic in mapping.items()
         if capability in supplied
-    }
-
-
-_REGENERATION_MECHANIC_CAPABILITIES = {
-    "regenerate": {
-        "permanent.regeneration.fixed_effect",
-        "permanent.regeneration.self_activation",
-    },
-    "regeneration-prohibition": {
-        "permanent.destroy.regeneration_prohibition"
-    },
-}
-
-
-def _regeneration_covered_mechanics(supplied: set[str]) -> set[str]:
-    return {
-        mechanic
-        for mechanic, capabilities in _REGENERATION_MECHANIC_CAPABILITIES.items()
-        if supplied.intersection(capabilities)
     }
 
 

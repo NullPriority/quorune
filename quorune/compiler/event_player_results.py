@@ -5,6 +5,8 @@ from __future__ import annotations
 import re
 from collections.abc import Mapping
 from ..rules.event_subscriptions import FixedEventSubscriptionSet
+from ..event_player_result_values import event_result_value_capabilities
+from .event_result_value_templates import event_result_instruction
 
 EVENT_PLAYER_RESULT_CAPABILITY='resolution.event_player.fixed_result'
 EVENT_PLAYER_RESULT_MECHANIC='fixed-event-player-result'
@@ -53,15 +55,17 @@ def _fixed_event_player_clause(binding,body,*,effect_template,card_name):
     player=_event_player(binding,match['subject'].casefold())
     if player is None:return None
     verb=match['verb'].casefold().removesuffix('s')
-    normalized=verb.capitalize()+' '+match['body']
+    normalized=event_result_instruction(match['subject'].casefold(),verb,match['body'])
+    if normalized is None:return None
     compiled=effect_template(normalized,card_name=card_name)
     if compiled[0] is None or compiled[2] is not None or len(compiled[1])!=1:return None
     effect=compiled[1][0];layouts={'draw':('count',{'op','player','count','private'}),
         'life':('delta',{'op','player','delta'}),'lose_life':('amount',{'op','player','amount'})}
     if effect.get('op') not in layouts:return None
     field,fields=layouts[effect['op']]
-    if (set(effect)!=fields or effect.get('player')!='$controller' or type(effect.get(field)) is not int
-            or effect[field]<=0 or effect['op']=='draw' and effect['private'] is not True):return None
+    if (set(effect)!=fields or effect.get('player')!='$controller'
+            or event_result_value_capabilities(effect['op'],field,effect.get(field)) is None
+            or effect['op']=='draw' and effect['private'] is not True):return None
     return {**effect,'player':player},compiled[3]
 
 

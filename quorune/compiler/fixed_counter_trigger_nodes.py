@@ -1221,7 +1221,7 @@ def _binding_effect_template(binding, body, *, card_name, effect_template):
 
 
 def _counter_binding_accepts_result(binding,body_mechanics):
-    return (bool({'fixed-entry-event-object-counter', 'fixed-public-event-source-counter', 'fixed-public-event-target-counter'}.intersection(body_mechanics))
+    return (bool({'fixed-entry-event-object-counter', 'fixed-public-event-source-counter', 'fixed-public-event-target-counter','fixed-public-event-set-counter'}.intersection(body_mechanics))
         or binding.variant not in _NONCOUNTER_PUBLIC_EVENT_VARIANTS
         or binding.event in {FixedCounterTriggerEvent.PERMANENT_SACRIFICED,FixedCounterTriggerEvent.CARD_DISCARDED}
         and binding.variant in PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS)

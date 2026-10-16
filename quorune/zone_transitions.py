@@ -34,9 +34,9 @@ from .life_state import (
     commit_life_payment,
     prepare_life_payment,
 )
-from .kicker import KICKER_ANNOTATION
 from .model import CardInstance, GameState, StackItem
 from .relative_power_target import pin_host_relative_power_source_departures
+from .zone_trigger_processing import _damage_source_characteristics
 from .scalar_effect_amounts import pin_scalar_characteristic_departures
 from .station import pin_host_station_departures
 from .semantic_runtime import (
@@ -47,7 +47,7 @@ from .semantic_runtime import (
 )
 from .semantic_runtime.explore import capture_explore_source_departure
 from .trigger_processing import enqueue_trigger_batch
-from .zone_object_state import reset_card_after_zone_change
+from .zone_object_state import reset_card_after_zone_change, stack_entry_cast_facts
 from .zone_trigger_events import (
     ZoneChangeOccurrence,
     ZoneTransitionKind,
@@ -102,6 +102,7 @@ class ZoneTransitionOwner:
             (item, copy.deepcopy(item.context))
             for item in self.state.stack
         )
+        pending_before = tuple(self.state.pending_trigger_batches)
         try:
             pin_scalar_characteristic_departures(self.host, cards, error_type=StateInvariantError)
             from .token_copy_references import pin_copy_characteristic_departures
@@ -116,9 +117,14 @@ class ZoneTransitionOwner:
                 cards,
                 error_type=StateInvariantError,
             )
+            from .rules.stack_damage_sources import pin_stack_damage_departures
+            pin_stack_damage_departures(self.host, cards, error_type=StateInvariantError)
         except StateInvariantError:
             for item, context in contexts:
                 item.context = context
+            from .trigger_processing import replace_pending_trigger_batch
+            for index, batch in enumerate(pending_before):
+                replace_pending_trigger_batch(self.host, index, batch)
             raise
 
     def semantic_event_sources(self, *, zones: set[str] | None = None) -> list[CardInstance]:
@@ -476,7 +482,7 @@ class ZoneTransitionOwner:
             card,
         )
         characteristics = (
-            copy.deepcopy(self.host._effective_card_data(card))
+            _damage_source_characteristics(self.host, card)
             if semantic_events
             else {}
         )
@@ -500,11 +506,7 @@ class ZoneTransitionOwner:
             ),
             copy_snapshot=(token_copy_snapshot(self.host, card)
                            if semantic_events and card.zone == "battlefield" else None),
-            cast_option=(
-                "kicked"
-                if card.annotations.get(KICKER_ANNOTATION) is True
-                else None
-            ),
+            **stack_entry_cast_facts(card),
         )
 
     def _commit_move(
@@ -738,6 +740,7 @@ class ZoneTransitionOwner:
                     plan.prepared_replacement.read_ahead_chapter
                 ),
                 cast_option=departure.cast_option,
+                paid_entry_copy=departure.paid_entry_copy,
                 trigger_batch=trigger_batch,
             )
         if not defer_control_sync:
@@ -848,6 +851,8 @@ class ZoneTransitionOwner:
         trigger_batch: list[StackItem] | None = None,
         history_pre_recorded: bool = False,
     ) -> tuple[ZoneChangeOccurrence, list[StackItem], bool]:
+        from .rules.city_blessing import synchronize_citys_blessing
+        synchronize_citys_blessing(self.host,reason='zone transition before trigger facts')
         occurrence = self._zone_change_occurrence(
             card,
             departure=departure,
@@ -915,6 +920,7 @@ class ZoneTransitionOwner:
             transition_kind=transition_kind,
             read_ahead_chapter=read_ahead_chapter,
             cast_option=departure.cast_option if departure.origin == 'stack' and card.zone == 'battlefield' else None,
+            paid_entry_copy=departure.paid_entry_copy if departure.origin == 'stack' and card.zone == 'battlefield' else None,
         )
 
     def move_cards_simultaneously(
@@ -948,7 +954,7 @@ class ZoneTransitionOwner:
             sources=sources,
             source_zones={source.object_id: source.zone for source in sources},
             source_characteristics={
-                source.object_id: copy.deepcopy(self.host._effective_card_data(source))
+                source.object_id: _damage_source_characteristics(self.host, source)
                 for source in sources
             },
         )
@@ -1004,6 +1010,8 @@ class ZoneTransitionOwner:
             )
         from .control_effects import synchronize_control_effects
         synchronize_control_effects(self.host, reason="control duration sources changed zones simultaneously")
+        from .rules.city_blessing import synchronize_citys_blessing
+        synchronize_citys_blessing(self.host,reason='simultaneous zone transitions before trigger facts')
         occurrences = tuple(
             self._zone_change_occurrence(
                 card,
@@ -1038,6 +1046,7 @@ class ZoneTransitionOwner:
                 origin_attachments=departure.attachments,
                 origin_attached_to=departure.attached_to,
                 cast_option=departure.cast_option,
+                paid_entry_copy=departure.paid_entry_copy,
                 departure_sources=sources.sources,
                 departure_source_zones=sources.source_zones,
                 departure_source_characteristics=(

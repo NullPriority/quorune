@@ -521,6 +521,7 @@ class CapabilityRegistryTests(unittest.TestCase):
             [
                 "damage.result.multitype_permanent",
                 "damage.result.player_life",
+                "damage.source.stack_current_or_lki",
                 "target.public.player_or_damageable_permanent",
             ],
             profile="commander_review",
@@ -637,6 +638,7 @@ class GeneratedCapabilityTrustTests(unittest.TestCase):
                 "damage.amount.positive",
                 "damage.result.multitype_permanent",
                 "damage.result.player_life",
+                "damage.source.stack_current_or_lki",
                 "target.public.player_or_damageable_permanent",
             ),
             node.capability_dependencies,

@@ -72,7 +72,9 @@ def validate_dynamic_mana_output(ability):
     value=ability.dynamic_mana_output
     if value is None or value=='opponent_land_colors':
         return
-    output=PublicQuantityManaOutput.from_dict(value)
+    from .chosen_color_mana_model import CHOSEN_COLOR_MANA_KIND, ChosenColorManaOutput
+    output = (ChosenColorManaOutput.from_dict(value) if isinstance(value, Mapping) and value.get('kind') == CHOSEN_COLOR_MANA_KIND
+              else PublicQuantityManaOutput.from_dict(value))
     if not ability.mana_ability or ability.fixed_mana_outputs or ability.color_set_mana_output is not None:
         raise ValueError('Public quantity mana cannot mix competing output descriptors')
     if output.restriction != ability.mana_spend_restriction or ability.loyalty_delta is not None or ability.target_schema is not None:

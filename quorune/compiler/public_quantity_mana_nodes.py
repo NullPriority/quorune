@@ -17,7 +17,8 @@ from .ir_model import OracleNode, append_residual
 def public_quantity_activated_mana_node(ability,node_id,line,span,capability_registry,capability_profile,residuals,*,source_name):
     output=public_quantity_mana_template(ability.effect_text,source_name=source_name)
     if output is None:
-        return ability,None
+        from .chosen_color_mana_nodes import chosen_color_activated_mana_node
+        return chosen_color_activated_mana_node(ability, node_id, line, span, capability_registry, capability_profile, residuals)
     spec=compile_public_quantity_activated_mana_ability(ability,output)
     if spec is None:
         return ability,None

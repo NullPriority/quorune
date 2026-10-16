@@ -1122,6 +1122,12 @@ class FixedEffectOptionalPaymentHandler(OptionalPaymentHandler):
     """One registered owner preserves historical v1 and versioned fixed costs."""
 
     def prepare(self,effect:Mapping[str,Any],context:SemanticChoiceContext)->SemanticChoicePreparation:
+        if effect.get('schema_version')==5:
+            from .commander_learn import prepare_commander_learn
+            return prepare_commander_learn(effect,context)
+        if effect.get('schema_version')==4:
+            from .reflexive_payment import prepare_reflexive_payment
+            return prepare_reflexive_payment(effect,context)
         if effect.get('schema_version')==3:
             from .source_maintenance import prepare_source_maintenance
             return prepare_source_maintenance(effect,context)
@@ -1131,6 +1137,12 @@ class FixedEffectOptionalPaymentHandler(OptionalPaymentHandler):
         return super().prepare(effect,context)
 
     def complete(self,continuation:SemanticChoiceContinuation,response:Mapping[str,Any],query:SemanticChoiceQuery)->SemanticChoiceCompletion:
+        if continuation.effect.get('schema_version')==5:
+            from .commander_learn import complete_commander_learn
+            return complete_commander_learn(continuation,response,query)
+        if continuation.effect.get('schema_version')==4:
+            from .reflexive_payment import complete_reflexive_payment
+            return complete_reflexive_payment(continuation,response,query)
         if continuation.effect.get('schema_version')==3:
             from .source_maintenance import complete_source_maintenance
             return complete_source_maintenance(continuation,response,query)
@@ -1157,7 +1169,10 @@ PAYMENT_CHOICE_HANDLERS = (
             "cost",
             "effects",
             "schema_version",
+            "action", "rules_scope",
             "payment",
+            "reflexive_program",
+            "_parent_stack_ref",
             "_legal_objects",
             "_choice_actor",
             "_requirements",

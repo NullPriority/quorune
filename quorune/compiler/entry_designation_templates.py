@@ -12,6 +12,7 @@ from ..entry_designations import (
     CHOSEN_CHARACTERISTICS_HANDLER_ID,
     ENTRY_DESIGNATION_CAPABILITY,
     ENTRY_DESIGNATION_HANDLER_ID,
+    ENTRY_DESIGNATION_HANDLER_IDS,
 )
 from ..rules.source_references import SourceReferenceSpec
 from .continuous_templates import (
@@ -32,7 +33,7 @@ def scope_entry_designation_faces(
             descriptor["designation"]
             for node in face.nodes
             for descriptor in node.handlers
-            if descriptor.get("handler_id") == ENTRY_DESIGNATION_HANDLER_ID
+            if descriptor.get("handler_id") in ENTRY_DESIGNATION_HANDLER_IDS
         )
         duplicates = {kind for kind, count in declarations.items() if count > 1}
         source = (
@@ -57,7 +58,7 @@ def scope_entry_designation_faces(
         nodes = []
         for node in face.nodes:
             if any(
-                descriptor.get("handler_id") == ENTRY_DESIGNATION_HANDLER_ID
+                descriptor.get("handler_id") in ENTRY_DESIGNATION_HANDLER_IDS
                 and descriptor.get("designation") in blocked
                 for descriptor in node.handlers
             ):
@@ -89,6 +90,13 @@ def scope_entry_designation_faces(
 
 
 def entry_designation_handler(text: str, *, source_name: str):
+    from .entry_color_composition import composed_entry_color_designation_handler
+
+    return (composed_entry_color_designation_handler(text, source_name=source_name)
+            or _plain_entry_designation_handler(text, source_name=source_name))
+
+
+def _plain_entry_designation_handler(text: str, *, source_name: str):
     source = (
         rf"(?:{SourceReferenceSpec(source_name).regex_pattern}|"
         r"this (?:artifact|Aura|card|creature|enchantment|Equipment|land|permanent))"
@@ -112,7 +120,14 @@ def entry_designation_handler(text: str, *, source_name: str):
     )
 
 
-def chosen_characteristics_handler(text: str):
+def chosen_characteristics_handler(text: str, *, source_name: str = 'source'):
+    from .conditional_chosen_templates import conditional_chosen_characteristics_handler
+
+    return (conditional_chosen_characteristics_handler(text, source_name=source_name)
+            or _fixed_chosen_characteristics_handler(text))
+
+
+def _fixed_chosen_characteristics_handler(text: str):
     match = re.fullmatch(
         r"(?P<other>Other )?(?P<all>All )?creatures"
         r"(?P<controlled> you control)? of the chosen (?P<kind>color|type)"

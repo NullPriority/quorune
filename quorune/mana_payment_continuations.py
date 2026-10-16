@@ -53,6 +53,9 @@ def issue_mana_payment_replacement_choice(
         raise ReplacementEffectError(
             "Only represented priority actions have resumable mana payments"
         )
+    if action=='activate':
+        from .rules.activation.random_discard_costs import freeze_random_discard_cost_response
+        response=freeze_random_discard_cost_response(host,seat,response)
     pending = required.pending
     if pending.choice.chooser != seat:
         raise ReplacementEffectError(
@@ -146,6 +149,7 @@ def execute_mana_choice_capable_priority_action(
         "_mana_payment_id",
         "_mana_replacement_selections",
         "_counted_cost_replacement_sequence",
+        "_random_discard_cost_refs",
     }
     if not trusted_resume and internal_fields.intersection(response):
         raise GameRuleError(

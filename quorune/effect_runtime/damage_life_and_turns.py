@@ -64,6 +64,19 @@ def _apply_creature_power_damage(
     return result
 
 
+def _source_snapshot_override(host, effect):
+    raw = effect.get('source_snapshot')
+    if raw is not None and not isinstance(raw, Mapping):
+        raise GameRuleError('Damage source LKI is malformed')
+    snapshot = DamageSourceSnapshot.from_dict(dict(raw)) if isinstance(raw, Mapping) else None
+    if snapshot is not None and effect.get('source') != snapshot.ref:
+        raise GameRuleError('Damage source LKI does not match the represented source')
+    if snapshot is not None:
+        from ..rules.stack_damage_sources import refresh_stack_damage_source
+        snapshot = refresh_stack_damage_source(host, snapshot, sealed=bool(effect.get('_replacement_event_ids')))
+    return snapshot
+
+
 def _apply_damage(
     host: Any,
     effect: Mapping[str, Any],
@@ -80,25 +93,12 @@ def _apply_damage(
     if amount == 0:
         return 0
     try:
-        raw_source_snapshot = effect.get("source_snapshot")
-        if raw_source_snapshot is not None and not isinstance(
-            raw_source_snapshot, Mapping
-        ):
-            raise GameRuleError("Damage source LKI is malformed")
-        pinned_source = (
-            DamageSourceSnapshot.from_dict(dict(raw_source_snapshot))
-            if isinstance(raw_source_snapshot, Mapping)
-            else None
-        )
+        pinned_source = _source_snapshot_override(host, effect)
         effect_source = (
             str(effect["source"])
             if effect.get("source") is not None
             else None
         )
-        if pinned_source is not None and effect_source != pinned_source.ref:
-            raise GameRuleError(
-                "Damage source LKI does not match the represented source"
-            )
         replacement_event_ids = list(
             effect.get("_replacement_event_ids") or ()
         )
@@ -188,6 +188,7 @@ def _apply_damage_each_opponent(
         if seat != actor
     ]
     try:
+        pinned_source = _source_snapshot_override(host, effect)
         replacement_event_ids = list(
             effect.get("_replacement_event_ids") or ()
         )
@@ -218,6 +219,7 @@ def _apply_damage_each_opponent(
                 amount=amount,
                 combat=False,
                 reason=reason,
+                source_override=pinned_source,
                 unpreventable=bool(
                     effect.get("unpreventable", False)
                 ),

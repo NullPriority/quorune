@@ -172,7 +172,8 @@ def _source_permanent_participation_template(
             compiled=self_zone_cast,
             kind="static_ability",
             event="cast.zone.permission",
-            active_zone="graveyard",
+            active_zone='all' if self_zone_cast[1].get('handler_id') == 'permission.cast.self-public-zones.v1' else 'graveyard',
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,) if self_zone_cast[1].get('handler_id') == 'permission.cast.self-public-zones.v1' else (),
             dependency_reason=(
                 "self-zone casting permission requires its closed typed "
                 "runtime capability"
@@ -545,8 +546,8 @@ def _graveyard_static_template(text: str, *, source_name: str | None, source_is_
         dependency_reason='Explicit graveyard grants require source-zone and live query capabilities')
 
 
-def _chosen_static_template(text: str, *, source_is_class: bool):
-    chosen = None if source_is_class else chosen_characteristics_handler(text)
+def _chosen_static_template(text: str, *, source_name: str | None, source_is_class: bool):
+    chosen = None if source_is_class else chosen_characteristics_handler(text, source_name=source_name or "source")
     return None if chosen is None else StaticRuntimeTemplate(
         compiled=chosen, kind='static_ability', event='characteristics.evaluate',
         runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
@@ -648,7 +649,7 @@ def static_runtime_template(
         if draw is not None:
             return draw
 
-    chosen = _chosen_static_template(text, source_is_class=source_is_class)
+    chosen = _chosen_static_template(text, source_name=source_name, source_is_class=source_is_class)
     if chosen is not None:
         return chosen
     continuous = _continuous_static_runtime_template(

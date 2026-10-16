@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "focused_original_and_synthetic_rules_cards",
+  "source": "Pinned Lightwheel Oracle/rulings and explicit synthetic Vehicle",
+  "cards": [
+    {
+      "oracle_id": "17fae94e-558f-449a-b30c-e3c37a068b79",
+      "name": "Lightwheel Enhancements",
+      "mana_cost": "{W}",
+      "type_line": "Enchantment \u2014 Aura",
+      "oracle_text": "Enchant creature or Vehicle\nStart your engines! (If you have no speed, it starts at 1. It increases once on each of your turns when an opponent loses life. Max speed is 4.)\nEnchanted permanent gets +1/+1 and has vigilance.\nMax speed \u2014 You may cast this card from your graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "cmc": 1.0,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Max speed",
+        "Enchant",
+        "Start your engines!"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "91fecaa7-495c-42cb-85f6-126e9ce4b101",
+      "name": "Generic Modifier Vehicle",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Artifact \u2014 Vehicle",
+      "oracle_text": "",
+      "power": "3",
+      "toughness": "3",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "17fae94e-558f-449a-b30c-e3c37a068b79",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "\u201cMax speed \u2014 [ability]\u201d means \u201cAs long as you have max speed, this object has [ability].\u201d If the granted ability functions in a zone other than the battlefield, the max speed ability does too."
+    },
+    {
+      "oracle_id": "17fae94e-558f-449a-b30c-e3c37a068b79",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "A player \u201chas max speed\u201d if their speed is 4."
+    },
+    {
+      "oracle_id": "17fae94e-558f-449a-b30c-e3c37a068b79",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "Each player tracks their speed (or lack thereof) separately. Increasing your speed has no effect on whether another player has speed."
+    },
+    {
+      "oracle_id": "17fae94e-558f-449a-b30c-e3c37a068b79",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "If an effect needs to know what a player\u2019s speed is and that player doesn\u2019t have a speed, their speed is considered 0."
+    },
+    {
+      "oracle_id": "17fae94e-558f-449a-b30c-e3c37a068b79",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "Your speed doesn\u2019t change until a spell or ability says so, such as the inherent triggered ability that cares about opponents losing life during your turn. Notably, losing control of permanents with start your engines! doesn\u2019t affect your speed."
+    },
+    {
+      "oracle_id": "17fae94e-558f-449a-b30c-e3c37a068b79",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "Start your engines! isn\u2019t a triggered ability. Increasing your speed to 1 is something that happens as a state-based action as soon as you control a permanent with the ability. Notably, this includes gaining control of a permanent with the ability that another player controls."
+    }
+  ]
+}

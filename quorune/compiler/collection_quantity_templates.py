@@ -10,6 +10,19 @@ from .fixed_numbers import fixed_number
 from ..object_predicate import ObjectQuerySpec
 
 
+def fixed_devotion_condition(text: str):
+    from ..continuous_conditions import FixedPublicStateConditionSpec, FixedPublicStateConditionKind
+    match = re.fullmatch(r'(?P<quantity>your devotion to (?:white|blue|black|red|green)(?: and (?:white|blue|black|red|green))?) is less than (?P<amount>one|two|three|four|five|six|seven|eight|nine|ten|[0-9]+)', text, re.I)
+    if match is None:
+        return None
+    quantity = collection_quantity(match['quantity'], compile_count=lambda _text: None)
+    amount = fixed_number(match['amount'])
+    if quantity is None or amount < 1:
+        return None
+    return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.QUERY_COUNT_AT_MOST,
+        amount=amount - 1, quantity=quantity, schema_version=2)
+
+
 def collection_quantity(value: str, *, compile_count) -> CharacteristicQuantitySpec | None:
     devotion = re.fullmatch(r'your devotion to (?P<first>white|blue|black|red|green)(?: and (?P<second>white|blue|black|red|green))?', value, re.I)
     if devotion is not None:

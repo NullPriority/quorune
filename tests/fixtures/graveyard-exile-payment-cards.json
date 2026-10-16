@@ -1,0 +1,363 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "pinned-original-rule-witness",
+  "source": "Pinned scryfall-current.sqlite3 originals and all their rulings",
+  "cards": [
+    {
+      "oracle_id": "09277185-fccd-4747-aa79-f569c581022a",
+      "name": "Kishla Trawlers",
+      "mana_cost": "{2}{U}",
+      "type_line": "Creature \u2014 Human Citizen",
+      "oracle_text": "When this creature enters, you may exile a creature card from your graveyard. When you do, return target instant or sorcery card from your graveyard to your hand.",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "17455491-c295-4130-99b4-1b5c6ac1cd25",
+      "name": "Young Necromancer",
+      "mana_cost": "{4}{B}",
+      "type_line": "Creature \u2014 Human Warlock",
+      "oracle_text": "When this creature enters, you may exile two cards from your graveyard. When you do, return target creature card from your graveyard to the battlefield.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-06-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 5.0
+    },
+    {
+      "oracle_id": "34bccfc0-453d-4d1a-8046-70f9c3065e88",
+      "name": "Master Skald",
+      "mana_cost": "{4}{W}",
+      "type_line": "Creature \u2014 Dwarf Warrior",
+      "oracle_text": "When this creature enters, you may exile a creature card from your graveyard. If you do, return target artifact or enchantment card from your graveyard to your hand.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 5.0
+    },
+    {
+      "oracle_id": "1d09ebb7-c4c9-4bb7-b6bf-3c8330b954e8",
+      "name": "Tymaret Calls the Dead",
+      "mana_cost": "{2}{B}",
+      "type_line": "Enchantment \u2014 Saga",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI, II \u2014 Mill three cards. Then you may exile a creature or enchantment card from your graveyard. If you do, create a 2/2 black Zombie creature token.\nIII \u2014 You gain X life and scry X, where X is the number of Zombies you control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Mill",
+        "Scry"
+      ],
+      "produced_mana": [],
+      "layout": "saga",
+      "released_at": "2020-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "210940f1-3c11-4877-bbfc-2429c03f98ee",
+      "name": "Masked Vandal",
+      "mana_cost": "{1}{G}",
+      "type_line": "Creature \u2014 Shapeshifter",
+      "oracle_text": "Changeling (This card is every creature type.)\nWhen this creature enters, you may exile a creature card from your graveyard. If you do, exile target artifact or enchantment an opponent controls.",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Changeling"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "09277185-fccd-4747-aa79-f569c581022a",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "You don\u2019t choose a target for Kishla Trawlers\u2019s ability at the time it triggers. Rather, a second \u201creflexive\u201d ability triggers when you exile a creature card from your graveyard this way. You choose a target for that ability as it goes on the stack. Each player may respond to this triggered ability as normal."
+    },
+    {
+      "oracle_id": "17455491-c295-4130-99b4-1b5c6ac1cd25",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Young Necromancer's reflexive triggered ability (the one that returns a card to the battlefield) triggers when you exile two cards from your graveyard. Players may respond to that ability before the card is returned."
+    },
+    {
+      "oracle_id": "34bccfc0-453d-4d1a-8046-70f9c3065e88",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "You choose the target artifact or enchantment card in your graveyard as you put the triggered ability on the stack. Once the ability starts resolving, you choose which creature card to exile from your graveyard, if any. At that point, no one can respond to your choice or take any actions until the ability is finished resolving."
+    },
+    {
+      "oracle_id": "34bccfc0-453d-4d1a-8046-70f9c3065e88",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If you choose an artifact creature card or an enchantment creature card in your graveyard as the target, you could exile that card as the triggered ability is resolving, but if you do, you won\u2019t return it to your hand."
+    },
+    {
+      "oracle_id": "1d09ebb7-c4c9-4bb7-b6bf-3c8330b954e8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "A chapter ability doesn\u2019t trigger if a lore counter is put on a Saga that already had a number of lore counters greater than or equal to that chapter\u2019s number. For example, the third lore counter put on a Saga causes the III chapter ability to trigger, but I and II won\u2019t trigger again."
+    },
+    {
+      "oracle_id": "1d09ebb7-c4c9-4bb7-b6bf-3c8330b954e8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If X is greater than the number of cards in your library while resolving the third chapter ability, you look at your entire library and put it back in any order. You still gain life equal to the full value of X."
+    },
+    {
+      "oracle_id": "1d09ebb7-c4c9-4bb7-b6bf-3c8330b954e8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Removing lore counters won\u2019t cause a previous chapter ability to trigger. If lore counters are removed from a Saga, the appropriate chapter abilities will trigger again when the Saga receives lore counters."
+    },
+    {
+      "oracle_id": "1d09ebb7-c4c9-4bb7-b6bf-3c8330b954e8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Each symbol on the left of a Saga\u2019s text box represents a chapter ability. A chapter ability is a triggered ability that triggers when a lore counter that is put on the Saga causes the number of lore counters on the Saga to become equal to or greater than the ability\u2019s chapter number. Chapter abilities are put onto the stack and may be responded to."
+    },
+    {
+      "oracle_id": "1d09ebb7-c4c9-4bb7-b6bf-3c8330b954e8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Once the number of lore counters on a Saga is greater than or equal to the greatest number among its chapter abilities, the Saga\u2019s controller sacrifices it as soon as its chapter ability has left the stack, most likely by resolving or being countered. This state-based action doesn\u2019t use the stack."
+    },
+    {
+      "oracle_id": "1d09ebb7-c4c9-4bb7-b6bf-3c8330b954e8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Once a chapter ability has triggered, the ability on the stack won\u2019t be affected if the Saga gains or loses counters, or if it leaves the battlefield."
+    },
+    {
+      "oracle_id": "1d09ebb7-c4c9-4bb7-b6bf-3c8330b954e8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "As a Saga enters the battlefield, its controller puts a lore counter on it. As your precombat main phase begins (immediately after your draw step), you put another lore counter on each Saga you control. Putting a lore counter on a Saga in either of these ways doesn\u2019t use the stack."
+    },
+    {
+      "oracle_id": "1d09ebb7-c4c9-4bb7-b6bf-3c8330b954e8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "While resolving the first two chapter abilities, you can\u2019t exile multiple cards to create multiple Zombies."
+    },
+    {
+      "oracle_id": "1d09ebb7-c4c9-4bb7-b6bf-3c8330b954e8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If multiple chapter abilities trigger at the same time, their controller puts them on the stack in any order. If any of them require targets, those targets are chosen as you put the abilities on the stack, before any of those abilities resolve."
+    },
+    {
+      "oracle_id": "1d09ebb7-c4c9-4bb7-b6bf-3c8330b954e8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "The card that you exile for the first two chapter abilities may be one of the cards that you just put into your graveyard."
+    },
+    {
+      "oracle_id": "210940f1-3c11-4877-bbfc-2429c03f98ee",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "The subtype Shapeshifter that appears on the type line is mostly there to reinforce the flavor. A creature card with changeling is just as much an Elf, a Dwarf, a Sliver, a Goat, a Coward, and a Zombie as it is a Shapeshifter."
+    },
+    {
+      "oracle_id": "210940f1-3c11-4877-bbfc-2429c03f98ee",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Changeling is a characteristic-defining ability. It functions in all zones, not only while a card that has it is on the battlefield."
+    },
+    {
+      "oracle_id": "210940f1-3c11-4877-bbfc-2429c03f98ee",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If an effect causes a creature with changeling to lose all abilities, it will remain all creature types, even though it will no longer have changeling. This is because changeling applies before the effect that removes it."
+    },
+    {
+      "oracle_id": "210940f1-3c11-4877-bbfc-2429c03f98ee",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If an effect causes a creature with changeling to become a new creature type, it will be only that new creature type. It will still have changeling; the effect making it all creature types will simply be overwritten."
+    },
+    {
+      "oracle_id": "210940f1-3c11-4877-bbfc-2429c03f98ee",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "You choose the target artifact or enchantment an opponent controls as you put the triggered ability on the stack. Once the ability starts resolving, you choose which creature card to exile from your graveyard, if any. At that point, no one can respond to your choice or take any actions until the ability is finished resolving."
+    }
+  ]
+}

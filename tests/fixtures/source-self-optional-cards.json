@@ -1,0 +1,361 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "pinned-original-and-constructed-rule-witness",
+  "source": "Pinned scryfall-current.sqlite3 and explicitly synthetic optional-result controls",
+  "cards": [
+    {
+      "oracle_id": "1bfdbb96-cc18-4609-ba17-d169967df8d0",
+      "name": "Geistcatcher's Rig",
+      "mana_cost": "{6}",
+      "type_line": "Artifact Creature \u2014 Construct",
+      "oracle_text": "When this creature enters, you may have it deal 4 damage to target creature with flying.",
+      "power": "4",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 6.0
+    },
+    {
+      "oracle_id": "7ab18e48-f935-405b-8658-b49052d20529",
+      "name": "Clash of Realities",
+      "mana_cost": "{3}{R}",
+      "type_line": "Enchantment",
+      "oracle_text": "All Spirits have \"When this permanent enters, you may have it deal 3 damage to target non-Spirit creature.\"\nNon-Spirit creatures have \"When this creature enters, you may have it deal 3 damage to target Spirit creature.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2005-02-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "c1177f22-a1cf-4da3-a68d-ff954e878403",
+      "name": "Goblin Arsonist",
+      "mana_cost": "{R}",
+      "type_line": "Creature \u2014 Goblin Shaman",
+      "oracle_text": "When this creature dies, you may have it deal 1 damage to any target.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
+    },
+    {
+      "oracle_id": "809edc14-8759-53e2-a480-394e54568ac0",
+      "name": "Generic Optional Flyer",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Creature \u2014 Bird",
+      "oracle_text": "Flying",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "6"
+    },
+    {
+      "oracle_id": "e5aaa843-df9b-5361-a86a-de8e631a7ece",
+      "name": "Generic Optional Ground",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Creature \u2014 Human",
+      "oracle_text": "",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "6"
+    },
+    {
+      "oracle_id": "5901fcd1-13c2-517a-adf0-402f365047f1",
+      "name": "Generic Optional Spirit",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Creature \u2014 Spirit",
+      "oracle_text": "Flash",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "6"
+    },
+    {
+      "oracle_id": "87420595-b0dc-54b6-a5d5-abde72a1819e",
+      "name": "Generic Optional Nonspirit",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Creature \u2014 Human",
+      "oracle_text": "Flash",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "6"
+    },
+    {
+      "oracle_id": "2594b1f7-0bc0-50af-9432-ab6da885f74d",
+      "name": "Generic Optional Bounce",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Return target nonland permanent to its owner's hand.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "1bfdbb96-cc18-4609-ba17-d169967df8d0",
+      "published_at": "2011-09-22",
+      "source": "wotc",
+      "comment": "The target creature with flying is chosen when the ability triggers and goes on the stack. You choose whether or not Geistcatcher\u2019s Rig will deal 4 damage to it when then ability resolves."
+    },
+    {
+      "oracle_id": "7ab18e48-f935-405b-8658-b49052d20529",
+      "published_at": "2005-02-01",
+      "source": "wotc",
+      "comment": "Creatures with no creature type are non-Spirit creatures."
+    },
+    {
+      "oracle_id": "7ab18e48-f935-405b-8658-b49052d20529",
+      "published_at": "2005-02-01",
+      "source": "wotc",
+      "comment": "Clash of Realities's abilities apply as each creature enters and gives them an \"enters\" ability."
+    }
+  ]
+}

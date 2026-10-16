@@ -24,6 +24,12 @@ Compiled = tuple[str | None, tuple[Mapping[str, Any], ...], Mapping[str, Any] | 
 
 def fixed_effect_payment_spec(text: str) -> FixedEffectPaymentSpec | None:
     value=text.strip()
+    exile = _owned_graveyard_exile_payment(value)
+    if exile is not None:return exile
+    tap = _fixed_untapped_permanent_payment(value)
+    if tap is not None:return tap
+    counter = _fixed_source_counter_payment(value)
+    if counter is not None:return counter
     energy=re.fullmatch(r'pay (?P<symbols>(?:\{E\})+)',value,re.I)
     if energy is not None:return FixedEffectPaymentSpec('energy',amount=len(energy['symbols'])//3)
     mana=re.fullmatch(r"pay (?P<cost>(?:\{(?:[0-9]+|[WUBRGC])\})+)",value,re.I)
@@ -51,6 +57,51 @@ def fixed_effect_payment_spec(text: str) -> FixedEffectPaymentSpec | None:
             predicate=zone_cost.predicate
         return FixedEffectPaymentSpec('sacrifice',predicate=replace(predicate,controller='$controller'))
     return None
+
+
+def _fixed_source_counter_payment(value):
+    from ..abilities import _source_counter_removal_cost
+    from ..rules.source_references import source_self_permanent_type
+    if source_self_permanent_type(value.rsplit(' from ',1)[-1]) is None:return None
+    parsed=_source_counter_removal_cost(value,card_name='source')
+    if parsed is None:return None
+    return FixedEffectPaymentSpec('remove_source_counter',schema_version=4,amount=parsed.amount,
+        counter_name=parsed.counter_name,source_ref='$source.zone_object')
+
+
+def _fixed_untapped_permanent_payment(value):
+    from .activated_tap_costs import fixed_tap_activation_cost_choice
+    from ..object_predicate import ObjectQuerySpec
+    normalized=value.casefold()
+    surface,nonhuman=re.subn(r'\bnon-human (?=creatures?\b)','',normalized,count=1)
+    choice=fixed_tap_activation_cost_choice(surface)
+    if choice is None:return None
+    predicate=ObjectQuerySpec.from_dict(choice.predicate)
+    if nonhuman and predicate.types_all!=('creature',):return None
+    predicate=replace(predicate,controller='$controller',
+        exclude_ref='$source.zone_object' if choice.another else None,
+        excluded_subtypes=('human',) if nonhuman else ())
+    try:return FixedEffectPaymentSpec('tap',amount=choice.count,predicate=predicate,schema_version=3)
+    except (TypeError,ValueError):return None
+
+
+def _owned_graveyard_exile_payment(value):
+    match=re.fullmatch(r'exile (?P<count>a|an|one|two|three|four|five|six|seven|eight|nine|ten|[1-9][0-9]*) (?P<cards>.+?) from your graveyard',value,re.I)
+    if match is None:return None
+    from .fixed_numbers import fixed_number
+    from .cast_cost_modifier_templates import fixed_spell_predicate
+    from ..object_predicate import ObjectQuerySpec
+    amount=1 if match['count'].casefold() in {'a','an'} else fixed_number(match['count'])
+    noun='card' if amount==1 else 'cards'
+    cards=match['cards'].casefold()
+    if cards==noun:predicate=ObjectQuerySpec()
+    elif cards.endswith(' '+noun):predicate=fixed_spell_predicate(cards[:-len(noun)].strip()+' spells you cast')
+    else:return None
+    if predicate is None:return None
+    try:
+        return FixedEffectPaymentSpec('exile',amount=amount,schema_version=3,
+            predicate=replace(predicate,zones=('graveyard',),owner='$controller',token=False,known_to_actor=True))
+    except (TypeError,ValueError):return None
 
 
 def fixed_effect_payment_template(text: str, *, compile_effect: Callable[[str], Compiled]) -> Compiled | None:

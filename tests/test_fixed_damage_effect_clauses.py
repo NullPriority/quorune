@@ -372,6 +372,7 @@ class FixedDamageEffectCompilerTests(unittest.TestCase):
                     "count": 1,
                 },
                 {
+                    "damage.source.stack_current_or_lki",
                     "damage.amount.positive",
                     "damage.result.multitype_permanent",
                     "target.revalidate_resolution",
@@ -386,6 +387,7 @@ class FixedDamageEffectCompilerTests(unittest.TestCase):
                     "count": 1,
                 },
                 {
+                    "damage.source.stack_current_or_lki",
                     "damage.amount.positive",
                     "damage.result.multitype_permanent",
                     "target.revalidate_resolution",
@@ -400,6 +402,7 @@ class FixedDamageEffectCompilerTests(unittest.TestCase):
                     "count": 1,
                 },
                 {
+                    "damage.source.stack_current_or_lki",
                     "damage.amount.positive",
                     "damage.result.multitype_permanent",
                     "damage.result.player_life",
@@ -416,6 +419,7 @@ class FixedDamageEffectCompilerTests(unittest.TestCase):
                     "player_relation": "opponent",
                 },
                 {
+                    "damage.source.stack_current_or_lki",
                     "damage.amount.positive",
                     "damage.result.multitype_permanent",
                     "damage.result.player_life",
@@ -430,6 +434,7 @@ class FixedDamageEffectCompilerTests(unittest.TestCase):
                     "count": 1,
                 },
                 {
+                    "damage.source.stack_current_or_lki",
                     "damage.amount.positive",
                     "damage.result.player_life",
                     "target.revalidate_resolution",
@@ -444,6 +449,7 @@ class FixedDamageEffectCompilerTests(unittest.TestCase):
                     "player_relation": "opponent",
                 },
                 {
+                    "damage.source.stack_current_or_lki",
                     "damage.amount.positive",
                     "damage.result.player_life",
                     "target.revalidate_resolution",
@@ -484,7 +490,7 @@ class FixedDamageEffectCompilerTests(unittest.TestCase):
             node.effects,
         )
         self.assertEqual(
-            {"damage.amount.positive", "damage.result.player_life"},
+            {"damage.source.stack_current_or_lki", "damage.amount.positive", "damage.result.player_life"},
             set(node.capability_dependencies),
         )
 
@@ -516,6 +522,7 @@ class FixedDamageEffectCompilerTests(unittest.TestCase):
                 self.assertEqual("damage-creature-v1", node.template_id)
                 self.assertEqual(
                     {
+                        "damage.source.stack_current_or_lki",
                         "damage.amount.positive",
                         "damage.result.multitype_permanent",
                         "target.revalidate_resolution",
@@ -659,6 +666,7 @@ class FixedDamageEffectCompilerTests(unittest.TestCase):
         mechanics = template.mechanics
         schema = template.target_schema
         expected = {
+            "damage.source.stack_current_or_lki",
             "damage.amount.positive",
             "damage.result.multitype_permanent",
             "target.revalidate_resolution",
@@ -909,6 +917,7 @@ class FixedDamageEffectRuntimeTests(unittest.TestCase):
         )
         self.assertEqual(
             {
+                "damage.source.stack_current_or_lki",
                 "damage.amount.positive",
                 "damage.result.multitype_permanent",
                 "damage.result.player_life",

@@ -514,6 +514,7 @@ class SemanticChoiceCoordinationMixin:
             except (ValueError, TypeError, KeyError) as exc:
                 raise SemanticChoiceError(str(exc)) from exc
         return SnapshotSemanticChoiceQuery(
+            rules_profile=self.state.config.effective_profile(len(self.seats)),
             seat_order=tuple(self.seats),
             active_order=tuple(self.active_seats),
             object_rows=object_rows,

@@ -574,6 +574,8 @@ class StateProjector:
                 "cmd": self._zone(p.zones["command"], principal),
             }
             generic_counters = _generic_player_counter_rows(p)
+            from .city_blessing_model import player_has_citys_blessing
+            if player_has_citys_blessing(p):summary['citys_blessing']=True
             if generic_counters:
                 summary[PLAYER_COUNTERS_FIELD] = generic_counters
             commander_damage = _commander_damage_rows(

@@ -11083,6 +11083,194 @@
       "capability_ids": ["token.ability.fixed_mutagen"],
       "interaction_order": 2,
       "assertion": "A constructed printed Mutagen trigger does not bypass the unsupported Squad replacement-ordering sibling: both complete-card admission modes reject the unresolved program and preserve its material replacement blockers."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_javelin_entry_equip_and_next_turn_recompute_attached_modifier",
+      "piece_ids": [
+        "capability.attachment.action.fixed_source",
+        "capability.continuous.characteristics.fixed_public_setting"
+      ],
+      "capability_ids": [
+        "attachment.action.fixed_source",
+        "continuous.characteristics.fixed_public_setting"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Javelin cast and controlled-creature entry attachment reject a foreign creature, then a real Equip action transfers the live own-turn +2/+0 and first strike to the second holder. The next actual player turn removes the modifier while attachment remains; rollback, pending load, privacy and pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.continuous.characteristics.fixed_public_setting"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "continuous.characteristics.fixed_public_setting"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Aura spells legally enchant a noncreature Vehicle and reject a land; their modifiers compose after an actual 5/5 animation and disappear when the Aura departs. Lightwheel vigilance and Silken +1/+2 reach remain separate from Aura target/type authority; normal trusted registration, rollback, pending load and replay are exercised."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_silken_vehicle_modifiers_and_departed_aura_untap_reference",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.continuous.characteristics.fixed_public_setting"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "continuous.characteristics.fixed_public_setting"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Aura spells legally enchant a noncreature Vehicle and reject a land; their modifiers compose after an actual 5/5 animation and disappear when the Aura departs. Lightwheel vigilance and Silken +1/+2 reach remain separate from Aura target/type authority; normal trusted registration, rollback, pending load and replay are exercised."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_silken_vehicle_modifiers_and_departed_aura_untap_reference",
+      "piece_ids": [
+        "capability.attachment.reference.current_or_lki",
+        "capability.continuous.characteristics.fixed_public_setting"
+      ],
+      "capability_ids": [
+        "attachment.reference.current_or_lki",
+        "continuous.characteristics.fixed_public_setting"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Silken Strength attaches to a tapped Vehicle. Its waiting entry trigger untaps that exact enchanted Vehicle both while attached and after an actual Aura bounce; the departed Aura modifier is absent, while a later actual animation observes only current modifiers. Pending load and before-cast replay preserve the old attachment reference."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_promoted_leaves_keep_unrepresented_siblings_closed_at_admission",
+      "piece_ids": [
+        "capability.continuous.characteristics.conditional_creature_type_removal",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.conditional_creature_type_removal"
+      ],
+      "interaction_order": 2,
+      "assertion": "All pinned original carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_promoted_leaves_keep_unrepresented_siblings_closed_at_admission",
+      "piece_ids": [
+        "capability.continuous.characteristics.conditional_creature_type_removal",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.conditional_creature_type_removal"
+      ],
+      "interaction_order": 2,
+      "assertion": "All pinned original carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_promoted_leaves_keep_unrepresented_siblings_closed_at_admission",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.regeneration"
+      ],
+      "capability_ids": [
+        "damage.source.stack_current_or_lki"
+      ],
+      "interaction_order": 2,
+      "assertion": "All pinned original carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_promoted_leaves_keep_unrepresented_siblings_closed_at_admission",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "damage.source.stack_current_or_lki"
+      ],
+      "interaction_order": 2,
+      "assertion": "All pinned original carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_promoted_leaves_keep_unrepresented_siblings_closed_at_admission",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "damage.source.stack_current_or_lki"
+      ],
+      "interaction_order": 2,
+      "assertion": "All pinned original carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_promoted_leaves_keep_unrepresented_siblings_closed_at_admission",
+      "piece_ids": [
+        "capability.mana.production.source_chosen_color",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "mana.production.source_chosen_color"
+      ],
+      "interaction_order": 2,
+      "assertion": "All pinned original carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_promoted_leaves_keep_unrepresented_siblings_closed_at_admission",
+      "piece_ids": [
+        "capability.mana.production.source_chosen_color",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "mana.production.source_chosen_color"
+      ],
+      "interaction_order": 2,
+      "assertion": "All pinned original carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_hexproof_lair_chooses_entry_color_and_allows_own_target_only",
+      "piece_ids": [
+        "capability.target.protection.hexproof_permanent",
+        "capability.zone.entry.color_designation_composition"
+      ],
+      "capability_ids": [
+        "target.protection.hexproof_permanent",
+        "zone.entry.color_designation_composition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Valgavoth Lair play completes controller-owned color/tapped entry choices despite Hexproof, rejects wrong-principal entry responses, rejects an opponent land-targeting spell, permits the controller own untap spell, then produces the retained chosen green mana. Rollback, pending entry load and pre-action replay remain exact."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_hexproof_lair_chooses_entry_color_and_allows_own_target_only",
+      "piece_ids": [
+        "capability.target.protection.hexproof_permanent",
+        "capability.zone.entry.public_designation"
+      ],
+      "capability_ids": [
+        "target.protection.hexproof_permanent",
+        "zone.entry.public_designation"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Valgavoth Lair play completes controller-owned color/tapped entry choices despite Hexproof, rejects wrong-principal entry responses, rejects an opponent land-targeting spell, permits the controller own untap spell, then produces the retained chosen green mana. Rollback, pending entry load and pre-action replay remain exact."
     }
   ]
 }

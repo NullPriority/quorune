@@ -119,6 +119,11 @@ def generated_node_groups(
     return tuple(tuple(group) for group in groups)
 
 
+def _component_program_is_closed(component,recognizers):
+    from .nonleaf_effect_closure import nonleaf_effect_program_is_closed
+    return nonleaf_effect_program_is_closed(component) or any(recognizer(component) for recognizer in recognizers)
+
+
 def is_closed_composed_spell_effect_program(
     program: SemanticProgram,
     *,
@@ -236,10 +241,7 @@ def is_closed_composed_spell_effect_program(
                 dict(target_schema) if target_schema is not None else None
             ),
         )
-        if not any(
-            recognizer(component_shape)
-            for recognizer in component_recognizers
-        ):
+        if not _component_program_is_closed(component_shape,component_recognizers):
             return False
         dependencies.update(component_dependencies)
         if target_schema is not None:

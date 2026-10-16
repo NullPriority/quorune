@@ -310,7 +310,7 @@ class ResolutionPublicConditionCompilerTests(unittest.TestCase):
 
     def test_conditional_exclusions_are_fully_consumed(self):
         for text in (
-            "Draw a card. If you control an artifact, draw two cards instead.",
+            "Draw a card. If you control an artifact, draw X cards instead.",
             "Draw a card. If you control an artifact, destroy target creature.",
             "Draw a card. If this creature has flying, draw a card.",
             "Draw a card. If you control another creature, draw a card.",

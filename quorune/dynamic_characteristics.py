@@ -63,7 +63,7 @@ def query_characteristic_count(
             raise ValueError(
                 "Characteristic source counters must be nonnegative integers"
             )
-        return raw
+        return raw * quantity.multiplier + quantity.offset
 
     assert quantity.query is not None
     zone = quantity.query.zones[0]
@@ -98,7 +98,7 @@ def query_characteristic_count(
     if zone == "hand":
         # The closed hand grammar carries no identity predicates. Counting the
         # zone directly keeps hidden card characteristics outside this owner.
-        return len(object_ids)
+        return len(object_ids) * quantity.multiplier + quantity.offset
 
     matched = []
     for object_id in object_ids:

@@ -72,6 +72,7 @@ class FixedPublicStateConditionKind(StrEnum):
     OPPONENT_LIFE_AT_MOST = "opponent_life_at_most"
     OPPONENT_POISON_COUNTER_AT_LEAST = "opponent_poison_counter_at_least"
     CONTROLLER_IS_MONARCH = "controller_is_monarch"
+    CONTROLLER_HAS_CITYS_BLESSING = 'controller_has_citys_blessing'
     CONTROLLER_MAX_SPEED = "controller_max_speed"
     SOURCE_ENTERED_THIS_TURN = "source_entered_this_turn"
     SOURCE_COUNTER_AT_LEAST = "source_counter_at_least"
@@ -146,6 +147,7 @@ class FixedPublicStateConditionSnapshot:
     opponent_poison_counter_counts: tuple[int, ...] = ()
     player_hand_counts: tuple[int, ...] = ()
     controller_is_monarch: bool = False
+    controller_has_citys_blessing: bool = False
     source_query_matches: bool | None = None
     attached_query_matches: bool | None = None
     condition_quantity: int | None = None
@@ -216,6 +218,8 @@ class FixedPublicStateConditionSnapshot:
             raise FixedPublicStateConditionError(
                 "Controller monarch status must be boolean"
             )
+        if type(self.controller_has_citys_blessing) is not bool:
+            raise FixedPublicStateConditionError('City blessing snapshot must be boolean')
         if type(self.controller_speed) is not int or self.controller_speed<0:
             raise FixedPublicStateConditionError('Controller speed must be a nonnegative integer')
         normalized: list[tuple[str, int]] = []
@@ -593,6 +597,7 @@ class FixedPublicStateConditionSpec:
             FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
             FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
             FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH,
+            FixedPublicStateConditionKind.CONTROLLER_HAS_CITYS_BLESSING,
             FixedPublicStateConditionKind.CONTROLLER_MAX_SPEED,
             FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS,
         }
@@ -652,6 +657,8 @@ class FixedPublicStateConditionSpec:
             )
         if self.kind is FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH:
             return snapshot.controller_is_monarch
+        if self.kind is FixedPublicStateConditionKind.CONTROLLER_HAS_CITYS_BLESSING:
+            return snapshot.controller_has_citys_blessing
         if self.kind is FixedPublicStateConditionKind.CONTROLLER_MAX_SPEED:
             return snapshot.controller_speed==4
         if self.kind is FixedPublicStateConditionKind.SOURCE_ENTERED_THIS_TURN:

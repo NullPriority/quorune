@@ -1,0 +1,1664 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned Commander Learn originals; CR 701.48a and 903.11 scope",
+  "cards": [
+    {
+      "oracle_id": "1a8ae444-6237-4591-97ab-f43e181b2f4f",
+      "name": "Professor of Symbology",
+      "mana_cost": "{1}{W}",
+      "type_line": "Creature — Kor Cleric",
+      "oracle_text": "When this creature enters, learn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "279e573d-b7a3-4e62-a708-3ec992d97972",
+      "name": "Retriever Phoenix",
+      "mana_cost": "{3}{R}",
+      "type_line": "Creature — Phoenix",
+      "oracle_text": "Flying, haste\nWhen this creature enters, if you cast it, learn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)\nAs long as this card is in your graveyard, if you would learn, you may instead return this card to the battlefield.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flying",
+        "Haste",
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "29423b70-7cb7-4617-898c-78a38eb233ad",
+      "name": "Field Trip",
+      "mana_cost": "{2}{G}",
+      "type_line": "Sorcery",
+      "oracle_text": "Search your library for a basic Forest card, put that card onto the battlefield tapped, then shuffle.\nLearn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "2aac3575-4a06-452c-bb0f-68dc34086226",
+      "name": "Sparring Regimen",
+      "mana_cost": "{2}{W}",
+      "type_line": "Enchantment",
+      "oracle_text": "When this enchantment enters, learn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)\nWhenever you attack, put a +1/+1 counter on target attacking creature and untap it.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "2e31af8f-5e94-4888-857d-911253eac2cd",
+      "name": "Igneous Inspiration",
+      "mana_cost": "{2}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Igneous Inspiration deals 3 damage to any target.\nLearn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "4233334d-bb19-41e4-a203-2b7bb0c48f52",
+      "name": "Enthusiastic Study",
+      "mana_cost": "{2}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets +3/+1 and gains trample until end of turn.\nLearn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "4b5806fa-430f-4b78-b874-63d01a8a9de5",
+      "name": "Arcane Subtraction",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets -4/-0 until end of turn.\nLearn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "53f1bcff-55fb-4d38-b108-dcbed623f488",
+      "name": "Hunt for Specimens",
+      "mana_cost": "{1}{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "Create a 1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\"\nLearn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "5c7e7c9e-00d1-497e-bee7-278bbd82e234",
+      "name": "Guiding Voice",
+      "mana_cost": "{W}",
+      "type_line": "Sorcery",
+      "oracle_text": "Put a +1/+1 counter on target creature.\nLearn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "6a7a5e93-fea8-4aa0-a2b1-73d466220cfb",
+      "name": "Eyetwitch",
+      "mana_cost": "{B}",
+      "type_line": "Creature — Eye Bat",
+      "oracle_text": "Flying\nWhen this creature dies, learn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying",
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "6e5b8bb2-9dd8-4986-9d0a-659114be5a2a",
+      "name": "Cram Session",
+      "mana_cost": "{1}{B/G}",
+      "type_line": "Sorcery",
+      "oracle_text": "You gain 4 life.\nLearn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G"
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "keywords": [
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "7aae7c7b-0b31-4b48-a8d3-81c913f604cf",
+      "name": "Study Break",
+      "mana_cost": "{1}{W}",
+      "type_line": "Instant",
+      "oracle_text": "Tap up to two target creatures.\nLearn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "7b1c1a0c-f443-4eb5-a430-9eea886361ca",
+      "name": "Divide by Zero",
+      "mana_cost": "{2}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Return target spell or permanent with mana value 1 or greater to its owner's hand.\nLearn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "802f8bcd-9219-48cd-a4c5-d9ea9ef60c9e",
+      "name": "Overgrown Arch",
+      "mana_cost": "{1}{G}",
+      "type_line": "Creature — Plant Wall",
+      "oracle_text": "Defender\n{T}: You gain 1 life.\n{2}, Sacrifice this creature: Learn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)",
+      "power": "0",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Learn",
+        "Defender"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "810f2b50-59c7-490a-8e6a-00f982cd16a0",
+      "name": "Rise of Extus",
+      "mana_cost": "{4}{W/B}{W/B}",
+      "type_line": "Sorcery",
+      "oracle_text": "Exile target creature. Exile up to one target instant or sorcery card from a graveyard.\nLearn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 6.0
+    },
+    {
+      "oracle_id": "b22de128-6dad-4e15-a547-1c9ca08df5ff",
+      "name": "Academic Dispute",
+      "mana_cost": "{R}",
+      "type_line": "Instant",
+      "oracle_text": "Target creature blocks this turn if able. You may have it gain reach until end of turn.\nLearn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "bfd6a73e-d126-4afe-99db-98cf716a1772",
+      "name": "Dream Strix",
+      "mana_cost": "{2}{U}",
+      "type_line": "Creature — Bird Illusion",
+      "oracle_text": "Flying\nWhen this creature becomes the target of a spell, sacrifice it.\nWhen this creature dies, learn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying",
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "dda9ac6c-1ab2-4f77-b499-f03d587163d8",
+      "name": "Pop Quiz",
+      "mana_cost": "{2}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Draw a card.\nLearn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "e0b5c772-e029-4b8d-be67-b1584700e377",
+      "name": "First Day of Class",
+      "mana_cost": "{1}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Whenever a creature you control enters this turn, put a +1/+1 counter on it and it gains haste until end of turn.\nLearn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "e66083f0-62a9-4ff7-8bb0-3eafc6d2e95d",
+      "name": "Gnarled Professor",
+      "mana_cost": "{2}{G}{G}",
+      "type_line": "Creature — Treefolk Druid",
+      "oracle_text": "Trample\nWhen this creature enters, learn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)",
+      "power": "5",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Trample",
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "f474d421-5fd0-4d76-95cb-4824a2381a29",
+      "name": "Poet's Quill",
+      "mana_cost": "{1}{B}",
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "When this Equipment enters, learn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)\nEquipped creature gets +1/+1 and has lifelink.\nEquip {1}{B}",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Equip",
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "fixture:sequential-learn",
+      "name": "Generic Sequential Learn",
+      "mana_cost": "{0}",
+      "type_line": "Sorcery",
+      "oracle_text": "Learn, then learn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "1a8ae444-6237-4591-97ab-f43e181b2f4f",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "1a8ae444-6237-4591-97ab-f43e181b2f4f",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "1a8ae444-6237-4591-97ab-f43e181b2f4f",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "1a8ae444-6237-4591-97ab-f43e181b2f4f",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "279e573d-b7a3-4e62-a708-3ec992d97972",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If Retriever Phoenix somehow dies with its triggered ability on the stack, you may return it to the battlefield with that triggered ability."
+    },
+    {
+      "oracle_id": "279e573d-b7a3-4e62-a708-3ec992d97972",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "Retriever Phoenix must be in your graveyard at the moment you're instructed to learn if you want to use the last ability to return it to the battlefield."
+    },
+    {
+      "oracle_id": "279e573d-b7a3-4e62-a708-3ec992d97972",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "279e573d-b7a3-4e62-a708-3ec992d97972",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "279e573d-b7a3-4e62-a708-3ec992d97972",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "279e573d-b7a3-4e62-a708-3ec992d97972",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "29423b70-7cb7-4617-898c-78a38eb233ad",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "29423b70-7cb7-4617-898c-78a38eb233ad",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "29423b70-7cb7-4617-898c-78a38eb233ad",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "29423b70-7cb7-4617-898c-78a38eb233ad",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "2aac3575-4a06-452c-bb0f-68dc34086226",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "2aac3575-4a06-452c-bb0f-68dc34086226",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "2aac3575-4a06-452c-bb0f-68dc34086226",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "2aac3575-4a06-452c-bb0f-68dc34086226",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "2e31af8f-5e94-4888-857d-911253eac2cd",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "2e31af8f-5e94-4888-857d-911253eac2cd",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "2e31af8f-5e94-4888-857d-911253eac2cd",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "2e31af8f-5e94-4888-857d-911253eac2cd",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "4233334d-bb19-41e4-a203-2b7bb0c48f52",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "4233334d-bb19-41e4-a203-2b7bb0c48f52",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "4233334d-bb19-41e4-a203-2b7bb0c48f52",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "4233334d-bb19-41e4-a203-2b7bb0c48f52",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "4b5806fa-430f-4b78-b874-63d01a8a9de5",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "4b5806fa-430f-4b78-b874-63d01a8a9de5",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "4b5806fa-430f-4b78-b874-63d01a8a9de5",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "4b5806fa-430f-4b78-b874-63d01a8a9de5",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "53f1bcff-55fb-4d38-b108-dcbed623f488",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "53f1bcff-55fb-4d38-b108-dcbed623f488",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "53f1bcff-55fb-4d38-b108-dcbed623f488",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "53f1bcff-55fb-4d38-b108-dcbed623f488",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "5c7e7c9e-00d1-497e-bee7-278bbd82e234",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "5c7e7c9e-00d1-497e-bee7-278bbd82e234",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "5c7e7c9e-00d1-497e-bee7-278bbd82e234",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "5c7e7c9e-00d1-497e-bee7-278bbd82e234",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "6a7a5e93-fea8-4aa0-a2b1-73d466220cfb",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "6a7a5e93-fea8-4aa0-a2b1-73d466220cfb",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "6a7a5e93-fea8-4aa0-a2b1-73d466220cfb",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "6a7a5e93-fea8-4aa0-a2b1-73d466220cfb",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "6e5b8bb2-9dd8-4986-9d0a-659114be5a2a",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "6e5b8bb2-9dd8-4986-9d0a-659114be5a2a",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "6e5b8bb2-9dd8-4986-9d0a-659114be5a2a",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "6e5b8bb2-9dd8-4986-9d0a-659114be5a2a",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "7aae7c7b-0b31-4b48-a8d3-81c913f604cf",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "7aae7c7b-0b31-4b48-a8d3-81c913f604cf",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "7aae7c7b-0b31-4b48-a8d3-81c913f604cf",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "7aae7c7b-0b31-4b48-a8d3-81c913f604cf",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "7b1c1a0c-f443-4eb5-a430-9eea886361ca",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If an effect returns a copy of a spell to its owner’s hand, the copy ceases to exist."
+    },
+    {
+      "oracle_id": "7b1c1a0c-f443-4eb5-a430-9eea886361ca",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "7b1c1a0c-f443-4eb5-a430-9eea886361ca",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "7b1c1a0c-f443-4eb5-a430-9eea886361ca",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "7b1c1a0c-f443-4eb5-a430-9eea886361ca",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "802f8bcd-9219-48cd-a4c5-d9ea9ef60c9e",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "802f8bcd-9219-48cd-a4c5-d9ea9ef60c9e",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "802f8bcd-9219-48cd-a4c5-d9ea9ef60c9e",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "802f8bcd-9219-48cd-a4c5-d9ea9ef60c9e",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "810f2b50-59c7-490a-8e6a-00f982cd16a0",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "810f2b50-59c7-490a-8e6a-00f982cd16a0",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "810f2b50-59c7-490a-8e6a-00f982cd16a0",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "810f2b50-59c7-490a-8e6a-00f982cd16a0",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "b22de128-6dad-4e15-a547-1c9ca08df5ff",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "b22de128-6dad-4e15-a547-1c9ca08df5ff",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "b22de128-6dad-4e15-a547-1c9ca08df5ff",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "You choose whether you want the creature to gain reach until end of turn as Academic Dispute resolves."
+    },
+    {
+      "oracle_id": "b22de128-6dad-4e15-a547-1c9ca08df5ff",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "The controller of the creature chooses which attacking creature that creature blocks."
+    },
+    {
+      "oracle_id": "b22de128-6dad-4e15-a547-1c9ca08df5ff",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "b22de128-6dad-4e15-a547-1c9ca08df5ff",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "b22de128-6dad-4e15-a547-1c9ca08df5ff",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "The creature blocks only if it's able to do so as the declare blockers step begins. If, at that time, the creature is tapped, it's affected by a spell or ability that says it can't block, or no creatures are attacking its controller or a planeswalker controlled by that player, then it doesn't block. If there's a cost associated with having the creature block, the player isn't forced to pay that cost. If that cost isn't paid, the creature won't block."
+    },
+    {
+      "oracle_id": "bfd6a73e-d126-4afe-99db-98cf716a1772",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If Dream Strix becomes the target of a spell, it will be sacrificed before that spell tries to resolve. If it is the only target of that spell, it will be removed from the stack rather than resolving, and no part of its instructions will be performed."
+    },
+    {
+      "oracle_id": "bfd6a73e-d126-4afe-99db-98cf716a1772",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "bfd6a73e-d126-4afe-99db-98cf716a1772",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "bfd6a73e-d126-4afe-99db-98cf716a1772",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "bfd6a73e-d126-4afe-99db-98cf716a1772",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "dda9ac6c-1ab2-4f77-b499-f03d587163d8",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "dda9ac6c-1ab2-4f77-b499-f03d587163d8",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "dda9ac6c-1ab2-4f77-b499-f03d587163d8",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "dda9ac6c-1ab2-4f77-b499-f03d587163d8",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "e0b5c772-e029-4b8d-be67-b1584700e377",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "e0b5c772-e029-4b8d-be67-b1584700e377",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "e0b5c772-e029-4b8d-be67-b1584700e377",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "e0b5c772-e029-4b8d-be67-b1584700e377",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "e66083f0-62a9-4ff7-8bb0-3eafc6d2e95d",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "e66083f0-62a9-4ff7-8bb0-3eafc6d2e95d",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "e66083f0-62a9-4ff7-8bb0-3eafc6d2e95d",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "e66083f0-62a9-4ff7-8bb0-3eafc6d2e95d",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "f474d421-5fd0-4d76-95cb-4824a2381a29",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "f474d421-5fd0-4d76-95cb-4824a2381a29",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "f474d421-5fd0-4d76-95cb-4824a2381a29",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "f474d421-5fd0-4d76-95cb-4824a2381a29",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    }
+  ]
+}

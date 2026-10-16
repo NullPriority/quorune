@@ -15,6 +15,10 @@ from ..compiler.affected_player_discard_templates import (
 )
 
 
+def _literal_discard_count_is_closed(value, controller):
+    return type(value) is int and value in ({1, 2, 3, 4} if controller else {1, 2, 3})
+
+
 def fixed_affected_player_discard_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
@@ -52,9 +56,7 @@ def fixed_affected_player_discard_node_capabilities(
         or effect.get("op") != "choose_cards_apnap"
         or effect.get("actor") != "$controller"
         or effect.get("zone") != "hand"
-        or effect.get("count") not in (
-            {1, 2, 3, 4} if controller else {1, 2, 3}
-        )
+        or not _literal_discard_count_is_closed(effect.get("count"), controller)
         or effect.get("then") != "discard"
         or effect.get("hidden") is not True
         or type(effect.get("prompt")) is not str

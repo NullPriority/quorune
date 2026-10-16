@@ -160,8 +160,13 @@ class EntryDesignationTests(unittest.TestCase):
                 self.assertTrue(any(node.exact and node.template_id == "intrinsic-entry-designation-v1" for face in ir.faces for node in face.nodes))
                 program = compile_best_available_card_program(self.db, record, semantic_registry=SemanticRegistry(), capability_registry=registry, capability_profile="commander_review")
                 binding = bind_card_program_runtime(program, capability_registry=registry, profile="commander_review")
-                self.assertFalse(binding["strict_capability_ready"])
-                self.assertFalse(binding["compatible_ready"])
+                if record.name == "Sol Grail":
+                    self.assertEqual("exact", ir.status, ir.material_residuals)
+                    self.assertTrue(any("mana.production.source_chosen_color" in node.capability_dependencies for face in ir.faces for node in face.nodes))
+                    self.assertTrue(binding["strict_capability_ready"], binding)
+                else:
+                    self.assertFalse(binding["strict_capability_ready"])
+                    self.assertFalse(binding["compatible_ready"])
 
     def test_entry_designation_dependency_and_compiler_mutations_fail_closed(self):
         raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))

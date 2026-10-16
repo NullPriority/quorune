@@ -7,6 +7,8 @@ from ..continuous_conditions import FixedPublicStateConditionKind,FixedPublicSta
 
 
 def fixed_player_status_condition(normalized):
+    if normalized.casefold().replace('’',"'")=="you have the city's blessing":
+        return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.CONTROLLER_HAS_CITYS_BLESSING)
     if normalized.casefold() in {"you're the monarch","you are the monarch"}:return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH)
     poisoned=re.fullmatch(r'an opponent (?:is poisoned|has (?P<count>three|[0-9]+) or more poison counters)',normalized,re.I)
     if poisoned is None:return None

@@ -12,6 +12,16 @@ PUBLIC_SOURCE_COUNTER_MECHANIC='fixed-public-event-source-counter'
 PUBLIC_TARGET_COUNTER_MECHANIC='fixed-public-event-target-counter'
 
 
+def public_event_counter_set_result(binding,body,*,effect_template,card_name,accepted_variants=()):
+    if binding.variant not in accepted_variants or re.search(r'\bcounters?\b',body,re.I) is None:return None
+    compiled=effect_template(body,card_name=card_name)
+    if compiled[0] is None:return None
+    from ..rules.public_event_counter_set_shapes import fixed_public_event_set_result_capabilities,PUBLIC_SET_EVENT_MECHANIC
+    required=fixed_public_event_set_result_capabilities(effects=compiled[1],target_schema=compiled[2],mechanic_ids=compiled[3])
+    if not required:return None
+    return (compiled[0],compiled[1],compiled[2],(*compiled[3],PUBLIC_SET_EVENT_MECHANIC)),True
+
+
 def public_event_target_counter_result(binding, body, *, effect_template, card_name, accepted_variants=()):
     """Compose the existing fixed direct-target counter leaf without changing its target."""
     if binding.variant not in accepted_variants or re.fullmatch(

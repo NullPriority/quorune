@@ -1153,6 +1153,195 @@
       "toughness": "7",
       "type_line": "Artifact Creature \u2014 Construct",
       "mana_value": 0
+    },
+    {
+      "oracle_id": "2396299a-c031-4020-b13e-1f9bf9d64511",
+      "name": "Thassa, Deep-Dwelling",
+      "mana_cost": "{3}{U}",
+      "cmc": 4.0,
+      "type_line": "Legendary Enchantment Creature \u2014 God",
+      "oracle_text": "Indestructible\nAs long as your devotion to blue is less than five, Thassa isn't a creature.\nAt the beginning of your end step, exile up to one other target creature you control, then return that card to the battlefield under your control.\n{3}{U}: Tap another target creature.",
+      "power": "6",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Indestructible"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0dc0b990-7da7-4e6d-914b-75f7f2af1b01",
+      "name": "Generic Devotion Blue Artifact",
+      "mana_cost": "{U}{U}{U}{U}",
+      "cmc": 4,
+      "type_line": "Artifact",
+      "oracle_text": "Flash",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "power": null,
+      "toughness": null,
+      "keywords": [
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "0dc0b990-7da7-4e6d-914b-75f7f2af1b02",
+      "name": "Generic Devotion Hybrid Artifact",
+      "mana_cost": "{U/B}{U/B}",
+      "cmc": 2,
+      "type_line": "Artifact",
+      "oracle_text": "",
+      "colors": [
+        "U",
+        "B"
+      ],
+      "color_identity": [
+        "U",
+        "B"
+      ],
+      "power": null,
+      "toughness": null,
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "0dc0b990-7da7-4e6d-914b-75f7f2af1b03",
+      "name": "Generic Devotion Single Blue Artifact",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Artifact",
+      "oracle_text": "",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "power": null,
+      "toughness": null,
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "0dc0b990-7da7-4e6d-914b-75f7f2af1b04",
+      "name": "Generic Devotion Twin God",
+      "mana_cost": "{U/B}",
+      "cmc": 1,
+      "type_line": "Enchantment Creature \u2014 God",
+      "oracle_text": "As long as your devotion to blue and black is less than four, this permanent isn't a creature.",
+      "colors": [
+        "U",
+        "B"
+      ],
+      "color_identity": [
+        "U",
+        "B"
+      ],
+      "power": "3",
+      "toughness": "4",
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "0dc0b990-7da7-4e6d-914b-75f7f2af1b05",
+      "name": "Generic Devotion Entry Observer",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Enchantment",
+      "oracle_text": "Whenever a creature you control enters, draw a card.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "power": null,
+      "toughness": null,
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "0dc0b990-7da7-4e6d-914b-75f7f2af1b06",
+      "name": "Generic Devotion Ability Seal",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Enchantment \u2014 Aura",
+      "oracle_text": "Enchant permanent\nEnchanted permanent loses all abilities.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -1282,6 +1471,108 @@
       "oracle_id": "ed8392b8-71e9-4874-a5bd-3c9fa5605780",
       "published_at": "2019-10-04",
       "source": "wotc"
+    },
+    {
+      "oracle_id": "2396299a-c031-4020-b13e-1f9bf9d64511",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If an activated ability or triggered ability has an effect that depends on your devotion to a color, you count the number of mana symbols of that color among the mana costs of permanents you control as the ability resolves. The permanent with that ability will be counted if it\u2019s still on the battlefield at that time."
+    },
+    {
+      "oracle_id": "2396299a-c031-4020-b13e-1f9bf9d64511",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a God stops being a creature, it loses the type creature and the creature type God. It continues to be a legendary enchantment."
+    },
+    {
+      "oracle_id": "2396299a-c031-4020-b13e-1f9bf9d64511",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Counters put on a God remain on it while it\u2019s not a creature, even if they have no effect."
+    },
+    {
+      "oracle_id": "2396299a-c031-4020-b13e-1f9bf9d64511",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "When a God enters the battlefield, your devotion to its color (including the mana symbols in the mana cost of the God itself) will determine if a creature entered the battlefield or not for abilities that trigger whenever a creature enters the battlefield."
+    },
+    {
+      "oracle_id": "2396299a-c031-4020-b13e-1f9bf9d64511",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If you gain control of a creature \u201cuntil end of turn,\u201d you\u2019ll control it during your end step."
+    },
+    {
+      "oracle_id": "2396299a-c031-4020-b13e-1f9bf9d64511",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "The abilities of Gods function as long as they\u2019re on the battlefield, regardless of whether they\u2019re creatures."
+    },
+    {
+      "oracle_id": "2396299a-c031-4020-b13e-1f9bf9d64511",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "As a God enters the battlefield, your devotion to its color will determine whether any replacement effects that affect creatures entering the battlefield apply to that God. Because replacement effects are considered before the God is on the battlefield, the mana symbols in its mana cost won\u2019t be counted when determining this."
+    },
+    {
+      "oracle_id": "2396299a-c031-4020-b13e-1f9bf9d64511",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "When the card returns to the battlefield, it will be a new object with no connection to the card that was exiled. Auras attached to the exiled creature will be put into their owners\u2019 graveyards. Any Equipment will become unattached and remain on the battlefield. Any counters on the exiled creature will cease to exist."
+    },
+    {
+      "oracle_id": "2396299a-c031-4020-b13e-1f9bf9d64511",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Colorless and generic mana symbols ({C}, {0}, {1}, {2}, {X}, and so on) in mana costs of permanents you control don\u2019t count toward your devotion to any color."
+    },
+    {
+      "oracle_id": "2396299a-c031-4020-b13e-1f9bf9d64511",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If you put an Aura on an opponent\u2019s permanent, you still control the Aura, and mana symbols in its mana cost count towards your devotion."
+    },
+    {
+      "oracle_id": "2396299a-c031-4020-b13e-1f9bf9d64511",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Mana symbols in the text boxes of permanents you control don\u2019t count toward your devotion to any color."
+    },
+    {
+      "oracle_id": "2396299a-c031-4020-b13e-1f9bf9d64511",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "When an effect returns the exiled card \u201cunder your control,\u201d you control it indefinitely after that. In a multiplayer game, if a player leaves the game, all cards that player owns leave as well. If you leave the game, any creatures you control from Thassa\u2019s effect but don\u2019t own are exiled."
+    },
+    {
+      "oracle_id": "2396299a-c031-4020-b13e-1f9bf9d64511",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a God is attacking or blocking and it stops being a creature, it will be removed from combat. It won\u2019t rejoin combat if it resumes being a creature later during that combat."
+    },
+    {
+      "oracle_id": "2396299a-c031-4020-b13e-1f9bf9d64511",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a token is exiled this way, it will cease to exist and won\u2019t return to the battlefield."
+    },
+    {
+      "oracle_id": "2396299a-c031-4020-b13e-1f9bf9d64511",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Hybrid mana symbols, monocolored hybrid mana symbols, and Phyrexian mana symbols do count toward your devotion to their color(s)."
+    },
+    {
+      "oracle_id": "2396299a-c031-4020-b13e-1f9bf9d64511",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "The type-changing ability that can make a God not be a creature functions only on the battlefield. It\u2019s always a creature card in other zones, regardless of your devotion to its color. It\u2019s always a creature spell while it\u2019s on the stack."
+    },
+    {
+      "oracle_id": "2396299a-c031-4020-b13e-1f9bf9d64511",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If an effect causes a God to lose all abilities, its ability that causes it to stop being a creature still applies if appropriate."
     }
   ],
   "schema_version": 1,

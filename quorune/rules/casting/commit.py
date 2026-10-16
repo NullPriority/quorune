@@ -31,6 +31,7 @@ from ...cast_lifecycles import (
     fixed_cast_lifecycle_stack_fields,
 )
 from ...compiled_kicker import compiled_fixed_mana_kicker_spec
+from .paid_entry_copy_costs import paid_entry_copy_cast_context
 from ...flashback import FLASHBACK_CAST_OPTION_ID
 from ...evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
 from ...kicker import KICKER_ANNOTATION, KICKER_MECHANIC_ID
@@ -944,6 +945,7 @@ def _create_spell_item(
         ),
         context={
             **_cast_provenance_context(proposal, spent),
+            **paid_entry_copy_cast_context(selected_option),
             "target_groups": thaw_json(proposal.target_groups),
             "target_snapshots": thaw_json(proposal.target_snapshots),
             "targets_revalidated": False,

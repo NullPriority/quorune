@@ -7,7 +7,7 @@ from typing import Any, Mapping
 from ..fixed_effect_payment import FixedEffectPaymentSpec
 from ..object_query import object_matches_query
 from ..replacement.immutable import FrozenMap
-from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent, PayLifeIntent, PayManaCostIntent
+from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent, PayLifeIntent, PayManaCostIntent, SetPermanentsTappedIntent, RemoveCountersIntent
 from ..semantic_runtime.energy_payment import PayEnergyIntent
 from ..zone_trigger_events import ZoneTransitionKind
 from .context import SemanticChoiceContext, SemanticChoiceQuery
@@ -39,7 +39,7 @@ def _validated(
         raise SemanticChoiceError(str(exc)) from exc
     if ('cost' in effect) != (spec.kind == 'mana') or spec.kind == 'mana' and dict(effect['cost']) != dict(spec.requirements):
         raise SemanticChoiceError('Fixed payment mana identity changed')
-    if spec.kind == 'discard' and spec.predicate.owner != actor or spec.kind == 'sacrifice' and spec.predicate.controller != actor:
+    if spec.kind in {'discard','exile'} and spec.predicate.owner != actor or spec.kind in {'sacrifice','tap'} and spec.predicate.controller != actor:
         raise SemanticChoiceError('Fixed payment object relation changed')
     effects = effect['effects']
     if not isinstance(effects, (tuple, list)) or not 1 <= len(effects) <= 4:
@@ -59,6 +59,23 @@ def prepare_fixed_effect_payment(
     return prepare_fixed_payment_cost(spec, effect, context)
 
 
+def _source_counter_payment_row(spec,query):
+    row=query.object(spec.source_ref,zones=('battlefield',)) if spec.source_ref is not None else None
+    if row is None or row.phased_out:return None
+    count=row.counters.get(spec.counter_name,0)
+    if type(count) is not int or count<spec.amount:return None
+    return row
+
+
+def _source_counter_payment_intent(spec,effect,query):
+    row=_source_counter_payment_row(spec,query)
+    legal={value['ref']:value['logical_object_id'] for value in effect['_legal_objects']}
+    if row is None or legal.get(row.ref)!=row.logical_object_id:
+        raise SemanticChoiceError('Source counter payment is unavailable or changed incarnation')
+    return RemoveCountersIntent(actor=effect['_choice_actor'],object_ref=row.ref,counter_name=spec.counter_name,
+        amount=spec.amount,reason=effect['_stack_label'],source_ref=row.ref)
+
+
 def prepare_fixed_payment_cost(
     spec: FixedEffectPaymentSpec, effect: Mapping[str, Any],
     context: SemanticChoiceContext,
@@ -66,11 +83,11 @@ def prepare_fixed_payment_cost(
     """Publish the existing closed cost independently of its result branch."""
     actor = context.actor
     legal = ()
-    if spec.kind in {'discard', 'sacrifice'}:
+    if spec.kind in {'discard', 'sacrifice', 'exile', 'tap'}:
         candidates = context.query.objects(
             zones=spec.predicate.zones,
-            owner=actor if spec.kind == 'discard' else None,
-            controller=actor if spec.kind == 'sacrifice' else None,
+            owner=actor if spec.kind in {'discard','exile'} else None,
+            controller=actor if spec.kind in {'sacrifice','tap'} else None,
         )
         legal = tuple(sorted(
             (row for row in candidates if object_matches_query(row, spec.predicate)),
@@ -83,9 +100,14 @@ def prepare_fixed_payment_cost(
             maximum=spec.amount if payable else 0, optional=True,
             visibility='actor_private' if spec.kind == 'discard' else 'public',
             allowed_cardinalities=((0, spec.amount) if payable else (0,)) if spec.amount > 1 else None,
-            owner_relation='actor' if spec.kind == 'discard' else 'any',
-            controller_relation='actor' if spec.kind == 'sacrifice' else 'any',
+            owner_relation='actor' if spec.kind in {'discard','exile'} else 'any',
+            controller_relation='actor' if spec.kind in {'sacrifice','tap'} else 'any',
         )
+    elif spec.kind=='remove_source_counter':
+        source=_source_counter_payment_row(spec,context.query)
+        legal=(source,) if source is not None else ()
+        payable=bool(legal)
+        choice=ScalarChoice(field_name='pay',legal_values=(True,False) if payable else (False,))
     else:
         payable = (
             context.query.player_life(actor) >= spec.amount if spec.kind == 'life'
@@ -130,7 +152,7 @@ def complete_fixed_payment_cost(
     """Validate and commit one fixed cost through the canonical intent owner."""
     actor = effect['_choice_actor']
     label = effect['_stack_label']
-    if spec.kind in {'discard', 'sacrifice'}:
+    if spec.kind in {'discard', 'sacrifice', 'exile', 'tap'}:
         unknown = set(response) - {'cards', 'pay', 'action', 'action_id', 'a', 'cap', 'reason', 'plan', 'next', 'choice_schema'}
         if unknown:
             raise SemanticChoiceError('Fixed object payment response has unknown fields: ' + ','.join(sorted(unknown)))
@@ -154,11 +176,11 @@ def complete_fixed_payment_cost(
             current = query.object(ref, zones=spec.predicate.zones)
             if ref not in legal or current is None or current.logical_object_id != legal[ref] or not object_matches_query(current, spec.predicate):
                 raise SemanticChoiceError('Fixed payment object is stale or ineligible')
-        intent = MoveObjectsSimultaneouslyIntent(
+        intent = SetPermanentsTappedIntent(actor=actor,object_refs=selected,tapped=True,reason=label) if spec.kind=='tap' else MoveObjectsSimultaneouslyIntent(
             actor=actor, object_refs=selected, expected_zones=spec.predicate.zones,
-            destination='graveyard', reason=label,
-            transition_kind=ZoneTransitionKind.DISCARD if spec.kind == 'discard' else ZoneTransitionKind.SACRIFICE,
-            owned_only=spec.kind == 'discard', controlled_only=spec.kind == 'sacrifice',
+            destination='exile' if spec.kind=='exile' else 'graveyard', reason=label,
+            transition_kind={'discard':ZoneTransitionKind.DISCARD,'sacrifice':ZoneTransitionKind.SACRIFICE,'exile':ZoneTransitionKind.ORDINARY}[spec.kind],
+            owned_only=spec.kind in {'discard','exile'}, controlled_only=spec.kind == 'sacrifice',
         )
     else:
         unknown = set(response) - {'pay', 'action', 'action_id', 'a', 'cap', 'reason', 'plan', 'next', 'choice_schema'}
@@ -168,7 +190,9 @@ def complete_fixed_payment_cost(
             raise SemanticChoiceError('Fixed resource payment choice must be boolean')
         if not response.get('pay', False):
             return SemanticChoiceCompletion()
-        if spec.kind == 'life':
+        if spec.kind=='remove_source_counter':
+            intent=_source_counter_payment_intent(spec,effect,query)
+        elif spec.kind == 'life':
             if query.player_life(actor) < spec.amount:
                 raise SemanticChoiceError('Fixed life payment is no longer payable')
             intent = PayLifeIntent(actor=actor, player=actor, amount=spec.amount, reason=label)

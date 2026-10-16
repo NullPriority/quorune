@@ -199,7 +199,7 @@ class ComplexActivationManaCompilerTests(unittest.TestCase):
 
         excluded = (
             "{X}, {T}: You gain 1 life.",
-            "Pay {E}, {T}: You gain 1 life.",
+            "Pay X {E}, {T}: You gain 1 life.",
             "{W/P}, Discard two cards: You gain 1 life.",
         )
         for index, text in enumerate(excluded):

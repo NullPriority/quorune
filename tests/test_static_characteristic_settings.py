@@ -23,6 +23,138 @@ from test_qualified_zone_event_queries import query_record
 import test_bound_effect_programs as witnesses
 
 
+class ConditionalCreatureTypeRemovalTests(unittest.TestCase):
+    def test_conditional_type_component_validates_information_layers_and_incarnation(self):
+        from quorune.continuous_conditions import FixedPublicStateConditionSnapshot
+        from quorune.continuous_effect_model import Layer
+        from quorune.continuous_effects import CharacteristicState, evaluate_continuous_effects
+        from quorune.semantic_runtime.continuous_components import ContinuousEffectSourceContext
+        from quorune.semantic_runtime.fixed_characteristic_settings import ConditionalCreatureTypeRemovalHandler
+        from quorune.card_programs.runtime import _component_public_state_snapshot
+
+        text = "As long as your devotion to blue is less than five, this permanent isn't a creature."
+        descriptor = fixed_characteristic_setting_handler(text, source_name='Generic God')[1]
+        handler = ConditionalCreatureTypeRemovalHandler()
+        public = FixedPublicStateConditionSnapshot(source_controller='A', active_player='B',
+            controller_hand_count=2, controller_graveyard_card_count=0, controller_life=40,
+            opponent_life_totals=(40, 40, 40), turn_sequence=1,
+            source_entered_battlefield_turn_sequence=0, source_counters=(), condition_quantity=4)
+        context = ContinuousEffectSourceContext(source_object_id='source', source_ref='SOURCE', source_controller='A',
+            source_timestamp=1, source_logical_object_id='source@0', component_id='conditional-type', public_state=public)
+        effects = handler.lower(descriptor, context)
+        self.assertEqual(1, len(effects))
+        self.assertEqual(Layer.TYPE, effects[0].layer)
+        base = CharacteristicState(name='Source', card_types={'Enchantment', 'Creature'}, subtypes={'God'}, power=3, toughness=4)
+        active = evaluate_continuous_effects(deepcopy(base), effects,
+            context={'object_id': 'source', 'logical_object_id': 'source@0', 'zone': 'battlefield'}).characteristics
+        stale = evaluate_continuous_effects(deepcopy(base), effects,
+            context={'object_id': 'source', 'logical_object_id': 'source@1', 'zone': 'battlefield'}).characteristics
+        self.assertEqual(['Enchantment'], active['card_types'])
+        self.assertEqual([], active['subtypes'])
+        self.assertEqual(['Creature', 'Enchantment'], stale['card_types'])
+        self.assertEqual((), handler.lower(descriptor, replace(context,
+            public_state=replace(public, condition_quantity=5))))
+        for invalid in (replace(context, public_state=None), replace(context, source_logical_object_id=None),
+                        replace(context, public_state=replace(public, condition_quantity=None))):
+            with self.subTest(context=invalid), self.assertRaises(ValueError):
+                handler.lower(descriptor, invalid)
+        self.assertEqual((True, None), _component_public_state_snapshot(None, descriptor, maximum_layer=Layer.TEXT,
+            public_state_resolver=None, setting_state_resolver=None))
+        from quorune.semantic_runtime.continuous_components import ContinuousEffectComponentRegistry
+        registry = ContinuousEffectComponentRegistry((handler,)).freeze()
+        self.assertEqual(Layer.TEXT, registry.source_component_layer(descriptor))
+        self.assertEqual(Layer.ABILITY, registry.source_component_layer({'handler_id': 'unclassified'}))
+        malformed = {**descriptor, 'unrepresented': True}
+        with self.assertRaises(ValueError):
+            registry.source_component_layer(malformed)
+        with self.assertRaises(ValueError):
+            _component_public_state_snapshot(None, malformed, maximum_layer=Layer.TEXT,
+                public_state_resolver=None, setting_state_resolver=None)
+        for raw in ({**descriptor, 'schema_version': True}, {**descriptor, 'event': 'anything'}):
+            with self.assertRaises(ValueError):
+                handler.validate(raw)
+
+    def test_type_removal_operation_round_trips_and_rejects_payloads(self):
+        from quorune.continuous_effect_model import ContinuousEffect, ContinuousEffectError, ContinuousOperation, Layer
+
+        operation = ContinuousOperation('remove_creature_card_type')
+        self.assertEqual(operation, ContinuousOperation.from_dict(json.loads(json.dumps(operation.to_dict()))))
+        with self.assertRaises(ContinuousEffectError):
+            ContinuousEffect(effect_id='wrong-layer', source_id='source', layer=Layer.COLOR,
+                sublayer='5', timestamp=0, operations=(operation,))
+        for value in (True, False, 0, '', 'Creature', [], {}):
+            with self.subTest(value=value), self.assertRaises(ContinuousEffectError):
+                ContinuousOperation('remove_creature_card_type', value)
+        with self.assertRaises(ContinuousEffectError):
+            ContinuousOperation('remove_creature_card_type', field='subtypes')
+        with self.assertRaises(ContinuousEffectError):
+            ContinuousOperation.from_dict({**operation.to_dict(), 'extra': True})
+
+    def test_type_removal_retains_only_subtypes_correlated_with_remaining_types(self):
+        # Pinned CR 205.1a: Kindred shares the creature subtype set.
+        from quorune.continuous_effect_model import ContinuousEffect, ContinuousOperation, ContinuousEffectOrigin, Layer
+        from quorune.continuous_effects import CharacteristicState, evaluate_continuous_effects
+
+        operation = ContinuousOperation('remove_creature_card_type', None)
+        effect = ContinuousEffect(effect_id='remove-creature-type', source_id='source',
+            layer=Layer.TYPE, sublayer='4', timestamp=1, operations=(operation,), origin=ContinuousEffectOrigin.OBJECT)
+        cases = (
+            ({'Enchantment', 'Creature'}, {'God'}, {'Enchantment'}, set()),
+            ({'Kindred', 'Enchantment', 'Creature'}, {'God'}, {'Kindred', 'Enchantment'}, {'God'}),
+            ({'Artifact', 'Creature'}, {'Construct', 'Equipment'}, {'Artifact'}, {'Equipment'}),
+            ({'Land', 'Creature'}, {'Dryad', 'Forest'}, {'Land'}, {'Forest'}),
+            ({'Kindred', 'Enchantment'}, {'God'}, {'Kindred', 'Enchantment'}, {'God'}),
+        )
+        for types, subtypes, expected_types, expected_subtypes in cases:
+            with self.subTest(types=types, subtypes=subtypes):
+                base = CharacteristicState(name='Generic Conditional Source', controller='A',
+                    card_types=set(types), subtypes=set(subtypes), power=3, toughness=4)
+                result = evaluate_continuous_effects(base, (effect,)).characteristics
+                self.assertEqual(expected_types, set(result['card_types']))
+                self.assertEqual(expected_subtypes, set(result['subtypes']))
+                self.assertEqual((3, 4), (result['power'], result['toughness']))
+                repeated = evaluate_continuous_effects(base, (effect,
+                    replace(effect, effect_id='remove-creature-type-again', timestamp=2))).characteristics
+                self.assertEqual(expected_types, set(repeated['card_types']))
+                self.assertEqual(expected_subtypes, set(repeated['subtypes']))
+
+    def test_devotion_type_removal_compiles_the_complete_generic_condition(self):
+        # CR 700.5/700.5a and 613.1d; runtime admission has separate witnesses.
+        registry = load_default_capability_registry()
+        for colors, threshold in (('blue', 'five'), ('blue and black', 'seven')):
+            text = f"As long as your devotion to {colors} is less than {threshold}, this permanent isn't a creature."
+            with self.subTest(text=text):
+                record = replace(query_record(text), type_line='Enchantment Creature — God', mana_cost='{3}{U}')
+                ir = compile_oracle_card(record, capability_registry=registry, capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                self.assertEqual(1, len(ir.faces[0].nodes))
+                self.assertEqual(text, ir.faces[0].nodes[0].text)
+                self.assertTrue(ir.faces[0].nodes[0].lowerable)
+                self.assertIn('continuous.characteristics.conditional_creature_type_removal', ir.faces[0].nodes[0].capability_dependencies)
+                self.assertIn('state_query.devotion.current', ir.faces[0].nodes[0].capability_dependencies)
+
+    def test_devotion_type_subject_domain_and_withdrawn_dependencies_fail_closed(self):
+        from quorune.compiler.public_state_queries import fixed_public_state_condition
+        for condition in ('your devotion to blue and blue is less than five', 'your devotion to blue is less than zero',
+                          'your devotion to blue is less than 0', 'your devotion to blue and black and green is less than seven'):
+            self.assertIsNone(fixed_public_state_condition(condition, source_name='Generic God'))
+        registry = load_default_capability_registry()
+        for body in ("that creature isn't a creature", "target creature isn't a creature", "this permanent isn't a creature and draws a card"):
+            text = 'As long as your devotion to blue is less than five, ' + body + '.'
+            ir = compile_oracle_card(replace(query_record(text), type_line='Enchantment Creature — God'),
+                capability_registry=registry, capability_profile='commander_review')
+            self.assertNotEqual('exact', ir.status)
+        text = "As long as your devotion to blue is less than five, this permanent isn't a creature."
+        record = replace(query_record(text), type_line='Enchantment Creature — God')
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        for capability in ('continuous.characteristics.conditional_creature_type_removal', 'state_query.devotion.current'):
+            withdrawn = deepcopy(raw)
+            next(row for row in withdrawn['capabilities'] if row['id'] == capability).update(status='blocked', blockers=['withdrawn'])
+            ir = compile_oracle_card(record, capability_registry=CapabilityRegistry(withdrawn), capability_profile='commander_review')
+            self.assertNotEqual('exact', ir.status)
+            self.assertTrue(ir.material_residuals)
+
+
 class StaticSettingCompilerTests(unittest.TestCase):
     def test_conditional_source_setting_preserves_public_condition_and_layer_contract(self):
         from test_qualified_zone_event_queries import query_record
@@ -183,6 +315,230 @@ class StaticSettingCompilerTests(unittest.TestCase):
 
 
 class StaticSettingRuntimeTests(unittest.TestCase):
+    def cast_at_priority(self, session, seat, card, targets=()):
+        for _ in range(16):
+            session.engine.pump()
+            decision = session.state.pending_decision
+            self.assertEqual('priority', decision.kind)
+            if session.state.priority_player == seat:
+                break
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        else:
+            self.fail('Casting principal did not receive priority')
+        actions = session.packet('pilot:' + seat, full=True)['decision']['ctx']['legal']['actions']
+        current = session.state.cards[card.object_id]
+        matching = [row for row in actions if row['id'] == 'cast:' + current.ref]
+        self.assertTrue(matching, {'card': current.printed_name, 'zone': current.zone,
+            'reference_changed': current.ref != card.ref, 'phase': session.state.phase, 'step': session.state.step,
+            'mana': dict(session.state.players[seat].mana_pool),
+            'offered_cast_cards': [row.get('card') for row in actions if row['id'].startswith('cast:')]})
+        offered = matching[0]
+        accepted = session.act('pilot:' + seat, {'action_id': offered['id'], 'targets': list(targets), 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+
+    def assert_closed_card(self, session, card):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        program = compile_best_available_card_program(self.db, self.db.lookup(card.printed_name),
+            semantic_registry=session.engine.semantics, capability_registry=self.registry, capability_profile='commander_review')
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'], binding)
+        self.assertEqual('capability_closed', binding['trust_basis'])
+
+    def current_types(self, session, card):
+        return session.engine._type_parts(session.engine._effective_card_data(session.state.cards[card.object_id])['type_line'])
+
+    def test_actual_original_thassa_devotion_threshold_retains_abilities_counters_and_replays(self):
+        session = self.session(394001); engine = session.engine
+        god = self.add(engine, 'Thassa, Deep-Dwelling', zone='hand', ref='devotion-original-thassa')
+        blue = self.add(engine, 'Generic Devotion Blue Artifact', zone='hand', ref='devotion-blue-four')
+        bounce = self.add(engine, 'Generic Setting Bounce', zone='hand', ref='devotion-blue-bounce')
+        counter = self.add(engine, 'Generic Setting Counter Spell', zone='hand', ref='devotion-counter')
+        body = self.add(engine, 'Generic Bound Body', seat='B', ref='devotion-foreign-body')
+        self.add(engine, 'Forest', ref='devotion-counter-forest')
+        private = self.add(engine, 'Generic Bound Growth', seat='C', zone='hand', ref='devotion-private-hand')
+        offered = self.ready(session, god, {'U': 20, 'C': 6}); self.assert_closed_card(session, god)
+        self.checkpoint(session)
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:D', {'action_id': offered['id'], 'pay': 'auto'}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.assertTrue(session.act('pilot:A', {'action_id': offered['id'], 'pay': 'auto'}).ok)
+        self.assertIn('creature', self.current_types(session, god)[0])  # Creature spell, even below devotion.
+        self.resolve(session)
+        self.assertEqual({'enchantment'}, self.current_types(session, god)[0])
+        self.assertNotIn('god', self.current_types(session, god)[1])
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        ability = next(row for row in actions if row['id'].startswith('activate:') and row.get('source') == god.ref)
+        self.assertTrue(session.act('pilot:A', {'action_id': ability['id'], 'targets': [body.ref], 'pay': 'auto'}).ok)
+        self.resolve(session)
+        self.assertTrue(session.state.cards[body.object_id].tapped)
+        self.assertEqual({'enchantment'}, self.current_types(session, god)[0])
+        self.cast_at_priority(session, 'A', blue)
+        session = self.replay(session, load=True)
+        self.resolve(session)
+        self.assertEqual({'enchantment', 'creature'}, self.current_types(session, god)[0])
+        self.assertIn('god', self.current_types(session, god)[1])
+        self.cast_at_priority(session, 'A', counter, [god.ref]); self.resolve(session)
+        self.assertEqual(1, session.state.cards[god.object_id].counters.get('+1/+1'))
+        self.cast_at_priority(session, 'A', bounce, [blue.ref])
+        session = self.replay(session, load=True); self.resolve(session)
+        self.assertEqual({'enchantment'}, self.current_types(session, god)[0])
+        self.assertEqual(1, session.state.cards[god.object_id].counters.get('+1/+1'))
+        self.cast_at_priority(session, 'A', blue); self.resolve(session)
+        self.assertEqual({'enchantment', 'creature'}, self.current_types(session, god)[0])
+        self.assertEqual((7, 6), tuple(session.engine._numeric_stat(god.object_id, stat) for stat in ('power', 'toughness')))
+        for viewer in 'ABD':
+            self.assertNotIn(private.ref, json.dumps(session.packet('pilot:' + viewer, full=True)))
+        self.assertIn(private.ref, json.dumps(session.packet('pilot:C', full=True)))
+        self.replay(session, load=True)
+
+    def test_actual_hybrid_devotion_control_change_and_reentry_keep_new_incarnation(self):
+        session = self.session(394002); engine = session.engine
+        god = self.add(engine, 'Generic Devotion Twin God', zone='hand', ref='devotion-twin-god')
+        hybrid = self.add(engine, 'Generic Devotion Hybrid Artifact', zone='hand', ref='devotion-two-hybrid')
+        blue = self.add(engine, 'Generic Devotion Single Blue Artifact', zone='hand', ref='devotion-one-blue')
+        self.add(engine, 'Generic Devotion Single Blue Artifact', seat='D', ref='devotion-foreign-blue')
+        control = self.add(engine, 'Generic Event Subject Control', seat='D', zone='hand', ref='devotion-control')
+        self.add(engine, 'Generic Bound Plains', seat='D', ref='devotion-control-payment')
+        bounce = self.add(engine, 'Generic Setting Bounce', zone='hand', ref='devotion-god-return')
+        private = self.add(engine, 'Generic Bound Growth', seat='C', zone='hand', ref='devotion-private-twin')
+        offered = self.ready(session, god, {'U': 5}); self.assert_closed_card(session, god)
+        self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A', {'action_id': offered['id'], 'pay': 'auto'}).ok); self.resolve(session)
+        self.assertNotIn('creature', self.current_types(session, god)[0])
+        self.cast_at_priority(session, 'A', hybrid); self.resolve(session)
+        self.assertNotIn('creature', self.current_types(session, god)[0])  # Three symbols, not six; opponent mana is excluded.
+        self.cast_at_priority(session, 'A', blue); self.resolve(session)
+        self.assertIn('creature', self.current_types(session, god)[0])  # Exactly four symbols.
+        old_identity = session.state.cards[god.object_id].logical_object_id
+        self.cast_at_priority(session, 'D', control, [god.ref])
+        session = self.replay(session, load=True); self.resolve(session)
+        self.assertEqual('D', session.state.cards[god.object_id].controller)
+        self.assertNotIn('creature', self.current_types(session, god)[0])
+        self.cast_at_priority(session, 'A', bounce, [god.ref]); self.resolve(session)
+        self.assertEqual('hand', session.state.cards[god.object_id].zone)
+        self.assertIn('creature', self.current_types(session, god)[0])  # Card outside the battlefield.
+        self.cast_at_priority(session, 'A', god); self.resolve(session)
+        current = session.state.cards[god.object_id]
+        self.assertEqual('A', current.controller)
+        self.assertNotEqual(old_identity, current.logical_object_id)
+        self.assertIn('creature', self.current_types(session, god)[0])
+        self.assertNotIn('haste', session.engine._combat_keywords(current))
+        for viewer in 'ABD':
+            self.assertNotIn(private.ref, json.dumps(session.packet('pilot:' + viewer, full=True)))
+        self.replay(session, load=True)
+
+    def test_actual_devotion_type_removal_precedes_persistent_ability_loss(self):
+        session = self.session(394003); engine = session.engine
+        god = self.add(engine, 'Thassa, Deep-Dwelling', zone='hand', ref='ability-loss-god')
+        blue = self.add(engine, 'Generic Devotion Blue Artifact', ref='ability-loss-devotion')
+        aura = self.add(engine, 'Generic Devotion Ability Seal', zone='hand', ref='ability-loss-aura')
+        lower = self.add(engine, 'Generic Setting Bounce', zone='hand', ref='ability-loss-lower-devotion')
+        restore = self.add(engine, 'Generic Setting Bounce', zone='hand', ref='ability-loss-restore')
+        self.add(engine, 'Generic Bound Body', seat='B', ref='ability-loss-legal-activation-target')
+        offered = self.ready(session, god, {'U': 8, 'C': 6})
+        for card in (god, aura):
+            self.assert_closed_card(session, card)
+        self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A', {'action_id': offered['id'], 'pay': 'auto'}).ok); self.resolve(session)
+        self.assertIn('creature', self.current_types(session, god)[0])
+        self.cast_at_priority(session, 'A', aura, [god.ref]); self.resolve(session)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        self.assertFalse(any(row['id'].startswith('activate:') and row.get('source') == god.ref for row in actions))
+        self.cast_at_priority(session, 'A', lower, [blue.ref])
+        session = self.replay(session, load=True); self.resolve(session)
+        self.assertEqual('battlefield', session.state.cards[aura.object_id].zone)
+        self.assertEqual(god.object_id, session.state.cards[aura.object_id].attached_to)
+        self.assertEqual({'enchantment'}, self.current_types(session, god)[0])
+        self.cast_at_priority(session, 'A', restore, [aura.ref]); self.resolve(session)
+        self.assertEqual({'enchantment'}, self.current_types(session, god)[0])
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        self.assertTrue(any(row['id'].startswith('activate:') and row.get('source') == god.ref for row in actions))
+        self.replay(session, load=True)
+
+    def test_actual_attacking_god_leaves_combat_and_does_not_rejoin_after_devotion_returns(self):
+        from quorune.model import CombatState
+        session = self.session(394004); engine = session.engine
+        god = self.add(engine, 'Thassa, Deep-Dwelling', ref='combat-devotion-god')
+        god.acquired_control_turn_count = -1
+        blue = self.add(engine, 'Generic Devotion Blue Artifact', ref='combat-devotion-four')
+        bounce = self.add(engine, 'Generic Setting Bounce', zone='hand', ref='combat-devotion-lower')
+        private = self.add(engine, 'Generic Bound Growth', seat='C', zone='hand', ref='combat-devotion-private')
+        self.ready(session, bounce, {'U': 4}); self.assert_closed_card(session, god)
+        engine.permissions.invalidate_current(); engine.state.pending_decision = None
+        engine.state.phase = 'combat'; engine.state.step = 'declare_attackers'; engine.state.phase_index = 5
+        engine.state.combat = CombatState(); engine._issue_attackers()
+        god_identity = god.logical_object_id; blue_identity = blue.logical_object_id
+        life = {seat: player.life for seat, player in session.state.players.items()}
+        self.checkpoint(session)
+        before = authoritative_state_hash(session.state)
+        denied = session.act('pilot:D', {'action_id': 'attack', 'attackers': {god.ref: 'B'}})
+        self.assertFalse(denied.ok); self.assertEqual(before, authoritative_state_hash(session.state))
+        self.assertTrue(session.act('pilot:A', {'action_id': 'attack', 'attackers': {god.ref: 'B'}}).ok)
+        self.assertIn(god.object_id, session.state.combat.attackers)
+        self.cast_at_priority(session, 'A', bounce, [blue.ref]); self.resolve(session)
+        self.assertNotIn('creature', self.current_types(session, god)[0])
+        self.assertNotIn(god.object_id, session.state.combat.attackers)
+        session = self.replay(session, load=True)
+        self.cast_at_priority(session, 'A', blue); self.resolve(session)
+        self.assertIn('creature', self.current_types(session, god)[0])
+        self.assertNotIn(god.object_id, session.state.combat.attackers)
+        for _ in range(48):
+            session.engine.pump()
+            if session.state.phase != 'combat':
+                break
+            decision = session.state.pending_decision
+            response = {'action_id': 'block', 'blocks': {}} if decision.kind == 'combat.blockers' else {'action_id': 'pass'}
+            self.assertTrue(session.act(session.pending_principals()[0], response).ok)
+        else:
+            self.fail('Combat did not finish')
+        self.assertEqual(life, {seat: player.life for seat, player in session.state.players.items()})
+        self.assertEqual(god_identity, session.state.cards[god.object_id].logical_object_id)
+        self.assertNotEqual(blue_identity, session.state.cards[blue.object_id].logical_object_id)
+        for viewer in 'ABD':
+            self.assertNotIn(private.ref, json.dumps(session.packet('pilot:' + viewer, full=True)))
+        self.replay(session, load=True)
+
+    def test_actual_original_thassa_entry_replacement_and_post_entry_event_use_distinct_devotion(self):
+        from quorune.semantic_runtime.zone_replacements import capture_zone_change_replacement_snapshot
+        for devotion, expected_entry_creature, expected_draw in ((0, False, 0), (4, False, 1), (5, True, 1)):
+            with self.subTest(pre_entry_devotion=devotion):
+                session = self.session(394010 + devotion); engine = session.engine
+                god = self.add(engine, 'Thassa, Deep-Dwelling', zone='hand', ref='entry-devotion-god')
+                observer = self.add(engine, 'Generic Devotion Entry Observer', ref='entry-devotion-observer')
+                if devotion >= 4:
+                    self.add(engine, 'Generic Devotion Blue Artifact', ref='entry-devotion-four')
+                if devotion == 5:
+                    self.add(engine, 'Generic Devotion Single Blue Artifact', ref='entry-devotion-one')
+                offered = self.ready(session, god, {'U': 1, 'C': 3})
+                for card in (god, observer):
+                    self.assert_closed_card(session, card)
+                hands = {seat: set(session.state.players[seat].zones['hand']) for seat in 'ABCD'}
+                self.checkpoint(session)
+                self.assertTrue(session.act('pilot:A', {'action_id': offered['id'], 'pay': 'auto'}).ok)
+                before_snapshot = authoritative_state_hash(session.state)
+                snapshot = capture_zone_change_replacement_snapshot(session.engine, [(god.object_id, 'battlefield')],
+                    destination_controllers={god.object_id: 'A'})
+                self.assertEqual(before_snapshot, authoritative_state_hash(session.state))
+                self.assertEqual(expected_entry_creature, 'creature' in snapshot.subjects[0].object_types)
+                session = self.replay(session, load=True); self.resolve(session)
+                current = session.state.cards[god.object_id]
+                self.assertEqual(bool(expected_draw), 'creature' in self.current_types(session, god)[0])
+                self.assertEqual(len(hands['A']) - 1 + expected_draw, len(session.state.players['A'].zones['hand']))
+                for seat in 'BCD':
+                    self.assertEqual(hands[seat], set(session.state.players[seat].zones['hand']))
+                added = set(session.state.players['A'].zones['hand']) - hands['A']
+                self.assertEqual(expected_draw, len(added))
+                for object_id in added:
+                    reference = session.state.cards[object_id].ref
+                    for viewer in 'ABCD':
+                        rendered = json.dumps(session.projector._snapshot('pilot:' + viewer), sort_keys=True)
+                        if viewer == 'A':
+                            self.assertIn(reference, rendered)
+                        else:
+                            self.assertNotIn(reference, rendered)
+                self.replay(session, load=True)
+
     def test_actual_graveyard_wonder_tracks_owner_land_source_departure_and_replay(self):
         from quorune.card_programs import bind_card_program_runtime
         from quorune.card_programs.adapters import compile_best_available_card_program
@@ -312,6 +668,7 @@ class StaticSettingRuntimeTests(unittest.TestCase):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'settings.sqlite3'
         build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
             ROOT/'tests/fixtures/static-characteristic-setting-cards.json',
+            ROOT/'tests/fixtures/event-player-subject-cards.json',
             ROOT/'tests/fixtures/conditional-exile-cards.json',ROOT/'tests/fixtures/scryfall-exact-lists.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Static setting witness',[DeckEntry('Generic Bound Commander',1,'commander'),

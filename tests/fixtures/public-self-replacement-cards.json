@@ -1,0 +1,140 @@
+{
+  "cards": [
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{0}",
+      "name": "Memnite",
+      "oracle_id": "7663ac7c-1de3-4250-b96a-fae9dbd66a27",
+      "oracle_text": "",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2011-05-14",
+      "toughness": "1",
+      "type_line": "Artifact Creature — Construct"
+    },
+    {
+      "oracle_id": "692a6833-3014-42f6-b1ad-333bb3292c65",
+      "name": "Thought Reflection",
+      "mana_cost": "{4}{U}{U}{U}",
+      "cmc": 7.0,
+      "type_line": "Enchantment",
+      "oracle_text": "If you would draw a card, draw two cards instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-08-07",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture:self-replacement-entry",
+      "name": "Generic City Replacement Enterer",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Creature — Human",
+      "oracle_text": "Ascend\nWhen this creature enters, draw two cards. If you have the city's blessing, draw three cards instead.",
+      "power": "1",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Ascend"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture:self-replacement-prefix",
+      "name": "Generic Public Replacement Prefix",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Instant",
+      "oracle_text": "You gain 1 life. Draw a card. If you have three or more cards in hand, draw two cards instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If a spell or ability causes you to draw multiple cards, Thought Reflection's effect doubles each card draw. For example, if you cast Harmonize (“Draw three cards”), you'll draw six cards.",
+      "oracle_id": "692a6833-3014-42f6-b1ad-333bb3292c65",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If two or more replacement effects would apply to a card-drawing event, the player who's drawing the card chooses what order to apply them.",
+      "oracle_id": "692a6833-3014-42f6-b1ad-333bb3292c65",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "The effects of multiple Thought Reflections are cumulative. For example, if you have two Thought Reflections on the battlefield, you'll draw four times the original number of cards. If you have three, you'll draw eight times the number of cards, and so on.",
+      "oracle_id": "692a6833-3014-42f6-b1ad-333bb3292c65",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

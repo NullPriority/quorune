@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Canonical public source and recipient snapshots before damage replacement."""
 
-from typing import Any
+from typing import Any, Mapping
 from ..damage_source import DamageSourceSnapshot,DamageError,represented_toxic_value
 from ..damage_values import DamageRecipientSnapshot
 from ..damage_scope_facts import current_damage_scope_facts,current_damage_combat_partners
@@ -17,10 +17,12 @@ def source_snapshot(
     source_ref: str | None,
     *,
     controller: str,
+    source_card: Any | None = None,
+    characteristics: Mapping[str, Any] | None = None,
 ) -> DamageSourceSnapshot:
     """Capture CR 120.1/120.2 source facts before event transformation."""
 
-    source = next(
+    source = source_card or next(
         (
             card
             for card in host.state.cards.values()
@@ -54,7 +56,7 @@ def source_snapshot(
             owner=controller,
             zone="unknown",
         )
-    data = host._effective_card_data(source)
+    data = dict(characteristics) if characteristics is not None else host._effective_card_data(source)
     card_types, subtypes, supertypes = host._type_parts(
         str(data.get("type_line") or "")
     )

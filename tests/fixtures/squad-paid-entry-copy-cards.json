@@ -1,0 +1,1312 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned Squad originals and rulings, including nonmana residual controls; CR 702.157",
+  "cards": [
+    {
+      "oracle_id": "29439669-c9be-46f3-a62f-16de51fefe88",
+      "name": "Wasteland Raider",
+      "mana_cost": "{2}{B}{B}",
+      "type_line": "Creature — Human Mercenary",
+      "oracle_text": "Squad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)\nWhen this creature enters, each player sacrifices a creature of their choice.",
+      "power": "4",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Squad"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-03-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "344671d1-8abf-4be1-93c9-ef917e88e6c9",
+      "name": "Ruthless Radrat",
+      "mana_cost": "{1}{B}{B}",
+      "type_line": "Creature — Rat Mutant",
+      "oracle_text": "Squad—Exile four cards from your graveyard. (As an additional cost to cast this spell, you may pay its squad cost any number of times. When this creature enters, create that many tokens that are copies of it.)\nMenace (This creature can't be blocked except by two or more creatures.)",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Menace",
+        "Squad"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-03-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "65db1ec4-70b9-45f9-a2c2-01f6c8e8fd89",
+      "name": "Sicarian Infiltrator",
+      "mana_cost": "{2}{U}",
+      "type_line": "Artifact Creature — Human Soldier",
+      "oracle_text": "Flash\nSquad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)\nBenediction of the Omnissiah — When this creature enters, draw a card.",
+      "power": "1",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Benediction of the Omnissiah",
+        "Flash",
+        "Squad"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "7273118b-08af-41cd-a316-6bf61dc45b6c",
+      "name": "Thrill-Kill Disciple",
+      "mana_cost": "{2}{R}",
+      "type_line": "Creature — Human Mercenary",
+      "oracle_text": "Squad—{1}, Discard a card. (As an additional cost to cast this spell, you may pay its squad cost any number of times. When this creature enters, create that many tokens that are copies of it.)\nWhen this creature dies, create a Junk token.",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Squad"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-03-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "74cd099c-8476-4f75-bc1a-8b166f696163",
+      "name": "Ultramarines Honour Guard",
+      "mana_cost": "{3}{W}",
+      "type_line": "Creature — Astartes Warrior",
+      "oracle_text": "Squad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)\nOther creatures you control get +1/+1.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Squad"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "77ccafd9-6d76-4658-81ab-bde0454fcc15",
+      "name": "Endless Foot Assault",
+      "mana_cost": "{2}{W}",
+      "type_line": "Enchantment",
+      "oracle_text": "Squad {1}{W} (As an additional cost to cast this spell, you may pay {1}{W} any number of times. When this enchantment enters, create that many tokens that are copies of it.)\nWhenever you attack, for each opponent, create a 1/1 black Ninja creature token that's tapped and attacking that player.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Squad"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-03-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Vigilance",
+        "Squad"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Securitron Squadron",
+      "oracle_id": "96312b75-3110-4506-9f95-0c6c17d9da11",
+      "oracle_text": "Squad {3} (As an additional cost to cast this spell, you may pay {3} any number of times. When this creature enters, create that many tokens that are copies of it.)\nVigilance\nWhenever a creature token you control enters, put a +1/+1 counter on it.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-03-08",
+      "toughness": "2",
+      "type_line": "Artifact Creature — Robot"
+    },
+    {
+      "oracle_id": "b34507d3-55ba-4629-9581-7983d0025e89",
+      "name": "Powder Ganger",
+      "mana_cost": "{2}{R}",
+      "type_line": "Creature — Human Rogue",
+      "oracle_text": "Squad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)\nWhen this creature enters, destroy up to one target artifact.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Squad"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-03-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "b48e7e87-3adf-417d-b93b-bf67ad6cbf1d",
+      "name": "Arco-Flagellant",
+      "mana_cost": "{2}{B}",
+      "type_line": "Creature — Human",
+      "oracle_text": "Squad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)\nThis creature can't block.\nEndurant — Pay 3 life: This creature gains indestructible until end of turn.",
+      "power": "3",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Endurant",
+        "Squad"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "b7c48f87-bdef-4cef-a1c4-5b4d0b7a26cd",
+      "name": "Vanguard Suppressor",
+      "mana_cost": "{3}{U}",
+      "type_line": "Creature — Astartes Warrior",
+      "oracle_text": "Squad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)\nFlying\nSuppressing Fire — Whenever this creature deals combat damage to a player, draw a card.",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying",
+        "Suppressing Fire",
+        "Squad"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "cd8761ef-b57b-456b-aa12-374ac825087e",
+      "name": "Roadkill Rodney",
+      "mana_cost": "{2}",
+      "type_line": "Artifact Creature — Robot",
+      "oracle_text": "Squad {3} (As an additional cost to cast this spell, you may pay {3} any number of times. When this creature enters, create that many tokens that are copies of it.)\nDeathtouch\nWhenever this creature deals combat damage to a player, create a Mutagen token.",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Squad",
+        "Deathtouch"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-03-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "name": "Zephyrim",
+      "mana_cost": "{3}{W}",
+      "type_line": "Creature — Human Warrior",
+      "oracle_text": "Squad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)\nFlying, vigilance\nMiracle {1}{W} (You may cast this card for its miracle cost when you draw it if it's the first card you drew this turn.)",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Miracle",
+        "Vigilance",
+        "Squad"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "d9af0da0-5e10-40c5-afb2-3f44c016b927",
+      "name": "Gary Clone",
+      "mana_cost": "{1}{W}",
+      "type_line": "Creature — Human Citizen",
+      "oracle_text": "Squad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)\nWhenever this creature attacks, each creature you control named Gary Clone gets +1/+0 until end of turn.",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Squad"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-03-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "da4bf807-93f3-41b7-8bfd-aa63a551754e",
+      "name": "Galadhrim Brigade",
+      "mana_cost": "{2}{G}",
+      "type_line": "Creature — Elf Soldier",
+      "oracle_text": "Squad {1}{G} (As an additional cost to cast this spell, you may pay {1}{G} any number of times. When this creature enters, create that many tokens that are copies of it.)\nOther Elves you control get +1/+1.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Squad"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "fa25d142-e6ba-4fc9-81e2-114c32afc030",
+      "name": "Space Marine Devastator",
+      "mana_cost": "{3}{W}",
+      "type_line": "Creature — Astartes Warrior",
+      "oracle_text": "Squad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)\nGrav-cannon — When this creature enters, destroy up to one target artifact or enchantment.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Grav-cannon",
+        "Squad"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 4.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "29439669-c9be-46f3-a62f-16de51fefe88",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If the spell resolves but the creature with squad leaves the battlefield before its squad ability resolves, you’ll still create the token copies."
+    },
+    {
+      "oracle_id": "29439669-c9be-46f3-a62f-16de51fefe88",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If, for some reason, the creature doesn’t have the squad ability when it’s on the battlefield, the ability won’t trigger, even if you’ve paid the squad cost one or more times."
+    },
+    {
+      "oracle_id": "29439669-c9be-46f3-a62f-16de51fefe88",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "The tokens created by the squad ability aren’t “cast,” so any abilities that trigger when a spell is cast won’t trigger for the copies."
+    },
+    {
+      "oracle_id": "29439669-c9be-46f3-a62f-16de51fefe88",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If the spell is countered, the squad ability will not trigger, and no tokens will be created."
+    },
+    {
+      "oracle_id": "29439669-c9be-46f3-a62f-16de51fefe88",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "You may pay the squad cost any number of times. You will create a token that is a copy of that permanent for each time you paid the squad cost. If you paid the squad cost multiple times, the tokens will all enter the battlefield simultaneously."
+    },
+    {
+      "oracle_id": "344671d1-8abf-4be1-93c9-ef917e88e6c9",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "You may pay the squad cost any number of times. You will create a token that is a copy of that permanent for each time you paid the squad cost. If you paid the squad cost multiple times, the tokens will all enter the battlefield simultaneously."
+    },
+    {
+      "oracle_id": "344671d1-8abf-4be1-93c9-ef917e88e6c9",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If, for some reason, the creature doesn’t have the squad ability when it’s on the battlefield, the ability won’t trigger, even if you’ve paid the squad cost one or more times."
+    },
+    {
+      "oracle_id": "344671d1-8abf-4be1-93c9-ef917e88e6c9",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If the spell is countered, the squad ability will not trigger, and no tokens will be created."
+    },
+    {
+      "oracle_id": "344671d1-8abf-4be1-93c9-ef917e88e6c9",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "The tokens created by the squad ability aren’t “cast,” so any abilities that trigger when a spell is cast won’t trigger for the copies."
+    },
+    {
+      "oracle_id": "344671d1-8abf-4be1-93c9-ef917e88e6c9",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "Once you announce that you’re casting Ruthless Radrat, no player may take actions until you’re done casting it. Notably, opponents can’t try to remove cards from your graveyard to stop you from paying Ruthless Radrat’s squad cost."
+    },
+    {
+      "oracle_id": "344671d1-8abf-4be1-93c9-ef917e88e6c9",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If the spell resolves but the creature with squad leaves the battlefield before its squad ability resolves, you’ll still create the token copies."
+    },
+    {
+      "oracle_id": "65db1ec4-70b9-45f9-a2c2-01f6c8e8fd89",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "The tokens created by the squad ability aren't \"cast,\" so any abilities that trigger when a spell is cast won't trigger for the copies."
+    },
+    {
+      "oracle_id": "65db1ec4-70b9-45f9-a2c2-01f6c8e8fd89",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You may pay the squad cost any number of times. You will get a token that is a copy of that permanent for each time you paid the squad cost."
+    },
+    {
+      "oracle_id": "65db1ec4-70b9-45f9-a2c2-01f6c8e8fd89",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If, for some reason, the creature doesn't have the squad ability when it's on the battlefield, the ability won't trigger, even if you've paid the squad cost one or more times."
+    },
+    {
+      "oracle_id": "65db1ec4-70b9-45f9-a2c2-01f6c8e8fd89",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If the spell is countered, the squad ability will not trigger, and no tokens will be created."
+    },
+    {
+      "oracle_id": "7273118b-08af-41cd-a316-6bf61dc45b6c",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "The tokens created by the squad ability aren’t “cast,” so any abilities that trigger when a spell is cast won’t trigger for the copies."
+    },
+    {
+      "oracle_id": "7273118b-08af-41cd-a316-6bf61dc45b6c",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "You may pay the squad cost any number of times. You will create a token that is a copy of that permanent for each time you paid the squad cost. If you paid the squad cost multiple times, the tokens will all enter the battlefield simultaneously."
+    },
+    {
+      "oracle_id": "7273118b-08af-41cd-a316-6bf61dc45b6c",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If the spell resolves but the creature with squad leaves the battlefield before its squad ability resolves, you’ll still create the token copies."
+    },
+    {
+      "oracle_id": "7273118b-08af-41cd-a316-6bf61dc45b6c",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If the spell is countered, the squad ability will not trigger, and no tokens will be created."
+    },
+    {
+      "oracle_id": "7273118b-08af-41cd-a316-6bf61dc45b6c",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "Some spells and abilities that create Junk tokens may require targets. If each target chosen is illegal as that spell or ability tries to resolve, it won’t resolve and none of its effects happen. You won’t create any Junk tokens."
+    },
+    {
+      "oracle_id": "7273118b-08af-41cd-a316-6bf61dc45b6c",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "You pay all costs and follow all normal timing rules for the card played from exile with a Junk token’s ability. For example, if the exiled card is a land card, you may play it only during your main phase while the stack is empty."
+    },
+    {
+      "oracle_id": "7273118b-08af-41cd-a316-6bf61dc45b6c",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If, for some reason, the creature doesn’t have the squad ability when it’s on the battlefield, the ability won’t trigger, even if you’ve paid the squad cost one or more times."
+    },
+    {
+      "oracle_id": "7273118b-08af-41cd-a316-6bf61dc45b6c",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "You can’t sacrifice a Junk token to pay multiple costs. For example, you can’t sacrifice a Junk token to activate its own ability and also to activate the second ability of Junk Jet."
+    },
+    {
+      "oracle_id": "74cd099c-8476-4f75-bc1a-8b166f696163",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "The tokens created by the squad ability aren't \"cast,\" so any abilities that trigger when a spell is cast won't trigger for the copies."
+    },
+    {
+      "oracle_id": "74cd099c-8476-4f75-bc1a-8b166f696163",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If the spell is countered, the squad ability will not trigger, and no tokens will be created."
+    },
+    {
+      "oracle_id": "74cd099c-8476-4f75-bc1a-8b166f696163",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You may pay the squad cost any number of times. You will get a token that is a copy of that permanent for each time you paid the squad cost."
+    },
+    {
+      "oracle_id": "74cd099c-8476-4f75-bc1a-8b166f696163",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If, for some reason, the creature doesn't have the squad ability when it's on the battlefield, the ability won't trigger, even if you've paid the squad cost one or more times."
+    },
+    {
+      "oracle_id": "77ccafd9-6d76-4658-81ab-bde0454fcc15",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "If, for some reason, the permanent doesn't have the squad ability when it's on the battlefield, the ability won't trigger, even if you've paid the squad cost one or more times."
+    },
+    {
+      "oracle_id": "77ccafd9-6d76-4658-81ab-bde0454fcc15",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "If the spell is countered, the squad ability will not trigger, and no tokens will be created."
+    },
+    {
+      "oracle_id": "77ccafd9-6d76-4658-81ab-bde0454fcc15",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Tokens will be created for each of your opponents, not just opponents that you attacked."
+    },
+    {
+      "oracle_id": "77ccafd9-6d76-4658-81ab-bde0454fcc15",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "The tokens created by the squad ability aren't \"cast,\" so any abilities that trigger when a spell is cast won't trigger for the copies."
+    },
+    {
+      "oracle_id": "77ccafd9-6d76-4658-81ab-bde0454fcc15",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Although the tokens created by the last ability are attacking, they were never declared as attacking creatures. Abilities that trigger whenever a creature attacks won't trigger when those tokens enter attacking."
+    },
+    {
+      "oracle_id": "77ccafd9-6d76-4658-81ab-bde0454fcc15",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "You may pay the squad cost any number of times. You will create a token that is a copy of that permanent for each time you paid the squad cost. If you paid the squad cost multiple times, the tokens will all enter the battlefield simultaneously."
+    },
+    {
+      "oracle_id": "77ccafd9-6d76-4658-81ab-bde0454fcc15",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "If the spell resolves but the permanent with squad leaves the battlefield before its squad ability resolves, you'll still create the token copies."
+    },
+    {
+      "oracle_id": "96312b75-3110-4506-9f95-0c6c17d9da11",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If, for some reason, the creature doesn’t have the squad ability when it’s on the battlefield, the ability won’t trigger, even if you’ve paid the squad cost one or more times."
+    },
+    {
+      "oracle_id": "96312b75-3110-4506-9f95-0c6c17d9da11",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "You may pay the squad cost any number of times. You will create a token that is a copy of that permanent for each time you paid the squad cost. If you paid the squad cost multiple times, the tokens will all enter the battlefield simultaneously."
+    },
+    {
+      "oracle_id": "96312b75-3110-4506-9f95-0c6c17d9da11",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If the spell resolves but the creature with squad leaves the battlefield before its squad ability resolves, you’ll still create the token copies."
+    },
+    {
+      "oracle_id": "96312b75-3110-4506-9f95-0c6c17d9da11",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If Securitron Squadron enters the battlefield at the same time as one or more creature tokens, its last ability will trigger for each of those creature tokens. If that Securitron Squadron is itself a creature token, its last ability will trigger when it enters the battlefield as well."
+    },
+    {
+      "oracle_id": "96312b75-3110-4506-9f95-0c6c17d9da11",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "For example, if you pay Securitron Squadron’s squad cost three times, then you’ll create three token copies of Securitron Squadron when its squad ability resolves. Each of those tokens will enter the battlefield simultaneously. When they enter, their last abilities will each trigger three times (once for each of the other two tokens, and once for itself.) If the original Securitron Squadron is still on the battlefield, its last ability will trigger three times as well. After all of the triggered abilities resolve, each of the three token copies of Securitron Squadron will have four +1/+1 counters on it."
+    },
+    {
+      "oracle_id": "96312b75-3110-4506-9f95-0c6c17d9da11",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If the spell is countered, the squad ability will not trigger, and no tokens will be created."
+    },
+    {
+      "oracle_id": "96312b75-3110-4506-9f95-0c6c17d9da11",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "The tokens created by the squad ability aren’t “cast,” so any abilities that trigger when a spell is cast won’t trigger for the copies."
+    },
+    {
+      "oracle_id": "b34507d3-55ba-4629-9581-7983d0025e89",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "The tokens created by the squad ability aren’t “cast,” so any abilities that trigger when a spell is cast won’t trigger for the copies."
+    },
+    {
+      "oracle_id": "b34507d3-55ba-4629-9581-7983d0025e89",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If, for some reason, the creature doesn’t have the squad ability when it’s on the battlefield, the ability won’t trigger, even if you’ve paid the squad cost one or more times."
+    },
+    {
+      "oracle_id": "b34507d3-55ba-4629-9581-7983d0025e89",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If the spell is countered, the squad ability will not trigger, and no tokens will be created."
+    },
+    {
+      "oracle_id": "b34507d3-55ba-4629-9581-7983d0025e89",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If the spell resolves but the creature with squad leaves the battlefield before its squad ability resolves, you’ll still create the token copies."
+    },
+    {
+      "oracle_id": "b34507d3-55ba-4629-9581-7983d0025e89",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "You may pay the squad cost any number of times. You will create a token that is a copy of that permanent for each time you paid the squad cost. If you paid the squad cost multiple times, the tokens will all enter the battlefield simultaneously."
+    },
+    {
+      "oracle_id": "b48e7e87-3adf-417d-b93b-bf67ad6cbf1d",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You may pay the squad cost any number of times. You will get a token that is a copy of that permanent for each time you paid the squad cost."
+    },
+    {
+      "oracle_id": "b48e7e87-3adf-417d-b93b-bf67ad6cbf1d",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "The tokens created by the squad ability aren't \"cast,\" so any abilities that trigger when a spell is cast won't trigger for the copies."
+    },
+    {
+      "oracle_id": "b48e7e87-3adf-417d-b93b-bf67ad6cbf1d",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If, for some reason, the creature doesn't have the squad ability when it's on the battlefield, the ability won't trigger, even if you've paid the squad cost one or more times."
+    },
+    {
+      "oracle_id": "b48e7e87-3adf-417d-b93b-bf67ad6cbf1d",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If the spell is countered, the squad ability will not trigger, and no tokens will be created."
+    },
+    {
+      "oracle_id": "b7c48f87-bdef-4cef-a1c4-5b4d0b7a26cd",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If the spell is countered, the squad ability will not trigger, and no tokens will be created."
+    },
+    {
+      "oracle_id": "b7c48f87-bdef-4cef-a1c4-5b4d0b7a26cd",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You may pay the squad cost any number of times. You will get a token that is a copy of that permanent for each time you paid the squad cost."
+    },
+    {
+      "oracle_id": "b7c48f87-bdef-4cef-a1c4-5b4d0b7a26cd",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "The tokens created by the squad ability aren't \"cast,\" so any abilities that trigger when a spell is cast won't trigger for the copies."
+    },
+    {
+      "oracle_id": "b7c48f87-bdef-4cef-a1c4-5b4d0b7a26cd",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If, for some reason, the creature doesn't have the squad ability when it's on the battlefield, the ability won't trigger, even if you've paid the squad cost one or more times."
+    },
+    {
+      "oracle_id": "cd8761ef-b57b-456b-aa12-374ac825087e",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Some spells and abilities that create Mutagen tokens require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve. The Mutagen token won't be created."
+    },
+    {
+      "oracle_id": "cd8761ef-b57b-456b-aa12-374ac825087e",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "If, for some reason, the permanent doesn't have the squad ability when it's on the battlefield, the ability won't trigger, even if you've paid the squad cost one or more times."
+    },
+    {
+      "oracle_id": "cd8761ef-b57b-456b-aa12-374ac825087e",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "If the spell is countered, the squad ability will not trigger, and no tokens will be created."
+    },
+    {
+      "oracle_id": "cd8761ef-b57b-456b-aa12-374ac825087e",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "If the spell resolves but the permanent with squad leaves the battlefield before its squad ability resolves, you'll still create the token copies."
+    },
+    {
+      "oracle_id": "cd8761ef-b57b-456b-aa12-374ac825087e",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "The tokens created by the squad ability aren't \"cast,\" so any abilities that trigger when a spell is cast won't trigger for the copies."
+    },
+    {
+      "oracle_id": "cd8761ef-b57b-456b-aa12-374ac825087e",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "You may pay the squad cost any number of times. You will create a token that is a copy of that permanent for each time you paid the squad cost. If you paid the squad cost multiple times, the tokens will all enter the battlefield simultaneously."
+    },
+    {
+      "oracle_id": "cd8761ef-b57b-456b-aa12-374ac825087e",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Mutagen tokens are a kind of predefined token. Each one is a colorless artifact with the artifact subtype Mutagen and the ability \"{1}, {T}, Sacrifice this token: Put a +1/+1 counter on target creature. Activate only as a sorcery.\""
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You can cast a card for its miracle cost only as the miracle triggered ability resolves. If you don't want to cast it at that time (or you can't cast it, perhaps because there are no legal targets available), you won't be able to cast it later for the miracle cost."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "Multiple card draws are always treated as a sequence of individual card draws. For example, if you haven't drawn any cards yet during a turn and cast a spell that instructs you to draw three cards, you'll draw them one at a time. Only the first card drawn this way may be revealed and cast using its miracle ability."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "The tokens created by the squad ability aren't \"cast,\" so any abilities that trigger when a spell is cast won't trigger for the copies."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "It's important to reveal a card with miracle before it is mixed with the other cards in your hand."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If the spell is countered, the squad ability will not trigger, and no tokens will be created."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You can reveal and cast a card with miracle on any turn, not just your own, if it's the first card you've drawn that turn."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a miracle cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You may pay the squad cost any number of times. You will get a token that is a copy of that permanent for each time you paid the squad cost."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You still draw the card, whether you use the miracle ability or not. Any ability that triggers whenever you draw a card, for example, will trigger. If you don't cast the card using its miracle ability, it will remain in your hand."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If the card with miracle leaves your hand before the triggered ability resolves, you won't be able to cast it using its miracle ability."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "See also \"New Keyword Ability: Squad\" and \"Returning Keyword Ability: Miracle\" in the General Notes section."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If, for some reason, the creature doesn't have the squad ability when it's on the battlefield, the ability won't trigger, even if you've paid the squad cost one or more times."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You don't have to reveal a drawn card with miracle if you don't wish to cast it at that time."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If you cast Zephyrim for its miracle cost, you may also choose to pay its squad cost one or more times."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You cast the card with miracle during the resolution of the triggered ability. Ignore any timing rules based on the card's type."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "Miracle is an alternative cost to cast the spell with miracle. It can't be combined with other alternative costs, such as casting a spell \"without paying its mana cost.\""
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If an effect puts a card into your hand without using the word \"draw,\" the card wasn't drawn."
+    },
+    {
+      "oracle_id": "d9af0da0-5e10-40c5-afb2-3f44c016b927",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "You may pay the squad cost any number of times. You will create a token that is a copy of that permanent for each time you paid the squad cost. If you paid the squad cost multiple times, the tokens will all enter the battlefield simultaneously."
+    },
+    {
+      "oracle_id": "d9af0da0-5e10-40c5-afb2-3f44c016b927",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If, for some reason, the creature doesn't have the squad ability when it's on the battlefield, the ability won't trigger, even if you've paid the squad cost one or more times."
+    },
+    {
+      "oracle_id": "d9af0da0-5e10-40c5-afb2-3f44c016b927",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "The tokens created by the squad ability aren't \"cast,\" so any abilities that trigger when a spell is cast won't trigger for the copies."
+    },
+    {
+      "oracle_id": "d9af0da0-5e10-40c5-afb2-3f44c016b927",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If the spell is countered, the squad ability will not trigger, and no tokens will be created."
+    },
+    {
+      "oracle_id": "d9af0da0-5e10-40c5-afb2-3f44c016b927",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If the spell resolves but the creature with squad leaves the battlefield before its squad ability resolves, you'll still create the token copies."
+    },
+    {
+      "oracle_id": "da4bf807-93f3-41b7-8bfd-aa63a551754e",
+      "published_at": "2023-11-03",
+      "source": "wotc",
+      "comment": "The tokens created by the squad ability aren't \"cast,\" so any abilities that trigger when a spell is cast won't trigger for the copies."
+    },
+    {
+      "oracle_id": "da4bf807-93f3-41b7-8bfd-aa63a551754e",
+      "published_at": "2023-11-03",
+      "source": "wotc",
+      "comment": "If the spell is countered, the squad ability will not trigger, and no tokens will be created."
+    },
+    {
+      "oracle_id": "da4bf807-93f3-41b7-8bfd-aa63a551754e",
+      "published_at": "2023-11-03",
+      "source": "wotc",
+      "comment": "If, for some reason, the creature doesn't have the squad ability when it's on the battlefield, the ability won't trigger, even if you've paid the squad cost one or more times."
+    },
+    {
+      "oracle_id": "da4bf807-93f3-41b7-8bfd-aa63a551754e",
+      "published_at": "2023-11-03",
+      "source": "wotc",
+      "comment": "You may pay the squad cost any number of times. You will get a token that is a copy of that permanent for each time you paid the squad cost. If you paid the squad cost multiple times, the tokens will all enter the battlefield simultaneously."
+    },
+    {
+      "oracle_id": "fa25d142-e6ba-4fc9-81e2-114c32afc030",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "The tokens created by the squad ability aren't \"cast,\" so any abilities that trigger when a spell is cast won't trigger for the copies."
+    },
+    {
+      "oracle_id": "fa25d142-e6ba-4fc9-81e2-114c32afc030",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You may pay the squad cost any number of times. You will get a token that is a copy of that permanent for each time you paid the squad cost."
+    },
+    {
+      "oracle_id": "fa25d142-e6ba-4fc9-81e2-114c32afc030",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If, for some reason, the creature doesn't have the squad ability when it's on the battlefield, the ability won't trigger, even if you've paid the squad cost one or more times."
+    },
+    {
+      "oracle_id": "fa25d142-e6ba-4fc9-81e2-114c32afc030",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If the spell is countered, the squad ability will not trigger, and no tokens will be created."
+    }
+  ]
+}

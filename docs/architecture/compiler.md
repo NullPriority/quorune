@@ -2627,6 +2627,32 @@ query. Optional, payment, dynamic, aggregate, combined-event, targeted,
 multi-effect, other-counter, non-self, and broader damage forms remain
 source-spanned residuals.
 
+## Paid entry-copy keywords
+
+A printed fixed ordinary-mana Offspring instance emits an admitted additional
+cost component and its linked entry trigger. The accepted cast option seals
+the instance's paid fact through stack-to-battlefield entry. The trigger reuses
+the canonical current/LKI source-copy recipe with a 1/1 exception. Unpaid casts,
+blinked entries and newly created token copies cannot invent paid facts.
+[ADR 0118](../adr/0118-paid-entry-copy-casting-facts.md) defines the cost,
+occurrence and copied-casting-decision boundaries. Fixed ordinary-mana Squad
+adds a separately validated integer payment count and one simultaneous source
+copy batch. Its published count field is independent of printed X and has no
+arbitrary repetition ceiling. See [ADR 0119](../adr/0119-fixed-mana-squad-repetitions.md).
+Broader costs and multiple printed instances remain residual.
+
+## Commander Learn
+
+The complete Learn instruction lowers to the existing optional-payment
+operation's closed schema-5 Learn action. Its capability is Commander-only;
+runtime also verifies the effective Commander rules profile. The locked
+controller may discard one current owned hand card, followed by one canonical
+private draw, or decline. Commander rule 903.11 prevents the outside-the-game
+Lesson option. Unknown profiles, broader subjects and unrepresented Learn
+replacement effects remain unsupported. See
+[ADR 0117](../adr/0117-commander-learn-payment-boundary.md) for the schema,
+format authority, payment delegation and replay boundary.
+
 ## Extending the compiler
 
 Add the smallest reusable grammar production and typed construct. Include

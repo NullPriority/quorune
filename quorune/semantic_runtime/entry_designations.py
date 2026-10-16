@@ -57,6 +57,9 @@ class EntryDesignationHandler:
         self.validate(descriptor)
         return ()
 
+    def _designation_values(self, descriptor, kind):
+        return kind.values
+
     def subject_replacement_effects(
         self,
         descriptor: Mapping[str, Any],
@@ -83,5 +86,5 @@ class EntryDesignationHandler:
                 operations=(SetField(kind.event_field, value),),
                 label=f"{subject.object_ref}: choose {kind.value.replace('_', ' ')} {value}",
             )
-            for value in kind.values
+            for value in self._designation_values(descriptor, kind)
         )

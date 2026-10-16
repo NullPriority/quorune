@@ -169,7 +169,7 @@ class FixedChooseOneModalCompilerTests(unittest.TestCase):
             (
                 "Spree\n"
                 "+ {1} — Destroy target artifact.\n"
-                "+ {2} — You gain 4 life."
+                "+ {X} — You gain 4 life."
             ),
         )
         for oracle_text in cases:
@@ -239,7 +239,7 @@ class FixedChooseOneModalCompilerTests(unittest.TestCase):
 
         assert_exact()
         with patch(
-            "quorune.oracle_ir.fixed_choose_one_modal_spell_template",
+            "quorune.compiler.whole_modal_templates.fixed_choose_one_modal_spell_template",
             return_value=None,
         ):
             with self.assertRaises(AssertionError):

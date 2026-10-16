@@ -62,6 +62,7 @@ from .conditional_entry_counters import ConditionalSelfEntryCounterHandler
 from .sunburst import SunburstEntryCounterHandler
 from .entry_choices import ReadAheadEntryChoiceHandler, RiotEntryChoiceHandler
 from .entry_designations import EntryDesignationHandler
+from .entry_color_exclusion import ExcludedColorEntryDesignationHandler
 from .entry_copy import EntryCopyHandler, entry_copy_replacement_effects
 from .entry_reveal import EntryRevealHandler,entry_reveal_replacement_effects
 from .kicker import FixedKickedEntryHandler
@@ -85,7 +86,7 @@ from .zone_replacement_model import (
 )
 from .zone_replacement_inputs import (
     active_zone_replacement_sources,
-    prospective_destination_controller,
+    zone_change_subject_characteristics,
     validated_zone_change_snapshot_inputs,
     zone_change_snapshot_event as _snapshot_event,
     zone_change_subject_card,
@@ -437,6 +438,7 @@ def default_zone_change_replacement_registry(
             EntryStateReplacementHandler(),
             FixedEntryConditionReplacementHandler(),
             EntryDesignationHandler(),
+            ExcludedColorEntryDesignationHandler(),
             EntryCopyHandler(),
             EntryRevealHandler(),
             ReadAheadEntryChoiceHandler(),
@@ -754,15 +756,8 @@ def _zone_change_snapshot_subjects(
     for object_id, destination in changes:
         card = zone_change_subject_card(host, object_id, prospective_objects, error_type)
         try:
-            characteristics = dict(
-                entry_characteristics.get(
-                    object_id, host._effective_card_data(card)
-                )
-            )
-            card_types, subtypes, supertypes = host._type_parts(
-                str(characteristics.get("type_line") or "")
-            )
-            destination_controller = prospective_destination_controller(card, destination_controllers)
+            characteristics, destination_controller, card_types, subtypes, supertypes = zone_change_subject_characteristics(
+                host, card, destination, entry_characteristics, destination_controllers)
             controlled_basic_types = controller_basic_land_types(
                 host,
                 destination_controller,

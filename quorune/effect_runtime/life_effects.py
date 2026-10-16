@@ -387,11 +387,14 @@ def _apply_drain_each_opponent(
     return amount
 
 
+from .fractional_life import apply_life_loss
+
+
 HANDLERS = {
     "drain_each_opponent": _apply_drain_each_opponent,
     "drain_opponent": _apply_drain_opponent,
     _LIFE_OPERATION: _apply_life,
-    "lose_life": _apply_lose_life,
+    "lose_life": apply_life_loss,
     "lose_life_each_opponent": _apply_lose_life_each_opponent,
     "lose_life_equal_mana_value": _apply_lose_life_equal_mana_value,
 }

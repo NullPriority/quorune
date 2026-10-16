@@ -785,6 +785,7 @@ class ScalarEffectAmountValueTests(unittest.TestCase):
             context={"source_logical_object_id": source.logical_object_id, SCALAR_REFERENCE_CONTEXT: []},
         )
         host.state.stack.append(malformed)
+        host.state.pending_trigger_batches = []
         before = [deepcopy(pending.context) for pending in host.state.stack]
         with self.assertRaisesRegex(StateInvariantError, "continuation is malformed"):
             ZoneTransitionOwner(host).pin_characteristic_departures([source])

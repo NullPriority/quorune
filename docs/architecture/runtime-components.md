@@ -136,6 +136,60 @@ limits the source tap symbol but does not prevent paying a selected-creature tap
 Legacy versions retain their output and result-rider schemas. Multiple selected
 costs, discard or exile costs, and selected-cost result riders remain excluded.
 
+Fixed energy activation clauses decode before generic mana-symbol stripping.
+Each literal `{E}` contributes one counter; the existing counted-word format
+retains its typed amount and payload. Multiple exact clauses add their amounts.
+Mixed, stray, variable and alternative energy syntax stays unresolved. The
+activation owner uses `ActivatedAbility.energy_payment` for both affordability
+and its canonical player-counter transaction. Energy belongs to the activating
+player and persists through phase boundaries. A source tap symbol retains its
+usual control-duration and haste restriction, and countering the activated
+ability does not refund either cost.
+
+Ascend has separate typed permanent and spell paths. A current trusted static
+component awards the controlling player the city's blessing when that player
+controls ten phased-in permanents. The spell instruction checks only when it
+resolves. One rules owner stores the persistent public player designation;
+it is not a counter and does not transfer or disappear with a source. Zone
+facts, complete simultaneous moves, control changes, instruction completion
+and state-based stabilization synchronize acquisition before subsequent trigger
+checks. Read-only snapshots and projection only observe the marker. The shared
+public-state condition supplies its current source controller's designation
+to existing characteristic owners; unresolved follow-up bodies remain residual.
+The no-parameter city-blessing activation restriction reads the same designation
+for the current activator during both offer and acceptance. Its typed condition
+and capability retain the existing activation transaction and pending result;
+sacrificing an Ascend source cannot revoke an acquired player designation.
+
+Public resolution-condition schema 3 represents a fixed self-replacement with
+independently closed default and alternative programs. The resolving controller's
+condition selects one program before the original instruction or its external
+replacement owners run. Earlier mandatory instructions remain a separate prefix.
+The compiler binds a bounded repeated creature-set antecedent to its original
+controlled set; optional replacement choices, changed targets and variable
+results remain residual. Unversioned prefix conditions and schema 2 kicked-cast
+facts retain their existing payloads and execution paths.
+
+Normalized public events compose fixed untargeted permanent-set counter results
+through a separate precise producer. Complete public-condition branches must
+each contain an independently closed fixed set; a coarse counter mechanic alone
+cannot cross the event-result guard. The existing affected-set and replacement
+owners use the locked trigger controller. The event's attacker or entry object
+does not become the recipient set or replace that controller. Current ability
+components gate future discovery, while an already created trigger survives
+its source leaving.
+
+Fixed random-discard activation costs use an optional typed scalar that is
+omitted from older ability payloads. The activating player must hold the full
+count. The canonical random selector binds a distinct hand subset to the
+server's existing payment identity, source incarnation and ability. It then
+uses the exact counted activation discard transaction, including singleton
+costs. A suspended replacement choice retains the selected refs privately;
+resume recomputes and validates the same subset. The client supplies neither
+selected cost cards nor a random seed. Earlier selected discard costs keep
+their existing interface, and unsupported grants, mana activations or combined
+object costs cannot drop the random cost during compilation.
+
 The compound self-entry handler combines a fixed tapped state and fixed counter
 creation in one replacement effect for complete “enters tapped with” wording.
 It inherits the ordinary self-entry counter validation and submits both
@@ -197,7 +251,13 @@ overlay boundary; archived payloads retain their recorded descriptors.
 setting to a reciprocal attached object or a closed public battlefield query.
 The compiler preserves type retention, source exclusion, controller scope,
 fixed colors, keyword additions, ability removal, base power/toughness and
-fixed modifiers. Creature subtype replacement removes only creature subtypes,
+fixed modifiers. Attached and live-set producers share the fixed keyword
+vocabulary. Printed and granted Skulk use the existing blocking owner, which
+compares the holder's and blocker's current power when blocks are validated.
+Pure fixed P/T and keyword modifiers also apply to attached permanents without
+changing their types. A noncreature's P/T modifier is retained for any later
+creature state; an independent base-stat animation applies before that bonus.
+Creature subtype replacement removes only creature subtypes,
 preserving unrelated artifact or enchantment subtypes. Unknown subjects,
 chosen values, names, dynamic definitions and quoted grants remain residual.
 
@@ -209,6 +269,21 @@ The ordinary timestamp and component-presence owners determine current source
 participation. Source departure or phasing ends a static effect, and reciprocal
 attachment identities prevent it from following a different incarnation.
 Printed and copied values remain separate from these live characteristics.
+
+`continuous.characteristics.conditional-creature-type-removal.v1` removes only
+the source incarnation's Creature card type in layer 4 under a represented
+public condition. Correlated creature subtypes disappear unless a remaining
+Kindred card type still shares them. Its source ability participates through
+copy, control and text effects; a later ability-removal effect does not undo
+the earlier type change. Other component owners retain their ordinary
+participation boundary. Missing condition information and malformed descriptors
+fail closed.
+
+The entry-replacement snapshot projects this typed self effect against the
+pre-entry battlefield without inserting a live object. The incoming permanent's
+mana symbols do not contribute to that devotion read. After entry, the ordinary
+characteristic and event owners include the new permanent, so pre-entry
+replacement classification and post-entry creature triggers can differ.
 
 `ability.activated.mana.public-quantity.v1` shares the existing activated mana
 registry and fixed-family cost boundary. Its versioned output reads a closed
@@ -297,6 +372,61 @@ applied by the same total-cost query used for offers and accepted commands.
 Target-relative prices, unrecorded history, dynamic power/toughness, chosen or
 hidden facts, caps, floors, and open arithmetic fail closed rather than
 becoming a runtime prose query.
+
+An established source-self event can bind optional pronouns such as
+"you may have it deal" to that source before composing the existing optional
+result owner. The complete leaf retains its target restrictions and original
+source incarnation. Targets are chosen when the original trigger is placed;
+apply-or-decline is chosen when it resolves. Granted entry abilities belong to
+their receiving permanent and its controller, including as that permanent
+enters. A created trigger survives the live grant ending. New-object and
+unestablished antecedents remain residual.
+
+Fixed payment cost schema 3 adds positive fixed-count exile of owned public
+graveyard cards. The existing object-choice owner offers the represented card
+qualities and accepts the complete count or a decline. One canonical ordinary
+zone move commits the selected cards to exile with destination replacements.
+Stored card controller does not replace graveyard ownership. Cost schema 2
+retains its existing encoding for earlier payment kinds. Ordinary conditional
+results keep their original target timing; selected graveyard-return identities
+survive a paid prefix, so a target exiled as the cost remains exiled. Explicitly
+linked new-zone objects retain their separate reference ownership.
+
+The same cost schema also represents fixed counts of controlled untapped
+permanents. The compiler reuses the fixed activation tap selector, while
+resolution keeps the trigger's locked payer. These worded costs can tap newly
+entered creatures. `another` excludes the original source incarnation through
+`$source.zone_object`; a returned new object is distinct. The canonical tap-set
+intent commits every selected member before discovering tap triggers. Tapping
+an attacking creature does not remove it from combat. Variable, linked and
+source-self tap costs remain residual.
+
+Cost schema 4 adds fixed removal of one named counter from the original source
+permanent. Its explicit source reference resolves through `$source.zone_object`;
+leaving and returning cannot substitute new counters for the old object. The
+choice rechecks the full counter amount and retained source identity before
+emitting the canonical counter-removal intent. The payer stays the trigger's
+controller, while an unqualified source-local removal remains available after
+the source changes controller. Cost pronouns are normalized only inside an
+established source-self event. Earlier cost encodings remain unchanged.
+Paid and optional legacy library searches pass their existing complete
+battlefield or hand shape validator before ordinary search execution resumes;
+counted-search schema 2 retains its existing model validation.
+
+Resolution-time payment schema 4 composes one existing fixed action with a
+`reflexive_trigger_program`. This immutable body retains unbound targets and
+quantities until it resolves in its own stack frame. The existing payment
+choice commits the cost and then enqueues a typed reflexive occurrence through
+ordinary APNAP trigger placement. The creating ability finishes before targets
+are chosen, and players receive the ordinary response window. Declining creates
+no occurrence; an unavailable mandatory target does not refund a completed
+payment. The trigger retains the creating ability's controller and source
+incarnation. Repeated payments, nested optional costs and unrepresented
+paid-object antecedents remain residual. Earlier payment schemas keep their
+existing decoding and timing.
+Source damage in these frames uses the shared current/last-known source owner;
+a departed source's controller and keywords remain independent of the
+controller of the reflexive ability.
 
 `ability.activated.mana.color-set.v1` binds a compiler-pinned relative object
 query to the activating seat and reads only matching public battlefield
@@ -530,6 +660,12 @@ modifier with one typed live public-state predicate. The cast-cost collector
 uses the shared condition evaluator before returning the ordinary modifier to
 the total-cost owner. Offer and commit use that same collector, preserving
 current ability presence, source control, generic floors and colored payments.
+Fixed spell subjects also accept disjunctions of represented types and colors.
+An unqualified first or second spell uses the caster's complete committed cast
+history for the turn; a type-qualified ordinal counts only matching spell
+types. A multicolor spell receives one modifier for a matching color union.
+Ordinal predicates that require historical colors, subtypes or payment choices
+remain unsupported by the card-type history schema.
 
 `permission.cast.self-zone-public-state.v1` evaluates an explicit self-graveyard
 permission against the same typed public-state facts. Outside the battlefield,
@@ -538,15 +674,27 @@ immutable source view. The ordinary casting proposal still owns timing, cost,
 target and current-zone checks. The earlier controlled-subtype permission
 descriptor retains its existing schema and behavior.
 
+`permission.cast.self-public-zones.v1` adds only the card owner's explicitly
+declared graveyard or face-up exile origins. The descriptor contains typed zone
+data and requires complete CardProgram admission and the current selected-face
+component. It retains ordinary timing, mana and additional costs, hand casting,
+and resolution destinations. It supplies no Flashback exile replacement or
+temporary designation. New incarnations use their own printed permission;
+face-down cards and unrepresented condition, cost or restriction tails fail
+closed. Existing conditional self-graveyard schemas retain their gates.
+
 The same quantity boundary supports versioned distinct basic land types,
 graveyard card types, colors, maximum/total mana value and colored mana-symbol
 counts. It reads current copy/type/color data only through layer 5. Exactly two
 leaf quantities may be added without conflating them with a union; fixed
 positive multipliers and nonnegative offsets remain explicit. Paired all-zone
 power/toughness definitions retain independent field offsets. Legacy count and
-definition payloads retain their existing codecs. Hidden characteristic reads,
-power/toughness aggregates and open or nested
-arithmetic remain unsupported rather than using an incorrect boundary.
+definition payloads retain their existing codecs. Controller hand-size arithmetic
+reads only the unfiltered zone cardinality. Source-counter values support fixed
+positive multipliers and nonnegative offsets, including their composition.
+All-graveyard definitions also count instant or sorcery cards through the public
+query boundary. Hidden characteristic reads, power/toughness aggregates and
+arithmetic outside the represented fixed forms remain unsupported.
 
 `controller_opponent_count` is a versioned public-roster quantity for the
 represented free-for-all profiles. It counts other players still in the game
@@ -569,8 +717,9 @@ before later characteristic changes. One hybrid symbol contributes once to a
 two-color union. Typed fixed static increases use the existing current ability
 component map and cease after ability removal, phasing or source departure.
 Characteristic definitions, resolution amounts, mana production and self cast-
-cost reductions share this owner. Every newly compiled consumer declares the
-devotion capability separately from its result capability.
+cost reductions and closed devotion comparisons share this owner. Every newly
+compiled consumer declares the devotion capability separately from its result
+capability.
 
 Compiled token quantity replacements participate only while their source's
 current static component is present. The shared token discovery path reads
@@ -656,3 +805,131 @@ workflow. Architectural rationale remains in
 [ADR 0010](../adr/0010-replacement-event-tree-and-token-owner.md),
 [ADR 0011](../adr/0011-counter-placement-event-and-mutation-owner.md), and
 [ADR 0008](../adr/0008-runtime-trust-and-governance-hardening.md).
+
+### Conditional queried declaration grants
+
+`compiler/conditional_declaration_grants.py` composes an independently closed
+public condition with a closed battlefield query and one recipient-relative
+declaration fragment. Pure grants use the existing schema-6
+`continuous.declaration.public-state.v1` descriptor, with no added keyword or
+power/toughness modifier. The same module retains the existing mixed
+characteristic-and-declaration compiler path, exported through its original
+`declaration_nodes` entry point.
+
+The static source's current controller supplies both the condition actor and
+recipient query. Current matching entrants receive the grant; source departure,
+ability loss, control changes, and query membership changes recompute it. The
+existing layer-6 and combat declaration owners govern both blocker domains and
+accepted commands. Source-relative opposing-controller rules and incomplete
+conditions or sibling clauses remain residual.
+
+### Conditional chosen characteristics
+
+`continuous.characteristics.conditional-chosen-designation.v1` gates an existing
+schema-1 chosen-characteristic descriptor with a typed current public condition.
+It delegates both the retained designation and recipient query to
+`ChosenCharacteristicsHandler`. The compiler may resolve a plural continuation
+to one explicit, independently closed chosen query in the same complete static
+paragraph. Its unconditional component remains separate from the conditional
+component.
+
+The ordinary public-state snapshot owner supplies the source's current
+controller facts. Query recipients and retained per-incarnation choices remain
+live through control changes; departure clears the choice, and re-entry asks
+again. The shared static-condition validator rejects numeric characteristic
+conditions that would need a separate layer-timing owner. Existing chosen-query
+schema-1 descriptors retain their shape and behavior.
+
+### Source chosen-color mana
+
+`ability.activated.mana.source-chosen-color.v1` combines the shared closed mana
+activation-cost descriptor with `ChosenColorManaOutput`. The output occupies the
+existing tagged `dynamic_mana_output` field; fixed, color-set, and public-quantity
+encodings retain their shapes. Literal amounts, an optional fixed alternative,
+and existing spend restrictions form a closed output contract.
+
+The mana runtime reads the source's retained public WUBRG designation. Explicit
+activation, automatic payment, and land-produced-color discovery use the same
+current modes. The activation owner captures the original source color before
+all costs, so source or selected-source sacrifice cannot erase it. Public
+quantity mana retains its post-object-cost, pre-source-departure snapshot. The
+existing payment/usage transaction is delegated to
+`rules/activation/payment_commit.py` without changing cost order or mutation
+owners. Mana still resolves immediately for the current activator. Departure
+clears the designation and re-entry obtains a fresh choice.
+
+### Entry color exclusions and tapped paragraphs
+
+`replacement.zone.entry-color-exclusion.v2` validates one excluded canonical
+WUBRG color. It delegates to the existing intrinsic entry replacement producer,
+which offers only the remaining values to the battlefield destination controller.
+The plain schema-1 color and creature-type descriptors keep their encodings.
+Both variants participate in duplicate same-kind choice scoping.
+
+`compiler/entry_color_composition.py` recognizes complete unconditional
+enters-tapped plus bound as-it-enters color paragraphs. It emits separate,
+independently owned tap-state and designation descriptors with the full original
+source span. The canonical immutable replacement journal orders and applies
+them; the zone owner stores one choice and tapped state on the entering
+incarnation. Unknown exclusions, ambiguous subjects, conditional prefixes and
+unrepresented sibling clauses remain residual. Chosen-color mana and spending
+restrictions continue through their existing shared output and payment owners.
+
+### Fixed Spree mode costs
+
+`SpreeModeCosts` binds one canonical literal mana vector to every printed mode of
+an existing complete nonrepeating modal spell. The compiler retains the original
+whole source span and independently closes each branch before emitting the
+version-1 `spree` casting-cost schema. Ordinary modal encodings remain unchanged.
+
+The casting cost owner expands finite distinct mode sets into correlated cost
+options before total-cost modifiers. Each option carries the exact selected
+mode target schema and adds those prices to its existing base, including a free
+base. The shared affordability, target validation and payment owners enforce
+that binding; resolution retains printed mode order and ordinary copy behavior.
+Variable prices and incomplete mode bodies remain residual.
+
+### Typed token children in modal branches
+
+`compiler/modal_token_branches.py` adapts the existing typed token-node compiler
+for complete ordinary and Spree modal branches. Each branch retains its token
+fragments and independently closed generated child nodes. Identical branch
+bodies may share one immutable child definition; different source rows and
+abilities retain distinct keys. Unknown children or sibling branches keep the
+whole modal face residual.
+
+`compiler/modal_spell_faces.py` assembles the parent spell and those child nodes
+with the original spans and existing capability gates. Generated registration,
+recording and loading preserve the child definitions. Token creation and later
+abilities use the existing runtime owners, current token controller, normal
+activation costs and timing. The creator spell can leave without removing a
+token's ability. No runtime Oracle parsing or new token engine is introduced.
+
+### Half quantities in player results
+
+`HalfQuantitySpec` is a closed version-1 quantity with divisor two and explicit
+up/down rounding. It clamps negative effect results to zero under CR 107.1b.
+The compiler pairs it with existing represented player and selector shells.
+The existing `lose_life` instruction reads a typed half amount at its current-life boundary and delegates
+the complete batch to the canonical life-change owner.
+
+Fractional `choose_cards_apnap` counts retain the existing instruction and zone
+owners. Before collection starts, `selection/fractional_counts.py` seals each
+player's candidate domain and required rounded count. Every issued and accepted
+choice revalidates those values; zero domains skip automatically. The shared
+APNAP contract validator is extracted without changing ordinary fixed counts.
+No client count override or runtime Oracle parsing supplies the quantity.
+
+### Half amounts on represented event-player results
+
+`event_player_result_values.py` validates positive literal draw/life values and
+independently typed half-life amounts. The compiler normalizes their/your only
+after an existing compatible event subject has bound. Its subject/event matrix
+and generated-program reference checks remain authoritative.
+
+`rules/half_event_player_shapes.py` combines the half owner with the existing
+event/trigger dependency proof. The emitted amount remains typed and resolves
+through the existing life owner at instruction time. The damaged player's
+identity remains sealed while that player's current life can change before
+resolution. No object-controller reference is replaced with a damaged player,
+and unsupported antecedents or amount fields remain residual.

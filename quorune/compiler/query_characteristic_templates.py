@@ -223,8 +223,11 @@ def _query_quantity_descriptor(
         "planeswalkers": "planeswalker",
         "permanents": "permanent",
     }.get(descriptor, descriptor)
-    if descriptor in _PERMANENT_CARD_TYPES:
+    if descriptor in _PERMANENT_CARD_TYPES or (
+            definition_extensions and zone == 'graveyard' and descriptor in {'instant', 'sorcery'}):
         fields["types_all"] = (descriptor,)
+        if zone == 'graveyard' and descriptor in {'instant', 'sorcery'}:
+            fields['token'] = False
     elif descriptor == "permanent":
         fields["types_any"] = _PERMANENT_CARD_TYPES
     elif descriptor in _NONCREATURE_SUBTYPE_OWNERS:
@@ -367,7 +370,7 @@ def query_characteristic_quantity(
 def query_characteristic_value(value: str, *, source_name: str) -> CharacteristicQuantitySpec | None:
     """A whole value definition, distinct from a bare object-count phrase."""
     text = " ".join(value.strip().rstrip(".").split())
-    adjusted = fixed_quantity_arithmetic(text, compile_value=lambda base: _unadjusted_characteristic_value(base, source_name=source_name))
+    adjusted = fixed_quantity_arithmetic(text, compile_value=lambda base: query_characteristic_value(base, source_name=source_name))
     return adjusted if adjusted is not None else _unadjusted_characteristic_value(text, source_name=source_name)
 
 

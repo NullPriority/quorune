@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Synthetic typed current-query witness beside pinned Ascend originals",
+  "cards": [
+    {
+      "oracle_id": "fixture:conditional-query-detective",
+      "name": "Generic Conditional Detective",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Creature — Human Detective",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

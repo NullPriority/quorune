@@ -9,7 +9,7 @@ from .characteristic_fragments import CharacteristicQuantitySpec, Characteristic
 from .dynamic_characteristics import query_characteristic_count
 from .errors import GameRuleError
 from .mana import ManaMode
-from .public_quantity_mana_model import PublicQuantityManaOutput
+from .public_quantity_mana_model import PublicQuantityManaOutput, PUBLIC_QUANTITY_MANA_KIND
 from .scalar_effect_amounts import resolve_scalar_effect_amount, scalar_source_context
 from .util import normalize_mana_bundle
 from .replacement.immutable import FrozenMap, thaw_value
@@ -25,7 +25,7 @@ class ManaSourceInformation:
 
 def public_quantity_output(ability) -> PublicQuantityManaOutput | None:
     raw = ability.dynamic_mana_output
-    return PublicQuantityManaOutput.from_dict(raw) if isinstance(raw, Mapping) else None
+    return PublicQuantityManaOutput.from_dict(raw) if isinstance(raw, Mapping) and raw.get('kind') == PUBLIC_QUANTITY_MANA_KIND else None
 
 
 def capture_mana_source_information(host, seat, source, ability):

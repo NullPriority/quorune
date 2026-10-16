@@ -23,6 +23,7 @@ from ...compiled_flashback import (
     compiled_ordinary_zone_cast_permission,
 )
 from ...compiled_kicker import compiled_fixed_mana_kicker_spec
+from .paid_entry_copy_costs import with_paid_entry_copy_cost_schema
 from ...compiled_bestow import compiled_fixed_mana_bestow_spec
 from ...convoke import (
     CONVOKE_PAYMENT_SYMBOLS,
@@ -373,6 +374,7 @@ def _cast_schema_and_mechanics(
     )
     for augment in (
         _with_kicker_cost,
+        with_paid_entry_copy_cost_schema,
         _with_bestow_cost,
         with_fixed_public_alternative_costs,
     ):
@@ -553,35 +555,8 @@ def _initial_options(
                 "requirements": requirements,
             }
         )
-    expanded = list(base)
-    for raw in schema.get("optional_costs", []):
-        additional = dict(raw)
-        if (
-            additional.get("source_zone") is not None
-            and str(additional["source_zone"]) != card.zone
-        ):
-            continue
-        additional_vector = host._mana_vector(additional.get("requirements"))
-        for base_option in base:
-            combined = host._mana_vector(base_option["requirements"])
-            for symbol, amount in additional_vector.items():
-                combined[symbol] += amount
-            expanded.append(
-                {
-                    **base_option,
-                    **{
-                        key: copy.deepcopy(value)
-                        for key, value in additional.items()
-                        if key not in {"requirements", "id"}
-                    },
-                    "id": str(additional["id"]),
-                    "kind": str(
-                        additional.get("kind") or "optional_additional"
-                    ),
-                    "requirements": combined,
-                    "base_cost_option": base_option["id"],
-                }
-            )
+    from .option_expansion import expand_optional_mana_costs
+    expanded = expand_optional_mana_costs(host, card, base, schema, response=response, hint=hint)
     mandatory = [dict(value) for value in schema.get("additional_costs", [])]
     alternative_expansion = _expand_fixed_alternative_options(
         host,
@@ -591,6 +566,8 @@ def _initial_options(
     if alternative_expansion is None:
         return None
     expanded, mandatory = alternative_expansion
+    from .spree_costs import with_spree_mode_cost_options
+    expanded = with_spree_mode_cost_options(program, schema, expanded, response, hint=hint)
     from .aftermath import with_aftermath_stack_context
     return with_aftermath_stack_context(host,card,expanded), mandatory, mechanics, has_x
 

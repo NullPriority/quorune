@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..city_blessing_model import AscendIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..random_discard import RandomDiscardIntent
 from .control_intents import ControlIntent
@@ -7,6 +8,7 @@ from .zone_move_intent import ZoneMoveIntent, _freeze_replacement_selections
 from .counter_movement_intent import MoveCountersIntent
 from .connive_intent import ConniveCompletedIntent
 from .energy_payment import PayEnergyIntent
+from ..reflexive_trigger_model import QueueReflexiveTriggerIntent
 
 from dataclasses import dataclass, field
 from typing import Any, Literal, Mapping, TypeAlias
@@ -17,7 +19,7 @@ from ..drawing.model import DiscardDrawnCardUnlessType, DrawnCardAction, RevealD
 from ..fixed_damage_set_model import FixedDamageSetSpec
 from ..impulse_access_model import ImpulseAccessDuration
 from ..creature_subtypes import canonical_creature_subtype
-from ..replacement.immutable import FrozenMap
+from ..replacement.immutable import FrozenMap, thaw_value
 from ..rules.library_scry import ScryArrangement
 from ..rules.library_selection import LibrarySelectionArrangement
 from ..rules.library_surveillance import SurveilArrangement
@@ -324,12 +326,20 @@ class ReturnGraveyardCardToOwnerHandIntent:
     object_ref: str
     reason: str
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    target_snapshot: FrozenMap | None = None
 
     def __post_init__(self) -> None:
         if not all((self.actor, self.object_ref, self.reason)):
             raise ValueError(
                 "Graveyard-return intents require actor, object, and reason"
             )
+        if self.target_snapshot is not None:
+            snapshot=self.target_snapshot
+            if (not isinstance(snapshot,Mapping) or set(snapshot)!={'ref','object_id','zone_change_counter'}
+                    or snapshot['ref']!=self.object_ref or type(snapshot['object_id']) is not str or not snapshot['object_id']
+                    or type(snapshot['zone_change_counter']) is not int or snapshot['zone_change_counter']<0):
+                raise ValueError('Graveyard-return target identity snapshot is malformed')
+            object.__setattr__(self,'target_snapshot',FrozenMap(snapshot))
         object.__setattr__(
             self,
             "replacement_selections",
@@ -433,6 +443,7 @@ class DealFixedDamageSetIntent:
     reason: str
     replacement_selections: tuple[str | FrozenMap, ...] = ()
     replacement_event_ids: tuple[str, ...] = ()
+    source_snapshot: FrozenMap | None = None
 
     def __post_init__(self) -> None:
         if any(
@@ -468,6 +479,12 @@ class DealFixedDamageSetIntent:
                 "Fixed damage-set replacement event identities must be unique"
             )
         object.__setattr__(self, "replacement_event_ids", event_ids)
+        if self.source_snapshot is not None:
+            from ..damage_source import DamageSourceSnapshot
+            snapshot = DamageSourceSnapshot.from_dict(dict(thaw_value(self.source_snapshot)))
+            if snapshot.ref != self.source_ref:
+                raise ValueError('Fixed damage-set source snapshot identity changed')
+            object.__setattr__(self, 'source_snapshot', FrozenMap(snapshot.to_dict()))
 
 
 @dataclass(frozen=True, slots=True)
@@ -1542,6 +1559,7 @@ class ProliferateIntent:
 
 SemanticIntent: TypeAlias = (
     DrawCardsIntent | ControlIntent
+    | QueueReflexiveTriggerIntent
     | MillCardsIntent
     | BecomeMonarchIntent
     | SetPermanentTappedIntent
@@ -1602,6 +1620,7 @@ SemanticIntent: TypeAlias = (
     | DomainEffectIntent
     | DiscardWholeHandsIntent
     | RandomDiscardIntent
+    | AscendIntent
 )
 ResultShape: TypeAlias = Literal["single", "by_player"]
 

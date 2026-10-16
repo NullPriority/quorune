@@ -735,6 +735,25 @@ def _casting_zone_cost_event_is_valid(
     )
 
 
+def _activation_batch_cost_refs(response:Mapping[str,Any]) -> tuple[str,...] | None:
+    summary=response.get('cost_summary')
+    if not isinstance(summary,Mapping):return None
+    if 'random_discard' in summary:
+        refs=response.get('_random_discard_cost_refs')
+        count=summary['random_discard']
+        count_valid=type(count) is int and 1<=count<=4
+    else:
+        refs=response.get('cost_objects') or response.get('cost_cards')
+        choices=summary.get('choose_cost')
+        if not isinstance(choices,(list,tuple)) or len(choices)!=1 or not isinstance(choices[0],Mapping):return None
+        count=choices[0].get('n');count_valid=type(count) is int
+    if (not count_valid or not isinstance(refs,(list,tuple)) or not 2<=len(refs)<=10
+            or count!=len(refs) or any(type(ref) is not str or not ref for ref in refs)
+            or len(set(refs))!=len(refs)):
+        return None
+    return tuple(refs)
+
+
 def _priority_action_cost_event_ids(
     batch: ReplacementEventBatch,
     *,
@@ -743,15 +762,9 @@ def _priority_action_cost_event_ids(
     seat: str,
 ) -> set[str]:
     if action == 'activate' and len(batch.events) > 1:
-        refs = response.get('cost_objects') or response.get('cost_cards')
-        summary = response.get('cost_summary')
-        choices = summary.get('choose_cost') if isinstance(summary, Mapping) else None
+        refs=_activation_batch_cost_refs(response)
         if (
-            not isinstance(refs, (list, tuple)) or not 2 <= len(refs) <= 10
-            or any(type(ref) is not str for ref in refs) or len(set(refs)) != len(refs)
-            or not isinstance(choices, (list, tuple)) or len(choices) != 1
-            or not isinstance(choices[0], Mapping)
-            or choices[0].get('n') != len(refs) or len(batch.events) != len(refs)
+            refs is None or len(batch.events) != len(refs)
             or {event.payload.get('object_ref') for event in batch.events} != set(refs)
             or len({event.event_id for event in batch.events}) != len(refs)
             or any(event.kind != 'zone.change' or not _counted_activation_cost_event_is_valid(
@@ -896,11 +909,14 @@ def _counted_activation_cost_event_is_valid(
     event: ReplaceableEvent, response: Mapping[str, Any], *, seat: str,
 ) -> bool:
     """Rebind the original cost destination after recorded replacements."""
-    choices = response['cost_summary']['choose_cost']
-    contract = FIXED_ZONE_CHANGE_COST_CONTRACTS.get(str(choices[0].get('k') or ''))
-    if contract is None:
-        return False
-    payload = {**dict(event.payload), 'destination': contract[1]}
+    summary=response['cost_summary']
+    if 'random_discard' in summary:destination='graveyard'
+    else:
+        choices=summary['choose_cost']
+        contract=FIXED_ZONE_CHANGE_COST_CONTRACTS.get(str(choices[0].get('k') or ''))
+        if contract is None:return False
+        destination=contract[1]
+    payload = {**dict(event.payload), 'destination': destination}
     original = ReplaceableEvent(
         event_id=event.event_id, kind=event.kind, affected_player=event.affected_player,
         affected_object=event.affected_object, payload=payload,

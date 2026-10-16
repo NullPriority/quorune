@@ -13,6 +13,7 @@ from .declared_effect_amounts import declared_effect_amount_template
 from .scalar_effect_amounts import scalar_effect_amount_template
 from .fixed_resolution_characteristics import fixed_resolution_characteristics_effect_template
 from .fixed_effect_payment_templates import fixed_effect_payment_template,fixed_effect_payment_with_mandatory_prefix
+from .reflexive_payment_templates import reflexive_payment_template
 from .optional_payment_templates import fixed_optional_mana_payment_template
 from .counter_templates import targeted_controller_payment_template
 from .token_copy_templates import token_copy_recipe_template
@@ -66,6 +67,9 @@ def reviewed_contextual_effect_template(
         return reviewed_effect_template_composition(body,source_name=card_name,
             compile_atomic=atomic_with_characteristics,
             compile_fixed=partial(compile_fixed,card_name=card_name,**source_context))
+    reflexive = reflexive_payment_template(text, compile_effect=payment_body)
+    if reflexive is not None:
+        return reflexive
     fixed_payment=fixed_effect_payment_template(text,compile_effect=payment_body) or fixed_effect_payment_with_mandatory_prefix(text,compile_effect=payment_body)
     if fixed_payment is not None:
         return fixed_payment

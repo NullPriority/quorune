@@ -30,6 +30,7 @@ class ActivationConditionKind(str, Enum):
     GRAVEYARD_DISTINCT_TYPES = "graveyard_distinct_types"
     PUBLIC_QUERY_COUNT = "public_query_count"
     CLASS_LEVEL_EQUALS = "class_level_equals"
+    CONTROLLER_HAS_CITYS_BLESSING = 'controller_has_citys_blessing'
     UNSUPPORTED = "unsupported"
 
 
@@ -400,6 +401,8 @@ def activation_restriction_spec(text: str) -> ActivationRestrictionSpec | None:
 
     normalized = " ".join(text.casefold().rstrip(".").split())
     fixed = {
+        "if you have the city's blessing": ActivationRestrictionSpec(conditions=(ActivationCondition(ActivationConditionKind.CONTROLLER_HAS_CITYS_BLESSING),)),
+        "if you have the city’s blessing": ActivationRestrictionSpec(conditions=(ActivationCondition(ActivationConditionKind.CONTROLLER_HAS_CITYS_BLESSING),)),
         "as a sorcery": ActivationRestrictionSpec(sorcery_speed=True),
         "as a sorcery and only once each turn": ActivationRestrictionSpec(
             sorcery_speed=True,

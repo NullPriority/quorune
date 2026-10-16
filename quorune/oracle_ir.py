@@ -39,6 +39,7 @@ from .compiler.ability_keyword_fragments import (
     lower_ability_keyword_fragments,
 )
 from .compiler.closed_static_nodes import closed_static_or_replacement_node
+from .compiler.public_self_replacement_templates import is_fixed_public_self_replacement
 from .compiler.public_alternative_cost_nodes import (
     reject_cast_cost_composition,
 )
@@ -81,7 +82,7 @@ from .compiler.temporary_target_interactions import (
 )
 from .compiler.explore_templates import single_explore_effect_template
 from .compiler.keyword_templates import keyword_mechanics
-from .compiler.life_templates import fixed_life_effect_template
+from .compiler.fractional_player_templates import fixed_player_result_template
 from .compiler.library_search_templates import (
     fixed_library_search_effect_template,
 )
@@ -170,7 +171,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v367"
+ORACLE_COMPILER_VERSION = "oracle-ir-v397"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -272,9 +273,9 @@ def _effect_template(
     draw_template = fixed_draw_effect_template(normalized)
     if draw_template is not None:
         return draw_template
-    life_template = fixed_life_effect_template(normalized)
-    if life_template is not None:
-        return life_template.compiled()
+    player_result = fixed_player_result_template(normalized)
+    if player_result is not None:
+        return player_result.compiled()
     mill_template = fixed_mill_effect_template(normalized)
     if mill_template is not None:
         return mill_template.compiled()
@@ -424,7 +425,8 @@ def _reviewed_atomic_effect_template(
         text.strip(),
         card_name=card_name,
     )
-    compiled = prevention or _effect_template(
+    from .compiler.commander_learn_templates import commander_learn_effect_template
+    compiled = prevention or commander_learn_effect_template(text) or _effect_template(
         text,
         card_name=card_name,
         source_is_permanent=source_is_permanent,
@@ -685,7 +687,7 @@ def _keyword_nodes(
 
     multi_nodes = multi_keyword_nodes(**locals())
     if multi_nodes is not None: return multi_nodes
-    if mechanics in {("madness",), ("partner with",)}: return ()
+    if mechanics in {("madness",), ("partner with",), ("learn",)}: return ()
 
     keyword_event_effect = fixed_keyword_event_effect_node(node_id=node_id, line=line, material_line=material_line, span=span, mechanics=mechanics, capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
     if keyword_event_effect is not None: return (keyword_event_effect,)
@@ -1076,6 +1078,8 @@ def _typed_whole_spell_face(
     *,
     face_id: str,
     face_name: str,
+    type_line: str,
+    keywords: Sequence[str],
     oracle_text: str,
     material_rows: Sequence[tuple[str, str, SourceSpan]],
     effect_template: Any,
@@ -1098,95 +1102,12 @@ def _typed_whole_spell_face(
     )
     if additional_cost_face is not None:
         return additional_cost_face
-    modal_template = fixed_choose_one_modal_spell_template(
-        material_rows,
-        compile_effect=lambda body: effect_template(
-            body,
-            card_name=face_name or record.name,
-        ),
-    )
-    if modal_template is None:
-        expanded_modal = fixed_nonrepeating_modal_template(
-            material_rows,
-            compile_effect=lambda body: effect_template(
-                body,
-                card_name=face_name or record.name,
-            ),
-        )
-        modal_template = (
-            expanded_modal
-            if expanded_modal is not None
-            and not expanded_modal.context_prefix
-            else None
-        )
-    if modal_template is None:
-        return None
-    template, effects, target_schema, mechanics = modal_template.compiled()
-    dependency_gate = _dependency_gate(
-        mechanics=mechanics,
-        effects=effects,
-        target_schema=target_schema,
-        trusted_mechanics=trusted_mechanics,
-        capability_registry=capability_registry,
-        capability_profile=capability_profile,
-    )
-    span = SourceSpan(
-        material_rows[0][2].start,
-        material_rows[-1][2].end,
-        material_rows[0][2].line,
-    )
-    residual_ids = (
-        (
-            _residual(
-                residuals,
-                kind="dependency_contract",
-                text=oracle_text,
-                span=span,
-                reason="fixed modal spell depends on untrusted rules dependencies",
-                blockers=dependency_gate.blockers,
-            ),
-        )
-        if dependency_gate.blockers
-        else ()
-    )
-    node = OracleNode(
-        node_id=f"{face_id}:n1",
-        kind="spell_ability",
-        text=oracle_text,
-        span=span,
-        active_zone="stack",
-        event="resolve",
-        lowerable=True,
-        exact=not residual_ids,
-        template_id=template,
-        effects=effects,
-        target_schema=target_schema,
-        mechanics=mechanics,
-        residual_ids=residual_ids,
-        capability_dependencies=dependency_gate.capabilities,
-        capability_closure=(
-            dependency_gate.closure.reachable
-            if dependency_gate.closure is not None
-            else ()
-        ),
-        capability_profile=(
-            dependency_gate.closure.profile
-            if dependency_gate.closure is not None
-            else None
-        ),
-        capability_fingerprint=(
-            dependency_gate.closure.fingerprint
-            if dependency_gate.closure is not None
-            else None
-        ),
-    )
-    return OracleFaceIR(
-        face_id=face_id,
-        face_name=face_name,
-        oracle_text=oracle_text,
-        nodes=(node,),
-        residuals=tuple(residuals),
-    )
+    from .compiler.modal_spell_faces import compile_whole_modal_face
+    return compile_whole_modal_face(record=record, face_id=face_id, face_name=face_name,
+        type_line=type_line, keywords=keywords, oracle_text=oracle_text, material_rows=material_rows,
+        effect_template=effect_template, trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals, compile_inner=_activated_or_fixed_event_trigger_node,
+        trigger_node=_trigger_node, grant_effect_templates=_contextual_effect_templates)
 
 
 def _compile_face(
@@ -1214,7 +1135,7 @@ def _compile_face(
 
     if spell:
         typed_face = _typed_whole_spell_face(
-            record, face_id=face_id, face_name=face_name, oracle_text=oracle_text,
+            record, face_id=face_id, face_name=face_name, type_line=type_line, keywords=keywords, oracle_text=oracle_text,
             material_rows=material_rows, effect_template=declared_spell_effect_compiler(record, is_spell=spell, oracle_text=oracle_text, compile_effect=contextual_effect_template),
             trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
             capability_profile=capability_profile, residuals=residuals,
@@ -1290,7 +1211,7 @@ def _compile_face(
             nodes.append(closed_static)
             continue
 
-        if _REPLACEMENT_MARKERS.search(line):
+        if _REPLACEMENT_MARKERS.search(line) and not (spell and is_fixed_public_self_replacement(material_line,face_name or record.name,contextual_effect_template)):
             residual_id = _residual(
                 residuals,
                 kind="replacement_effect",

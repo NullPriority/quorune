@@ -11,6 +11,8 @@ from ..semantic_runtime.casting_activation_metadata import (
     LOYALTY_COST_MODIFIER_HANDLER_ID,
     SELF_ZONE_CAST_PERMISSION_EVENT,
     SELF_ZONE_CAST_PERMISSION_HANDLER_ID,
+    SELF_PUBLIC_ZONE_CAST_PERMISSION_HANDLER_ID,
+    SELF_PUBLIC_ZONE_CAST_PERMISSION_CAPABILITY,
 )
 
 
@@ -40,6 +42,15 @@ def static_self_zone_cast_permission_handler(
 ) -> CastingActivationMetadataTemplate | None:
     """Lower explicit self-graveyard permission behind a closed public condition."""
 
+    simple = re.fullmatch(r'You may cast this card from (?P<first>your graveyard|exile)(?: or from (?P<second>your graveyard|exile))?\.?', text.strip(), re.I)
+    if simple is not None:
+        from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
+        zones = [zone.casefold().removeprefix('your ') for zone in (simple['first'], simple['second']) if zone]
+        if len(zones) != len(set(zones)):
+            return None
+        return 'self-public-zone-cast-v1', {'handler_id': SELF_PUBLIC_ZONE_CAST_PERMISSION_HANDLER_ID,
+            'schema_version': 1, 'event': SELF_ZONE_CAST_PERMISSION_EVENT, 'source_zones': sorted(zones),
+            REQUIRES_COMPLETE_CARD_PROGRAM_FIELD: True}, SELF_PUBLIC_ZONE_CAST_PERMISSION_CAPABILITY
     match = _SELF_GRAVEYARD_CONTROLLED_SUBTYPE.fullmatch(text.strip())
     subtype = canonical_creature_subtype(match.group("subtype")) if match is not None else None
     if subtype is None:

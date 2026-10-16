@@ -62,7 +62,7 @@ def pay_counted_zone_change_activation_cost(
     cost = choice.fixed_zone_change_cost()
     raw = response.get('cost_cards') or response.get('cost_objects') or []
     if (
-        cost is None or cost.count <= 1 or not isinstance(raw, (list, tuple))
+        cost is None or cost.count < 1 or not isinstance(raw, (list, tuple))
         or len(raw) != cost.count or any(type(ref) is not str for ref in raw)
         or len(set(raw)) != len(raw)
     ):

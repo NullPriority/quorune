@@ -55,6 +55,13 @@ def _represented_effect(
         except (ValueError, TypeError, KeyError) as exc:
             raise SemanticChoiceError("Optional counted search is malformed") from exc
         return
+    if operation == 'search':
+        from ..rules.library_search_capability_shapes import fixed_library_search_node_capabilities, fixed_type_to_hand_search_node_capabilities
+        mechanics=('fixed-library-search-to-battlefield','fixed-library-search-to-hand')
+        if not any(resolver(effects=(effect,),target_schema=None,mechanic_ids=mechanics)
+                for resolver in (fixed_library_search_node_capabilities,fixed_type_to_hand_search_node_capabilities)):
+            raise SemanticChoiceError('Optional fixed search is malformed')
+        return
     try:
         plan = default_semantic_interpreter().lower_for_seats(
             effect,

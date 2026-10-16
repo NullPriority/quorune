@@ -223,6 +223,7 @@ class SemanticChoiceIntentHostMixin:
                     for value in intent.replacement_selections
                 ),
                 replacement_event_ids=intent.replacement_event_ids,
+                source_override=(thaw_value(intent.source_snapshot) if intent.source_snapshot is not None else None),
             )
         except FixedDamageSetError as exc:
             raise GameRuleError(str(exc)) from exc

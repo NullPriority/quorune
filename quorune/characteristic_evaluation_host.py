@@ -442,6 +442,13 @@ class CharacteristicEvaluationHostMixin:
             source_designations=current_source_designations(self.state,prospective),
         )
 
+    def _static_component_keys_at_layer(self, source, maximum_layer):
+        """Keep earlier-layer ability participation independent of later removal."""
+        data = self._effective_card_data(source, maximum_layer=maximum_layer,
+            _enforce_static_component_applicability=False)
+        return static_component_keys(data.get('ability_fragments', ()),
+            source_designations=current_source_designations(self.state, source))
+
     def _effective_static_component_keys(
         self,
         card: CardInstance,
@@ -625,8 +632,8 @@ class CharacteristicEvaluationHostMixin:
                         or maximum_layer >= Layer.ABILITY
                         else None
                     ),
-                    # The conditional setting codec admits only public graveyard
-                    # counts, so this resolver is safe at the earlier-layer boundary.
+                    # Setting codecs admit graveyard counts or devotion, whose
+                    # existing owner stops after copy/control/text (CR 700.5a).
                     setting_quantity_resolver=partial(
                         query_characteristic_count, self,
                         _enforce_static_component_applicability=_enforce_static_component_applicability,
@@ -640,6 +647,7 @@ class CharacteristicEvaluationHostMixin:
                         if static_component_key_map is not None
                         else None
                     ),
+                    early_static_component_resolver=self._static_component_keys_at_layer,
                 ),
             )
             if card.zone == "battlefield"

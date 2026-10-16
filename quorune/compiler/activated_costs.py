@@ -19,6 +19,10 @@ def activated_ability_cost_capabilities(
     """Return the reviewed capability owners for one typed activation cost."""
 
     additional: list[str] = []
+    if ability.energy_payment:
+        additional.append('activation.energy.fixed_payment')
+    if ability.random_discard_payment:
+        additional.append('activation.random_discard.fixed')
     if ability.power_up is not None:additional.append(POWER_UP_CAPABILITY)
     if ability.source_counter_removal_cost is not None:
         additional.append("activation.source_counter_removal.fixed")
@@ -42,6 +46,8 @@ def activated_ability_cost_capabilities(
         additional.append(ACTIVATION_PUBLIC_QUERY_CAPABILITY)
     if ActivationConditionKind.CLASS_LEVEL_EQUALS in condition_kinds:
         additional.append(CLASS_LEVEL_ACTIVATION_CAPABILITY)
+    if ActivationConditionKind.CONTROLLER_HAS_CITYS_BLESSING in condition_kinds:
+        additional.append('activation.condition.citys_blessing')
     if ability.mana_cost_options:
         additional.append("activation.mana_cost.fixed_complex")
     if not ability.mana_ability and (
@@ -92,6 +98,7 @@ def activated_ability_cost(ability: ActivatedAbility) -> dict[str, Any]:
     if ability.activation_limit is not None:
         result["activation_limit"] = ability.activation_limit.value
     if ability.power_up is not None:result['power_up']=ability.power_up.to_dict()
+    if ability.random_discard_payment:result['random_discard_payment']=ability.random_discard_payment
     if ability.crew_threshold is not None:
         result["crew"] = ability.crew_threshold
     return result

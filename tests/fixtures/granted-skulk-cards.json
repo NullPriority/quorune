@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "focused_original_and_synthetic_rules_cards",
+  "source": "Pinned Skeleton Key Oracle/rulings subset and explicitly synthetic Skulk witnesses",
+  "cards": [
+    {
+      "oracle_id": "328834f6-1f49-417a-a2d6-d430b8dca177",
+      "name": "Skeleton Key",
+      "mana_cost": "{1}",
+      "type_line": "Artifact \u2014 Equipment",
+      "oracle_text": "Equipped creature has skulk. (It can't be blocked by creatures with greater power.)\nWhenever equipped creature deals combat damage to a player, you may draw a card. If you do, discard a card.\nEquip {2}",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2016-04-08",
+      "cmc": 1.0,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Equip"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "96b6f322-8752-411d-b167-87f6f7302701",
+      "name": "Generic Skulk Aura",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Enchantment \u2014 Aura",
+      "oracle_text": "Enchant creature\nEnchanted creature has skulk.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "96b6f322-8752-411d-b167-87f6f7302702",
+      "name": "Generic Skulk Growth",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets +2/+2 until end of turn.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "96b6f322-8752-411d-b167-87f6f7302703",
+      "name": "Generic Skulk Bounce",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Instant",
+      "oracle_text": "Return target nonland permanent to its owner's hand.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "96b6f322-8752-411d-b167-87f6f7302704",
+      "name": "Generic Skulk Greater",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Creature \u2014 Soldier",
+      "oracle_text": "",
+      "power": "3",
+      "toughness": "1",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "96b6f322-8752-411d-b167-87f6f7302705",
+      "name": "Generic Skulk Body",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Creature \u2014 Soldier",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "4",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "328834f6-1f49-417a-a2d6-d430b8dca177",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "Skulk matters only as blockers are chosen. Modifying either creature\u2019s power after blockers are chosen won\u2019t cause the attacking creature to become unblocked."
+    },
+    {
+      "oracle_id": "328834f6-1f49-417a-a2d6-d430b8dca177",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "If you cause a creature to have 0 power or less, use the actual value (which may be negative) to determine whether it can block or be blocked. A creature with skulk and 0 or less power most likely won\u2019t be blocked, but it won\u2019t deal combat damage and won\u2019t trigger any abilities that trigger when combat damage is dealt."
+    }
+  ]
+}

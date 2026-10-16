@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+
 """Closed capability shapes for destruction and regeneration effects."""
 
 from typing import Any, Iterable, Mapping, Sequence
@@ -18,6 +19,15 @@ from .permanent_predicate_capability_shapes import (
     direct_permanent_target_schema_is_closed,
     direct_target_predicate_capabilities,
 )
+
+
+def regeneration_covered_mechanics(supplied: set[str]) -> set[str]:
+    """Project the regeneration owners back to their existing mechanic names."""
+    mapping = {
+        'regenerate': {'permanent.regeneration.fixed_effect', 'permanent.regeneration.self_activation'},
+        'regeneration-prohibition': {'permanent.destroy.regeneration_prohibition'},
+    }
+    return {mechanic for mechanic, capabilities in mapping.items() if supplied.intersection(capabilities)}
 
 
 def targeted_destruction_node_capabilities(

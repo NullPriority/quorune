@@ -33,19 +33,26 @@ def resolution_condition_node_capabilities(
     if wrapper["player"] != "$controller":
         return ()
     prefix = effects[:-1]
-    if _contains_target_reference(conditional):
+    otherwise=wrapper.get('otherwise_effects',())
+    if _contains_target_reference(conditional) or _contains_target_reference(otherwise):
         return ()
-    if len(prefix) + len(conditional) > 8 or any(
+    if len(prefix) + max(len(conditional),len(otherwise)) > 8 or any(
         effect.get("op") == RESOLUTION_CONDITION_OPERATION for effect in prefix
     ):
         return ()
-    branches = tuple(branch for branch in (prefix, conditional) if branch)
-    if bool(prefix) != bool(wrapper["prefix_mechanic_ids"]) or not set((*wrapper["prefix_mechanic_ids"], *wrapper["mechanic_ids"])) <= mechanics:
+    branches = tuple((branch,ids) for branch,ids in ((prefix,wrapper['prefix_mechanic_ids']),
+        (conditional,wrapper['mechanic_ids']),(otherwise,wrapper.get('otherwise_mechanic_ids',()))) if branch)
+    if bool(prefix) != bool(wrapper["prefix_mechanic_ids"]) or not set((*wrapper["prefix_mechanic_ids"], *wrapper["mechanic_ids"],*wrapper.get('otherwise_mechanic_ids',()))) <= mechanics:
         return ()
-    targeted = tuple(branch for branch in branches if _contains_target_reference(branch))
+    targeted = tuple(branch for branch,_ids in branches if _contains_target_reference(branch))
     if len(targeted) > 1 or (target_schema is not None) != bool(targeted):
         return ()
     dependencies = {RESOLUTION_CONDITION_CAPABILITY}
+    from ..characteristic_fragments import characteristic_quantity_capabilities
+    dependencies.update(characteristic_quantity_capabilities(_condition.to_dict()))
+    if wrapper.get('schema_version')==3:
+        from ..resolution_conditions import PUBLIC_SELF_REPLACEMENT_CAPABILITY
+        dependencies.add(PUBLIC_SELF_REPLACEMENT_CAPABILITY)
     if _condition.kind == FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS:
         dependencies.add('condition.creature.fixed_numeric_exists')
     if wrapper.get('schema_version') == 2:
@@ -58,9 +65,9 @@ def resolution_condition_node_capabilities(
         'fixed-cast-fact-condition',
         *wrapper["prefix_mechanic_ids"],
         *wrapper["mechanic_ids"],
+        *wrapper.get('otherwise_mechanic_ids',()),
     }
-    for branch in branches:
-        branch_mechanics = wrapper["prefix_mechanic_ids"] if branch is prefix else wrapper["mechanic_ids"]
+    for branch,branch_mechanics in branches:
         child = capability_dependencies_for_node(
             effects=branch,
             target_schema=target_schema if branch in targeted else None,

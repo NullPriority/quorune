@@ -654,6 +654,7 @@ def commit_counter_placement_plan(
     reason: str,
     log: bool = True,
     dispatch_events: bool = True,
+    dispatch_sagas: bool = True,
 ) -> tuple[CounterPlacementResult, ...]:
     """Apply a validated placement plan without rediscovering replacements."""
 
@@ -663,7 +664,8 @@ def commit_counter_placement_plan(
     except CounterStateError as exc:
         raise CounterPlacementError(str(exc)) from exc
     return finish_counter_placement_commit(
-        host, plan, transitions, reason=reason, log=log, dispatch_events=dispatch_events)
+        host, plan, transitions, reason=reason, log=log, dispatch_events=dispatch_events,
+        dispatch_sagas=dispatch_sagas)
 
 
 def finish_counter_placement_commit(
@@ -674,6 +676,7 @@ def finish_counter_placement_commit(
     reason: str,
     log: bool = True,
     dispatch_events: bool = True,
+    dispatch_sagas: bool = True,
 ) -> tuple[CounterPlacementResult, ...]:
     """Publish placement results after the canonical counter plan was committed."""
     results: list[CounterPlacementResult] = []
@@ -728,8 +731,8 @@ def finish_counter_placement_commit(
     if log:
         log_counter_placement_replacements(host, plan.prepared)
     if dispatch_events:
-        from .counter_placement_events import dispatch_prepared_counter_events
-        dispatch_prepared_counter_events(host, plan.prepared, reason=reason)
+        from .counter_placement_events import dispatch_committed_counter_events
+        dispatch_committed_counter_events(host, plan.prepared, results, reason=reason, dispatch_sagas=dispatch_sagas)
     return tuple(results)
 
 

@@ -15,6 +15,7 @@ from .errors import GameRuleError
 from .mana import ManaMode
 from .object_query import object_query_result, query_objects
 from .util import normalize_mana_bundle
+from .chosen_color_mana_runtime import chosen_color_mana_output, chosen_color_mana_modes
 from .public_quantity_mana_runtime import (
     public_quantity_output, public_quantity_mana_modes, select_public_quantity_mana,
 )
@@ -121,6 +122,15 @@ def _color_set_mana_modes(
     raise GameRuleError("Unsupported typed color-set mana selection")
 
 
+def _fixed_output_modes(ability):
+    fixed_outputs = tuple(ability.fixed_mana_outputs)
+    if all(sum(1 for amount in mode.bundle.values() if amount) == 1 for mode in fixed_outputs):
+        color_order = {color: index for index, color in enumerate('WUBRGC')}
+        fixed_outputs = tuple(sorted(fixed_outputs, key=lambda mode: min(
+            color_order[color] for color, amount in mode.bundle.items() if amount)))
+    return tuple(ManaMode(mode.bundle) for mode in fixed_outputs)
+
+
 def mana_modes_for_ability(
     host: ManaAbilityRuntimeHost,
     seat: str,
@@ -158,25 +168,9 @@ def mana_modes_for_ability(
     if public_quantity_output(ability) is not None:
         return decorated(public_quantity_mana_modes(host, seat, source, ability))
     if ability.fixed_mana_outputs:
-        fixed_outputs = tuple(ability.fixed_mana_outputs)
-        if all(
-            sum(1 for amount in mode.bundle.values() if amount) == 1
-            for mode in fixed_outputs
-        ):
-            color_order = {color: index for index, color in enumerate("WUBRGC")}
-            fixed_outputs = tuple(
-                sorted(
-                    fixed_outputs,
-                    key=lambda mode: min(
-                        color_order[color]
-                        for color, amount in mode.bundle.items()
-                        if amount
-                    ),
-                )
-            )
-        return decorated(
-            tuple(ManaMode(mode.bundle) for mode in fixed_outputs)
-        )
+        return decorated(_fixed_output_modes(ability))
+    if chosen_color_mana_output(ability) is not None:
+        return decorated(chosen_color_mana_modes(source, ability))
     if ability.dynamic_mana_output == "opponent_land_colors":
         return decorated(tuple(
             ManaMode(
@@ -188,6 +182,20 @@ def mana_modes_for_ability(
             for color in _opponent_land_colors(host, seat)
         ))
     return ()
+
+
+def _land_ability_colors(host, seat, land, ability):
+    if ability.fixed_mana_outputs:
+        modes = ability.fixed_mana_outputs
+    elif ability.color_set_mana_output is not None:
+        modes = _color_set_mana_modes(host, seat, ability)
+    elif public_quantity_output(ability) is not None:
+        return {color for color in public_quantity_output(ability).colors if color in 'WUBRG'}, None
+    elif chosen_color_mana_output(ability) is not None:
+        modes = chosen_color_mana_modes(land, ability)
+    else:
+        return set(), ability.dynamic_mana_output
+    return {color for mode in modes for color, amount in mode.bundle.items() if color in 'WUBRG' and amount}, None
 
 
 def _land_output_colors(
@@ -214,24 +222,10 @@ def _land_output_colors(
             for ability in host._activated_abilities(land):
                 if not ability.mana_ability or land.zone not in ability.zones:
                     continue
-                if ability.fixed_mana_outputs:
-                    colors.update(
-                        color
-                        for mode in ability.fixed_mana_outputs
-                        for color, amount in mode.bundle.items()
-                        if color in "WUBRG" and amount
-                    )
-                elif ability.color_set_mana_output is not None:
-                    colors.update(
-                        color
-                        for mode in _color_set_mana_modes(host, seat, ability)
-                        for color, amount in mode.bundle.items()
-                        if color in "WUBRG" and amount
-                    )
-                elif public_quantity_output(ability) is not None:
-                    colors.update(color for color in public_quantity_output(ability).colors if color in 'WUBRG')
-                elif ability.dynamic_mana_output is not None:
-                    dynamic_by_object[object_id] = ability.dynamic_mana_output
+                produced, dynamic = _land_ability_colors(host, seat, land, ability)
+                colors.update(produced)
+                if dynamic is not None:
+                    dynamic_by_object[object_id] = dynamic
     changed = True
     while changed:
         changed = False
@@ -318,7 +312,8 @@ def mana_output_for_ability(
     if public_quantity_output(ability) is not None:
         return select_public_quantity_mana(host, seat, source, ability, response,
             source_information=source_information)
-    legal_modes = mana_modes_for_ability(host, seat, source, ability)
+    legal_modes = (chosen_color_mana_modes(source, ability, source_information=source_information)
+                   if chosen_color_mana_output(ability) is not None else mana_modes_for_ability(host, seat, source, ability))
     declared = normalize_mana_bundle(response.get("mana_output"))
     raw_choice = str(response.get("mana_choice") or "").upper()
     if raw_choice in "WUBRGC" and len(raw_choice) == 1:

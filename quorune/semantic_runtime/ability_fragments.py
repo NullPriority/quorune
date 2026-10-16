@@ -46,6 +46,7 @@ from .context import SemanticNodeError
 from .player_target_protection import PlayerTargetProtectionHandler
 from .graveyard_copy_keyword import GraveyardCopyKeywordHandler
 from .player_speed import StartEnginesHandler
+from .city_blessing import AscendStaticHandler
 from .prototype import PrototypeAbilityHandler
 from .enlist import EnlistAbilityFragmentHandler
 from .exert import ExertAttackFragmentHandler
@@ -1392,6 +1393,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             PlayerTargetProtectionHandler(),
             GraveyardCopyKeywordHandler(),
             StartEnginesHandler(),
+            AscendStaticHandler(),
             PartnerWithAbilityFragmentHandler(),
             ProwessAbilityFragmentHandler(),
             RenownAbilityFragmentHandler(),

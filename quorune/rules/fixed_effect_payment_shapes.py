@@ -37,6 +37,9 @@ def fixed_effect_payment_node_capabilities(*,effects:Sequence[Mapping[str,Any]],
     mechanics=set(mechanic_ids)
     if FIXED_EFFECT_PAYMENT_MECHANIC not in mechanics or len(effects)!=1:return ()
     wrapper=effects[0]
+    if isinstance(wrapper, Mapping) and wrapper.get('schema_version') == 4:
+        from .reflexive_payment_shapes import reflexive_payment_node_capabilities
+        return reflexive_payment_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
     if isinstance(wrapper, Mapping) and wrapper.get('schema_version') == 3:
         from ..source_maintenance import SOURCE_MAINTENANCE_MECHANIC, SourceMaintenanceSpec
         if target_schema is not None or SOURCE_MAINTENANCE_MECHANIC not in mechanics:
@@ -49,8 +52,9 @@ def fixed_effect_payment_node_capabilities(*,effects:Sequence[Mapping[str,Any]],
             return ()
         payment = spec.payment
         if payment is not None and (
-            payment.kind == 'discard' and payment.predicate.owner != '$controller'
-            or payment.kind == 'sacrifice' and payment.predicate.controller != '$controller'
+            payment.kind in {'discard','exile'} and payment.predicate.owner != '$controller'
+            or payment.kind in {'sacrifice','tap'} and payment.predicate.controller != '$controller'
+            or payment.kind=='remove_source_counter' and payment.source_ref!='$source.zone_object'
         ):
             return ()
         return spec.capabilities
@@ -59,8 +63,9 @@ def fixed_effect_payment_node_capabilities(*,effects:Sequence[Mapping[str,Any]],
     try:payment=FixedEffectPaymentSpec.from_dict(wrapper['payment'])
     except (ValueError,TypeError,KeyError):return ()
     if ('cost'in wrapper)!=(payment.kind=='mana') or payment.kind=='mana'and dict(wrapper['cost'])!=dict(payment.requirements):return ()
-    if payment.kind=='discard'and payment.predicate.owner!='$controller':return ()
-    if payment.kind=='sacrifice'and payment.predicate.controller!='$controller':return ()
+    if payment.kind in {'discard','exile'}and payment.predicate.owner!='$controller':return ()
+    if payment.kind in {'sacrifice','tap'}and payment.predicate.controller!='$controller':return ()
+    if payment.kind=='remove_source_counter' and payment.source_ref!='$source.zone_object':return ()
     nested=wrapper['effects']
     if not isinstance(nested,(list,tuple))or not 1<=len(nested)<=4 or any(not isinstance(e,Mapping)or e.get('op')in {'offer_optional_effect',OPTIONAL_MANA_PAYMENT_OPERATION}for e in nested):return ()
     dependencies=set(payment.capabilities)

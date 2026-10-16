@@ -39,6 +39,7 @@ from ..self_cast_reductions import (
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
+from .paid_entry_copy import PaidEntryCopyCostHandler
 
 
 CONVOKE_ACTIVE_ZONE = "stack"
@@ -545,6 +546,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             ImproviseCostHandler(),
             SelfSpellCostReductionHandler(),
             TypedAffinityCostHandler(),
+            PaidEntryCopyCostHandler(),
         )
     )
     registry.require_registered_capabilities(load_default_capability_registry())

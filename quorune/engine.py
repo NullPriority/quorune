@@ -1201,7 +1201,7 @@ class CommanderEngine(
             str, Mapping[str, Any]
         ],
         reason: str,
-        transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY, read_ahead_chapter: int | None = None, cast_option: str | None = None,
+        transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY, read_ahead_chapter: int | None = None, cast_option: str | None = None, paid_entry_copy: Mapping[str, Any] | None = None,
         trigger_batch: list[StackItem] | None = None,
         history_pre_recorded: bool = False,
     ) -> None:
@@ -1217,7 +1217,7 @@ class CommanderEngine(
                     characteristics=origin_data,
                     counters=origin_counters,
                     attachments=origin_attachments,
-                    attached_to=origin_attached_to, cast_option=cast_option,
+                    attached_to=origin_attached_to, cast_option=cast_option, paid_entry_copy=paid_entry_copy,
                     sources=departure_sources,
                     source_zones=departure_source_zones,
                     source_characteristics=departure_source_characteristics,
@@ -2890,6 +2890,7 @@ class CommanderEngine(
                 or ability.exile_source
                 or ability.life_payment
                 or ability.energy_payment
+                or ability.random_discard_payment
                 or ability.loyalty_delta is not None or ability.source_counter_removal_cost is not None
                 or activation_condition_status(
                     self, seat, ability, source
@@ -3389,6 +3390,8 @@ class CommanderEngine(
         ] | None = None,
         trigger_batch: list[StackItem] | None = None,
     ) -> list[str]:
+        from .rules.city_blessing import synchronize_citys_blessing
+        synchronize_citys_blessing(self,reason='before semantic trigger discovery')
         return dispatch_semantic_event(
             self,
             event,
@@ -6530,6 +6533,8 @@ class CommanderEngine(
     def _synchronize_world_supertype_timestamps(self) -> None:
         """Observe simultaneous gains/losses of the World supertype."""
 
+        from .rules.city_blessing import synchronize_citys_blessing
+        synchronize_citys_blessing(self,reason='before state-based actions')
         synchronize_day_night(
             self, reason="continuous day/night synchronization"
         )

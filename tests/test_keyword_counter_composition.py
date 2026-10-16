@@ -470,22 +470,18 @@ class KeywordCounterCompositionTests(unittest.TestCase):
             "undeclared_runtime_dependency:counter.placement.quantity_replacement",
             binding["blockers"],
         )
+        from dataclasses import replace
+        securitron = self.db.lookup("Securitron Squadron")
+        self.assertEqual('exact', compile_oracle_card(securitron, capability_registry=registry,
+            capability_profile='commander_review').status)
+        variable_squad = replace(securitron, oracle_id='fixture:variable-squad-counter-boundary',
+            oracle_text=securitron.oracle_text.replace('Squad {3}', 'Squad {X}'))
         unresolved = compile_oracle_card(
-            self.db.lookup("Securitron Squadron"), capability_registry=registry,
+            variable_squad, capability_registry=registry,
             capability_profile="commander_review",
         )
-        blockers = {
-            blocker
-            for residual in unresolved.material_residuals
-            for blocker in residual.blockers
-        }
-        self.assertGreaterEqual(
-            blockers,
-            {
-                "replacement applicability",
-                "self-replacement and prevention ordering",
-            },
-        )
+        self.assertNotEqual('exact', unresolved.status)
+        self.assertTrue(unresolved.material_residuals)
 
         attacker = self.token(
             engine,

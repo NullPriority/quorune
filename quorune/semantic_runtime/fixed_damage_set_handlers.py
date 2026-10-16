@@ -23,6 +23,7 @@ _FIELDS = frozenset(
         _REASON_FIELD,
         "_replacement_selections",
         "_replacement_event_ids",
+        "source_snapshot",
     }
 )
 
@@ -116,6 +117,7 @@ class FixedDamageSetHandler:
                 reason=raw_reason or context.default_reason,
                 replacement_selections=selections,
                 replacement_event_ids=event_ids,
+                source_snapshot=effect.get('source_snapshot'),
             )
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc

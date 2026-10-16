@@ -1,0 +1,283 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "focused_original_and_synthetic_rules_cards",
+  "source": "Pinned stat-definition Oracle/rulings and explicit synthetic controls",
+  "cards": [
+    {
+      "oracle_id": "882da1c6-7b86-4de0-9161-ce7c50f9c90c",
+      "name": "Magnivore",
+      "mana_cost": "{2}{R}{R}",
+      "type_line": "Creature \u2014 Lhurgoyf",
+      "oracle_text": "Haste (This creature can attack and {T} as soon as it comes under your control.)\nMagnivore's power and toughness are each equal to the number of sorcery cards in all graveyards.",
+      "power": "*",
+      "toughness": "*",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2005-07-29",
+      "cmc": 4.0,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Haste"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "8b4aae48-be01-4b42-8d32-45071650da03",
+      "name": "Cognivore",
+      "mana_cost": "{6}{U}{U}",
+      "type_line": "Creature \u2014 Lhurgoyf",
+      "oracle_text": "Flying\nCognivore's power and toughness are each equal to the number of instant cards in all graveyards.",
+      "power": "*",
+      "toughness": "*",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2001-10-01",
+      "cmc": 8.0,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "8af347b8-89fa-499e-8e5a-77463edd6773",
+      "name": "Masumaro, First to Live",
+      "mana_cost": "{3}{G}{G}{G}",
+      "type_line": "Legendary Creature \u2014 Spirit",
+      "oracle_text": "Masumaro's power and toughness are each equal to twice the number of cards in your hand.",
+      "power": "*",
+      "toughness": "*",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2005-06-03",
+      "cmc": 6.0,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "42b2c6d0-e0da-41b0-8876-f17dbe5db79a",
+      "name": "Mwonvuli Ooze",
+      "mana_cost": "{G}",
+      "type_line": "Creature \u2014 Ooze",
+      "oracle_text": "Cumulative upkeep {2} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay {2} for each age counter on it.)\nMwonvuli Ooze's power and toughness are each equal to 1 plus twice the number of age counters on it.",
+      "power": "1+*",
+      "toughness": "1+*",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "1997-06-09",
+      "cmc": 1.0,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Cumulative upkeep"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "708433c1-0777-4fae-a61e-cf6bf43bb601",
+      "name": "Generic Stat Sorcery",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Sorcery",
+      "oracle_text": "You gain 1 life.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "708433c1-0777-4fae-a61e-cf6bf43bb602",
+      "name": "Generic Stat Instant",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Instant",
+      "oracle_text": "You gain 1 life.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "708433c1-0777-4fae-a61e-cf6bf43bb603",
+      "name": "Generic Stat Draw",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Instant",
+      "oracle_text": "Draw two cards.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "708433c1-0777-4fae-a61e-cf6bf43bb604",
+      "name": "Generic Stat Age",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Instant",
+      "oracle_text": "Put an age counter on target creature.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "42b2c6d0-e0da-41b0-8876-f17dbe5db79a",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "Its power/toughness changes when the cumulative upkeep resolves, not when it triggers."
+    },
+    {
+      "oracle_id": "42b2c6d0-e0da-41b0-8876-f17dbe5db79a",
+      "published_at": "2008-04-01",
+      "source": "wotc",
+      "comment": "If you choose not to pay Mwonvuli Ooze\u2019s cumulative upkeep, it will still get an age counter before being sacrificed. Its power and toughness will momentarily increase before being put into the graveyard, which might matter to certain other cards (such as Proper Burial)."
+    }
+  ]
+}

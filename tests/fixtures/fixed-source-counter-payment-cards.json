@@ -1,0 +1,302 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Forgehammer Centurion",
+      "oracle_id": "fa519a46-11ab-4ab8-9286-904ce2746c03",
+      "oracle_text": "Whenever another creature or artifact you control is put into a graveyard from the battlefield, put an oil counter on this creature.\nWhenever this creature attacks, you may remove two oil counters from it. When you do, target creature can't block this turn.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2023-02-10",
+      "toughness": "2",
+      "type_line": "Creature — Phyrexian Warrior"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Menace"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}",
+      "name": "Nazar, the Velvet Fang",
+      "oracle_id": "beeed1c5-2f51-4e40-87b9-9a6f810ee4cb",
+      "oracle_text": "Menace (This creature can't be blocked except by two or more creatures.)\nWhenever you gain life, put a feeding counter on Nazar.\nWhenever Nazar attacks, you may remove three feeding counters from it. If you do, you draw three cards and you lose 3 life.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": "3",
+      "type_line": "Legendary Creature — Vampire Warlock"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Vanguard Species"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Purestrain Genestealer",
+      "oracle_id": "3d4c7f1a-deca-4bae-90c7-68d623da400e",
+      "oracle_text": "This creature enters with two +1/+1 counters on it.\nVanguard Species — Whenever this creature attacks, you may remove a +1/+1 counter from it. If you do, search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2022-10-07",
+      "toughness": "1",
+      "type_line": "Creature — Tyranid"
+    },
+    {
+      "oracle_id": "b3b00911-ece7-4484-bc36-f211ce72b6cc",
+      "name": "Stifle",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Counter target activated or triggered ability. (Mana abilities can't be targeted.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-06-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Each creature with lifelink dealing combat damage causes a separate life-gaining event. For example, if two creatures you control with lifelink deal combat damage at the same time, Nazar's second ability will trigger twice. However, if a single creature you control with lifelink deals combat damage to multiple creatures, players, planeswalkers, and/or battles at the same time (perhaps because it has trample or was blocked by more than one creature), the ability will trigger only once.",
+      "oracle_id": "beeed1c5-2f51-4e40-87b9-9a6f810ee4cb",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Nazar isn't on the battlefield as its last ability resolves, you can't remove three feeding counters from it, even if it had three or more feeding counters on it before it left the battlefield. You won't draw cards or lose life.",
+      "oracle_id": "beeed1c5-2f51-4e40-87b9-9a6f810ee4cb",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you gain an amount of life \"for each\" of something or \"equal to the number\" of something, that life is gained as one event and Nazar's second ability triggers only once.",
+      "oracle_id": "beeed1c5-2f51-4e40-87b9-9a6f810ee4cb",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Two-Headed Giant game, life gained by your teammate won't cause Nazar's second ability to trigger, even though it caused your team's life total to increase.",
+      "oracle_id": "beeed1c5-2f51-4e40-87b9-9a6f810ee4cb",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Nazar's second ability triggers just once for each life-gaining event, whether it's 1 life from Dazzling Angel or 4 life from Apothecary Stomper.",
+      "oracle_id": "beeed1c5-2f51-4e40-87b9-9a6f810ee4cb",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You don't choose a target for Forgehammer Centurion's last ability at the time it triggers. Rather, a second \"reflexive\" ability triggers when you remove two oil counters this way. You choose a target for that ability as it goes on the stack. Each player may respond to this triggered ability as normal.",
+      "oracle_id": "fa519a46-11ab-4ab8-9286-904ce2746c03",
+      "published_at": "2023-02-04",
+      "source": "wotc"
+    },
+    {
+      "oracle_id": "b3b00911-ece7-4484-bc36-f211ce72b6cc",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "It can target delayed triggered abilities. For example, a card that says \"Whenever a player cycles a card, you may exile target creature. If you do, return that creature to the battlefield at the beginning of the end step.\" triggers when a player cycles a card and creates a delayed trigger that happens at the beginning of the end step. You can choose to target the \"at the beginning of the end step\" trigger when it is placed on the stack at end of turn."
+    },
+    {
+      "oracle_id": "b3b00911-ece7-4484-bc36-f211ce72b6cc",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "An activated ability has a \"Cost: Effect\" format. Look for the colon. A triggered ability starts with \"when\", \"whenever\", or \"at\"."
+    },
+    {
+      "oracle_id": "b3b00911-ece7-4484-bc36-f211ce72b6cc",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "Turn-based actions and special actions like the normal card draw, combat damage, or turning a face-down creature face up can't be targeted."
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}
