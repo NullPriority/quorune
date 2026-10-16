@@ -26913,64 +26913,192 @@
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
       "test_id": "tests.test_attached_static_characteristics.AttachedContinuousModelTests.test_attached_subject_type_is_rechecked_before_modifier_layers",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Re-evaluate the printed enchanted-creature or fortified-land subject after type layers and before applying layer-6 or layer-7 modifiers; retain the source-pinned legacy descriptor path for replay."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
       "test_id": "tests.test_attached_static_characteristics.AttachedContinuousModelTests.test_type_and_ability_removal_use_their_canonical_layers",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Apply one source's represented multi-layer effect without losing its object relation."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
       "test_id": "tests.test_attached_static_characteristics.AttachedQuotedAbilityRuntimeTests.test_attached_granted_source_sacrifice_uses_recipient_and_lki_program",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Sacrifice the attached recipient rather than the granting Aura and resolve its typed program from last-known source identity."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
       "test_id": "tests.test_attached_static_characteristics.AttachedQuotedAbilityRuntimeTests.test_granted_activation_shares_offer_commit_lifetime_and_rollback",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Share one current layer-6 recipient grant between activation offers and commands, preserve target rollback, and end it on detach or granting-ability removal."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
       "test_id": "tests.test_attached_static_characteristics.AttachedQuotedAbilityRuntimeTests.test_granted_mana_ability_is_recipient_bound_and_ends_on_departure",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Discover fixed-output mana only on the attached recipient and remove it immediately when the granting source departs."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
       "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_aura_equipment_anthem_temporary_effect_and_draw_compose",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Apply fixed characteristics from both live attachments beside a fixed anthem, a locked temporary modifier, and a canonical draw without crossing attachment identity."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
       "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_dynamic_quantities_use_source_controller_and_attached_exclusion",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Resolve attached dynamic modifiers through the cycle-safe layer-5 public query using the source's current controller and excluding the attached subject for other-object wording."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
       "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_live_generic_equipment_effect_moves_detaches_and_tracks_control",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Recompute the affected object across reattachment, detachment, and control changes."
     },
     {
@@ -26987,7 +27115,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27000,32 +27129,96 @@
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
       "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_shared_static_component_query_owns_removal_and_typed_grant",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Use one typed layer-6 component-presence query for printed static programs, removal, and explicit semantic grants; stale component identities fail closed."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
       "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_target_departure_and_source_departure_end_effect_without_stale_identity",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "End source-bound effects on departure and do not follow a returned logical object."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
       "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_attached_characteristics_and_requirement_end_with_attachment",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compose one fixed attached characteristic modifier with a typed attack requirement and end both immediately when the attachment source departs."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_exact_continuous_effects_compose_while_replacements_stay_residual",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compose an attached fixed modifier with exact anthem and until-end-of-turn owners while keeping unsupported replacement prose explicitly residual."
     },
     {
@@ -27042,7 +27235,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27050,6 +27244,102 @@
         "commander_review"
       ],
       "applicability_note": "Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_otherwise_auras_cover_typed_branches_and_counter_composition",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_sea_legs_tracks_type_change_and_source_removal",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_tahngarth_rage_updates_at_attack_and_keeps_damage_and_replay_exact",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -27065,7 +27355,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27088,7 +27379,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27111,7 +27403,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -27134,7 +27427,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -27157,7 +27451,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27170,8 +27465,24 @@
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_multiple_sources_apply_independently_in_four_player_game",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Stack attached sources controlled by different seats in a four-player state."
     },
     {
@@ -27188,7 +27499,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27196,6 +27508,30 @@
         "commander_review"
       ],
       "applicability_note": "Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -27211,7 +27547,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27234,7 +27571,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -27257,7 +27595,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -27280,7 +27619,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27293,9 +27633,49 @@
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "mutation",
       "test_id": "tests.test_capability_implementation_mutations.CapabilityImplementationMutationTests.test_attached_characteristic_relation_mutant_is_killed",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Kill removal of the relation-bound attached-characteristic lowering."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_otherwise_component_omissions_are_killed_after_complete_admission",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -27311,7 +27691,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27334,7 +27715,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27357,7 +27739,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27370,16 +27753,48 @@
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "negative",
       "test_id": "tests.test_attached_static_characteristics.AttachedContinuousCompilerTests.test_compiler_keeps_unsupported_attached_grants_residual",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Reject multiple quotes, static prose, external attachment references, and costs outside the closed typed grant schema."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "negative",
       "test_id": "tests.test_attached_static_characteristics.AttachedContinuousCompilerTests.test_compiler_rejects_conditional_and_unrepresented_text",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Reject conditional, named, target-relative, quoted, declaration-restriction, and unsupported attached-object wording."
     },
     {
@@ -27396,7 +27811,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27409,8 +27825,24 @@
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "negative",
       "test_id": "tests.test_attached_static_characteristics.AttachedContinuousModelTests.test_relation_model_and_descriptor_fail_closed",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Reject malformed relation identities and descriptors before evaluation."
     },
     {
@@ -27427,7 +27859,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27440,24 +27873,72 @@
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "negative",
       "test_id": "tests.test_attached_static_characteristics.AttachmentRelationTests.test_malformed_relation_fails_before_mutation",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Reject one-sided authoritative attachment state without mutation."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "negative",
       "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_declaration_grant_dependencies_fail_closed",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Block either the attached-characteristic or declaration capability and keep the combined node out of exact admission."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "negative",
       "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_query_and_attachment_declaration_grants_compile_closed",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Reject temporary, malformed, and unsupported attached declaration bodies rather than widening the characteristic shell."
     },
     {
@@ -27474,7 +27955,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27482,6 +27964,30 @@
         "commander_review"
       ],
       "applicability_note": "Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatCompilerTests.test_otherwise_composition_keeps_recipient_scope_and_rejects_unknown_branches",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -27497,7 +28003,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27520,7 +28027,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27543,7 +28051,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -27556,16 +28065,48 @@
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "positive",
       "test_id": "tests.test_attached_static_characteristics.AttachedContinuousCompilerTests.test_compiler_lowers_attached_quoted_abilities_to_typed_programs",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile one accepted attached shell and one independently exact quoted activated, fixed-output mana, or triggered program into a recipient-bound typed fragment."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "positive",
       "test_id": "tests.test_attached_static_characteristics.AttachedContinuousCompilerTests.test_compiler_lowers_closed_dynamic_compound_and_transform_forms",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile only the closed attached dynamic, compound, base-setting, type, color, and supported-keyword grammar into the existing typed owner."
     },
     {
@@ -27582,7 +28123,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27595,40 +28137,120 @@
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "positive",
       "test_id": "tests.test_attached_static_characteristics.AttachedContinuousModelTests.test_dynamic_transform_and_remove_then_grant_use_canonical_layers",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Apply dynamic scaling, type and color transformation, base power/toughness, and ordered remove-then-grant operations in their canonical layers."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "positive",
       "test_id": "tests.test_attached_static_characteristics.AttachedContinuousModelTests.test_fixed_modifier_and_keyword_apply_only_to_exact_logical_object",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Apply fixed characteristics only to the exact logical attached object."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "positive",
       "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_animate_dead_and_bestow_modifiers_use_generic_attached_handler",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Apply generic Aura and bestowed fixed modifiers through live relations."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "positive",
       "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_query_and_attachment_declaration_grants_compile_closed",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile exact attached declaration fragments alone or beside a fixed characteristic modifier through one source-bound layer-6 owner."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "positive",
       "test_id": "tests.test_exact_zimone_closure.ExactZimoneClosureTests.test_thornbite_staff_grants_damage_death_untap_and_shaman_attach",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Apply separately trusted fixed granted rules text to the attached object."
     },
     {
@@ -27645,7 +28267,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27653,6 +28276,126 @@
         "commander_review"
       ],
       "applicability_note": "Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatCompilerTests.test_seven_original_otherwise_stat_auras_bind_as_complete_programs",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_otherwise_auras_cover_typed_branches_and_counter_composition",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_sea_legs_tracks_type_change_and_source_removal",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_tahngarth_rage_updates_at_attack_and_keeps_damage_and_replay_exact",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -27668,7 +28411,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27691,7 +28435,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27714,7 +28459,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -27737,7 +28483,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -27760,7 +28507,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -27783,7 +28531,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27796,8 +28545,24 @@
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "privacy",
       "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_projection_hides_relation_identity_and_replay_is_exact",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Project public characteristics without physical or logical relation IDs."
     },
     {
@@ -27814,7 +28579,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27822,6 +28588,30 @@
         "commander_review"
       ],
       "applicability_note": "Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -27837,7 +28627,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27860,7 +28651,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -27883,7 +28675,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -27906,7 +28699,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27917,26 +28711,98 @@
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatCompilerTests.test_otherwise_composition_keeps_recipient_scope_and_rejects_unknown_branches",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "replay",
       "test_id": "tests.test_attached_static_characteristics.AttachedContinuousModelTests.test_relation_round_trip_is_canonical_and_legacy_shape_stays_stable",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Round-trip relation effects while retaining the historical unrelated shape."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "replay",
       "test_id": "tests.test_attached_static_characteristics.AttachedQuotedAbilityRuntimeTests.test_granted_triggers_preserve_multiplicity_and_replay",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Preserve independently granted trigger multiplicity through ordinary ordering, placement, resolution, checkpoint save, and exact replay."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "replay",
       "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_projection_hides_relation_identity_and_replay_is_exact",
-      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Replay a timestamped attach command and its characteristic result exactly."
     },
     {
@@ -27953,7 +28819,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27961,6 +28828,102 @@
         "commander_review"
       ],
       "applicability_note": "Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_otherwise_auras_cover_typed_branches_and_counter_composition",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_sea_legs_tracks_type_change_and_source_removal",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_tahngarth_rage_updates_at_attack_and_keeps_damage_and_replay_exact",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -27976,7 +28939,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -27999,7 +28963,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -28022,7 +28987,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -28045,7 +29011,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -28068,7 +29035,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -28076,6 +29044,30 @@
         "commander_review"
       ],
       "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
     },
     {
       "capability_id": "continuous.basic_land_type.add_all_lands",
@@ -30518,7 +31510,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -30541,7 +31534,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -30550,7 +31544,30 @@
       ],
       "applicability_note": "Original Blood Baron is strictly compiled and cast with both life thresholds satisfied. A real Stream of Life raises the final qualifying opponent above ten, removes only the coupled bonus/flying, and preserves printed lifelink. Wrong-principal rollback, private projection, pending save/load and complete pre-action replay agree."
     },
-    {"capability_id":"continuous.characteristics.fixed_public_state","evidence_class":"interaction","test_id":"tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_jetmir_additional_thresholds_stack_and_recompute_after_real_bounce","official_rule_ids":["604.1","611.3a","611.3b","611.3c","613.1f","613.1g","613.4c","613.6","603.6b","603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Jetmir's independent fixed bonuses stack at six and nine controlled creatures. An actual Unsummon lowers the count across each threshold, removes only the newly inapplicable bonus and keyword, and preserves earlier vigilance and complete pre-cast replay."},
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_jetmir_additional_thresholds_stack_and_recompute_after_real_bounce",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Jetmir's independent fixed bonuses stack at six and nine controlled creatures. An actual Unsummon lowers the count across each threshold, removes only the newly inapplicable bonus and keyword, and preserves earlier vigilance and complete pre-cast replay."
+    },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
@@ -30565,7 +31582,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -30588,7 +31606,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -30611,7 +31630,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -30634,7 +31654,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -30657,7 +31678,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -30666,7 +31688,126 @@
       ],
       "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
     },
-    {"capability_id":"continuous.characteristics.fixed_public_state","evidence_class":"interaction","test_id":"tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it","official_rule_ids":["604.1","611.3a","611.3b","611.3c","613.1f","613.1g","613.4c","613.6","603.6b","603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."},
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_otherwise_auras_cover_typed_branches_and_counter_composition",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_sea_legs_tracks_type_change_and_source_removal",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_tahngarth_rage_updates_at_attack_and_keeps_damage_and_replay_exact",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
@@ -30681,7 +31822,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -30704,7 +31846,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -30727,7 +31870,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -30740,7 +31884,19 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
       "test_id": "tests.test_public_history_condition_closure.PublicHistoryConditionRuntimeContractTests.test_history_facts_use_sealed_actor_and_target_not_current_objects",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
       "supported_profiles": [
         "traditional",
         "commander_duel",
@@ -30752,8 +31908,24 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
       "test_id": "tests.test_public_state_condition_runtime.FixedPublicStateCharacteristicRuntimeTests.test_live_public_object_state_and_layer_five_queries_recompute",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Recompute combat, controller-relative modified, equipped-source, attached-object color, and layer-5 type-count gates through one live typed boundary."
     },
     {
@@ -30770,7 +31942,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -30783,24 +31956,72 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
       "test_id": "tests.test_public_state_condition_runtime.FixedPublicStateCharacteristicRuntimeTests.test_public_condition_queries_follow_authoritative_history_and_control",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Recompute fixed characteristic conditions from canonical draw and cast history, current controller query membership, player counters, monarch state, and control changes."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
       "test_id": "tests.test_public_state_condition_runtime.FixedPublicStateCharacteristicRuntimeTests.test_public_fact_conditions_recompute_and_replay",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Recompute schema-v3 graveyard, entry, attack, life, hand, starting-life, and planeswalker-subtype conditions through the existing layer-6 and layer-7c owner."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
       "test_id": "tests.test_public_state_condition_runtime.FixedPublicStateCharacteristicRuntimeTests.test_public_state_conditions_recompute_layer_six_and_seven_results",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Recompute the same typed public-state predicate for paired layer-6 ability grants and layer-7c fixed power/toughness modifiers."
     },
     {
@@ -30817,7 +32038,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -30840,7 +32062,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -30863,7 +32086,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -30886,7 +32110,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -30909,7 +32134,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -30918,7 +32144,54 @@
       ],
       "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
     },
-    {"capability_id":"continuous.characteristics.fixed_public_state","evidence_class":"multiplayer","test_id":"tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it","official_rule_ids":["604.1","611.3a","611.3b","611.3c","613.1f","613.1g","613.4c","613.6","603.6b","603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."},
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "multiplayer",
@@ -30933,7 +32206,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -30946,33 +32220,144 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_public_state_condition_runtime.FixedPublicStateCharacteristicRuntimeTests.test_public_condition_queries_follow_authoritative_history_and_control",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Evaluate controller-relative history and query conditions against the correct seat while opponent poison and monarch facts remain public in four-player state."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_public_state_condition_runtime.FixedPublicStateCharacteristicRuntimeTests.test_public_fact_conditions_recompute_and_replay",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Evaluate controller-relative public facts in four-player state while retaining exact source incarnation and seat relations."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_public_state_condition_runtime.FixedPublicStateCharacteristicRuntimeTests.test_turn_gated_attachment_and_anthem_compose",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Track the source controller, active player, attached object, and controller-scoped target set while control and zone membership change in a four-player game."
     },
-    {"capability_id":"continuous.characteristics.fixed_public_state","evidence_class":"mutation","test_id":"tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierCompilerTests.test_additional_modifier_producer_and_capability_omissions_fail_closed","official_rule_ids":["604.1","611.3a","611.3b","611.3c","613.1f","613.1g","613.4c","613.6","603.6b","603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Omitting additive-body normalization or the fixed public-state capability kills admission."},
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierCompilerTests.test_additional_modifier_producer_and_capability_omissions_fail_closed",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting additive-body normalization or the fixed public-state capability kills admission."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_otherwise_component_omissions_are_killed_after_complete_admission",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "mutation",
       "test_id": "tests.test_public_state_condition_compiler.FixedPublicStateCharacteristicCompilerTests.test_condition_and_target_mutants_change_card_program_fingerprint",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Kill a controller-turn to other-turn condition mutant by requiring the enclosing CardProgram fingerprint to change."
     },
     {
@@ -30989,7 +32374,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31002,8 +32388,24 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "mutation",
       "test_id": "tests.test_public_state_condition_runtime.FixedPublicStateCharacteristicRuntimeTests.test_public_fact_conditions_recompute_and_replay",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Force every public-fact quantity to zero and require all fact-gated layer-6 and layer-7c results to disappear."
     },
     {
@@ -31020,7 +32422,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31029,7 +32432,30 @@
       ],
       "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
     },
-    {"capability_id":"continuous.characteristics.fixed_public_state","evidence_class":"negative","test_id":"tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierCompilerTests.test_additional_wording_does_not_admit_unrepresented_bonus_or_condition","official_rule_ids":["604.1","611.3a","611.3b","611.3c","613.1f","613.1g","613.4c","613.6","603.6b","603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Variable or multiplied bonuses, unknown conditions and repeated-effect riders remain residual."},
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierCompilerTests.test_additional_wording_does_not_admit_unrepresented_bonus_or_condition",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Variable or multiplied bonuses, unknown conditions and repeated-effect riders remain residual."
+    },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "negative",
@@ -31044,7 +32470,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31067,7 +32494,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31090,7 +32518,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31113,7 +32542,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31136,7 +32566,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31159,7 +32590,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31171,9 +32603,49 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatCompilerTests.test_otherwise_composition_keeps_recipient_scope_and_rejects_unknown_branches",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_query_dependency_fails_closed_across_consumers",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Block the shared target-query dependency before a public-state-gated characteristic component can become exact."
     },
     {
@@ -31190,7 +32662,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31213,7 +32686,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31236,7 +32710,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31259,7 +32734,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31282,7 +32758,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31305,7 +32782,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31318,24 +32796,72 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "negative",
       "test_id": "tests.test_public_state_condition_compiler.FixedPublicStateCharacteristicCompilerTests.test_fixed_public_condition_dependencies_fail_closed",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Block the shared public-query or monarch capability and retain the affected static condition as a source-spanned residual."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "negative",
       "test_id": "tests.test_public_state_condition_compiler.FixedPublicStateCharacteristicCompilerTests.test_public_state_descriptors_fail_closed_without_effects",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Reject unknown fields, unsupported predicates, invalid scalar types, widened targets, and untrusted ability grants before lowering any effect."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "negative",
       "test_id": "tests.test_public_state_condition_compiler.FixedPublicStateCharacteristicCompilerTests.test_unrepresented_conditions_and_bodies_remain_residual",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Keep ability-presence counts, dynamic amounts, unmarked open counts, per-opponent thresholds above existence, otherwise branches, compound or unsupported state comparisons, Ward, and quoted abilities material and residual."
     },
     {
@@ -31352,7 +32878,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31375,7 +32902,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31384,7 +32912,30 @@
       ],
       "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
     },
-    {"capability_id":"continuous.characteristics.fixed_public_state","evidence_class":"positive","test_id":"tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierCompilerTests.test_additional_and_also_fixed_bonuses_keep_the_complete_condition","official_rule_ids":["604.1","611.3a","611.3b","611.3c","613.1f","613.1g","613.4c","613.6","603.6b","603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Complete fixed additive modifiers preserve the full typed condition, original spans, target domain, keyword dependencies, and whole-program admission."},
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierCompilerTests.test_additional_and_also_fixed_bonuses_keep_the_complete_condition",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed additive modifiers preserve the full typed condition, original spans, target domain, keyword dependencies, and whole-program admission."
+    },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
@@ -31399,7 +32950,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31422,7 +32974,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31445,7 +32998,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31468,7 +33022,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31491,7 +33046,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31514,7 +33070,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31526,9 +33083,145 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatCompilerTests.test_seven_original_otherwise_stat_auras_bind_as_complete_programs",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_otherwise_auras_cover_typed_branches_and_counter_composition",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_sea_legs_tracks_type_change_and_source_removal",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_tahngarth_rage_updates_at_attack_and_keeps_damage_and_replay_exact",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_set_query_fans_into_layers_and_resolution",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Reuse the same public target query under a separately typed source-state condition."
     },
     {
@@ -31545,7 +33238,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31568,7 +33262,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31591,7 +33286,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31604,8 +33300,24 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
       "test_id": "tests.test_public_state_condition_compiler.FixedPublicStateCharacteristicCompilerTests.test_closed_public_state_grammar_compiles_capability_closed",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile the closed turn, graveyard-card-count, hand-count, life-total, entry-turn, and named-counter grammar over source, attached, and fixed-query targets."
     },
     {
@@ -31622,7 +33334,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31645,7 +33358,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31658,40 +33372,120 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
       "test_id": "tests.test_public_state_condition_compiler.FixedPublicStateCharacteristicCompilerTests.test_fixed_public_condition_models_use_closed_current_facts",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Validate immutable fixed thresholds for hand, draw, cast, poison, monarch, and query-count snapshots."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
       "test_id": "tests.test_public_state_condition_compiler.FixedPublicStateCharacteristicCompilerTests.test_fixed_public_condition_queries_compile_across_authoritative_facts",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile the bounded source, zone-query, current-turn, player-counter, and designation condition grammar into one existing typed static component."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
       "test_id": "tests.test_public_state_condition_compiler.FixedPublicStateCharacteristicCompilerTests.test_public_condition_closure_compiles_typed_queries_and_facts",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile cycle-safe distinct graveyard values, sealed public facts, public player relations, exact attachment counts, and planeswalker-subtype queries into schema-v3 conditions."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
       "test_id": "tests.test_public_state_condition_compiler.FixedPublicStateCharacteristicCompilerTests.test_public_object_state_and_query_conditions_compile_closed",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile direct public-state affected sets plus source, attached-object, and cycle-safe fixed object-count conditions through the existing typed characteristic owners."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
       "test_id": "tests.test_public_state_condition_runtime.FixedPublicStateCharacteristicRuntimeTests.test_public_fact_conditions_recompute_and_replay",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Apply live schema-v3 fact quantities to fixed layer-6 keyword and layer-7c power/toughness results and remove them when the fact is absent."
     },
     {
@@ -31708,7 +33502,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31731,7 +33526,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31754,7 +33550,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31777,7 +33574,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31800,7 +33598,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31809,13 +33608,76 @@
       ],
       "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
     },
-    {"capability_id":"continuous.characteristics.fixed_public_state","evidence_class":"privacy","test_id":"tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it","official_rule_ids":["604.1","611.3a","611.3b","611.3c","613.1f","613.1g","613.4c","613.6","603.6b","603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."},
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "privacy",
       "test_id": "tests.test_public_state_condition_runtime.FixedPublicStateCharacteristicRuntimeTests.test_hand_count_condition_projects_and_replays_without_hidden_identity",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Consume only the controller's public hand count and exclude hidden card identity from every opposing principal projection."
     },
     {
@@ -31832,7 +33694,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31845,17 +33708,73 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "privacy",
       "test_id": "tests.test_public_state_condition_runtime.FixedPublicStateCharacteristicRuntimeTests.test_public_condition_queries_follow_authoritative_history_and_control",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Use only aggregate hand and history counts while keeping every hidden hand identity out of opponent projection."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "privacy",
       "test_id": "tests.test_public_state_condition_runtime.FixedPublicStateCharacteristicRuntimeTests.test_public_fact_conditions_recompute_and_replay",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Use only public counts and effective graveyard characteristics while keeping every hidden hand identity out of opponent projection."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatCompilerTests.test_otherwise_composition_keeps_recipient_scope_and_rejects_unknown_branches",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -31871,7 +33790,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31894,7 +33814,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31917,7 +33838,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31940,7 +33862,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31963,7 +33886,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -31986,7 +33910,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -32009,7 +33934,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -32018,21 +33944,172 @@
       ],
       "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
     },
-    {"capability_id":"continuous.characteristics.fixed_public_state","evidence_class":"replay","test_id":"tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it","official_rule_ids":["604.1","611.3a","611.3b","611.3c","613.1f","613.1g","613.4c","613.6","603.6b","603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."},
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_otherwise_auras_cover_typed_branches_and_counter_composition",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_sea_legs_tracks_type_change_and_source_removal",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_tahngarth_rage_updates_at_attack_and_keeps_damage_and_replay_exact",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "replay",
       "test_id": "tests.test_public_state_condition_runtime.FixedPublicStateCharacteristicRuntimeTests.test_hand_count_condition_projects_and_replays_without_hidden_identity",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Pin the typed hand-count predicate and source identity into a checkpoint, then replay the following multiplayer priority commands exactly."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "replay",
       "test_id": "tests.test_public_state_condition_runtime.FixedPublicStateCharacteristicRuntimeTests.test_live_public_object_state_and_layer_five_queries_recompute",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Pin schema-v2 source, attached-object, and layer-5 count conditions into a checkpoint and replay the following authoritative command exactly."
     },
     {
@@ -32049,7 +34126,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -32062,19 +34140,98 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "replay",
       "test_id": "tests.test_public_state_condition_runtime.FixedPublicStateCharacteristicRuntimeTests.test_public_condition_queries_follow_authoritative_history_and_control",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Save and replay authoritative draw, cast, control, query, player-counter, and monarch facts from the exact checkpoint."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "replay",
       "test_id": "tests.test_public_state_condition_runtime.FixedPublicStateCharacteristicRuntimeTests.test_public_fact_conditions_recompute_and_replay",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Serialize schema-v3 facts plus new entry and attack history and replay the following multiplayer command to the same hash."
     },
-    {"capability_id":"continuous.characteristics.fixed_public_state","evidence_class":"rollback","test_id":"tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it","official_rule_ids":["604.1","611.3a","611.3b","611.3c","613.1f","613.1g","613.4c","613.6","603.6b","603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."},
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_public_state_characteristics.OtherwiseAttachedStatRuntimeTests.test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "rollback",
@@ -32089,7 +34246,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",

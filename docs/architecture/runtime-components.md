@@ -806,6 +806,21 @@ workflow. Architectural rationale remains in
 [ADR 0011](../adr/0011-counter-placement-event-and-mutation-owner.md), and
 [ADR 0008](../adr/0008-runtime-trust-and-governance-hardening.md).
 
+### Fixed attached otherwise stats
+
+Complete fixed additive P/T alternatives on an enchanted creature use the
+existing attached and public-condition owners. The compiler emits the
+otherwise modifier as a source-bound base and adds the difference between the
+two printed modifiers while the recipient condition holds. Both components
+remain ordinary layer-7c modifications with one attachment and source lifetime.
+
+The condition reads the enchanted creature's current color, types or combat
+state, independently of the Aura and either controller. Recipient ability
+removal does not remove its Aura effects. Source departure removes both stat
+components, and resulting toughness follows ordinary state-based actions.
+Base-setting, permission, variable and unrepresented otherwise branches stay
+outside this fixed additive production.
+
 ### Qualified copy-entry choices
 
 Intrinsic copy entry keeps its historical schema-1 selection contract. A

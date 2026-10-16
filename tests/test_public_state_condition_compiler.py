@@ -1195,7 +1195,7 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
 
             with self.subTest(mutation=mutation), mock.patch(
                 "quorune.compiler.runtime_templates."
-                "fixed_public_state_characteristics_handler",
+                "composed_public_state_characteristics_handler",
                 side_effect=mutated,
             ):
                 changed = compile_card_program(

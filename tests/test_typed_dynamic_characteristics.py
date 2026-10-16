@@ -635,7 +635,7 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
         def assert_compatibility_boundary() -> None:
             with mock.patch(
                 "quorune.compiler.runtime_templates."
-                "fixed_public_state_characteristics_handler",
+                "composed_public_state_characteristics_handler",
                 return_value=None,
             ):
                 program = self.compile(

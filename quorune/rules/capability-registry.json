@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 330,
+  "registry_version": 331,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -10069,7 +10069,7 @@
     },
     {
       "id": "continuous.characteristics.fixed_public_state",
-      "version": 16,
+      "version": 17,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -10080,7 +10080,8 @@
         "613.4c",
         "613.6",
         "603.6b",
-        "603.10"
+        "603.10",
+        "303.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -10088,7 +10089,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply fixed supported keywords and power/toughness modifiers in layers 6 and 7c while one closed authoritative public scalar, object, cycle-safe query, sealed history, distinct graveyard characteristic, hand, starting-life, player-counter, or designation condition is true. Compose one recipient-relative declaration requirement or restriction with fixed characteristics behind that same current public condition. Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition. A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope. Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost. Versioned flat all/any compositions retain each closed leaf and current source-bound snapshot, including distinct query quantities and status producer dependencies. The controller city blessing boolean uses its canonical persistent public designation owner and current source controller.",
+        "summary": "Apply fixed supported keywords and power/toughness modifiers in layers 6 and 7c while one closed authoritative public scalar, object, cycle-safe query, sealed history, distinct graveyard characteristic, hand, starting-life, player-counter, or designation condition is true. Compose one recipient-relative declaration requirement or restriction with fixed characteristics behind that same current public condition. Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition. A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope. Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost. Versioned flat all/any compositions retain each closed leaf and current source-bound snapshot, including distinct query quantities and status producer dependencies. The controller city blessing boolean uses its canonical persistent public designation owner and current source controller. Complete attached fixed additive otherwise clauses compose an unconditional otherwise modifier with a current recipient-condition correction in layer 7c; the components share source and attachment lifetime.",
         "inputs": [
           "active phased-in battlefield source",
           "source controller turn, life, public hand, graveyard, current or sealed turn-history, opponent poison, monarch, and starting-life facts",
@@ -10107,7 +10108,7 @@
         "exclusions": [
           "most-common, tied, open arithmetic, arbitrary dynamic quantities, and per-opponent aggregate thresholds above existence",
           "top-library, chosen, secret-content, city blessing, dungeon, initiative, max-speed, sticker, crime, dice, and unowned historical predicates",
-          "otherwise branches, dynamic amounts, base-setting, type, color, ability-removal, quoted rules text, Protection, Ward, and unsupported keyword bodies",
+          "unrepresented otherwise branches, dynamic amounts, base-setting, type, color, ability-removal, quoted rules text, Protection, Ward, and unsupported keyword bodies",
           "Class levels, copied or granted source abilities without shared typed propagation, and dependency interactions outside the represented fixed conditions"
         ]
       },
@@ -10141,7 +10142,8 @@
         "quorune.semantic_runtime.casting_activation_metadata.compiled_self_zone_cast_permission",
         "quorune.continuous_conditions.OwnerRelativeConditionSource",
         "quorune.compiler.boolean_public_conditions.compose_public_conditions",
-        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver.snapshot"
+        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver.snapshot",
+        "quorune.compiler.otherwise_characteristic_templates.attached_otherwise_stat_handler"
       ],
       "positive_tests": [
         "test_closed_public_state_grammar_compiles_capability_closed",
@@ -10167,7 +10169,12 @@
         "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
         "test_boolean_public_conditions_keep_independent_leaf_snapshots_and_operators",
         "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
-        "test_actual_aspirant_tenth_entry_seals_flying_before_zone_trigger_discovery"
+        "test_actual_aspirant_tenth_entry_seals_flying_before_zone_trigger_discovery",
+        "test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+        "test_seven_original_otherwise_stat_auras_bind_as_complete_programs",
+        "test_actual_otherwise_auras_cover_typed_branches_and_counter_composition",
+        "test_actual_sea_legs_tracks_type_change_and_source_removal",
+        "test_actual_tahngarth_rage_updates_at_attack_and_keeps_damage_and_replay_exact"
       ],
       "negative_tests": [
         "test_unrepresented_conditions_and_bodies_remain_residual",
@@ -10188,7 +10195,8 @@
         "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
         "test_boolean_condition_truth_query_snapshots_and_malformed_inputs_are_distinct",
         "test_boolean_composition_preserves_attachment_numeric_trigger_and_status_boundaries",
-        "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays"
+        "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
+        "test_otherwise_composition_keeps_recipient_scope_and_rejects_unknown_branches"
       ],
       "interaction_tests": [
         "test_live_public_object_state_and_layer_five_queries_recompute",
@@ -10209,7 +10217,11 @@
         "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
         "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
         "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
-        "test_actual_aspirant_tenth_entry_seals_flying_before_zone_trigger_discovery"
+        "test_actual_aspirant_tenth_entry_seals_flying_before_zone_trigger_discovery",
+        "test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+        "test_actual_otherwise_auras_cover_typed_branches_and_counter_composition",
+        "test_actual_sea_legs_tracks_type_change_and_source_removal",
+        "test_actual_tahngarth_rage_updates_at_attack_and_keeps_damage_and_replay_exact"
       ],
       "multiplayer_tests": [
         "test_turn_gated_attachment_and_anthem_compose",
@@ -10220,7 +10232,8 @@
         "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
         "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
         "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
-        "test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders"
+        "test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders",
+        "test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization"
       ],
       "privacy_tests": [
         "test_hand_count_condition_projects_and_replays_without_hidden_identity",
@@ -10231,7 +10244,8 @@
         "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
         "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
         "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
-        "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays"
+        "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
+        "test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization"
       ],
       "replay_tests": [
         "test_hand_count_condition_projects_and_replays_without_hidden_identity",
@@ -10248,7 +10262,11 @@
         "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
         "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
         "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
-        "test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders"
+        "test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders",
+        "test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+        "test_actual_otherwise_auras_cover_typed_branches_and_counter_composition",
+        "test_actual_sea_legs_tracks_type_change_and_source_removal",
+        "test_actual_tahngarth_rage_updates_at_attack_and_keeps_damage_and_replay_exact"
       ],
       "required_evidence": [
         "positive",
@@ -10261,7 +10279,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking the shared public-query capability prevents query-targeted public-state components from becoming exact; each emitted keyword and power/toughness body also independently declares and closes its exact consumer capability.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Focused tests remove or invert the typed state condition, public-fact quantity, target identity, layer-6 grant, or layer-7c modifier and exact current-characteristic assertions reject each survivor.",
+      "implementation_mutation_rationale": "Focused tests remove or invert the typed state condition, public-fact quantity, target identity, layer-6 grant, or layer-7c modifier and exact current-characteristic assertions reject each survivor. Omitting either the otherwise base or the conditional correction preserves complete admission but changes the actual Aura stat consequence and is killed by its native witness.",
       "blockers": [],
       "status": "trusted"
     },
@@ -11066,7 +11084,7 @@
     },
     {
       "id": "continuous.attached.fixed_characteristics",
-      "version": 13,
+      "version": 14,
       "official_rules": [
         "301.5",
         "303.4",
@@ -11077,7 +11095,8 @@
         "613.1f",
         "613.1g",
         "613.6",
-        "701.3c"
+        "701.3c",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -11085,7 +11104,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply closed type, subtype, color, supported ability (including five fixed basic landwalk variants and Horsemanship), fixed or typed public-query power/toughness, base power/toughness, one separately exact typed quoted ability, or one exact declaration requirement or restriction to the logical object currently attached to a phased-in battlefield source. Grant already-represented fixed combat or spell-cast keyword trigger fragments with exact label, instance and consumer dependencies. Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once.",
+        "summary": "Apply closed type, subtype, color, supported ability (including five fixed basic landwalk variants and Horsemanship), fixed or typed public-query power/toughness, base power/toughness, one separately exact typed quoted ability, or one exact declaration requirement or restriction to the logical object currently attached to a phased-in battlefield source. Grant already-represented fixed combat or spell-cast keyword trigger fragments with exact label, instance and consumer dependencies. Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once. Complete attached fixed additive otherwise clauses compose an unconditional otherwise modifier with a current recipient-condition correction in layer 7c; the components share source and attachment lifetime.",
         "inputs": [
           "active attached source object",
           "reciprocal physical attachment relation",
@@ -11146,7 +11165,8 @@
         "quorune.keyword_abilities.triggered_keyword_grant",
         "quorune.rules.activation.query.activated_abilities",
         "quorune.semantic_runtime.attached_continuous.AttachedFixedCharacteristicsHandler",
-        "quorune.trigger_discovery._event_programs_for_source"
+        "quorune.trigger_discovery._event_programs_for_source",
+        "quorune.compiler.otherwise_characteristic_templates.attached_otherwise_stat_handler"
       ],
       "positive_tests": [
         "test_animate_dead_and_bestow_modifiers_use_generic_attached_handler",
@@ -11167,7 +11187,12 @@
         "test_werewolf_plural_union_is_typed_and_deduplicates_recipient_query",
         "test_all_existing_grant_scopes_declare_the_live_skulk_owner",
         "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
-        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+        "test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+        "test_seven_original_otherwise_stat_auras_bind_as_complete_programs",
+        "test_actual_otherwise_auras_cover_typed_branches_and_counter_composition",
+        "test_actual_sea_legs_tracks_type_change_and_source_removal",
+        "test_actual_tahngarth_rage_updates_at_attack_and_keeps_damage_and_replay_exact"
       ],
       "negative_tests": [
         "test_compiler_keeps_unsupported_attached_grants_residual",
@@ -11185,7 +11210,8 @@
         "test_static_label_dispatch_omission_mutant_is_killed",
         "test_static_query_and_attachment_declaration_grants_compile_closed",
         "test_triggered_keyword_grant_labels_and_fragments_are_exact_and_fail_closed",
-        "test_unknown_siblings_and_withdrawn_skulk_authority_remain_residual"
+        "test_unknown_siblings_and_withdrawn_skulk_authority_remain_residual",
+        "test_otherwise_composition_keeps_recipient_scope_and_rejects_unknown_branches"
       ],
       "interaction_tests": [
         "test_actual_islandwalk_aura_cast_tracks_recipient_and_ends_on_source_departure",
@@ -11208,7 +11234,11 @@
         "test_target_departure_and_source_departure_end_effect_without_stale_identity",
         "test_type_and_ability_removal_use_their_canonical_layers",
         "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
-        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+        "test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+        "test_actual_otherwise_auras_cover_typed_branches_and_counter_composition",
+        "test_actual_sea_legs_tracks_type_change_and_source_removal",
+        "test_actual_tahngarth_rage_updates_at_attack_and_keeps_damage_and_replay_exact"
       ],
       "multiplayer_tests": [
         "test_multiple_sources_apply_independently_in_four_player_game",
@@ -11216,7 +11246,8 @@
         "test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays",
         "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
         "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
-        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+        "test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization"
       ],
       "privacy_tests": [
         "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
@@ -11224,7 +11255,8 @@
         "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
         "test_projection_hides_relation_identity_and_replay_is_exact",
         "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
-        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+        "test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization"
       ],
       "replay_tests": [
         "test_actual_islandwalk_aura_cast_tracks_recipient_and_ends_on_source_departure",
@@ -11236,7 +11268,11 @@
         "test_projection_hides_relation_identity_and_replay_is_exact",
         "test_relation_round_trip_is_canonical_and_legacy_shape_stays_stable",
         "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
-        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+        "test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+        "test_actual_otherwise_auras_cover_typed_branches_and_counter_composition",
+        "test_actual_sea_legs_tracks_type_change_and_source_removal",
+        "test_actual_tahngarth_rage_updates_at_attack_and_keeps_damage_and_replay_exact"
       ],
       "required_evidence": [
         "positive",
@@ -11249,7 +11285,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Dynamic counts use the shared cycle-safe layer-5 quantity boundary, and missing, removed, or untrusted outer or inner semantic component identities fail closed before an attached source contributes effects or executable ability fragments.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_attached_characteristic_relation_mutant_is_killed removes the typed lowering and the exact relation-bound characteristic assertions reject the survivor; focused quoted-grant tests reject lost fragment identity, recipient binding, multiplicity, lifetime, offer/commit parity, or replay.",
+      "implementation_mutation_rationale": "test_attached_characteristic_relation_mutant_is_killed removes the typed lowering and the exact relation-bound characteristic assertions reject the survivor; focused quoted-grant tests reject lost fragment identity, recipient binding, multiplicity, lifetime, offer/commit parity, or replay. Omitting either the otherwise base or the conditional correction preserves complete admission but changes the actual Aura stat consequence and is killed by its native witness.",
       "blockers": [],
       "status": "trusted"
     },

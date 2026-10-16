@@ -1196,7 +1196,8 @@
         "quorune/semantic_runtime/continuous_components.py",
         "quorune/turn_history.py",
         "tests/fixtures/fixed-public-state-interaction-cards.json",
-        "tests/fixtures/fixed-public-state-characteristics-cards.json"
+        "tests/fixtures/fixed-public-state-characteristics-cards.json",
+        "quorune/compiler/otherwise_characteristic_templates.py"
       ],
       "test_modules": [
         "test_attached_static_characteristics",

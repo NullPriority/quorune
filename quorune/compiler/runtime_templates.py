@@ -27,11 +27,11 @@ from .continuous_templates import (
     basic_land_type_addition_handler,
     conditional_self_keyword_handler,
     dynamic_self_power_toughness_handler,
-    fixed_public_state_characteristics_handler,
     fixed_query_characteristic_grant_handler,
     fixed_query_keyword_grant_handler,
     fixed_power_toughness_anthem_handler,
 )
+from .otherwise_characteristic_templates import composed_public_state_characteristics_handler
 from .declaration_nodes import fixed_static_declaration_grant_handler
 from .query_characteristic_templates import (
     query_power_toughness_definition_handler,
@@ -64,7 +64,7 @@ from .zone_templates import static_zone_destination_replacement_handler
 class StaticRuntimeTemplate:
     compiled: tuple[
         str,
-        Mapping[str, Any],
+        Mapping[str, Any] | tuple[Mapping[str, Any], ...],
         str | tuple[str, ...],
     ]
     kind: str
@@ -426,7 +426,7 @@ def _continuous_static_runtime_template(
         fixed_public_state = (
             None
             if source_is_class
-            else fixed_public_state_characteristics_handler(
+            else composed_public_state_characteristics_handler(
                 text,
                 source_name=source_name,
             )
