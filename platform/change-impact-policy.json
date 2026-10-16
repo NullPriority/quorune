@@ -4571,6 +4571,21 @@
         "test_counted_activation_costs",
         "test_random_discard_activation_costs"
       ]
+    },
+    {
+      "id": "creature-power-current-and-immediate-departure-lki",
+      "patterns": [
+        "quorune/creature_power_damage.py",
+        "quorune/rules/stack_damage_sources.py",
+        "quorune/zone_transitions.py",
+        "tests/fixtures/creature-power-departure-cards.json"
+      ],
+      "test_modules": [
+        "test_creature_power_departure_lki",
+        "test_fixed_creature_power_damage",
+        "test_fixed_damage_source_lki",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

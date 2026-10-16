@@ -109,6 +109,65 @@ def pin_stack_damage_departures(host, cards, *, error_type=DamageError):
         raise error_type(str(exc)) from exc
 
 
+def pin_creature_power_damage_departures(host, cards, *, error_type=DamageError):
+    """Refresh source power before any member of a departure batch changes."""
+    from ..creature_power_damage import (
+        capture_creature_power_damage_source_lki, _source_lki_value,
+        CREATURE_POWER_DAMAGE_LKI_CONTEXT, CREATURE_POWER_DAMAGE_OPERATION,
+    )
+    try:
+        departing = {(card.object_id, card.logical_object_id):card for card in cards}
+        source_ids = {key[0] for key in departing}
+        frames = [item.to_dict() for item in host.state.stack]
+        for batch in host.state.pending_trigger_batches:
+            frames.extend(item for group in batch.to_dict()['groups'] for item in group['items'])
+        snapshots = {}; updates = {}
+        for item in frames:
+            context = item.get('context', {})
+            source_id = item.get('source_object_id') or item.get('card_object_id')
+            if source_id not in source_ids or CREATURE_POWER_DAMAGE_LKI_CONTEXT not in context:
+                continue
+            prior = context[CREATURE_POWER_DAMAGE_LKI_CONTEXT]
+            if not isinstance(prior, Mapping) or not isinstance(prior.get('source'), Mapping):
+                raise DamageError('Creature-power frame snapshot is malformed')
+            parsed = _source_lki_value(prior['source'].get('ref'), prior)
+            if parsed is None:
+                raise DamageError('Creature-power frame snapshot is malformed')
+            known = parsed[1]
+            if known.object_id != source_id or context.get('source_logical_object_id', known.logical_object_id) != known.logical_object_id:
+                raise DamageError('Creature-power frame refers to another incarnation')
+            key = (source_id, known.logical_object_id)
+            source = departing.get(key)
+            if source is None:
+                continue
+            if known.ref != source.ref:
+                raise DamageError('Creature-power frame public source reference changed')
+            if key not in snapshots:
+                value = capture_creature_power_damage_source_lki(host, source,
+                    ({'op': CREATURE_POWER_DAMAGE_OPERATION, 'source': '$source'},))
+                if value is None:
+                    raise DamageError('Creature-power departure value is unrepresented')
+                snapshots[key] = value
+            updates[item['ref']] = snapshots[key]
+        pending = []
+        for index, batch in enumerate(host.state.pending_trigger_batches):
+            data = batch.to_dict(); changed = False
+            for group in data['groups']:
+                for item in group['items']:
+                    if item['ref'] in updates:
+                        item.setdefault('context', {})[CREATURE_POWER_DAMAGE_LKI_CONTEXT] = deepcopy(updates[item['ref']]); changed = True
+            if changed:
+                pending.append((index, PendingTriggerBatch.from_dict(data)))
+        for item in host.state.stack:
+            if item.ref in updates:
+                item.context[CREATURE_POWER_DAMAGE_LKI_CONTEXT] = deepcopy(updates[item.ref])
+        from ..trigger_processing import replace_pending_trigger_batch
+        for index, batch in pending:
+            replace_pending_trigger_batch(host, index, batch)
+    except (KeyError, TypeError, ValueError) as exc:
+        raise error_type(str(exc)) from exc
+
+
 def bound_stack_damage_source(host, effect, item):
     """Bind only the source; targets and amounts keep their ordinary owners."""
     if effect.get('op') not in _OPERATIONS or effect.get('source') != '$source':

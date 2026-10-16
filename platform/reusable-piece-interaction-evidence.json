@@ -11271,6 +11271,36 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Valgavoth Lair play completes controller-owned color/tapped entry choices despite Hexproof, rejects wrong-principal entry responses, rejects an opponent land-targeting spell, permits the controller own untap spell, then produces the retained chosen green mana. Rollback, pending entry load and pre-action replay remain exact."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_goblin_departure_uses_latest_power_controller_and_lifelink",
+      "piece_ids": [
+        "capability.damage.creature_power.fixed_interaction",
+        "capability.permanent.return.owner_hand"
+      ],
+      "capability_ids": [
+        "damage.creature_power.fixed_interaction",
+        "permanent.return.owner_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Already supported Spikeshot Goblin activates at power1. Actual counter, lifelink and control responses precede an actual Unsummon. The pending ability keeps controllerA, while immediate source LKI deals2 and grants2 life toB after return toownerA hand. Pending save/load, wrong-principal rollback, four-seat private projection and pre-action replay are exact."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_elder_returned_incarnation_does_not_replace_original_source",
+      "piece_ids": [
+        "capability.damage.creature_power.fixed_interaction",
+        "capability.zone.linked_exile_return.fixed"
+      ],
+      "capability_ids": [
+        "damage.creature_power.fixed_interaction",
+        "zone.linked_exile_return.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Already supported Spikeshot Elder changes power, controller and lifelink after activation, then Cloudshift returns the same physical card as a fresh smaller incarnation. The original ability uses old-incarnation departure power2 and controllerB lifelink instead of creation power1 or returned-characteristic values. Cost, identity, projection and replay remain canonical."
     }
   ]
 }

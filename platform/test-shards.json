@@ -23,6 +23,7 @@
       "test_cleanup_step_rules",
       "test_combat_evasion_restrictions",
       "test_complex_activation_mana_costs",
+      "test_creature_power_departure_lki",
       "test_draw_transaction_commit",
       "test_end_step_rules",
       "test_fixed_attachment_actions",

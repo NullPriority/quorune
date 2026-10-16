@@ -79,7 +79,11 @@ def capture_creature_power_damage_source_lki(
     )
     power = _creature_power(host, source, characteristics=effective)
     if power is None:
-        return None
+        types = host._type_parts(str(effective.get('type_line') or ''))[0]
+        if source.zone != 'battlefield' or 'creature' in types:
+            return None
+        # CR 208.3/107.2: a battlefield noncreature has no power to read.
+        power = 0
     card_types, subtypes, supertypes = host._type_parts(
         str(effective.get("type_line") or "")
     )
@@ -158,13 +162,19 @@ def _source_value(
     ref: str,
     lki: Mapping[str, Any] | None,
 ) -> tuple[int, DamageSourceSnapshot] | None:
-    current = _current_creature(host, ref)
+    current = _card_by_ref(host, ref)
     lki_value = _source_lki_value(ref, lki)
-    if current is not None and (
+    if current is not None and current.zone == 'battlefield' and not current.phased_out and (
         lki_value is None
-        or current[0].logical_object_id == lki_value[1].logical_object_id
+        or current.logical_object_id == lki_value[1].logical_object_id
     ):
-        card, power = current
+        card = current
+        effective = host._effective_card_data(card)
+        power = _creature_power(host, card, characteristics=effective)
+        if power is None:
+            if 'creature' in host._type_parts(str(effective.get('type_line') or ''))[0]:
+                return None
+            power = 0
         return power, source_snapshot(
             host,
             card.ref,
@@ -184,8 +194,8 @@ def _source_lki_value(
         "schema_version",
         "source",
     }:
-        return None
-    if lki.get("schema_version") != 1 or type(lki.get("power")) is not int:
+        raise CreaturePowerDamageError('Creature-power source LKI is malformed')
+    if type(lki.get('schema_version')) is not int or lki.get("schema_version") != 1 or type(lki.get("power")) is not int:
         raise CreaturePowerDamageError("Creature-power source LKI is malformed")
     raw_source = lki.get("source")
     if not isinstance(raw_source, Mapping):
