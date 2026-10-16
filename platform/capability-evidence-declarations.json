@@ -65373,57 +65373,426 @@
       "capability_id": "permanent.destroy.state_based_damage",
       "evidence_class": "interaction",
       "test_id": "tests.test_combat_keyword_rules.CombatKeywordRuleTests.test_indestructible_consumes_deathtouch_at_the_first_sba_check",
-      "official_rule_ids": ["701.8", "701.8a", "701.8b", "702.2", "702.12b", "704.5g", "704.5h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "702.2",
+        "702.12b",
+        "704.5g",
+        "704.5h",
+        "614.8",
+        "701.19a",
+        "701.19c",
+        "704.3",
+        "122.1c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Let current Indestructible prohibit the Deathtouch destruction result while consuming the since-last-check marker at that same SBA check."
+    },
+    {
+      "capability_id": "permanent.destroy.state_based_damage",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_regeneration_rules.StateBasedReplacementOnlyRuntimeTests.test_actual_supported_troll_regenerates_after_shock_and_disfigure_before_priority",
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "702.2",
+        "702.12b",
+        "704.5g",
+        "704.5h",
+        "614.8",
+        "701.19a",
+        "701.19c",
+        "704.3",
+        "122.1c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Already supported Cudgel Troll, Shock and Disfigure expose replacement-only state-based destruction. Tap, damage clearing and shield consumption occur before priority without a zone move; indestructibility, effect-only shield-counter behavior, zero-toughness controls, authority, privacy and pending/pre-action replay remain exact."
+    },
+    {
+      "capability_id": "permanent.destroy.state_based_damage",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_regeneration_rules.StateBasedReplacementOnlyRuntimeTests.test_nonmoving_regeneration_and_ordinary_protection_plans_preserve_boundaries",
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "702.2",
+        "702.12b",
+        "704.5g",
+        "704.5h",
+        "614.8",
+        "701.19a",
+        "701.19c",
+        "704.3",
+        "122.1c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Already supported Cudgel Troll, Shock and Disfigure expose replacement-only state-based destruction. Tap, damage clearing and shield consumption occur before priority without a zone move; indestructibility, effect-only shield-counter behavior, zero-toughness controls, authority, privacy and pending/pre-action replay remain exact."
     },
     {
       "capability_id": "permanent.destroy.state_based_damage",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_destruction_rules.DestructionRuleTests.test_simultaneous_multiplayer_batch_has_disjoint_results",
-      "official_rule_ids": ["701.8", "701.8a", "701.8b", "702.2", "702.12b", "704.5g", "704.5h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "702.2",
+        "702.12b",
+        "704.5g",
+        "704.5h",
+        "614.8",
+        "701.19a",
+        "701.19c",
+        "704.3",
+        "122.1c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Commit one four-player simultaneous destruction batch with canonical, disjoint destroyed, shielded, and Indestructible results."
+    },
+    {
+      "capability_id": "permanent.destroy.state_based_damage",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_regeneration_rules.StateBasedReplacementOnlyRuntimeTests.test_actual_supported_troll_regenerates_after_shock_and_disfigure_before_priority",
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "702.2",
+        "702.12b",
+        "704.5g",
+        "704.5h",
+        "614.8",
+        "701.19a",
+        "701.19c",
+        "704.3",
+        "122.1c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Already supported Cudgel Troll, Shock and Disfigure expose replacement-only state-based destruction. Tap, damage clearing and shield consumption occur before priority without a zone move; indestructibility, effect-only shield-counter behavior, zero-toughness controls, authority, privacy and pending/pre-action replay remain exact."
     },
     {
       "capability_id": "permanent.destroy.state_based_damage",
       "evidence_class": "mutation",
       "test_id": "tests.test_capability_implementation_mutations.CapabilityImplementationMutationTests.test_destruction_disposition_mutants_are_killed",
-      "official_rule_ids": ["701.8", "701.8a", "701.8b", "702.2", "702.12b", "704.5g", "704.5h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "702.2",
+        "702.12b",
+        "704.5g",
+        "704.5h",
+        "614.8",
+        "701.19a",
+        "701.19c",
+        "704.3",
+        "122.1c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Kill altered state-based and Indestructible destruction dispositions against exact canonical results."
+    },
+    {
+      "capability_id": "permanent.destroy.state_based_damage",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_regeneration_rules.StateBasedReplacementOnlyRuntimeTests.test_replacement_only_plan_and_commit_omissions_are_killed_by_supported_commands",
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "702.2",
+        "702.12b",
+        "704.5g",
+        "704.5h",
+        "614.8",
+        "701.19a",
+        "701.19c",
+        "704.3",
+        "122.1c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Already supported Cudgel Troll, Shock and Disfigure expose replacement-only state-based destruction. Tap, damage clearing and shield consumption occur before priority without a zone move; indestructibility, effect-only shield-counter behavior, zero-toughness controls, authority, privacy and pending/pre-action replay remain exact."
     },
     {
       "capability_id": "permanent.destroy.state_based_damage",
       "evidence_class": "negative",
       "test_id": "tests.test_indestructible_rules.IndestructibleRuntimeTests.test_indestructible_is_destroy_only_and_malformed_keywords_fail_closed",
-      "official_rule_ids": ["701.8", "701.8a", "701.8b", "702.2", "702.12b", "704.5g", "704.5h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "702.2",
+        "702.12b",
+        "704.5g",
+        "704.5h",
+        "614.8",
+        "701.19a",
+        "701.19c",
+        "704.3",
+        "122.1c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Keep zero-toughness movement outside destruction and reject malformed effective-keyword inputs before mutation."
+    },
+    {
+      "capability_id": "permanent.destroy.state_based_damage",
+      "evidence_class": "negative",
+      "test_id": "tests.test_regeneration_rules.StateBasedReplacementOnlyRuntimeTests.test_nonmoving_regeneration_and_ordinary_protection_plans_preserve_boundaries",
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "702.2",
+        "702.12b",
+        "704.5g",
+        "704.5h",
+        "614.8",
+        "701.19a",
+        "701.19c",
+        "704.3",
+        "122.1c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Already supported Cudgel Troll, Shock and Disfigure expose replacement-only state-based destruction. Tap, damage clearing and shield consumption occur before priority without a zone move; indestructibility, effect-only shield-counter behavior, zero-toughness controls, authority, privacy and pending/pre-action replay remain exact."
     },
     {
       "capability_id": "permanent.destroy.state_based_damage",
       "evidence_class": "positive",
       "test_id": "tests.test_indestructible_rules.IndestructibleRuntimeTests.test_state_based_lethal_and_deathtouch_share_typed_destruction",
-      "official_rule_ids": ["701.8", "701.8a", "701.8b", "702.2", "702.12b", "704.5g", "704.5h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "702.2",
+        "702.12b",
+        "704.5g",
+        "704.5h",
+        "614.8",
+        "701.19a",
+        "701.19c",
+        "704.3",
+        "122.1c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Commit lethal marked damage and one-check Deathtouch results through one canonical state-based destruction and simultaneous zone-change path."
+    },
+    {
+      "capability_id": "permanent.destroy.state_based_damage",
+      "evidence_class": "positive",
+      "test_id": "tests.test_regeneration_rules.StateBasedReplacementOnlyRuntimeTests.test_actual_supported_troll_regenerates_after_shock_and_disfigure_before_priority",
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "702.2",
+        "702.12b",
+        "704.5g",
+        "704.5h",
+        "614.8",
+        "701.19a",
+        "701.19c",
+        "704.3",
+        "122.1c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Already supported Cudgel Troll, Shock and Disfigure expose replacement-only state-based destruction. Tap, damage clearing and shield consumption occur before priority without a zone move; indestructibility, effect-only shield-counter behavior, zero-toughness controls, authority, privacy and pending/pre-action replay remain exact."
+    },
+    {
+      "capability_id": "permanent.destroy.state_based_damage",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_regeneration_rules.StateBasedReplacementOnlyRuntimeTests.test_actual_supported_troll_regenerates_after_shock_and_disfigure_before_priority",
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "702.2",
+        "702.12b",
+        "704.5g",
+        "704.5h",
+        "614.8",
+        "701.19a",
+        "701.19c",
+        "704.3",
+        "122.1c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Already supported Cudgel Troll, Shock and Disfigure expose replacement-only state-based destruction. Tap, damage clearing and shield consumption occur before priority without a zone move; indestructibility, effect-only shield-counter behavior, zero-toughness controls, authority, privacy and pending/pre-action replay remain exact."
+    },
+    {
+      "capability_id": "permanent.destroy.state_based_damage",
+      "evidence_class": "property",
+      "test_id": "tests.test_regeneration_rules.StateBasedReplacementOnlyRuntimeTests.test_nonmoving_regeneration_and_ordinary_protection_plans_preserve_boundaries",
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "702.2",
+        "702.12b",
+        "704.5g",
+        "704.5h",
+        "614.8",
+        "701.19a",
+        "701.19c",
+        "704.3",
+        "122.1c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Already supported Cudgel Troll, Shock and Disfigure expose replacement-only state-based destruction. Tap, damage clearing and shield consumption occur before priority without a zone move; indestructibility, effect-only shield-counter behavior, zero-toughness controls, authority, privacy and pending/pre-action replay remain exact."
     },
     {
       "capability_id": "permanent.destroy.state_based_damage",
       "evidence_class": "replay",
       "test_id": "tests.test_combat_keyword_rules.CombatKeywordRuleTests.test_four_player_deathtouch_result_is_source_derived_and_replays",
-      "official_rule_ids": ["701.8", "701.8a", "701.8b", "702.2", "702.12b", "704.5g", "704.5h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "702.2",
+        "702.12b",
+        "704.5g",
+        "704.5h",
+        "614.8",
+        "701.19a",
+        "701.19c",
+        "704.3",
+        "122.1c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Replay a simultaneous four-player Deathtouch damage result through the same source snapshot and state-based destruction result."
+    },
+    {
+      "capability_id": "permanent.destroy.state_based_damage",
+      "evidence_class": "replay",
+      "test_id": "tests.test_regeneration_rules.StateBasedReplacementOnlyRuntimeTests.test_actual_supported_troll_regenerates_after_shock_and_disfigure_before_priority",
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "702.2",
+        "702.12b",
+        "704.5g",
+        "704.5h",
+        "614.8",
+        "701.19a",
+        "701.19c",
+        "704.3",
+        "122.1c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Already supported Cudgel Troll, Shock and Disfigure expose replacement-only state-based destruction. Tap, damage clearing and shield consumption occur before priority without a zone move; indestructibility, effect-only shield-counter behavior, zero-toughness controls, authority, privacy and pending/pre-action replay remain exact."
     },
     {
       "capability_id": "permanent.destroy.state_based_damage",
       "evidence_class": "rollback",
       "test_id": "tests.test_indestructible_rules.IndestructibleRuntimeTests.test_indestructible_is_destroy_only_and_malformed_keywords_fail_closed",
-      "official_rule_ids": ["701.8", "701.8a", "701.8b", "702.2", "702.12b", "704.5g", "704.5h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "702.2",
+        "702.12b",
+        "704.5g",
+        "704.5h",
+        "614.8",
+        "701.19a",
+        "701.19c",
+        "704.3",
+        "122.1c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Reject a malformed effective-keyword snapshot without changing the authoritative state hash."
+    },
+    {
+      "capability_id": "permanent.destroy.state_based_damage",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_regeneration_rules.StateBasedReplacementOnlyRuntimeTests.test_actual_supported_troll_regenerates_after_shock_and_disfigure_before_priority",
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "702.2",
+        "702.12b",
+        "704.5g",
+        "704.5h",
+        "614.8",
+        "701.19a",
+        "701.19c",
+        "704.3",
+        "122.1c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Already supported Cudgel Troll, Shock and Disfigure expose replacement-only state-based destruction. Tap, damage clearing and shield consumption occur before priority without a zone move; indestructibility, effect-only shield-counter behavior, zero-toughness controls, authority, privacy and pending/pre-action replay remain exact."
     },
     {
       "capability_id": "permanent.destroy.umbra_armor",

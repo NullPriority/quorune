@@ -6411,14 +6411,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "creature-power-immediate-departure-lki-correction",
-      "compiler_version": "oracle-ir-v398",
+      "transition_id": "state-based-replacement-only-commit-correction",
+      "compiler_version": "oracle-ir-v399",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Refresh the referenced source incarnation numeric power, controller and damage keywords immediately before departure; use current information while present and never substitute a returned incarnation or trigger-creation value. Preserve Fight current-creature requirements and malformed-reference rejection; no new support grammar."
+      "non_harvest_reason": "Commit represented nonmoving state-based destruction replacements before priority, including regeneration tap, damage clearing and shield consumption even when no permanent changes zones. Preserve indestructible no-op stabilization and ordinary nondestruction boundaries; no new support grammar or feature harvest."
     },
 
     "forecast_corrections": [

@@ -130,7 +130,12 @@ Destruction delegates shield removal to the counter owner and permanent
 movement to the zone owner. Regeneration shields are public logical-object
 state: the regeneration owner creates them, cleanup and zone-object reset clear
 them, and destruction consumes one while coordinating canonical tap, damage,
-and combat state. Direct exile and return snapshot owner, controller,
+and combat state. State-based execution commits a replacement-only result even
+when no permanent changes zones. Regeneration, represented damage clearing and
+Umbra protection participate in the changed-state decision and the same typed
+destruction commit; an Indestructible no-op leaves the stabilization loop
+unchanged. Source or recipient zone movement is not a prerequisite for those
+replacement mutations. Direct exile and return snapshot owner, controller,
 and object identity through one closed single-object transition substrate before
 delegating their distinct requested destinations to that same replacement-aware
 zone owner.
