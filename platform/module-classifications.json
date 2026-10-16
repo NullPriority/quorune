@@ -3392,6 +3392,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/granted_program_bounds.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/graveyard_copy_keyword_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -3752,7 +3767,37 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/modal_spell_faces.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/modal_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/modal_token_branches.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -14147,5 +14192,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "0e2dc8427daf29f2b0505e3e91da6f351fa062d19020fbd040dad581536321ae"
+  "fingerprint": "e4d4c830671ff0d6953d9f0ed2c89fd6ab47fbd1efbaeb0611a3fe3b83c4a7e5"
 }

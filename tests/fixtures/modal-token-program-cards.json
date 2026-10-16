@@ -1,0 +1,1688 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned modal quoted-token candidates for bounded composition evidence",
+  "cards": [
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "name": "Unfortunate Accident",
+      "mana_cost": "{B}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {2}{B} — Destroy target creature.\n+ {1} — Create a 1/1 red Mercenary creature token with \"{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "01160cb5-6d83-4317-9522-74083b3a83bb",
+      "name": "Eldrazi Confluence",
+      "mana_cost": "{2}{C}{C}",
+      "cmc": 4.0,
+      "type_line": "Instant",
+      "oracle_text": "Choose three. You may choose the same mode more than once.\n• Target creature gets +3/-3 until end of turn.\n• Exile target nonland permanent, then return it to the battlefield tapped under its owner's control.\n• Create a 1/1 colorless Eldrazi Scion creature token with \"Sacrifice this token: Add {C}.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2024-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0ec54683-a65c-461d-862e-585b6499d6a5",
+      "name": "Burn Down the House",
+      "mana_cost": "{3}{R}{R}",
+      "cmc": 5.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Choose one —\n• Burn Down the House deals 5 damage to each creature and each planeswalker.\n• Create three 1/1 red Devil creature tokens with \"When this token dies, it deals 1 damage to any target.\" They gain haste until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-09-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "2458aa66-5b20-4811-a4a4-8375ad0a6498",
+      "name": "Jaya, Fiery Negotiator",
+      "mana_cost": "{2}{R}{R}",
+      "cmc": 4.0,
+      "type_line": "Legendary Planeswalker — Jaya",
+      "oracle_text": "+1: Create a 1/1 red Monk creature token with prowess.\n−1: Exile the top two cards of your library. Choose one of them. You may play that card this turn.\n−2: Choose target creature an opponent controls. Whenever you attack this turn, Jaya deals damage equal to the number of attacking creatures to that creature.\n−8: You get an emblem with \"Whenever you cast a red instant or sorcery spell, copy it twice. You may choose new targets for the copies.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": "4",
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-09-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "2f2c549d-0293-4b9d-b9a8-ff392800f3a5",
+      "name": "Kozilek's Command",
+      "mana_cost": "{X}{C}{C}",
+      "cmc": 2.0,
+      "type_line": "Kindred Instant — Eldrazi",
+      "oracle_text": "Choose two —\n• Target player creates X 0/1 colorless Eldrazi Spawn creature tokens with \"Sacrifice this token: Add {C}.\"\n• Target player scries X, then draws a card.\n• Exile target creature with mana value X or less.\n• Exile up to X target cards from graveyards.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Scry"
+      ],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2024-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "561af57d-d43d-4d98-9ef6-18a0843f22ae",
+      "name": "Defend the Rider",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Choose one —\n• Target permanent you control gains hexproof and indestructible until end of turn.\n• Create a 1/1 colorless Pilot creature token with \"This token saddles Mounts and crews Vehicles as though its power were 2 greater.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "name": "Choreographed Sparks",
+      "mana_cost": "{R}{R}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "This spell can't be copied.\nChoose one or both —\n• Copy target instant or sorcery spell you control. You may choose new targets for the copy.\n• Copy target creature spell you control. The copy gains haste and \"At the beginning of the end step, sacrifice this token.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "734a5186-caa6-4811-b6d7-91b7b32fc403",
+      "name": "Discerning Financier",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Creature — Human Noble",
+      "oracle_text": "At the beginning of your upkeep, if an opponent controls more lands than you, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\n{2}{W}: Choose another player. That player gains control of target Treasure you control. You draw a card.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Treasure"
+      ],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2023-09-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "750b61a1-7eb1-4ce2-8a56-fa63f8e48755",
+      "name": "You've Been Caught Stealing",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Choose one —\n• Threaten the Merchant — Each creature blocks this turn if able.\n• Bribe the Guards — You create a Treasure token for each opponent who was dealt damage this turn. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Bribe the Guards",
+        "Treasure",
+        "Threaten the Merchant"
+      ],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2022-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "818f908c-9af6-4edc-bb0e-193bc830e2e4",
+      "name": "Chandra, Flameshaper",
+      "mana_cost": "{5}{R}{R}",
+      "cmc": 7.0,
+      "type_line": "Legendary Planeswalker — Chandra",
+      "oracle_text": "+2: Add {R}{R}{R}. Exile the top three cards of your library. Choose one. You may play that card this turn.\n+1: Create a token that's a copy of target creature you control, except it has haste and \"At the beginning of the end step, sacrifice this token.\"\n−4: Chandra deals 8 damage divided as you choose among any number of target creatures and/or planeswalkers.",
+      "power": null,
+      "toughness": null,
+      "loyalty": "6",
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "R"
+      ],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "88d49309-e7d7-486d-8696-cd66bec2fe33",
+      "name": "Sunder the Gateway",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Choose one —\n• Destroy target nontoken artifact or enchantment an opponent controls. Incubate 2. (Create an Incubator token with two +1/+1 counters on it and \"{2}: Transform this token.\" It transforms into a 0/0 Phyrexian artifact creature.)\n• Incubate 2, then transform an Incubator token you control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Incubate",
+        "Transform"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-04-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "95b20721-1af9-4f3f-a39b-7cd1d4ce0b20",
+      "name": "Selvala, Eager Trailblazer",
+      "mana_cost": "{2}{G}{W}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Elf Scout",
+      "oracle_text": "Vigilance\nWhenever you cast a creature spell, create a 1/1 red Mercenary creature token with \"{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery.\"\n{T}: Choose a color. Add one mana of that color for each different power among creatures you control.",
+      "power": "4",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "keywords": [
+        "Vigilance"
+      ],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "9b61f5b1-7688-4336-8fe9-66da37a34df9",
+      "name": "Volo, Itinerant Scholar",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Human Wizard",
+      "oracle_text": "When Volo enters, create Volo's Journal, a legendary colorless Book artifact token with hexproof and \"Whenever you cast a creature spell, note one of its creature types that hasn't been noted for Volo's Journal.\"\n{2}, {T}: Draw a card for each creature type noted for target permanent you control named Volo's Journal.\nChoose a Background",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Choose a background"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a0c956dc-d7de-4f11-b76f-7537fbee1731",
+      "name": "Oko, Lorwyn Liege // Oko, Shadowmoor Scion",
+      "mana_cost": "{2}{U} // ",
+      "cmc": 3.0,
+      "type_line": "Legendary Planeswalker — Oko // Legendary Planeswalker — Oko",
+      "oracle_text": "Oko, Lorwyn Liege: At the beginning of your first main phase, you may pay {G}. If you do, transform Oko.\n+2: Up to one target creature gains all creature types. (This effect doesn't end.)\n+1: Target creature gets -2/-0 until your next turn.\n//\nOko, Shadowmoor Scion: At the beginning of your first main phase, you may pay {U}. If you do, transform Oko.\n−1: Mill three cards. You may put a permanent card from among them into your hand.\n−3: Create two 3/3 green Elk creature tokens.\n−6: Choose a creature type. You get an emblem with \"Creatures you control of the chosen type get +3/+3 and have vigilance and hexproof.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [
+        "Transform",
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2026-01-23",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "U"
+          ],
+          "defense": null,
+          "loyalty": "3",
+          "mana_cost": "{2}{U}",
+          "name": "Oko, Lorwyn Liege",
+          "oracle_text": "At the beginning of your first main phase, you may pay {G}. If you do, transform Oko.\n+2: Up to one target creature gains all creature types. (This effect doesn't end.)\n+1: Target creature gets -2/-0 until your next turn.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Legendary Planeswalker — Oko"
+        },
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": "3",
+          "mana_cost": "",
+          "name": "Oko, Shadowmoor Scion",
+          "oracle_text": "At the beginning of your first main phase, you may pay {U}. If you do, transform Oko.\n−1: Mill three cards. You may put a permanent card from among them into your hand.\n−3: Create two 3/3 green Elk creature tokens.\n−6: Choose a creature type. You get an emblem with \"Creatures you control of the chosen type get +3/+3 and have vigilance and hexproof.\"",
+          "power": null,
+          "toughness": null,
+          "type_line": "Legendary Planeswalker — Oko"
+        }
+      ]
+    },
+    {
+      "oracle_id": "c8b9fa02-0a0c-4a87-9a00-3c1c7e2f4bfd",
+      "name": "Warping Wail",
+      "mana_cost": "{1}{C}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "({C} represents colorless mana.)\nChoose one —\n• Exile target creature with power or toughness 1 or less.\n• Counter target sorcery spell.\n• Create a 1/1 colorless Eldrazi Scion creature token. It has \"Sacrifice this token: Add {C}.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "name": "March of Progress",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Choose target artifact creature you control. For each creature chosen this way, create a token that's a copy of it.\nOverload {6}{U} (You may cast this spell for its overload cost. If you do, change its text by replacing all instances of \"target\" with \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-11-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f5c30dec-072c-4f02-b5d8-5eccfd1cffcf",
+      "name": "Urza's Command",
+      "mana_cost": "{2}{U}{U}",
+      "cmc": 4.0,
+      "type_line": "Instant",
+      "oracle_text": "Choose two —\n• Creatures you don't control get -2/-0 until end of turn.\n• Create a tapped Powerstone token.\n• Create a tapped 0/0 colorless Construct artifact creature token with \"This token gets +1/+1 for each artifact you control.\"\n• Scry 1, then draw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Scry"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-11-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f5fba11b-7669-40a0-97c7-6cb7c13acedd",
+      "name": "Blink",
+      "mana_cost": "{2}{U}{B}",
+      "cmc": 4.0,
+      "type_line": "Enchantment — Saga",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after IV.)\nI, III — Choose target creature. Its owner shuffles it into their library, then investigates. (They create a Clue token.)\nII, IV — Create a 2/2 black Alien Angel artifact creature token with first strike, vigilance, and \"Whenever an opponent casts a creature spell, this token isn't a creature until end of turn.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "U"
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "keywords": [
+        "Investigate",
+        "Vigilance"
+      ],
+      "produced_mana": [],
+      "layout": "saga",
+      "released_at": "2023-10-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fa08400f-b7ca-4c5c-b7ca-a6583b783878",
+      "name": "Survivor's Med Kit",
+      "mana_cost": "{1}",
+      "cmc": 1.0,
+      "type_line": "Artifact",
+      "oracle_text": "{1}, {T}: Choose one that hasn't been chosen —\n• Stimpak — Draw a card.\n• Fancy Lads Snack Cakes — Create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\n• RadAway — Target player loses all rad counters. Sacrifice this artifact.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Stimpak",
+        "Food",
+        "RadAway",
+        "Fancy Lads Snack Cakes"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-03-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fa47c190-d66a-41b0-aa08-21036cda4223",
+      "name": "Charge of the Mites",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Choose one —\n• Charge of the Mites deals damage equal to the number of creatures you control to target creature or planeswalker.\n• Create two 1/1 colorless Phyrexian Mite artifact creature tokens with toxic 1 and \"This token can't block.\" (Players dealt combat damage by them also get a poison counter.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-02-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree “without paying its mana cost,” you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can’t be changed."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won’t be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there’s a legal target available. Ignore the targeting requirements for modes you don’t choose."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose the same mode more than once."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn’t matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "01160cb5-6d83-4317-9522-74083b3a83bb",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If the same mode is chosen more than once, you choose their relative order as you cast the spell. For example, if you choose the second mode of Eldrazi Confluence more than once, you choose the relative order to exile and return the target nonland permanents."
+    },
+    {
+      "oracle_id": "01160cb5-6d83-4317-9522-74083b3a83bb",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there's a legal target available. Ignore the targeting requirements for modes you don't choose. Each time you select that mode, you can choose a different target, or you can choose the same target."
+    },
+    {
+      "oracle_id": "01160cb5-6d83-4317-9522-74083b3a83bb",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell. Once modes are chosen, they can't be changed."
+    },
+    {
+      "oracle_id": "01160cb5-6d83-4317-9522-74083b3a83bb",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "No matter which combination of modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "01160cb5-6d83-4317-9522-74083b3a83bb",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a Confluence resolves, the spell will be countered and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "01160cb5-6d83-4317-9522-74083b3a83bb",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If a Confluence is copied, the effect that creates the copy will usually allow you to choose new targets, but you can't choose new modes."
+    },
+    {
+      "oracle_id": "01160cb5-6d83-4317-9522-74083b3a83bb",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won't be put onto the stack until a spell is done resolving."
+    },
+    {
+      "oracle_id": "2458aa66-5b20-4811-a4a4-8375ad0a6498",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "If the spell that's copied is modal (that is, it says \"Choose one —\" or the like), the copies will have the same mode or modes. You can't choose different ones."
+    },
+    {
+      "oracle_id": "2458aa66-5b20-4811-a4a4-8375ad0a6498",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "You can't choose to pay any additional costs for the copies. However, effects based on any additional costs that were paid for the original spell are copied as though those same costs were paid for the copies too. Notably, if the spell you copy was kicked, the copies will also be kicked."
+    },
+    {
+      "oracle_id": "2458aa66-5b20-4811-a4a4-8375ad0a6498",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "You must pay all costs and follow all normal timing rules to play a card chosen for Jaya's second loyalty ability. For example, if you choose a land card, you may only play it during one of your main phases while the stack is empty, and only if you haven't yet played a land in the same turn."
+    },
+    {
+      "oracle_id": "2458aa66-5b20-4811-a4a4-8375ad0a6498",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "Activating Jaya's third loyalty ability creates a delayed triggered ability that will trigger each time you declare attackers this turn (usually, this will only happen once). This ability will trigger even if Jaya is no longer on the battlefield. If anything needs information about the source of that damage, use Jaya's characteristics as she last existed on the battlefield."
+    },
+    {
+      "oracle_id": "2458aa66-5b20-4811-a4a4-8375ad0a6498",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "The triggered ability of Jaya's emblem will copy any red instant or sorcery spell you cast, not just one with targets."
+    },
+    {
+      "oracle_id": "2458aa66-5b20-4811-a4a4-8375ad0a6498",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "The copies will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. The new targets must be legal."
+    },
+    {
+      "oracle_id": "2458aa66-5b20-4811-a4a4-8375ad0a6498",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "The copies are created on the stack, so they're not \"cast.\" Abilities that trigger when a player casts a spell won't trigger."
+    },
+    {
+      "oracle_id": "2458aa66-5b20-4811-a4a4-8375ad0a6498",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "Copies are created even if the spell that caused the ability to trigger has been countered by the time that ability resolves. The copies resolve before the original spell."
+    },
+    {
+      "oracle_id": "2f2c549d-0293-4b9d-b9a8-ff392800f3a5",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If a creature has {X} in its mana cost, X is 0 when determining its mana value."
+    },
+    {
+      "oracle_id": "2f2c549d-0293-4b9d-b9a8-ff392800f3a5",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If all of Kozilek's Command's targets are illegal as it tries to resolve, it will do nothing. If at least one target is still legal, it will resolve and do as much as it can."
+    },
+    {
+      "oracle_id": "2f2c549d-0293-4b9d-b9a8-ff392800f3a5",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "While it appears only on cards that already have other card types, kindred is a card type and will be counted by effects that refer to the number of card types among cards in a zone."
+    },
+    {
+      "oracle_id": "2f2c549d-0293-4b9d-b9a8-ff392800f3a5",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Kindred is a card type that allows noncreature cards to have creature types. For example, Echoes of Eternity is an Eldrazi (although not a creature) while on the battlefield and an Eldrazi card (although not a creature card) in zones other than the battlefield."
+    },
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "Choreographed Sparks has received a minor update to remove the erroneous word \"next\" from its second mode. Its updated Oracle text appears above."
+    },
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "If the copied spell divides damage or distributes counters among a number of targets, the division and number of targets can't be changed. If you choose new targets, you must choose the same number of targets."
+    },
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "If the spell that's copied has an X whose value was determined as it was cast, the copy has the same value of X."
+    },
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "If a spell with a converge ability is copied, no mana was spent to cast the copy, so the number of colors of mana spent to cast the spell will be zero. The number of colors spent to cast the original spell is not copied."
+    },
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "You can't choose to pay any additional costs for a copied spell. However, effects based on any additional costs that were paid for the original spell are copied as though those same costs were paid for the copy too."
+    },
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "The copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger."
+    },
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "If the spell that's copied is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode or modes. You can't choose different ones."
+    },
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "Any choices made when the spell resolves won't have been made yet when it's copied. Any such choices will be made separately when the copy resolves."
+    },
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "A resolving copy of a permanent spell becomes a token. That token isn't \"created\" and won't interact with abilities that care about tokens being created."
+    },
+    {
+      "oracle_id": "734a5186-caa6-4811-b6d7-91b7b32fc403",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "If the target Treasure is an illegal target as Discerning Financier's last ability tries to resolve, it won't resolve. You won't draw a card."
+    },
+    {
+      "oracle_id": "818f908c-9af6-4edc-bb0e-193bc830e2e4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Chandra's first ability is not a mana ability. It uses the stack and players can respond to it."
+    },
+    {
+      "oracle_id": "818f908c-9af6-4edc-bb0e-193bc830e2e4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Any enters abilities of the copied creature will trigger when the token enters. Any \"as [this permanent] enters\" or \"[this permanent] enters with\" abilities of the copied creature will also work."
+    },
+    {
+      "oracle_id": "818f908c-9af6-4edc-bb0e-193bc830e2e4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If the copied creature is copying something else, then the token enters as whatever that creature copied, with the listed exceptions."
+    },
+    {
+      "oracle_id": "818f908c-9af6-4edc-bb0e-193bc830e2e4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You choose the targets and how damage will be divided as you activate Chandra's last ability. Each chosen target must receive at least 1 damage."
+    },
+    {
+      "oracle_id": "818f908c-9af6-4edc-bb0e-193bc830e2e4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "The token created by Chandra's second ability copies exactly what was printed on the original creature and nothing else, with the listed exceptions (unless that creature is copying something else or is a token; see below). It doesn't copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, or so on. If it is a Vehicle, it is not crewed."
+    },
+    {
+      "oracle_id": "818f908c-9af6-4edc-bb0e-193bc830e2e4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If some of the targets of Chandra's last ability become illegal, the original division of damage still applies, but the damage that would have been dealt to illegal targets isn't dealt at all."
+    },
+    {
+      "oracle_id": "818f908c-9af6-4edc-bb0e-193bc830e2e4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You pay all costs and follow all timing rules for cards played with the permission granted by Chandra's first ability. For example, if the exiled card is a land card, you may play it only during your main phase while the stack is empty."
+    },
+    {
+      "oracle_id": "818f908c-9af6-4edc-bb0e-193bc830e2e4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If the copied creature is a token, the token that's created copies the original characteristics of that token as stated by the effect that created the token, with the listed exceptions."
+    },
+    {
+      "oracle_id": "88d49309-e7d7-486d-8696-cd66bec2fe33",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "For the second mode, the Incubator token is chosen as Sunder the Gateway resolves. You can transform the Incubator token you just created or one you already controlled."
+    },
+    {
+      "oracle_id": "88d49309-e7d7-486d-8696-cd66bec2fe33",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "For the first mode, if the nontoken artifact or enchantment is an illegal target at the time Sunder the Gateway tries to resolve, it won't resolve and none of its effects will happen. You won't incubate."
+    },
+    {
+      "oracle_id": "95b20721-1af9-4f3f-a39b-7cd1d4ce0b20",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Selvala’s last ability doesn’t care what color or colors the creatures you control are. It cares only about the power of those creatures."
+    },
+    {
+      "oracle_id": "95b20721-1af9-4f3f-a39b-7cd1d4ce0b20",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Selvala’s last ability is a mana ability. It doesn’t use the stack and can’t be responded to."
+    },
+    {
+      "oracle_id": "95b20721-1af9-4f3f-a39b-7cd1d4ce0b20",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Selvala’s last ability looks at the creatures you control as it resolves to determine how much mana of the chosen color to add. For example, if you control Selvala (a 4/5 creature), a 1/1 creature, and a 2/1 creature, there are three different powers among creatures you control."
+    },
+    {
+      "oracle_id": "9b61f5b1-7688-4336-8fe9-66da37a34df9",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "Choose a Background is a variant of the partner ability. You may have two commanders if one of them is a legendary creature with the choose a background ability and the other is a legendary Background enchantment. Backgrounds and cards with choose a Background do not interact with cards which have any other partner ability."
+    },
+    {
+      "oracle_id": "9b61f5b1-7688-4336-8fe9-66da37a34df9",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library."
+    },
+    {
+      "oracle_id": "9b61f5b1-7688-4336-8fe9-66da37a34df9",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If a card refers to a commander creature you own, a Background won't usually be counted or included for that effect. If another spell or ability causes your Background to become a creature, however, it will be included. Any effect that refers to your commander or a commander you own or control without specifying creature will apply to a Background that is your commander, as appropriate."
+    },
+    {
+      "oracle_id": "9b61f5b1-7688-4336-8fe9-66da37a34df9",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens."
+    },
+    {
+      "oracle_id": "9b61f5b1-7688-4336-8fe9-66da37a34df9",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "You can choose two commanders that are the same color or colors."
+    },
+    {
+      "oracle_id": "9b61f5b1-7688-4336-8fe9-66da37a34df9",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 combat damage from any one of them, not from both of them combined (although your Background won't usually be a creature anyway)."
+    },
+    {
+      "oracle_id": "9b61f5b1-7688-4336-8fe9-66da37a34df9",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders."
+    },
+    {
+      "oracle_id": "9b61f5b1-7688-4336-8fe9-66da37a34df9",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If you control a Background that grants an ability to commander creatures you own, and you own more than one commander creature, each of them will have that ability."
+    },
+    {
+      "oracle_id": "9b61f5b1-7688-4336-8fe9-66da37a34df9",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If your Commander deck has two commanders, you can include only cards whose own color identities are also found in your commanders' combined color identities."
+    },
+    {
+      "oracle_id": "9b61f5b1-7688-4336-8fe9-66da37a34df9",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If your commander loses the choose a Background ability or stops being a Background during the game, as appropriate, it is still your commander."
+    },
+    {
+      "oracle_id": "a0c956dc-d7de-4f11-b76f-7537fbee1731",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "Each nonmodal double-faced card in this release is cast face up. In every zone other than the battlefield, consider only the characteristics of its front face. If it is on the battlefield, consider only the characteristics of the face that's up; the other face's characteristics are ignored."
+    },
+    {
+      "oracle_id": "a0c956dc-d7de-4f11-b76f-7537fbee1731",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "In the Commander variant, a double-faced card's color identity is determined by the mana costs and mana symbols in the rules text of both faces combined. If either face has a color indicator or basic land type, those are also considered. For example, Oko, Lorwyn Liege's color identity is green and blue, since its front face is blue, its rules text contains a green mana symbol, and its back face has a green color indicator as well as a blue mana symbol in its rules text."
+    },
+    {
+      "oracle_id": "a0c956dc-d7de-4f11-b76f-7537fbee1731",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "A nonmodal double-faced card enters with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed or allows you to cast it transformed, in which case it enters with its back face up."
+    },
+    {
+      "oracle_id": "a0c956dc-d7de-4f11-b76f-7537fbee1731",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "The back face of a nonmodal double-faced card usually has a color indicator that defines its color."
+    },
+    {
+      "oracle_id": "a0c956dc-d7de-4f11-b76f-7537fbee1731",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "In some rare cases, this permanent might transform while its triggered ability that allows you to pay mana to transform it is still on the stack. (For example, another effect might cause that ability to trigger an additional time.) In such a case, even if you pay mana as the triggered ability resolves, this permanent won't transform because it already transformed while the triggered ability was on the stack."
+    },
+    {
+      "oracle_id": "a0c956dc-d7de-4f11-b76f-7537fbee1731",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "Each face of a nonmodal double-faced card has its own set of characteristics: name, types, subtypes, abilities, and so on. While a double-faced permanent is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored."
+    },
+    {
+      "oracle_id": "a0c956dc-d7de-4f11-b76f-7537fbee1731",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "If you are instructed to put a card that isn't a double-faced card onto the battlefield transformed, it will not enter at all."
+    },
+    {
+      "oracle_id": "a0c956dc-d7de-4f11-b76f-7537fbee1731",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "The effect of Oko, Lorwyn Liege's first loyalty ability lasts indefinitely. It doesn't expire during the cleanup step or when Oko leaves the battlefield or transforms."
+    },
+    {
+      "oracle_id": "a0c956dc-d7de-4f11-b76f-7537fbee1731",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "The mana value of a nonmodal double-faced card is the mana value of its front face, no matter which face is up."
+    },
+    {
+      "oracle_id": "a0c956dc-d7de-4f11-b76f-7537fbee1731",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "A token that is created as a copy of a double-faced permanent or a double-faced card in another zone is a double-faced token. It will have both the front face and back face of whatever object it's copying. If it's copying a double-faced permanent whose back face is up, the token will enter with its back face up. It can transform if instructed to do so."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Overload doesn’t change when you can cast the spell."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If you don’t pay the overload cost of a spell, that spell will have a single target. If you pay the overload cost, the spell won’t have any targets."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Each token copies exactly what was printed on the original artifact creature and nothing more (unless that creature is copying something else or is a token; see below. It doesn’t copy whether that creature is tapped or untapped, whether it has any counters on it or Auras attached to it, or any non-copy effects that have changed its power, toughness, types, color, and so on."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload “without paying its mana cost,” you can’t choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If the copied artifact creature has {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Casting a spell with overload doesn’t change that spell’s mana cost. You just pay the overload cost instead."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn’t target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If the chosen artifact creature is itself a token, the token March of Progress creates copies the original characteristics of that token as stated by the effect that created that token."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied artifact creature will trigger when the token enters the battlefield. Any “as [this creature] enters the battlefield” or “[this creature] enters the battlefield with” abilities of the chosen creature will also work."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If the chosen artifact creature is copying something else, then the token enters the battlefield as whatever the chosen creature is copying."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Effects that cause you to pay more or less for a spell will cause you to pay that much more or less while casting it for its overload cost, too."
+    },
+    {
+      "oracle_id": "f5c30dec-072c-4f02-b5d8-5eccfd1cffcf",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "The ability of that Construct token does count the Construct itself, so it'll be at least 1/1."
+    },
+    {
+      "oracle_id": "f5c30dec-072c-4f02-b5d8-5eccfd1cffcf",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "You can use the {C} added by a Powerstone token on anything that isn't a nonartifact spell. This includes paying costs to activate abilities of both artifact and nonartifact permanents, paying ward costs, and so on."
+    },
+    {
+      "oracle_id": "f5c30dec-072c-4f02-b5d8-5eccfd1cffcf",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Powerstone tokens are a kind of predefined token. Each one has the artifact subtype \"Powerstone\" and the ability \"{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.\""
+    },
+    {
+      "oracle_id": "f5c30dec-072c-4f02-b5d8-5eccfd1cffcf",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Although all the cards in The Brothers' War that create Powerstone tokens create a tapped Powerstone token, entering the battlefield tapped isn't part of the token's definition. Notably, if you create a token that is a copy of a Powerstone token, the token copy won't enter the battlefield tapped."
+    },
+    {
+      "oracle_id": "f5fba11b-7669-40a0-97c7-6cb7c13acedd",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "People often assume that Sagas are a strict progression from top to bottom, but actually, from a non-linear, non-subjective viewpoint, it's more like a big ball of wibbly wobbly, timey-wimey . . . stuff. That is, the rules support chapter abilities that appear to be out of order, like those on Blink. The first ability triggers when the first and third lore counters are added. The last ability triggers when the second and fourth lore counters are placed on it."
+    },
+    {
+      "oracle_id": "f5fba11b-7669-40a0-97c7-6cb7c13acedd",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "If an opponent casts a creature spell with flash while the token is attacking or blocking, the token is removed from combat because it stops being a creature. However, any creatures that it was blocking are still considered blocked."
+    },
+    {
+      "oracle_id": "f5fba11b-7669-40a0-97c7-6cb7c13acedd",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "As the triggered ability of the Alien Angel token resolves, it continues to be an artifact but will stop being both an Alien and an Angel until it becomes a creature again."
+    },
+    {
+      "oracle_id": "fa08400f-b7ca-4c5c-b7ca-a6583b783878",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "In a game using the shared team turns option, such as an Archenemy or Two-Headed Giant game, the inherent triggered ability associated with rad counters triggers once for each player on the active team that has rad counters. Each instance of that ability is controlled by one of those players."
+    },
+    {
+      "oracle_id": "fa08400f-b7ca-4c5c-b7ca-a6583b783878",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "The cards are milled all at once, which means abilities that trigger \"whenever one or more nonland cards are milled\" will trigger exactly once as long as at least one nonland card was milled."
+    },
+    {
+      "oracle_id": "fa08400f-b7ca-4c5c-b7ca-a6583b783878",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "Keep track of how many rad counters each player has. Potential ways to track this include writing them down on paper or using dice, but any method that is clear and mutually agreeable is fine."
+    },
+    {
+      "oracle_id": "fa08400f-b7ca-4c5c-b7ca-a6583b783878",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "There is an inherent triggered ability associated with having rad counters. This triggered ability has no source and is controlled by the active player. The full text of this ability is \"At the beginning of the precombat main phase of a player with rad counters, that player mills cards equal to the number of rad counters they have. For each nonland card milled this way, that player loses 1 life and removes one rad counter from themselves.\""
+    },
+    {
+      "oracle_id": "fa08400f-b7ca-4c5c-b7ca-a6583b783878",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "Any effects (such as proliferate) that interact with counters a player gets, has, or loses can interact with rad counters."
+    },
+    {
+      "oracle_id": "fa08400f-b7ca-4c5c-b7ca-a6583b783878",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "Rad counters don't go away as steps, phases, or turns end. They only go away when an effect instructs a player to remove rad counters from themselves."
+    },
+    {
+      "oracle_id": "fa08400f-b7ca-4c5c-b7ca-a6583b783878",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "Rad counters are a kind of counter that a player may have. They're not associated with any specific permanents."
+    },
+    {
+      "oracle_id": "fa08400f-b7ca-4c5c-b7ca-a6583b783878",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If a player has fewer cards remaining in their library than the number of rad counters they have when the triggered ability resolves, they'll mill as many cards as they can."
+    },
+    {
+      "oracle_id": "fa08400f-b7ca-4c5c-b7ca-a6583b783878",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Whatever you do, don't eat the delicious cards."
+    },
+    {
+      "oracle_id": "fa08400f-b7ca-4c5c-b7ca-a6583b783878",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Food is an artifact type. Even though it appears on some creatures, it's never a creature type."
+    },
+    {
+      "oracle_id": "fa08400f-b7ca-4c5c-b7ca-a6583b783878",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You can't sacrifice a Food to pay multiple costs. For example, you can't sacrifice a Food token to activate its own ability and also to activate Maraleaf Rider's ability."
+    },
+    {
+      "oracle_id": "fa47c190-d66a-41b0-aa08-21036cda4223",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "Multiple instances of toxic are cumulative. For example, if a creature has toxic 2 and gains toxic 1 due to another effect, combat damage that creature deals to a player will cause that player to get 3 poison counters."
+    },
+    {
+      "oracle_id": "fa47c190-d66a-41b0-aa08-21036cda4223",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "Conversely, replacement effects that apply to the number of counters put on a player can modify the counters placed this way. For example, Vorinclex, Monstrous Raider's last two abilities can apply to counters placed this way."
+    },
+    {
+      "oracle_id": "fa47c190-d66a-41b0-aa08-21036cda4223",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "Toxic doesn't change the amount of combat damage a creature deals. For example, if a 2/2 creature with toxic 1 deals combat damage to a player, that creature will deal 2 damage. The results of that damage are the player loses 2 life and gets a poison counter."
+    },
+    {
+      "oracle_id": "fa47c190-d66a-41b0-aa08-21036cda4223",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "A player with ten or more poison counters loses the game. This is a state-based action and doesn't use the stack. In other words, it happens immediately and players can't respond to it, just like a player losing the game due to having 0 or less life."
+    },
+    {
+      "oracle_id": "fa47c190-d66a-41b0-aa08-21036cda4223",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "If a creature with toxic deals combat damage to a creature or planeswalker, or if it deals noncombat damage, toxic has no effect and no player gets poison counters."
+    },
+    {
+      "oracle_id": "fa47c190-d66a-41b0-aa08-21036cda4223",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "Damage dealt by a creature with toxic grants the same number of counters regardless of how much damage is dealt. Notably, if a replacement effect modifies the damage in some way (such as that of Gratuitous Violence), the number of counters given remains unchanged."
+    },
+    {
+      "oracle_id": "fa47c190-d66a-41b0-aa08-21036cda4223",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "Any other effects of that damage, such as life gain from lifelink, still apply."
+    }
+  ]
+}

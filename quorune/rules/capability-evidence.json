@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "836fdfd153c69c6ee0952626567f4a9bb6baa4ba7306c9126f9bc21cca893908",
-  "declaration_source_fingerprint": "b6f598ea89c46ab08e8ef6d38559e0fd9b74662e9695bc61371af9088180f4e8",
+  "registry_fingerprint": "6bee2e65f8049963c674ea7a28f0fce9a8fbdc4bfc9d8f7f9b74752e4ad9cfb3",
+  "declaration_source_fingerprint": "fd02d66737f4f9440de37d61ca3030541c0f66078c9799317c10097bab07ea0a",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -119131,6 +119131,63 @@
     },
     {
       "capability_id": "token.creation.typed_ability_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_modal_token_programs.ModalTokenProgramRuntimeTests.test_actual_destroy_only_spree_mode_does_not_create_unselected_token",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Unfortunate destroy-only mode pays its complete Spree cost and destroys the selected creature while no unselected token is created; exact replay retains independently registered but ungranted child definitions."
+    },
+    {
+      "capability_id": "token.creation.typed_ability_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_modal_token_programs.ModalTokenProgramRuntimeTests.test_actual_spree_token_fresh_tap_guard_haste_activation_expiry_and_replay",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete ordinary/Spree modal token branches retain the existing typed fragments and independently generated child programs. Actual Unfortunate token-mode cast proves creation without unselected targets, fresh tap guard, real haste/control, sorcery timing, current-controller targets, EOT expiry, privacy and pending load/replay after creator departure."
+    },
+    {
+      "capability_id": "token.creation.typed_ability_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_modal_token_programs.ModalTokenProgramRuntimeTests.test_real_token_control_change_uses_current_activator_targets_and_child_program",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete ordinary/Spree modal token branches retain the existing typed fragments and independently generated child programs. Actual Unfortunate token-mode cast proves creation without unselected targets, fresh tap guard, real haste/control, sorcery timing, current-controller targets, EOT expiry, privacy and pending load/replay after creator departure."
+    },
+    {
+      "capability_id": "token.creation.typed_ability_definition",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_typed_token_ability_apnap_privacy_and_replay",
       "official_rule_ids": [
@@ -119147,6 +119204,25 @@
         "commander_review"
       ],
       "applicability_note": "Create several ability-bearing tokens through the ordinary replacement transaction and place their simultaneous triggers through the shared four-player APNAP batch."
+    },
+    {
+      "capability_id": "token.creation.typed_ability_definition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_modal_token_programs.ModalTokenProgramRuntimeTests.test_real_token_control_change_uses_current_activator_targets_and_child_program",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete ordinary/Spree modal token branches retain the existing typed fragments and independently generated child programs. Actual Unfortunate token-mode cast proves creation without unselected targets, fresh tap guard, real haste/control, sorcery timing, current-controller targets, EOT expiry, privacy and pending load/replay after creator departure."
     },
     {
       "capability_id": "token.creation.typed_ability_definition",
@@ -119169,6 +119245,25 @@
     },
     {
       "capability_id": "token.creation.typed_ability_definition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_modal_token_programs.ModalTokenProgramCompilerTests.test_modal_token_branches_retain_generated_children_and_distinct_program_keys",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete ordinary/Spree modal token branches retain the existing typed fragments and independently generated child programs. Actual Unfortunate token-mode cast proves creation without unselected targets, fresh tap guard, real haste/control, sorcery timing, current-controller targets, EOT expiry, privacy and pending load/replay after creator departure."
+    },
+    {
+      "capability_id": "token.creation.typed_ability_definition",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_token_creation_effects.FixedTokenCreationCompilerTests.test_typed_token_ability_grammar_and_dependencies_fail_closed",
       "official_rule_ids": [
@@ -119185,6 +119280,25 @@
         "commander_review"
       ],
       "applicability_note": "Keep reminder-only, more-than-two, independently unsupported, replacement, prevention, linked, and open quoted token abilities residual, and reject malformed fragment or capability identities."
+    },
+    {
+      "capability_id": "token.creation.typed_ability_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_modal_token_programs.ModalTokenProgramCompilerTests.test_unknown_token_child_and_withdrawn_definition_keep_whole_modal_residual",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete ordinary/Spree modal token branches retain the existing typed fragments and independently generated child programs. Actual Unfortunate token-mode cast proves creation without unselected targets, fresh tap guard, real haste/control, sorcery timing, current-controller targets, EOT expiry, privacy and pending load/replay after creator departure."
     },
     {
       "capability_id": "token.creation.typed_ability_definition",
@@ -119207,6 +119321,44 @@
     },
     {
       "capability_id": "token.creation.typed_ability_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_modal_token_programs.ModalTokenProgramCompilerTests.test_modal_token_branches_retain_generated_children_and_distinct_program_keys",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete ordinary/Spree modal token branches retain the existing typed fragments and independently generated child programs. Actual Unfortunate token-mode cast proves creation without unselected targets, fresh tap guard, real haste/control, sorcery timing, current-controller targets, EOT expiry, privacy and pending load/replay after creator departure."
+    },
+    {
+      "capability_id": "token.creation.typed_ability_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_modal_token_programs.ModalTokenProgramCompilerTests.test_original_spree_and_ordinary_modal_token_programs_close_normally",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete ordinary/Spree modal token branches retain the existing typed fragments and independently generated child programs. Actual Unfortunate token-mode cast proves creation without unselected targets, fresh tap guard, real haste/control, sorcery timing, current-controller targets, EOT expiry, privacy and pending load/replay after creator departure."
+    },
+    {
+      "capability_id": "token.creation.typed_ability_definition",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_typed_token_ability_apnap_privacy_and_replay",
       "official_rule_ids": [
@@ -119226,6 +119378,25 @@
     },
     {
       "capability_id": "token.creation.typed_ability_definition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_modal_token_programs.ModalTokenProgramRuntimeTests.test_actual_spree_token_fresh_tap_guard_haste_activation_expiry_and_replay",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete ordinary/Spree modal token branches retain the existing typed fragments and independently generated child programs. Actual Unfortunate token-mode cast proves creation without unselected targets, fresh tap guard, real haste/control, sorcery timing, current-controller targets, EOT expiry, privacy and pending load/replay after creator departure."
+    },
+    {
+      "capability_id": "token.creation.typed_ability_definition",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_typed_token_ability_apnap_privacy_and_replay",
       "official_rule_ids": [
@@ -119242,6 +119413,63 @@
         "commander_review"
       ],
       "applicability_note": "Save and exactly replay replacement-ordered creation, intrinsic typed token programs, APNAP trigger placement, and final authoritative state."
+    },
+    {
+      "capability_id": "token.creation.typed_ability_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_modal_token_programs.ModalTokenProgramRuntimeTests.test_actual_destroy_only_spree_mode_does_not_create_unselected_token",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Unfortunate destroy-only mode pays its complete Spree cost and destroys the selected creature while no unselected token is created; exact replay retains independently registered but ungranted child definitions."
+    },
+    {
+      "capability_id": "token.creation.typed_ability_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_modal_token_programs.ModalTokenProgramRuntimeTests.test_actual_spree_token_fresh_tap_guard_haste_activation_expiry_and_replay",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete ordinary/Spree modal token branches retain the existing typed fragments and independently generated child programs. Actual Unfortunate token-mode cast proves creation without unselected targets, fresh tap guard, real haste/control, sorcery timing, current-controller targets, EOT expiry, privacy and pending load/replay after creator departure."
+    },
+    {
+      "capability_id": "token.creation.typed_ability_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_modal_token_programs.ModalTokenProgramRuntimeTests.test_real_token_control_change_uses_current_activator_targets_and_child_program",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete ordinary/Spree modal token branches retain the existing typed fragments and independently generated child programs. Actual Unfortunate token-mode cast proves creation without unselected targets, fresh tap guard, real haste/control, sorcery timing, current-controller targets, EOT expiry, privacy and pending load/replay after creator departure."
     },
     {
       "capability_id": "trigger.condition.fixed_public_state",
@@ -150727,5 +150955,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "1c8a7ff9708ba69543d77f21b97431921d0450de6e4f98e1ae6626c6e8ffa65b"
+  "fingerprint": "53f41aeaf3cfa15ac484a79422c7ebc2108dd3f2dac187a755de11cc4e2e6ff6"
 }

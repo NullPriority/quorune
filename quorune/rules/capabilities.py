@@ -290,6 +290,7 @@ _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
     "fixed-counter-controller-effect-sequence"
 )
 MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    'fixed-token-typed-ability-definition': ('token.creation.typed_ability_definition',),
     'fixed-spree-mode-costs': ('casting.additional_cost.spree_fixed_modes',),
     'fixed-public-event-set-counter':('counter.producer.fixed_public_set_event',),
     'ascend':('player.designation.citys_blessing',),
@@ -467,6 +468,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
 }
 _SHAPE_GATED_MECHANICS = frozenset(
     {
+        'fixed-token-typed-ability-definition',
         'fixed-spree-mode-costs',
         'fixed-public-event-set-counter',
         'ascend',

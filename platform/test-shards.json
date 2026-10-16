@@ -408,6 +408,7 @@
       "test_graft_rules",
       "test_graveyard_exile_payments",
       "test_life_state",
+      "test_modal_token_programs",
       "test_monarch_rules",
       "test_player_speed",
       "test_public_scalar_stat_definitions",

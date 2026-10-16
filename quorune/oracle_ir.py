@@ -171,7 +171,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v390"
+ORACLE_COMPILER_VERSION = "oracle-ir-v391"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1077,6 +1077,8 @@ def _typed_whole_spell_face(
     *,
     face_id: str,
     face_name: str,
+    type_line: str,
+    keywords: Sequence[str],
     oracle_text: str,
     material_rows: Sequence[tuple[str, str, SourceSpan]],
     effect_template: Any,
@@ -1099,80 +1101,12 @@ def _typed_whole_spell_face(
     )
     if additional_cost_face is not None:
         return additional_cost_face
-    from .compiler.whole_modal_templates import whole_modal_spell_template
-    modal_template = whole_modal_spell_template(material_rows,
-        compile_effect=lambda body: effect_template(body, card_name=face_name or record.name))
-    if modal_template is None:
-        return None
-    template, effects, target_schema, mechanics = modal_template.compiled()
-    cost_schema = getattr(modal_template, 'cost_schema', None)
-    dependency_gate = _dependency_gate(
-        mechanics=mechanics,
-        effects=effects,
-        target_schema=target_schema,
-        cost_schema=cost_schema,
-        trusted_mechanics=trusted_mechanics,
-        capability_registry=capability_registry,
-        capability_profile=capability_profile,
-    )
-    span = SourceSpan(
-        material_rows[0][2].start,
-        material_rows[-1][2].end,
-        material_rows[0][2].line,
-    )
-    residual_ids = (
-        (
-            _residual(
-                residuals,
-                kind="dependency_contract",
-                text=oracle_text,
-                span=span,
-                reason="fixed modal spell depends on untrusted rules dependencies",
-                blockers=dependency_gate.blockers,
-            ),
-        )
-        if dependency_gate.blockers
-        else ()
-    )
-    node = OracleNode(
-        node_id=f"{face_id}:n1",
-        kind="spell_ability",
-        text=oracle_text,
-        span=span,
-        active_zone="stack",
-        event="resolve",
-        lowerable=True,
-        exact=not residual_ids,
-        template_id=template,
-        effects=effects,
-        target_schema=target_schema,
-        mechanics=mechanics,
-        cost=cost_schema,
-        residual_ids=residual_ids,
-        capability_dependencies=dependency_gate.capabilities,
-        capability_closure=(
-            dependency_gate.closure.reachable
-            if dependency_gate.closure is not None
-            else ()
-        ),
-        capability_profile=(
-            dependency_gate.closure.profile
-            if dependency_gate.closure is not None
-            else None
-        ),
-        capability_fingerprint=(
-            dependency_gate.closure.fingerprint
-            if dependency_gate.closure is not None
-            else None
-        ),
-    )
-    return OracleFaceIR(
-        face_id=face_id,
-        face_name=face_name,
-        oracle_text=oracle_text,
-        nodes=(node,),
-        residuals=tuple(residuals),
-    )
+    from .compiler.modal_spell_faces import compile_whole_modal_face
+    return compile_whole_modal_face(record=record, face_id=face_id, face_name=face_name,
+        type_line=type_line, keywords=keywords, oracle_text=oracle_text, material_rows=material_rows,
+        effect_template=effect_template, trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals, compile_inner=_activated_or_fixed_event_trigger_node,
+        trigger_node=_trigger_node, grant_effect_templates=_contextual_effect_templates)
 
 
 def _compile_face(
@@ -1200,7 +1134,7 @@ def _compile_face(
 
     if spell:
         typed_face = _typed_whole_spell_face(
-            record, face_id=face_id, face_name=face_name, oracle_text=oracle_text,
+            record, face_id=face_id, face_name=face_name, type_line=type_line, keywords=keywords, oracle_text=oracle_text,
             material_rows=material_rows, effect_template=declared_spell_effect_compiler(record, is_spell=spell, oracle_text=oracle_text, compile_effect=contextual_effect_template),
             trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
             capability_profile=capability_profile, residuals=residuals,

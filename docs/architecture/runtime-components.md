@@ -888,3 +888,19 @@ mode target schema and adds those prices to its existing base, including a free
 base. The shared affordability, target validation and payment owners enforce
 that binding; resolution retains printed mode order and ordinary copy behavior.
 Variable prices and incomplete mode bodies remain residual.
+
+### Typed token children in modal branches
+
+`compiler/modal_token_branches.py` adapts the existing typed token-node compiler
+for complete ordinary and Spree modal branches. Each branch retains its token
+fragments and independently closed generated child nodes. Identical branch
+bodies may share one immutable child definition; different source rows and
+abilities retain distinct keys. Unknown children or sibling branches keep the
+whole modal face residual.
+
+`compiler/modal_spell_faces.py` assembles the parent spell and those child nodes
+with the original spans and existing capability gates. Generated registration,
+recording and loading preserve the child definitions. Token creation and later
+abilities use the existing runtime owners, current token controller, normal
+activation costs and timing. The creator spell can leave without removing a
+token's ability. No runtime Oracle parsing or new token engine is introduced.

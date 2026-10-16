@@ -25,10 +25,9 @@ from .conditional_granted_ability_templates import (
     conditional_quoted_ability_handler,
 )
 from .public_query_effect_amounts import (
-    contains_public_query_characteristic_amount,
-    contains_public_query_effect_amount,
     _source_characteristic_amount_base,
 )
+from .granted_program_bounds import granted_effect_values_are_closed
 from .ir_model import OracleNode, OracleResidual, SourceSpan
 from .static_runtime_nodes import runtime_handler_node
 
@@ -127,10 +126,7 @@ def attached_granted_ability_plan(
     if (
         not node.exact
         or node.residual_ids
-        or (
-            contains_public_query_effect_amount(node.effects)
-            and not contains_public_query_characteristic_amount(node.effects)
-        )
+        or not granted_effect_values_are_closed(node.effects)
     ):
         return None
     if node.kind in {"activated_ability", "mana_ability"}:
