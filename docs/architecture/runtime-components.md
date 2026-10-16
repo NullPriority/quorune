@@ -822,3 +822,20 @@ ability loss, control changes, and query membership changes recompute it. The
 existing layer-6 and combat declaration owners govern both blocker domains and
 accepted commands. Source-relative opposing-controller rules and incomplete
 conditions or sibling clauses remain residual.
+
+### Conditional chosen characteristics
+
+`continuous.characteristics.conditional-chosen-designation.v1` gates an existing
+schema-1 chosen-characteristic descriptor with a typed current public condition.
+It delegates both the retained designation and recipient query to
+`ChosenCharacteristicsHandler`. The compiler may resolve a plural continuation
+to one explicit, independently closed chosen query in the same complete static
+paragraph. Its unconditional component remains separate from the conditional
+component.
+
+The ordinary public-state snapshot owner supplies the source's current
+controller facts. Query recipients and retained per-incarnation choices remain
+live through control changes; departure clears the choice, and re-entry asks
+again. The shared static-condition validator rejects numeric characteristic
+conditions that would need a separate layer-timing owner. Existing chosen-query
+schema-1 descriptors retain their shape and behavior.

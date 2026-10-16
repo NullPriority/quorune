@@ -387,6 +387,7 @@
       "test_combat_damage_sequence",
       "test_combat_damage_snapshot",
       "test_command_zone_rules",
+      "test_conditional_chosen_characteristics",
       "test_convoke_rules",
       "test_damage_redirection",
       "test_deathtouch_rules",

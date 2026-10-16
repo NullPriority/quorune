@@ -25382,6 +25382,236 @@
       "applicability_note": "Printed copy makes a fresh entry choice, rejects a stale selection atomically and replays; duplicated linked choices and departed incarnations do not retain admission or choice state."
     },
     {
+      "capability_id": "continuous.characteristics.conditional_chosen_designation",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_chosen_characteristics.ConditionalChosenCharacteristicRuntimeTests.test_actual_radiant_entry_choice_late_tenth_and_vigilance_attack_use_live_query",
+      "official_rule_ids": [
+        "109.5",
+        "205.3m",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed retained chosen queries compose with current typed conditions without changing schema1. Actual Radiant cast/entry-choice, invalid choice and wrong-principal rollback, late tenth permanent, current queried P/T and vigilance attack, real source control/departure/re-entry, four-player privacy and pending load/replay establish complete consequences."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_chosen_designation",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_chosen_characteristics.ConditionalChosenCharacteristicRuntimeTests.test_real_source_control_departure_and_fresh_entry_choice_recompute_grants",
+      "official_rule_ids": [
+        "109.5",
+        "205.3m",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed retained chosen queries compose with current typed conditions without changing schema1. Actual Radiant cast/entry-choice, invalid choice and wrong-principal rollback, late tenth permanent, current queried P/T and vigilance attack, real source control/departure/re-entry, four-player privacy and pending load/replay establish complete consequences."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_chosen_designation",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_conditional_chosen_characteristics.ConditionalChosenCharacteristicRuntimeTests.test_real_source_control_departure_and_fresh_entry_choice_recompute_grants",
+      "official_rule_ids": [
+        "109.5",
+        "205.3m",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed retained chosen queries compose with current typed conditions without changing schema1. Actual Radiant cast/entry-choice, invalid choice and wrong-principal rollback, late tenth permanent, current queried P/T and vigilance attack, real source control/departure/re-entry, four-player privacy and pending load/replay establish complete consequences."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_chosen_designation",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_conditional_chosen_characteristics.ConditionalChosenCharacteristicCompilerTests.test_conditional_chosen_queries_and_shared_paragraph_close_without_changing_legacy",
+      "official_rule_ids": [
+        "109.5",
+        "205.3m",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed retained chosen queries compose with current typed conditions without changing schema1. Actual Radiant cast/entry-choice, invalid choice and wrong-principal rollback, late tenth permanent, current queried P/T and vigilance attack, real source control/departure/re-entry, four-player privacy and pending load/replay establish complete consequences."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_chosen_designation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_chosen_characteristics.ConditionalChosenCharacteristicCompilerTests.test_ambiguous_subjects_unknown_conditions_and_partial_paragraphs_remain_residual",
+      "official_rule_ids": [
+        "109.5",
+        "205.3m",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed retained chosen queries compose with current typed conditions without changing schema1. Actual Radiant cast/entry-choice, invalid choice and wrong-principal rollback, late tenth permanent, current queried P/T and vigilance attack, real source control/departure/re-entry, four-player privacy and pending load/replay establish complete consequences."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_chosen_designation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_chosen_characteristics.ConditionalChosenCharacteristicCompilerTests.test_conditional_designation_dependencies_and_descriptors_fail_closed",
+      "official_rule_ids": [
+        "109.5",
+        "205.3m",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed retained chosen queries compose with current typed conditions without changing schema1. Actual Radiant cast/entry-choice, invalid choice and wrong-principal rollback, late tenth permanent, current queried P/T and vigilance attack, real source control/departure/re-entry, four-player privacy and pending load/replay establish complete consequences."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_chosen_designation",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_chosen_characteristics.ConditionalChosenCharacteristicCompilerTests.test_conditional_chosen_queries_and_shared_paragraph_close_without_changing_legacy",
+      "official_rule_ids": [
+        "109.5",
+        "205.3m",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed retained chosen queries compose with current typed conditions without changing schema1. Actual Radiant cast/entry-choice, invalid choice and wrong-principal rollback, late tenth permanent, current queried P/T and vigilance attack, real source control/departure/re-entry, four-player privacy and pending load/replay establish complete consequences."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_chosen_designation",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_conditional_chosen_characteristics.ConditionalChosenCharacteristicRuntimeTests.test_actual_radiant_entry_choice_late_tenth_and_vigilance_attack_use_live_query",
+      "official_rule_ids": [
+        "109.5",
+        "205.3m",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed retained chosen queries compose with current typed conditions without changing schema1. Actual Radiant cast/entry-choice, invalid choice and wrong-principal rollback, late tenth permanent, current queried P/T and vigilance attack, real source control/departure/re-entry, four-player privacy and pending load/replay establish complete consequences."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_chosen_designation",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_chosen_characteristics.ConditionalChosenCharacteristicRuntimeTests.test_actual_radiant_entry_choice_late_tenth_and_vigilance_attack_use_live_query",
+      "official_rule_ids": [
+        "109.5",
+        "205.3m",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed retained chosen queries compose with current typed conditions without changing schema1. Actual Radiant cast/entry-choice, invalid choice and wrong-principal rollback, late tenth permanent, current queried P/T and vigilance attack, real source control/departure/re-entry, four-player privacy and pending load/replay establish complete consequences."
+    },
+    {
+      "capability_id": "continuous.characteristics.conditional_chosen_designation",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_chosen_characteristics.ConditionalChosenCharacteristicRuntimeTests.test_real_source_control_departure_and_fresh_entry_choice_recompute_grants",
+      "official_rule_ids": [
+        "109.5",
+        "205.3m",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed retained chosen queries compose with current typed conditions without changing schema1. Actual Radiant cast/entry-choice, invalid choice and wrong-principal rollback, late tenth permanent, current queried P/T and vigilance attack, real source control/departure/re-entry, four-player privacy and pending load/replay establish complete consequences."
+    },
+    {
       "capability_id": "continuous.characteristics.conditional_creature_type_removal",
       "evidence_class": "interaction",
       "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_attacking_god_leaves_combat_and_does_not_rejoin_after_devotion_returns",

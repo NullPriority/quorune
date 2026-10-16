@@ -236,6 +236,19 @@ def _validate_typed_keyword_modifier(value):
     return node.abilities, value['power'], value['toughness'], tuple(dict(raw) for raw in value['add_ability_fragments'])
 
 
+def validate_static_public_state_condition(value: Any) -> FixedPublicStateConditionSpec:
+    """Use one cycle-safe condition boundary for layer-6/7 static grants."""
+    try:
+        condition = FixedPublicStateConditionSpec.from_dict(value)
+        if any(leaf.kind.value == 'controller_creature_numeric_exists'
+               or leaf.predicate is not None and leaf.predicate.numeric_characteristic is not None
+               for leaf in condition.leaf_conditions()):
+            raise FixedPublicStateConditionError('Static numeric conditions require a separate layer timing owner')
+    except (FixedPublicStateConditionError, TypeError) as exc:
+        raise SemanticNodeError(str(exc)) from exc
+    return condition
+
+
 @dataclass(frozen=True, slots=True)
 class FixedPublicStateCharacteristicsHandler:
     """Apply fixed layer-6/7c results behind one public-state condition."""
@@ -292,16 +305,7 @@ class FixedPublicStateCharacteristicsHandler:
             )
         if descriptor["event"] != self.event:
             raise SemanticNodeError(f"{self.handler_id} must handle {self.event}")
-        try:
-            source_condition = FixedPublicStateConditionSpec.from_dict(
-                descriptor["source_condition"]
-            )
-            if any(leaf.kind.value == 'controller_creature_numeric_exists'
-                    or leaf.predicate is not None and leaf.predicate.numeric_characteristic is not None
-                    for leaf in source_condition.leaf_conditions()):
-                raise FixedPublicStateConditionError('Static numeric conditions require a separate layer timing owner')
-        except (FixedPublicStateConditionError, TypeError) as exc:
-            raise SemanticNodeError(str(exc)) from exc
+        source_condition = validate_static_public_state_condition(descriptor['source_condition'])
 
         (
             target_kind,

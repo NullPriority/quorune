@@ -13,6 +13,8 @@ ENTRY_DESIGNATION_HANDLER_ID = "replacement.zone.entry-designation.v1"
 ENTRY_DESIGNATION_CAPABILITY = "zone.entry.public_designation"
 CHOSEN_CHARACTERISTICS_HANDLER_ID = "continuous.characteristics.chosen-designation.v1"
 CHOSEN_CHARACTERISTICS_CAPABILITY = "continuous.characteristics.chosen_designation"
+CONDITIONAL_CHOSEN_CHARACTERISTICS_HANDLER_ID = "continuous.characteristics.conditional-chosen-designation.v1"
+CONDITIONAL_CHOSEN_CHARACTERISTICS_CAPABILITY = "continuous.characteristics.conditional_chosen_designation"
 
 
 class EntryDesignationKind(StrEnum):

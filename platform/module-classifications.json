@@ -2015,6 +2015,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/conditional_chosen_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/conditional_declaration_grants.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -11510,6 +11525,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/conditional_chosen_characteristics.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/conditional_continuous.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -13915,5 +13945,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "af448a5599d69bbab809cd38748b4be04b4add5fee277731d818056e3b78b655"
+  "fingerprint": "621092fbc882981682bbbaca93e1310b753cc276371f1922e34a1840d6bf898c"
 }

@@ -112,7 +112,14 @@ def entry_designation_handler(text: str, *, source_name: str):
     )
 
 
-def chosen_characteristics_handler(text: str):
+def chosen_characteristics_handler(text: str, *, source_name: str = 'source'):
+    from .conditional_chosen_templates import conditional_chosen_characteristics_handler
+
+    return (conditional_chosen_characteristics_handler(text, source_name=source_name)
+            or _fixed_chosen_characteristics_handler(text))
+
+
+def _fixed_chosen_characteristics_handler(text: str):
     match = re.fullmatch(
         r"(?P<other>Other )?(?P<all>All )?creatures"
         r"(?P<controlled> you control)? of the chosen (?P<kind>color|type)"

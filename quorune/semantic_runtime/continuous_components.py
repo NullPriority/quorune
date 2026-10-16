@@ -1375,6 +1375,7 @@ class ContinuousEffectComponentRegistry(
 def default_continuous_effect_component_registry(
 ) -> ContinuousEffectComponentRegistry:
     from .chosen_characteristics import ChosenCharacteristicsHandler
+    from .conditional_chosen_characteristics import ConditionalChosenCharacteristicsHandler
     from .attached_continuous import AttachedFixedCharacteristicsHandler
     from .fixed_characteristic_settings import FixedCharacteristicSettingsHandler, ConditionalCharacteristicSettingsHandler, ConditionalCreatureTypeRemovalHandler
     from .attached_control import AttachedControlHandler
@@ -1392,6 +1393,7 @@ def default_continuous_effect_component_registry(
     registry = ContinuousEffectComponentRegistry(
         (
             ChosenCharacteristicsHandler(),
+            ConditionalChosenCharacteristicsHandler(),
             FixedPowerToughnessAnthemHandler(),
             FixedQueryPowerToughnessAnthemHandler(),
             FixedQueryPowerToughnessAnthemHandler(

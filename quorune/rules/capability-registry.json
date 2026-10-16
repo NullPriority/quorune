@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 315,
+  "registry_version": 316,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -244,6 +244,92 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "continuous.characteristics.conditional_chosen_designation",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "205.3m",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Compose one independently closed retained creature-type/color characteristic query with an existing current public condition. A complete two-clause paragraph may share its explicit chosen query with a conditional they continuation.",
+        "inputs": [
+          "retained canonical per-incarnation entry designation",
+          "existing fixed chosen creature query and characteristic body",
+          "cycle-safe typed public condition relative to current source controller",
+          "optional complete explicit preceding chosen query"
+        ],
+        "outputs": [
+          "current chosen-query recipients receive conditional fixed characteristics in the existing layers",
+          "unconditional preceding characteristic component retains its own independent applicability"
+        ],
+        "exclusions": [
+          "ambiguous pronouns or unestablished choice values",
+          "new choice kinds or unsupported bodies",
+          "unknown condition or sibling clauses",
+          "numeric characteristic conditions that require a separate layer timing owner"
+        ]
+      },
+      "dependencies": [
+        "continuous.characteristics.chosen_designation",
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "implementation_components": [
+        "quorune.compiler.conditional_chosen_templates.conditional_chosen_characteristics_handler",
+        "quorune.compiler.conditional_chosen_templates._conditional_chosen_grant",
+        "quorune.semantic_runtime.conditional_chosen_characteristics.ConditionalChosenCharacteristicsHandler",
+        "quorune.semantic_runtime.conditional_continuous.validate_static_public_state_condition",
+        "quorune.card_programs.runtime._component_public_state_snapshot"
+      ],
+      "positive_tests": [
+        "test_conditional_chosen_queries_and_shared_paragraph_close_without_changing_legacy"
+      ],
+      "negative_tests": [
+        "test_ambiguous_subjects_unknown_conditions_and_partial_paragraphs_remain_residual",
+        "test_conditional_designation_dependencies_and_descriptors_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_actual_radiant_entry_choice_late_tenth_and_vigilance_attack_use_live_query",
+        "test_real_source_control_departure_and_fresh_entry_choice_recompute_grants"
+      ],
+      "multiplayer_tests": [
+        "test_real_source_control_departure_and_fresh_entry_choice_recompute_grants"
+      ],
+      "privacy_tests": [
+        "test_actual_radiant_entry_choice_late_tenth_and_vigilance_attack_use_live_query"
+      ],
+      "replay_tests": [
+        "test_actual_radiant_entry_choice_late_tenth_and_vigilance_attack_use_live_query",
+        "test_real_source_control_departure_and_fresh_entry_choice_recompute_grants"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Both the chosen query and public condition must close independently. Existing query/keyword/stat and designation producer dependencies remain explicit; withdrawal of wrapper or either parent prevents admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting conditional chosen compiler composition rejects all four new generic witnesses; actual original Radiant admission and exact stats/vigilance, current controller, source departure and fresh re-entry choice witnesses reject lost gating or stale query semantics.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "continuous.declaration.conditional_query_grant",
       "version": 1,
