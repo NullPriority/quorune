@@ -48,7 +48,7 @@ ACTIVATED_ABILITY_DESCRIPTOR_FIELDS = frozenset(
     }
 )
 _OPTIONAL_DESCRIPTOR_FIELDS = frozenset(
-    {"mana_cost_options", "source_counter_removal_cost", "power_up", "fixed_mana_result"}
+    {"mana_cost_options", "source_counter_removal_cost", "power_up", "fixed_mana_result", "random_discard_payment"}
 )
 
 _SEQUENCE_FIELDS = (
@@ -85,6 +85,8 @@ def validate_activated_ability_descriptor(value: Any) -> Mapping[str, Any]:
         raise ValueError("activated abilities use a closed schema")
     if value["schema_version"] != 1:
         raise ValueError("unsupported activated ability schema version")
+    if 'random_discard_payment' in value and (type(value['random_discard_payment']) is not int or not 1<=value['random_discard_payment']<=4):
+        raise ValueError('Optional random-discard cost must be an exact positive supported count')
     if any(not isinstance(value[field], list) for field in _SEQUENCE_FIELDS):
         raise ValueError("activated ability sequence fields must be arrays")
     if not isinstance(value["mana"], Mapping):

@@ -94,6 +94,8 @@ def activation_availability(
         return "unpayable", "insufficient_life"
     if ability.energy_payment and player.energy < ability.energy_payment:
         return "unpayable", "insufficient_energy"
+    if ability.random_discard_payment and len(player.zones['hand'])<ability.random_discard_payment:
+        return 'unpayable','insufficient_random_discard_cards'
     if ability.source_counter_removal_cost is not None:
         cost = ability.source_counter_removal_cost
         if zone != "battlefield":

@@ -578,6 +578,7 @@ def compile_fixed_activated_mana_ability(
         or ability.discard_source
         or ability.exile_source
         or ability.energy_payment
+        or ability.random_discard_payment
         or ability.loyalty_delta is not None
         or (ability.choices and (len(ability.choices)!=1 or not _selected_mana_choice_is_closed(ability.choices[0])))
         or ability.uncompiled_costs

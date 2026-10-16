@@ -575,6 +575,7 @@ def build_activation_offer(
                 "tap",
                 "life",
                 "energy",
+                "random_discard",
                 "loyalty",
                 "remove_source_counter",
                 "sac_self",

@@ -60,7 +60,7 @@ def is_closed_transmute_program(program: Any) -> bool:
     return bool(ability.zones == ('hand',) and ability.discard_source and ability.sorcery_speed
         and not (ability.tap_source or ability.untap_source or ability.sacrifice_source or ability.exile_source
             or ability.mana_ability or ability.complex_symbols or ability.uncompiled_costs or ability.choices
-            or ability.life_payment or ability.energy_payment or ability.loyalty_delta))
+            or ability.life_payment or ability.energy_payment or ability.random_discard_payment or ability.loyalty_delta))
 
 
 def capture_transmute_discard(host: Any, program: Any, source: Any) -> dict[str, Any]:

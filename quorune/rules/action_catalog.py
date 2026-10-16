@@ -304,6 +304,7 @@ def _ability_offers(
                     ability.choices
                     or ability.life_payment
                     or ability.energy_payment
+                    or ability.random_discard_payment
                     or ability.discard_source
                     or ability.sacrifice_source
                     or ability.exile_source

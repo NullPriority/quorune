@@ -21,6 +21,8 @@ def activated_ability_cost_capabilities(
     additional: list[str] = []
     if ability.energy_payment:
         additional.append('activation.energy.fixed_payment')
+    if ability.random_discard_payment:
+        additional.append('activation.random_discard.fixed')
     if ability.power_up is not None:additional.append(POWER_UP_CAPABILITY)
     if ability.source_counter_removal_cost is not None:
         additional.append("activation.source_counter_removal.fixed")
@@ -94,6 +96,7 @@ def activated_ability_cost(ability: ActivatedAbility) -> dict[str, Any]:
     if ability.activation_limit is not None:
         result["activation_limit"] = ability.activation_limit.value
     if ability.power_up is not None:result['power_up']=ability.power_up.to_dict()
+    if ability.random_discard_payment:result['random_discard_payment']=ability.random_discard_payment
     if ability.crew_threshold is not None:
         result["crew"] = ability.crew_threshold
     return result

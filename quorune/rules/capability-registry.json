@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 309,
+  "registry_version": 310,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -244,6 +244,108 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "activation.random_discard.fixed",
+      "version": 1,
+      "official_rules": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Pay one exact fixed random discard of one to four owned hand cards for an otherwise closed battlefield nonmana activation, using the existing server payment identity, random selector and counted discard transaction.",
+        "inputs": [
+          "current activating controller",
+          "full fixed hand-card count",
+          "server payment identity and original source incarnation",
+          "closed canonical scalar/mana/tap resources",
+          "independently owned activation effect"
+        ],
+        "outputs": [
+          "automatic exact random subset",
+          "canonical simultaneous discard cost",
+          "private selected identities across replacement suspension",
+          "stable retry/save-load/replay without player selection or reroll"
+        ],
+        "exclusions": [
+          "variable, qualified or open random costs",
+          "mana abilities and unrepresented granted costs",
+          "other selected or source zone-change costs",
+          "caller-selected cost cards or random seeds",
+          "partial payment from insufficient cards"
+        ]
+      },
+      "dependencies": [
+        "activation.selected_zone_change.fixed",
+        "zone.discard.fixed_random"
+      ],
+      "implementation_components": [
+        "quorune.abilities._fixed_random_discard_payment",
+        "quorune.compiler.activated_costs.activated_ability_cost_capabilities",
+        "quorune.rules.activation.random_discard_costs.random_discard_cost_refs",
+        "quorune.rules.activation.random_discard_costs.pay_random_discard_activation_cost",
+        "quorune.rules.activation.random_discard_costs.freeze_random_discard_cost_response",
+        "quorune.rules.activation.availability.activation_availability",
+        "quorune.rules.activation_zone_change_costs.activation_zone_change_cost_reference"
+      ],
+      "positive_tests": [
+        "test_fixed_random_hand_costs_are_automatic_exact_resources_with_owned_capability",
+        "test_random_cost_payload_is_optional_strict_and_preserves_older_ability_bytes"
+      ],
+      "negative_tests": [
+        "test_open_random_qualities_counts_and_other_object_costs_remain_residual",
+        "test_withdrawn_random_cost_capability_prevents_promotion",
+        "test_granted_and_mana_owners_cannot_drop_a_random_resource_cost",
+        "test_random_replacement_identity_cannot_claim_an_unselected_card"
+      ],
+      "interaction_tests": [
+        "test_actual_stormbind_pays_randomly_before_resolution_and_repeated_activations_have_distinct_keys",
+        "test_actual_meteor_two_card_random_cost_keeps_subset_across_replacement_load_and_replay",
+        "test_actual_mage_control_change_pays_new_controller_hand_and_taps_before_damage",
+        "test_exact_random_cost_cannot_pay_with_too_few_cards_despite_mana_and_other_hands",
+        "test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay"
+      ],
+      "multiplayer_tests": [
+        "test_actual_mage_control_change_pays_new_controller_hand_and_taps_before_damage"
+      ],
+      "privacy_tests": [
+        "test_actual_stormbind_pays_randomly_before_resolution_and_repeated_activations_have_distinct_keys",
+        "test_actual_meteor_two_card_random_cost_keeps_subset_across_replacement_load_and_replay",
+        "test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay"
+      ],
+      "replay_tests": [
+        "test_actual_stormbind_pays_randomly_before_resolution_and_repeated_activations_have_distinct_keys",
+        "test_actual_meteor_two_card_random_cost_keeps_subset_across_replacement_load_and_replay",
+        "test_actual_mage_control_change_pays_new_controller_hand_and_taps_before_damage",
+        "test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Exact full hand affordability, complete typed effect ownership and original server payment identity are mandatory. Other object-cost combinations and unsupported owners stay residual. Withdrawing this capability blocks promotion.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the fixed random-cost decoder rejects all four complete compiler cost witnesses. Native costs must select and move the exact subset before their independent result, preserving rollback and no refund on countering.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "activation.energy.fixed_payment",
       "version": 1,
@@ -2775,7 +2877,7 @@
     },
     {
       "id": "activation.selected_zone_change.fixed",
-      "version": 4,
+      "version": 5,
       "official_rules": [
         "400.2",
         "400.7",
@@ -2793,7 +2895,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Compile and pay one selected-object activation cost with one current predicate and a fixed count from one through ten, using the canonical owned/controlled query and simultaneous zone transaction for counted sets.",
+        "summary": "Compile and pay one selected-object activation cost with one current predicate and a fixed count from one through ten, using the canonical owned/controlled query and simultaneous zone transaction for counted sets. The canonical exact discard transaction also accepts a singleton internally selected by a separately owned random cost, retaining private frozen identity and replacement journals.",
         "inputs": [
           "one source-spanned fixed selected-object activation cost",
           "one closed actor-bound ObjectQuerySpec over fixed type, subtype, color, supertype, or token identity",
@@ -2854,7 +2956,9 @@
         "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
         "test_real_goblin_warrens_sacrifices_one_simultaneous_controlled_set",
         "test_real_lavamancer_full_graveyard_payment_and_action_rollback_replay",
-        "test_unqualified_graveyard_exile_uses_owner"
+        "test_unqualified_graveyard_exile_uses_owner",
+        "test_actual_meteor_two_card_random_cost_keeps_subset_across_replacement_load_and_replay",
+        "test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay"
       ],
       "negative_tests": [
         "test_activation_zone_change_costs_exclude_mana_abilities",
@@ -2872,7 +2976,9 @@
         "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
         "test_selected_zone_cost_offer_and_command_share_candidates",
         "test_selected_zone_cost_replacement_is_private_and_replays",
-        "test_selected_zone_cost_uses_current_effective_characteristics"
+        "test_selected_zone_cost_uses_current_effective_characteristics",
+        "test_actual_meteor_two_card_random_cost_keeps_subset_across_replacement_load_and_replay",
+        "test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay"
       ],
       "multiplayer_tests": [
         "test_counted_sacrifice_replacements_suspend_whole_cost_load_and_resume_once",
@@ -2891,7 +2997,9 @@
         "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
         "test_real_goblin_warrens_sacrifices_one_simultaneous_controlled_set",
         "test_real_lavamancer_full_graveyard_payment_and_action_rollback_replay",
-        "test_selected_zone_cost_replacement_is_private_and_replays"
+        "test_selected_zone_cost_replacement_is_private_and_replays",
+        "test_actual_meteor_two_card_random_cost_keeps_subset_across_replacement_load_and_replay",
+        "test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay"
       ],
       "required_evidence": [
         "positive",

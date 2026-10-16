@@ -432,6 +432,7 @@ def compile_color_set_activated_mana_ability(
         or ability.discard_source
         or ability.exile_source
         or ability.energy_payment
+        or ability.random_discard_payment
         or ability.loyalty_delta is not None
         or ability.choices
         or ability.uncompiled_costs

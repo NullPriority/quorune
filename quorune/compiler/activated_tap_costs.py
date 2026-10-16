@@ -148,6 +148,7 @@ def fixed_activated_tap_cost(ability: ActivatedAbility) -> ActivatedAbility:
         or ability.exile_source
         or ability.life_payment
         or ability.energy_payment
+        or ability.random_discard_payment
         or ability.loyalty_delta is not None
         or ability.choices
         or len(ability.uncompiled_costs) != 1

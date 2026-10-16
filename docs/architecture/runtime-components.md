@@ -146,6 +146,17 @@ player and persists through phase boundaries. A source tap symbol retains its
 usual control-duration and haste restriction, and countering the activated
 ability does not refund either cost.
 
+Fixed random-discard activation costs use an optional typed scalar that is
+omitted from older ability payloads. The activating player must hold the full
+count. The canonical random selector binds a distinct hand subset to the
+server's existing payment identity, source incarnation and ability. It then
+uses the exact counted activation discard transaction, including singleton
+costs. A suspended replacement choice retains the selected refs privately;
+resume recomputes and validates the same subset. The client supplies neither
+selected cost cards nor a random seed. Earlier selected discard costs keep
+their existing interface, and unsupported grants, mana activations or combined
+object costs cannot drop the random cost during compilation.
+
 The compound self-entry handler combines a fixed tapped state and fixed counter
 creation in one replacement effect for complete “enters tapped with” wording.
 It inherits the ordinary self-entry counter validation and submits both

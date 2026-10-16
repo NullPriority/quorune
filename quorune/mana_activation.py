@@ -163,6 +163,7 @@ def complete_mana_activation(
                 ability.exile_source,
                 ability.life_payment,
                 ability.energy_payment,
+                ability.random_discard_payment,
                 ability.loyalty_delta is not None,
                 ability.source_counter_removal_cost is not None,
                 paid_objects,

@@ -473,6 +473,9 @@ def _pay_object_and_mana_costs(
 
 
 def _pay_selected_object_costs(host, seat, source, ability, response):
+    if ability.random_discard_payment:
+        from .random_discard_costs import pay_random_discard_activation_cost
+        return pay_random_discard_activation_cost(host,seat,source,ability,response)
     if len(ability.choices) == 1 and ability.choices[0].count > 1 and ability.choices[0].fixed_zone_change_cost() is not None:
         from ..activation_costs import pay_counted_zone_change_activation_cost
         return pay_counted_zone_change_activation_cost(

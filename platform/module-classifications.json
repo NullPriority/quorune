@@ -8203,6 +8203,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/activation/random_discard_costs.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/activation/resolution.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -13772,5 +13786,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "0296ccb05595afa9f9b17014094bdc4086da9c13a0e70ae4f1b7ce017b8c4e52"
+  "fingerprint": "ca60f3192c4887c520a7f6aeff48fadac9db3973a7b0fbd175833b2c9ed88868"
 }

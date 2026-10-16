@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "e0bdc9aaf72d0e4c7c85456b3b900ce091de1e3d6c71beca98428e7be6317a9b",
-  "declaration_source_fingerprint": "4b1667267101d189ffbb94012a4030b343b7860c1a348fae26500333b910a9b5",
+  "registry_fingerprint": "fea7daa1f844366478af277008246d8fb4cc697c11989e7c81470e2e364cdee4",
+  "declaration_source_fingerprint": "c4010f81a6fe539eca531b0e7f55796b2fb3211ed67fc98a5c2f184cd41c0640",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -3630,6 +3630,535 @@
       "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
     },
     {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_actual_mage_control_change_pays_new_controller_hand_and_taps_before_damage",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind, Meteor Storm and Mage il-Vec use exact automatic random costs through real offered activations. Tests cover no user-selected refs/seed, one versus two-card full affordability, current payer after control change, source tap, cost-before-result, countered ability no refund, stable frozen replacement subset, private hands, rollback, pending load and preaction replay."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_actual_meteor_two_card_random_cost_keeps_subset_across_replacement_load_and_replay",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind, Meteor Storm and Mage il-Vec use exact automatic random costs through real offered activations. Tests cover no user-selected refs/seed, one versus two-card full affordability, current payer after control change, source tap, cost-before-result, countered ability no refund, stable frozen replacement subset, private hands, rollback, pending load and preaction replay."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_actual_stormbind_pays_randomly_before_resolution_and_repeated_activations_have_distinct_keys",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind, Meteor Storm and Mage il-Vec use exact automatic random costs through real offered activations. Tests cover no user-selected refs/seed, one versus two-card full affordability, current payer after control change, source tap, cost-before-result, countered ability no refund, stable frozen replacement subset, private hands, rollback, pending load and preaction replay."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind automatic singleton discard suspends competing destination replacements with no card or mana committed, retains one private server-selected reference across load/replay, then commits the modified discard exactly once before independent damage. Unselected hands remain private."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_exact_random_cost_cannot_pay_with_too_few_cards_despite_mana_and_other_hands",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind, Meteor Storm and Mage il-Vec use exact automatic random costs through real offered activations. Tests cover no user-selected refs/seed, one versus two-card full affordability, current payer after control change, source tap, cost-before-result, countered ability no refund, stable frozen replacement subset, private hands, rollback, pending load and preaction replay."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_actual_mage_control_change_pays_new_controller_hand_and_taps_before_damage",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind, Meteor Storm and Mage il-Vec use exact automatic random costs through real offered activations. Tests cover no user-selected refs/seed, one versus two-card full affordability, current payer after control change, source tap, cost-before-result, countered ability no refund, stable frozen replacement subset, private hands, rollback, pending load and preaction replay."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationCompilerTests.test_fixed_random_hand_costs_are_automatic_exact_resources_with_owned_capability",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind, Meteor Storm and Mage il-Vec use exact automatic random costs through real offered activations. Tests cover no user-selected refs/seed, one versus two-card full affordability, current payer after control change, source tap, cost-before-result, countered ability no refund, stable frozen replacement subset, private hands, rollback, pending load and preaction replay."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationCompilerTests.test_granted_and_mana_owners_cannot_drop_a_random_resource_cost",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind, Meteor Storm and Mage il-Vec use exact automatic random costs through real offered activations. Tests cover no user-selected refs/seed, one versus two-card full affordability, current payer after control change, source tap, cost-before-result, countered ability no refund, stable frozen replacement subset, private hands, rollback, pending load and preaction replay."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationCompilerTests.test_open_random_qualities_counts_and_other_object_costs_remain_residual",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind, Meteor Storm and Mage il-Vec use exact automatic random costs through real offered activations. Tests cover no user-selected refs/seed, one versus two-card full affordability, current payer after control change, source tap, cost-before-result, countered ability no refund, stable frozen replacement subset, private hands, rollback, pending load and preaction replay."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationCompilerTests.test_random_replacement_identity_cannot_claim_an_unselected_card",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind, Meteor Storm and Mage il-Vec use exact automatic random costs through real offered activations. Tests cover no user-selected refs/seed, one versus two-card full affordability, current payer after control change, source tap, cost-before-result, countered ability no refund, stable frozen replacement subset, private hands, rollback, pending load and preaction replay."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationCompilerTests.test_withdrawn_random_cost_capability_prevents_promotion",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind, Meteor Storm and Mage il-Vec use exact automatic random costs through real offered activations. Tests cover no user-selected refs/seed, one versus two-card full affordability, current payer after control change, source tap, cost-before-result, countered ability no refund, stable frozen replacement subset, private hands, rollback, pending load and preaction replay."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationCompilerTests.test_fixed_random_hand_costs_are_automatic_exact_resources_with_owned_capability",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind, Meteor Storm and Mage il-Vec use exact automatic random costs through real offered activations. Tests cover no user-selected refs/seed, one versus two-card full affordability, current payer after control change, source tap, cost-before-result, countered ability no refund, stable frozen replacement subset, private hands, rollback, pending load and preaction replay."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationCompilerTests.test_random_cost_payload_is_optional_strict_and_preserves_older_ability_bytes",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind, Meteor Storm and Mage il-Vec use exact automatic random costs through real offered activations. Tests cover no user-selected refs/seed, one versus two-card full affordability, current payer after control change, source tap, cost-before-result, countered ability no refund, stable frozen replacement subset, private hands, rollback, pending load and preaction replay."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_actual_meteor_two_card_random_cost_keeps_subset_across_replacement_load_and_replay",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind, Meteor Storm and Mage il-Vec use exact automatic random costs through real offered activations. Tests cover no user-selected refs/seed, one versus two-card full affordability, current payer after control change, source tap, cost-before-result, countered ability no refund, stable frozen replacement subset, private hands, rollback, pending load and preaction replay."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_actual_stormbind_pays_randomly_before_resolution_and_repeated_activations_have_distinct_keys",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind, Meteor Storm and Mage il-Vec use exact automatic random costs through real offered activations. Tests cover no user-selected refs/seed, one versus two-card full affordability, current payer after control change, source tap, cost-before-result, countered ability no refund, stable frozen replacement subset, private hands, rollback, pending load and preaction replay."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind automatic singleton discard suspends competing destination replacements with no card or mana committed, retains one private server-selected reference across load/replay, then commits the modified discard exactly once before independent damage. Unselected hands remain private."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_actual_mage_control_change_pays_new_controller_hand_and_taps_before_damage",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind, Meteor Storm and Mage il-Vec use exact automatic random costs through real offered activations. Tests cover no user-selected refs/seed, one versus two-card full affordability, current payer after control change, source tap, cost-before-result, countered ability no refund, stable frozen replacement subset, private hands, rollback, pending load and preaction replay."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_actual_meteor_two_card_random_cost_keeps_subset_across_replacement_load_and_replay",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind, Meteor Storm and Mage il-Vec use exact automatic random costs through real offered activations. Tests cover no user-selected refs/seed, one versus two-card full affordability, current payer after control change, source tap, cost-before-result, countered ability no refund, stable frozen replacement subset, private hands, rollback, pending load and preaction replay."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_actual_stormbind_pays_randomly_before_resolution_and_repeated_activations_have_distinct_keys",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind, Meteor Storm and Mage il-Vec use exact automatic random costs through real offered activations. Tests cover no user-selected refs/seed, one versus two-card full affordability, current payer after control change, source tap, cost-before-result, countered ability no refund, stable frozen replacement subset, private hands, rollback, pending load and preaction replay."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind automatic singleton discard suspends competing destination replacements with no card or mana committed, retains one private server-selected reference across load/replay, then commits the modified discard exactly once before independent damage. Unselected hands remain private."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_actual_mage_control_change_pays_new_controller_hand_and_taps_before_damage",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind, Meteor Storm and Mage il-Vec use exact automatic random costs through real offered activations. Tests cover no user-selected refs/seed, one versus two-card full affordability, current payer after control change, source tap, cost-before-result, countered ability no refund, stable frozen replacement subset, private hands, rollback, pending load and preaction replay."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_actual_stormbind_pays_randomly_before_resolution_and_repeated_activations_have_distinct_keys",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind, Meteor Storm and Mage il-Vec use exact automatic random costs through real offered activations. Tests cover no user-selected refs/seed, one versus two-card full affordability, current payer after control change, source tap, cost-before-result, countered ability no refund, stable frozen replacement subset, private hands, rollback, pending load and preaction replay."
+    },
+    {
+      "capability_id": "activation.random_discard.fixed",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_exact_random_cost_cannot_pay_with_too_few_cards_despite_mana_and_other_hands",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.11",
+        "400.7",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "616.1",
+        "701.9a",
+        "701.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind, Meteor Storm and Mage il-Vec use exact automatic random costs through real offered activations. Tests cover no user-selected refs/seed, one versus two-card full affordability, current payer after control change, source tap, cost-before-result, countered ability no refund, stable frozen replacement subset, private hands, rollback, pending load and preaction replay."
+    },
+    {
       "capability_id": "activation.restriction.attached",
       "evidence_class": "interaction",
       "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_attached_restraint_shares_layer_six_declaration_and_activation_queries",
@@ -4618,6 +5147,50 @@
     },
     {
       "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_actual_meteor_two_card_random_cost_keeps_subset_across_replacement_load_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The existing exact counted activation discard transaction commits a server-selected two-card random subset through competing destination replacements, with full rollback, private frozen identity, pending load and replay."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind automatic singleton discard suspends competing destination replacements with no card or mana committed, retains one private server-selected reference across load/replay, then commits the modified discard exactly once before independent damage. Unselected hands remain private."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_counted_activation_costs.CountedActivationActionTests.test_counted_sacrifice_replacements_suspend_whole_cost_load_and_resume_once",
       "official_rule_ids": [
@@ -5235,6 +5808,50 @@
     {
       "capability_id": "activation.selected_zone_change.fixed",
       "evidence_class": "positive",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_actual_meteor_two_card_random_cost_keeps_subset_across_replacement_load_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The existing exact counted activation discard transaction commits a server-selected two-card random subset through competing destination replacements, with full rollback, private frozen identity, pending load and replay."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind automatic singleton discard suspends competing destination replacements with no card or mana committed, retains one private server-selected reference across load/replay, then commits the modified discard exactly once before independent damage. Unselected hands remain private."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "positive",
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_fixed_mana_sacrifice_choice_retains_typed_cost_and_modes",
       "official_rule_ids": [
         "400.2",
@@ -5473,6 +6090,50 @@
         "commander_review"
       ],
       "applicability_note": "OriginalPhyrexianAltar iscast. Actualactivationselectsowncreatureas sacrificeand addsselectedblackmana immediatelywithoutstack. Foreignprincipal/foreignbody/wrongtype reject atomically; producedmanapaysactualEssenceHarvest, privateprojection andpending/fullreplay agree."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_actual_meteor_two_card_random_cost_keeps_subset_across_replacement_load_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The existing exact counted activation discard transaction commits a server-selected two-card random subset through competing destination replacements, with full rollback, private frozen identity, pending load and replay."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_discard_activation_costs.RandomDiscardActivationRuntimeTests.test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Stormbind automatic singleton discard suspends competing destination replacements with no card or mana committed, retains one private server-selected reference across load/replay, then commits the modified discard exactly once before independent damage. Unselected hands remain private."
     },
     {
       "capability_id": "activation.selected_zone_change.fixed",
@@ -147430,5 +148091,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "9ea968c8eb22b740803cc0ac149df44ee57d5d07cbc287455c6a3f610e16e54d"
+  "fingerprint": "a9fe6a25077c1aebfda90e4b4b1a0da6a69ebd64c2220ac550c6afce11ecb07b"
 }

@@ -135,6 +135,7 @@
     "tests/fixtures/query-power-toughness-definition-cards.json",
     "tests/fixtures/query-scaled-counter-cards.json",
     "tests/fixtures/rampage-cards.json",
+    "tests/fixtures/random-discard-activation-cards.json",
     "tests/fixtures/random-discard-cards.json",
     "tests/fixtures/read-ahead-saga-cards.json",
     "tests/fixtures/reflexive-payment-cards.json",

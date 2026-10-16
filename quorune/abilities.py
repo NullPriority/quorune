@@ -287,6 +287,7 @@ class ActivatedAbility:
     exile_source: bool = False
     life_payment: int = 0
     energy_payment: int = 0
+    random_discard_payment: int = 0
     loyalty_delta: int | None = None
     source_counter_removal_cost: SourceCounterRemovalCost | None = None
     choices: tuple[CostChoice, ...] = ()
@@ -378,6 +379,7 @@ class ActivatedAbility:
             )
         if self.power_up is not None:result['power_up']=self.power_up.to_dict()
         if self.fixed_mana_result is not None:result['fixed_mana_result']=self.fixed_mana_result.to_dict()
+        if self.random_discard_payment:result['random_discard_payment']=self.random_discard_payment
         return result
 
     @classmethod
@@ -405,6 +407,7 @@ class ActivatedAbility:
             exile_source=value["exile_source"],
             life_payment=value["life_payment"],
             energy_payment=value["energy_payment"],
+            random_discard_payment=value.get('random_discard_payment',0),
             loyalty_delta=value["loyalty_delta"],
             source_counter_removal_cost=(
                 None
@@ -452,7 +455,9 @@ class ActivatedAbility:
 
     @property
     def compiled_cost(self) -> bool:
-        return not self.complex_symbols and not self.uncompiled_costs
+        random_closed=not self.random_discard_payment or (self.zones==('battlefield',) and not self.mana_ability
+            and not (self.choices or self.discard_source or self.sacrifice_source or self.exile_source))
+        return not self.complex_symbols and not self.uncompiled_costs and random_closed
 
     def compact(self, *, source_ref: str, zone: str) -> dict[str, Any]:
         result: dict[str, Any] = {
@@ -480,6 +485,8 @@ class ActivatedAbility:
             result["life"] = self.life_payment
         if self.energy_payment:
             result["energy"] = self.energy_payment
+        if self.random_discard_payment:
+            result['random_discard']=self.random_discard_payment
         if self.loyalty_delta is not None:
             result["loyalty"] = self.loyalty_delta
         if self.source_counter_removal_cost is not None:
@@ -601,6 +608,7 @@ def _validate_ability_sequences_and_scalars(ability: ActivatedAbility) -> None:
     for field_name in (
         "life_payment",
         "energy_payment",
+        "random_discard_payment",
         "generic_reduction_per_legendary_creature",
     ):
         value = getattr(ability, field_name)
@@ -608,6 +616,8 @@ def _validate_ability_sequences_and_scalars(ability: ActivatedAbility) -> None:
             raise ValueError(
                 f"activated ability {field_name} must be nonnegative"
             )
+    if ability.random_discard_payment>4:
+        raise ValueError('Fixed random-discard activation costs support at most four cards')
 
 
 def _normalize_and_validate_ability_descriptors(
@@ -884,6 +894,7 @@ def _fixed_equip_keyword_ability(
         exile_source=cost.exile_source,
         life_payment=cost.life_payment,
         energy_payment=cost.energy_payment,
+        random_discard_payment=cost.random_discard_payment,
         loyalty_delta=cost.loyalty_delta,
         choices=cost.choices,
         uncompiled_costs=cost.uncompiled,
@@ -993,6 +1004,7 @@ class _ParsedCost:
     source_counter_removal_cost: SourceCounterRemovalCost | None
     choices: tuple[CostChoice, ...]
     uncompiled: tuple[str, ...]
+    random_discard_payment: int = 0
 
 
 def _fixed_activation_energy_payment(clause: str) -> int | None:
@@ -1001,12 +1013,20 @@ def _fixed_activation_energy_payment(clause: str) -> int | None:
     return _number(match['count']) if match['count'] is not None else len(parse_mana_symbols(match['symbols']))
 
 
+def _fixed_random_discard_payment(clause: str) -> int | None:
+    match=re.fullmatch(r'discard (?P<count>a|an|one|two|three|four|[1-4]) (?P<noun>cards?) at random',clause.strip(),re.I)
+    if match is None:return None
+    count=_number(match['count'])
+    return count if match['noun'].casefold()==('card' if count==1 else 'cards') else None
+
+
 def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
     requirements, raw_complex = mana_cost_to_vector(actual_cost)
     complex_symbols = [value for value in raw_complex if value not in {"T", "Q"}]
     flags = {"discard": False, "sacrifice": False, "exile": False}
     life_payment = 0
     energy_payment = 0
+    random_discard_payment = 0
     loyalty_delta: int | None = None
     source_counter_removal_cost: SourceCounterRemovalCost | None = None
     loyalty_clauses = 0
@@ -1039,6 +1059,11 @@ def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
             else:
                 energy_payment+=payment
                 complex_symbols=[value for value in complex_symbols if value!='E']
+            continue
+        random_count=_fixed_random_discard_payment(clause)
+        if random_count is not None:
+            if random_discard_payment:uncompiled.append(clause.strip())
+            else:random_discard_payment=random_count
             continue
         residue = re.sub(r"\{[^{}]+\}", "", clause).strip()
         if not residue:
@@ -1103,6 +1128,7 @@ def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
         exile_source=flags["exile"],
         life_payment=life_payment,
         energy_payment=energy_payment,
+        random_discard_payment=random_discard_payment,
         loyalty_delta=loyalty_delta,
         source_counter_removal_cost=source_counter_removal_cost,
         choices=tuple(choices),
@@ -1516,6 +1542,7 @@ def _parse_activated_line(
             exile_source=cost.exile_source,
             life_payment=cost.life_payment,
             energy_payment=cost.energy_payment,
+            random_discard_payment=cost.random_discard_payment,
             loyalty_delta=cost.loyalty_delta,
             source_counter_removal_cost=cost.source_counter_removal_cost,
             choices=cost.choices,

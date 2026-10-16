@@ -29,6 +29,8 @@ def activation_zone_change_cost_reference(
     cost_summary = response.get("cost_summary")
     if not isinstance(cost_summary, Mapping):
         return None
+    if 'random_discard' in cost_summary and any(field in cost_summary for field in ('choose_cost','discard_self','exile_self','sac_self')):
+        return None
     source_ref = response.get("source")
     source_flags = {
         field
@@ -67,6 +69,15 @@ def activation_zone_change_cost_reference(
         return object_ref
     if source_flags or type(source_ref) is not str or not source_ref:
         return None
+    if 'random_discard' in cost_summary:
+        refs=response.get('_random_discard_cost_refs')
+        payment_id=response.get('_mana_payment_id')
+        count=cost_summary['random_discard']
+        return object_ref if (origin=='hand' and destination=='graveyard'
+            and type(count) is int and 1<=count<=4 and type(payment_id) is str and payment_id
+            and isinstance(refs,(list,tuple)) and len(refs)==count
+            and all(type(ref) is str and ref for ref in refs) and len(set(refs))==count
+            and object_ref in refs) else None
 
     choices = cost_summary.get("choose_cost")
     raw_refs = response.get("cost_objects") or response.get("cost_cards")
@@ -116,6 +127,15 @@ def counted_activation_replacement_selections(response: Mapping[str, Any], objec
             selections.append(selection)
         else:
             raise ReplacementEffectError('Counted activation replacement selection is malformed')
+    if not sequence and len(object_refs)==1:
+        journal=response.get('_mana_replacement_selections',{})
+        if not isinstance(journal,Mapping):
+            raise ReplacementEffectError('Singleton activation replacement journal is malformed')
+        for event_id,values in journal.items():
+            if type(event_id) is not str or not event_id.startswith('zone.change:'):continue
+            if not event_id.endswith(':'+object_refs[0]) or not isinstance(values,(list,tuple)) or any(type(v) is not str or not v for v in values):
+                raise ReplacementEffectError('Singleton activation replacement identity is malformed')
+            selections.extend(values)
     return tuple(selections)
 
 
