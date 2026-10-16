@@ -806,6 +806,23 @@ workflow. Architectural rationale remains in
 [ADR 0011](../adr/0011-counter-placement-event-and-mutation-owner.md), and
 [ADR 0008](../adr/0008-runtime-trust-and-governance-hardening.md).
 
+### Qualified copy-entry choices
+
+Intrinsic copy entry keeps its historical schema-1 selection contract. A
+schema-2 descriptor adds closed public Equipment, nonland, fixed current-power
+and entered-this-turn predicates through the same replacement owner. The
+prospective entry controller supplies any relative controller relation. These
+choices do not target, so Hexproof and Shroud do not remove eligible choices.
+
+Eligibility reads current characteristics and the current incarnation's public
+entry history. The selected copy then retains separate copiable values,
+excluding temporary stat changes, counters, attachment state and unrelated
+effects. Typed copied programs and entry replacements keep their existing
+ownership. Cascade may put a permanent onto the battlefield in time to become
+an eligible copy source, including during another player's turn. Hidden-zone,
+unknown-exception and unrepresented recursive copy forms remain outside this
+contract.
+
 ### Conditional queried declaration grants
 
 `compiler/conditional_declaration_grants.py` composes an independently closed

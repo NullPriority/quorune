@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 329,
+  "registry_version": 330,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -3331,7 +3331,7 @@
     },
     {
       "id": "zone.entry.fixed_copy",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "614.12",
         "614.12a",
@@ -3340,7 +3340,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -3353,7 +3357,8 @@
           "one complete intrinsic copy entry descriptor",
           "prospective controller",
           "current public matching permanents",
-          "typed copiable values and retained source program provenance"
+          "typed copiable values and retained source program provenance",
+          "Schema-2 Equipment, nonland, fixed current creature-power minimum or current-turn entry predicate; eligibility stays distinct from copiable values and does not target"
         ],
         "outputs": [
           "copy replacement before ordinary entry replacements",
@@ -3378,7 +3383,10 @@
         "quorune.entry_results.commit_prepared_entry_results",
         "quorune.entry_copy.copiable_oracle_id",
         "quorune.copied_aura_entry.prepare_copied_aura_entry_choice",
-        "quorune.entry_copy.restore_prepared_copy_entry"
+        "quorune.entry_copy.restore_prepared_copy_entry",
+        "quorune.entry_copy.EntryCopySpec",
+        "quorune.compiler.entry_copy_templates._qualified_copy_query",
+        "quorune.semantic_runtime.entry_copy.entry_copy_handler"
       ],
       "positive_tests": [
         "test_intrinsic_copy_entry_has_an_independent_source_spanned_replacement_owner",
@@ -3386,13 +3394,21 @@
         "test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
         "test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
         "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
-        "test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation"
+        "test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation",
+        "test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
+        "test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death",
+        "test_actual_frostkite_eligibility_uses_current_power_but_copy_keeps_base_values",
+        "test_actual_protege_cascade_permanent_qualifies_and_copied_mana_ability_works",
+        "test_qualified_copy_originals_bind_and_dependencies_fail_closed"
       ],
       "negative_tests": [
         "test_entry_copy_contract_rejects_hidden_targets_open_tails_and_malformed_values",
         "test_registered_entry_copy_handler_rejects_open_fields_and_has_no_mutation_context",
         "test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
-        "test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values"
+        "test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
+        "test_qualified_copy_schema_rejects_hidden_mixed_and_unrepresented_queries",
+        "test_qualified_copy_compiler_keeps_unknown_siblings_and_selectors_residual",
+        "test_qualified_copy_originals_bind_and_dependencies_fail_closed"
       ],
       "interaction_tests": [
         "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
@@ -3401,14 +3417,20 @@
         "test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
         "test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
         "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
-        "test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation"
+        "test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation",
+        "test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
+        "test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death",
+        "test_actual_frostkite_eligibility_uses_current_power_but_copy_keeps_base_values",
+        "test_actual_protege_cascade_permanent_qualifies_and_copied_mana_ability_works"
       ],
       "multiplayer_tests": [
         "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
-        "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry"
+        "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
+        "test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy"
       ],
       "privacy_tests": [
-        "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay"
+        "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+        "test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy"
       ],
       "replay_tests": [
         "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
@@ -3417,7 +3439,11 @@
         "test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
         "test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
         "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
-        "test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation"
+        "test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation",
+        "test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
+        "test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death",
+        "test_actual_frostkite_eligibility_uses_current_power_but_copy_keeps_base_values",
+        "test_actual_protege_cascade_permanent_qualifies_and_copied_mana_ability_works"
       ],
       "required_evidence": [
         "positive",
@@ -3430,7 +3456,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The current registry mutation keeps the exact copy-entry descriptor residual when its precise capability is unavailable.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "The producer omission removes the actual original Clone replacement and is detected by the pre-cast real action witness.",
+      "implementation_mutation_rationale": "The producer omission removes the actual original Clone replacement and is detected by the pre-cast real action witness. Omitting the shared selection predicate admits an ineligible actual artifact into Masterwork choices and is detected by its native witness.",
       "blockers": [],
       "status": "trusted"
     },

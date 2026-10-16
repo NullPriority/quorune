@@ -525,6 +525,602 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "35d458fb-dfdb-41e4-92e3-f0fd392e1c69",
+      "name": "Masterwork of Ingenuity",
+      "mana_cost": "{1}",
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "You may have this Equipment enter as a copy of any Equipment on the battlefield.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2021-07-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "faces": [],
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "d4ec0df9-a4a3-48cf-a0aa-b1aea5c49142",
+      "name": "Clever Impersonator",
+      "mana_cost": "{2}{U}{U}",
+      "type_line": "Creature — Shapeshifter",
+      "oracle_text": "You may have this creature enter as a copy of any nonland permanent on the battlefield.",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2019-08-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "faces": [],
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "96d7b761-b0b2-4ba3-98bd-3a9191ba544e",
+      "name": "Deceptive Frostkite",
+      "mana_cost": "{U}{U}",
+      "type_line": "Creature — Dragon",
+      "oracle_text": "Flying\nYou may have this creature enter as a copy of a creature you control with power 4 or greater, except it's a Dragon in addition to its other types and it has flying.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "cf127842-5fb1-44df-8d91-8cc0f48c559a",
+      "name": "Sakashima's Protege",
+      "mana_cost": "{4}{U}{U}",
+      "type_line": "Creature — Shapeshifter",
+      "oracle_text": "Flash\nCascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)\nYou may have this creature enter as a copy of any permanent that entered this turn.",
+      "power": "3",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2020-11-20",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flash",
+        "Cascade"
+      ],
+      "produced_mana": [],
+      "faces": [],
+      "cmc": 6.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Echo Circlet",
+      "oracle_id": "17134950-fdb3-48d0-b541-419db673f4c9",
+      "oracle_text": "Equipped creature can block an additional creature each combat.\nEquip {1}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2010-10-01",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "oracle_id": "5748ebf1-24e3-499d-ab7c-c2cebd462a24",
+      "name": "Giant Growth",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f64878c1-1fba-44f7-a24f-d24bef2e03ae",
+      "name": "Slippery Bogle",
+      "mana_cost": "{G/U}",
+      "type_line": "Creature — Beast",
+      "oracle_text": "Hexproof (This creature can't be the target of spells or abilities your opponents control.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2018-12-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [
+        "Hexproof"
+      ],
+      "produced_mana": [],
+      "faces": [],
+      "cmc": 1.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "35d458fb-dfdb-41e4-92e3-f0fd392e1c69",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "Masterwork of Ingenuity enters the battlefield unattached. It doesn't enter attached to the same creature as the Equipment it copies."
+    },
+    {
+      "oracle_id": "d4ec0df9-a4a3-48cf-a0aa-b1aea5c49142",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "If the chosen permanent is a token, Clever Impersonator copies the original characteristics of that token as defined by the effect that put that token onto the battlefield. Clever Impersonator is not a token."
+    },
+    {
+      "oracle_id": "d4ec0df9-a4a3-48cf-a0aa-b1aea5c49142",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "You can choose not to copy anything. In that case, Clever Impersonator enters the battlefield as a 0/0 creature, and it's put into the graveyard immediately (unless something is raising its toughness above 0)."
+    },
+    {
+      "oracle_id": "d4ec0df9-a4a3-48cf-a0aa-b1aea5c49142",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "If Clever Impersonator enters the battlefield at the same time as another permanent, it can't become a copy of that permanent. You may choose only a nonland permanent that's already on the battlefield."
+    },
+    {
+      "oracle_id": "d4ec0df9-a4a3-48cf-a0aa-b1aea5c49142",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Remember that if you control more than one legendary permanent with the same name, you'll choose one to remain on the battlefield and put the rest into their owner's graveyard."
+    },
+    {
+      "oracle_id": "d4ec0df9-a4a3-48cf-a0aa-b1aea5c49142",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "If the chosen permanent is a copy of something else (for example, if the chosen permanent is another Clever Impersonator), then your Clever Impersonator enters the battlefield as whatever the chosen permanent copied."
+    },
+    {
+      "oracle_id": "d4ec0df9-a4a3-48cf-a0aa-b1aea5c49142",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the chosen permanent will trigger when Clever Impersonator enters the battlefield. Any \"as [this permanent] enters the battlefield\" or \"[this permanent] enters the battlefield with\" abilities of the chosen permanent will also work."
+    },
+    {
+      "oracle_id": "d4ec0df9-a4a3-48cf-a0aa-b1aea5c49142",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "You choose which nonland permanent Clever Impersonator will copy, if any, as it enters the battlefield. This doesn't target that nonland permanent."
+    },
+    {
+      "oracle_id": "d4ec0df9-a4a3-48cf-a0aa-b1aea5c49142",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "If the chosen permanent has {X} in its mana cost, X is considered to be 0."
+    },
+    {
+      "oracle_id": "d4ec0df9-a4a3-48cf-a0aa-b1aea5c49142",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "If Clever Impersonator enters the battlefield as a copy of a planeswalker, it will enter the battlefield with a number of loyalty counters on it equal to the loyalty printed in the lower right corner of the planeswalker card. It won't copy the number of loyalty counters on the original planeswalker."
+    },
+    {
+      "oracle_id": "d4ec0df9-a4a3-48cf-a0aa-b1aea5c49142",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Clever Impersonator copies exactly what is printed on the chosen permanent (unless that permanent is copying something else or is a token; see below). It doesn't copy whether that permanent is tapped or untapped, whether that permanent has any counters on it or any Auras and/or Equipment attached to it, and it doesn't copy any non-copy effects that have changed that permanent's power, toughness, types, color, abilities, or so on."
+    },
+    {
+      "oracle_id": "96d7b761-b0b2-4ba3-98bd-3a9191ba544e",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "Any enters abilities of the copied creature will trigger when Deceptive Frostkite enters. Any “as [this creature] enters” or “[this creature] enters with” abilities of the copied permanent will also work."
+    },
+    {
+      "oracle_id": "96d7b761-b0b2-4ba3-98bd-3a9191ba544e",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "Deceptive Frostkite copies exactly what was printed on the original creature and nothing else, with the listed exceptions (unless that creature is copying something else or is a token; see below). It doesn’t copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, or so on."
+    },
+    {
+      "oracle_id": "96d7b761-b0b2-4ba3-98bd-3a9191ba544e",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "If the copied creature is copying something else, then Deceptive Frostkite enters as whatever that creature copied, with the listed exceptions."
+    },
+    {
+      "oracle_id": "96d7b761-b0b2-4ba3-98bd-3a9191ba544e",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "If the copied creature is a token, Deceptive Frostkite copies the original characteristics of that token as stated by the effect that created the token, with the listed exceptions."
+    },
+    {
+      "oracle_id": "96d7b761-b0b2-4ba3-98bd-3a9191ba544e",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "If the copied creature has {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "96d7b761-b0b2-4ba3-98bd-3a9191ba544e",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "You can choose not to have Deceptive Frostkite enter as a copy of another creature. If you do, it will just be a 1/1 Dragon with flying."
+    },
+    {
+      "oracle_id": "cf127842-5fb1-44df-8d91-8cc0f48c559a",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If the chosen permanent is a token, Sakashima's Protege copies the original characteristics of that token as stated by the effect that put that token onto the battlefield. Sakashima's Protege doesn't become a token in this case."
+    },
+    {
+      "oracle_id": "cf127842-5fb1-44df-8d91-8cc0f48c559a",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Sakashima's Protege copies exactly what was printed on the original permanent (unless that permanent is copying something else or is a token; see below). It doesn't copy whether that permanent is tapped or untapped, whether it has any counters on it or any Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, or so on."
+    },
+    {
+      "oracle_id": "cf127842-5fb1-44df-8d91-8cc0f48c559a",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If you cast a permanent spell using the cascade ability of Sakashima's Protege, that permanent will be on the battlefield in time to be copied by Sakashima's Protege."
+    },
+    {
+      "oracle_id": "cf127842-5fb1-44df-8d91-8cc0f48c559a",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If the chosen permanent is copying something else (for example, if the chosen permanent is another Sakashima's Protege), then Sakashima's Protege enters the battlefield as whatever the chosen permanent copied."
+    },
+    {
+      "oracle_id": "cf127842-5fb1-44df-8d91-8cc0f48c559a",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If Sakashima's Protege enters the battlefield as a copy of a planeswalker, it will enter with a number of loyalty counters on it equal to the loyalty printed in the lower right corner of the planeswalker. It won't copy the number of counters currently on that planeswalker."
+    },
+    {
+      "oracle_id": "cf127842-5fb1-44df-8d91-8cc0f48c559a",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied permanent will trigger when Sakashima's Protege enters the battlefield. Any \"as [this permanent] enters the battlefield\" or \"[this permanent] enters the battlefield with\" abilities of the chosen permanent will also work."
+    },
+    {
+      "oracle_id": "cf127842-5fb1-44df-8d91-8cc0f48c559a",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If Sakashima's Protege somehow enters the battlefield at the same time as another creature, it can't become a copy of that creature. You may choose only a creature that's already on the battlefield and entered the battlefield this turn."
+    },
+    {
+      "oracle_id": "cf127842-5fb1-44df-8d91-8cc0f48c559a",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Cascade triggers when you cast the spell, meaning that it resolves before that spell. If you end up casting the exiled card, it will go on the stack above the spell with cascade."
+    },
+    {
+      "oracle_id": "cf127842-5fb1-44df-8d91-8cc0f48c559a",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "cf127842-5fb1-44df-8d91-8cc0f48c559a",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "cf127842-5fb1-44df-8d91-8cc0f48c559a",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If cascade allows you to cast a split card, you may cast either half but not both halves."
+    },
+    {
+      "oracle_id": "cf127842-5fb1-44df-8d91-8cc0f48c559a",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If you cast a card \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, you must pay those to cast the card."
+    },
+    {
+      "oracle_id": "cf127842-5fb1-44df-8d91-8cc0f48c559a",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If a spell with cascade is countered, the cascade ability will still resolve normally."
+    },
+    {
+      "oracle_id": "cf127842-5fb1-44df-8d91-8cc0f48c559a",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Due to a 2021 rules change to cascade, not only do you stop exiling cards if you exile a nonland card with lesser mana value than the spell with cascade, but the resulting spell you cast must also have lesser mana value. Previously, in cases where a card's mana value differed from the resulting spell, such as with some modal double-faced cards or cards with an Adventure, you could cast a spell with a higher mana value than the exiled card."
+    },
+    {
+      "oracle_id": "cf127842-5fb1-44df-8d91-8cc0f48c559a",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "When the cascade ability resolves, you must exile cards. The only optional part of the ability is whether or not you cast the last card exiled."
+    },
+    {
+      "oracle_id": "cf127842-5fb1-44df-8d91-8cc0f48c559a",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "17134950-fdb3-48d0-b541-419db673f4c9",
+      "published_at": "2011-01-01",
+      "source": "wotc",
+      "comment": "Echo Circlet’s effect is cumulative. If it equips a creature that can already block an additional creature, now it can block three creatures. The same is true if two Echo Circlets equip the same creature, for example."
+    },
+    {
+      "oracle_id": "17134950-fdb3-48d0-b541-419db673f4c9",
+      "published_at": "2011-01-01",
+      "source": "wotc",
+      "comment": "Destroying or unequipping the Echo Circlet after blockers have been declared will not undo any blocks made by the equipped creature."
     }
   ]
 }

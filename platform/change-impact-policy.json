@@ -2410,7 +2410,12 @@
         "quorune/carddb_characteristics.py",
         "quorune/record_trust.py",
         "quorune/stack_resolution.py",
-        "tests/fixtures/entry-copy-cards.json"
+        "tests/fixtures/entry-copy-cards.json",
+        "quorune/semantic_runtime/zone_replacements.py",
+        "quorune/object_query.py",
+        "quorune/object_predicate.py",
+        "quorune/target_numeric.py",
+        "quorune/zone_object_state.py"
       ],
       "test_modules": [
         "test_copy_objects",
@@ -2420,7 +2425,9 @@
         "test_persist_undying_rules",
         "test_fixed_token_creation_effects",
         "test_card_program_trust",
-        "test_game_record_v3"
+        "test_game_record_v3",
+        "test_cascade_rules",
+        "test_hexproof_targeting"
       ]
     },
     {

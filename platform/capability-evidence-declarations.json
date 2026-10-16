@@ -102795,7 +102795,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -102816,7 +102820,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -102837,7 +102845,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -102858,7 +102870,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -102879,7 +102895,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -102900,7 +102920,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -102921,7 +102945,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -102929,6 +102957,106 @@
         "commander_review"
       ],
       "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_frostkite_eligibility_uses_current_power_but_copy_keeps_base_values",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_protege_cascade_permanent_qualifies_and_copied_mana_ability_works",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
     },
     {
       "capability_id": "zone.entry.fixed_copy",
@@ -102942,7 +103070,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -102963,7 +103095,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -102971,6 +103107,31 @@
         "commander_review"
       ],
       "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
     },
     {
       "capability_id": "zone.entry.fixed_copy",
@@ -102984,7 +103145,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -102992,6 +103157,31 @@
         "commander_review"
       ],
       "applicability_note": "Original Clone actual cast, intrinsic copy choice, retained physical identity, copiable-only values, copied ETB controller, authorized replacement principal, privacy and pre-cast replay use one canonical entry/copy transaction."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_qualified_copy_predicate_omission_is_killed_by_actual_equipment_choices",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
     },
     {
       "capability_id": "zone.entry.fixed_copy",
@@ -103005,7 +103195,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -103026,7 +103220,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -103047,7 +103245,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -103068,7 +103270,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -103076,6 +103282,81 @@
         "commander_review"
       ],
       "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorContractTests.test_qualified_copy_compiler_keeps_unknown_siblings_and_selectors_residual",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorContractTests.test_qualified_copy_originals_bind_and_dependencies_fail_closed",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorContractTests.test_qualified_copy_schema_rejects_hidden_mixed_and_unrepresented_queries",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
     },
     {
       "capability_id": "zone.entry.fixed_copy",
@@ -103089,7 +103370,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -103110,7 +103395,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -103131,7 +103420,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -103152,7 +103445,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -103173,7 +103470,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -103194,7 +103495,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -103202,6 +103507,131 @@
         "commander_review"
       ],
       "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorContractTests.test_qualified_copy_originals_bind_and_dependencies_fail_closed",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_frostkite_eligibility_uses_current_power_but_copy_keeps_base_values",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_protege_cascade_permanent_qualifies_and_copied_mana_ability_works",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
     },
     {
       "capability_id": "zone.entry.fixed_copy",
@@ -103215,7 +103645,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -103223,6 +103657,56 @@
         "commander_review"
       ],
       "applicability_note": "Original Clone actual cast, intrinsic copy choice, retained physical identity, copiable-only values, copied ETB controller, authorized replacement principal, privacy and pre-cast replay use one canonical entry/copy transaction."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "property",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorContractTests.test_qualified_copy_queries_round_trip_and_preserve_legacy_schema",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
     },
     {
       "capability_id": "zone.entry.fixed_copy",
@@ -103236,7 +103720,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -103257,7 +103745,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -103278,7 +103770,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -103299,7 +103795,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -103320,7 +103820,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -103341,7 +103845,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -103362,7 +103870,11 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -103370,6 +103882,156 @@
         "commander_review"
       ],
       "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_frostkite_eligibility_uses_current_power_but_copy_keeps_base_values",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_protege_cascade_permanent_qualifies_and_copied_mana_ability_works",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
     },
     {
       "capability_id": "zone.entry.public_designation",

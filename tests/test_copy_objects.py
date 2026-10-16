@@ -848,5 +848,295 @@ class CopyObjectLifecycleTests(unittest.TestCase):
         self.assertTrue(replay["ok"], replay)
 
 
+class EntryCopySelectorRuntimeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+
+    @classmethod
+    def setUpClass(cls):
+        EntryCopyRuntimeTests.setUpClass.__func__(cls)
+
+    @classmethod
+    def tearDownClass(cls):
+        EntryCopyRuntimeTests.tearDownClass.__func__(cls)
+
+    session = EntryCopyRuntimeTests.session
+    add = EntryCopyRuntimeTests.add
+    ready = EntryCopyRuntimeTests.ready
+    checkpoint = EntryCopyRuntimeTests.checkpoint
+    resolve = EntryCopyRuntimeTests.resolve
+    replay = EntryCopyRuntimeTests.replay
+
+    def assert_original_closed(self, name):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
+        program = compile_best_available_card_program(self.db, self.db.lookup(name),
+            semantic_registry=SemanticRegistry(), capability_registry=self.registry,
+            capability_profile='commander_review')
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'], name + ': ' + binding['trust_basis'])
+
+    def test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy(self):
+        import json
+        from quorune.record import authoritative_state_hash
+        from quorune.rules.block_capacity import current_block_capacity
+        self.assert_original_closed('Masterwork of Ingenuity')
+        session = self.session(524001)
+        engine = session.engine
+        source = self.add(engine, 'Masterwork of Ingenuity', zone='hand')
+        equipment = self.add(engine, 'Echo Circlet', seat='B', ref='selected-equipment')
+        enemy_body = self.add(engine, 'Generic Bound Body', seat='B', ref='enemy-equipped-body')
+        equipment.attached_to = enemy_body.object_id
+        body = self.add(engine, 'Generic Bound Body', ref='copier-equip-recipient')
+        other = self.add(engine, 'Sol Ring', seat='B', ref='ineligible-mana-artifact')
+        private = self.add(engine, 'Generic Bound Body', seat='C', zone='hand', ref='copy-private-hand')
+        action = self.ready(session, source, {'C': 2})
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual('replacement.order', self.resolve(session).kind)
+        session = self.replay(session, load=True)
+        engine = session.engine
+        options = session.packet('pilot:A', full=True)['decision']['ctx']['options']
+        choice = next(row for row in options if equipment.ref in row['id'] and not row['id'].startswith('decline:'))
+        self.assertFalse(any(other.ref in row['id'] for row in options))
+        for principal, replacement in (('pilot:B', choice['id']),
+                ('pilot:A', choice['id'].replace(equipment.ref, other.ref))):
+            before = authoritative_state_hash(engine.state)
+            rejected = session.act(principal, {'action_id': 'choose', 'replacement': replacement})
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(engine.state))
+        accepted = session.act('pilot:A', {'action_id': 'choose', 'replacement': choice['id']})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        current = engine.state.cards[source.object_id]
+        self.assertEqual(source.oracle_id, current.oracle_id)
+        self.assertEqual('Echo Circlet', engine.display_name(current.object_id))
+        self.assertIsNone(current.attached_to)
+        self.assertEqual(enemy_body.object_id, engine.state.cards[equipment.object_id].attached_to)
+        while session.pending_principals()[0] != 'pilot:A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        equip = next(row for row in actions if row['id'].startswith('activate:' + current.ref + ':'))
+        accepted = session.act('pilot:A', {'action_id': equip['id'], 'targets': [body.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual(body.object_id, engine.state.cards[current.object_id].attached_to)
+        self.assertEqual(2, current_block_capacity(engine, engine.state.cards[body.object_id], eligible_attackers=3))
+        self.assertNotIn(private.ref, json.dumps(session.packet('pilot:D', full=True)))
+        self.assertIn(private.ref, json.dumps(session.packet('pilot:C', full=True)))
+        self.replay(session, load=True)
+
+
+    def test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death(self):
+        from quorune.record import authoritative_state_hash
+        self.assert_original_closed('Clever Impersonator')
+        for decline in (False, True):
+            with self.subTest(decline=decline):
+                session = self.session(524002 + decline)
+                engine = session.engine
+                source = self.add(engine, 'Clever Impersonator', zone='hand')
+                chosen = self.add(engine, 'Slippery Bogle', seat='B', ref='opposing-hexproof-copy')
+                land = self.add(engine, 'Generic Bound Plains', ref='excluded-copy-land')
+                action = self.ready(session, source, {'U': 2, 'C': 2})
+                self.checkpoint(session)
+                self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'}).ok)
+                self.assertEqual('replacement.order', self.resolve(session).kind)
+                session = self.replay(session, load=True)
+                engine = session.engine
+                options = session.packet('pilot:A', full=True)['decision']['ctx']['options']
+                copy = next(row for row in options if chosen.ref in row['id'] and not row['id'].startswith('decline:'))
+                self.assertFalse(any(land.ref in row['id'] for row in options))
+                before = authoritative_state_hash(engine.state)
+                self.assertFalse(session.act('pilot:A', {'action_id': 'choose', 'replacement': copy['id'].replace(chosen.ref, land.ref)}).ok)
+                self.assertEqual(before, authoritative_state_hash(engine.state))
+                selected = next(row for row in options if row['id'].startswith('decline:')) if decline else copy
+                self.assertTrue(session.act('pilot:A', {'action_id': 'choose', 'replacement': selected['id']}).ok)
+                self.resolve(session)
+                current = engine.state.cards[source.object_id]
+                self.assertEqual('graveyard' if decline else 'battlefield', current.zone)
+                if not decline:
+                    self.assertEqual('A', current.controller)
+                    self.assertIn('hexproof', engine._combat_keywords(current))
+                    self.assertEqual((1, 1), (engine._numeric_stat(current.object_id, 'power'), engine._numeric_stat(current.object_id, 'toughness')))
+                self.assertEqual(40, engine.state.players['A'].life)
+                self.assertEqual(40, engine.state.players['B'].life)
+                self.replay(session, load=True)
+
+    def test_actual_frostkite_eligibility_uses_current_power_but_copy_keeps_base_values(self):
+        self.assert_original_closed('Deceptive Frostkite')
+        session = self.session(524004)
+        engine = session.engine
+        source = self.add(engine, 'Deceptive Frostkite', zone='hand')
+        growth = self.add(engine, 'Giant Growth', zone='hand')
+        chosen = self.add(engine, 'Grizzly Bears', ref='grown-copy-source')
+        low = self.add(engine, 'Generic Bound Body', ref='below-copy-threshold')
+        enemy = self.add(engine, 'Hill Giant', seat='B', ref='foreign-high-power')
+        enemy.counters['+1/+1'] = 2
+        action = self.ready(session, growth, {'G': 1, 'U': 2})
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [chosen.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual(5, engine._numeric_stat(chosen.object_id, 'power'))
+        while session.pending_principals()[0] != 'pilot:A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        cast = next(row for row in actions if row.get('card') == source.ref and row['id'].startswith('cast:'))
+        accepted = session.act('pilot:A', {'action_id': cast['id'], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual('replacement.order', self.resolve(session).kind)
+        session = self.replay(session, load=True)
+        engine = session.engine
+        options = session.packet('pilot:A', full=True)['decision']['ctx']['options']
+        self.assertFalse(any(low.ref in row['id'] or enemy.ref in row['id'] for row in options))
+        choice = next(row for row in options if chosen.ref in row['id'] and not row['id'].startswith('decline:'))
+        self.assertTrue(session.act('pilot:A', {'action_id': 'choose', 'replacement': choice['id']}).ok)
+        self.resolve(session)
+        current = engine.state.cards[source.object_id]
+        self.assertEqual((2, 2), (engine._numeric_stat(current.object_id, 'power'), engine._numeric_stat(current.object_id, 'toughness')))
+        self.assertIn('dragon', engine._type_parts(engine._effective_card_data(current)['type_line'])[1])
+        self.assertIn('flying', engine._combat_keywords(current))
+        self.assertEqual(5, engine._numeric_stat(chosen.object_id, 'power'))
+        self.replay(session, load=True)
+
+    def test_actual_protege_cascade_permanent_qualifies_and_copied_mana_ability_works(self):
+        self.assert_original_closed("Sakashima's Protege")
+        session = self.session(524005)
+        engine = session.engine
+        source = self.add(engine, "Sakashima's Protege", zone='hand')
+        candidate = self.add(engine, 'Sol Ring', zone='library', ref='cascade-fresh-copy-source')
+        old = self.add(engine, 'Hill Giant', seat='B', ref='older-copy-source')
+        engine.move_card(candidate.object_id, 'library', position='top', log=False)
+        action = self.ready(session, source, {'U': 2, 'C': 4})
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.active_player = 'B'
+        engine._grant_priority('A')
+        engine.pump()
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        action = next(row for row in actions if row.get('card') == source.ref and row['id'].startswith('cast:'))
+        self.assertGreater(engine.state.turn_sequence, 0)
+        self.assertNotEqual(engine.state.turn_sequence, old.entered_battlefield_turn_sequence)
+        self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'}).ok)
+        self.assertEqual('selection.exile_cast', self.resolve(session).kind)
+        session = self.replay(session, load=True)
+        self.assertTrue(session.act('pilot:A', {'action_id': 'cast'}).ok)
+        self.assertEqual('replacement.order', self.resolve(session).kind)
+        engine = session.engine
+        self.assertEqual('battlefield', engine.state.cards[candidate.object_id].zone)
+        options = session.packet('pilot:A', full=True)['decision']['ctx']['options']
+        self.assertFalse(any(old.ref in row['id'] for row in options))
+        choice = next(row for row in options if candidate.ref in row['id'] and not row['id'].startswith('decline:'))
+        self.assertTrue(session.act('pilot:A', {'action_id': 'choose', 'replacement': choice['id']}).ok)
+        self.resolve(session)
+        current = engine.state.cards[source.object_id]
+        self.assertEqual(source.oracle_id, current.oracle_id)
+        self.assertEqual('Sol Ring', engine.display_name(current.object_id))
+        while session.pending_principals()[0] != 'pilot:A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        activate = next(row for row in actions if row['id'].startswith('activate:' + current.ref + ':'))
+        before = engine.state.players['A'].mana_pool.get('C', 0)
+        self.assertTrue(session.act('pilot:A', {'action_id': activate['id'], 'pay': 'auto'}).ok)
+        self.assertEqual(before + 2, engine.state.players['A'].mana_pool.get('C', 0))
+        self.assertTrue(current.tapped)
+        self.assertEqual('B', engine.state.active_player)
+        self.replay(session, load=True)
+
+    def test_qualified_copy_predicate_omission_is_killed_by_actual_equipment_choices(self):
+        from unittest.mock import patch
+        with patch('quorune.semantic_runtime.entry_copy.object_matches_query', return_value=True):
+            with self.assertRaises(AssertionError):
+                self.test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy()
+
+
+class EntryCopySelectorContractTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        EntryCopyRuntimeTests.setUpClass.__func__(cls)
+
+    @classmethod
+    def tearDownClass(cls):
+        EntryCopyRuntimeTests.tearDownClass.__func__(cls)
+
+    def test_qualified_copy_originals_bind_and_dependencies_fail_closed(self):
+        from copy import deepcopy
+        import json
+        from common import ROOT
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry
+        from unittest.mock import patch
+        for name in ('Masterwork of Ingenuity', 'Clever Impersonator', 'Deceptive Frostkite', "Sakashima's Protege"):
+            with self.subTest(name=name):
+                EntryCopySelectorRuntimeTests.assert_original_closed(self, name)
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        card = self.db.lookup('Clever Impersonator')
+        for missing in (None, 'zone.entry.fixed_copy', 'state_query.permanent.public_state_predicate'):
+            changed = deepcopy(raw)
+            if missing is not None:
+                next(row for row in changed['capabilities'] if row['id'] == missing).update(
+                    status='blocked', blockers=['controlled negative dependency fixture'])
+            registry = CapabilityRegistry(changed)
+            registry.mark_evidence_verified('0' * 64)
+            status = compile_oracle_card(card, capability_registry=registry).status
+            with self.subTest(missing=missing):
+                self.assertEqual('exact', status) if missing is None else self.assertNotEqual('exact', status)
+        with patch('quorune.compiler.entry_copy_templates.entry_copy_spec', return_value=None):
+            self.assertNotEqual('exact', compile_oracle_card(card, capability_registry=self.registry).status)
+
+    def test_qualified_copy_queries_round_trip_and_preserve_legacy_schema(self):
+        from dataclasses import replace
+        from quorune.compiler.entry_copy_templates import entry_copy_spec
+        from quorune.entry_copy import EntryCopySpec
+        from quorune.semantic_runtime.entry_copy import entry_copy_handler
+        texts = (
+            'You may have this Equipment enter as a copy of any Equipment on the battlefield.',
+            'You may have this creature enter as a copy of any nonland permanent on the battlefield.',
+            'You may have this creature enter as a copy of a creature you control with power 4 or greater.',
+            'You may have this creature enter as a copy of any permanent that entered this turn.')
+        for text in texts:
+            with self.subTest(text=text):
+                spec = entry_copy_spec(text, source_name='Generic copy source')
+                self.assertEqual(2, spec.schema_version)
+                self.assertEqual(spec, EntryCopySpec.from_dict(spec.to_dict()))
+                descriptor = {'handler_id': entry_copy_handler(2).handler_id, 'schema_version': 2,
+                    'event': 'zone.change', 'copy': spec.to_dict()}
+                self.assertEqual(spec, entry_copy_handler(2).validate(descriptor))
+                with self.assertRaises(ValueError):
+                    replace(spec, schema_version=1)
+                with self.assertRaises(ValueError):
+                    entry_copy_handler(1).validate(descriptor)
+        legacy = entry_copy_spec('You may have this creature enter as a copy of any creature on the battlefield.', source_name='Generic')
+        self.assertEqual(1, legacy.schema_version)
+
+    def test_qualified_copy_schema_rejects_hidden_mixed_and_unrepresented_queries(self):
+        from dataclasses import replace
+        from quorune.compiler.entry_copy_templates import entry_copy_spec
+        from quorune.object_predicate import PermanentStatePredicateSpec
+        from quorune.target_numeric import TargetNumericCharacteristicSpec, TargetNumericCharacteristic, TargetNumericComparison
+        spec = entry_copy_spec('You may have this creature enter as a copy of any nonland permanent on the battlefield.', source_name='Generic')
+        for change in ({'zones': ('graveyard',)}, {'known_to_actor': False},
+                {'excluded_types': ('creature',)},
+                {'state_predicate': PermanentStatePredicateSpec(entered_this_turn=True)},
+                {'numeric_characteristic': TargetNumericCharacteristicSpec(
+                    TargetNumericCharacteristic.POWER_OR_TOUGHNESS, TargetNumericComparison.AT_LEAST, 4)}):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                replace(spec, selection=replace(spec.selection, **change))
+        for value in (True, 0, 3):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                replace(spec, schema_version=value)
+
+    def test_qualified_copy_compiler_keeps_unknown_siblings_and_selectors_residual(self):
+        from quorune.compiler.entry_copy_templates import entry_copy_spec
+        for subject in ('target creature', 'creature with power X or greater',
+                'creature in a graveyard', 'permanent that entered this turn and is tapped',
+                'creature you control with power 4 or greater that is green'):
+            with self.subTest(subject=subject):
+                self.assertIsNone(entry_copy_spec('You may have this creature enter as a copy of a ' + subject + '.', source_name='Generic'))
+        self.assertIsNone(entry_copy_spec('You may have this creature enter as a copy of any nonland permanent on the battlefield. Then draw a card.', source_name='Generic'))
+
+
 if __name__ == "__main__":
     unittest.main()

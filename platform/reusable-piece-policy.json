@@ -129,6 +129,7 @@
     ["stack_resolution", "triggers"]
   ],
   "ambient_high_risk_piece_pairs": [
+    ["capability.attachment.equip.fixed_mana", "capability.zone.entry.fixed_copy"],
     ["capability.casting.additional_cost.fixed_counter_placement", "capability.counter.placement.quantity_replacement"],
     ["capability.casting.additional_cost.fixed_sacrifice", "capability.trigger.event.normalized_zone_change"],
     ["capability.casting.additional_cost.fixed_sacrifice", "capability.zone.change.destination_replacement"],
@@ -136,6 +137,7 @@
     ["capability.casting.multikicker.fixed_mana", "capability.replacement.multikicker.named_entry_counters"],
     ["capability.combat.attack.vigilance", "capability.counter.characteristic.keyword"],
     ["capability.combat.block.capacity", "capability.combat.block.capacity.temporary"],
+    ["capability.combat.block.capacity", "capability.zone.entry.fixed_copy"],
     ["capability.combat.block.capacity.temporary", "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"],
     ["capability.combat.block.capacity.temporary", "capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn"],
     ["capability.combat.block.capacity.temporary", "capability.permanent.untap.effect"],
@@ -148,6 +150,8 @@
     ["capability.combat.damage.assignment.deathtouch", "capability.counter.characteristic.keyword"],
     ["capability.combat.damage.assignment.trample", "capability.counter.characteristic.keyword"],
     ["capability.combat.damage.participation.strike_steps", "capability.counter.characteristic.keyword"],
+    ["capability.continuous.attached.fixed_characteristics", "capability.zone.entry.fixed_copy"],
+    ["capability.continuous.resolution.fixed_characteristics_until_end_of_turn", "capability.zone.entry.fixed_copy"],
     ["capability.counter.characteristic.keyword", "capability.counter.placement.quantity_replacement"],
     ["capability.counter.characteristic.keyword", "capability.damage.result.deathtouch"],
     ["capability.counter.characteristic.keyword", "capability.damage.result.lifelink"],
@@ -164,7 +168,11 @@
       "capability.library.search.fixed_counted",
       "capability.zone.change.destination_replacement"
     ],
+    ["capability.state_query.permanent.public_state_predicate", "capability.zone.entry.fixed_copy"],
+    ["capability.target.protection.hexproof_permanent", "capability.zone.entry.fixed_copy"],
+    ["capability.timing.cast.printed_flash", "capability.zone.entry.fixed_copy"],
     ["capability.trigger.event.normalized_zone_change", "capability.zone.change.destination_replacement"],
+    ["capability.trigger.keyword.cascade", "capability.zone.entry.fixed_copy"],
     ["capability.zone.entry.tapped_state", "mechanic.cr-616-interaction-of-replacement-and-or-prevention-effects"]
   ],
   "complex_card_weights": {

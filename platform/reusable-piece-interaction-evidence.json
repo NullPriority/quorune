@@ -14100,6 +14100,80 @@
       ],
       "interaction_order": 3,
       "assertion": "Actual Cloudshift responds separately to an original source activation and to Valor Made Real targeting the returned source. Neither pending instruction grants a permission to the next incarnation; mana, pending round trips and full pre-action replay retain both temporal boundaries."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
+      "piece_ids": [
+        "capability.attachment.equip.fixed_mana",
+        "capability.combat.block.capacity",
+        "capability.continuous.attached.fixed_characteristics",
+        "capability.state_query.permanent.public_state_predicate",
+        "capability.zone.entry.fixed_copy"
+      ],
+      "capability_ids": [
+        "attachment.equip.fixed_mana",
+        "combat.block.capacity",
+        "continuous.attached.fixed_characteristics",
+        "state_query.permanent.public_state_predicate",
+        "zone.entry.fixed_copy"
+      ],
+      "interaction_order": 5,
+      "assertion": "Actual Masterwork selects only current Equipment, enters unattached without disturbing the original attachment, then equips its copied Echo Circlet program to a creature controlled by its new controller. Principal and invalid-source rollback, effective block capacity, private projection, pending load and pre-cast replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death",
+      "piece_ids": [
+        "capability.state_query.permanent.public_state_predicate",
+        "capability.target.protection.hexproof_permanent",
+        "capability.zone.entry.fixed_copy"
+      ],
+      "capability_ids": [
+        "state_query.permanent.public_state_predicate",
+        "target.protection.hexproof_permanent",
+        "zone.entry.fixed_copy"
+      ],
+      "interaction_order": 3,
+      "assertion": "Actual Clever Impersonator excludes lands and chooses an opposing Hexproof creature because the replacement choice does not target. It retains the copied ability under the entering controller; a separate native decline follows printed zero-toughness stabilization and full replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_frostkite_eligibility_uses_current_power_but_copy_keeps_base_values",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.state_query.permanent.public_state_predicate",
+        "capability.zone.entry.fixed_copy"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "state_query.permanent.public_state_predicate",
+        "zone.entry.fixed_copy"
+      ],
+      "interaction_order": 3,
+      "assertion": "Actual Giant Growth makes an owned Grizzly Bears eligible for actual Deceptive Frostkite while a low-power owned body and high-power opposing body stay excluded. The new copy has the original base P/T plus Dragon/Flying, leaving the Growth on its original object; pending load and pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_protege_cascade_permanent_qualifies_and_copied_mana_ability_works",
+      "piece_ids": [
+        "capability.state_query.permanent.public_state_predicate",
+        "capability.timing.cast.printed_flash",
+        "capability.trigger.keyword.cascade",
+        "capability.zone.entry.fixed_copy"
+      ],
+      "capability_ids": [
+        "state_query.permanent.public_state_predicate",
+        "timing.cast.printed_flash",
+        "trigger.keyword.cascade",
+        "zone.entry.fixed_copy"
+      ],
+      "interaction_order": 4,
+      "assertion": "Actual Sakashima Protege uses Flash during another player turn and Cascade casts Sol Ring. The new permanent is eligible while an older permanent is excluded. The copier then activates the copied artifact mana ability under its own controller; exact pending load and full replay retain that global-turn history."
     }
   ]
 }
