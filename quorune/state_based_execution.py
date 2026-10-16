@@ -19,6 +19,7 @@ from .counter_state import (
 from .destruction import (
     commit_destruction_plan,
     DestructionCause,
+    DestructionDisposition,
     DestructionHost,
     DestructionPlan,
     prepare_destructions,
@@ -400,6 +401,10 @@ def prepare_state_based_execution(
         counter_removals=counter_removals,
         state_changed=bool(
             ordinary
+            or any(entry.disposition is DestructionDisposition.REGENERATION
+                for entry in destruction.entries)
+            or destruction.umbra_protections
+            or destruction.damage_clear_object_ids
             or batch.detach
             or counter_removals.counters.removals
             or batch.cease
@@ -427,8 +432,6 @@ def _commit_state_based_zone_changes(
         raise StateBasedExecutionError(
             "State-based commit requires a typed execution plan"
         )
-    if not plan.simultaneous_changes:
-        return
     commit_destruction_plan(
         host,
         plan.destruction,

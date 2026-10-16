@@ -1470,5 +1470,136 @@ class QualifiedRegenerationRuntimeTests(unittest.TestCase):
         self.replay(session, load=True)
 
 
+class StateBasedReplacementOnlyRuntimeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+        cls.temporary=tempfile.TemporaryDirectory()
+        path=Path(cls.temporary.name)/'state-based-replacement-only.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
+            ROOT/'tests/fixtures/regeneration-cards.json'],path)
+        cls.db=CardDatabase(path)
+        cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition('Replacement-only stabilization',
+            [DeckEntry('Generic Bound Commander',1,'commander'),DeckEntry('Generic Bound Plains',30)],
+            ['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    import test_bound_effect_programs as _bound
+    session=_bound.BoundEffectProgramRuntimeTests.session
+    add=_bound.BoundEffectProgramRuntimeTests.add
+    ready=_bound.BoundEffectProgramRuntimeTests.ready
+    checkpoint=_bound.BoundEffectProgramRuntimeTests.checkpoint
+    resolve=_bound.BoundEffectProgramRuntimeTests.resolve
+    replay=_bound.BoundEffectProgramRuntimeTests.replay
+
+    def test_actual_supported_troll_regenerates_after_shock_and_disfigure_before_priority(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
+        for name in ('Cudgel Troll','Shock','Disfigure'):
+            program=compile_best_available_card_program(self.db,self.db.lookup(name),
+                semantic_registry=SemanticRegistry(),capability_registry=self.registry,capability_profile='commander_review')
+            self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')['strict_capability_ready'],name)
+        session=self.session(527001)
+        engine=session.engine
+        source=self.add(engine,'Cudgel Troll')
+        shock=self.add(engine,'Shock',zone='hand')
+        shrink=self.add(engine,'Disfigure',zone='hand')
+        private=self.add(engine,'Generic Bound Body',seat='C',zone='hand',ref='sba-private-hand')
+        self.ready(session,source,{'G':6,'R':6,'B':6,'C':6})
+        self.checkpoint(session)
+        def cast(card):
+            while session.pending_principals()[0]!='pilot:A':
+                self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+            rows=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+            row=next(r for r in rows if r.get('card')==card.ref and r['id'].startswith('cast:'))
+            accepted=session.act('pilot:A',{'action_id':row['id'],'targets':[source.ref],'pay':'auto'})
+            self.assertTrue(accepted.ok,accepted.summary)
+            self.replay(session,load=True)
+            self.resolve(session)
+        cast(shock)
+        self.assertEqual(2,engine.state.cards[source.object_id].marked_damage)
+        while session.pending_principals()[0]!='pilot:A':
+            self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        rows=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        row=next(r for r in rows if r['id'].startswith('activate:'+source.ref+':'))
+        before=authoritative_state_hash(engine.state)
+        self.assertFalse(session.act('pilot:B',{'action_id':row['id'],'pay':'auto'}).ok)
+        self.assertEqual(before,authoritative_state_hash(engine.state))
+        self.assertTrue(session.act('pilot:A',{'action_id':row['id'],'pay':'auto'}).ok)
+        self.resolve(session)
+        self.assertEqual(1,engine.state.cards[source.object_id].regeneration_shields)
+        cast(shrink)
+        current=engine.state.cards[source.object_id]
+        self.assertEqual('priority',engine.state.pending_decision.kind)
+        self.assertEqual('battlefield',current.zone)
+        self.assertTrue(current.tapped)
+        self.assertEqual(0,current.marked_damage)
+        self.assertEqual(0,current.regeneration_shields)
+        self.assertEqual((2,1),(engine._numeric_stat(current.object_id,'power'),engine._numeric_stat(current.object_id,'toughness')))
+        self.assertNotIn(private.ref,json.dumps(session.packet('pilot:D',full=True)))
+        self.assertIn(private.ref,json.dumps(session.packet('pilot:C',full=True)))
+        self.replay(session,load=True)
+
+
+    def test_nonmoving_regeneration_and_ordinary_protection_plans_preserve_boundaries(self):
+        from quorune.state_based_actions import evaluate_state_based_actions
+        from quorune.state_based_execution import prepare_state_based_execution, commit_state_based_zone_changes
+        for protection in ('regeneration','shield','indestructible'):
+            with self.subTest(protection=protection):
+                session=self.session(527010+len(protection))
+                engine=session.engine
+                card=self.add(engine,'Cudgel Troll')
+                card.marked_damage=3
+                if protection=='regeneration':
+                    card.regeneration_shields=1
+                elif protection=='shield':
+                    card.counters['shield']=1
+                else:
+                    card.temporary_keywords.append('Indestructible')
+                    card.regeneration_shields=1
+                batch=evaluate_state_based_actions(permanents=engine._permanent_sba_snapshots(),objects=())
+                plan=prepare_state_based_execution(engine,batch)
+                self.assertEqual(protection!='indestructible',plan.state_changed)
+                if protection=='shield':
+                    commit_state_based_zone_changes(engine,plan)
+                    self.assertEqual('graveyard',card.zone)
+                    continue
+                self.assertEqual((),plan.simultaneous_changes)
+                if protection=='indestructible':
+                    self.assertFalse(engine._stabilize())
+                    self.assertEqual(1,card.regeneration_shields)
+                    self.assertEqual(3,card.marked_damage)
+                else:
+                    commit_state_based_zone_changes(engine,plan)
+                    if protection=='regeneration':
+                        self.assertTrue(card.tapped)
+                        self.assertEqual(0,card.marked_damage)
+                        self.assertEqual(0,card.regeneration_shields)
+                        self.assertEqual('battlefield',card.zone)
+
+    def test_replacement_only_plan_and_commit_omissions_are_killed_by_supported_commands(self):
+        import quorune.state_based_execution as owner
+        from quorune.errors import StateInvariantError
+        original_prepare=owner.prepare_state_based_execution
+        def omit_plan(*args,**kwargs):
+            plan=original_prepare(*args,**kwargs)
+            return replace(plan,state_changed=False) if not plan.simultaneous_changes else plan
+        original_commit=owner._commit_state_based_zone_changes
+        def omit_commit(host,plan):
+            return original_commit(host,plan) if plan.simultaneous_changes else None
+        for target,mutation in (('prepare_state_based_execution',omit_plan),('_commit_state_based_zone_changes',omit_commit)):
+            with self.subTest(target=target),patch.object(owner,target,side_effect=mutation):
+                with self.assertRaises((AssertionError,StateInvariantError)):
+                    self.test_actual_supported_troll_regenerates_after_shock_and_disfigure_before_priority()
+
+
 if __name__ == "__main__":
     unittest.main()

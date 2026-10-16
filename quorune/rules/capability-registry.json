@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 327,
+  "registry_version": 328,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -13808,28 +13808,99 @@
     },
     {
       "id": "permanent.destroy.state_based_damage",
-      "version": 1,
-      "official_rules": ["701.8", "701.8a", "701.8b", "702.2", "702.12b", "704.5g", "704.5h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "702.2",
+        "702.12b",
+        "704.5g",
+        "704.5h",
+        "614.8",
+        "701.19a",
+        "701.19c",
+        "704.3",
+        "122.1c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Evaluate lethal marked damage and since-last-check Deathtouch damage from one immutable permanent snapshot, then commit the resulting destruction set through the canonical typed destruction and simultaneous zone-change owners.",
-        "inputs": ["one immutable state-based-action snapshot", "current represented creature type and toughness", "marked damage and one-check Deathtouch result", "current represented effective Indestructible ability", "physical and logical object identity"],
-        "outputs": ["canonical state-based destruction set", "one regeneration alternate result when applicable", "Indestructible no-change result", "one simultaneous battlefield-to-owner-graveyard transaction", "consumed Deathtouch check marker"],
-        "exclusions": ["effects that say a permanent cannot be regenerated", "unsupported continuous-effect, copy, face-down, merged-object, and ability-changing producers", "zero-toughness and other non-destruction state-based graveyard moves", "other unrepresented destruction replacement effects; cards representing those interactions remain material residuals and fail match trust closed"]
+        "summary": "Evaluate lethal marked damage and since-last-check Deathtouch damage from one immutable permanent snapshot, then commit the resulting destruction set through the canonical typed destruction and simultaneous zone-change owners. Commit nonmoving regeneration and other represented replacement mutations even when the simultaneous zone-change set is empty; only an actual no-change result terminates stabilization.",
+        "inputs": [
+          "one immutable state-based-action snapshot",
+          "current represented creature type and toughness",
+          "marked damage and one-check Deathtouch result",
+          "current represented effective Indestructible ability",
+          "physical and logical object identity"
+        ],
+        "outputs": [
+          "canonical state-based destruction set",
+          "one regeneration alternate result when applicable",
+          "Indestructible no-change result",
+          "one simultaneous battlefield-to-owner-graveyard transaction",
+          "consumed Deathtouch check marker"
+        ],
+        "exclusions": [
+          "effects that say a permanent cannot be regenerated",
+          "unsupported continuous-effect, copy, face-down, merged-object, and ability-changing producers",
+          "zero-toughness and other non-destruction state-based graveyard moves",
+          "other unrepresented destruction replacement effects; cards representing those interactions remain material residuals and fail match trust closed"
+        ]
       },
-      "dependencies": ["damage.result.creature_mark", "damage.result.deathtouch"],
-      "implementation_components": ["CommanderEngine._permanent_sba_snapshots", "quorune.state_based_actions.evaluate_permanent_state_based_actions", "quorune.state_based_execution.prepare_state_based_execution", "quorune.state_based_execution.commit_state_based_zone_changes", "quorune.destruction.prepare_destructions", "quorune.destruction.commit_destruction_plan"],
-      "positive_tests": ["test_state_based_destruction_ignores_shield_counter", "test_state_based_lethal_and_deathtouch_share_typed_destruction"],
-      "negative_tests": ["test_indestructible_is_destroy_only_and_malformed_keywords_fail_closed", "test_indestructible_and_phased_objects_are_not_destroyed"],
-      "interaction_tests": ["test_indestructible_consumes_deathtouch_at_the_first_sba_check", "test_old_deathtouch_marker_cannot_apply_after_type_or_phase_returns"],
-      "multiplayer_tests": ["test_simultaneous_multiplayer_batch_has_disjoint_results"],
-      "privacy_tests": [],
-      "replay_tests": ["test_four_player_deathtouch_result_is_source_derived_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "replay"],
+      "dependencies": [
+        "damage.result.creature_mark",
+        "damage.result.deathtouch"
+      ],
+      "implementation_components": [
+        "CommanderEngine._permanent_sba_snapshots",
+        "quorune.state_based_actions.evaluate_permanent_state_based_actions",
+        "quorune.state_based_execution.prepare_state_based_execution",
+        "quorune.state_based_execution.commit_state_based_zone_changes",
+        "quorune.destruction.prepare_destructions",
+        "quorune.destruction.commit_destruction_plan"
+      ],
+      "positive_tests": [
+        "test_state_based_destruction_ignores_shield_counter",
+        "test_state_based_lethal_and_deathtouch_share_typed_destruction",
+        "test_actual_supported_troll_regenerates_after_shock_and_disfigure_before_priority"
+      ],
+      "negative_tests": [
+        "test_indestructible_is_destroy_only_and_malformed_keywords_fail_closed",
+        "test_indestructible_and_phased_objects_are_not_destroyed",
+        "test_nonmoving_regeneration_and_ordinary_protection_plans_preserve_boundaries"
+      ],
+      "interaction_tests": [
+        "test_indestructible_consumes_deathtouch_at_the_first_sba_check",
+        "test_old_deathtouch_marker_cannot_apply_after_type_or_phase_returns",
+        "test_actual_supported_troll_regenerates_after_shock_and_disfigure_before_priority",
+        "test_nonmoving_regeneration_and_ordinary_protection_plans_preserve_boundaries"
+      ],
+      "multiplayer_tests": [
+        "test_simultaneous_multiplayer_batch_has_disjoint_results",
+        "test_actual_supported_troll_regenerates_after_shock_and_disfigure_before_priority"
+      ],
+      "privacy_tests": [
+        "test_actual_supported_troll_regenerates_after_shock_and_disfigure_before_priority"
+      ],
+      "replay_tests": [
+        "test_four_player_deathtouch_result_is_source_derived_and_replays",
+        "test_actual_supported_troll_regenerates_after_shock_and_disfigure_before_priority"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The bounded state-based destruction capability closes over both ordinary marked-damage and Deathtouch result owners; blocking either dependency prevents this capability and dependent Indestructible CardPrograms from becoming trusted.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_destruction_disposition_mutants_are_killed changes state-based and Indestructible destruction dispositions; the exact state-based results reject each survivor.",
+      "implementation_mutation_rationale": "test_destruction_disposition_mutants_are_killed changes state-based and Indestructible destruction dispositions; the exact state-based results reject each survivor. Omitting the changed-state flag or the nonmoving destruction commit reproduces the original supported-card missing tap/damage-clear/shield consumption or prevents stabilization; native command witnesses kill both omissions.",
       "blockers": [],
       "status": "trusted"
     },

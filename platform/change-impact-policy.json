@@ -4588,6 +4588,24 @@
         "test_fixed_damage_source_lki",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "state-based-replacement-only-commit-contract",
+      "patterns": [
+        "quorune/state_based_execution.py",
+        "quorune/state_based_replacement_coordination.py",
+        "quorune/destruction.py",
+        "quorune/regeneration.py",
+        "tests/fixtures/regeneration-cards.json"
+      ],
+      "test_modules": [
+        "test_regeneration_rules",
+        "test_state_based_actions",
+        "test_destruction_rules",
+        "test_umbra_armor",
+        "test_card_program_trust",
+        "test_game_record_v3"
+      ]
     }
   ],
   "symbol_rules": [

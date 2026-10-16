@@ -11301,6 +11301,23 @@
       ],
       "interaction_order": 2,
       "assertion": "Already supported Spikeshot Elder changes power, controller and lifelink after activation, then Cloudshift returns the same physical card as a fresh smaller incarnation. The original ability uses old-incarnation departure power2 and controllerB lifelink instead of creation power1 or returned-characteristic values. Cost, identity, projection and replay remain canonical."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "tests.test_regeneration_rules.StateBasedReplacementOnlyRuntimeTests.test_actual_supported_troll_regenerates_after_shock_and_disfigure_before_priority",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.permanent.destroy.state_based_damage",
+        "capability.permanent.regeneration.self_activation"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "permanent.destroy.state_based_damage",
+        "permanent.regeneration.self_activation"
+      ],
+      "interaction_order": 3,
+      "assertion": "Already capability-closed actual Cudgel Troll receives Shock damage, activates regeneration and receives Disfigure. Lethal state-based destruction is replaced before priority even with no simultaneous zone move:damage andshieldclear,thecreaturetaps,anditsincarnationremains withmodifiedstats. Wrong-principal rollback, four-player privacy,pending load andpre-actionreplay agree."
     }
   ]
 }
