@@ -16,6 +16,7 @@ from .replacement.immutable import FrozenMap
 RESOLUTION_CONDITION_OPERATION = "apply_if_public_condition"
 RESOLUTION_CONDITION_MECHANIC = "fixed-resolution-public-condition"
 RESOLUTION_CONDITION_CAPABILITY = "resolution.effect.public_condition"
+PUBLIC_SELF_REPLACEMENT_CAPABILITY='resolution.effect.fixed_public_self_replacement'
 CAST_FACT_CONDITION_CAPABILITY = 'resolution.effect.fixed_cast_fact'
 CAST_FACT_CONDITION_MECHANIC = 'fixed-cast-fact-condition'
 _DERIVED_RESULT_MECHANICS = frozenset({
@@ -108,8 +109,10 @@ def validate_resolution_condition_instruction(
         "mechanic_ids", "prefix_mechanic_ids",
     }
     cast_fact = effect.get('schema_version') == 2
+    replacing=effect.get('schema_version')==3
     if cast_fact:
         expected_fields |= {'schema_version', 'cast_fact'}
+    if replacing:expected_fields|={'schema_version','otherwise_effects','otherwise_mechanic_ids'}
     if (
         not isinstance(effect, Mapping)
         or set(effect) != expected_fields
@@ -118,7 +121,7 @@ def validate_resolution_condition_instruction(
         raise ValueError("Resolution condition instructions have a closed schema")
     if type(effect.get("player")) is not str or not effect["player"]:
         raise ValueError("Resolution conditions require a controller binding")
-    for name in ("mechanic_ids", "prefix_mechanic_ids"):
+    for name in ("mechanic_ids", "prefix_mechanic_ids", *(('otherwise_mechanic_ids',) if replacing else ())):
         values = effect[name]
         if (
             not isinstance(values, (list, tuple))
@@ -127,7 +130,7 @@ def validate_resolution_condition_instruction(
             or RESOLUTION_CONDITION_MECHANIC in values
         ):
             raise ValueError("Resolution condition component mechanics are malformed")
-    if not effect["mechanic_ids"]:
+    if not effect["mechanic_ids"] or replacing and not effect['otherwise_mechanic_ids']:
         raise ValueError("Resolution condition result mechanics must be present")
     if "fixed-next-turn-upkeep-draw" in (*effect["mechanic_ids"], *effect["prefix_mechanic_ids"]):
         raise ValueError("Delayed draw remains outside conditional programs")
@@ -147,6 +150,18 @@ def validate_resolution_condition_instruction(
         for value in nested
     ):
         raise ValueError("Resolution conditions require a bounded nonnested effect program")
-    if not (cast_fact_result_is_fixed(nested, effect["mechanic_ids"]) if cast_fact else resolution_result_is_fixed(nested, effect["mechanic_ids"])):
+    if not (cast_fact_result_is_fixed(nested, effect["mechanic_ids"]) if cast_fact or replacing else resolution_result_is_fixed(nested, effect["mechanic_ids"])):
         raise ValueError("Derived or source-relative results require a separate binding and timing boundary")
+    if replacing:
+        if type(effect['schema_version']) is not int:raise ValueError('Self-replacement version must be an exact integer')
+        _validate_otherwise_program(effect)
     return condition, tuple(nested)
+
+
+def _validate_otherwise_program(effect):
+    values=effect['otherwise_effects']
+    if (not isinstance(values,(list,tuple)) or not 1<=len(values)<=8
+            or any(not isinstance(child,Mapping) or child.get('op')==RESOLUTION_CONDITION_OPERATION for child in values)
+            or not cast_fact_result_is_fixed(values,effect['otherwise_mechanic_ids'])
+            or 'fixed-next-turn-upkeep-draw' in effect['otherwise_mechanic_ids']):
+        raise ValueError('Self-replacement default program is malformed or unrepresented')

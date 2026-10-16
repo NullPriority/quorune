@@ -23,6 +23,9 @@ def resolution_condition_template(
     compile_component: Callable[[str], CompiledEffectTemplate],
 ) -> CompiledEffectTemplate | None:
     normalized = re.sub(r"^[A-Z][A-Za-z' ]{0,80} — ", "", text.strip())
+    from .public_self_replacement_templates import fixed_public_self_replacement_template
+    replacement=fixed_public_self_replacement_template(normalized,source_name=source_name,compile_component=compile_component)
+    if replacement is not None:return replacement
     positions = _top_level_positions(normalized, "If ")
     if positions is None or len(positions) != 1 or not normalized.endswith("."):
         return None

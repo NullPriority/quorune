@@ -39,6 +39,7 @@ from .compiler.ability_keyword_fragments import (
     lower_ability_keyword_fragments,
 )
 from .compiler.closed_static_nodes import closed_static_or_replacement_node
+from .compiler.public_self_replacement_templates import is_fixed_public_self_replacement
 from .compiler.public_alternative_cost_nodes import (
     reject_cast_cost_composition,
 )
@@ -170,7 +171,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v383"
+ORACLE_COMPILER_VERSION = "oracle-ir-v384"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1290,7 +1291,7 @@ def _compile_face(
             nodes.append(closed_static)
             continue
 
-        if _REPLACEMENT_MARKERS.search(line):
+        if _REPLACEMENT_MARKERS.search(line) and not (spell and is_fixed_public_self_replacement(material_line,face_name or record.name,contextual_effect_template)):
             residual_id = _residual(
                 residuals,
                 kind="replacement_effect",

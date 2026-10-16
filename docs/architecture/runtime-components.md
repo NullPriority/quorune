@@ -161,6 +161,15 @@ for the current activator during both offer and acceptance. Its typed condition
 and capability retain the existing activation transaction and pending result;
 sacrificing an Ascend source cannot revoke an acquired player designation.
 
+Public resolution-condition schema 3 represents a fixed self-replacement with
+independently closed default and alternative programs. The resolving controller's
+condition selects one program before the original instruction or its external
+replacement owners run. Earlier mandatory instructions remain a separate prefix.
+The compiler binds a bounded repeated creature-set antecedent to its original
+controlled set; optional replacement choices, changed targets and variable
+results remain residual. Unversioned prefix conditions and schema 2 kicked-cast
+facts retain their existing payloads and execution paths.
+
 Fixed random-discard activation costs use an optional typed scalar that is
 omitted from older ability payloads. The activating player must hold the full
 count. The canonical random selector binds a distinct hand subset to the

@@ -120,8 +120,8 @@ def generated_node_groups(
 
 
 def _component_program_is_closed(component,recognizers):
-    from ..rules.city_blessing_shapes import ascend_program_is_closed
-    return ascend_program_is_closed(component) or any(recognizer(component) for recognizer in recognizers)
+    from .nonleaf_effect_closure import nonleaf_effect_program_is_closed
+    return nonleaf_effect_program_is_closed(component) or any(recognizer(component) for recognizer in recognizers)
 
 
 def is_closed_composed_spell_effect_program(

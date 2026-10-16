@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "981fb5fafbe49485bb1df49ca5618a9efe5247f69956d546e94654e02e3bc998",
-  "declaration_source_fingerprint": "c57c2561135defd1af457176bcafd956284811d59a0ef116cfacb1fe63fb1972",
+  "registry_fingerprint": "84c501a888dae2cd3ff82df8ba4c1a497cac1dc62f59062d15782a8a4d7c01e5",
+  "declaration_source_fingerprint": "8ed75bb14959ada154e67df0077ce5b8bee04720eb897a42404ce868d380c181",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -102894,6 +102894,312 @@
       "applicability_note": "Replay one ordinary destruction, one shield replacement, one Indestructible result, and their canonical simultaneous transition."
     },
     {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementRuntimeTests.test_actual_demise_and_pride_replace_the_whole_fixed_modifier_once",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementRuntimeTests.test_actual_secrets_selects_self_replacement_before_external_draw_doubling",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementRuntimeTests.test_mandatory_earlier_life_prefix_survives_and_condition_precedes_default_draw",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementRuntimeTests.test_pending_self_replacement_uses_locked_controller_after_real_control_change",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementRuntimeTests.test_pending_self_replacement_uses_locked_controller_after_real_control_change",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementCompilerTests.test_fixed_default_and_alternative_are_typed_independent_complete_branches",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementCompilerTests.test_optional_ambiguous_target_and_variable_self_replacements_remain_residual",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementCompilerTests.test_replacement_schema_requires_owned_otherwise_shape_and_preserves_old_variants",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementCompilerTests.test_withdrawn_self_replacement_capability_prevents_admission",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementCompilerTests.test_fixed_default_and_alternative_are_typed_independent_complete_branches",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementCompilerTests.test_replacement_schema_requires_owned_otherwise_shape_and_preserves_old_variants",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementRuntimeTests.test_actual_secrets_selects_self_replacement_before_external_draw_doubling",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementRuntimeTests.test_actual_demise_and_pride_replace_the_whole_fixed_modifier_once",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementRuntimeTests.test_actual_secrets_selects_self_replacement_before_external_draw_doubling",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementRuntimeTests.test_mandatory_earlier_life_prefix_survives_and_condition_precedes_default_draw",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementRuntimeTests.test_pending_self_replacement_uses_locked_controller_after_real_control_change",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementRuntimeTests.test_mandatory_earlier_life_prefix_survives_and_condition_precedes_default_draw",
+      "official_rule_ids": [
+        "109.2",
+        "109.5",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Additive schema3 preserves a separately owned earlier mandatory life prefix and selects one fixed default/alternative at the original instruction point. Older unversioned and kicked schema2 mappings validate without mutation; malformed or unknown default branches fail closed."
+    },
+    {
       "capability_id": "resolution.effect.public_condition",
       "evidence_class": "interaction",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_death_prefix_updates_history_before_condition_and_replays",
@@ -102968,6 +103274,24 @@
     {
       "capability_id": "resolution.effect.public_condition",
       "evidence_class": "negative",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementCompilerTests.test_replacement_schema_requires_owned_otherwise_shape_and_preserves_old_variants",
+      "official_rule_ids": [
+        "109.2",
+        "109.5",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Additive schema3 preserves a separately owned earlier mandatory life prefix and selects one fixed default/alternative at the original instruction point. Older unversioned and kicked schema2 mappings validate without mutation; malformed or unknown default branches fail closed."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "negative",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_derived_conditional_results_remain_residual_without_timing_proof",
       "official_rule_ids": [
         "109.2",
@@ -103004,6 +103328,24 @@
     {
       "capability_id": "resolution.effect.public_condition",
       "evidence_class": "positive",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementCompilerTests.test_replacement_schema_requires_owned_otherwise_shape_and_preserves_old_variants",
+      "official_rule_ids": [
+        "109.2",
+        "109.5",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Additive schema3 preserves a separately owned earlier mandatory life prefix and selects one fixed default/alternative at the original instruction point. Older unversioned and kicked schema2 mappings validate without mutation; malformed or unknown default branches fail closed."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "positive",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
       "official_rule_ids": [
         "109.2",
@@ -103036,6 +103378,24 @@
         "commander_review"
       ],
       "applicability_note": "Only the resolving controller sees the resulting drawn card; other seat projections remain private."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementRuntimeTests.test_mandatory_earlier_life_prefix_survives_and_condition_precedes_default_draw",
+      "official_rule_ids": [
+        "109.2",
+        "109.5",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Additive schema3 preserves a separately owned earlier mandatory life prefix and selects one fixed default/alternative at the original instruction point. Older unversioned and kicked schema2 mappings validate without mutation; malformed or unknown default branches fail closed."
     },
     {
       "capability_id": "resolution.effect.public_condition",
@@ -148850,5 +149210,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "f3e03559d6e9dfe1b24fb0bc8ea73ee9d813c9aae3e1443eb628f2f6e36c97c5"
+  "fingerprint": "bda6843907560e3b79e5c977820b6bf88e1a5b9d2fdadab14b8aa63a17ba7344"
 }
