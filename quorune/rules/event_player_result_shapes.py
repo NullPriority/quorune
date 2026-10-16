@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from ..compiler.event_player_results import EVENT_PLAYER_RESULT_CAPABILITY,EVENT_PLAYER_RESULT_MECHANIC
 from .mill_capability_shapes import fixed_mill_node_capabilities,mill_covered_mechanics
+from ..event_player_result_values import event_result_value_capabilities
+from ..fractional_quantity_model import HALF_LIFE_CAPABILITY,HALF_LIFE_MECHANIC
 
 
 def fixed_event_player_result_node_capabilities(*,effects,target_schema,mechanic_ids):
@@ -16,10 +18,11 @@ def fixed_event_player_result_node_capabilities(*,effects,target_schema,mechanic
     for effect in effects:
         if effect.get('op') not in layouts:return ()
         field,fields,capability=layouts[effect['op']]
+        extra=event_result_value_capabilities(effect['op'],field,effect.get(field))
         if (set(effect)!=fields or effect.get('player') not in {'$controller','$context.player','$context.target','$context.defending_player','$context.previous_controller','$context.controller'}
-                or type(effect.get(field)) is not int or effect[field]<=0
+                or extra is None or HALF_LIFE_CAPABILITY in extra and HALF_LIFE_MECHANIC not in set(mechanic_ids)
                 or effect['op']=='draw' and effect['private'] is not True):return ()
-        capabilities.add(capability)
+        capabilities.update((capability,*extra))
     return tuple(sorted(capabilities))
 
 

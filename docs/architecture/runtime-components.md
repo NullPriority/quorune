@@ -919,3 +919,17 @@ player's candidate domain and required rounded count. Every issued and accepted
 choice revalidates those values; zero domains skip automatically. The shared
 APNAP contract validator is extracted without changing ordinary fixed counts.
 No client count override or runtime Oracle parsing supplies the quantity.
+
+### Half amounts on represented event-player results
+
+`event_player_result_values.py` validates positive literal draw/life values and
+independently typed half-life amounts. The compiler normalizes their/your only
+after an existing compatible event subject has bound. Its subject/event matrix
+and generated-program reference checks remain authoritative.
+
+`rules/half_event_player_shapes.py` combines the half owner with the existing
+event/trigger dependency proof. The emitted amount remains typed and resolves
+through the existing life owner at instruction time. The damaged player's
+identity remains sealed while that player's current life can change before
+resolution. No object-controller reference is replaced with a damaged player,
+and unsupported antecedents or amount fields remain residual.

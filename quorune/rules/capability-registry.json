@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 321,
+  "registry_version": 322,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -246,7 +246,7 @@
   "capabilities": [
     {
       "id": "life.loss.half_current_player",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "107.1a",
         "107.1b",
@@ -265,7 +265,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Lose half the represented player current life with explicit up/down rounding through the canonical life-change batch owner.",
+        "summary": "Lose half the represented player current life with explicit up/down rounding through the canonical life-change batch owner. An independently validated half-life amount composes with the existing event-player recipient contract, preserving subject/event compatibility and current instruction-time life.",
         "inputs": [
           "closed half quantity with explicit rounding",
           "represented target/controller/APNAP player domain",
@@ -290,29 +290,41 @@
         "quorune.compiler.fractional_player_templates.fractional_player_result_template",
         "quorune.rules.fractional_player_result_shapes.half_life_node_capabilities",
         "quorune.effect_runtime.fractional_life.apply_fractional_life_loss",
-        "quorune.effect_runtime.fractional_life.apply_life_loss"
+        "quorune.effect_runtime.fractional_life.apply_life_loss",
+        "quorune.event_player_result_values.event_result_value_capabilities",
+        "quorune.compiler.event_result_value_templates.event_result_instruction",
+        "quorune.rules.half_event_player_shapes.half_event_player_node_capabilities"
       ],
       "positive_tests": [
         "test_half_player_life_hand_and_creature_results_have_closed_rounding_contracts",
-        "test_half_quantity_arithmetic_and_malformed_fields_are_closed"
+        "test_half_quantity_arithmetic_and_malformed_fields_are_closed",
+        "test_half_event_results_preserve_occurrence_recipient_and_typed_amount"
       ],
       "negative_tests": [
-        "test_fraction_result_unknown_domains_and_shape_mutations_remain_residual"
+        "test_fraction_result_unknown_domains_and_shape_mutations_remain_residual",
+        "test_fractional_binding_keeps_unsupported_antecedents_and_quantity_fields_residual",
+        "test_half_event_result_owner_withdrawal_prevents_whole_admission"
       ],
       "interaction_tests": [
         "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
-        "test_actual_vona_city_branch_uses_current_each_opponent_creature_count"
+        "test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
+        "test_actual_quietus_cast_equip_damage_current_life_and_pending_departure",
+        "test_real_d_attacker_and_a_equipment_keep_b_as_recipient"
       ],
       "multiplayer_tests": [
         "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
-        "test_actual_vona_city_branch_uses_current_each_opponent_creature_count"
+        "test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
+        "test_real_d_attacker_and_a_equipment_keep_b_as_recipient"
       ],
       "privacy_tests": [
-        "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life"
+        "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
+        "test_actual_quietus_cast_equip_damage_current_life_and_pending_departure"
       ],
       "replay_tests": [
         "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
-        "test_actual_vona_city_branch_uses_current_each_opponent_creature_count"
+        "test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
+        "test_actual_quietus_cast_equip_damage_current_life_and_pending_departure",
+        "test_real_d_attacker_and_a_equipment_keep_b_as_recipient"
       ],
       "required_evidence": [
         "positive",
@@ -325,7 +337,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The half quantity schema and existing selector/player shell close independently. Unknown rounding/divisor/domain or missing ownership prevents admission; affected counts and candidates are sealed and revalidated.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Omitting fractional compilation rejects all five newly admitted generic instructions. Changing rounding or omitting per-player fraction count sealing causes exact odd-count/native affected-player assertions to fail; life uses current pending-resolution facts rather than initial totals.",
+      "implementation_mutation_rationale": "Omitting fractional compilation rejects all five newly admitted generic instructions. Changing rounding or omitting per-player fraction count sealing causes exact odd-count/native affected-player assertions to fail; life uses current pending-resolution facts rather than initial totals. Omitting half event normalization rejects both generic half-event witnesses; actual combat, pending life change and equipment/attacker/recipient separation reject stale or redirected amounts.",
       "blockers": [],
       "status": "trusted"
     },
@@ -2267,7 +2279,7 @@
     },
     {
       "id": "resolution.event_player.fixed_result",
-      "version": 4,
+      "version": 5,
       "official_rules": [
         "113.7a",
         "120.3a",
@@ -2288,7 +2300,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "One or two complete fixed draw/life instructions addressed to an occurrence player or locked trigger controller; a referenced creature controller is represented only by departure LKI on a death event.",
+        "summary": "One or two complete fixed draw/life instructions addressed to an occurrence player or locked trigger controller; a referenced creature controller is represented only by departure LKI on a death event. An independently validated half-life amount composes with the existing event-player recipient contract, preserving subject/event compatibility and current instruction-time life.",
         "inputs": [
           "complete independent event binding",
           "typed event player reference",
@@ -2311,7 +2323,10 @@
       "implementation_components": [
         "quorune.compiler.event_player_results.fixed_event_player_result",
         "quorune.rules.event_player_result_shapes.fixed_event_player_result_node_capabilities",
-        "quorune.rules.event_player_result_shapes.is_closed_fixed_event_player_result_program"
+        "quorune.rules.event_player_result_shapes.is_closed_fixed_event_player_result_program",
+        "quorune.event_player_result_values.event_result_value_capabilities",
+        "quorune.compiler.event_result_value_templates.event_result_instruction",
+        "quorune.rules.half_event_player_shapes.half_event_player_node_capabilities"
       ],
       "required_evidence": [
         "positive",
@@ -2324,7 +2339,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Fine capability and actual resultowner are separately requested; withdrawn resultowner/finecap and unprovenrecipientdomain block exactadmission.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Omittingeventplayerresult handoff leavescompletecasterdrawresidual.",
+      "implementation_mutation_rationale": "Omittingeventplayerresult handoff leavescompletecasterdrawresidual. Omitting half event normalization rejects both generic half-event witnesses; actual combat, pending life change and equipment/attacker/recipient separation reject stale or redirected amounts.",
       "blockers": [],
       "status": "trusted",
       "positive_tests": [
@@ -2338,7 +2353,8 @@
         "test_damaged_player_draw_keeps_its_locked_recipient_in_actual_combat",
         "test_you_draw_keeps_locked_trigger_controller_distinct_from_damaged_player",
         "test_you_draw_remains_with_locked_controller_after_actual_observer_control_change",
-        "test_death_controller_uses_departure_lki_after_actual_control_and_reentry"
+        "test_death_controller_uses_departure_lki_after_actual_control_and_reentry",
+        "test_half_event_results_preserve_occurrence_recipient_and_typed_amount"
       ],
       "negative_tests": [
         "test_event_controller_and_individual_attack_recipient_results_preserve_fields",
@@ -2349,7 +2365,9 @@
         "test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
         "test_event_result_subject_and_occurrence_compatibility_matrix",
         "test_typed_event_player_shapes_check_every_subscribed_occurrence",
-        "test_unrepresented_creature_controller_subject_has_no_trusted_program"
+        "test_unrepresented_creature_controller_subject_has_no_trusted_program",
+        "test_fractional_binding_keeps_unsupported_antecedents_and_quantity_fields_residual",
+        "test_half_event_result_owner_withdrawal_prevents_whole_admission"
       ],
       "interaction_tests": [
         "test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
@@ -2358,7 +2376,9 @@
         "test_damaged_player_draw_keeps_its_locked_recipient_in_actual_combat",
         "test_you_draw_keeps_locked_trigger_controller_distinct_from_damaged_player",
         "test_you_draw_remains_with_locked_controller_after_actual_observer_control_change",
-        "test_death_controller_uses_departure_lki_after_actual_control_and_reentry"
+        "test_death_controller_uses_departure_lki_after_actual_control_and_reentry",
+        "test_actual_quietus_cast_equip_damage_current_life_and_pending_departure",
+        "test_real_d_attacker_and_a_equipment_keep_b_as_recipient"
       ],
       "multiplayer_tests": [
         "test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
@@ -2367,7 +2387,8 @@
         "test_damaged_player_draw_keeps_its_locked_recipient_in_actual_combat",
         "test_you_draw_keeps_locked_trigger_controller_distinct_from_damaged_player",
         "test_you_draw_remains_with_locked_controller_after_actual_observer_control_change",
-        "test_death_controller_uses_departure_lki_after_actual_control_and_reentry"
+        "test_death_controller_uses_departure_lki_after_actual_control_and_reentry",
+        "test_real_d_attacker_and_a_equipment_keep_b_as_recipient"
       ],
       "privacy_tests": [
         "test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
@@ -2376,7 +2397,8 @@
         "test_damaged_player_draw_keeps_its_locked_recipient_in_actual_combat",
         "test_you_draw_keeps_locked_trigger_controller_distinct_from_damaged_player",
         "test_you_draw_remains_with_locked_controller_after_actual_observer_control_change",
-        "test_death_controller_uses_departure_lki_after_actual_control_and_reentry"
+        "test_death_controller_uses_departure_lki_after_actual_control_and_reentry",
+        "test_actual_quietus_cast_equip_damage_current_life_and_pending_departure"
       ],
       "replay_tests": [
         "test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
@@ -2385,7 +2407,9 @@
         "test_damaged_player_draw_keeps_its_locked_recipient_in_actual_combat",
         "test_you_draw_keeps_locked_trigger_controller_distinct_from_damaged_player",
         "test_you_draw_remains_with_locked_controller_after_actual_observer_control_change",
-        "test_death_controller_uses_departure_lki_after_actual_control_and_reentry"
+        "test_death_controller_uses_departure_lki_after_actual_control_and_reentry",
+        "test_actual_quietus_cast_equip_damage_current_life_and_pending_departure",
+        "test_real_d_attacker_and_a_equipment_keep_b_as_recipient"
       ]
     },
     {

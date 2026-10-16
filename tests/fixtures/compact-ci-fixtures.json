@@ -95,6 +95,7 @@
     "tests/fixtures/graveyard-copy-keyword-cards.json",
     "tests/fixtures/graveyard-exile-payment-cards.json",
     "tests/fixtures/group-declaration-rules.json",
+    "tests/fixtures/half-event-player-result-cards.json",
     "tests/fixtures/hand-entry-expansion-cards.json",
     "tests/fixtures/history-entry-characteristic-cards.json",
     "tests/fixtures/history-entry-counters.json",

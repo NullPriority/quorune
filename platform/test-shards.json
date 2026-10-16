@@ -408,6 +408,7 @@
       "test_fixed_source_counter_payments",
       "test_graft_rules",
       "test_graveyard_exile_payments",
+      "test_half_event_player_results",
       "test_life_state",
       "test_modal_token_programs",
       "test_monarch_rules",

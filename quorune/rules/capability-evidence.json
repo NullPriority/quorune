@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "c084225bd9e5216e743f0cc5d3ab511813e96253d7ecd4dc97b9e0b01cb49a89",
-  "declaration_source_fingerprint": "d919b4ac6d6ae2cc79fc56f2c9593fccc0f227a80f4b2e76c442c6b2af7cc4f3",
+  "registry_fingerprint": "78f923f3d77a0f5df262ce0092f9a9c099805d3dffb66d54d1dffe3b4a3d8119",
+  "declaration_source_fingerprint": "27515d64163e741f2d32332d59c7a3a03cf6efd6dd94cb3262509803e7f664a1",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -89736,6 +89736,52 @@
     },
     {
       "capability_id": "life.loss.half_current_player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultRuntimeTests.test_actual_quietus_cast_equip_damage_current_life_and_pending_departure",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultRuntimeTests.test_real_d_attacker_and_a_equipment_keep_b_as_recipient",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fractional_player_results.FractionalPlayerResultRuntimeTests.test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
       "official_rule_ids": [
@@ -89782,6 +89828,29 @@
     },
     {
       "capability_id": "life.loss.half_current_player",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultRuntimeTests.test_real_d_attacker_and_a_equipment_keep_b_as_recipient",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
       "evidence_class": "mutation",
       "test_id": "tests.test_fractional_player_results.FractionalPlayerResultCompilerTests.test_half_player_life_hand_and_creature_results_have_closed_rounding_contracts",
       "official_rule_ids": [
@@ -89805,6 +89874,29 @@
     },
     {
       "capability_id": "life.loss.half_current_player",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultCompilerTests.test_half_event_results_preserve_occurrence_recipient_and_typed_amount",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
       "evidence_class": "negative",
       "test_id": "tests.test_fractional_player_results.FractionalPlayerResultCompilerTests.test_fraction_result_unknown_domains_and_shape_mutations_remain_residual",
       "official_rule_ids": [
@@ -89825,6 +89917,52 @@
         "commander_review"
       ],
       "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
+      "evidence_class": "negative",
+      "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultCompilerTests.test_fractional_binding_keeps_unsupported_antecedents_and_quantity_fields_residual",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
+      "evidence_class": "negative",
+      "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultCompilerTests.test_half_event_result_owner_withdrawal_prevents_whole_admission",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
     },
     {
       "capability_id": "life.loss.half_current_player",
@@ -89874,6 +90012,29 @@
     },
     {
       "capability_id": "life.loss.half_current_player",
+      "evidence_class": "positive",
+      "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultCompilerTests.test_half_event_results_preserve_occurrence_recipient_and_typed_amount",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
       "evidence_class": "privacy",
       "test_id": "tests.test_fractional_player_results.FractionalPlayerResultRuntimeTests.test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
       "official_rule_ids": [
@@ -89894,6 +90055,29 @@
         "commander_review"
       ],
       "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultRuntimeTests.test_actual_quietus_cast_equip_damage_current_life_and_pending_departure",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
     },
     {
       "capability_id": "life.loss.half_current_player",
@@ -89940,6 +90124,52 @@
         "commander_review"
       ],
       "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
+      "evidence_class": "replay",
+      "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultRuntimeTests.test_actual_quietus_cast_equip_damage_current_life_and_pending_departure",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
+      "evidence_class": "replay",
+      "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultRuntimeTests.test_real_d_attacker_and_a_equipment_keep_b_as_recipient",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
     },
     {
       "capability_id": "mana.activated.color_set",
@@ -108360,6 +108590,56 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "interaction",
+      "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultRuntimeTests.test_actual_quietus_cast_equip_damage_current_life_and_pending_departure",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8",
+        "113.8",
+        "400.7",
+        "603.3a",
+        "603.6c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultRuntimeTests.test_real_d_attacker_and_a_equipment_keep_b_as_recipient",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8",
+        "113.8",
+        "400.7",
+        "603.3a",
+        "603.6c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
       "official_rule_ids": [
         "113.7a",
@@ -108531,6 +108811,31 @@
         "traditional"
       ],
       "applicability_note": "An actual control spell moves the observer to a third seat while its damage trigger is pending; the old trigger still draws for its original controller, with private projection, pending reload and complete pre-action replay."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultRuntimeTests.test_real_d_attacker_and_a_equipment_keep_b_as_recipient",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8",
+        "113.8",
+        "400.7",
+        "603.3a",
+        "603.6c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
     },
     {
       "capability_id": "resolution.event_player.fixed_result",
@@ -108710,6 +109015,31 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "mutation",
+      "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultCompilerTests.test_half_event_results_preserve_occurrence_recipient_and_typed_amount",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8",
+        "113.8",
+        "400.7",
+        "603.3a",
+        "603.6c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "mutation",
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_fixed_event_player_result_partial_domain_dependency_and_omission_fail_closed",
       "official_rule_ids": [
         "113.7a",
@@ -108731,6 +109061,56 @@
         "traditional"
       ],
       "applicability_note": "Existing fixeddraw/lifeleaf binds only independentlyguaranteed eventplayerfields, closeswholeprogramwithfinecap/resultowner, rejects partial/newobject/globalattack/unrestricteddamage domains and killsomittedlowering."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultCompilerTests.test_fractional_binding_keeps_unsupported_antecedents_and_quantity_fields_residual",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8",
+        "113.8",
+        "400.7",
+        "603.3a",
+        "603.6c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultCompilerTests.test_half_event_result_owner_withdrawal_prevents_whole_admission",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8",
+        "113.8",
+        "400.7",
+        "603.3a",
+        "603.6c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
     },
     {
       "capability_id": "resolution.event_player.fixed_result",
@@ -108956,6 +109336,31 @@
         "traditional"
       ],
       "applicability_note": "Typed binder and closure controls reject incompatible, malformed or primary-event-omitting subscription sets; this isolated shape test is not gameplay admission."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultCompilerTests.test_half_event_results_preserve_occurrence_recipient_and_typed_amount",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8",
+        "113.8",
+        "400.7",
+        "603.3a",
+        "603.6c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
     },
     {
       "capability_id": "resolution.event_player.fixed_result",
@@ -109235,6 +109640,31 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "privacy",
+      "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultRuntimeTests.test_actual_quietus_cast_equip_damage_current_life_and_pending_departure",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8",
+        "113.8",
+        "400.7",
+        "603.3a",
+        "603.6c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "privacy",
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
       "official_rule_ids": [
         "113.7a",
@@ -109406,6 +109836,56 @@
         "traditional"
       ],
       "applicability_note": "An actual control spell moves the observer to a third seat while its damage trigger is pending; the old trigger still draws for its original controller, with private projection, pending reload and complete pre-action replay."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultRuntimeTests.test_actual_quietus_cast_equip_damage_current_life_and_pending_departure",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8",
+        "113.8",
+        "400.7",
+        "603.3a",
+        "603.6c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultRuntimeTests.test_real_d_attacker_and_a_equipment_keep_b_as_recipient",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8",
+        "113.8",
+        "400.7",
+        "603.3a",
+        "603.6c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
     },
     {
       "capability_id": "resolution.event_player.fixed_result",
@@ -151576,5 +152056,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "aec5bc0b70a4089e367e88323f9e30cd12027ac5d3514c28be009aadb094e4e4"
+  "fingerprint": "62102734624a803981d8478a7f172b2b4210e2c795762849b54095f935d76861"
 }

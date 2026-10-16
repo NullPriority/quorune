@@ -2762,6 +2762,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/event_result_value_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/exert_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -6672,6 +6687,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/event_player_result_values.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/evoke.py",
       "layer": "rules",
       "owning_subsystem": "legacy_rules",
@@ -9544,6 +9571,20 @@
     },
     {
       "file": "quorune/rules/graveyard_card_targets.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/half_event_player_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -14305,5 +14346,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "319ca09e880d173f58af2d07935eda3a88f7ce2ed7783f9ad42659f6fde07ca4"
+  "fingerprint": "12f57ca9819240a177ef61a95bf89b14dadaa9f883dd9609d3fa0a82bce1adcc"
 }

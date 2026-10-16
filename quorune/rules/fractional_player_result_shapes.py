@@ -14,6 +14,9 @@ from .affected_player_sacrifice_capability_shapes import fixed_affected_player_s
 
 def half_life_node_capabilities(*, effects, target_schema, mechanic_ids):
     mechanics = set(mechanic_ids)
+    if 'fixed-event-player-result' in mechanics:
+        from .half_event_player_shapes import half_event_player_node_capabilities
+        return half_event_player_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     if HALF_LIFE_MECHANIC not in mechanics or 'cr-119-life' not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]
