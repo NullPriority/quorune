@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "84c501a888dae2cd3ff82df8ba4c1a497cac1dc62f59062d15782a8a4d7c01e5",
-  "declaration_source_fingerprint": "8ed75bb14959ada154e67df0077ce5b8bee04720eb897a42404ce868d380c181",
+  "registry_fingerprint": "1ca92c5d473361e14c1db3e81ce8b75c0d025026ba5e743f2721629df489ba12",
+  "declaration_source_fingerprint": "73284ba8f3e584eb95a9f17f03fbefd40fcb4804c35b9358dc1cc53537f42d79",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -64073,6 +64073,215 @@
         "commander_review"
       ],
       "applicability_note": "Replay the selected player target, four priority passes, and typed rad-counter result to the identical authoritative state hash."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_set_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_event_counter_sets.PublicEventCounterSetRuntimeTests.test_actual_anduril_cast_equip_attack_and_pending_departure_place_one_or_two_once",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Anduril casts/equips/attacks and places1/2 counters once on its trigger controller current creatures. Pending real source destruction does not cancel the result. A real control change gives another player the equipped attacker, yet Equipment controller A owns the trigger/set, excluding the enemy-controlled attacker. Canonical replacement/set owners, privacy, pending load and replay remain authoritative."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_set_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_event_counter_sets.PublicEventCounterSetRuntimeTests.test_real_attacker_control_change_does_not_change_equipment_trigger_actor_or_set",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Anduril casts/equips/attacks and places1/2 counters once on its trigger controller current creatures. Pending real source destruction does not cancel the result. A real control change gives another player the equipped attacker, yet Equipment controller A owns the trigger/set, excluding the enemy-controlled attacker. Canonical replacement/set owners, privacy, pending load and replay remain authoritative."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_set_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_event_counter_sets.PublicEventCounterSetRuntimeTests.test_real_attacker_control_change_does_not_change_equipment_trigger_actor_or_set",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Anduril casts/equips/attacks and places1/2 counters once on its trigger controller current creatures. Pending real source destruction does not cancel the result. A real control change gives another player the equipped attacker, yet Equipment controller A owns the trigger/set, excluding the enemy-controlled attacker. Canonical replacement/set owners, privacy, pending load and replay remain authoritative."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_set_event",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_event_counter_sets.PublicEventCounterSetCompilerTests.test_public_event_set_results_and_complete_conditional_sets_close_independently",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Anduril casts/equips/attacks and places1/2 counters once on its trigger controller current creatures. Pending real source destruction does not cancel the result. A real control change gives another player the equipped attacker, yet Equipment controller A owns the trigger/set, excluding the enemy-controlled attacker. Canonical replacement/set owners, privacy, pending load and replay remain authoritative."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_set_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_event_counter_sets.PublicEventCounterSetCompilerTests.test_fixed_set_producer_rejects_unowned_or_mixed_conditional_leaves",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Anduril casts/equips/attacks and places1/2 counters once on its trigger controller current creatures. Pending real source destruction does not cancel the result. A real control change gives another player the equipped attacker, yet Equipment controller A owns the trigger/set, excluding the enemy-controlled attacker. Canonical replacement/set owners, privacy, pending load and replay remain authoritative."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_set_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_event_counter_sets.PublicEventCounterSetCompilerTests.test_unestablished_sets_targets_and_variable_results_remain_residual",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Anduril casts/equips/attacks and places1/2 counters once on its trigger controller current creatures. Pending real source destruction does not cancel the result. A real control change gives another player the equipped attacker, yet Equipment controller A owns the trigger/set, excluding the enemy-controlled attacker. Canonical replacement/set owners, privacy, pending load and replay remain authoritative."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_set_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_event_counter_sets.PublicEventCounterSetCompilerTests.test_withdrawn_public_set_event_owner_prevents_promotion",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Anduril casts/equips/attacks and places1/2 counters once on its trigger controller current creatures. Pending real source destruction does not cancel the result. A real control change gives another player the equipped attacker, yet Equipment controller A owns the trigger/set, excluding the enemy-controlled attacker. Canonical replacement/set owners, privacy, pending load and replay remain authoritative."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_set_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_event_counter_sets.PublicEventCounterSetCompilerTests.test_public_event_set_results_and_complete_conditional_sets_close_independently",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Anduril casts/equips/attacks and places1/2 counters once on its trigger controller current creatures. Pending real source destruction does not cancel the result. A real control change gives another player the equipped attacker, yet Equipment controller A owns the trigger/set, excluding the enemy-controlled attacker. Canonical replacement/set owners, privacy, pending load and replay remain authoritative."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_set_event",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_event_counter_sets.PublicEventCounterSetRuntimeTests.test_actual_anduril_cast_equip_attack_and_pending_departure_place_one_or_two_once",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Anduril casts/equips/attacks and places1/2 counters once on its trigger controller current creatures. Pending real source destruction does not cancel the result. A real control change gives another player the equipped attacker, yet Equipment controller A owns the trigger/set, excluding the enemy-controlled attacker. Canonical replacement/set owners, privacy, pending load and replay remain authoritative."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_set_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_event_counter_sets.PublicEventCounterSetRuntimeTests.test_actual_anduril_cast_equip_attack_and_pending_departure_place_one_or_two_once",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Anduril casts/equips/attacks and places1/2 counters once on its trigger controller current creatures. Pending real source destruction does not cancel the result. A real control change gives another player the equipped attacker, yet Equipment controller A owns the trigger/set, excluding the enemy-controlled attacker. Canonical replacement/set owners, privacy, pending load and replay remain authoritative."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_set_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_event_counter_sets.PublicEventCounterSetRuntimeTests.test_real_attacker_control_change_does_not_change_equipment_trigger_actor_or_set",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Anduril casts/equips/attacks and places1/2 counters once on its trigger controller current creatures. Pending real source destruction does not cancel the result. A real control change gives another player the equipped attacker, yet Equipment controller A owns the trigger/set, excluding the enemy-controlled attacker. Canonical replacement/set owners, privacy, pending load and replay remain authoritative."
     },
     {
       "capability_id": "counter.producer.fixed_public_source_event",
@@ -149210,5 +149419,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "bda6843907560e3b79e5c977820b6bf88e1a5b9d2fdadab14b8aa63a17ba7344"
+  "fingerprint": "e2f6e6bdda295bbc08d9f16cb4309c12fd93fb73c3ff0be551e4ae826a2111c1"
 }

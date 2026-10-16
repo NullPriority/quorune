@@ -170,6 +170,15 @@ controlled set; optional replacement choices, changed targets and variable
 results remain residual. Unversioned prefix conditions and schema 2 kicked-cast
 facts retain their existing payloads and execution paths.
 
+Normalized public events compose fixed untargeted permanent-set counter results
+through a separate precise producer. Complete public-condition branches must
+each contain an independently closed fixed set; a coarse counter mechanic alone
+cannot cross the event-result guard. The existing affected-set and replacement
+owners use the locked trigger controller. The event's attacker or entry object
+does not become the recipient set or replace that controller. Current ability
+components gate future discovery, while an already created trigger survives
+its source leaving.
+
 Fixed random-discard activation costs use an optional typed scalar that is
 omitted from older ability payloads. The activating player must hold the full
 count. The canonical random selector binds a distinct hand subset to the

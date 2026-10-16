@@ -11,6 +11,9 @@ from .fixed_entry_return_requirements import fixed_entry_return_effect_template
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=()):
+    from .event_counter_results import public_event_counter_set_result
+    counter_set=public_event_counter_set_result(binding,body,effect_template=effect_template,card_name=card_name,accepted_variants=source_counter_variants)
+    if counter_set is not None:return counter_set
     from .event_counter_results import public_event_source_counter_result
     source_counter = public_event_source_counter_result(
         binding, body, effect_template=effect_template, card_name=card_name,

@@ -367,6 +367,7 @@
       "test_linked_abilities",
       "test_ordinary_crew",
       "test_permissions_projection",
+      "test_public_event_counter_sets",
       "test_public_fixtures",
       "test_random_discard_activation_costs",
       "test_reflexive_payments",

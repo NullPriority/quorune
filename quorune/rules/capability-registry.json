@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 313,
+  "registry_version": 314,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -244,6 +244,89 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "counter.producer.fixed_public_set_event",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "113.7a",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Bind an independently closed fixed untargeted permanent-set counter program to an already normalized public event, retaining the creating permanent trigger controller and ordinary current set ownership.",
+        "inputs": [
+          "exact current public event binding",
+          "independently closed literal fixed counter-set leaf or complete set-only public conditional",
+          "locked trigger controller",
+          "current represented recipient set"
+        ],
+        "outputs": [
+          "ordinary counter trigger with independent actor-relative recipient set",
+          "existing counter placement/replacement transaction",
+          "pending trigger survives source departure"
+        ],
+        "exclusions": [
+          "unestablished event-object or set pronouns",
+          "new targeting or variable result quantities",
+          "mixed unsupported conditional branches",
+          "untrusted event predicates or current-ability omissions"
+        ]
+      },
+      "dependencies": [
+        "counter.producer.fixed_permanent_set_effect",
+        "counter.producer.fixed_event_trigger"
+      ],
+      "implementation_components": [
+        "quorune.compiler.event_counter_results.public_event_counter_set_result",
+        "quorune.rules.public_event_counter_set_shapes.fixed_public_event_set_result_capabilities",
+        "quorune.rules.public_event_counter_set_shapes.public_event_counter_set_node_capabilities",
+        "quorune.compiler.fixed_counter_trigger_nodes._counter_binding_accepts_result"
+      ],
+      "positive_tests": [
+        "test_public_event_set_results_and_complete_conditional_sets_close_independently"
+      ],
+      "negative_tests": [
+        "test_unestablished_sets_targets_and_variable_results_remain_residual",
+        "test_fixed_set_producer_rejects_unowned_or_mixed_conditional_leaves",
+        "test_withdrawn_public_set_event_owner_prevents_promotion"
+      ],
+      "interaction_tests": [
+        "test_actual_anduril_cast_equip_attack_and_pending_departure_place_one_or_two_once",
+        "test_real_attacker_control_change_does_not_change_equipment_trigger_actor_or_set"
+      ],
+      "multiplayer_tests": [
+        "test_real_attacker_control_change_does_not_change_equipment_trigger_actor_or_set"
+      ],
+      "privacy_tests": [
+        "test_actual_anduril_cast_equip_attack_and_pending_departure_place_one_or_two_once"
+      ],
+      "replay_tests": [
+        "test_actual_anduril_cast_equip_attack_and_pending_departure_place_one_or_two_once",
+        "test_real_attacker_control_change_does_not_change_equipment_trigger_actor_or_set"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Precise result shape validation adds one explicit producer mechanic across the existing public-event restriction. Unknown set/source/quantity or incomplete mixed branches fail closed; withdrawal blocks admission. Existing event object source/target owners remain unchanged.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the public-event fixed-set producer rejects the three newly closed compiler event/result witnesses while the two already supported spell/entry controls retain their original owner. Actual Anduril must place exactly1/2 once on locked controller recipients, including when equipped attacker changes controller or source leaves after creation.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "resolution.effect.fixed_public_self_replacement",
       "version": 1,
