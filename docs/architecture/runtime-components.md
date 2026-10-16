@@ -136,6 +136,16 @@ limits the source tap symbol but does not prevent paying a selected-creature tap
 Legacy versions retain their output and result-rider schemas. Multiple selected
 costs, discard or exile costs, and selected-cost result riders remain excluded.
 
+Fixed energy activation clauses decode before generic mana-symbol stripping.
+Each literal `{E}` contributes one counter; the existing counted-word format
+retains its typed amount and payload. Multiple exact clauses add their amounts.
+Mixed, stray, variable and alternative energy syntax stays unresolved. The
+activation owner uses `ActivatedAbility.energy_payment` for both affordability
+and its canonical player-counter transaction. Energy belongs to the activating
+player and persists through phase boundaries. A source tap symbol retains its
+usual control-duration and haste restriction, and countering the activated
+ability does not refund either cost.
+
 The compound self-entry handler combines a fixed tapped state and fixed counter
 creation in one replacement effect for complete “enters tapped with” wording.
 It inherits the ordinary self-entry counter validation and submits both

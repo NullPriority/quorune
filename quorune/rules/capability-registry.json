@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 308,
+  "registry_version": 309,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -244,6 +244,92 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "activation.energy.fixed_payment",
+      "version": 1,
+      "official_rules": [
+        "107.14",
+        "118.1",
+        "118.3",
+        "122.1",
+        "302.6",
+        "602.2",
+        "602.2a",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Decode complete fixed energy activation clauses into the existing typed payer resource cost, preserving counted-word payloads and canonical activation legality and payment.",
+        "inputs": [
+          "complete exact literal energy symbols or counted-word clause",
+          "current activation controller and public energy counters",
+          "existing typed ordinary mana and source tap costs",
+          "independently owned activation effect"
+        ],
+        "outputs": [
+          "one exact typed energy requirement",
+          "shared offer and acceptance affordability",
+          "canonical player counter transaction before stack resolution",
+          "ordinary response and counterability without cost refund"
+        ],
+        "exclusions": [
+          "mixed or stray resource symbols inside a pay clause",
+          "variable or alternative energy costs",
+          "unrepresented combined costs or effects",
+          "payment from another player counters or mana"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.abilities._fixed_activation_energy_payment",
+        "quorune.abilities._parse_cost",
+        "quorune.compiler.activated_costs.activated_ability_cost_capabilities",
+        "quorune.rules.activation.availability.activation_availability",
+        "quorune.rules.activation.commit._commit_resource_costs"
+      ],
+      "positive_tests": [
+        "test_complete_energy_clauses_keep_exact_symbol_or_word_amount_and_cost_ownership",
+        "test_existing_counted_word_energy_payload_and_ordinary_mana_cost_round_trip"
+      ],
+      "negative_tests": [
+        "test_open_mixed_or_stray_energy_symbols_cannot_be_erased_by_a_valid_clause",
+        "test_withdrawn_energy_activation_capability_prevents_exact_promotion"
+      ],
+      "interaction_tests": [
+        "test_actual_artist_uses_own_energy_without_tap_and_control_change_changes_payer",
+        "test_actual_zealot_tap_cost_needs_haste_and_rejects_illegal_target_without_paying",
+        "test_actual_turret_energy_persists_phases_and_countering_never_refunds_the_cost"
+      ],
+      "multiplayer_tests": [
+        "test_actual_artist_uses_own_energy_without_tap_and_control_change_changes_payer"
+      ],
+      "privacy_tests": [
+        "test_actual_artist_uses_own_energy_without_tap_and_control_change_changes_payer"
+      ],
+      "replay_tests": [
+        "test_actual_artist_uses_own_energy_without_tap_and_control_change_changes_payer",
+        "test_actual_zealot_tap_cost_needs_haste_and_rejects_illegal_target_without_paying",
+        "test_actual_turret_energy_persists_phases_and_countering_never_refunds_the_cost"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Complete cost-clause decoding, existing resource legality and independent effect ownership are required. Stray E symbols remain residual even alongside a valid energy clause; withdrawing this capability prevents promotion.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the energy-clause decoder prevents all seven exact compiler count/combination witnesses; native original activations must spend the current controller counters before resolution and cannot borrow mana or another seat counters.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "cost.counter.source_fixed_resolution",
       "version": 1,

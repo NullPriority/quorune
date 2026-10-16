@@ -357,6 +357,7 @@
       "test_destruction_rules",
       "test_draw_result_ordering",
       "test_ending_phase_rules",
+      "test_energy_activation_costs",
       "test_exact_combat_keywords",
       "test_fixed_damage_source_lki",
       "test_fixed_player_life_effects",

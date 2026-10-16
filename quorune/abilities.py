@@ -47,7 +47,8 @@ _ACTIVATE_ONLY_SORCERY = re.compile(
 )
 _PAY_LIFE = re.compile(r"^pay\s+(\d+)\s+life$", re.IGNORECASE)
 _PAY_ENERGY = re.compile(
-    r"^pay\s+(?P<count>\d+|one|two|three|four|five|six|seven|eight|nine|ten)$",
+    r"^pay\s+(?:(?P<symbols>\{E\}(?:\s*\{E\})*)|"
+    r"(?P<count>\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+\{E\})$",
     re.IGNORECASE,
 )
 _REMOVE_SOURCE_COUNTER = re.compile(
@@ -994,6 +995,12 @@ class _ParsedCost:
     uncompiled: tuple[str, ...]
 
 
+def _fixed_activation_energy_payment(clause: str) -> int | None:
+    match=_PAY_ENERGY.fullmatch(clause.strip())
+    if match is None:return None
+    return _number(match['count']) if match['count'] is not None else len(parse_mana_symbols(match['symbols']))
+
+
 def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
     requirements, raw_complex = mana_cost_to_vector(actual_cost)
     complex_symbols = [value for value in raw_complex if value not in {"T", "Q"}]
@@ -1026,6 +1033,13 @@ def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
     }
     for clause in _split_cost_clauses(actual_cost):
         symbols = parse_mana_symbols(clause)
+        if 'E' in symbols:
+            payment=_fixed_activation_energy_payment(clause)
+            if payment is None:uncompiled.append(clause.strip())
+            else:
+                energy_payment+=payment
+                complex_symbols=[value for value in complex_symbols if value!='E']
+            continue
         residue = re.sub(r"\{[^{}]+\}", "", clause).strip()
         if not residue:
             continue
@@ -1063,11 +1077,6 @@ def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
         life_match = _PAY_LIFE.match(lower)
         if life_match:
             life_payment += int(life_match.group(1))
-            continue
-        energy_match = _PAY_ENERGY.match(lower)
-        if energy_match and "E" in symbols:
-            energy_payment += _number(energy_match.group("count"))
-            complex_symbols = [value for value in complex_symbols if value != "E"]
             continue
         counter_cost = _source_counter_removal_cost(
             residue,

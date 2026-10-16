@@ -628,6 +628,321 @@
       "applicability_note": "Replay the source-pinned descriptor, payment, discard-cost event, stack object, and private draw exactly."
     },
     {
+      "capability_id": "activation.energy.fixed_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_energy_activation_costs.EnergyActivationRuntimeTests.test_actual_artist_uses_own_energy_without_tap_and_control_change_changes_payer",
+      "official_rule_ids": [
+        "107.14",
+        "118.1",
+        "118.3",
+        "122.1",
+        "302.6",
+        "602.2",
+        "602.2a",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Artist, Zealot and Turret activations use current trusted registration and actual offered/accepted actions. Exact energy amounts, same-controller payer after real control change, mana/other-seat exclusion, source-tap sickness versus haste, private hand projection, rollback, phase persistence, countered activation costs and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "activation.energy.fixed_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_energy_activation_costs.EnergyActivationRuntimeTests.test_actual_turret_energy_persists_phases_and_countering_never_refunds_the_cost",
+      "official_rule_ids": [
+        "107.14",
+        "118.1",
+        "118.3",
+        "122.1",
+        "302.6",
+        "602.2",
+        "602.2a",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Artist, Zealot and Turret activations use current trusted registration and actual offered/accepted actions. Exact energy amounts, same-controller payer after real control change, mana/other-seat exclusion, source-tap sickness versus haste, private hand projection, rollback, phase persistence, countered activation costs and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "activation.energy.fixed_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_energy_activation_costs.EnergyActivationRuntimeTests.test_actual_zealot_tap_cost_needs_haste_and_rejects_illegal_target_without_paying",
+      "official_rule_ids": [
+        "107.14",
+        "118.1",
+        "118.3",
+        "122.1",
+        "302.6",
+        "602.2",
+        "602.2a",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Artist, Zealot and Turret activations use current trusted registration and actual offered/accepted actions. Exact energy amounts, same-controller payer after real control change, mana/other-seat exclusion, source-tap sickness versus haste, private hand projection, rollback, phase persistence, countered activation costs and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "activation.energy.fixed_payment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_energy_activation_costs.EnergyActivationRuntimeTests.test_actual_artist_uses_own_energy_without_tap_and_control_change_changes_payer",
+      "official_rule_ids": [
+        "107.14",
+        "118.1",
+        "118.3",
+        "122.1",
+        "302.6",
+        "602.2",
+        "602.2a",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Artist, Zealot and Turret activations use current trusted registration and actual offered/accepted actions. Exact energy amounts, same-controller payer after real control change, mana/other-seat exclusion, source-tap sickness versus haste, private hand projection, rollback, phase persistence, countered activation costs and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "activation.energy.fixed_payment",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_energy_activation_costs.EnergyActivationCompilerTests.test_complete_energy_clauses_keep_exact_symbol_or_word_amount_and_cost_ownership",
+      "official_rule_ids": [
+        "107.14",
+        "118.1",
+        "118.3",
+        "122.1",
+        "302.6",
+        "602.2",
+        "602.2a",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Artist, Zealot and Turret activations use current trusted registration and actual offered/accepted actions. Exact energy amounts, same-controller payer after real control change, mana/other-seat exclusion, source-tap sickness versus haste, private hand projection, rollback, phase persistence, countered activation costs and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "activation.energy.fixed_payment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_energy_activation_costs.EnergyActivationCompilerTests.test_open_mixed_or_stray_energy_symbols_cannot_be_erased_by_a_valid_clause",
+      "official_rule_ids": [
+        "107.14",
+        "118.1",
+        "118.3",
+        "122.1",
+        "302.6",
+        "602.2",
+        "602.2a",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Artist, Zealot and Turret activations use current trusted registration and actual offered/accepted actions. Exact energy amounts, same-controller payer after real control change, mana/other-seat exclusion, source-tap sickness versus haste, private hand projection, rollback, phase persistence, countered activation costs and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "activation.energy.fixed_payment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_energy_activation_costs.EnergyActivationCompilerTests.test_withdrawn_energy_activation_capability_prevents_exact_promotion",
+      "official_rule_ids": [
+        "107.14",
+        "118.1",
+        "118.3",
+        "122.1",
+        "302.6",
+        "602.2",
+        "602.2a",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Artist, Zealot and Turret activations use current trusted registration and actual offered/accepted actions. Exact energy amounts, same-controller payer after real control change, mana/other-seat exclusion, source-tap sickness versus haste, private hand projection, rollback, phase persistence, countered activation costs and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "activation.energy.fixed_payment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_energy_activation_costs.EnergyActivationCompilerTests.test_complete_energy_clauses_keep_exact_symbol_or_word_amount_and_cost_ownership",
+      "official_rule_ids": [
+        "107.14",
+        "118.1",
+        "118.3",
+        "122.1",
+        "302.6",
+        "602.2",
+        "602.2a",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Artist, Zealot and Turret activations use current trusted registration and actual offered/accepted actions. Exact energy amounts, same-controller payer after real control change, mana/other-seat exclusion, source-tap sickness versus haste, private hand projection, rollback, phase persistence, countered activation costs and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "activation.energy.fixed_payment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_energy_activation_costs.EnergyActivationCompilerTests.test_existing_counted_word_energy_payload_and_ordinary_mana_cost_round_trip",
+      "official_rule_ids": [
+        "107.14",
+        "118.1",
+        "118.3",
+        "122.1",
+        "302.6",
+        "602.2",
+        "602.2a",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Artist, Zealot and Turret activations use current trusted registration and actual offered/accepted actions. Exact energy amounts, same-controller payer after real control change, mana/other-seat exclusion, source-tap sickness versus haste, private hand projection, rollback, phase persistence, countered activation costs and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "activation.energy.fixed_payment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_energy_activation_costs.EnergyActivationRuntimeTests.test_actual_artist_uses_own_energy_without_tap_and_control_change_changes_payer",
+      "official_rule_ids": [
+        "107.14",
+        "118.1",
+        "118.3",
+        "122.1",
+        "302.6",
+        "602.2",
+        "602.2a",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Artist, Zealot and Turret activations use current trusted registration and actual offered/accepted actions. Exact energy amounts, same-controller payer after real control change, mana/other-seat exclusion, source-tap sickness versus haste, private hand projection, rollback, phase persistence, countered activation costs and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "activation.energy.fixed_payment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_energy_activation_costs.EnergyActivationRuntimeTests.test_actual_artist_uses_own_energy_without_tap_and_control_change_changes_payer",
+      "official_rule_ids": [
+        "107.14",
+        "118.1",
+        "118.3",
+        "122.1",
+        "302.6",
+        "602.2",
+        "602.2a",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Artist, Zealot and Turret activations use current trusted registration and actual offered/accepted actions. Exact energy amounts, same-controller payer after real control change, mana/other-seat exclusion, source-tap sickness versus haste, private hand projection, rollback, phase persistence, countered activation costs and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "activation.energy.fixed_payment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_energy_activation_costs.EnergyActivationRuntimeTests.test_actual_turret_energy_persists_phases_and_countering_never_refunds_the_cost",
+      "official_rule_ids": [
+        "107.14",
+        "118.1",
+        "118.3",
+        "122.1",
+        "302.6",
+        "602.2",
+        "602.2a",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Artist, Zealot and Turret activations use current trusted registration and actual offered/accepted actions. Exact energy amounts, same-controller payer after real control change, mana/other-seat exclusion, source-tap sickness versus haste, private hand projection, rollback, phase persistence, countered activation costs and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "activation.energy.fixed_payment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_energy_activation_costs.EnergyActivationRuntimeTests.test_actual_zealot_tap_cost_needs_haste_and_rejects_illegal_target_without_paying",
+      "official_rule_ids": [
+        "107.14",
+        "118.1",
+        "118.3",
+        "122.1",
+        "302.6",
+        "602.2",
+        "602.2a",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Artist, Zealot and Turret activations use current trusted registration and actual offered/accepted actions. Exact energy amounts, same-controller payer after real control change, mana/other-seat exclusion, source-tap sickness versus haste, private hand projection, rollback, phase persistence, countered activation costs and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "activation.energy.fixed_payment",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_energy_activation_costs.EnergyActivationRuntimeTests.test_actual_artist_uses_own_energy_without_tap_and_control_change_changes_payer",
+      "official_rule_ids": [
+        "107.14",
+        "118.1",
+        "118.3",
+        "122.1",
+        "302.6",
+        "602.2",
+        "602.2a",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Artist, Zealot and Turret activations use current trusted registration and actual offered/accepted actions. Exact energy amounts, same-controller payer after real control change, mana/other-seat exclusion, source-tap sickness versus haste, private hand projection, rollback, phase persistence, countered activation costs and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "activation.energy.fixed_payment",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_energy_activation_costs.EnergyActivationRuntimeTests.test_actual_zealot_tap_cost_needs_haste_and_rejects_illegal_target_without_paying",
+      "official_rule_ids": [
+        "107.14",
+        "118.1",
+        "118.3",
+        "122.1",
+        "302.6",
+        "602.2",
+        "602.2a",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Artist, Zealot and Turret activations use current trusted registration and actual offered/accepted actions. Exact energy amounts, same-controller payer after real control change, mana/other-seat exclusion, source-tap sickness versus haste, private hand projection, rollback, phase persistence, countered activation costs and pending-load/preaction replay are covered."
+    },
+    {
       "capability_id": "activation.exhaust.once_per_object",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_source_effect_sequences.FixedSourceEffectSequenceRuntimeTests.test_exhaust_source_sequence_suspends_for_replacement_and_resumes_exactly",

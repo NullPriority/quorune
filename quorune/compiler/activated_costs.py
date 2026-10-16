@@ -19,6 +19,8 @@ def activated_ability_cost_capabilities(
     """Return the reviewed capability owners for one typed activation cost."""
 
     additional: list[str] = []
+    if ability.energy_payment:
+        additional.append('activation.energy.fixed_payment')
     if ability.power_up is not None:additional.append(POWER_UP_CAPABILITY)
     if ability.source_counter_removal_cost is not None:
         additional.append("activation.source_counter_removal.fixed")
