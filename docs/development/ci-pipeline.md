@@ -278,6 +278,9 @@ change to a static-characteristic, activated-cost, prevention, or central
 program-registration owner makes its positive and residual expectations
 visible in the focused plan. The links supplement the authoritative cloud
 shard; they do not turn a full shard into a required local run.
+The pre-corpus change-impact contract checks every path and symbol rule's
+module and suite references against the shard manifest, including rules not
+selected by the current change. A stale reference fails before generation.
 
 Run write mode after the coherent source/test/documentation worktree is complete
 and before the final commit; inspect and stage its outputs with the source

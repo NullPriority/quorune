@@ -3039,7 +3039,7 @@
         "test_fixed_source_characteristic_effects",
         "test_fixed_target_effect_sequences",
         "test_high_risk_interaction_assurance",
-        "test_mechanic_contracts",
+        "test_oracle_ir",
         "test_mill_rules",
         "test_resolution_public_conditions",
         "test_rules_scheduler",
@@ -3942,7 +3942,7 @@
         "test_fixed_target_effect_sequences",
         "test_fixed_token_creation_effects",
         "test_bound_effect_programs",
-        "test_oracle_corpus_examples",
+        "test_oracle_ir",
         "test_fixed_public_state_characteristics",
         "test_fixed_damage_effect_clauses",
         "test_public_state_counter_actions",
@@ -3965,7 +3965,7 @@
       ],
       "test_modules": [
         "test_fixed_counter_event_triggers",
-        "test_oracle_corpus_examples",
+        "test_oracle_ir",
         "test_bound_effect_programs",
         "test_fixed_token_creation_effects",
         "test_card_program_v2"
@@ -3981,7 +3981,7 @@
         "test_fixed_source_characteristic_effects",
         "test_fixed_evasion_grants",
         "test_landwalk",
-        "test_oracle_corpus_examples"
+        "test_oracle_ir"
       ]
     },
     {
@@ -3996,7 +3996,7 @@
         "test_turn_priority_owner",
         "test_turn_structure_rules",
         "test_card_program_trust",
-        "test_oracle_corpus_examples",
+        "test_oracle_ir",
         "test_bound_effect_programs"
       ]
     },
@@ -4011,7 +4011,7 @@
         "test_regeneration_rules",
         "test_fixed_counter_event_triggers",
         "test_targeted_destruction_effect_clauses",
-        "test_oracle_corpus_examples",
+        "test_oracle_ir",
         "test_fixed_public_state_characteristics",
         "test_public_state_counter_actions",
         "test_public_state_event_actions",
@@ -4037,7 +4037,7 @@
         "test_targeted_graveyard_return_effect_clauses",
         "test_targeted_return_to_hand_effect_clauses",
         "test_card_program_trust",
-        "test_oracle_corpus_examples"
+        "test_oracle_ir"
       ]
     },
     {
@@ -4057,7 +4057,7 @@
         "test_temporary_declaration_restriction_effects",
         "test_combat_declaration_restrictions",
         "test_temporary_target_interactions",
-        "test_oracle_corpus_examples",
+        "test_oracle_ir",
         "test_continuous_effect_duration",
         "test_fixed_source_characteristic_effects",
         "test_card_program_trust",
@@ -4076,7 +4076,7 @@
         "test_casting_activation_metadata",
         "test_copy_objects",
         "test_target_announcements",
-        "test_oracle_corpus_examples"
+        "test_oracle_ir"
       ]
     },
     {
@@ -4393,8 +4393,10 @@
         "test_fixed_counter_player_cast_triggers",
         "test_manifest",
         "test_morph_rules",
-        "test_zone_object_lifecycle",
-        "test_zone_transitions",
+        "test_entry_designations",
+        "test_single_object_zone_transition",
+        "test_zone_general_rules",
+        "test_zone_transition_owner",
         "test_semantic_choice_characterization",
         "test_card_program_trust"
       ]

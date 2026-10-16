@@ -22,7 +22,7 @@ from scripts.ci_plan import (
     selected_test_plan,
     workflow_job_ids,
 )
-from scripts.change_impact import classify_changes
+from scripts.change_impact import classify_changes, load_impact_policy
 from scripts.ci_risk_sentinel import requires_high_risk_gate
 from scripts.main_broad_ci import main_broad_concurrency_budget
 from scripts.main_health import MainHealthError, verify_main_health
@@ -223,6 +223,13 @@ class CiPipelineTests(unittest.TestCase):
             for modules in manifest["primary_shards"].values()
             for module in modules
         }
+        policy, _ = load_impact_policy()
+        all_suites = set(manifest["primary_shards"]) | set(manifest["overlay_suites"])
+        for group in ("path_rules", "symbol_rules"):
+            for rule in policy[group]:
+                with self.subTest(group=group, rule=rule["id"]):
+                    self.assertEqual([], sorted(set(rule.get("test_modules", ())) - all_modules))
+                    self.assertEqual([], sorted(set(rule.get("test_suites", ())) - all_suites))
         self.assertLess(set(ordinary["selected_test_modules"]), all_modules)
         self.assertIn(
             "test_card_program_trust", ordinary["selected_test_modules"]
