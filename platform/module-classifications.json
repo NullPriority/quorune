@@ -2015,6 +2015,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/conditional_declaration_grants.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/conditional_exile_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -13900,5 +13915,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "68532131f68cf137db42ab3984349a2a5e55a93bd82c20328c1ff6d8f7d8d9eb"
+  "fingerprint": "af448a5599d69bbab809cd38748b4be04b4add5fee277731d818056e3b78b655"
 }

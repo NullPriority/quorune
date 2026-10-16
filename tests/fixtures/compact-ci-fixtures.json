@@ -34,6 +34,7 @@
     "tests/fixtures/composition-assurance-cards.json",
     "tests/fixtures/conditional-entry-library-targets.json",
     "tests/fixtures/conditional-exile-cards.json",
+    "tests/fixtures/conditional-query-declaration-cards.json",
     "tests/fixtures/controller-damage-cards.json",
     "tests/fixtures/controller-sacrifice-cards.json",
     "tests/fixtures/copied-self-entry-counter-cards.json",

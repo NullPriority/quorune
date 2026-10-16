@@ -805,3 +805,20 @@ workflow. Architectural rationale remains in
 [ADR 0010](../adr/0010-replacement-event-tree-and-token-owner.md),
 [ADR 0011](../adr/0011-counter-placement-event-and-mutation-owner.md), and
 [ADR 0008](../adr/0008-runtime-trust-and-governance-hardening.md).
+
+### Conditional queried declaration grants
+
+`compiler/conditional_declaration_grants.py` composes an independently closed
+public condition with a closed battlefield query and one recipient-relative
+declaration fragment. Pure grants use the existing schema-6
+`continuous.declaration.public-state.v1` descriptor, with no added keyword or
+power/toughness modifier. The same module retains the existing mixed
+characteristic-and-declaration compiler path, exported through its original
+`declaration_nodes` entry point.
+
+The static source's current controller supplies both the condition actor and
+recipient query. Current matching entrants receive the grant; source departure,
+ability loss, control changes, and query membership changes recompute it. The
+existing layer-6 and combat declaration owners govern both blocker domains and
+accepted commands. Source-relative opposing-controller rules and incomplete
+conditions or sibling clauses remain residual.

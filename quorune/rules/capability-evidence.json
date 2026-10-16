@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "1ca92c5d473361e14c1db3e81ce8b75c0d025026ba5e743f2721629df489ba12",
-  "declaration_source_fingerprint": "73284ba8f3e584eb95a9f17f03fbefd40fcb4804c35b9358dc1cc53537f42d79",
+  "registry_fingerprint": "c889c22bab1d107ef79403b745bcdd2aa8f07759f289174560cac6e13d701500",
+  "declaration_source_fingerprint": "a7938b6d13b96c032900934a174357e99af8e23e4d0fee194ba707966108451a",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -47966,6 +47966,215 @@
         "commander_review"
       ],
       "applicability_note": "Owner diagnostic: a single zone move with semantic event emission suppressed expires the source guard before returning. Reentry cannot restore it or satisfy the retained original source identity; a stale instruction is a no-op without mutation."
+    },
+    {
+      "capability_id": "continuous.declaration.conditional_query_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_query_declarations.ConditionalQueryDeclarationRuntimeTests.test_actual_detective_cast_late_recipient_and_block_offer_commit_agree",
+      "official_rule_ids": [
+        "109.5",
+        "509.1b",
+        "509.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed public condition gates a current recipient query and existing declaration fragment. Actual Detective cast, late creature entry, block domains and accepted commands, rollback, real source control/departure, four-seat privacy, pending load and exact pre-action replay establish live ownership."
+    },
+    {
+      "capability_id": "continuous.declaration.conditional_query_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_query_declarations.ConditionalQueryDeclarationRuntimeTests.test_real_source_control_and_departure_recompute_condition_and_recipients",
+      "official_rule_ids": [
+        "109.5",
+        "509.1b",
+        "509.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed public condition gates a current recipient query and existing declaration fragment. Actual Detective cast, late creature entry, block domains and accepted commands, rollback, real source control/departure, four-seat privacy, pending load and exact pre-action replay establish live ownership."
+    },
+    {
+      "capability_id": "continuous.declaration.conditional_query_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_conditional_query_declarations.ConditionalQueryDeclarationRuntimeTests.test_actual_detective_cast_late_recipient_and_block_offer_commit_agree",
+      "official_rule_ids": [
+        "109.5",
+        "509.1b",
+        "509.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed public condition gates a current recipient query and existing declaration fragment. Actual Detective cast, late creature entry, block domains and accepted commands, rollback, real source control/departure, four-seat privacy, pending load and exact pre-action replay establish live ownership."
+    },
+    {
+      "capability_id": "continuous.declaration.conditional_query_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_conditional_query_declarations.ConditionalQueryDeclarationRuntimeTests.test_real_source_control_and_departure_recompute_condition_and_recipients",
+      "official_rule_ids": [
+        "109.5",
+        "509.1b",
+        "509.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed public condition gates a current recipient query and existing declaration fragment. Actual Detective cast, late creature entry, block domains and accepted commands, rollback, real source control/departure, four-seat privacy, pending load and exact pre-action replay establish live ownership."
+    },
+    {
+      "capability_id": "continuous.declaration.conditional_query_grant",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_conditional_query_declarations.ConditionalQueryDeclarationCompilerTests.test_pure_query_declaration_uses_one_condition_without_invented_characteristics",
+      "official_rule_ids": [
+        "109.5",
+        "509.1b",
+        "509.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed public condition gates a current recipient query and existing declaration fragment. Actual Detective cast, late creature entry, block domains and accepted commands, rollback, real source control/departure, four-seat privacy, pending load and exact pre-action replay establish live ownership."
+    },
+    {
+      "capability_id": "continuous.declaration.conditional_query_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_query_declarations.ConditionalQueryDeclarationCompilerTests.test_open_condition_query_siblings_and_source_relative_rules_remain_residual",
+      "official_rule_ids": [
+        "109.5",
+        "509.1b",
+        "509.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed public condition gates a current recipient query and existing declaration fragment. Actual Detective cast, late creature entry, block domains and accepted commands, rollback, real source control/departure, four-seat privacy, pending load and exact pre-action replay establish live ownership."
+    },
+    {
+      "capability_id": "continuous.declaration.conditional_query_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_query_declarations.ConditionalQueryDeclarationCompilerTests.test_query_declaration_dependencies_and_descriptor_validation_fail_closed",
+      "official_rule_ids": [
+        "109.5",
+        "509.1b",
+        "509.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed public condition gates a current recipient query and existing declaration fragment. Actual Detective cast, late creature entry, block domains and accepted commands, rollback, real source control/departure, four-seat privacy, pending load and exact pre-action replay establish live ownership."
+    },
+    {
+      "capability_id": "continuous.declaration.conditional_query_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_query_declarations.ConditionalQueryDeclarationCompilerTests.test_pure_query_declaration_uses_one_condition_without_invented_characteristics",
+      "official_rule_ids": [
+        "109.5",
+        "509.1b",
+        "509.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed public condition gates a current recipient query and existing declaration fragment. Actual Detective cast, late creature entry, block domains and accepted commands, rollback, real source control/departure, four-seat privacy, pending load and exact pre-action replay establish live ownership."
+    },
+    {
+      "capability_id": "continuous.declaration.conditional_query_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_conditional_query_declarations.ConditionalQueryDeclarationRuntimeTests.test_actual_detective_cast_late_recipient_and_block_offer_commit_agree",
+      "official_rule_ids": [
+        "109.5",
+        "509.1b",
+        "509.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed public condition gates a current recipient query and existing declaration fragment. Actual Detective cast, late creature entry, block domains and accepted commands, rollback, real source control/departure, four-seat privacy, pending load and exact pre-action replay establish live ownership."
+    },
+    {
+      "capability_id": "continuous.declaration.conditional_query_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_query_declarations.ConditionalQueryDeclarationRuntimeTests.test_actual_detective_cast_late_recipient_and_block_offer_commit_agree",
+      "official_rule_ids": [
+        "109.5",
+        "509.1b",
+        "509.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed public condition gates a current recipient query and existing declaration fragment. Actual Detective cast, late creature entry, block domains and accepted commands, rollback, real source control/departure, four-seat privacy, pending load and exact pre-action replay establish live ownership."
+    },
+    {
+      "capability_id": "continuous.declaration.conditional_query_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_query_declarations.ConditionalQueryDeclarationRuntimeTests.test_real_source_control_and_departure_recompute_condition_and_recipients",
+      "official_rule_ids": [
+        "109.5",
+        "509.1b",
+        "509.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed public condition gates a current recipient query and existing declaration fragment. Actual Detective cast, late creature entry, block domains and accepted commands, rollback, real source control/departure, four-seat privacy, pending load and exact pre-action replay establish live ownership."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -149419,5 +149628,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "e2f6e6bdda295bbc08d9f16cb4309c12fd93fb73c3ff0be551e4ae826a2111c1"
+  "fingerprint": "299ae2fca12d27e67453797c391697c3be49f10a38fbb59da070a2fbb0c5276e"
 }

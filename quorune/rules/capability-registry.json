@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 314,
+  "registry_version": 315,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -244,6 +244,87 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "continuous.declaration.conditional_query_grant",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "509.1b",
+        "509.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Gate one independently closed recipient-relative declaration fragment over a current battlefield query with one existing typed public condition. Reuse schema6, layer6 and the shared combat declaration owner.",
+        "inputs": [
+          "current phased-in trusted static source",
+          "closed public condition relative to current source controller",
+          "closed current battlefield query",
+          "one recipient-relative declaration fragment"
+        ],
+        "outputs": [
+          "current query recipients receive the declaration fragment only while the condition is true",
+          "advertised and accepted declarations share current restriction and requirement ownership"
+        ],
+        "exclusions": [
+          "ambiguous or unestablished subjects",
+          "open conditions and unsupported sibling clauses",
+          "source-relative opposing-controller restrictions",
+          "multiple declaration fragments or new characteristic modifiers"
+        ]
+      },
+      "dependencies": [
+        "combat.declaration.typed_components",
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "implementation_components": [
+        "quorune.compiler.conditional_declaration_grants.conditional_query_declaration_grant",
+        "quorune.compiler.conditional_declaration_grants.conditional_characteristic_declaration_grant",
+        "quorune.semantic_runtime.conditional_continuous.ConditionalDeclarationGrantHandler"
+      ],
+      "positive_tests": [
+        "test_pure_query_declaration_uses_one_condition_without_invented_characteristics"
+      ],
+      "negative_tests": [
+        "test_open_condition_query_siblings_and_source_relative_rules_remain_residual",
+        "test_query_declaration_dependencies_and_descriptor_validation_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_actual_detective_cast_late_recipient_and_block_offer_commit_agree",
+        "test_real_source_control_and_departure_recompute_condition_and_recipients"
+      ],
+      "multiplayer_tests": [
+        "test_actual_detective_cast_late_recipient_and_block_offer_commit_agree",
+        "test_real_source_control_and_departure_recompute_condition_and_recipients"
+      ],
+      "privacy_tests": [
+        "test_actual_detective_cast_late_recipient_and_block_offer_commit_agree"
+      ],
+      "replay_tests": [
+        "test_actual_detective_cast_late_recipient_and_block_offer_commit_agree",
+        "test_real_source_control_and_departure_recompute_condition_and_recipients"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The complete existing declaration query leaf and public condition must parse independently. Each consumer and condition producer retains its capability gate; withdrawing any owner prevents exact admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the pure conditional query path rejects the exact generic declarations and original Detective admission. Native blocks must exclude matching Detectives only while the current source controller condition holds, including late entrants, real control change and source departure.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "counter.producer.fixed_public_set_event",
       "version": 1,
