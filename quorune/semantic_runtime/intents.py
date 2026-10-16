@@ -7,6 +7,7 @@ from .zone_move_intent import ZoneMoveIntent, _freeze_replacement_selections
 from .counter_movement_intent import MoveCountersIntent
 from .connive_intent import ConniveCompletedIntent
 from .energy_payment import PayEnergyIntent
+from ..reflexive_trigger_model import QueueReflexiveTriggerIntent
 
 from dataclasses import dataclass, field
 from typing import Any, Literal, Mapping, TypeAlias
@@ -1542,6 +1543,7 @@ class ProliferateIntent:
 
 SemanticIntent: TypeAlias = (
     DrawCardsIntent | ControlIntent
+    | QueueReflexiveTriggerIntent
     | MillCardsIntent
     | BecomeMonarchIntent
     | SetPermanentTappedIntent

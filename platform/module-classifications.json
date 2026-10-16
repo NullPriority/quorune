@@ -4163,6 +4163,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/reflexive_payment_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/regeneration_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -7643,6 +7658,18 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/reflexive_trigger_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/regeneration.py",
       "layer": "rules",
       "owning_subsystem": "regeneration",
@@ -9548,6 +9575,34 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/reflexive_payment_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/reflexive_triggers.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/rules/resolution_characteristic_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -10819,6 +10874,21 @@
     },
     {
       "file": "quorune/semantic_choices/public_selection.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_choices",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/semantic_choices/reflexive_payment.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_choices",
       "allowed_dependency_layers": [
@@ -12363,6 +12433,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/stack_execution.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/static_cast_rules.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -13673,5 +13758,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "ee265caeb821f07fccb39f8e82df2b2e063451e9440a79d6c0f1ce26adca351a"
+  "fingerprint": "1653350ecee6aa1fd167024999201dee8f0642379820020bd36bd69171876e74"
 }

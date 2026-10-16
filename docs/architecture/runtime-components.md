@@ -319,6 +319,18 @@ Target-relative prices, unrecorded history, dynamic power/toughness, chosen or
 hidden facts, caps, floors, and open arithmetic fail closed rather than
 becoming a runtime prose query.
 
+Resolution-time payment schema 4 composes one existing fixed action with a
+`reflexive_trigger_program`. This immutable body retains unbound targets and
+quantities until it resolves in its own stack frame. The existing payment
+choice commits the cost and then enqueues a typed reflexive occurrence through
+ordinary APNAP trigger placement. The creating ability finishes before targets
+are chosen, and players receive the ordinary response window. Declining creates
+no occurrence; an unavailable mandatory target does not refund a completed
+payment. The trigger retains the creating ability's controller and source
+incarnation. Repeated payments, nested optional costs and unrepresented
+paid-object antecedents remain residual. Earlier payment schemas keep their
+existing decoding and timing.
+
 `ability.activated.mana.color-set.v1` binds a compiler-pinned relative object
 query to the activating seat and reads only matching public battlefield
 objects or that seat's graveyard. It derives colors from current effective

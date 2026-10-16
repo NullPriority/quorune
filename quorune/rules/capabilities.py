@@ -2,6 +2,7 @@ from __future__ import annotations
 from .counter_placement_capability_shapes import counter_placement_covered_mechanics
 from .control_capability_shapes import fixed_control_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
+from .destruction_regeneration_capability_shapes import regeneration_covered_mechanics as _regeneration_covered_mechanics
 from .whole_hand_discard_shapes import unchosen_hand_discard_node_capabilities
 from .connive_capability_shapes import fixed_connive_node_capabilities
 from .goad_capability_shapes import fixed_goad_node_capabilities
@@ -409,6 +410,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'trigger-event-normalized-counter-placement': ('trigger.event.normalized_counter_placement',),
     "tap-state-event-player-result": ("trigger.event.normalized_public_action",),
     "scheduled-player-event-result": ("trigger.event.scheduled_player_result",),
+    "fixed-action-reflexive-trigger": ("trigger.reflexive.fixed_action_result",),
     "trigger-event-normalized-damage": (
         "trigger.event.normalized_damage",
     ),
@@ -471,6 +473,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         "optional-fixed-counter-event-trigger",
         FIXED_OPTIONAL_EFFECT_MECHANIC,
         FIXED_OPTIONAL_MANA_PAYMENT_MECHANIC,
+        "fixed-action-reflexive-trigger",
         "destroy",
         _EXILE_MECHANIC,
         "return-to-owner-hand",
@@ -1392,25 +1395,6 @@ def _fixed_modal_covered_mechanics(supplied: set[str]) -> set[str]:
         mechanic
         for capability, mechanic in mapping.items()
         if capability in supplied
-    }
-
-
-_REGENERATION_MECHANIC_CAPABILITIES = {
-    "regenerate": {
-        "permanent.regeneration.fixed_effect",
-        "permanent.regeneration.self_activation",
-    },
-    "regeneration-prohibition": {
-        "permanent.destroy.regeneration_prohibition"
-    },
-}
-
-
-def _regeneration_covered_mechanics(supplied: set[str]) -> set[str]:
-    return {
-        mechanic
-        for mechanic, capabilities in _REGENERATION_MECHANIC_CAPABILITIES.items()
-        if supplied.intersection(capabilities)
     }
 
 

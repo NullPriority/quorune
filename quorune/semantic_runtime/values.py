@@ -81,6 +81,20 @@ def _resolve_attachment_reference(
     return target.ref
 
 
+def _resolve_typed_numeric_amount(host, value, item):
+    """Delegate numeric value families without changing their error boundary."""
+    try:
+        if value['kind'] == PUBLIC_QUERY_AMOUNT_KIND:
+            return resolve_public_query_amount(host, value, item)
+        if value['kind'] == CAST_X_AMOUNT_KIND:
+            return resolve_cast_x_amount(value, item)
+        if value['kind'] == SCALAR_AMOUNT_KIND:
+            return resolve_scalar_effect_amount(host, value, item)
+    except PublicQueryAmountError as exc:
+        raise SemanticNodeError(str(exc)) from exc
+    raise SemanticNodeError('Typed numeric value kind is unsupported')
+
+
 def resolve_semantic_value(
     host: SemanticValueHost,
     value: Any,
@@ -90,23 +104,16 @@ def resolve_semantic_value(
 
     if isinstance(value, list):
         return [resolve_semantic_value(host, child, item) for child in value]
+    if isinstance(value, Mapping) and value.get('kind') == 'reflexive_trigger_program':
+        from ..reflexive_trigger_model import ReflexiveTriggerProgram
+        try:
+            return ReflexiveTriggerProgram.from_dict(value).to_dict()
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
     if isinstance(value, Mapping) and value.get("kind") == "source_attachment":
         return _resolve_attachment_reference(host, value, item)
-    if isinstance(value, Mapping) and value.get("kind") == PUBLIC_QUERY_AMOUNT_KIND:
-        try:
-            return resolve_public_query_amount(host, value, item)
-        except PublicQueryAmountError as exc:
-            raise SemanticNodeError(str(exc)) from exc
-    if isinstance(value, Mapping) and value.get("kind") == CAST_X_AMOUNT_KIND:
-        try:
-            return resolve_cast_x_amount(value, item)
-        except PublicQueryAmountError as exc:
-            raise SemanticNodeError(str(exc)) from exc
-    if isinstance(value, Mapping) and value.get("kind") == SCALAR_AMOUNT_KIND:
-        try:
-            return resolve_scalar_effect_amount(host, value, item)
-        except PublicQueryAmountError as exc:
-            raise SemanticNodeError(str(exc)) from exc
+    if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND):
+        return _resolve_typed_numeric_amount(host, value, item)
     if isinstance(value, dict):
         return {
             key: resolve_semantic_value(host, child, item)

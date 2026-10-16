@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "e12a52a5652ec638994421ff8020ff7e1ba24ec0e292eb5e27abce992a710249",
-  "declaration_source_fingerprint": "1e65af9f0c4df8f61262c8d0effcb51d317bcc9a1c5f5169e6620ab4d89c0a3f",
+  "registry_fingerprint": "a2dd0e2513b6cb1032d7fa59a6ebc171f618a07ddea4ff90bd652655b8a8cc02",
+  "declaration_source_fingerprint": "8c8931576d01b98e529e7ebeb79a938acaf6e7feccd9119c068aaae34d56643e",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -66158,6 +66158,38 @@
     {
       "capability_id": "counter.producer.saga_lore",
       "evidence_class": "interaction",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_actual_final_saga_chapter_discards_before_selecting_that_card_as_a_new_target",
+      "official_rule_ids": [
+        "101.4",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3",
+        "614.1c",
+        "614.16",
+        "616.1",
+        "616.1f",
+        "702.155",
+        "702.155a",
+        "702.155b",
+        "702.155c",
+        "714.2b",
+        "714.2d",
+        "714.3",
+        "714.3a",
+        "714.3b",
+        "714.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual original Saga crosses chapters through real typed lore-counter spells, mills exactly once, then discards before choosing that newly graveyard card as its reflexive target. The final Saga sacrifices before new target selection; the child retains its old source incarnation. A real spell payment likewise finishes and moves its source before the separately targeted private draw. Pending save/load and whole pre-action replay preserve each boundary."
+    },
+    {
+      "capability_id": "counter.producer.saga_lore",
+      "evidence_class": "interaction",
       "test_id": "tests.test_saga_counter_progression.SagaCounterProgressionTests.test_competing_saga_entry_replacements_order_to_three_or_four",
       "official_rule_ids": [
         "101.4",
@@ -66378,6 +66410,38 @@
         "commander_review"
       ],
       "applicability_note": "Preserve both simultaneous Saga event identities across successive replacement-order retries and commit the complete batch before chapter dispatch."
+    },
+    {
+      "capability_id": "counter.producer.saga_lore",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_actual_final_saga_chapter_discards_before_selecting_that_card_as_a_new_target",
+      "official_rule_ids": [
+        "101.4",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3",
+        "614.1c",
+        "614.16",
+        "616.1",
+        "616.1f",
+        "702.155",
+        "702.155a",
+        "702.155b",
+        "702.155c",
+        "714.2b",
+        "714.2d",
+        "714.3",
+        "714.3a",
+        "714.3b",
+        "714.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual original Saga crosses chapters through real typed lore-counter spells, mills exactly once, then discards before choosing that newly graveyard card as its reflexive target. The final Saga sacrifices before new target selection; the child retains its old source incarnation. A real spell payment likewise finishes and moves its source before the separately targeted private draw. Pending save/load and whole pre-action replay preserve each boundary."
     },
     {
       "capability_id": "counter.producer.saga_lore",
@@ -66766,6 +66830,38 @@
     {
       "capability_id": "counter.producer.saga_lore",
       "evidence_class": "positive",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_actual_final_saga_chapter_discards_before_selecting_that_card_as_a_new_target",
+      "official_rule_ids": [
+        "101.4",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3",
+        "614.1c",
+        "614.16",
+        "616.1",
+        "616.1f",
+        "702.155",
+        "702.155a",
+        "702.155b",
+        "702.155c",
+        "714.2b",
+        "714.2d",
+        "714.3",
+        "714.3a",
+        "714.3b",
+        "714.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual original Saga crosses chapters through real typed lore-counter spells, mills exactly once, then discards before choosing that newly graveyard card as its reflexive target. The final Saga sacrifices before new target selection; the child retains its old source incarnation. A real spell payment likewise finishes and moves its source before the separately targeted private draw. Pending save/load and whole pre-action replay preserve each boundary."
+    },
+    {
+      "capability_id": "counter.producer.saga_lore",
+      "evidence_class": "positive",
       "test_id": "tests.test_saga_counter_progression.SagaCounterProgressionTests.test_compiled_ordinary_saga_chapter_dispatches_and_resolves",
       "official_rule_ids": [
         "101.4",
@@ -66958,6 +67054,38 @@
     {
       "capability_id": "counter.producer.saga_lore",
       "evidence_class": "privacy",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_actual_final_saga_chapter_discards_before_selecting_that_card_as_a_new_target",
+      "official_rule_ids": [
+        "101.4",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3",
+        "614.1c",
+        "614.16",
+        "616.1",
+        "616.1f",
+        "702.155",
+        "702.155a",
+        "702.155b",
+        "702.155c",
+        "714.2b",
+        "714.2d",
+        "714.3",
+        "714.3a",
+        "714.3b",
+        "714.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual original Saga crosses chapters through real typed lore-counter spells, mills exactly once, then discards before choosing that newly graveyard card as its reflexive target. The final Saga sacrifices before new target selection; the child retains its old source incarnation. A real spell payment likewise finishes and moves its source before the separately targeted private draw. Pending save/load and whole pre-action replay preserve each boundary."
+    },
+    {
+      "capability_id": "counter.producer.saga_lore",
+      "evidence_class": "privacy",
       "test_id": "tests.test_saga_counter_progression.SagaCounterProgressionTests.test_read_ahead_choice_is_private_and_replays_exactly",
       "official_rule_ids": [
         "101.4",
@@ -67050,6 +67178,38 @@
         "commander_review"
       ],
       "applicability_note": "Project the precombat replacement choice only to the affected active player without exposing the authoritative turn-action frame, batch, or physical Saga identity."
+    },
+    {
+      "capability_id": "counter.producer.saga_lore",
+      "evidence_class": "replay",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_actual_final_saga_chapter_discards_before_selecting_that_card_as_a_new_target",
+      "official_rule_ids": [
+        "101.4",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3",
+        "614.1c",
+        "614.16",
+        "616.1",
+        "616.1f",
+        "702.155",
+        "702.155a",
+        "702.155b",
+        "702.155c",
+        "714.2b",
+        "714.2d",
+        "714.3",
+        "714.3a",
+        "714.3b",
+        "714.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual original Saga crosses chapters through real typed lore-counter spells, mills exactly once, then discards before choosing that newly graveyard card as its reflexive target. The final Saga sacrifices before new target selection; the child retains its old source incarnation. A real spell payment likewise finishes and moves its source before the separately targeted private draw. Pending save/load and whole pre-action replay preserve each boundary."
     },
     {
       "capability_id": "counter.producer.saga_lore",
@@ -129369,6 +129529,678 @@
       "applicability_note": "Replay a waiting untap trigger that is put on the stack before upkeep priority."
     },
     {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_actual_final_saga_chapter_discards_before_selecting_that_card_as_a_new_target",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual original Saga crosses chapters through real typed lore-counter spells, mills exactly once, then discards before choosing that newly graveyard card as its reflexive target. The final Saga sacrifices before new target selection; the child retains its old source incarnation. A real spell payment likewise finishes and moves its source before the separately targeted private draw. Pending save/load and whole pre-action replay preserve each boundary."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_actual_labyrinth_creates_targeted_response_window_after_payment_and_can_be_countered",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed action payment precedes an independently validated unbound body. Actual Labyrinth casting/attack/payment yields a separately targetable and Stifle-counterable trigger; source-sacrifice and private target-player draw, absent child targets, declines, unauthorized rollback, pending save/load and pre-action replay retain their timing and identities."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_no_legal_child_target_does_not_suppress_or_refund_payment_and_decline_creates_no_child",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed action payment precedes an independently validated unbound body. Actual Labyrinth casting/attack/payment yields a separately targetable and Stifle-counterable trigger; source-sacrifice and private target-player draw, absent child targets, declines, unauthorized rollback, pending save/load and pre-action replay retain their timing and identities."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_source_sacrifice_retains_locked_controller_incarnation_and_private_draw_target",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed action payment precedes an independently validated unbound body. Actual Labyrinth casting/attack/payment yields a separately targetable and Stifle-counterable trigger; source-sacrifice and private target-player draw, absent child targets, declines, unauthorized rollback, pending save/load and pre-action replay retain their timing and identities."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_spell_source_finishes_before_reflexive_target_selection_and_keeps_its_identity",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual original Saga crosses chapters through real typed lore-counter spells, mills exactly once, then discards before choosing that newly graveyard card as its reflexive target. The final Saga sacrifices before new target selection; the child retains its old source incarnation. A real spell payment likewise finishes and moves its source before the separately targeted private draw. Pending save/load and whole pre-action replay preserve each boundary."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_actual_final_saga_chapter_discards_before_selecting_that_card_as_a_new_target",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual original Saga crosses chapters through real typed lore-counter spells, mills exactly once, then discards before choosing that newly graveyard card as its reflexive target. The final Saga sacrifices before new target selection; the child retains its old source incarnation. A real spell payment likewise finishes and moves its source before the separately targeted private draw. Pending save/load and whole pre-action replay preserve each boundary."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_actual_labyrinth_creates_targeted_response_window_after_payment_and_can_be_countered",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed action payment precedes an independently validated unbound body. Actual Labyrinth casting/attack/payment yields a separately targetable and Stifle-counterable trigger; source-sacrifice and private target-player draw, absent child targets, declines, unauthorized rollback, pending save/load and pre-action replay retain their timing and identities."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_source_sacrifice_retains_locked_controller_incarnation_and_private_draw_target",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed action payment precedes an independently validated unbound body. Actual Labyrinth casting/attack/payment yields a separately targetable and Stifle-counterable trigger; source-sacrifice and private target-player draw, absent child targets, declines, unauthorized rollback, pending save/load and pre-action replay retain their timing and identities."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_spell_source_finishes_before_reflexive_target_selection_and_keeps_its_identity",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual original Saga crosses chapters through real typed lore-counter spells, mills exactly once, then discards before choosing that newly graveyard card as its reflexive target. The final Saga sacrifices before new target selection; the child retains its old source incarnation. A real spell payment likewise finishes and moves its source before the separately targeted private draw. Pending save/load and whole pre-action replay preserve each boundary."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentCompilerTests.test_deferred_program_preserves_child_binding_and_rejects_malformed_payloads",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed action payment precedes an independently validated unbound body. Actual Labyrinth casting/attack/payment yields a separately targetable and Stifle-counterable trigger; source-sacrifice and private target-player draw, absent child targets, declines, unauthorized rollback, pending save/load and pre-action replay retain their timing and identities."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentCompilerTests.test_deferred_program_preserves_child_binding_and_rejects_malformed_payloads",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed action payment precedes an independently validated unbound body. Actual Labyrinth casting/attack/payment yields a separately targetable and Stifle-counterable trigger; source-sacrifice and private target-player draw, absent child targets, declines, unauthorized rollback, pending save/load and pre-action replay retain their timing and identities."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentCompilerTests.test_repeat_negative_and_ambiguous_paid_object_forms_stay_residual",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed action payment precedes an independently validated unbound body. Actual Labyrinth casting/attack/payment yields a separately targetable and Stifle-counterable trigger; source-sacrifice and private target-player draw, absent child targets, declines, unauthorized rollback, pending save/load and pre-action replay retain their timing and identities."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentCompilerTests.test_deferred_program_preserves_child_binding_and_rejects_malformed_payloads",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed action payment precedes an independently validated unbound body. Actual Labyrinth casting/attack/payment yields a separately targetable and Stifle-counterable trigger; source-sacrifice and private target-player draw, absent child targets, declines, unauthorized rollback, pending save/load and pre-action replay retain their timing and identities."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentCompilerTests.test_reflexive_payment_defers_the_complete_typed_body_and_its_targets",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed action payment precedes an independently validated unbound body. Actual Labyrinth casting/attack/payment yields a separately targetable and Stifle-counterable trigger; source-sacrifice and private target-player draw, absent child targets, declines, unauthorized rollback, pending save/load and pre-action replay retain their timing and identities."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_actual_final_saga_chapter_discards_before_selecting_that_card_as_a_new_target",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual original Saga crosses chapters through real typed lore-counter spells, mills exactly once, then discards before choosing that newly graveyard card as its reflexive target. The final Saga sacrifices before new target selection; the child retains its old source incarnation. A real spell payment likewise finishes and moves its source before the separately targeted private draw. Pending save/load and whole pre-action replay preserve each boundary."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_spell_source_finishes_before_reflexive_target_selection_and_keeps_its_identity",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual original Saga crosses chapters through real typed lore-counter spells, mills exactly once, then discards before choosing that newly graveyard card as its reflexive target. The final Saga sacrifices before new target selection; the child retains its old source incarnation. A real spell payment likewise finishes and moves its source before the separately targeted private draw. Pending save/load and whole pre-action replay preserve each boundary."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_actual_final_saga_chapter_discards_before_selecting_that_card_as_a_new_target",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual original Saga crosses chapters through real typed lore-counter spells, mills exactly once, then discards before choosing that newly graveyard card as its reflexive target. The final Saga sacrifices before new target selection; the child retains its old source incarnation. A real spell payment likewise finishes and moves its source before the separately targeted private draw. Pending save/load and whole pre-action replay preserve each boundary."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_actual_labyrinth_creates_targeted_response_window_after_payment_and_can_be_countered",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed action payment precedes an independently validated unbound body. Actual Labyrinth casting/attack/payment yields a separately targetable and Stifle-counterable trigger; source-sacrifice and private target-player draw, absent child targets, declines, unauthorized rollback, pending save/load and pre-action replay retain their timing and identities."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_source_sacrifice_retains_locked_controller_incarnation_and_private_draw_target",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed action payment precedes an independently validated unbound body. Actual Labyrinth casting/attack/payment yields a separately targetable and Stifle-counterable trigger; source-sacrifice and private target-player draw, absent child targets, declines, unauthorized rollback, pending save/load and pre-action replay retain their timing and identities."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_spell_source_finishes_before_reflexive_target_selection_and_keeps_its_identity",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual original Saga crosses chapters through real typed lore-counter spells, mills exactly once, then discards before choosing that newly graveyard card as its reflexive target. The final Saga sacrifices before new target selection; the child retains its old source incarnation. A real spell payment likewise finishes and moves its source before the separately targeted private draw. Pending save/load and whole pre-action replay preserve each boundary."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_actual_final_saga_chapter_discards_before_selecting_that_card_as_a_new_target",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual original Saga crosses chapters through real typed lore-counter spells, mills exactly once, then discards before choosing that newly graveyard card as its reflexive target. The final Saga sacrifices before new target selection; the child retains its old source incarnation. A real spell payment likewise finishes and moves its source before the separately targeted private draw. Pending save/load and whole pre-action replay preserve each boundary."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_actual_labyrinth_creates_targeted_response_window_after_payment_and_can_be_countered",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed action payment precedes an independently validated unbound body. Actual Labyrinth casting/attack/payment yields a separately targetable and Stifle-counterable trigger; source-sacrifice and private target-player draw, absent child targets, declines, unauthorized rollback, pending save/load and pre-action replay retain their timing and identities."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_no_legal_child_target_does_not_suppress_or_refund_payment_and_decline_creates_no_child",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed action payment precedes an independently validated unbound body. Actual Labyrinth casting/attack/payment yields a separately targetable and Stifle-counterable trigger; source-sacrifice and private target-player draw, absent child targets, declines, unauthorized rollback, pending save/load and pre-action replay retain their timing and identities."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_source_sacrifice_retains_locked_controller_incarnation_and_private_draw_target",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed action payment precedes an independently validated unbound body. Actual Labyrinth casting/attack/payment yields a separately targetable and Stifle-counterable trigger; source-sacrifice and private target-player draw, absent child targets, declines, unauthorized rollback, pending save/load and pre-action replay retain their timing and identities."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_spell_source_finishes_before_reflexive_target_selection_and_keeps_its_identity",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual original Saga crosses chapters through real typed lore-counter spells, mills exactly once, then discards before choosing that newly graveyard card as its reflexive target. The final Saga sacrifices before new target selection; the child retains its old source incarnation. A real spell payment likewise finishes and moves its source before the separately targeted private draw. Pending save/load and whole pre-action replay preserve each boundary."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_actual_labyrinth_creates_targeted_response_window_after_payment_and_can_be_countered",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed action payment precedes an independently validated unbound body. Actual Labyrinth casting/attack/payment yields a separately targetable and Stifle-counterable trigger; source-sacrifice and private target-player draw, absent child targets, declines, unauthorized rollback, pending save/load and pre-action replay retain their timing and identities."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_no_legal_child_target_does_not_suppress_or_refund_payment_and_decline_creates_no_child",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed action payment precedes an independently validated unbound body. Actual Labyrinth casting/attack/payment yields a separately targetable and Stifle-counterable trigger; source-sacrifice and private target-player draw, absent child targets, declines, unauthorized rollback, pending save/load and pre-action replay retain their timing and identities."
+    },
+    {
+      "capability_id": "trigger.reflexive.fixed_action_result",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_reflexive_payments.ReflexivePaymentRuntimeTests.test_source_sacrifice_retains_locked_controller_incarnation_and_private_draw_target",
+      "official_rule_ids": [
+        "113.8",
+        "118.1",
+        "400.7",
+        "603.3",
+        "603.3b",
+        "603.3d",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "603.12",
+        "603.12a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed action payment precedes an independently validated unbound body. Actual Labyrinth casting/attack/payment yields a separately targetable and Stifle-counterable trigger; source-sacrifice and private target-player draw, absent child targets, declines, unauthorized rollback, pending save/load and pre-action replay retain their timing and identities."
+    },
+    {
       "capability_id": "trigger.result.fixed_context_player_discard",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_mixed_upkeep_discards_for_active_player_and_gains_for_controller",
@@ -143692,5 +144524,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "35cff05139a5870725c69bca06356eee3ba30d8e255b0ccd7dc884129df57b01"
+  "fingerprint": "6ebd8134552a231dd606cc51cc87d1dd424cfcd8997a8184c83213120e2948e9"
 }

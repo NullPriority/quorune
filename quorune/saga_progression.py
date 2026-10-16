@@ -453,6 +453,7 @@ def commit_saga_lore_turn_action(
             action.counter_plan,
             reason="Saga lore turn action",
             log=False,
+            dispatch_sagas=False,
         )
     except CounterPlacementError as exc:
         raise SagaProgressionError(str(exc)) from exc

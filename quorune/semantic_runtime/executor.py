@@ -8,6 +8,7 @@ from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from .whole_hand_discard import execute_whole_hand_discard
 from ..random_discard import RandomDiscardIntent
 from .random_discard import execute_random_discard
+from .stack_execution import STACK_INTENT_TYPES, execute_stack_intent
 
 from dataclasses import dataclass
 from typing import Any, Mapping, Protocol
@@ -712,6 +713,9 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
         )
     results: list[tuple[str, object]] = []
     for intent in plan.intents:
+        if isinstance(intent, STACK_INTENT_TYPES):
+            results.append(execute_stack_intent(sink, intent))
+            continue
         if isinstance(intent, PLAYER_INTENT_TYPES):
             results.append(_execute_player_intent(sink, intent))
             continue
@@ -805,21 +809,9 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
             result = sink.remove_all_counters_intent(intent)
             results.append((_COUNTER_RESULT_KEY, result))
             continue
-        if isinstance(intent, CounterStackIntent):
-            sink.counter_stack_intent(intent)
-            results.append((intent.stack_ref, None))
-            continue
         if isinstance(intent, EliminatePlayersIntent):
             sink.eliminate_players_intent(intent)
             results.append(("players", None))
-            continue
-        if isinstance(intent, CopyStackItemIntent):
-            result = sink.copy_stack_item_intent(intent)
-            results.append((intent.target_stack_ref, result))
-            continue
-        if isinstance(intent, RetargetStackItemIntent):
-            result = sink.retarget_stack_item_intent(intent)
-            results.append((intent.target_stack_ref, result))
             continue
         if isinstance(intent, CreateTokenIntent):
             result = sink.create_token_intent(intent)

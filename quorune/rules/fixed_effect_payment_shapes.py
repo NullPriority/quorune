@@ -37,6 +37,9 @@ def fixed_effect_payment_node_capabilities(*,effects:Sequence[Mapping[str,Any]],
     mechanics=set(mechanic_ids)
     if FIXED_EFFECT_PAYMENT_MECHANIC not in mechanics or len(effects)!=1:return ()
     wrapper=effects[0]
+    if isinstance(wrapper, Mapping) and wrapper.get('schema_version') == 4:
+        from .reflexive_payment_shapes import reflexive_payment_node_capabilities
+        return reflexive_payment_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
     if isinstance(wrapper, Mapping) and wrapper.get('schema_version') == 3:
         from ..source_maintenance import SOURCE_MAINTENANCE_MECHANIC, SourceMaintenanceSpec
         if target_schema is not None or SOURCE_MAINTENANCE_MECHANIC not in mechanics:

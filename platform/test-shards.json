@@ -365,6 +365,7 @@
       "test_ordinary_crew",
       "test_permissions_projection",
       "test_public_fixtures",
+      "test_reflexive_payments",
       "test_support_counter_placement"
     ],
     "functional-11": [

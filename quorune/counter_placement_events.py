@@ -91,6 +91,23 @@ def dispatch_prepared_counter_events(host,prepared,*,reason,trigger_batch=None):
     dispatch_counter_placement_occurrences(host,occurrences,trigger_batch=trigger_batch,subscribers=subscribers)
 
 
+def dispatch_committed_counter_events(host, prepared, results, *, reason, dispatch_sagas=True):
+    """Publish ordinary put-counter and crossed-chapter occurrences together."""
+    batch = []
+    dispatch_prepared_counter_events(host, prepared, reason=reason, trigger_batch=batch)
+    if dispatch_sagas:
+        from .saga_progression import dispatch_saga_chapters
+        before_by_object = {}
+        for result in results:
+            if result.subject_kind == 'permanent' and result.counter_name == 'lore' and result.after > result.before:
+                before_by_object[result.subject_id] = min(before_by_object.get(result.subject_id, result.before), result.before)
+        for object_id, previous in before_by_object.items():
+            card = host.state.cards.get(object_id)
+            if card is not None and card.zone == 'battlefield':
+                dispatch_saga_chapters(host, card, previous_lore=previous, trigger_batch=batch)
+    enqueue_trigger_batch(host, batch)
+
+
 def dispatch_counter_event_trees(host,resolutions,*,reason,trigger_batch=None):
     from .counter_placement import prepared_counter_events_from_tree
     events=[]

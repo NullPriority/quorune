@@ -21,6 +21,7 @@ def _intent_types():
         typed.RecordChoiceIntent, typed.ExploreCompletedIntent, typed.ConniveCompletedIntent,
         typed.SetPermanentTappedIntent, typed.ProhibitNextUntapIntent, DomainEffectIntent, ExploitSacrificeIntent,
         typed.PlaceCountersIntent,typed.PlacePlayerCountersIntent,typed.PlaceCounterBatchIntent,
+        typed.QueueReflexiveTriggerIntent,
     )}
 
 
