@@ -8,6 +8,8 @@ from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import object_matches_query, object_query_result
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..semantic_choices.apnap_commit import APNAP_OBJECT_COMMIT_OPERATION
+from .apnap_contract import validate_apnap_choice_effect
+from .fractional_counts import seal_fractional_counts, apnap_required_count
 from .model import (
     SelectionContract,
     SelectionContinuation,
@@ -162,74 +164,7 @@ class ApnapChoiceOwnerMixin:
                 for seat in self.apnap_order()
                 if seat in selected_players
             ]
-        count = effect.get("count", 1)
-        if type(count) is not int or count <= 0:
-            raise GameRuleError("APNAP choice count must be positive")
-        if effect.get("predicate") is not None:
-            private_discard = (
-                effect.get("zone") == "hand"
-                and effect.get("then") == "discard"
-            )
-            allowed_fields = {
-                "op",
-                "actor",
-                "players",
-                "zone",
-                "predicate",
-                "count",
-                "then",
-                "prompt",
-                *(("exclude_ref",) if "exclude_ref" in effect else ()),
-                *(("require_full_count", "fallback_effects") if effect.get("require_full_count") is True else ()),
-                *(("hidden",) if private_discard else ()),
-                *(('target',) if "target" in effect else ()),
-            }
-            stack_ref = str(continuation.get("stack_ref") or "")
-            item = next(
-                (
-                    candidate
-                    for candidate in self.state.stack
-                    if candidate.ref == stack_ref
-                ),
-                None,
-            )
-            if (
-                set(effect) != allowed_fields
-                or effect.get("op") != "choose_cards_apnap"
-                or (
-                    effect.get("zone"),
-                    effect.get("then"),
-                    effect.get("hidden", False),
-                )
-                not in {
-                    ("battlefield", "sacrifice", False),
-                    ("battlefield", "return_owner_hand", False),
-                    ("hand", "discard", True),
-                }
-                or type(effect.get("actor")) is not str
-                or effect.get("actor") not in self.active_seats
-                or item is None
-                or effect.get("actor") != item.controller
-                or (
-                    "target" in effect
-                    and effect.get("players") != [effect.get("target")]
-                )
-                or type(effect.get("prompt")) is not str
-                or not str(effect.get("prompt")).strip()
-                or (
-                    "exclude_ref" in effect
-                    and (type(effect.get("exclude_ref")) is not str or not effect.get("exclude_ref"))
-                )
-                or (
-                    effect.get("require_full_count") is True
-                    and (
-                        effect.get("then") != "return_owner_hand"
-                        or not isinstance(effect.get("fallback_effects"), list)
-                        or not effect.get("fallback_effects")
-                    )
-                )
-            ):
-                raise GameRuleError("Typed APNAP choice effect is malformed")
+        validate_apnap_choice_effect(self, effect, continuation)
         choice_state = {
             "queue": queue,
             "player_order": list(queue),
@@ -237,6 +172,7 @@ class ApnapChoiceOwnerMixin:
             "effect": dict(effect),
             "resume": dict(continuation),
         }
+        seal_fractional_counts(self, choice_state)
         self._issue_next_apnap_choice(choice_state)
 
     def _issue_next_apnap_choice(self, state: dict[str, Any]) -> None:
@@ -247,7 +183,7 @@ class ApnapChoiceOwnerMixin:
         seat = queue[0]
         effect = state["effect"]
         options = self._choice_options(seat, effect)
-        count = min(int(effect.get("count", 1)), len(options))
+        count = apnap_required_count(state, seat, options)
         if effect.get("require_full_count") is True and count < int(
             effect.get("count", 1)
         ):
@@ -365,7 +301,7 @@ class ApnapChoiceOwnerMixin:
         issued_options = tuple(str(value) for value in payload.get("legal_refs", ()))
         if "selection" in raw_continuation and tuple(options) != issued_options:
             raise GameRuleError("APNAP choice candidates changed")
-        required = min(int(effect.get("count", 1)), len(options))
+        required = apnap_required_count(state, seat, options)
         if len(values) != required:
             raise GameRuleError(f"{seat} must choose exactly {required} option(s)")
         refs: list[str] = []
@@ -426,7 +362,7 @@ class ApnapChoiceOwnerMixin:
             semantic_frame.get("instruction_pointer", 0)
         )
         full_count_required = effect.get("require_full_count") is True
-        full_count_paid = len(selected_refs) == int(effect.get("count", 1))
+        full_count_paid = not full_count_required or len(selected_refs) == int(effect.get("count", 1))
         if full_count_required and not full_count_paid:
             commit_effects = [
                 dict(value) for value in effect.get("fallback_effects", [])

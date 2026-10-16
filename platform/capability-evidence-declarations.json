@@ -13343,6 +13343,374 @@
       "applicability_note": "Reject a stale issued candidate and a malformed typed predicate while preserving the exact authoritative state hash."
     },
     {
+      "capability_id": "choice.affected_player.half_domain",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultRuntimeTests.test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "choice.affected_player.half_domain",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultRuntimeTests.test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "choice.affected_player.half_domain",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultRuntimeTests.test_each_opponent_fractional_discard_keeps_all_sealed_hands_private_until_commit",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed per-player fractional domains/counts reject changes. Actual each-opponent discard with7/9/8privatehands requires4/5/4choices, reveals only viewer-owned cards, retains collected choices before one simultaneous commit, rejects other principals and preserves pending load/replay."
+    },
+    {
+      "capability_id": "choice.affected_player.half_domain",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultRuntimeTests.test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "choice.affected_player.half_domain",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultRuntimeTests.test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "choice.affected_player.half_domain",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultRuntimeTests.test_each_opponent_fractional_discard_keeps_all_sealed_hands_private_until_commit",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed per-player fractional domains/counts reject changes. Actual each-opponent discard with7/9/8privatehands requires4/5/4choices, reveals only viewer-owned cards, retains collected choices before one simultaneous commit, rejects other principals and preserves pending load/replay."
+    },
+    {
+      "capability_id": "choice.affected_player.half_domain",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultCompilerTests.test_half_player_life_hand_and_creature_results_have_closed_rounding_contracts",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "choice.affected_player.half_domain",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultCompilerTests.test_fraction_result_unknown_domains_and_shape_mutations_remain_residual",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "choice.affected_player.half_domain",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultCompilerTests.test_fractional_selection_state_rejects_changed_sealed_counts_and_domains",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed per-player fractional domains/counts reject changes. Actual each-opponent discard with7/9/8privatehands requires4/5/4choices, reveals only viewer-owned cards, retains collected choices before one simultaneous commit, rejects other principals and preserves pending load/replay."
+    },
+    {
+      "capability_id": "choice.affected_player.half_domain",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultCompilerTests.test_half_player_life_hand_and_creature_results_have_closed_rounding_contracts",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "choice.affected_player.half_domain",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultCompilerTests.test_half_quantity_arithmetic_and_malformed_fields_are_closed",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "choice.affected_player.half_domain",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultRuntimeTests.test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "choice.affected_player.half_domain",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultRuntimeTests.test_each_opponent_fractional_discard_keeps_all_sealed_hands_private_until_commit",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed per-player fractional domains/counts reject changes. Actual each-opponent discard with7/9/8privatehands requires4/5/4choices, reveals only viewer-owned cards, retains collected choices before one simultaneous commit, rejects other principals and preserves pending load/replay."
+    },
+    {
+      "capability_id": "choice.affected_player.half_domain",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultRuntimeTests.test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "choice.affected_player.half_domain",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultRuntimeTests.test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "choice.affected_player.half_domain",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultRuntimeTests.test_each_opponent_fractional_discard_keeps_all_sealed_hands_private_until_commit",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed per-player fractional domains/counts reject changes. Actual each-opponent discard with7/9/8privatehands requires4/5/4choices, reveals only viewer-owned cards, retains collected choices before one simultaneous commit, rejects other principals and preserves pending load/replay."
+    },
+    {
       "capability_id": "choice.controller.fixed_return_owner_hand",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_entry_return_triggers.FixedEntryReturnTriggerRuntimeTests.test_entry_return_choice_uses_owner_hand_and_replays",
@@ -58252,6 +58620,259 @@
       "official_rule_ids": ["119.3", "119.10", "120.4c", "614.1", "615.5", "616.1", "616.1f", "616.1g"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the ordered multiplier choice through the closed semantic-intent continuation to the same authoritative state hash."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultRuntimeTests.test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultRuntimeTests.test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultRuntimeTests.test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultRuntimeTests.test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultCompilerTests.test_half_player_life_hand_and_creature_results_have_closed_rounding_contracts",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultCompilerTests.test_fraction_result_unknown_domains_and_shape_mutations_remain_residual",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultCompilerTests.test_half_player_life_hand_and_creature_results_have_closed_rounding_contracts",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultCompilerTests.test_half_quantity_arithmetic_and_malformed_fields_are_closed",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultRuntimeTests.test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultRuntimeTests.test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
+    },
+    {
+      "capability_id": "life.loss.half_current_player",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fractional_player_results.FractionalPlayerResultRuntimeTests.test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
+      "official_rule_ids": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed half arithmetic and instruction-current affected domains retain existing life/APNAP/zone mutation owners. Actual Rush modes bind independent opponents, private odd hand/creature choices and pending life changes; Vona branches use creating actor city condition and current opponent counts. Actor/count rollback, pending load and replay retain sealed state."
     },
     {
       "capability_id": "mana.activated.color_set",

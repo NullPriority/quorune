@@ -30,4 +30,10 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
     if RESOLUTION_CONDITION_MECHANIC in mechanics or RESOLUTION_CONDITION_OPERATION in nested_effect_operations(effects):
         from .resolution_condition_shapes import resolution_condition_node_capabilities
         return resolution_condition_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics,cost_schema=cost_schema)
+    if not mechanics.intersection({'fixed-nonrepeating-modal', 'fixed-choose-one-modal-spell'}):
+        from .fractional_player_result_shapes import half_life_node_capabilities, half_choice_node_capabilities
+        if 'half-current-player-life-loss' in mechanics:
+            return half_life_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
+        if 'half-affected-player-domain-choice' in mechanics:
+            return half_choice_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
     return None

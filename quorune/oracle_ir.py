@@ -82,7 +82,7 @@ from .compiler.temporary_target_interactions import (
 )
 from .compiler.explore_templates import single_explore_effect_template
 from .compiler.keyword_templates import keyword_mechanics
-from .compiler.life_templates import fixed_life_effect_template
+from .compiler.fractional_player_templates import fixed_player_result_template
 from .compiler.library_search_templates import (
     fixed_library_search_effect_template,
 )
@@ -171,7 +171,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v391"
+ORACLE_COMPILER_VERSION = "oracle-ir-v392"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -273,9 +273,9 @@ def _effect_template(
     draw_template = fixed_draw_effect_template(normalized)
     if draw_template is not None:
         return draw_template
-    life_template = fixed_life_effect_template(normalized)
-    if life_template is not None:
-        return life_template.compiled()
+    player_result = fixed_player_result_template(normalized)
+    if player_result is not None:
+        return player_result.compiled()
     mill_template = fixed_mill_effect_template(normalized)
     if mill_template is not None:
         return mill_template.compiled()

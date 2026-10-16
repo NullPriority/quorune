@@ -904,3 +904,18 @@ recording and loading preserve the child definitions. Token creation and later
 abilities use the existing runtime owners, current token controller, normal
 activation costs and timing. The creator spell can leave without removing a
 token's ability. No runtime Oracle parsing or new token engine is introduced.
+
+### Half quantities in player results
+
+`HalfQuantitySpec` is a closed version-1 quantity with divisor two and explicit
+up/down rounding. It clamps negative effect results to zero under CR 107.1b.
+The compiler pairs it with existing represented player and selector shells.
+The existing `lose_life` instruction reads a typed half amount at its current-life boundary and delegates
+the complete batch to the canonical life-change owner.
+
+Fractional `choose_cards_apnap` counts retain the existing instruction and zone
+owners. Before collection starts, `selection/fractional_counts.py` seals each
+player's candidate domain and required rounded count. Every issued and accepted
+choice revalidates those values; zero domains skip automatically. The shared
+APNAP contract validator is extracted without changing ordinary fixed counts.
+No client count override or runtime Oracle parsing supplies the quantity.

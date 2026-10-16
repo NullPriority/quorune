@@ -16,7 +16,6 @@ from .model import (
     AutoContinue, SemanticChoiceCompletion, SemanticChoiceContinuation,
     SemanticChoiceError, SemanticChoicePreparation,
 )
-from .optional_effect import _represented_effect
 
 
 @dataclass(frozen=True, slots=True)
@@ -43,16 +42,8 @@ class PublicResolutionConditionHandler:
         if effect["player"] != context.actor or context.actor != context.stack_controller:
             raise SemanticChoiceError("Resolution conditions require the resolving controller")
         otherwise=effect.get('otherwise_effects',())
-        for child in (*effects,*otherwise):
-            if child.get('op') == 'choose_cards_apnap' and effect.get('schema_version') == 2:
-                from ..rules.affected_player_discard_capability_shapes import fixed_affected_player_discard_node_capabilities
-                symbolic = {**dict(child), 'actor': '$controller'}
-                if child.get('actor') != context.actor or child.get('players') != 'opponents' or not fixed_affected_player_discard_node_capabilities(
-                    effects=(symbolic,), target_schema=None, mechanic_ids=effect['mechanic_ids'],
-                ):
-                    raise SemanticChoiceError('Cast condition APNAP discard is malformed')
-            else:
-                _represented_effect(child, actor=context.actor, query=context.query)
+        from .resolution_result_validation import validate_resolution_result_children
+        validate_resolution_result_children(effect, effects, otherwise, context)
         try:
             matched = effect['cast_fact'] if effect.get('schema_version') == 2 else context.query.resolution_condition_matches(condition.to_dict())
             if type(matched) is not bool:

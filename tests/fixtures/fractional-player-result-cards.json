@@ -1,0 +1,2154 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned fractional result carriers and current life information witness",
+  "cards": [
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "name": "Rush of Dread",
+      "mana_cost": "{1}{B}{B}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1} — Target opponent sacrifices half the creatures they control of their choice, rounded up.\n+ {2} — Target opponent discards half the cards in their hand, rounded up.\n+ {2} — Target opponent loses half their life, rounded up.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0ff0a309-9b4a-4f9e-9ea6-c4d07906ebec",
+      "name": "Quietus Spike",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "Equipped creature has deathtouch.\nWhenever equipped creature deals combat damage to a player, that player loses half their life, rounded up.\nEquip {3}",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Equip"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-04-29",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "13da5255-2fc5-43a4-a44c-13a5d9ff77c3",
+      "name": "Temporal Extortion",
+      "mana_cost": "{B}{B}{B}{B}",
+      "cmc": 4.0,
+      "type_line": "Sorcery",
+      "oracle_text": "When you cast this spell, any player may pay half their life, rounded up. If a player does, counter Temporal Extortion.\nTake an extra turn after this one.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-02-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "191e003f-1a78-4d85-9c70-2ae132a5f9cc",
+      "name": "Aphelia, Viper Whisperer",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — Gorgon Assassin",
+      "oracle_text": "Deathtouch\nWhenever Aphelia attacks, you may pay {1}{B/G}. If you do, create a 1/1 black Snake creature token with deathtouch.\n{4}{B}: Until end of turn, whenever one or more Gorgons and/or Snakes you control deal combat damage to a player, that player loses half their life, rounded up.",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "keywords": [
+        "Deathtouch"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "21fa2442-6eac-4dce-a9cc-76f0053fdb8f",
+      "name": "Peer into the Abyss",
+      "mana_cost": "{4}{B}{B}{B}",
+      "cmc": 7.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Target player draws cards equal to half the number of cards in their library and loses half their life. Round up each time.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "30e5d70e-6547-483a-a4ab-4c2eed296543",
+      "name": "Raving Dead",
+      "mana_cost": "{4}{B}",
+      "cmc": 5.0,
+      "type_line": "Creature — Zombie",
+      "oracle_text": "Deathtouch\nAt the beginning of combat on your turn, choose an opponent at random. This creature attacks that player this combat if able.\nWhenever this creature deals combat damage to a player, that player loses half their life, rounded down.",
+      "power": "2",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Deathtouch"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-11-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3b00068d-ad07-417c-bbb3-5f980615fb06",
+      "name": "Fraying Omnipotence",
+      "mana_cost": "{3}{B}{B}",
+      "cmc": 5.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Each player loses half their life, then discards half the cards in their hand, then sacrifices half the creatures they control of their choice. Round up each time.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4a10c945-ad8b-47b6-8cbd-7b4e2612a9b0",
+      "name": "Goblin Game",
+      "mana_cost": "{5}{R}{R}",
+      "cmc": 7.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Each player hides at least one item, then all players reveal them simultaneously. Each player loses life equal to the number of items they revealed. The player who revealed the fewest items then loses half their life, rounded up. If two or more players are tied for fewest, each loses half their life, rounded up.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2001-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4d97b9d1-1138-40da-b593-8065ea6ed7b3",
+      "name": "Grievous Wound",
+      "mana_cost": "{3}{B}{B}",
+      "cmc": 5.0,
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant player\nEnchanted player can't gain life.\nWhenever enchanted player is dealt damage, they lose half their life, rounded up.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "6662968e-ca9e-454c-be44-24ad10e43d3e",
+      "name": "Unstoppable Slasher",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Creature — Zombie Assassin",
+      "oracle_text": "Deathtouch\nWhenever this creature deals combat damage to a player, they lose half their life, rounded up.\nWhen this creature dies, if it had no counters on it, return it to the battlefield tapped under its owner's control with two stun counters on it.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Deathtouch"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "name": "Virtus the Veiled",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Azra Assassin",
+      "oracle_text": "Partner with Gorm the Great (When this creature enters, target player may put Gorm into their hand from their library, then shuffle.)\nDeathtouch\nWhenever Virtus deals combat damage to a player, that player loses half their life, rounded up.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Partner with",
+        "Partner",
+        "Deathtouch"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-06-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "6e49a5b8-6bc4-4c7b-82c1-957f1fb0ca5f",
+      "name": "Personal Incarnation",
+      "mana_cost": "{3}{W}{W}{W}",
+      "cmc": 6.0,
+      "type_line": "Creature — Avatar Incarnation",
+      "oracle_text": "{0}: The next 1 damage that would be dealt to this creature this turn is dealt to its owner instead. Only this creatures owner may activate this ability.\nWhen this creature dies, its owner loses half their life, rounded up.",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-01-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "6e901cab-fba9-4581-9f09-90473bbd8e30",
+      "name": "Radioactive Man",
+      "mana_cost": "{4}{B}",
+      "cmc": 5.0,
+      "type_line": "Legendary Creature — Human Scientist Villain",
+      "oracle_text": "Deathtouch\nWhenever Radioactive Man deals combat damage to a player, that player loses half their life, rounded up.",
+      "power": "3",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Deathtouch"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "6f34d70e-7a3a-43f7-b2c9-f89519804d3c",
+      "name": "Skull Storm",
+      "mana_cost": "{7}{B}{B}",
+      "cmc": 9.0,
+      "type_line": "Sorcery",
+      "oracle_text": "When you cast this spell, copy it for each time you've cast your commander from the command zone this game.\nEach opponent sacrifices a creature of their choice. Each opponent who can't loses half their life, rounded up.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-08-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "826a0db6-195a-4697-9bd6-f544b279e3cf",
+      "name": "Betor, Kin to All",
+      "mana_cost": "{2}{W}{B}{G}",
+      "cmc": 5.0,
+      "type_line": "Legendary Creature — Spirit Dragon",
+      "oracle_text": "Flying\nAt the beginning of your end step, if creatures you control have total toughness 10 or greater, draw a card. Then if creatures you control have total toughness 20 or greater, untap each creature you control. Then if creatures you control have total toughness 40 or greater, each opponent loses half their life, rounded up.",
+      "power": "5",
+      "toughness": "7",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "W"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "836ecd67-6487-4f3d-9e08-013746be829a",
+      "name": "Revival // Revenge",
+      "mana_cost": "{W/B}{W/B} // {4}{W}{B}",
+      "cmc": 8.0,
+      "type_line": "Sorcery // Sorcery",
+      "oracle_text": "Revival: Return target creature card with mana value 3 or less from your graveyard to the battlefield.\n//\nRevenge: Double your life total. Target opponent loses half their life, rounded up.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [
+        "Double"
+      ],
+      "produced_mana": [],
+      "layout": "split",
+      "released_at": "2024-01-12",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{W/B}{W/B}",
+          "name": "Revival",
+          "oracle_text": "Return target creature card with mana value 3 or less from your graveyard to the battlefield.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{4}{W}{B}",
+          "name": "Revenge",
+          "oracle_text": "Double your life total. Target opponent loses half their life, rounded up.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        }
+      ]
+    },
+    {
+      "oracle_id": "86fd4652-a629-429a-bf95-0b8724708a71",
+      "name": "Ebonblade Reaper",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Creature — Human Cleric",
+      "oracle_text": "Whenever this creature attacks, you lose half your life, rounded up.\nWhenever this creature deals combat damage to a player, that player loses half their life, rounded up.\nMorph {3}{B}{B} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Morph"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2002-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "9ad61841-9894-41da-bdd8-248c2ce21b00",
+      "name": "Split the Party",
+      "mana_cost": "{3}{U}{U}",
+      "cmc": 5.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Choose target player. Return half the creatures they control to their owner's hand, rounded up.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-07-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a75ddd9c-2574-46e9-ac85-58082789ff3e",
+      "name": "Scytheclaw",
+      "mana_cost": "{5}",
+      "cmc": 5.0,
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "Living weapon (When this Equipment enters, create a 0/0 black Phyrexian Germ creature token, then attach this to it.)\nEquipped creature gets +1/+1.\nWhenever equipped creature deals combat damage to a player, that player loses half their life, rounded up.\nEquip {3}",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Equip",
+        "Living weapon"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "aa2da79c-b36c-4120-8d7d-f5571e87e45e",
+      "name": "Blood Tribute",
+      "mana_cost": "{4}{B}{B}",
+      "cmc": 6.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Kicker—Tap an untapped Vampire you control. (You may tap a Vampire you control in addition to any other costs as you cast this spell.)\nTarget opponent loses half their life, rounded up. If this spell was kicked, you gain life equal to the life lost this way.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Kicker"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-08-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
+      "name": "Havoc Festival",
+      "mana_cost": "{4}{B}{R}",
+      "cmc": 6.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Players can't gain life.\nAt the beginning of each player's upkeep, that player loses half their life, rounded up.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-10-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "c3ea6af5-48b9-45d2-9576-46cacb2db5b0",
+      "name": "Dark Leo & Shredder",
+      "mana_cost": "{W}{B}",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — Mutant Ninja Turtle Human",
+      "oracle_text": "Sneak {W}{B}\nAttacking Ninjas you control have deathtouch.\nWhenever Dark Leo & Shredder deal combat damage to a player, create a 1/1 black Ninja creature token. Then if you control five or more Ninjas, that player loses half their life, rounded up.",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [
+        "Sneak"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-03-06",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "c505d304-9428-4532-87a2-167c69f16969",
+      "name": "Pox Plague",
+      "mana_cost": "{B}{B}{B}{B}{B}",
+      "cmc": 5.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Each player loses half their life, then discards half the cards in their hand, then sacrifices half the permanents they control of their choice. Round down each time.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "c6dfc91f-bfac-40c2-99e5-0cec981f7f1f",
+      "name": "Scourge of the Skyclaves",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Creature — Demon",
+      "oracle_text": "Kicker {4}{B}\nWhen you cast this spell, if it was kicked, each player loses half their life, rounded up.\nScourge of the Skyclaves's power and toughness are each equal to 20 minus the highest life total among players.",
+      "power": "*",
+      "toughness": "*",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Kicker"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-09-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d17bfa94-5046-46ae-80af-be5d1d35af13",
+      "name": "Lord Xander, the Collector",
+      "mana_cost": "{4}{U}{B}{R}",
+      "cmc": 7.0,
+      "type_line": "Legendary Creature — Vampire Demon Noble",
+      "oracle_text": "When Lord Xander enters, target opponent discards half the cards in their hand, rounded down.\nWhenever Lord Xander attacks, defending player mills half their library, rounded down.\nWhen Lord Xander dies, target opponent sacrifices half the nonland permanents they control of their choice, rounded down.",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-04-29",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "da522912-1bc2-4d70-b426-94d10edb2afe",
+      "name": "Vona's Hunger",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nEach opponent sacrifices a creature of their choice. If you have the city's blessing, instead each opponent sacrifices half the creatures they control of their choice, rounded up.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Ascend"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-01-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ed43f1f9-ef96-47bc-8a54-e59154319f9d",
+      "name": "Alpharael, Stonechosen",
+      "mana_cost": "{3}{B}{B}",
+      "cmc": 5.0,
+      "type_line": "Legendary Creature — Human Cleric",
+      "oracle_text": "Ward—Discard a card at random.\nVoid — Whenever Alpharael attacks, if a nonland permanent left the battlefield this turn or a spell was warped this turn, defending player loses half their life, rounded up.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Ward",
+        "Void"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ee82947d-1cf0-4c53-84d4-81f81c6201ee",
+      "name": "Shredder, Shadow Master",
+      "mana_cost": "{3}{B}{B}",
+      "cmc": 5.0,
+      "type_line": "Legendary Creature — Human Ninja",
+      "oracle_text": "Whenever Shredder attacks a player, for each other opponent, create a token that's a copy of Shredder tapped and attacking that player, except it isn't legendary. Sacrifice those tokens at end of combat.\nWhenever Shredder deals combat damage to a player, that player loses half their life, rounded up.",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-03-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "eedd5a17-d0fe-4a13-8f2c-f343bfa43f92",
+      "name": "Shard of the Nightbringer",
+      "mana_cost": "{5}{B}{B}{B}",
+      "cmc": 8.0,
+      "type_line": "Creature — C'tan",
+      "oracle_text": "Flying\nDrain Life — When this creature enters, if you cast it, target opponent loses half their life, rounded up. You gain life equal to the life lost this way.",
+      "power": "8",
+      "toughness": "8",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying",
+        "Drain Life"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture:fractional-life-gain",
+      "name": "Generic Fraction Life Gain",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Instant",
+      "oracle_text": "Target player gains 1 life.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture:fractional-each-discard",
+      "name": "Generic Fraction Each Discard",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Sorcery",
+      "oracle_text": "Each opponent discards half the cards in their hand, rounded up.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can’t be changed."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose the same mode more than once."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Like the effects of all modal spells, Rush of Dread’s effects happen in order. If the first two modes target different opponents, the opponent targeted by the second mode will see what the first opponent sacrificed before choosing what to discard."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won’t be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn’t matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree “without paying its mana cost,” you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there’s a legal target available. Ignore the targeting requirements for modes you don’t choose."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "0ff0a309-9b4a-4f9e-9ea6-c4d07906ebec",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "That player loses half their life after combat damage has been subtracted from the player's life total. The amount of life the player loses is determined as the triggered ability resolves."
+    },
+    {
+      "oracle_id": "0ff0a309-9b4a-4f9e-9ea6-c4d07906ebec",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If multiple Quietus Spikes trigger at the same time, that player loses half their life when the first ability resolves, then loses half of the remainder when the next ability resolves, and so on. The player does not lose the same amount each time."
+    },
+    {
+      "oracle_id": "0ff0a309-9b4a-4f9e-9ea6-c4d07906ebec",
+      "published_at": "2010-06-15",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, after combat damage is dealt, Quietus Spike looks at that player's life total (which is the same as the team's life total) when determining how much life the team will lose, which basically means the team's life total is halved. Here's an example of the math: The team has 19 life, so the player has 19 life. Quietus Spike causes the team to lose 10 life (19 divided by 2, rounded up). The team's life total becomes 9 (19 minus 10)."
+    },
+    {
+      "oracle_id": "13da5255-2fc5-43a4-a44c-13a5d9ff77c3",
+      "published_at": "2007-02-01",
+      "source": "wotc",
+      "comment": "When this spell is cast, its “when you cast” ability triggers and goes on the stack on top of it."
+    },
+    {
+      "oracle_id": "13da5255-2fc5-43a4-a44c-13a5d9ff77c3",
+      "published_at": "2007-02-01",
+      "source": "wotc",
+      "comment": "As the triggered ability resolves, the active player gets the option to perform the action. If that player declines, the next player in turn order gets the option. As soon as any player performs the action, the spell is countered, but the remaining players still get the option. If all players decline, the spell remains on the stack."
+    },
+    {
+      "oracle_id": "191e003f-1a78-4d85-9c70-2ae132a5f9cc",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "The triggered ability created by Aphelia's last ability triggers and resolves after combat damage is dealt. For example, if Gorgons and/or Snakes you control deal a total of 3 combat damage to a player with 12 life, combat damage will reduce that player's life total to 9. Then the triggered ability will cause the player to lose 5 life, leaving the player at 4."
+    },
+    {
+      "oracle_id": "21fa2442-6eac-4dce-a9cc-76f0053fdb8f",
+      "published_at": "2020-06-23",
+      "source": "wotc",
+      "comment": "The life lost is rounded up, not the remaining life total. For example, if the target player has 7 life, they lose 4 life and end up with 3. Similarly, the number of cards drawn is rounded up, not the number of cards remaining in the library."
+    },
+    {
+      "oracle_id": "21fa2442-6eac-4dce-a9cc-76f0053fdb8f",
+      "published_at": "2020-06-23",
+      "source": "wotc",
+      "comment": "To draw the cards, first the player determines how many cards to draw, then draws them. This event may be modified so that a different number of cards are actually drawn."
+    },
+    {
+      "oracle_id": "30e5d70e-6547-483a-a4ab-4c2eed296543",
+      "published_at": "2014-11-07",
+      "source": "wotc",
+      "comment": "If Raving Dead can't attack the chosen player for one of the above reasons but it can still attack elsewhere, you may choose to have it attack another player, attack a planeswalker, or not attack at all."
+    },
+    {
+      "oracle_id": "30e5d70e-6547-483a-a4ab-4c2eed296543",
+      "published_at": "2014-11-07",
+      "source": "wotc",
+      "comment": "If your turn has multiple combat phases, Raving Dead's ability triggers at the beginning of each of them. Ignore any choices made during previous combat phases that turn."
+    },
+    {
+      "oracle_id": "30e5d70e-6547-483a-a4ab-4c2eed296543",
+      "published_at": "2014-11-07",
+      "source": "wotc",
+      "comment": "The last ability triggers and resolves after combat damage has been dealt. For example, if an opponent has 17 life and Raving Dead deals 2 combat damage to them, they will end up at 8 life."
+    },
+    {
+      "oracle_id": "30e5d70e-6547-483a-a4ab-4c2eed296543",
+      "published_at": "2014-11-07",
+      "source": "wotc",
+      "comment": "If, as attackers are declared, Raving Dead is tapped, is affected by a spell or ability that says it can't attack, or hasn't been under your control continuously since your turn began (and doesn't have haste), then it doesn't attack. If there's a cost associated with having Raving Dead attack the chosen player, you aren't forced to pay that cost, so it doesn't have to attack that player in that case either."
+    },
+    {
+      "oracle_id": "30e5d70e-6547-483a-a4ab-4c2eed296543",
+      "published_at": "2014-11-07",
+      "source": "wotc",
+      "comment": "Raving Dead must attack the chosen player if able, not a planeswalker controlled by that player."
+    },
+    {
+      "oracle_id": "3b00068d-ad07-417c-bbb3-5f980615fb06",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "Because the instructions are followed in order, abilities of the creatures a player will sacrifice may modify or trigger on losing life, discarding cards, and/or sacrificing creatures. Abilities that trigger this way will resolve after Fraying Omnipotence is done resolving."
+    },
+    {
+      "oracle_id": "3b00068d-ad07-417c-bbb3-5f980615fb06",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, Fraying Omnipotence causes each player to lose half of their team’s life, rounded up. This means that teams at an even life total will have 0 life, and teams at an odd life total will have -1 life. The game then ends in a draw."
+    },
+    {
+      "oracle_id": "3b00068d-ad07-417c-bbb3-5f980615fb06",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "When Fraying Omnipotence resolves, first each player loses the appropriate amount of life at once. Next, the player whose turn it is chooses an appropriate number of cards in hand without revealing them, then each other player in turn order does the same, and then those cards are all discarded simultaneously. Then, the player whose turn it is chooses an appropriate number of creatures they control. Each other player in turn order does the same, knowing choices made by previous players. Finally, all of the chosen creatures are sacrificed simultaneously."
+    },
+    {
+      "oracle_id": "3b00068d-ad07-417c-bbb3-5f980615fb06",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "The amounts that are lost are rounded up, not the amounts kept. For example, a player with 5 life, five cards in hand, and five creatures would lose 3 life, discard three cards, and sacrifice three creatures."
+    },
+    {
+      "oracle_id": "4a10c945-ad8b-47b6-8cbd-7b4e2612a9b0",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "When it comes to choice of items, use common sense. Items should be small enough to hide but large enough to count. Make it clear what kind of object you are hiding beforehand. For example, one player may choose coins and the other may choose dice. If you can’t find something convenient to hide, write numbers on a piece of paper and reveal the numbers. Make sure the numbers are unambiguous (for example, underline a 6 or 9 so it can’t be misread)."
+    },
+    {
+      "oracle_id": "4a10c945-ad8b-47b6-8cbd-7b4e2612a9b0",
+      "published_at": "2007-02-01",
+      "source": "wotc",
+      "comment": "If you attempt to halve a negative life total, you halve 0. This means that the life total stays the same. A life total of -10 would remain -10."
+    },
+    {
+      "oracle_id": "4d97b9d1-1138-40da-b593-8065ea6ed7b3",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "If an effect says to set the enchanted player's life total to a number that's higher than their current life total, that player's life total won't change."
+    },
+    {
+      "oracle_id": "4d97b9d1-1138-40da-b593-8065ea6ed7b3",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "Grievous Wound's last ability triggers only once whenever enchanted player is dealt combat damage, no matter how many creatures deal combat damage to them at the same time."
+    },
+    {
+      "oracle_id": "4d97b9d1-1138-40da-b593-8065ea6ed7b3",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "Spells and abilities that cause the enchanted player to gain life still resolve while Grievous Wound is on the battlefield. The enchanted player won't gain life, but any other effects of that spell or ability will still happen."
+    },
+    {
+      "oracle_id": "4d97b9d1-1138-40da-b593-8065ea6ed7b3",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "Grievous Wound's last ability triggers and resolves after the damage is dealt. For example, if the enchanted player has 10 life and is dealt 1 damage, that damage will reduce their life total to 9. Then Grievous Wound's ability will cause that player to lose 5 life, leaving their life total at 4."
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "Note that the target player searches their library (which may be affected by effects such as that of Stranglehold) and that the card they find is revealed, even though these words aren't included in the ability's reminder text."
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "\"Partner with [name]\" represents two abilities. The first is a triggered ability: \"When this permanent enters the battlefield, target player may search their library for a card named [name], reveal it, put it into their hand, then shuffle their library.\""
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders."
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards of your deck are shuffled to become your library."
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "If your Commander deck has two commanders, you can only include cards whose own color identities are also found in your commanders' combined color identities. If Khorvath and Sylvia are your commanders, your deck may contain cards with red and/or white in their color identity, but not blue, black, or green."
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, a player's life total is the same as their team's life total."
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "Virtus's last ability triggers and resolves after combat damage is dealt. For example, if Virtus deals 1 combat damage to a player with 10 life, combat damage will reduce that player's life total to 9. Then its ability will cause the player to lose 5 life, leaving the player at 4."
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 damage from one of them, not from both of them combined. Command Beacon's effect puts one into your hand from the command zone, not both."
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "The second ability represented by the \"partner with [name]\" keyword modifies the rules for deck construction in the Commander variant and has no function outside of that variant. If a legendary creature card with \"partner with [name]\" is designated as your commander, the named legendary creature card can also be designated as your commander. For more information on the Commander variant, please visit Wizards.com/Commander."
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "The triggered ability of the \"partner with\" keyword still triggers in a Commander game. If your other commander has somehow ended up in your library, you can find it. You can also target another player who might have that card in their library."
+    },
+    {
+      "oracle_id": "6da4f16c-f187-479e-b19b-78a137b1abe5",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "To have two commanders, both must have the partner ability (featured in the Magic: The Gathering—Commander™ (2016 Edition) set) or corresponding \"partner with\" abilities as the game begins. A creature with a \"partner with\" ability can't partner with any creature other than its designated partner. Losing a partner ability during the game doesn't cause either to cease to be your commander."
+    },
+    {
+      "oracle_id": "6e49a5b8-6bc4-4c7b-82c1-957f1fb0ca5f",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "You do not lose life if this card is exiled or sent someplace without going to the graveyard first."
+    },
+    {
+      "oracle_id": "6e49a5b8-6bc4-4c7b-82c1-957f1fb0ca5f",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "The owner of the Incarnation loses life when it is destroyed, not the controller. So if you control your opponent's Incarnation you can let it die to make them lose life."
+    },
+    {
+      "oracle_id": "6e49a5b8-6bc4-4c7b-82c1-957f1fb0ca5f",
+      "published_at": "2007-02-01",
+      "source": "wotc",
+      "comment": "If you attempt to halve a negative life total, you halve 0. This means that the life total stays the same. A life total of -10 would remain -10."
+    },
+    {
+      "oracle_id": "6f34d70e-7a3a-43f7-b2c9-f89519804d3c",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "The copies are created on the stack, so they’re not “cast.” Abilities that trigger when a player casts a spell (such as the Storm’s ability itself) won’t trigger."
+    },
+    {
+      "oracle_id": "6f34d70e-7a3a-43f7-b2c9-f89519804d3c",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "Each Storm’s triggered ability counts only how many times you’ve cast your commander from the command zone before that triggered ability resolves. If you cast your commander again later, you won’t get another copy."
+    },
+    {
+      "oracle_id": "6f34d70e-7a3a-43f7-b2c9-f89519804d3c",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "The amount of life to lose is determined only as Skull Storm resolves. For example, if an opponent controls no creatures and has 30 life when you cast Skull Storm and make two copies, the first to resolve causes that opponent to lose 15 life (so they have 15 life left), the second causes that opponent to lose 8 life (7 life left), and the original spell causes that player to lose 4 life, leaving the player at 3 life."
+    },
+    {
+      "oracle_id": "6f34d70e-7a3a-43f7-b2c9-f89519804d3c",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "Each Storm’s triggered ability can copy the Storm spell even if that spell is countered before that ability resolves."
+    },
+    {
+      "oracle_id": "6f34d70e-7a3a-43f7-b2c9-f89519804d3c",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "If your commander was countered, that time you cast it still counts."
+    },
+    {
+      "oracle_id": "6f34d70e-7a3a-43f7-b2c9-f89519804d3c",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "If you have multiple commanders, you’ll copy this spell for each time you’ve cast either of them. For example, if you’ve cast one commander once and one twice, you’ll copy this spell three times."
+    },
+    {
+      "oracle_id": "826a0db6-195a-4697-9bd6-f544b279e3cf",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "Betor’s last ability will check as the end step starts to see if creatures you control have total toughness 10 or greater. If they don’t, the ability won’t trigger at all. If it does trigger, the ability will check again as it tries to resolve. If creatures you control don’t have total toughness 10 or more at that time, the ability won’t resolve and none of its effects will happen. The ability won’t check to see if their total toughness is 20 or greater (or 40 or greater) until the ability resolves."
+    },
+    {
+      "oracle_id": "836ecd67-6487-4f3d-9e08-013746be829a",
+      "published_at": "2019-01-25",
+      "source": "wotc",
+      "comment": "If a card in a graveyard has {X} in its mana cost, X is considered to be 0."
+    },
+    {
+      "oracle_id": "836ecd67-6487-4f3d-9e08-013746be829a",
+      "published_at": "2019-01-25",
+      "source": "wotc",
+      "comment": "To double a player's life total, that player gains as much life as needed so that their life total is twice the number it was before. If their life total was negative, that player loses as much life as needed so that their life total is twice as far below 0 as it was before. Other effects interact with this life gain or loss accordingly."
+    },
+    {
+      "oracle_id": "836ecd67-6487-4f3d-9e08-013746be829a",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with certain characteristics, consider only the characteristics of the half you're casting. For example, if an effect allows you to cast a sorcery spell with mana value 2 or less from among cards in your graveyard, you could cast Assault this way, but not Battery."
+    },
+    {
+      "oracle_id": "836ecd67-6487-4f3d-9e08-013746be829a",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "A split card's characteristics are a combination of its two halves while it is not on the stack. For example, Assault // Battery has a mana value of 5 while it is in your library. If an effect allows you to search your library for a card with mana value 4 or less, you can't find Assault // Battery."
+    },
+    {
+      "oracle_id": "836ecd67-6487-4f3d-9e08-013746be829a",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Each split card has two names. If an effect instructs you to choose a card name, you may choose one of those names, but not both."
+    },
+    {
+      "oracle_id": "836ecd67-6487-4f3d-9e08-013746be829a",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Each split card is a single card. For example, if you discard a split card, you've discarded one card, not two. If an effect counts the number of sorcery cards in your graveyard, Assault // Battery counts once, not twice."
+    },
+    {
+      "oracle_id": "836ecd67-6487-4f3d-9e08-013746be829a",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Split cards have two card faces on a single card. The characteristics of the half you didn't cast are ignored while the spell is on the stack."
+    },
+    {
+      "oracle_id": "836ecd67-6487-4f3d-9e08-013746be829a",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "To cast a split card, choose one of its halves to cast. There's no way to cast both halves of this split card."
+    },
+    {
+      "oracle_id": "836ecd67-6487-4f3d-9e08-013746be829a",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "If you copy a spell that's half of a split card, the copy copies that same half. For example, if you copy Assault, the copy is also Assault, not Battery."
+    },
+    {
+      "oracle_id": "86fd4652-a629-429a-bf95-0b8724708a71",
+      "published_at": "2007-02-01",
+      "source": "wotc",
+      "comment": "If you attempt to halve a negative life total, you halve 0. This means that the life total stays the same. A life total of -10 would remain -10."
+    },
+    {
+      "oracle_id": "9ad61841-9894-41da-bdd8-248c2ce21b00",
+      "published_at": "2021-07-23",
+      "source": "wotc",
+      "comment": "The player that controls Split the Party chooses which creatures to return to their owner's hand as it resolves."
+    },
+    {
+      "oracle_id": "a75ddd9c-2574-46e9-ac85-58082789ff3e",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "Scytheclaw's triggered ability triggers and resolves after combat damage is dealt. For example, if the Germ token deals 1 combat damage to a player with 10 life, combat damage will reduce that player's life total to 9. Then Scytheclaw's ability will cause the player to lose 5 life, leaving the player at 4."
+    },
+    {
+      "oracle_id": "a75ddd9c-2574-46e9-ac85-58082789ff3e",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "If the Germ token is destroyed, the Equipment remains on the battlefield as with any other Equipment."
+    },
+    {
+      "oracle_id": "a75ddd9c-2574-46e9-ac85-58082789ff3e",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "Like other Equipment, each Equipment with living weapon has an equip cost. You can pay this cost to attach an Equipment to another creature you control. Once the Germ token is no longer equipped, it will be put into your graveyard and subsequently cease to exist, unless another effect raises its toughness above 0."
+    },
+    {
+      "oracle_id": "a75ddd9c-2574-46e9-ac85-58082789ff3e",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "If the living weapon trigger causes two Germs to be created (due to an effect such as that of Doubling Season), the Equipment becomes attached to one of them. The other will be put into your graveyard and subsequently cease to exist, unless another effect raises its toughness above 0."
+    },
+    {
+      "oracle_id": "a75ddd9c-2574-46e9-ac85-58082789ff3e",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "The Germ token enters the battlefield as a 0/0 creature and the Equipment becomes attached to it before state-based actions would cause the token to die. Abilities that trigger as the token enters the battlefield see that a 0/0 creature entered the battlefield."
+    },
+    {
+      "oracle_id": "aa2da79c-b36c-4120-8d7d-f5571e87e45e",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "You can tap a creature that hasn't been under your control since your most recent turn began to pay the kicker cost."
+    },
+    {
+      "oracle_id": "aa2da79c-b36c-4120-8d7d-f5571e87e45e",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "To determine a spell's total cost, start with the mana cost (or an alternative cost if another card's effect allows you to pay one instead), add any cost increases (such as kicker), then apply any cost reductions. The spell's mana value remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "aa2da79c-b36c-4120-8d7d-f5571e87e45e",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If you put a permanent with a kicker ability onto the battlefield without casting it, you can't kick it."
+    },
+    {
+      "oracle_id": "aa2da79c-b36c-4120-8d7d-f5571e87e45e",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If a spell's kicker cost was paid, the spell is \"kicked.\""
+    },
+    {
+      "oracle_id": "aa2da79c-b36c-4120-8d7d-f5571e87e45e",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If a card or token enters as a copy of a permanent, the new permanent isn't kicked, even if the original was."
+    },
+    {
+      "oracle_id": "aa2da79c-b36c-4120-8d7d-f5571e87e45e",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If you copy a kicked spell on the stack, the copy is also kicked. If the copied spell is a permanent spell, the token the copy of that spell becomes when it enters is also kicked."
+    },
+    {
+      "oracle_id": "aa2da79c-b36c-4120-8d7d-f5571e87e45e",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "The kicker ability doesn't let you pay a kicker cost more than once."
+    },
+    {
+      "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "Effects that would replace gaining life with another effect won’t apply because it’s impossible for players to gain life."
+    },
+    {
+      "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "Spells and abilities that would cause a player to gain life still resolve, but the life-gain part has no effect."
+    },
+    {
+      "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "If an effect says to set a player’s life total to a certain number and that number is higher than the player’s current life total, that part of the effect won’t do anything. (If the number is lower than the player’s current life total, the effect will work as normal.)"
+    },
+    {
+      "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "The amount of life lost is calculated when the triggered ability resolves. For example, if a player has 20 life and there are two Havoc Festivals on the battlefield, the first ability will cause that player to lose 10 life and then the second ability will cause that player to lose 5 life."
+    },
+    {
+      "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, the last ability triggers for each player. Any life loss is applied to the team’s life total. For example, if the team has 30 life, the first ability will cause the player (and thus the team) to lose 15 life and then the second ability will cause the other player (and thus the team) to lose 8 life. The team will end up having 7 life."
+    },
+    {
+      "oracle_id": "c3ea6af5-48b9-45d2-9576-46cacb2db5b0",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Spells can only be cast for their sneak costs any time you could play an instant during the declare blockers step on your turn (after your opponent has decided whether to block)."
+    },
+    {
+      "oracle_id": "c3ea6af5-48b9-45d2-9576-46cacb2db5b0",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "If a creature spell's sneak cost was paid, the creature it becomes enters tapped and attacking the same player, planeswalker, or battle as the creature that was returned to its owner's hand to pay its sneak cost. This is a rule specific to sneak; in other cases, when a creature is put onto the battlefield attacking, that creature's controller chooses which player, planeswalker, or battle it's attacking."
+    },
+    {
+      "oracle_id": "c3ea6af5-48b9-45d2-9576-46cacb2db5b0",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Although a creature put onto the battlefield this way is attacking, it was never declared as an attacking creature. Abilities that trigger whenever a creature attacks won't trigger when that creature enters attacking."
+    },
+    {
+      "oracle_id": "c6dfc91f-bfac-40c2-99e5-0cec981f7f1f",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "An ability that triggers when a player casts a spell resolves before the spell that caused it to trigger. It resolves even if that spell is countered. Notably, Scourge of the Skyclaves may have its toughness change from less than 0 to greater than 0 as a result of its triggered ability before it resolves and enters the battlefield."
+    },
+    {
+      "oracle_id": "c6dfc91f-bfac-40c2-99e5-0cec981f7f1f",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If the highest life total among players is greater than 20, Scourge of the Skyclaves has negative power and toughness equal to the difference."
+    },
+    {
+      "oracle_id": "c6dfc91f-bfac-40c2-99e5-0cec981f7f1f",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "The ability that defines Scourge of the Skyclaves's power and toughness applies in all zones, not just the battlefield."
+    },
+    {
+      "oracle_id": "c6dfc91f-bfac-40c2-99e5-0cec981f7f1f",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, Scourge of the Skyclaves causes each team to lose twice half their life rounded up, which is their full life total or, if it's odd, that much life plus 1. This causes the game to end in a draw."
+    },
+    {
+      "oracle_id": "c6dfc91f-bfac-40c2-99e5-0cec981f7f1f",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If you copy a kicked spell on the stack, the copy is also kicked. If the copied spell is a permanent spell, the token the copy of that spell becomes when it enters is also kicked."
+    },
+    {
+      "oracle_id": "c6dfc91f-bfac-40c2-99e5-0cec981f7f1f",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If a spell's kicker cost was paid, the spell is \"kicked.\""
+    },
+    {
+      "oracle_id": "c6dfc91f-bfac-40c2-99e5-0cec981f7f1f",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If you put a permanent with a kicker ability onto the battlefield without casting it, you can't kick it."
+    },
+    {
+      "oracle_id": "c6dfc91f-bfac-40c2-99e5-0cec981f7f1f",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "The kicker ability doesn't let you pay a kicker cost more than once."
+    },
+    {
+      "oracle_id": "c6dfc91f-bfac-40c2-99e5-0cec981f7f1f",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "To determine a spell's total cost, start with the mana cost (or an alternative cost if another card's effect allows you to pay one instead), add any cost increases (such as kicker), then apply any cost reductions. The spell's mana value remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "c6dfc91f-bfac-40c2-99e5-0cec981f7f1f",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If a card or token enters as a copy of a permanent, the new permanent isn't kicked, even if the original was."
+    },
+    {
+      "oracle_id": "da522912-1bc2-4d70-b426-94d10edb2afe",
+      "published_at": "2018-01-19",
+      "source": "wotc",
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the “Legend Rule” or due to being a creature with 0 toughness), you get the city’s blessing before it leaves the battlefield."
+    },
+    {
+      "oracle_id": "da522912-1bc2-4d70-b426-94d10edb2afe",
+      "published_at": "2018-01-19",
+      "source": "wotc",
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren’t permanents."
+    },
+    {
+      "oracle_id": "da522912-1bc2-4d70-b426-94d10edb2afe",
+      "published_at": "2018-01-19",
+      "source": "wotc",
+      "comment": "When Vona’s Hunger resolves, first the player whose turn it is (if that player is an opponent) chooses which creature or creatures they will sacrifice, then each other opponent in turn order does the same, then all chosen creatures are sacrificed at the same time. Players will know choices made by earlier players when making their choices."
+    },
+    {
+      "oracle_id": "da522912-1bc2-4d70-b426-94d10edb2afe",
+      "published_at": "2018-01-19",
+      "source": "wotc",
+      "comment": "Once you have the city’s blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city’s blessing isn’t a permanent itself and can’t be removed by any effect."
+    },
+    {
+      "oracle_id": "da522912-1bc2-4d70-b426-94d10edb2afe",
+      "published_at": "2018-01-19",
+      "source": "wotc",
+      "comment": "If you control ten permanents but don’t control a permanent or resolving spell with ascend, you don’t get the city’s blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won’t have the city’s blessing and the spell will affect creatures you control."
+    },
+    {
+      "oracle_id": "da522912-1bc2-4d70-b426-94d10edb2afe",
+      "published_at": "2018-01-19",
+      "source": "wotc",
+      "comment": "If you cast a spell with ascend, you don’t get the city’s blessing until it resolves. Players may respond to that spell by trying to change whether you get the city’s blessing."
+    },
+    {
+      "oracle_id": "ed43f1f9-ef96-47bc-8a54-e59154319f9d",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "If a player casts a spell for its warp cost but that spell is countered or otherwise fails to resolve, that spell was still warped, so the condition required by void abilities will be fulfilled for that turn."
+    },
+    {
+      "oracle_id": "ed43f1f9-ef96-47bc-8a54-e59154319f9d",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "Some void abilities are triggered abilities with intervening if clauses. If a nonland permanent hasn’t left the battlefield during that turn or a spell wasn’t warped that turn by the time the ability would trigger, it won’t trigger at all."
+    },
+    {
+      "oracle_id": "ee82947d-1cf0-4c53-84d4-81f81c6201ee",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "The token copies will have Shredder's abilities."
+    },
+    {
+      "oracle_id": "ee82947d-1cf0-4c53-84d4-81f81c6201ee",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "In the unusual case where Shredder becomes a copy of something else while his last ability is on the stack but before it resolves, the tokens will enter as a copy of whatever Shredder is copying."
+    },
+    {
+      "oracle_id": "ee82947d-1cf0-4c53-84d4-81f81c6201ee",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Although the token copies created by Shredder's first ability enter attacking, they were never declared as attacking creatures. Abilities that trigger whenever a creature attacks won't trigger when those tokens enter attacking."
+    },
+    {
+      "oracle_id": "ee82947d-1cf0-4c53-84d4-81f81c6201ee",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "If Shredder leaves the battlefield before his last ability resolves, the tokens will still enter as a copy of Shredder, using Shredder's copiable values from when he was last on the battlefield."
+    },
+    {
+      "oracle_id": "ee82947d-1cf0-4c53-84d4-81f81c6201ee",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "The tokens don't copy whether Shredder is tapped or untapped, whether he has any counters on him or Auras attached to him, or any non-copy effects that have changed his types, color, and so on."
+    }
+  ]
+}

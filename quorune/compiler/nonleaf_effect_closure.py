@@ -16,8 +16,9 @@ def nonleaf_effect_program_is_closed(program):
     from ..rules.linked_exile_return_shapes import linked_exile_return_node_capabilities
     from ..rules.resolution_condition_shapes import resolution_condition_node_capabilities
     from ..rules.affected_player_sacrifice_capability_shapes import fixed_affected_player_sacrifice_node_capabilities
+    from ..rules.fractional_player_result_shapes import half_life_node_capabilities, half_choice_node_capabilities
     for resolver in (random_discard_node_capabilities,resolution_condition_node_capabilities,linked_exile_return_node_capabilities,
-                     fixed_affected_player_sacrifice_node_capabilities):
+                     fixed_affected_player_sacrifice_node_capabilities, half_life_node_capabilities, half_choice_node_capabilities):
         required=resolver(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage)
         if required and set(required).issubset(program.capability_dependencies):return True
     return False

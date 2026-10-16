@@ -160,6 +160,7 @@ from ..compiler.fixed_library_selection_templates import (
     FIXED_LIBRARY_SELECTION_MECHANIC,
 )
 from .closed_effect_program_shapes import CLOSED_EFFECT_PROGRAM_MECHANIC, closed_effect_program_node_capabilities
+from .modal_node_capabilities import fixed_modal_capability_dependencies as _fixed_modal_capability_dependencies
 from .modal_capability_shapes import (
     fixed_choose_one_modal_branches,
     fixed_nonrepeating_modal_branches,
@@ -290,6 +291,8 @@ _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
     "fixed-counter-controller-effect-sequence"
 )
 MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    'half-current-player-life-loss': ('life.loss.half_current_player',),
+    'half-affected-player-domain-choice': ('choice.affected_player.half_domain',),
     'fixed-token-typed-ability-definition': ('token.creation.typed_ability_definition',),
     'fixed-spree-mode-costs': ('casting.additional_cost.spree_fixed_modes',),
     'fixed-public-event-set-counter':('counter.producer.fixed_public_set_event',),
@@ -468,6 +471,8 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
 }
 _SHAPE_GATED_MECHANICS = frozenset(
     {
+        'half-current-player-life-loss',
+        'half-affected-player-domain-choice',
         'fixed-token-typed-ability-definition',
         'fixed-spree-mode-costs',
         'fixed-public-event-set-counter',
@@ -1154,67 +1159,6 @@ def _targeted_effect_capabilities(
             )
         )
     return dependencies
-
-
-def _fixed_modal_capability_dependencies(
-    *,
-    effects: Sequence[Mapping[str, Any]],
-    target_schema: Mapping[str, Any] | None,
-    mechanics: Iterable[str],
-) -> tuple[str, ...]:
-    mechanic_values = tuple(str(value).casefold() for value in mechanics)
-    nonrepeating = FIXED_NONREPEATING_MODAL_MECHANIC in mechanic_values
-    branches = (
-        fixed_nonrepeating_modal_branches(
-            effects=effects,
-            target_schema=target_schema,
-            mechanic_ids=mechanic_values,
-        )
-        if nonrepeating
-        else fixed_choose_one_modal_branches(
-            effects=effects,
-            target_schema=target_schema,
-            mechanic_ids=mechanic_values,
-        )
-    )
-    if branches is None:
-        return ()
-    modal_mechanic = (
-        FIXED_NONREPEATING_MODAL_MECHANIC
-        if nonrepeating
-        else FIXED_CHOOSE_ONE_MODAL_MECHANIC
-    )
-    dependencies = {
-        (
-            FIXED_NONREPEATING_MODAL_CAPABILITY
-            if nonrepeating
-            else FIXED_CHOOSE_ONE_MODAL_CAPABILITY
-        )
-    }
-    represented_mechanics = {modal_mechanic}
-    for branch in branches:
-        branch_dependencies = capability_dependencies_for_node(
-            effects=branch.effects,
-            target_schema=branch.target_schema,
-            mechanic_ids=branch.mechanics,
-        )
-        if not branch_dependencies or (
-            set(branch.mechanics)
-            - set(capability_covered_mechanics(branch_dependencies))
-        ):
-            return ()
-        dependencies.update(branch_dependencies)
-        represented_mechanics.update(branch.mechanics)
-    outer_mechanics = set(mechanic_values) - represented_mechanics
-    for mechanic in outer_mechanics:
-        if mechanic == "cr-603-handling-triggered-abilities":
-            dependencies.add("trigger.placement.apnap")
-            continue
-        required = MECHANIC_CAPABILITY_DEPENDENCIES.get(mechanic)
-        if not required:
-            return ()
-        dependencies.update(required)
-    return tuple(sorted(dependencies))
 
 
 def capability_dependencies_for_node(

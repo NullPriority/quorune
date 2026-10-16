@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 320,
+  "registry_version": 321,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -244,6 +244,185 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "life.loss.half_current_player",
+      "version": 1,
+      "official_rules": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Lose half the represented player current life with explicit up/down rounding through the canonical life-change batch owner.",
+        "inputs": [
+          "closed half quantity with explicit rounding",
+          "represented target/controller/APNAP player domain",
+          "current authoritative instruction facts"
+        ],
+        "outputs": [
+          "nonnegative correctly rounded result",
+          "canonical life or simultaneous discard/sacrifice mutation",
+          "sealed affected-player choices and replayable continuation"
+        ],
+        "exclusions": [
+          "unknown fractions, qualifiers or ambiguous subjects",
+          "client-authored counts or changed candidate domains",
+          "unrepresented object-controller references"
+        ]
+      },
+      "dependencies": [
+        "life.change.effect"
+      ],
+      "implementation_components": [
+        "quorune.fractional_quantity_model.HalfQuantitySpec",
+        "quorune.compiler.fractional_player_templates.fractional_player_result_template",
+        "quorune.rules.fractional_player_result_shapes.half_life_node_capabilities",
+        "quorune.effect_runtime.fractional_life.apply_fractional_life_loss",
+        "quorune.effect_runtime.fractional_life.apply_life_loss"
+      ],
+      "positive_tests": [
+        "test_half_player_life_hand_and_creature_results_have_closed_rounding_contracts",
+        "test_half_quantity_arithmetic_and_malformed_fields_are_closed"
+      ],
+      "negative_tests": [
+        "test_fraction_result_unknown_domains_and_shape_mutations_remain_residual"
+      ],
+      "interaction_tests": [
+        "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
+        "test_actual_vona_city_branch_uses_current_each_opponent_creature_count"
+      ],
+      "multiplayer_tests": [
+        "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
+        "test_actual_vona_city_branch_uses_current_each_opponent_creature_count"
+      ],
+      "privacy_tests": [
+        "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life"
+      ],
+      "replay_tests": [
+        "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
+        "test_actual_vona_city_branch_uses_current_each_opponent_creature_count"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The half quantity schema and existing selector/player shell close independently. Unknown rounding/divisor/domain or missing ownership prevents admission; affected counts and candidates are sealed and revalidated.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting fractional compilation rejects all five newly admitted generic instructions. Changing rounding or omitting per-player fraction count sealing causes exact odd-count/native affected-player assertions to fail; life uses current pending-resolution facts rather than initial totals.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "choice.affected_player.half_domain",
+      "version": 1,
+      "official_rules": [
+        "107.1a",
+        "107.1b",
+        "119.3",
+        "119.5",
+        "601.2c",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Compute half a represented affected-player hand or controlled permanent domain with explicit rounding and seal per-player counts/candidates before canonical APNAP choices.",
+        "inputs": [
+          "closed half quantity with explicit rounding",
+          "represented target/controller/APNAP player domain",
+          "current authoritative instruction facts"
+        ],
+        "outputs": [
+          "nonnegative correctly rounded result",
+          "canonical life or simultaneous discard/sacrifice mutation",
+          "sealed affected-player choices and replayable continuation"
+        ],
+        "exclusions": [
+          "unknown fractions, qualifiers or ambiguous subjects",
+          "client-authored counts or changed candidate domains",
+          "unrepresented object-controller references"
+        ]
+      },
+      "dependencies": [
+        "choice.affected_player.fixed_discard",
+        "choice.affected_player.fixed_sacrifice",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.fractional_quantity_model.HalfQuantitySpec",
+        "quorune.compiler.fractional_player_templates.fractional_player_result_template",
+        "quorune.rules.fractional_player_result_shapes.half_choice_node_capabilities",
+        "quorune.selection.fractional_counts.seal_fractional_counts",
+        "quorune.selection.fractional_counts.apnap_required_count",
+        "quorune.selection.apnap_contract.validate_apnap_choice_effect",
+        "quorune.semantic_choices.resolution_result_validation.validate_resolution_result_children"
+      ],
+      "positive_tests": [
+        "test_half_player_life_hand_and_creature_results_have_closed_rounding_contracts",
+        "test_half_quantity_arithmetic_and_malformed_fields_are_closed",
+        "test_fractional_selection_state_rejects_changed_sealed_counts_and_domains"
+      ],
+      "negative_tests": [
+        "test_fraction_result_unknown_domains_and_shape_mutations_remain_residual"
+      ],
+      "interaction_tests": [
+        "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
+        "test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
+        "test_each_opponent_fractional_discard_keeps_all_sealed_hands_private_until_commit"
+      ],
+      "multiplayer_tests": [
+        "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
+        "test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
+        "test_each_opponent_fractional_discard_keeps_all_sealed_hands_private_until_commit"
+      ],
+      "privacy_tests": [
+        "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
+        "test_each_opponent_fractional_discard_keeps_all_sealed_hands_private_until_commit"
+      ],
+      "replay_tests": [
+        "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
+        "test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
+        "test_each_opponent_fractional_discard_keeps_all_sealed_hands_private_until_commit"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The half quantity schema and existing selector/player shell close independently. Unknown rounding/divisor/domain or missing ownership prevents admission; affected counts and candidates are sealed and revalidated.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting fractional compilation rejects all five newly admitted generic instructions. Changing rounding or omitting per-player fraction count sealing causes exact odd-count/native affected-player assertions to fail; life uses current pending-resolution facts rather than initial totals.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "casting.additional_cost.spree_fixed_modes",
       "version": 1,

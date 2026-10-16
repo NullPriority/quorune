@@ -365,6 +365,7 @@
       "test_fixed_player_life_effects",
       "test_fixed_public_zone_moves",
       "test_fixed_tap_payments",
+      "test_fractional_player_results",
       "test_goad_rules",
       "test_linked_abilities",
       "test_ordinary_crew",

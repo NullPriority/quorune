@@ -88,6 +88,7 @@
     "tests/fixtures/fixed-token-production-cards.json",
     "tests/fixtures/flashback-cards.json",
     "tests/fixtures/flavor-named-trigger-cards.json",
+    "tests/fixtures/fractional-player-result-cards.json",
     "tests/fixtures/global-plural-characteristic-sets.json",
     "tests/fixtures/graft-cards.json",
     "tests/fixtures/granted-skulk-cards.json",
