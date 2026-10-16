@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 311,
+  "registry_version": 312,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -244,6 +244,81 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "activation.condition.citys_blessing",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "602.2",
+        "602.5",
+        "702.131c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A no-parameter city blessing activation restriction evaluates the current activator designation through the same offer and acceptance legality owner.",
+        "inputs": [
+          "current activating player",
+          "canonical persistent city designation",
+          "typed no-parameter condition"
+        ],
+        "outputs": [
+          "shared availability result before costs",
+          "recognized compiler restriction with complete fixed effect body"
+        ],
+        "exclusions": [
+          "parameterized or unrelated city statuses",
+          "owner or active-player substitution",
+          "unrepresented additional costs and effects"
+        ]
+      },
+      "dependencies": [
+        "player.designation.citys_blessing"
+      ],
+      "implementation_components": [
+        "quorune.activation_condition_model.activation_restriction_spec",
+        "quorune.rules.activation.conditions.activation_condition_status",
+        "quorune.compiler.activated_costs.activated_ability_cost_capabilities"
+      ],
+      "positive_tests": [
+        "test_original_city_activation_guards_are_exact_and_round_trip"
+      ],
+      "negative_tests": [
+        "test_city_activation_guard_has_no_parameters_and_uses_activator_not_owner",
+        "test_withdrawn_city_activation_capability_prevents_guarded_ability_promotion"
+      ],
+      "interaction_tests": [
+        "test_actual_arch_guard_rejects_before_blessing_and_drawing_uses_private_replay",
+        "test_actual_relic_sacrifice_drops_below_ten_but_keeps_blessing_and_pending_result"
+      ],
+      "multiplayer_tests": [
+        "test_city_activation_guard_has_no_parameters_and_uses_activator_not_owner"
+      ],
+      "privacy_tests": [
+        "test_actual_arch_guard_rejects_before_blessing_and_drawing_uses_private_replay"
+      ],
+      "replay_tests": [
+        "test_actual_arch_guard_rejects_before_blessing_and_drawing_uses_private_replay",
+        "test_actual_relic_sacrifice_drops_below_ten_but_keeps_blessing_and_pending_result"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The exact recognized condition derives its independent designation dependency. Missing or withdrawn activation ownership prevents promotion; parameters and foreign player facts cannot satisfy the condition.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting activation-only city restriction parsing leaves both complete original Arch and Relic compiler witnesses residual. Native Arch must reject before acquisition without spending costs and Relic must preserve its already-owned designation after sacrifice.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "player.designation.citys_blessing",
       "version": 1,

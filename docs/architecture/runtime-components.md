@@ -156,6 +156,10 @@ and state-based stabilization synchronize acquisition before subsequent trigger
 checks. Read-only snapshots and projection only observe the marker. The shared
 public-state condition supplies its current source controller's designation
 to existing characteristic owners; unresolved follow-up bodies remain residual.
+The no-parameter city-blessing activation restriction reads the same designation
+for the current activator during both offer and acceptance. Its typed condition
+and capability retain the existing activation transaction and pending result;
+sacrificing an Ascend source cannot revoke an acquired player designation.
 
 Fixed random-discard activation costs use an optional typed scalar that is
 omitted from older ability payloads. The activating player must hold the full

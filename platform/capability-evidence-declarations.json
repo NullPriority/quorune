@@ -92,6 +92,193 @@
       "applicability_note": "Read-only source-local representation preserves Aura and recipient identity, control and effective ability presence; does not certify destruction gameplay."
     },
     {
+      "capability_id": "activation.condition.citys_blessing",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_actual_arch_guard_rejects_before_blessing_and_drawing_uses_private_replay",
+      "official_rule_ids": [
+        "109.5",
+        "602.2",
+        "602.5",
+        "702.131c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Arch rejects offered/forged guarded activation before city blessing, then gains the designation through real tenth entry and pays tap/mana before private draw. Actual Relic sacrifices below ten, keeps designation and resolves life/draw from a pending reloaded ability. No-parameter condition uses activator rather than owner/active player and older payloads round-trip."
+    },
+    {
+      "capability_id": "activation.condition.citys_blessing",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_actual_relic_sacrifice_drops_below_ten_but_keeps_blessing_and_pending_result",
+      "official_rule_ids": [
+        "109.5",
+        "602.2",
+        "602.5",
+        "702.131c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Arch rejects offered/forged guarded activation before city blessing, then gains the designation through real tenth entry and pays tap/mana before private draw. Actual Relic sacrifices below ten, keeps designation and resolves life/draw from a pending reloaded ability. No-parameter condition uses activator rather than owner/active player and older payloads round-trip."
+    },
+    {
+      "capability_id": "activation.condition.citys_blessing",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_ascend_city_blessing.AscendCompilerTests.test_city_activation_guard_has_no_parameters_and_uses_activator_not_owner",
+      "official_rule_ids": [
+        "109.5",
+        "602.2",
+        "602.5",
+        "702.131c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Arch rejects offered/forged guarded activation before city blessing, then gains the designation through real tenth entry and pays tap/mana before private draw. Actual Relic sacrifices below ten, keeps designation and resolves life/draw from a pending reloaded ability. No-parameter condition uses activator rather than owner/active player and older payloads round-trip."
+    },
+    {
+      "capability_id": "activation.condition.citys_blessing",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_ascend_city_blessing.AscendCompilerTests.test_original_city_activation_guards_are_exact_and_round_trip",
+      "official_rule_ids": [
+        "109.5",
+        "602.2",
+        "602.5",
+        "702.131c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Arch rejects offered/forged guarded activation before city blessing, then gains the designation through real tenth entry and pays tap/mana before private draw. Actual Relic sacrifices below ten, keeps designation and resolves life/draw from a pending reloaded ability. No-parameter condition uses activator rather than owner/active player and older payloads round-trip."
+    },
+    {
+      "capability_id": "activation.condition.citys_blessing",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ascend_city_blessing.AscendCompilerTests.test_city_activation_guard_has_no_parameters_and_uses_activator_not_owner",
+      "official_rule_ids": [
+        "109.5",
+        "602.2",
+        "602.5",
+        "702.131c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Arch rejects offered/forged guarded activation before city blessing, then gains the designation through real tenth entry and pays tap/mana before private draw. Actual Relic sacrifices below ten, keeps designation and resolves life/draw from a pending reloaded ability. No-parameter condition uses activator rather than owner/active player and older payloads round-trip."
+    },
+    {
+      "capability_id": "activation.condition.citys_blessing",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ascend_city_blessing.AscendCompilerTests.test_withdrawn_city_activation_capability_prevents_guarded_ability_promotion",
+      "official_rule_ids": [
+        "109.5",
+        "602.2",
+        "602.5",
+        "702.131c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Arch rejects offered/forged guarded activation before city blessing, then gains the designation through real tenth entry and pays tap/mana before private draw. Actual Relic sacrifices below ten, keeps designation and resolves life/draw from a pending reloaded ability. No-parameter condition uses activator rather than owner/active player and older payloads round-trip."
+    },
+    {
+      "capability_id": "activation.condition.citys_blessing",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ascend_city_blessing.AscendCompilerTests.test_original_city_activation_guards_are_exact_and_round_trip",
+      "official_rule_ids": [
+        "109.5",
+        "602.2",
+        "602.5",
+        "702.131c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Arch rejects offered/forged guarded activation before city blessing, then gains the designation through real tenth entry and pays tap/mana before private draw. Actual Relic sacrifices below ten, keeps designation and resolves life/draw from a pending reloaded ability. No-parameter condition uses activator rather than owner/active player and older payloads round-trip."
+    },
+    {
+      "capability_id": "activation.condition.citys_blessing",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_actual_arch_guard_rejects_before_blessing_and_drawing_uses_private_replay",
+      "official_rule_ids": [
+        "109.5",
+        "602.2",
+        "602.5",
+        "702.131c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Arch rejects offered/forged guarded activation before city blessing, then gains the designation through real tenth entry and pays tap/mana before private draw. Actual Relic sacrifices below ten, keeps designation and resolves life/draw from a pending reloaded ability. No-parameter condition uses activator rather than owner/active player and older payloads round-trip."
+    },
+    {
+      "capability_id": "activation.condition.citys_blessing",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_actual_arch_guard_rejects_before_blessing_and_drawing_uses_private_replay",
+      "official_rule_ids": [
+        "109.5",
+        "602.2",
+        "602.5",
+        "702.131c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Arch rejects offered/forged guarded activation before city blessing, then gains the designation through real tenth entry and pays tap/mana before private draw. Actual Relic sacrifices below ten, keeps designation and resolves life/draw from a pending reloaded ability. No-parameter condition uses activator rather than owner/active player and older payloads round-trip."
+    },
+    {
+      "capability_id": "activation.condition.citys_blessing",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_actual_relic_sacrifice_drops_below_ten_but_keeps_blessing_and_pending_result",
+      "official_rule_ids": [
+        "109.5",
+        "602.2",
+        "602.5",
+        "702.131c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Arch rejects offered/forged guarded activation before city blessing, then gains the designation through real tenth entry and pays tap/mana before private draw. Actual Relic sacrifices below ten, keeps designation and resolves life/draw from a pending reloaded ability. No-parameter condition uses activator rather than owner/active player and older payloads round-trip."
+    },
+    {
+      "capability_id": "activation.condition.citys_blessing",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_actual_arch_guard_rejects_before_blessing_and_drawing_uses_private_replay",
+      "official_rule_ids": [
+        "109.5",
+        "602.2",
+        "602.5",
+        "702.131c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Arch rejects offered/forged guarded activation before city blessing, then gains the designation through real tenth entry and pays tap/mana before private draw. Actual Relic sacrifices below ten, keeps designation and resolves life/draw from a pending reloaded ability. No-parameter condition uses activator rather than owner/active player and older payloads round-trip."
+    },
+    {
       "capability_id": "activation.condition.phase_window",
       "evidence_class": "interaction",
       "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_conditions_gate_existing_effect_and_replacement_owners",

@@ -23,6 +23,42 @@ import test_self_public_zone_casting as zone_actions
 
 
 class AscendCompilerTests(unittest.TestCase):
+    def test_city_activation_guard_has_no_parameters_and_uses_activator_not_owner(self):
+        from quorune.compiler.activated_ability_catalog import compile_activated_ability_catalog
+        from quorune.rules.activation.conditions import activation_condition_status
+        ability=compile_activated_ability_catalog(record("{T}: Draw a card. Activate only if you have the city's blessing.",'Artifact'))['front'][0]
+        condition=ability.activation_conditions[0]
+        with self.assertRaises(ValueError):replace(condition,minimum=1)
+        host=SimpleNamespace(state=SimpleNamespace(active_player='A',players={
+            'A':SimpleNamespace(stats={'citys_blessing':True}),'D':SimpleNamespace(stats={})}))
+        source=SimpleNamespace(owner='A',controller='D')
+        self.assertEqual(('unavailable','requires_citys_blessing'),activation_condition_status(host,'D',ability,source))
+        self.assertEqual(('payable',None),activation_condition_status(host,'A',ability,source))
+
+    def test_withdrawn_city_activation_capability_prevents_guarded_ability_promotion(self):
+        from quorune.rules.capabilities import CapabilityRegistry
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(cap for cap in raw['capabilities'] if cap['id']=='activation.condition.citys_blessing').update(
+            status='blocked',blockers=['withdrawn'])
+        ir=compile_oracle_card(record("{T}: Draw a card. Activate only if you have the city's blessing.",'Artifact'),
+            capability_registry=CapabilityRegistry(raw),capability_profile='commander_review')
+        self.assertNotEqual('exact',ir.status)
+
+    def test_original_city_activation_guards_are_exact_and_round_trip(self):
+        from quorune.abilities import ActivatedAbility
+        from quorune.compiler.activated_ability_catalog import compile_activated_ability_catalog
+        registry=load_default_capability_registry()
+        with _fixture_database() as db:
+            for name in ('Arch of Orazca','Orazca Relic'):
+                with self.subTest(name=name):
+                    card=db.lookup(name,fuzzy=False)
+                    ir=compile_oracle_card(card,capability_registry=registry,capability_profile='commander_review')
+                    self.assertEqual('exact',ir.status,ir.material_residuals)
+                    ability=next(a for a in compile_activated_ability_catalog(card)['front'] if a.activation_conditions)
+                    self.assertEqual('controller_has_citys_blessing',ability.activation_conditions[0].kind.value)
+                    self.assertEqual(ability,ActivatedAbility.from_dict(json.loads(json.dumps(ability.to_dict()))))
+                    self.assertTrue(any('activation.condition.citys_blessing' in n.capability_dependencies for n in ir.faces[0].nodes))
+
     def test_withdrawn_designation_owner_prevents_keyword_and_condition_promotion(self):
         from quorune.rules.capabilities import CapabilityRegistry
         raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
@@ -106,6 +142,50 @@ class AscendRuntimeTests(unittest.TestCase):
 
     def blessed(self,session,seat='A'):
         return session.state.players[seat].stats.get('citys_blessing',False)
+
+    def city_activation(self,session,source,*,actor='A',required=True):
+        rows=session.packet('pilot:'+actor,full=True)['decision']['ctx']['legal']['actions']
+        action=next((r for r in rows if r['id'].startswith('activate:'+source.ref+':')
+            and (r.get('cost_summary',{}).get('sac_self') or r.get('cost_summary',{}).get('m',{}).get('GENERIC')==5)),None)
+        if required:self.assertIsNotNone(action,'Missing supported city blessing activation')
+        return action
+
+    def test_actual_arch_guard_rejects_before_blessing_and_drawing_uses_private_replay(self):
+        session=self.session(409000);engine=session.engine
+        self.lands(engine,8)
+        source=self.add(engine,'Arch of Orazca',ref='actual-city-guard-arch')
+        tenth=self.add(engine,'Generic Bound Body',zone='hand',ref='city-arch-tenth-permanent')
+        self.prepare(session,mana={'C':5,'W':1});self.checkpoint(session)
+        self.assertIsNone(self.city_activation(session,source,required=False))
+        ability=next(a for a in session.engine._activated_abilities(source) if a.activation_conditions)
+        before=authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:A',{'action_id':'activate:'+source.ref+':'+ability.ability_id,'pay':'auto'}).ok)
+        self.assertEqual(before,authoritative_state_hash(session.state))
+        self.cast(session,'A',tenth);self.resolve(session);self.assertTrue(self.blessed(session))
+        self.assert_closed(session,source);action=self.city_activation(session,source)
+        hand=len(session.state.players['A'].zones['hand'])
+        accepted=session.act('pilot:A',{'action_id':action['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.assertTrue(session.state.cards[source.object_id].tapped)
+        self.assertEqual(0,sum(session.state.players['A'].mana_pool.values()))
+        session=self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(hand+1,len(session.state.players['A'].zones['hand']))
+        drawn=session.state.cards[session.state.players['A'].zones['hand'][-1]].ref
+        for viewer in 'BCD':self.assertNotIn(drawn,json.dumps(session.packet('pilot:'+viewer,full=True)))
+        self.replay(session,load=True)
+
+    def test_actual_relic_sacrifice_drops_below_ten_but_keeps_blessing_and_pending_result(self):
+        session=self.session(409010);engine=session.engine
+        self.lands(engine,9)
+        source=self.add(engine,'Orazca Relic',zone='hand',ref='actual-city-guard-relic')
+        self.assert_closed(session,source);self.prepare(session,mana={'C':3});self.checkpoint(session)
+        self.cast(session,'A',source);self.resolve(session);self.assertTrue(self.blessed(session))
+        action=self.city_activation(session,source);hand=len(session.state.players['A'].zones['hand'])
+        accepted=session.act('pilot:A',{'action_id':action['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual(('graveyard',9),(session.state.cards[source.object_id].zone,len(session.state.players['A'].zones['battlefield'])))
+        self.assertTrue(self.blessed(session));session=self.replay(session,load=True);self.resolve(session)
+        self.assertEqual((43,hand+1),(session.state.players['A'].life,len(session.state.players['A'].zones['hand'])))
+        self.assertTrue(self.blessed(session));self.replay(session,load=True)
 
     def test_actual_aspirant_tenth_entry_seals_flying_before_zone_trigger_discovery(self):
         import quorune.zone_transitions as zones
