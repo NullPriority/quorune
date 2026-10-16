@@ -117,8 +117,9 @@ class ZoneTransitionOwner:
                 cards,
                 error_type=StateInvariantError,
             )
-            from .rules.stack_damage_sources import pin_stack_damage_departures
+            from .rules.stack_damage_sources import pin_stack_damage_departures, pin_creature_power_damage_departures
             pin_stack_damage_departures(self.host, cards, error_type=StateInvariantError)
+            pin_creature_power_damage_departures(self.host, cards, error_type=StateInvariantError)
         except StateInvariantError:
             for item, context in contexts:
                 item.context = context

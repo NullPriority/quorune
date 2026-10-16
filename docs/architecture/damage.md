@@ -2,7 +2,7 @@
 title: "Damage transaction"
 status: "current"
 authoritative_source: "quorune/rules/stack_damage_sources.py, quorune/damage.py, quorune/damage_values.py, quorune/damage_results.py, quorune/turn_history.py, quorune/counter_placement.py, quorune/counter_removal.py, quorune/life_state.py, quorune/fixed_damage_set*, quorune/rules/damage_capability_shapes.py, and quorune/combat_damage_*"
-verified: "2026-08-07"
+verified: "2026-10-16"
 audience: "rules, semantics, replay, and architecture contributors"
 maintenance: "hand-maintained"
 ---
@@ -42,6 +42,16 @@ again. Optional-choice resumption therefore preserves source arrays and
 identity; the wire decoder still rejects malformed collections and identities.
 Face-down source snapshots withhold hidden Oracle identity. Legacy frames
 without a represented physical source retain their existing compatibility path.
+
+Creature-power damage retains a separate numeric source-power snapshot. The
+same rollback-safe, pre-mutation departure boundary refreshes matching stack
+and waiting-trigger frames before any member of a simultaneous batch moves.
+Resolution reads current information for that incarnation while present, then
+its immediate last-known power and damage characteristics. A trigger-creation
+value cannot replace a later departure value, and a returned incarnation cannot
+replace the original source. A represented battlefield noncreature has no
+power and contributes numeric zero under CR 208.3 and 107.2. Fight still requires
+both current creatures; it never substitutes a departed participant's power.
 
 ```mermaid
 flowchart LR

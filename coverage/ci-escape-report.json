@@ -1864,6 +1864,23 @@
       "resolution": "Resolve each temporary fixture root before creating sources and comparing canonical helper provenance. Preserve every test identity, decorator, assertion, cache-count control and malformed/missing/unreadable-input check; production dependency analysis and complete cross-platform CI selection remain unchanged. The exact two tests pass under the same native short-path harness after the fixture correction.",
       "run_id": 38773388505,
       "summary": "Both new dependency syntax-scope controls failed in the complete Windows generated-validation shard because TemporaryDirectory exposed a short-path root while helper discovery returned resolved long paths. The same ValueError is reproduced locally in both unchanged tests using native Windows short-path aliases."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Plan"
+      ],
+      "head_sha": "39bcaf219645033a79b9ad1218434b91a6c431b3",
+      "id": "ci-20261016-520-stale-impact-test-references",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_ci_pipeline.CiPipelineTests.test_risk_plan_selects_owned_modules_and_fails_closed",
+        "test_change_impact.ChangeImpactTests.test_manifest_zone_sources_select_current_zone_contracts"
+      ],
+      "resolution": "Map every stale reference to its actual owned module: existing Oracle IR and mechanic-contract classes reside in test_oracle_ir; zone consumers cover the canonical transition owner, single-object plans, general zone rules, and designation reset. Extend the existing pre-corpus impact sentinel to validate all path/symbol test module and suite references against the canonical shard manifest, including unselected rules. Keep the complete high-risk certification gate for this selection-authority correction.",
+      "run_id": 38948998302,
+      "summary": "PR planning selected two nonexistent zone-test modules from an existing manifest impact rule and failed before the regression matrix. The prior pre-corpus sentinel checked only representative plans; an exhaustive reference check also exposed nonexistent Oracle/compiler-contract module names in nine other path rules."
     }
   ],
   "known_flaky_tests": [],
@@ -1924,7 +1941,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "72bf5a2d3f20ea05347ce1b59afd9aa574c5531f6e69a472cd22376fe7191275",
+  "source_fingerprint": "7d1fd12f02749084325313722e80acd4a43cde4b176865869b1d5d546f58b70b",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -1934,13 +1951,13 @@
       "flaky_test": 9,
       "generated_artifact_drift": 10,
       "infrastructure": 1,
-      "missing_affected_test": 45,
+      "missing_affected_test": 46,
       "source_correctness": 29,
       "windows_compatibility": 3
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 94,
-    "escape_count": 102,
+    "deterministic_escape_count": 95,
+    "escape_count": 103,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

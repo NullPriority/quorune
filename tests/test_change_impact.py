@@ -14,6 +14,25 @@ from scripts.change_impact import (
 
 
 class ChangeImpactTests(unittest.TestCase):
+    def test_manifest_zone_sources_select_current_zone_contracts(self):
+        expected = {
+            "test_entry_designations",
+            "test_single_object_zone_transition",
+            "test_zone_general_rules",
+            "test_zone_transition_owner",
+            "test_manifest",
+            "test_morph_rules",
+        }
+        for owner in (
+            "quorune/zone_transitions.py",
+            "quorune/zone_transition_model.py",
+            "quorune/zone_object_state.py",
+            "quorune/semantic_runtime/zone_move_intent.py",
+            "quorune/rules/morph_actions.py",
+        ):
+            with self.subTest(owner=owner):
+                self.assertLessEqual(expected, set(classify_changes([owner]).test_modules))
+
     def test_batched_composition_sources_select_existing_integration_boundaries(self):
         cases = {
             'quorune/compiler/live_battlefield_quantities.py': {
