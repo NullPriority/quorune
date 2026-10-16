@@ -14020,6 +14020,86 @@
       ],
       "interaction_order": 3,
       "assertion": "Actual Flametongue Yearling with two payments enters with four power. An actual response adds another counter before its entry damage resolves. Both the live-source path and the subsequently bounced-source path deal five, using immediate same-incarnation LKI after departure rather than the trigger-creation value. The target, paid count and replay remain exact."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_actual_mounted_archers_repeat_permissions_and_full_combat",
+      "piece_ids": [
+        "capability.combat.block.capacity",
+        "capability.combat.block.capacity.temporary",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "combat.block.capacity",
+        "combat.block.capacity.temporary",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 3,
+      "assertion": "Actual strict Mounted Archers pays twice and retains two separate resolved permissions through pending save/load, accepted three-block declaration, rejected excess pairing, combat damage, four-player projection and full pre-activation replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_actual_valor_and_fixed_stats_survive_humble_then_blink_forgets_rules",
+      "piece_ids": [
+        "capability.combat.block.capacity.temporary",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+        "capability.target.revalidate_resolution",
+        "capability.zone.linked_exile_return.fixed"
+      ],
+      "capability_ids": [
+        "combat.block.capacity.temporary",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+        "target.revalidate_resolution",
+        "zone.linked_exile_return.fixed"
+      ],
+      "interaction_order": 5,
+      "assertion": "Actual Valor Made Real and Give No Ground affect one opposing Fencing Ace. Actual Humble removes its abilities while the resolved blocking rule survives; fixed P/T components retain their own values. Actual Cloudshift returns a fresh incarnation with original power/toughness and no old capacity, and pending save/load, privacy and pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_actual_heroism_untap_stats_and_rule_repeat_then_expire_together",
+      "piece_ids": [
+        "capability.combat.block.capacity",
+        "capability.combat.block.capacity.temporary",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.permanent.untap.effect",
+        "capability.resolution.effect_program.bound_references",
+        "capability.resolution.effect_program.closed_components",
+        "capability.target.revalidate_resolution"
+      ],
+      "capability_ids": [
+        "combat.block.capacity",
+        "combat.block.capacity.temporary",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "permanent.untap.effect",
+        "resolution.effect_program.bound_references",
+        "resolution.effect_program.closed_components",
+        "target.revalidate_resolution"
+      ],
+      "interaction_order": 7,
+      "assertion": "Two actual Act of Heroism casts bind untap, fixed stats and additional capacity to the same opposing creature. The second cast legally targets an untapped object, both modifiers and permissions accumulate, and cleanup removes every temporary consequence after exact pending load and pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_pending_original_source_blink_does_not_grant_returned_incarnation",
+      "piece_ids": [
+        "capability.combat.block.capacity.temporary",
+        "capability.target.revalidate_resolution",
+        "capability.zone.linked_exile_return.fixed"
+      ],
+      "capability_ids": [
+        "combat.block.capacity.temporary",
+        "target.revalidate_resolution",
+        "zone.linked_exile_return.fixed"
+      ],
+      "interaction_order": 3,
+      "assertion": "Actual Cloudshift responds separately to an original source activation and to Valor Made Real targeting the returned source. Neither pending instruction grants a permission to the next incarnation; mana, pending round trips and full pre-action replay retain both temporal boundaries."
     }
   ]
 }

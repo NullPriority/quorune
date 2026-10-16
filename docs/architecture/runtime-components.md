@@ -823,6 +823,18 @@ existing layer-6 and combat declaration owners govern both blocker domains and
 accepted commands. Source-relative opposing-controller rules and incomplete
 conditions or sibling clauses remain residual.
 
+### Temporary blocking capacity
+
+Plain instructions allowing one referenced creature to block additional or
+unlimited creatures this turn create `ResolvedBlockCapacityRule` values in the
+existing duration journal. They retain the affected incarnation, accumulate
+separate additional permissions and survive later ability removal. A departed
+or returned incarnation cannot inherit a pending or resolved permission.
+Direct creature targets use ordinary resolution revalidation; an optional fixed
+power/toughness modifier remains a separate characteristic component. Cleanup
+expires both components through the existing journal owner. Blocking capacity
+does not waive evasion, tapped-state or other declaration restrictions.
+
 ### Conditional chosen characteristics
 
 `continuous.characteristics.conditional-chosen-designation.v1` gates an existing

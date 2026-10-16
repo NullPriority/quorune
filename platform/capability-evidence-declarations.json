@@ -18470,6 +18470,578 @@
       "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
     },
     {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_actual_heroism_untap_stats_and_rule_repeat_then_expire_together",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_actual_mounted_archers_repeat_permissions_and_full_combat",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_actual_valor_and_fixed_stats_survive_humble_then_blink_forgets_rules",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_pending_original_source_blink_does_not_grant_returned_incarnation",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_actual_mounted_archers_repeat_permissions_and_full_combat",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_temporary_rule_journal_omission_is_killed_by_original_activation",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "negative",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityCompilerTests.test_temporary_capacity_dependencies_and_lowerer_fail_closed",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "negative",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityCompilerTests.test_variable_live_set_quoted_and_combat_conditional_capacity_stays_residual",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "negative",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_pending_original_source_blink_does_not_grant_returned_incarnation",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "negative",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityValueTests.test_temporary_capacity_shapes_reject_open_fields_and_unbound_subjects",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "positive",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityCompilerTests.test_fixed_source_and_targeted_temporary_capacity_originals_close",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "positive",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_actual_heroism_untap_stats_and_rule_repeat_then_expire_together",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "positive",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_actual_mounted_archers_repeat_permissions_and_full_combat",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "positive",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_actual_valor_and_fixed_stats_survive_humble_then_blink_forgets_rules",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "positive",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_pending_original_source_blink_does_not_grant_returned_incarnation",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_actual_mounted_archers_repeat_permissions_and_full_combat",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "property",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityValueTests.test_resolved_capacity_round_trips_accumulates_and_ignores_ability_removal",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "replay",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_actual_heroism_untap_stats_and_rule_repeat_then_expire_together",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "replay",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_actual_mounted_archers_repeat_permissions_and_full_combat",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "replay",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_actual_valor_and_fixed_stats_survive_humble_then_blink_forgets_rules",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "replay",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_pending_original_source_blink_does_not_grant_returned_incarnation",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
+      "capability_id": "combat.block.capacity.temporary",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_block_capacity.TemporaryBlockCapacityRuntimeTests.test_actual_mounted_archers_repeat_permissions_and_full_combat",
+      "official_rule_ids": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary source/target blocking capacity remains a resolved rule on one incarnation; repeated native activations, shared block/damage legality, rollback, privacy and replay distinguish it from static and removable ability grants."
+    },
+    {
       "capability_id": "combat.block.fear",
       "evidence_class": "interaction",
       "test_id": "tests.test_combat_evasion_restrictions.CombatEvasionRestrictionTests.test_all_represented_restrictions_are_cumulative",

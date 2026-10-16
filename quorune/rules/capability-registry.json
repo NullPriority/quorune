@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 328,
+  "registry_version": 329,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -25165,6 +25165,107 @@
       "dependency_fail_closed_rationale": "Missing payment or counter ownership prevents complete admission; malformed, unpayable, stale or foreign-instance choices reject before commitment.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omission of production, repeat pricing, entry multiplicity, paid facts or reset changes native admission, mana, counters and replay.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "combat.block.capacity.temporary",
+      "version": 1,
+      "official_rules": [
+        "113.10",
+        "115.1a",
+        "400.7",
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Resolve one fixed additional or unlimited blocking permission for one referenced incarnation this turn, with optional fixed power/toughness modification.",
+        "inputs": [
+          "one source-local activation or direct battlefield-creature target",
+          "one closed positive fixed additional or unlimited blocking capacity",
+          "optional fixed integral power/toughness modifiers"
+        ],
+        "outputs": [
+          "one typed incarnation-locked rule in the existing continuous-effect journal",
+          "additive current blocking capacity independent of ability removal",
+          "existing target revalidation, block legality, damage, cleanup, projection and replay"
+        ],
+        "exclusions": [
+          "variable quantities, live queried sets and open durations",
+          "quoted removable ability grants",
+          "defending-player target restrictions and compound blocking requirements outside separate owners"
+        ]
+      },
+      "dependencies": [
+        "combat.block.capacity",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "implementation_components": [
+        "quorune.block_capacity_rule_model.ResolvedBlockCapacityRule",
+        "quorune.compiler.block_capacity_templates.temporary_block_capacity_template",
+        "quorune.rules.block_capacity_effect.temporary_block_capacity_capabilities",
+        "quorune.rules.block_capacity_effect.apply_temporary_block_capacity",
+        "quorune.rules.block_capacity.current_block_capacity",
+        "quorune.declaration_rule_effects.continuous_journal_effect_from_dict",
+        "quorune.continuous_effect_state.commit_continuous_effect",
+        "quorune.continuous_effect_state.expire_end_of_turn_continuous_effects"
+      ],
+      "positive_tests": [
+        "test_actual_mounted_archers_repeat_permissions_and_full_combat",
+        "test_fixed_source_and_targeted_temporary_capacity_originals_close",
+        "test_actual_valor_and_fixed_stats_survive_humble_then_blink_forgets_rules",
+        "test_actual_heroism_untap_stats_and_rule_repeat_then_expire_together",
+        "test_pending_original_source_blink_does_not_grant_returned_incarnation"
+      ],
+      "negative_tests": [
+        "test_temporary_capacity_shapes_reject_open_fields_and_unbound_subjects",
+        "test_variable_live_set_quoted_and_combat_conditional_capacity_stays_residual",
+        "test_temporary_capacity_dependencies_and_lowerer_fail_closed",
+        "test_pending_original_source_blink_does_not_grant_returned_incarnation"
+      ],
+      "interaction_tests": [
+        "test_actual_mounted_archers_repeat_permissions_and_full_combat",
+        "test_actual_valor_and_fixed_stats_survive_humble_then_blink_forgets_rules",
+        "test_actual_heroism_untap_stats_and_rule_repeat_then_expire_together",
+        "test_pending_original_source_blink_does_not_grant_returned_incarnation"
+      ],
+      "multiplayer_tests": [
+        "test_actual_mounted_archers_repeat_permissions_and_full_combat"
+      ],
+      "privacy_tests": [
+        "test_actual_mounted_archers_repeat_permissions_and_full_combat"
+      ],
+      "replay_tests": [
+        "test_actual_mounted_archers_repeat_permissions_and_full_combat",
+        "test_actual_valor_and_fixed_stats_survive_humble_then_blink_forgets_rules",
+        "test_actual_heroism_untap_stats_and_rule_repeat_then_expire_together",
+        "test_pending_original_source_blink_does_not_grant_returned_incarnation"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking either the capacity or duration owner prevents exact admission. Controlled missing-dependency and compiler-omission tests preserve whole-card rejection.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the typed rule journal commit makes the actual original activation retain ordinary capacity and is detected by its native block and replay witness.",
       "blockers": [],
       "status": "trusted"
     }

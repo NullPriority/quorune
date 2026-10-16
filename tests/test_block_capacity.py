@@ -261,3 +261,338 @@ class BlockCapacityRuntimeTests(unittest.TestCase):
         data=e._effective_card_data(body)
         self.assertEqual((4,8),(int(data['power']),int(data['toughness'])))
         self.replay(s,load=True)
+
+
+class TemporaryBlockCapacityRuntimeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'temporary-capacity.sqlite3'
+        build_fixture_database([ROOT / 'tests/fixtures/bound-effect-program-cards.json',
+            ROOT / 'tests/fixtures/block-capacity-cards.json',
+            ROOT / 'tests/fixtures/creature-power-departure-cards.json'], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('Temporary blocking capacity',
+            [DeckEntry('Generic Bound Commander', 1, 'commander'), DeckEntry('Generic Bound Plains', 30)],
+            ['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):
+        BlockCapacityRuntimeTests.tearDownClass.__func__(cls)
+
+    session = witnesses.BoundEffectProgramRuntimeTests.session
+    add = witnesses.BoundEffectProgramRuntimeTests.add
+    checkpoint = witnesses.BoundEffectProgramRuntimeTests.checkpoint
+    replay = witnesses.BoundEffectProgramRuntimeTests.replay
+    resolve = counter_witnesses.CounterPlacementEventRuntimeTests.resolve
+
+    def assert_closed_capacity_original(self, name):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
+        program = compile_best_available_card_program(
+            self.db, self.db.lookup(name), semantic_registry=SemanticRegistry(),
+            capability_registry=self.registry, capability_profile='commander_review')
+        binding = bind_card_program_runtime(program, capability_registry=self.registry,
+            profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'], name + ': ' + binding['trust_basis'])
+
+    def capacity_activation(self, session, source, seat='B'):
+        for _ in range(16):
+            self.assertEqual('priority', session.state.pending_decision.kind)
+            principal = session.pending_principals()[0]
+            if principal == 'pilot:' + seat:
+                actions = session.packet(principal, full=True)['decision']['ctx']['legal']['actions']
+                return next(row for row in actions
+                    if row['id'].startswith('activate:' + source.ref + ':'))
+            result = session.act(principal, {'action_id': 'pass'})
+            self.assertTrue(result.ok, result.summary)
+        self.fail('The source controller never received the activation window')
+
+    def test_actual_mounted_archers_repeat_permissions_and_full_combat(self):
+        self.assert_closed_capacity_original('Mounted Archers')
+        session = self.session(523001)
+        engine = session.engine
+        blocker = self.add(engine, 'Mounted Archers', seat='B')
+        attackers = [self.add(engine, 'Generic Bound Body', ref='capacity-attacker-' + str(index))
+            for index in range(4)]
+        private = self.add(engine, 'Generic Bound Body', seat='C', zone='hand', ref='capacity-private-hand')
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.priority_player = None
+        engine.state.priority_passes = []
+        engine.state.started = True
+        engine.state.active_player = 'A'
+        engine.state.phase = 'combat'
+        engine.state.step = 'declare_attackers'
+        engine.state.phase_index = TURN_STEPS.index(('combat', 'declare_attackers'))
+        engine.state.players['B'].mana_pool['W'] = 2
+        for attacker in attackers:
+            attacker.attacking = 'B'
+        engine.state.combat = CombatState(attackers_declared=True,
+            attackers={card.object_id: 'B' for card in attackers}, defending_players=['B'])
+        engine._grant_priority('B')
+        engine.pump()
+        self.checkpoint(session)
+        self.assertEqual(1, current_block_capacity(engine, blocker, eligible_attackers=4))
+        for count in (1, 2):
+            action = self.capacity_activation(session, blocker)
+            if count == 1:
+                before = authoritative_state_hash(engine.state)
+                rejected = session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'})
+                self.assertFalse(rejected.ok)
+                self.assertEqual(before, authoritative_state_hash(engine.state))
+            accepted = session.act('pilot:B', {'action_id': action['id'], 'pay': 'auto'})
+            self.assertTrue(accepted.ok, accepted.summary)
+            self.replay(session, load=True)
+            self.resolve(session)
+            self.assertEqual(1 + count, current_block_capacity(engine, blocker, eligible_attackers=4))
+            self.assertEqual(2 - count, engine.state.players['B'].mana_pool.get('W', 0))
+        self.assertNotIn(private.ref, json.dumps(session.packet('pilot:A', full=True)))
+        self.assertIn(private.ref, json.dumps(session.packet('pilot:C', full=True)))
+        for _ in range(24):
+            if engine.state.pending_decision.kind != 'priority':
+                break
+            accepted = session.act(session.pending_principals()[0], {'action_id': 'pass'})
+            self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual('combat.blockers', engine.state.pending_decision.kind)
+        packet = session.packet('pilot:B', full=True)['decision']
+        self.assertEqual(3, packet['ctx']['declaration_constraints']['capacities'][blocker.ref])
+        before = authoritative_state_hash(engine.state)
+        rejected = session.act('pilot:B', {'action_id': 'block',
+            'blocks': {blocker.ref: [card.ref for card in attackers]}})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        accepted = session.act('pilot:B', {'action_id': 'block',
+            'blocks': {blocker.ref: [card.ref for card in attackers[:3]]}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        for _ in range(24):
+            if engine.state.pending_decision and engine.state.pending_decision.kind != 'priority':
+                break
+            accepted = session.act(session.pending_principals()[0], {'action_id': 'pass'})
+            self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual('combat.damage', engine.state.pending_decision.kind)
+        accepted = session.act('pilot:B', {'action_id': 'assign_damage',
+            'assignments': [{'source': blocker.ref, 'target': attackers[0].ref, 'amount': 2}]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual('graveyard', engine.state.cards[blocker.object_id].zone)
+        self.assertEqual([2, 0, 0, 0], [engine.state.cards[card.object_id].marked_damage for card in attackers])
+        self.assertEqual(38, engine.state.players['B'].life)
+        self.replay(session, load=True)
+
+    def test_temporary_rule_journal_omission_is_killed_by_original_activation(self):
+        with patch('quorune.rules.block_capacity_effect.commit_continuous_effect'):
+            with self.assertRaises(AssertionError):
+                self.test_actual_mounted_archers_repeat_permissions_and_full_combat()
+
+    def cast_capacity_spell(self, session, spell, target, seat='A'):
+        for _ in range(16):
+            self.assertEqual('priority', session.state.pending_decision.kind)
+            principal = session.pending_principals()[0]
+            if principal == 'pilot:' + seat:
+                actions = session.packet(principal, full=True)['decision']['ctx']['legal']['actions']
+                action = next(row for row in actions if row.get('card') == spell.ref and row['id'].startswith('cast:'))
+                accepted = session.act(principal, {'action_id': action['id'], 'targets': [target.ref], 'pay': 'auto'})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.replay(session, load=True)
+                self.resolve(session)
+                return
+            accepted = session.act(principal, {'action_id': 'pass'})
+            self.assertTrue(accepted.ok, accepted.summary)
+        self.fail('The spell controller never received its cast window')
+
+    def test_actual_valor_and_fixed_stats_survive_humble_then_blink_forgets_rules(self):
+        for name in ('Valor Made Real', 'Give No Ground'):
+            self.assert_closed_capacity_original(name)
+        session = self.session(523002)
+        engine = session.engine
+        body = self.add(engine, 'Fencing Ace', seat='B')
+        valor = self.add(engine, 'Valor Made Real', zone='hand')
+        humble = self.add(engine, 'Humble', zone='hand')
+        stats = self.add(engine, 'Give No Ground', zone='hand')
+        blink = self.add(engine, 'Cloudshift', seat='B', zone='hand')
+        private = self.add(engine, 'Generic Bound Body', seat='C', zone='hand', ref='target-capacity-private')
+        engine.state.players['B'].mana_pool['W'] = 1
+        witnesses.BoundEffectProgramRuntimeTests.ready(self, session, valor, {'W': 3, 'C': 4})
+        self.checkpoint(session)
+        self.cast_capacity_spell(session, valor, body)
+        self.assertEqual(4, current_block_capacity(engine, body, eligible_attackers=4))
+        self.cast_capacity_spell(session, humble, body)
+        self.assertNotIn('double strike', engine._combat_keywords(body))
+        self.assertEqual(4, current_block_capacity(engine, body, eligible_attackers=4))
+        self.cast_capacity_spell(session, stats, body)
+        data = engine._effective_card_data(body)
+        self.assertEqual((2, 7), (int(data['power']), int(data['toughness'])))
+        self.assertEqual(4, current_block_capacity(engine, body, eligible_attackers=4))
+        self.assertNotIn(private.ref, json.dumps(session.packet('pilot:A', full=True)))
+        self.assertIn(private.ref, json.dumps(session.packet('pilot:C', full=True)))
+        prior = body.logical_object_id
+        self.cast_capacity_spell(session, blink, body, seat='B')
+        body = engine.state.cards[body.object_id]
+        self.assertNotEqual(prior, body.logical_object_id)
+        self.assertEqual(1, current_block_capacity(engine, body, eligible_attackers=4))
+        self.assertIn('double strike', engine._combat_keywords(body))
+        data = engine._effective_card_data(body)
+        self.assertEqual((1, 1), (int(data['power']), int(data['toughness'])))
+        self.replay(session, load=True)
+
+    def test_actual_heroism_untap_stats_and_rule_repeat_then_expire_together(self):
+        from quorune.continuous_effect_state import expire_end_of_turn_continuous_effects
+        self.assert_closed_capacity_original('Act of Heroism')
+        session = self.session(523003)
+        engine = session.engine
+        body = self.add(engine, 'Generic Bound Body', seat='B')
+        body.tapped = True
+        first = self.add(engine, 'Act of Heroism', zone='hand', ref='capacity-heroism-first')
+        second = self.add(engine, 'Act of Heroism', zone='hand', ref='capacity-heroism-second')
+        witnesses.BoundEffectProgramRuntimeTests.ready(self, session, first, {'W': 2, 'C': 2})
+        self.checkpoint(session)
+        for count, spell in enumerate((first, second), start=1):
+            self.cast_capacity_spell(session, spell, body)
+            self.assertFalse(body.tapped)
+            self.assertEqual(count + 1, current_block_capacity(engine, body, eligible_attackers=4))
+            data = engine._effective_card_data(body)
+            self.assertEqual((2 + 2 * count, 6 + 2 * count), (int(data['power']), int(data['toughness'])))
+        self.replay(session, load=True)
+        expire_end_of_turn_continuous_effects(engine.state)
+        self.assertEqual([], engine.state.continuous_effects)
+        self.assertEqual(1, current_block_capacity(engine, body, eligible_attackers=4))
+        data = engine._effective_card_data(body)
+        self.assertEqual((2, 6), (int(data['power']), int(data['toughness'])))
+
+    def test_pending_original_source_blink_does_not_grant_returned_incarnation(self):
+        self.assert_closed_capacity_original('Mounted Archers')
+        session = self.session(523004)
+        engine = session.engine
+        source = self.add(engine, 'Mounted Archers')
+        blink = self.add(engine, 'Cloudshift', zone='hand')
+        second_blink = self.add(engine, 'Cloudshift', zone='hand', ref='pending-capacity-target-blink')
+        targeted = self.add(engine, 'Valor Made Real', zone='hand')
+        action = witnesses.BoundEffectProgramRuntimeTests.ready(self, session, source, {'W': 4})
+        self.checkpoint(session)
+        prior = source.logical_object_id
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.cast_capacity_spell(session, blink, source)
+        source = engine.state.cards[source.object_id]
+        self.assertNotEqual(prior, source.logical_object_id)
+        self.assertEqual(1, current_block_capacity(engine, source, eligible_attackers=4))
+        self.assertEqual([], engine.state.continuous_effects)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        cast = next(row for row in actions if row.get('card') == targeted.ref and row['id'].startswith('cast:'))
+        accepted = session.act('pilot:A', {'action_id': cast['id'], 'targets': [source.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        prior = source.logical_object_id
+        self.cast_capacity_spell(session, second_blink, source)
+        source = engine.state.cards[source.object_id]
+        self.assertNotEqual(prior, source.logical_object_id)
+        self.assertEqual(1, current_block_capacity(engine, source, eligible_attackers=4))
+        self.assertEqual([], engine.state.continuous_effects)
+        self.assertEqual(0, engine.state.players['A'].mana_pool.get('W', 0))
+        self.replay(session, load=True)
+
+
+class TemporaryBlockCapacityValueTests(unittest.TestCase):
+    def test_resolved_capacity_round_trips_accumulates_and_ignores_ability_removal(self):
+        from types import SimpleNamespace
+        from quorune.model import CardInstance
+        from quorune.block_capacity_rule_model import ResolvedBlockCapacityRule
+        from quorune.continuous_effect_model import ContinuousObjectIdentity, ContinuousEffectDuration
+        from quorune.declaration_rule_effects import continuous_journal_effect_from_dict
+        card = CardInstance(object_id='capacity-object', ref='capacity-ref', oracle_id='fixture:capacity',
+            printed_name='Capacity diagnostic', owner='A', controller='B', zone='battlefield')
+        identity = ContinuousObjectIdentity(card.object_id, card.logical_object_id)
+        first = ResolvedBlockCapacityRule('capacity-rule-1', 'source-1', 1, identity, BlockCapacitySpec(additional=1))
+        second = replace(first, effect_id='capacity-rule-2', timestamp=2)
+        host = SimpleNamespace(state=SimpleNamespace(continuous_effects=[first, second]),
+            _effective_card_data=lambda _: {'ability_fragments': []})
+        restored = continuous_journal_effect_from_dict(first.to_dict())
+        self.assertEqual(first, restored)
+        self.assertEqual(first.fingerprint, restored.fingerprint)
+        self.assertEqual(3, current_block_capacity(host, card, eligible_attackers=5))
+        card.controller = 'C'
+        self.assertEqual(3, current_block_capacity(host, card, eligible_attackers=5))
+        host.state.continuous_effects = [replace(first, subject=ContinuousObjectIdentity(card.object_id, 'old-incarnation'))]
+        self.assertEqual(1, current_block_capacity(host, card, eligible_attackers=5))
+        host.state.continuous_effects = [replace(first, capacity=BlockCapacitySpec(unlimited=True))]
+        self.assertEqual(5, current_block_capacity(host, card, eligible_attackers=5))
+        card.phased_out = True
+        self.assertEqual(1, current_block_capacity(host, card, eligible_attackers=5))
+        for change in ({'timestamp': True}, {'subject': False}, {'duration': ContinuousEffectDuration.WHILE_SOURCE_PRESENT}):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                replace(first, **change)
+        for raw in ({**first.to_dict(), 'extra': True}, {**first.to_dict(), 'capacity': {'schema_version': 1, 'additional': True, 'unlimited': False}}):
+            with self.subTest(raw=raw), self.assertRaises(ValueError):
+                ResolvedBlockCapacityRule.from_dict(raw)
+
+    def test_temporary_capacity_shapes_reject_open_fields_and_unbound_subjects(self):
+        from quorune.block_capacity_rule_model import TEMPORARY_BLOCK_CAPACITY, TEMPORARY_BLOCK_CAPACITY_MECHANIC
+        from quorune.rules.block_capacity_effect import decode_temporary_block_capacity, temporary_block_capacity_capabilities, apply_temporary_block_capacity
+        from quorune.compiler.direct_target import direct_permanent_target_spec
+        effect = {'op': 'apply_source_characteristics_until_end_of_turn', 'schema_version': 10,
+            'card': '$source.zone_object', 'capacity': BlockCapacitySpec(additional=1).to_dict(), 'power': 0, 'toughness': 0}
+        def dependencies(value, schema=None):
+            return temporary_block_capacity_capabilities(effects=(value,), target_schema=schema,
+                mechanic_ids=(TEMPORARY_BLOCK_CAPACITY_MECHANIC,))
+        self.assertIn(TEMPORARY_BLOCK_CAPACITY, dependencies(effect))
+        schema = direct_permanent_target_spec('Target creature').to_target_schema()
+        self.assertIn('target.revalidate_resolution', dependencies({**effect, 'card': '$target.0'}, schema))
+        for changed in ({'schema_version': True}, {'schema_version': 9}, {'card': None},
+                {'card': '$target.1'}, {'power': True}, {'extra': 1},
+                {'capacity': {'schema_version': 1, 'additional': 0, 'unlimited': False}}):
+            with self.subTest(changed=changed):
+                self.assertEqual((), dependencies({**effect, **changed}))
+        self.assertEqual((), apply_temporary_block_capacity(None, {**effect, 'card': None}, actor='A', reason='departed'))
+        with self.assertRaises(ValueError):
+            decode_temporary_block_capacity({**effect, 'card': None})
+
+
+class TemporaryBlockCapacityCompilerTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        BlockCapacityRuntimeTests.setUpClass.__func__(cls)
+
+    @classmethod
+    def tearDownClass(cls):
+        BlockCapacityRuntimeTests.tearDownClass.__func__(cls)
+
+    assert_closed_capacity_original = TemporaryBlockCapacityRuntimeTests.assert_closed_capacity_original
+
+    def test_fixed_source_and_targeted_temporary_capacity_originals_close(self):
+        for name in ('Luminous Guardian', 'Mounted Archers', 'Coastline Chimera',
+                'Anurid Swarmsnapper', 'Valor Made Real', 'Give No Ground', 'Act of Heroism'):
+            with self.subTest(name=name):
+                self.assert_closed_capacity_original(name)
+
+    def test_variable_live_set_quoted_and_combat_conditional_capacity_stays_residual(self):
+        for text in ('{1}: This creature can block an additional X creatures this turn.',
+                '{1}: This creature can block an additional creature this turn if you control an Island.',
+                'Each creature you control can block an additional creature this turn.',
+                'Target player can block any number of creatures this turn.',
+                'Target creature gains "This creature can block an additional creature each combat" until end of turn.'):
+            with self.subTest(text=text):
+                self.assertNotEqual('exact', compile_oracle_card(query_record(text), capability_registry=self.registry).status)
+
+    def test_temporary_capacity_dependencies_and_lowerer_fail_closed(self):
+        from copy import deepcopy
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        card = self.db.lookup('Mounted Archers')
+        for missing in (None, 'combat.block.capacity.temporary', 'combat.block.capacity',
+                'continuous.resolution.fixed_characteristics_until_end_of_turn'):
+            with self.subTest(missing=missing):
+                changed = deepcopy(raw)
+                if missing is not None:
+                    next(row for row in changed['capabilities'] if row['id'] == missing).update(
+                        status='blocked', blockers=['controlled negative dependency fixture'])
+                registry = CapabilityRegistry(changed)
+                registry.mark_evidence_verified('0' * 64)
+                status = compile_oracle_card(card, capability_registry=registry).status
+                if missing is None:
+                    self.assertEqual('exact', status)
+                else:
+                    self.assertNotEqual('exact', status)
+        with patch('quorune.compiler.resolution_effect_templates.temporary_block_capacity_template', return_value=None):
+            self.assertNotEqual('exact', compile_oracle_card(card, capability_registry=self.registry).status)

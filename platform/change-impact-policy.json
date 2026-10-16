@@ -4621,6 +4621,30 @@
         "test_paid_entry_copy",
         "test_squad_paid_entry_copy"
       ]
+    },
+    {
+      "id": "temporary-block-capacity-rule-contract",
+      "patterns": [
+        "quorune/block_capacity_rule_model.py",
+        "quorune/rules/block_capacity_effect.py",
+        "quorune/rules/block_capacity.py",
+        "quorune/compiler/block_capacity_templates.py",
+        "quorune/compiler/resolution_effect_templates.py",
+        "quorune/effect_runtime/characteristic_version_dispatch.py",
+        "quorune/continuous_effect_state.py",
+        "quorune/declaration_rule_effects.py",
+        "tests/fixtures/block-capacity-cards.json"
+      ],
+      "test_modules": [
+        "test_block_capacity",
+        "test_as_unblocked_assignment",
+        "test_toughness_assignment",
+        "test_continuous_effect_duration",
+        "test_continuous_effect_components",
+        "test_game_record_v3",
+        "test_card_program_trust",
+        "test_rule_capabilities"
+      ]
     }
   ],
   "symbol_rules": [

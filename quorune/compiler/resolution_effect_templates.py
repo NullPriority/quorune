@@ -11,6 +11,7 @@ from .as_unblocked_templates import temporary_as_unblocked_template
 from .toughness_assignment_templates import temporary_toughness_assignment_template
 from .connive_templates import fixed_connive_effect_template
 from .goad_templates import fixed_goad_effect_template
+from .block_capacity_templates import temporary_block_capacity_template
 
 from typing import Any, Mapping, Sequence
 
@@ -127,6 +128,9 @@ def _source_context_resolution_template(
     if connive is not None:return connive
     extra_turn = fixed_extra_turn_effect_template(text)
     if extra_turn is not None:return extra_turn
+    capacity = temporary_block_capacity_template(text, source_name=card_name,
+        source_is_permanent=source_is_permanent, source_card_types=source_card_types)
+    if capacity is not None:return capacity
     toughness=temporary_toughness_assignment_template(text)
     if toughness is not None:return toughness
     as_unblocked=temporary_as_unblocked_template(text,source_name=card_name,source_is_permanent=source_is_permanent,source_card_types=source_card_types)
