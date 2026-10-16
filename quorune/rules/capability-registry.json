@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 318,
+  "registry_version": 319,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -244,6 +244,95 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "casting.additional_cost.spree_fixed_modes",
+      "version": 1,
+      "official_rules": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.172a",
+        "702.172b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Compile complete fixed-price Spree modal spells through existing nonrepeating modal effects. Bind each distinct selected mode set to authoritative additional mana costs and its exact target schema before canonical total-cost modifiers and payment.",
+        "inputs": [
+          "complete independently closed modal branches",
+          "canonical literal mana price for every printed mode",
+          "one nonempty distinct selected mode set",
+          "existing base/alternative/additional costs and live modifiers"
+        ],
+        "outputs": [
+          "selected mode charges summed with the base before reductions",
+          "finite payable cost options bind exact selected modes and targets",
+          "ordinary printed mana value and modal resolution order retained",
+          "free base still pays selected mode charges"
+        ],
+        "exclusions": [
+          "variable or complex mode prices",
+          "unknown or partially represented mode bodies",
+          "zero/repeated/unknown mode selections",
+          "uncorrelated or client-authored mode-price data"
+        ]
+      },
+      "dependencies": [
+        "choice.modal.fixed_nonrepeating"
+      ],
+      "implementation_components": [
+        "quorune.spree_model.SpreeModeCosts",
+        "quorune.compiler.spree_templates.fixed_spree_modal_template",
+        "quorune.compiler.whole_modal_templates.whole_modal_spell_template",
+        "quorune.rules.spree_capability_shapes.modal_cost_capabilities",
+        "quorune.rules.casting.spree_costs.with_spree_mode_cost_options",
+        "quorune.rules.casting.spree_costs.default_cast_cost_option_id",
+        "quorune.rules.casting.option_expansion.expand_optional_mana_costs"
+      ],
+      "positive_tests": [
+        "test_fixed_mode_costs_close_with_original_spans_and_independent_modal_bodies",
+        "test_selected_costs_targets_and_free_base_options_remain_correlated"
+      ],
+      "negative_tests": [
+        "test_unknown_prices_bodies_and_malformed_mode_cost_ownership_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_actual_raid_selected_modes_charge_sum_and_bind_only_selected_targets",
+        "test_actual_electromancer_reduces_the_total_after_spree_additional_costs"
+      ],
+      "multiplayer_tests": [
+        "test_actual_raid_selected_modes_charge_sum_and_bind_only_selected_targets"
+      ],
+      "privacy_tests": [
+        "test_actual_raid_selected_modes_charge_sum_and_bind_only_selected_targets"
+      ],
+      "replay_tests": [
+        "test_actual_raid_selected_modes_charge_sum_and_bind_only_selected_targets",
+        "test_actual_electromancer_reduces_the_total_after_spree_additional_costs"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Every price must exactly match the complete typed modal schema and a closed branch program. Unknown prices, body siblings, modes or malformed correlation prevent exact admission; withdrawing either Spree or the existing modal owner blocks support.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the Spree compiler prevents all new exact witnesses. Omitting selected mode charge expansion makes actual Raid underpay or invalidates its offered correlated costs; Electromancer must reduce the complete base-plus-mode total rather than only the printed base.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "zone.entry.color_designation_composition",
       "version": 1,

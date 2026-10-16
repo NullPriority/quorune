@@ -171,7 +171,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v389"
+ORACLE_COMPILER_VERSION = "oracle-ir-v390"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1099,34 +1099,18 @@ def _typed_whole_spell_face(
     )
     if additional_cost_face is not None:
         return additional_cost_face
-    modal_template = fixed_choose_one_modal_spell_template(
-        material_rows,
-        compile_effect=lambda body: effect_template(
-            body,
-            card_name=face_name or record.name,
-        ),
-    )
-    if modal_template is None:
-        expanded_modal = fixed_nonrepeating_modal_template(
-            material_rows,
-            compile_effect=lambda body: effect_template(
-                body,
-                card_name=face_name or record.name,
-            ),
-        )
-        modal_template = (
-            expanded_modal
-            if expanded_modal is not None
-            and not expanded_modal.context_prefix
-            else None
-        )
+    from .compiler.whole_modal_templates import whole_modal_spell_template
+    modal_template = whole_modal_spell_template(material_rows,
+        compile_effect=lambda body: effect_template(body, card_name=face_name or record.name))
     if modal_template is None:
         return None
     template, effects, target_schema, mechanics = modal_template.compiled()
+    cost_schema = getattr(modal_template, 'cost_schema', None)
     dependency_gate = _dependency_gate(
         mechanics=mechanics,
         effects=effects,
         target_schema=target_schema,
+        cost_schema=cost_schema,
         trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
@@ -1163,6 +1147,7 @@ def _typed_whole_spell_face(
         effects=effects,
         target_schema=target_schema,
         mechanics=mechanics,
+        cost=cost_schema,
         residual_ids=residual_ids,
         capability_dependencies=dependency_gate.capabilities,
         capability_closure=(

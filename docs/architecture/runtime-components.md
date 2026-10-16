@@ -874,3 +874,17 @@ them; the zone owner stores one choice and tapped state on the entering
 incarnation. Unknown exclusions, ambiguous subjects, conditional prefixes and
 unrepresented sibling clauses remain residual. Chosen-color mana and spending
 restrictions continue through their existing shared output and payment owners.
+
+### Fixed Spree mode costs
+
+`SpreeModeCosts` binds one canonical literal mana vector to every printed mode of
+an existing complete nonrepeating modal spell. The compiler retains the original
+whole source span and independently closes each branch before emitting the
+version-1 `spree` casting-cost schema. Ordinary modal encodings remain unchanged.
+
+The casting cost owner expands finite distinct mode sets into correlated cost
+options before total-cost modifiers. Each option carries the exact selected
+mode target schema and adds those prices to its existing base, including a free
+base. The shared affordability, target validation and payment owners enforce
+that binding; resolution retains printed mode order and ordinary copy behavior.
+Variable prices and incomplete mode bodies remain residual.

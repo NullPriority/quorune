@@ -373,6 +373,7 @@
       "test_public_fixtures",
       "test_random_discard_activation_costs",
       "test_reflexive_payments",
+      "test_spree_mode_costs",
       "test_support_counter_placement"
     ],
     "functional-11": [

@@ -1,0 +1,2895 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned Spree originals and explicit mode-cost target witnesses",
+  "cards": [
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "name": "Unfortunate Accident",
+      "mana_cost": "{B}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {2}{B} — Destroy target creature.\n+ {1} — Create a 1/1 red Mercenary creature token with \"{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "09669283-eb14-46a2-b37a-51d7a52da891",
+      "name": "Requisition Raid",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1} — Destroy target artifact.\n+ {1} — Destroy target enchantment.\n+ {1} — Put a +1/+1 counter on each creature target player controls.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0b23d9aa-d4ed-4ccf-8810-4a4d11d6fb9c",
+      "name": "Lively Dirge",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1} — Search your library for a card, put it into your graveyard, then shuffle.\n+ {2} — Return up to two creature cards with total mana value 4 or less from your graveyard to the battlefield.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0db20037-35b3-4b1f-8dd6-3ee797c421ca",
+      "name": "Phantom Interference",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {3} — Create a 2/2 white Spirit creature token with flying.\n+ {1} — Counter target spell unless its controller pays {2}.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "name": "Rush of Dread",
+      "mana_cost": "{1}{B}{B}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1} — Target opponent sacrifices half the creatures they control of their choice, rounded up.\n+ {2} — Target opponent discards half the cards in their hand, rounded up.\n+ {2} — Target opponent loses half their life, rounded up.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "282dfeaa-6243-4f92-838a-5cb54fa85184",
+      "name": "Three Steps Ahead",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1}{U} — Counter target spell.\n+ {3} — Create a token that's a copy of target artifact or creature you control.\n+ {2} — Draw two cards, then discard a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "name": "Return the Favor",
+      "mana_cost": "{R}{R}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1} — Copy target instant spell, sorcery spell, activated ability, or triggered ability. You may choose new targets for the copy.\n+ {1} — Change the target of target spell or ability with a single target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "55cba59c-932c-4295-87dc-9179fbdfbd53",
+      "name": "One Last Job",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {2} — Return target creature card from your graveyard to the battlefield.\n+ {1} — Return target Mount or Vehicle card from your graveyard to the battlefield.\n+ {1} — Return target Aura or Equipment card from your graveyard to the battlefield attached to a creature you control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "605f719d-01f8-406c-9d4c-3f4992c6a69f",
+      "name": "Smuggler's Surprise",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {2} — Mill four cards. You may put up to two creature and/or land cards from among the milled cards into your hand.\n+ {4}{G} — You may put up to two creature cards from your hand onto the battlefield.\n+ {1} — Creatures you control with power 4 or greater gain hexproof and indestructible until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Spree",
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "69c8e690-c0a2-4c4e-910d-123c9c5b922f",
+      "name": "Metamorphic Blast",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1} — Until end of turn, target creature becomes a white Rabbit with base power and toughness 0/1.\n+ {3} — Target player draws two cards.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "763d60ea-a0ad-4f13-b8a7-aa1515283266",
+      "name": "Shifting Grift",
+      "mana_cost": "{U}{U}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {2} — Exchange control of two target creatures.\n+ {1} — Exchange control of two target artifacts.\n+ {1} — Exchange control of two target enchantments.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "7c57d4aa-d221-4b36-a544-9fa89d63ffbe",
+      "name": "Dance of the Tumbleweeds",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1} — Search your library for a basic land card or a Desert card, put it onto the battlefield, then shuffle.\n+ {3} — Create an X/X green Elemental creature token, where X is the number of lands you control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "7e7ec3d6-a84f-4cc3-93f4-4d181d41e126",
+      "name": "Final Showdown",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1} — All creatures lose all abilities until end of turn.\n+ {1} — Choose a creature you control. It gains indestructible until end of turn.\n+ {3}{W}{W} — Destroy all creatures.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "98eac0f7-3f4d-46ef-9575-680c52e967cf",
+      "name": "Getaway Glamer",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1} — Exile target nontoken creature. Return it to the battlefield under its owner's control at the beginning of the next end step.\n+ {2} — Destroy target creature if no other creature has greater power.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ad3e705f-da57-4eff-84d7-2072522de988",
+      "name": "Insatiable Avarice",
+      "mana_cost": "{B}",
+      "cmc": 1.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {2} — Search your library for a card, then shuffle and put that card on top.\n+ {B}{B} — Target player draws three cards and loses 3 life.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "afe2f7a4-9440-4d93-801f-a18b627efb21",
+      "name": "Great Train Heist",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {2}{R} — Untap all creatures you control. If it's your combat phase, there is an additional combat phase after this phase.\n+ {2} — Creatures you control get +1/+0 and gain first strike until end of turn.\n+ {R} — Choose target opponent. Whenever a creature you control deals combat damage to that player this turn, create a tapped Treasure token.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Treasure",
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b23dc81d-01bb-4bf0-9932-5d32a6b22cf7",
+      "name": "Explosive Derailment",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {2} — Explosive Derailment deals 4 damage to target creature.\n+ {2} — Destroy target artifact.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b47f7f1e-2d81-4b1b-870d-4c1a4f020505",
+      "name": "Trash the Town",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {2} — Put two +1/+1 counters on target creature.\n+ {1} — Target creature gains trample until end of turn.\n+ {1} — Until end of turn, target creature gains \"Whenever this creature deals combat damage to a player, draw two cards.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "bc7f39e1-97bf-4725-a84a-2a04121530c6",
+      "name": "Jailbreak Scheme",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {3} — Put a +1/+1 counter on target creature. It can't be blocked this turn.\n+ {2} — Target artifact or creature's owner puts it on their choice of the top or bottom of their library.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d262f3e1-b5bc-4dab-86c2-cd89c2419e54",
+      "name": "Caught in the Crossfire",
+      "mana_cost": "{R}{R}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1} — Caught in the Crossfire deals 2 damage to each outlaw creature. (Assassins, Mercenaries, Pirates, Rogues, and Warlocks are outlaws.)\n+ {1} — Caught in the Crossfire deals 2 damage to each non-outlaw creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ef0c0f28-e1ee-42a1-9878-95a0ceb0a9fa",
+      "name": "Rustler Rampage",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1} — Untap all creatures target player controls.\n+ {1} — Target creature gains double strike until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Spree"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "81f06f84-1580-43c0-89d5-08d34541a519",
+      "name": "Goblin Electromancer",
+      "mana_cost": "{U}{R}",
+      "cmc": 2.0,
+      "type_line": "Creature — Goblin Wizard",
+      "oracle_text": "Instant and sorcery spells you cast cost {1} less to cast.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture:spree-artifact",
+      "name": "Generic Spree Artifact",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Artifact",
+      "oracle_text": "",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture:spree-enchantment",
+      "name": "Generic Spree Enchantment",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Enchantment",
+      "oracle_text": "",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree “without paying its mana cost,” you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can’t be changed."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won’t be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there’s a legal target available. Ignore the targeting requirements for modes you don’t choose."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose the same mode more than once."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn’t matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "011558f3-3c23-430e-a08b-8f91238e7971",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "09669283-eb14-46a2-b37a-51d7a52da891",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "09669283-eb14-46a2-b37a-51d7a52da891",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can't be changed."
+    },
+    {
+      "oracle_id": "09669283-eb14-46a2-b37a-51d7a52da891",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "09669283-eb14-46a2-b37a-51d7a52da891",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "09669283-eb14-46a2-b37a-51d7a52da891",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there's a legal target available. Ignore the targeting requirements for modes you don't choose."
+    },
+    {
+      "oracle_id": "09669283-eb14-46a2-b37a-51d7a52da891",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won't be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "09669283-eb14-46a2-b37a-51d7a52da891",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn't matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "09669283-eb14-46a2-b37a-51d7a52da891",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won't resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "09669283-eb14-46a2-b37a-51d7a52da891",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "09669283-eb14-46a2-b37a-51d7a52da891",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree \"without paying its mana cost,\" you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "09669283-eb14-46a2-b37a-51d7a52da891",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can't choose the same mode more than once."
+    },
+    {
+      "oracle_id": "09669283-eb14-46a2-b37a-51d7a52da891",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "0b23d9aa-d4ed-4ccf-8810-4a4d11d6fb9c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can’t be changed."
+    },
+    {
+      "oracle_id": "0b23d9aa-d4ed-4ccf-8810-4a4d11d6fb9c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose the same mode more than once."
+    },
+    {
+      "oracle_id": "0b23d9aa-d4ed-4ccf-8810-4a4d11d6fb9c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "0b23d9aa-d4ed-4ccf-8810-4a4d11d6fb9c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The second mode doesn’t target any cards. You choose which ones you’re returning as Lively Dirge is resolving. You may choose the one you put into the graveyard with the first mode, if applicable, or ones that were already there. By the time Lively Dirge has started resolving, it’s too late for anyone to respond to it."
+    },
+    {
+      "oracle_id": "0b23d9aa-d4ed-4ccf-8810-4a4d11d6fb9c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "0b23d9aa-d4ed-4ccf-8810-4a4d11d6fb9c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "0b23d9aa-d4ed-4ccf-8810-4a4d11d6fb9c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "0b23d9aa-d4ed-4ccf-8810-4a4d11d6fb9c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won’t be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "0b23d9aa-d4ed-4ccf-8810-4a4d11d6fb9c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If the mana cost of a card in your graveyard includes {X}, X is 0 for the purpose of determining its mana value."
+    },
+    {
+      "oracle_id": "0b23d9aa-d4ed-4ccf-8810-4a4d11d6fb9c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there’s a legal target available. Ignore the targeting requirements for modes you don’t choose."
+    },
+    {
+      "oracle_id": "0b23d9aa-d4ed-4ccf-8810-4a4d11d6fb9c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn’t matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "0b23d9aa-d4ed-4ccf-8810-4a4d11d6fb9c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree “without paying its mana cost,” you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "0b23d9aa-d4ed-4ccf-8810-4a4d11d6fb9c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "0b23d9aa-d4ed-4ccf-8810-4a4d11d6fb9c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "0db20037-35b3-4b1f-8dd6-3ee797c421ca",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "0db20037-35b3-4b1f-8dd6-3ee797c421ca",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "0db20037-35b3-4b1f-8dd6-3ee797c421ca",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose the same mode more than once."
+    },
+    {
+      "oracle_id": "0db20037-35b3-4b1f-8dd6-3ee797c421ca",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "0db20037-35b3-4b1f-8dd6-3ee797c421ca",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "0db20037-35b3-4b1f-8dd6-3ee797c421ca",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won’t be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "0db20037-35b3-4b1f-8dd6-3ee797c421ca",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there’s a legal target available. Ignore the targeting requirements for modes you don’t choose."
+    },
+    {
+      "oracle_id": "0db20037-35b3-4b1f-8dd6-3ee797c421ca",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "0db20037-35b3-4b1f-8dd6-3ee797c421ca",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree “without paying its mana cost,” you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "0db20037-35b3-4b1f-8dd6-3ee797c421ca",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can’t be changed."
+    },
+    {
+      "oracle_id": "0db20037-35b3-4b1f-8dd6-3ee797c421ca",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn’t matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "0db20037-35b3-4b1f-8dd6-3ee797c421ca",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can’t be changed."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose the same mode more than once."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Like the effects of all modal spells, Rush of Dread’s effects happen in order. If the first two modes target different opponents, the opponent targeted by the second mode will see what the first opponent sacrificed before choosing what to discard."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won’t be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn’t matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree “without paying its mana cost,” you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there’s a legal target available. Ignore the targeting requirements for modes you don’t choose."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "0dfe6ec6-a0df-41c8-90dd-1ddf0417700a",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "282dfeaa-6243-4f92-838a-5cb54fa85184",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree “without paying its mana cost,” you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "282dfeaa-6243-4f92-838a-5cb54fa85184",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose the same mode more than once."
+    },
+    {
+      "oracle_id": "282dfeaa-6243-4f92-838a-5cb54fa85184",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "282dfeaa-6243-4f92-838a-5cb54fa85184",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The token copies exactly what was printed on the original permanent and nothing else (unless that permanent is copying something else or is a token; see below). It doesn’t copy whether that permanent is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, and so on."
+    },
+    {
+      "oracle_id": "282dfeaa-6243-4f92-838a-5cb54fa85184",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won’t be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "282dfeaa-6243-4f92-838a-5cb54fa85184",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If the copied permanent is a token, the token that’s created copies the original characteristics of that token as stated by the effect that created that token."
+    },
+    {
+      "oracle_id": "282dfeaa-6243-4f92-838a-5cb54fa85184",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there’s a legal target available. Ignore the targeting requirements for modes you don’t choose."
+    },
+    {
+      "oracle_id": "282dfeaa-6243-4f92-838a-5cb54fa85184",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If the first and/or second modes are chosen, then Three Steps Ahead has one or more targets. If so, and all its targets are illegal as it tries to resolve, Three Steps Ahead won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve and modes with legal targets (and the third mode, if chosen) will have their effects."
+    },
+    {
+      "oracle_id": "282dfeaa-6243-4f92-838a-5cb54fa85184",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "282dfeaa-6243-4f92-838a-5cb54fa85184",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If the copied permanent is copying something else, then the token enters the battlefield as whatever that permanent copied."
+    },
+    {
+      "oracle_id": "282dfeaa-6243-4f92-838a-5cb54fa85184",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "282dfeaa-6243-4f92-838a-5cb54fa85184",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "282dfeaa-6243-4f92-838a-5cb54fa85184",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "282dfeaa-6243-4f92-838a-5cb54fa85184",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn’t matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "282dfeaa-6243-4f92-838a-5cb54fa85184",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can’t be changed."
+    },
+    {
+      "oracle_id": "282dfeaa-6243-4f92-838a-5cb54fa85184",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If the copied permanent has {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "282dfeaa-6243-4f92-838a-5cb54fa85184",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied permanent will trigger when the token enters the battlefield. Any “as [this permanent] enters the battlefield” or “[this permanent] enters the battlefield with” abilities of the copied permanent will also work."
+    },
+    {
+      "oracle_id": "282dfeaa-6243-4f92-838a-5cb54fa85184",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won't resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree \"without paying its mana cost,\" you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The copy made by the effect of Return the Favor's first mode is created on the stack, so it's not \"cast\" or \"activated.\""
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can't be changed."
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell that's copied has an X whose value was determined as it was cast, the copy will have the same value of X. The same is true for an ability that's copied and an X whose value was determined as the ability was activated."
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell or ability targets multiple things, you can't target it with Return the Favor's second mode, even if all but one of those targets have become illegal."
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If you copy a spell with the first mode, you can't choose to pay any additional costs for the copy. However, effects based on any additional costs that were paid for the original spell are copied as though those same costs were paid for the copy too."
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn't matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You don't choose the new target for the spell or ability targeted with Return the Favor's second mode until Return the Favor resolves. You must change the target if possible. However, you can't change the target to an illegal target. If there are no legal targets to choose from, the target isn't changed. It doesn't matter if the original target has somehow become illegal itself."
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there's a legal target available. Ignore the targeting requirements for modes you don't choose."
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can't choose the same mode more than once."
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If the copied spell or ability divides damage or distributes counters among a number of targets, the division and number of targets can't be changed. If you choose new targets, you must choose the same number of targets."
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The copy created by the effect of Return the Favor's first mode will have the same targets as the spell or ability it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. The new targets must be legal."
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If you copy an activated ability with the first mode, and the activation cost includes a choice, such as a creature to sacrifice or a number of counters to remove, the copy uses that same information. You can't pay the cost again, even if you want to."
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If the copied spell or ability is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode or modes. You can't choose different ones."
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "30377bd5-99ab-4888-9ea7-e5a069b527e8",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won't be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "55cba59c-932c-4295-87dc-9179fbdfbd53",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "55cba59c-932c-4295-87dc-9179fbdfbd53",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn’t matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "55cba59c-932c-4295-87dc-9179fbdfbd53",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "55cba59c-932c-4295-87dc-9179fbdfbd53",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The creature that the Aura or Equipment card returned by the third mode will enter attached to isn’t a target of that mode and is chosen as One Last Job resolves. Notably, if you return a Vehicle with the second mode, you won’t have the opportunity to crew it before having to choose a creature for the third mode. In most cases, it won’t be a creature at that time."
+    },
+    {
+      "oracle_id": "55cba59c-932c-4295-87dc-9179fbdfbd53",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can’t be changed."
+    },
+    {
+      "oracle_id": "55cba59c-932c-4295-87dc-9179fbdfbd53",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree “without paying its mana cost,” you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "55cba59c-932c-4295-87dc-9179fbdfbd53",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose the same mode more than once."
+    },
+    {
+      "oracle_id": "55cba59c-932c-4295-87dc-9179fbdfbd53",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there’s a legal target available. Ignore the targeting requirements for modes you don’t choose."
+    },
+    {
+      "oracle_id": "55cba59c-932c-4295-87dc-9179fbdfbd53",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "55cba59c-932c-4295-87dc-9179fbdfbd53",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "55cba59c-932c-4295-87dc-9179fbdfbd53",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "55cba59c-932c-4295-87dc-9179fbdfbd53",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "55cba59c-932c-4295-87dc-9179fbdfbd53",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The Aura or Equipment must be able to be legally attached to the creature you choose. You can’t return an Aura card to the battlefield if there’s nothing to enchant. However, if you control no creatures (and didn’t bring any back with the first two modes), you could return an Equipment card to the battlefield unattached to anything."
+    },
+    {
+      "oracle_id": "55cba59c-932c-4295-87dc-9179fbdfbd53",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won’t be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "605f719d-01f8-406c-9d4c-3f4992c6a69f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there's a legal target available. Ignore the targeting requirements for modes you don't choose."
+    },
+    {
+      "oracle_id": "605f719d-01f8-406c-9d4c-3f4992c6a69f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "605f719d-01f8-406c-9d4c-3f4992c6a69f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn't matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "605f719d-01f8-406c-9d4c-3f4992c6a69f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won't be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "605f719d-01f8-406c-9d4c-3f4992c6a69f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won't resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "605f719d-01f8-406c-9d4c-3f4992c6a69f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "605f719d-01f8-406c-9d4c-3f4992c6a69f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "605f719d-01f8-406c-9d4c-3f4992c6a69f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree \"without paying its mana cost,\" you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "605f719d-01f8-406c-9d4c-3f4992c6a69f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can't choose the same mode more than once."
+    },
+    {
+      "oracle_id": "605f719d-01f8-406c-9d4c-3f4992c6a69f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "605f719d-01f8-406c-9d4c-3f4992c6a69f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The effect of Smuggler's Surprise's last mode affects only creatures you control at the time it resolves. Creatures you begin to control later in the turn and noncreature permanents that become creatures later in the turn won't get hexproof or indestructible. However, if you chose Smuggler's Surprise's second mode, any creatures you put onto the battlefield that way will gain hexproof and indestructible until end of turn if their power is 4 or greater."
+    },
+    {
+      "oracle_id": "605f719d-01f8-406c-9d4c-3f4992c6a69f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "605f719d-01f8-406c-9d4c-3f4992c6a69f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can't be changed."
+    },
+    {
+      "oracle_id": "69c8e690-c0a2-4c4e-910d-123c9c5b922f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "69c8e690-c0a2-4c4e-910d-123c9c5b922f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The effect of Metamorphic Blast’s first mode will overwrite any previous effects that set the creature’s power and toughness to specific values. Effects that otherwise modify the target creature’s power and toughness will still apply no matter when they took effect. The same is true for +1/+1 counters."
+    },
+    {
+      "oracle_id": "69c8e690-c0a2-4c4e-910d-123c9c5b922f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "69c8e690-c0a2-4c4e-910d-123c9c5b922f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can’t be changed."
+    },
+    {
+      "oracle_id": "69c8e690-c0a2-4c4e-910d-123c9c5b922f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn’t matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "69c8e690-c0a2-4c4e-910d-123c9c5b922f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there’s a legal target available. Ignore the targeting requirements for modes you don’t choose."
+    },
+    {
+      "oracle_id": "69c8e690-c0a2-4c4e-910d-123c9c5b922f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won’t be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "69c8e690-c0a2-4c4e-910d-123c9c5b922f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "69c8e690-c0a2-4c4e-910d-123c9c5b922f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "69c8e690-c0a2-4c4e-910d-123c9c5b922f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The effect of Metamorphic Blast’s first mode causes the target creature to lose its other colors and creature types. It doesn’t lose any of its abilities."
+    },
+    {
+      "oracle_id": "69c8e690-c0a2-4c4e-910d-123c9c5b922f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose the same mode more than once."
+    },
+    {
+      "oracle_id": "69c8e690-c0a2-4c4e-910d-123c9c5b922f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "69c8e690-c0a2-4c4e-910d-123c9c5b922f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "69c8e690-c0a2-4c4e-910d-123c9c5b922f",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree “without paying its mana cost,” you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "763d60ea-a0ad-4f13-b8a7-aa1515283266",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "763d60ea-a0ad-4f13-b8a7-aa1515283266",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can’t be changed."
+    },
+    {
+      "oracle_id": "763d60ea-a0ad-4f13-b8a7-aa1515283266",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won’t be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "763d60ea-a0ad-4f13-b8a7-aa1515283266",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "763d60ea-a0ad-4f13-b8a7-aa1515283266",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn’t matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "763d60ea-a0ad-4f13-b8a7-aa1515283266",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Gaining control of a permanent doesn’t cause you to gain control of any Auras or Equipment attached to it."
+    },
+    {
+      "oracle_id": "763d60ea-a0ad-4f13-b8a7-aa1515283266",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If one of the target permanents is an illegal target when Shifting Grift resolves, the exchange that permanent is involved in won’t happen."
+    },
+    {
+      "oracle_id": "763d60ea-a0ad-4f13-b8a7-aa1515283266",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "763d60ea-a0ad-4f13-b8a7-aa1515283266",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The effects of Shifting Grift’s modes last indefinitely. They don’t wear off during the cleanup step, and they don’t expire if one of the target permanents stops having that permanent type after Shifting Grift has resolved."
+    },
+    {
+      "oracle_id": "763d60ea-a0ad-4f13-b8a7-aa1515283266",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "763d60ea-a0ad-4f13-b8a7-aa1515283266",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If the same player controls both permanents involved in a single exchange when that exchange occurs, nothing happens to those permanents."
+    },
+    {
+      "oracle_id": "763d60ea-a0ad-4f13-b8a7-aa1515283266",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "763d60ea-a0ad-4f13-b8a7-aa1515283266",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "763d60ea-a0ad-4f13-b8a7-aa1515283266",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose the same mode more than once."
+    },
+    {
+      "oracle_id": "763d60ea-a0ad-4f13-b8a7-aa1515283266",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there’s a legal target available. Ignore the targeting requirements for modes you don’t choose."
+    },
+    {
+      "oracle_id": "763d60ea-a0ad-4f13-b8a7-aa1515283266",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You don’t have to control any of the target permanents."
+    },
+    {
+      "oracle_id": "763d60ea-a0ad-4f13-b8a7-aa1515283266",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree “without paying its mana cost,” you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "7c57d4aa-d221-4b36-a544-9fa89d63ffbe",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "7c57d4aa-d221-4b36-a544-9fa89d63ffbe",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn’t matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "7c57d4aa-d221-4b36-a544-9fa89d63ffbe",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can’t be changed."
+    },
+    {
+      "oracle_id": "7c57d4aa-d221-4b36-a544-9fa89d63ffbe",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose the same mode more than once."
+    },
+    {
+      "oracle_id": "7c57d4aa-d221-4b36-a544-9fa89d63ffbe",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "7c57d4aa-d221-4b36-a544-9fa89d63ffbe",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "7c57d4aa-d221-4b36-a544-9fa89d63ffbe",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won’t be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "7c57d4aa-d221-4b36-a544-9fa89d63ffbe",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The value of X is determined only once, as Dance of the Tumbleweeds resolves. The token’s power and toughness won’t change if the number of lands you control later changes."
+    },
+    {
+      "oracle_id": "7c57d4aa-d221-4b36-a544-9fa89d63ffbe",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "7c57d4aa-d221-4b36-a544-9fa89d63ffbe",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "7c57d4aa-d221-4b36-a544-9fa89d63ffbe",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree “without paying its mana cost,” you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "7c57d4aa-d221-4b36-a544-9fa89d63ffbe",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there’s a legal target available. Ignore the targeting requirements for modes you don’t choose."
+    },
+    {
+      "oracle_id": "7c57d4aa-d221-4b36-a544-9fa89d63ffbe",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "7e7ec3d6-a84f-4cc3-93f4-4d181d41e126",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there’s a legal target available. Ignore the targeting requirements for modes you don’t choose."
+    },
+    {
+      "oracle_id": "7e7ec3d6-a84f-4cc3-93f4-4d181d41e126",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can’t be changed."
+    },
+    {
+      "oracle_id": "7e7ec3d6-a84f-4cc3-93f4-4d181d41e126",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "7e7ec3d6-a84f-4cc3-93f4-4d181d41e126",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose the same mode more than once."
+    },
+    {
+      "oracle_id": "7e7ec3d6-a84f-4cc3-93f4-4d181d41e126",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "7e7ec3d6-a84f-4cc3-93f4-4d181d41e126",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won’t be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "7e7ec3d6-a84f-4cc3-93f4-4d181d41e126",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "7e7ec3d6-a84f-4cc3-93f4-4d181d41e126",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "7e7ec3d6-a84f-4cc3-93f4-4d181d41e126",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree “without paying its mana cost,” you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "7e7ec3d6-a84f-4cc3-93f4-4d181d41e126",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn’t matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "7e7ec3d6-a84f-4cc3-93f4-4d181d41e126",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The second mode of Final Showdown doesn’t target the creature. You don’t choose which creature will gain indestructible until the spell is resolving. At that point, it’s too late for anyone to respond to the spell."
+    },
+    {
+      "oracle_id": "7e7ec3d6-a84f-4cc3-93f4-4d181d41e126",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "7e7ec3d6-a84f-4cc3-93f4-4d181d41e126",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "7e7ec3d6-a84f-4cc3-93f4-4d181d41e126",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect grants a creature an ability after Final Showdown causes all creatures to lose all abilities, that creature won’t lose that ability."
+    },
+    {
+      "oracle_id": "98eac0f7-3f4d-46ef-9575-680c52e967cf",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there’s a legal target available. Ignore the targeting requirements for modes you don’t choose."
+    },
+    {
+      "oracle_id": "98eac0f7-3f4d-46ef-9575-680c52e967cf",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "98eac0f7-3f4d-46ef-9575-680c52e967cf",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose the same mode more than once."
+    },
+    {
+      "oracle_id": "98eac0f7-3f4d-46ef-9575-680c52e967cf",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "98eac0f7-3f4d-46ef-9575-680c52e967cf",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won’t be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "98eac0f7-3f4d-46ef-9575-680c52e967cf",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "98eac0f7-3f4d-46ef-9575-680c52e967cf",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree “without paying its mana cost,” you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "98eac0f7-3f4d-46ef-9575-680c52e967cf",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Getaway Glamer’s last mode can target any creature, even a creature that doesn’t have the undisputed greatest power among creatures on the battlefield at that time. The creature’s power is checked only during the resolution of Getaway Glamer and only after you’ve applied the effect of the first mode (if applicable)."
+    },
+    {
+      "oracle_id": "98eac0f7-3f4d-46ef-9575-680c52e967cf",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "98eac0f7-3f4d-46ef-9575-680c52e967cf",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can’t be changed."
+    },
+    {
+      "oracle_id": "98eac0f7-3f4d-46ef-9575-680c52e967cf",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "98eac0f7-3f4d-46ef-9575-680c52e967cf",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn’t matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "98eac0f7-3f4d-46ef-9575-680c52e967cf",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "ad3e705f-da57-4eff-84d7-2072522de988",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can’t be changed."
+    },
+    {
+      "oracle_id": "ad3e705f-da57-4eff-84d7-2072522de988",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "ad3e705f-da57-4eff-84d7-2072522de988",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won’t be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "ad3e705f-da57-4eff-84d7-2072522de988",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "ad3e705f-da57-4eff-84d7-2072522de988",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn’t matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "ad3e705f-da57-4eff-84d7-2072522de988",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "ad3e705f-da57-4eff-84d7-2072522de988",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose the same mode more than once."
+    },
+    {
+      "oracle_id": "ad3e705f-da57-4eff-84d7-2072522de988",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "ad3e705f-da57-4eff-84d7-2072522de988",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there’s a legal target available. Ignore the targeting requirements for modes you don’t choose."
+    },
+    {
+      "oracle_id": "ad3e705f-da57-4eff-84d7-2072522de988",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "ad3e705f-da57-4eff-84d7-2072522de988",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree “without paying its mana cost,” you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "ad3e705f-da57-4eff-84d7-2072522de988",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "afe2f7a4-9440-4d93-801f-a18b627efb21",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "afe2f7a4-9440-4d93-801f-a18b627efb21",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn’t matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "afe2f7a4-9440-4d93-801f-a18b627efb21",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won’t be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "afe2f7a4-9440-4d93-801f-a18b627efb21",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose the same mode more than once."
+    },
+    {
+      "oracle_id": "afe2f7a4-9440-4d93-801f-a18b627efb21",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree “without paying its mana cost,” you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "afe2f7a4-9440-4d93-801f-a18b627efb21",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Great Train Heist’s second mode affects only creatures you control at the time Great Train Heist resolves. Creatures you begin to control later in the turn and noncreature permanents that become creatures later in the turn won’t get +1/+0 or first strike."
+    },
+    {
+      "oracle_id": "afe2f7a4-9440-4d93-801f-a18b627efb21",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "afe2f7a4-9440-4d93-801f-a18b627efb21",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "afe2f7a4-9440-4d93-801f-a18b627efb21",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "afe2f7a4-9440-4d93-801f-a18b627efb21",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can’t be changed."
+    },
+    {
+      "oracle_id": "afe2f7a4-9440-4d93-801f-a18b627efb21",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "afe2f7a4-9440-4d93-801f-a18b627efb21",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there’s a legal target available. Ignore the targeting requirements for modes you don’t choose."
+    },
+    {
+      "oracle_id": "afe2f7a4-9440-4d93-801f-a18b627efb21",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Notably, Great Train Heist’s first mode doesn’t give you any additional main phases. This means that you will move directly from the end of combat step of one combat phase to the beginning of combat step of the next one."
+    },
+    {
+      "oracle_id": "afe2f7a4-9440-4d93-801f-a18b627efb21",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "b23dc81d-01bb-4bf0-9932-5d32a6b22cf7",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there’s a legal target available. Ignore the targeting requirements for modes you don’t choose."
+    },
+    {
+      "oracle_id": "b23dc81d-01bb-4bf0-9932-5d32a6b22cf7",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "b23dc81d-01bb-4bf0-9932-5d32a6b22cf7",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "b23dc81d-01bb-4bf0-9932-5d32a6b22cf7",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn’t matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "b23dc81d-01bb-4bf0-9932-5d32a6b22cf7",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won’t be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "b23dc81d-01bb-4bf0-9932-5d32a6b22cf7",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "b23dc81d-01bb-4bf0-9932-5d32a6b22cf7",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree “without paying its mana cost,” you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "b23dc81d-01bb-4bf0-9932-5d32a6b22cf7",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "b23dc81d-01bb-4bf0-9932-5d32a6b22cf7",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "b23dc81d-01bb-4bf0-9932-5d32a6b22cf7",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can’t be changed."
+    },
+    {
+      "oracle_id": "b23dc81d-01bb-4bf0-9932-5d32a6b22cf7",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose the same mode more than once."
+    },
+    {
+      "oracle_id": "b23dc81d-01bb-4bf0-9932-5d32a6b22cf7",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "b47f7f1e-2d81-4b1b-870d-4c1a4f020505",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won’t be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "b47f7f1e-2d81-4b1b-870d-4c1a4f020505",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there’s a legal target available. Ignore the targeting requirements for modes you don’t choose."
+    },
+    {
+      "oracle_id": "b47f7f1e-2d81-4b1b-870d-4c1a4f020505",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose the same mode more than once."
+    },
+    {
+      "oracle_id": "b47f7f1e-2d81-4b1b-870d-4c1a4f020505",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "b47f7f1e-2d81-4b1b-870d-4c1a4f020505",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "b47f7f1e-2d81-4b1b-870d-4c1a4f020505",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can’t be changed."
+    },
+    {
+      "oracle_id": "b47f7f1e-2d81-4b1b-870d-4c1a4f020505",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn’t matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "b47f7f1e-2d81-4b1b-870d-4c1a4f020505",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "b47f7f1e-2d81-4b1b-870d-4c1a4f020505",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "b47f7f1e-2d81-4b1b-870d-4c1a4f020505",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "b47f7f1e-2d81-4b1b-870d-4c1a4f020505",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree “without paying its mana cost,” you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "b47f7f1e-2d81-4b1b-870d-4c1a4f020505",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "bc7f39e1-97bf-4725-a84a-2a04121530c6",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The permanent’s owner chooses whether to put it on the top or bottom of their library."
+    },
+    {
+      "oracle_id": "bc7f39e1-97bf-4725-a84a-2a04121530c6",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "bc7f39e1-97bf-4725-a84a-2a04121530c6",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can’t be changed."
+    },
+    {
+      "oracle_id": "bc7f39e1-97bf-4725-a84a-2a04121530c6",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "bc7f39e1-97bf-4725-a84a-2a04121530c6",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree “without paying its mana cost,” you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "bc7f39e1-97bf-4725-a84a-2a04121530c6",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there’s a legal target available. Ignore the targeting requirements for modes you don’t choose."
+    },
+    {
+      "oracle_id": "bc7f39e1-97bf-4725-a84a-2a04121530c6",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won’t be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "bc7f39e1-97bf-4725-a84a-2a04121530c6",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "bc7f39e1-97bf-4725-a84a-2a04121530c6",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn’t matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "bc7f39e1-97bf-4725-a84a-2a04121530c6",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "bc7f39e1-97bf-4725-a84a-2a04121530c6",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose the same mode more than once."
+    },
+    {
+      "oracle_id": "bc7f39e1-97bf-4725-a84a-2a04121530c6",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If multiple cards are put into the library this way (such as when the spell targets a melded permanent), that permanent’s owner puts all the cards on top or all the cards on the bottom. They put them in whatever order they wish, and do not need to reveal the order."
+    },
+    {
+      "oracle_id": "bc7f39e1-97bf-4725-a84a-2a04121530c6",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "bc7f39e1-97bf-4725-a84a-2a04121530c6",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "d262f3e1-b5bc-4dab-86c2-cd89c2419e54",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "d262f3e1-b5bc-4dab-86c2-cd89c2419e54",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can’t be changed."
+    },
+    {
+      "oracle_id": "d262f3e1-b5bc-4dab-86c2-cd89c2419e54",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree “without paying its mana cost,” you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "d262f3e1-b5bc-4dab-86c2-cd89c2419e54",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose the same mode more than once."
+    },
+    {
+      "oracle_id": "d262f3e1-b5bc-4dab-86c2-cd89c2419e54",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Outlaw is not a creature type. If an effect asks you to choose a creature type, you can’t choose outlaw."
+    },
+    {
+      "oracle_id": "d262f3e1-b5bc-4dab-86c2-cd89c2419e54",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "A card, spell, or permanent is an outlaw if it has the Assassin, Mercenary, Pirate, Rogue, or Warlock creature type. It doesn’t matter if it has more than one of those creature types; as long as it has at least one, it’s an outlaw."
+    },
+    {
+      "oracle_id": "d262f3e1-b5bc-4dab-86c2-cd89c2419e54",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there’s a legal target available. Ignore the targeting requirements for modes you don’t choose."
+    },
+    {
+      "oracle_id": "d262f3e1-b5bc-4dab-86c2-cd89c2419e54",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "d262f3e1-b5bc-4dab-86c2-cd89c2419e54",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an ability refers to an outlaw or whether a player controls an outlaw, it’s referring only to permanents with one or more of the creature types specified above. Notably, it’s not referring to any spell or card not on the battlefield. However, other abilities may refer to an “outlaw spell” or “outlaw card” in a zone other than the battlefield. Those abilities refer to spells and cards with one or more of the specified creature types."
+    },
+    {
+      "oracle_id": "d262f3e1-b5bc-4dab-86c2-cd89c2419e54",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "d262f3e1-b5bc-4dab-86c2-cd89c2419e54",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "d262f3e1-b5bc-4dab-86c2-cd89c2419e54",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "d262f3e1-b5bc-4dab-86c2-cd89c2419e54",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "d262f3e1-b5bc-4dab-86c2-cd89c2419e54",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn’t matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "d262f3e1-b5bc-4dab-86c2-cd89c2419e54",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won’t be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "ef0c0f28-e1ee-42a1-9878-95a0ceb0a9fa",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You must choose at least one of the listed modes and pay its associated additional cost in order to cast a spell with spree."
+    },
+    {
+      "oracle_id": "ef0c0f28-e1ee-42a1-9878-95a0ceb0a9fa",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won’t be put onto the stack until the spell is done resolving."
+    },
+    {
+      "oracle_id": "ef0c0f28-e1ee-42a1-9878-95a0ceb0a9fa",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the modes as you cast the spell with spree. Once modes are chosen, they can’t be changed."
+    },
+    {
+      "oracle_id": "ef0c0f28-e1ee-42a1-9878-95a0ceb0a9fa",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with spree is copied, the effect that creates the copy may allow you to choose new targets. You cannot choose new modes."
+    },
+    {
+      "oracle_id": "ef0c0f28-e1ee-42a1-9878-95a0ceb0a9fa",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Each additional cost and associated mode in the text box is also preceded with a + indicator. These symbols also have no rules meaning and serve only to remind players that the listed costs are additional costs."
+    },
+    {
+      "oracle_id": "ef0c0f28-e1ee-42a1-9878-95a0ceb0a9fa",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If all targets for the chosen modes become illegal before a spell with spree resolves, the spell won’t resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "ef0c0f28-e1ee-42a1-9878-95a0ceb0a9fa",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "No matter which modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "ef0c0f28-e1ee-42a1-9878-95a0ceb0a9fa",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a spell with spree is determined only by its mana cost (in the upper right corner of the card). It doesn’t matter which modes you choose or which additional costs you pay, including any additional costs imposed by other effects."
+    },
+    {
+      "oracle_id": "ef0c0f28-e1ee-42a1-9878-95a0ceb0a9fa",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells with spree have a + (plus sign) indicator in the upper right corner of the card frame. This has no rules meaning and serves only to remind players that at least one additional cost is required to cast the spell."
+    },
+    {
+      "oracle_id": "ef0c0f28-e1ee-42a1-9878-95a0ceb0a9fa",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a mode requires a target, you can select that mode only if there’s a legal target available. Ignore the targeting requirements for modes you don’t choose."
+    },
+    {
+      "oracle_id": "ef0c0f28-e1ee-42a1-9878-95a0ceb0a9fa",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose the same mode more than once."
+    },
+    {
+      "oracle_id": "ef0c0f28-e1ee-42a1-9878-95a0ceb0a9fa",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with spree “without paying its mana cost,” you must still choose at least one mode and pay the associated additional costs."
+    },
+    {
+      "oracle_id": "81f06f84-1580-43c0-89d5-08d34541a519",
+      "published_at": "2017-03-14",
+      "source": "wotc",
+      "comment": "Two Goblin Electromancers will make instant and sorcery spells you cast cost {2} less to cast, and so on."
+    },
+    {
+      "oracle_id": "81f06f84-1580-43c0-89d5-08d34541a519",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "Goblin Electromancer's effect reduces only generic mana in the spell's total cost."
+    },
+    {
+      "oracle_id": "81f06f84-1580-43c0-89d5-08d34541a519",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    }
+  ]
+}

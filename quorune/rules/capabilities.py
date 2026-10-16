@@ -290,6 +290,7 @@ _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
     "fixed-counter-controller-effect-sequence"
 )
 MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    'fixed-spree-mode-costs': ('casting.additional_cost.spree_fixed_modes',),
     'fixed-public-event-set-counter':('counter.producer.fixed_public_set_event',),
     'ascend':('player.designation.citys_blessing',),
     **{name: ('keyword_action.manifest.card',) for name in ('manifest', 'cr-701-manifest')}, 'manifest dread': ('keyword_action.manifest_dread',), 'predefined-role-token': ('token.creation.predefined_role',),
@@ -466,6 +467,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
 }
 _SHAPE_GATED_MECHANICS = frozenset(
     {
+        'fixed-spree-mode-costs',
         'fixed-public-event-set-counter',
         'ascend',
         "fixed-extra-turn-after-current",
@@ -1238,11 +1240,9 @@ def capability_dependencies_for_node(
             FIXED_NONREPEATING_MODAL_MECHANIC,
         }
     ):
-        return _fixed_modal_capability_dependencies(
-            effects=effects,
-            target_schema=target_schema,
-            mechanics=mechanic_values,
-        )
+        from .spree_capability_shapes import modal_cost_capabilities
+        return modal_cost_capabilities(effects=effects, target_schema=target_schema,
+            mechanics=mechanic_values, cost_schema=cost_schema, modal_resolver=_fixed_modal_capability_dependencies)
 
     all_operations = _nested_effect_operations(effects)
     if (shape_context := _query.public_query_amount_shape_context(effects, mechanics)) is None: return ()

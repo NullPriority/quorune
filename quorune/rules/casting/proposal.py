@@ -238,11 +238,8 @@ def _selected_cost_option(
             status="unresolved",
             reason="unresolved_cost_semantics",
         )
-    option_id = request.cost_option_id or (
-        "normal"
-        if any(option.option_id == "normal" for option in options)
-        else options[0].option_id if len(options) == 1 else ""
-    )
+    from .spree_costs import default_cast_cost_option_id
+    option_id = request.cost_option_id or default_cast_cost_option_id(options)
     selected = next(
         (option for option in options if option.option_id == option_id), None
     )
