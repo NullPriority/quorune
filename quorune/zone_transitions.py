@@ -855,6 +855,8 @@ class ZoneTransitionOwner:
         trigger_batch: list[StackItem] | None = None,
         history_pre_recorded: bool = False,
     ) -> tuple[ZoneChangeOccurrence, list[StackItem], bool]:
+        from .rules.city_blessing import synchronize_citys_blessing
+        synchronize_citys_blessing(self.host,reason='zone transition before trigger facts')
         occurrence = self._zone_change_occurrence(
             card,
             departure=departure,
@@ -1011,6 +1013,8 @@ class ZoneTransitionOwner:
             )
         from .control_effects import synchronize_control_effects
         synchronize_control_effects(self.host, reason="control duration sources changed zones simultaneously")
+        from .rules.city_blessing import synchronize_citys_blessing
+        synchronize_citys_blessing(self.host,reason='simultaneous zone transitions before trigger facts')
         occurrences = tuple(
             self._zone_change_occurrence(
                 card,

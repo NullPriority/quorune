@@ -4,6 +4,8 @@ from __future__ import annotations
 
 
 def nonleaf_effect_program_is_closed(program):
+    from ..rules.city_blessing_shapes import ascend_program_is_closed
+    if ascend_program_is_closed(program):return True
     from ..random_discard import random_discard_node_capabilities
     if 'fixed-random-discard' in program.coverage:
         from ..rules.fixed_effect_clause_shapes import fixed_optional_effect_node_capabilities

@@ -60,6 +60,8 @@ def change_control(host: ControlEffectHost, object_id: str, controller: str, *, 
         )
     else:
         _commit_control_change(host, object_id, controller, reason=reason)
+    from .rules.city_blessing import synchronize_citys_blessing
+    synchronize_citys_blessing(host,reason='direct control changed')
 
 
 def _commit_control_change(host: ControlEffectHost, object_id: str, controller: str, *, reason: str) -> None:
@@ -415,7 +417,9 @@ def synchronize_control_effects(host: ControlEffectHost, *, reason: str) -> bool
             host.move_card(object_id, "exile", reason="control returned to a player who left", log=True)
         else:
             _commit_control_change(host, object_id, controller, reason=reason)
-    return bool(changes or expired)
+    from .rules.city_blessing import synchronize_citys_blessing
+    city_changed=synchronize_citys_blessing(host,reason='control changes committed')
+    return bool(changes or expired or city_changed)
 
 
 def end_player_control_effects(state: Any, seat: str) -> int:

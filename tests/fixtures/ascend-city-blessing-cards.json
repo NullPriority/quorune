@@ -1,0 +1,2821 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Ascend",
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Andúril, Narsil Reforged",
+      "oracle_id": "b7d7c131-b628-4b35-b40b-1087589ebdd0",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nWhenever equipped creature attacks, put a +1/+1 counter on each creature you control. If you have the city's blessing, put two +1/+1 counters on each creature you control instead.\nEquip {3}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-08-14",
+      "toughness": null,
+      "type_line": "Legendary Artifact — Equipment"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Arch of Orazca",
+      "oracle_id": "3bb518ff-399b-4ce7-b9ad-a1d563dd7792",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\n{T}: Add {C}.\n{5}, {T}: Draw a card. Activate only if you have the city's blessing.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2023-11-17",
+      "toughness": null,
+      "type_line": "Land"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{U}",
+      "name": "Clone",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield.",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2013-07-19",
+      "toughness": "0",
+      "type_line": "Creature — Shapeshifter"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ascend",
+        "Deathtouch"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}{B}",
+      "name": "Deadeye Brawler",
+      "oracle_id": "a7c36b66-4f58-41af-b1c5-704ff0d9eac8",
+      "oracle_text": "Deathtouch\nAscend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nWhenever this creature deals combat damage to a player, if you have the city's blessing, draw a card.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": "4",
+      "type_line": "Creature — Human Pirate"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Detective of the Month",
+      "oracle_id": "10d1d6ca-95f8-48da-8798-37c8aadb1f1f",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nAs long as you have the city's blessing, Detectives you control can't be blocked.\nWhenever you draw your second card each turn, create a 2/2 white and blue Detective creature token.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-02-09",
+      "toughness": "3",
+      "type_line": "Creature — Human Detective"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Disenchant",
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Dress Down",
+      "oracle_id": "c1cbbda0-e02b-4b9c-8669-ea87ca629520",
+      "oracle_text": "Flash\nWhen this enchantment enters, draw a card.\nCreatures lose all abilities.\nAt the beginning of the end step, sacrifice this enchantment.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-06-18",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}",
+      "name": "Dusk Charger",
+      "oracle_id": "e0190e13-89f6-4b51-a277-bf3eb842963e",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nThis creature gets +2/+2 as long as you have the city's blessing.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": "3",
+      "type_line": "Creature — Horse"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Expel from Orazca",
+      "oracle_id": "a6e12be3-4166-4bd7-8254-e28b7c8588c7",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nReturn target nonland permanent to its owner's hand. If you have the city's blessing, you may put that permanent on top of its owner's library instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}{B}",
+      "name": "Golden Demise",
+      "oracle_id": "e4648fa3-0343-414b-b04d-07fe0d132145",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nAll creatures get -2/-2 until end of turn. If you have the city's blessing, instead only creatures your opponents control get -2/-2 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{W}",
+      "name": "Illustrious Wanderglyph",
+      "oracle_id": "72adf091-4491-4afe-b893-b8d20ad38a86",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nOther artifact creatures you control get +2/+2 as long as you have the city's blessing.\nAt the beginning of each upkeep, create a 1/1 colorless Gnome artifact creature token.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2023-11-17",
+      "toughness": "2",
+      "type_line": "Artifact Creature — Golem"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}{U}",
+      "name": "Kumena's Awakening",
+      "oracle_id": "f7a8066e-f8a4-4202-8825-0327d11e58c3",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nAt the beginning of your upkeep, each player draws a card. If you have the city's blessing, instead only you draw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{B}",
+      "name": "Mausoleum Harpy",
+      "oracle_id": "ba682da8-50f5-478f-99cc-60a57d229a04",
+      "oracle_text": "Flying\nAscend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nWhenever another creature you control dies, if you have the city's blessing, put a +1/+1 counter on this creature.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": "3",
+      "type_line": "Creature — Harpy"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Lifelink",
+        "Ascend",
+        "First strike"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Ocelot Pride",
+      "oracle_id": "b4ce2c8f-a19c-461e-8a2e-0ec2bd3ebca3",
+      "oracle_text": "First strike, lifelink\nAscend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nAt the beginning of your end step, if you gained life this turn, create a 1/1 white Cat creature token. Then if you have the city's blessing, for each token you control that entered this turn, create a token that's a copy of it.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2024-06-14",
+      "toughness": "1",
+      "type_line": "Creature — Cat"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}",
+      "name": "Orazca Relic",
+      "oracle_id": "48b84b58-1a06-4bb4-be1f-ad3ca69e66dc",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\n{T}: Add {C}.\n{T}, Sacrifice this artifact: You gain 3 life and draw a card. Activate only if you have the city's blessing.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2021-07-23",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Pride of Conquerors",
+      "oracle_id": "e45a1c99-a020-49ab-8971-35c6bcd096c8",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nCreatures you control get +1/+1 until end of turn. If you have the city's blessing, those creatures get +2/+2 until end of turn instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Radiant Destiny",
+      "oracle_id": "068cbbe3-43c3-425e-80ec-d1ce5c02ea9b",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nAs this enchantment enters, choose a creature type.\nCreatures you control of the chosen type get +1/+1. As long as you have the city's blessing, they also have vigilance.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-11-17",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}{U}",
+      "name": "Resplendent Griffin",
+      "oracle_id": "f8bf5df2-b783-4796-b2c6-eb4dd4167d62",
+      "oracle_text": "Flying\nAscend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nWhenever this creature attacks, if you have the city's blessing, put a +1/+1 counter on it.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": "2",
+      "type_line": "Creature — Griffin"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}{U}",
+      "name": "Secrets of the Golden City",
+      "oracle_id": "c0dda0d0-1fae-4777-ba86-9fe7990bf3a8",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nDraw two cards. If you have the city's blessing, draw three cards instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Skymarcher Aspirant",
+      "oracle_id": "0b6db929-1b6a-4372-8146-aa047258b552",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nThis creature has flying as long as you have the city's blessing.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": "1",
+      "type_line": "Creature — Vampire Soldier"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Slippery Scoundrel",
+      "oracle_id": "3c7ea8d0-d866-4c02-bdfc-13bbc87c094a",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nAs long as you have the city's blessing, this creature has hexproof and can't be blocked.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": "2",
+      "type_line": "Creature — Human Pirate"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Snubhorn Sentry",
+      "oracle_id": "fc8d3933-f7fe-4849-aae7-737ce6f067de",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nThis creature gets +3/+0 as long as you have the city's blessing.",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": "3",
+      "type_line": "Creature — Dinosaur"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{U}",
+      "name": "Spire Winder",
+      "oracle_id": "e8cfb24a-7e52-4e39-a9e1-969b4a65b62e",
+      "oracle_text": "Flying\nAscend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nThis creature gets +1/+1 as long as you have the city's blessing.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": "3",
+      "type_line": "Creature — Snake"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Storm Fleet Swashbuckler",
+      "oracle_id": "6640bcfc-4bdc-4380-8b51-61b906f9aee6",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nThis creature has double strike as long as you have the city's blessing.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": "2",
+      "type_line": "Creature — Human Pirate"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{G}",
+      "name": "Tendershoot Dryad",
+      "oracle_id": "a336c10a-b5bd-47ff-ba2d-31e27af1e15a",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nAt the beginning of each upkeep, create a 1/1 green Saproling creature token.\nSaprolings you control get +2/+2 as long as you have the city's blessing.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": "2",
+      "type_line": "Creature — Dryad"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Tilonalli's Summoner",
+      "oracle_id": "830d3450-18e7-4bac-b330-3906ef5e4514",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nWhenever this creature attacks, you may pay {X}{R}. If you do, create X 1/1 red Elemental creature tokens that are tapped and attacking. At the beginning of the next end step, exile those tokens unless you have the city's blessing.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": "1",
+      "type_line": "Creature — Human Shaman"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Timestream Navigator",
+      "oracle_id": "d0896996-ee31-402e-b642-4e7cca4929fe",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\n{2}{U}{U}, {T}, Put this creature on the bottom of its owner's library: Take an extra turn after this one. Activate only if you have the city's blessing.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2023-11-17",
+      "toughness": "1",
+      "type_line": "Creature — Human Pirate Wizard"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}{B}",
+      "name": "Twilight Prophet",
+      "oracle_id": "a3afd8b9-d499-40f7-be41-f8fee6636a1d",
+      "oracle_text": "Flying\nAscend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nAt the beginning of your upkeep, if you have the city's blessing, reveal the top card of your library and put it into your hand. Each opponent loses X life and you gain X life, where X is that card's mana value.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-02-09",
+      "toughness": "4",
+      "type_line": "Creature — Vampire Cleric"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}",
+      "name": "Vona's Hunger",
+      "oracle_id": "da522912-1bc2-4d70-b426-94d10edb2afe",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nEach opponent sacrifices a creature of their choice. If you have the city's blessing, instead each opponent sacrifices half the creatures they control of their choice, rounded up.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ascend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Wayward Swordtooth",
+      "oracle_id": "3875aef0-3102-4fbf-be90-e4139f7a2348",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nYou may play an additional land on each of your turns.\nThis creature can't attack or block unless you have the city's blessing.",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2023-11-17",
+      "toughness": "5",
+      "type_line": "Creature — Dinosaur"
+    },
+    {
+      "oracle_id": "fixture:ascend-spell",
+      "name": "Generic Ascend Sorcery",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Sorcery",
+      "oracle_text": "Ascend\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Ascend"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture:ascend-zero-token",
+      "name": "Generic Ascend Empty Token",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Instant",
+      "oracle_text": "Create a 0/0 colorless Construct artifact creature token.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture:ascend-draw",
+      "name": "Generic Ascend Draw",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Instant",
+      "oracle_text": "Draw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren't permanents.",
+      "oracle_id": "068cbbe3-43c3-425e-80ec-d1ce5c02ea9b",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn't a triggered ability and doesn't use the stack. Players can respond to a spell that will give you your tenth permanent, but they can't respond to getting the city's blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can't respond before you get the city's blessing.",
+      "oracle_id": "068cbbe3-43c3-425e-80ec-d1ce5c02ea9b",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gaining vigilance any time after the moment you choose to attack with a creature won't cause that creature to become untapped, and losing vigilance after that time won't cause it to become tapped.",
+      "oracle_id": "068cbbe3-43c3-425e-80ec-d1ce5c02ea9b",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don't get the city's blessing until it resolves. Players may respond to that spell by trying to change whether you get the city's blessing.",
+      "oracle_id": "068cbbe3-43c3-425e-80ec-d1ce5c02ea9b",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don't control a permanent or resolving spell with ascend, you don't get the city's blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won't have the city's blessing and the spell will affect creatures you control.",
+      "oracle_id": "068cbbe3-43c3-425e-80ec-d1ce5c02ea9b",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the \"Legend Rule\" or due to being a creature with 0 toughness), you get the city's blessing before it leaves the battlefield.",
+      "oracle_id": "068cbbe3-43c3-425e-80ec-d1ce5c02ea9b",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city's blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city's blessing isn't a permanent itself and can't be removed by any effect.",
+      "oracle_id": "068cbbe3-43c3-425e-80ec-d1ce5c02ea9b",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some cards get power, toughness, and/or abilities once you have the city's blessing. If another card has an ability that triggers when creatures with certain characteristics enter the battlefield (such as Mentor of the Meek or Elemental Bond do), use the entering permanent's characteristics after you have the city's blessing to determine whether those abilities trigger. This is true even if the entering permanent is your tenth permanent.",
+      "oracle_id": "068cbbe3-43c3-425e-80ec-d1ce5c02ea9b",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "To choose a creature type, you must choose an existing creature type, such as Vampire or Knight. You can't choose multiple creature types, such as \"Vampire Knight.\" Card types such as artifact can't be chosen, nor can subtypes that aren't creature types, such as Jace, Vehicle, or Treasure.",
+      "oracle_id": "068cbbe3-43c3-425e-80ec-d1ce5c02ea9b",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren't permanents.",
+      "oracle_id": "0b6db929-1b6a-4372-8146-aa047258b552",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn't a triggered ability and doesn't use the stack. Players can respond to a spell that will give you your tenth permanent, but they can't respond to getting the city's blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can't respond before you get the city's blessing.",
+      "oracle_id": "0b6db929-1b6a-4372-8146-aa047258b552",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don't get the city's blessing until it resolves. Players may respond to that spell by trying to change whether you get the city's blessing.",
+      "oracle_id": "0b6db929-1b6a-4372-8146-aa047258b552",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don't control a permanent or resolving spell with ascend, you don't get the city's blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won't have the city's blessing and the spell will affect creatures you control.",
+      "oracle_id": "0b6db929-1b6a-4372-8146-aa047258b552",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the \"Legend Rule\" or due to being a creature with 0 toughness), you get the city's blessing before it leaves the battlefield.",
+      "oracle_id": "0b6db929-1b6a-4372-8146-aa047258b552",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city's blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city's blessing isn't a permanent itself and can't be removed by any effect.",
+      "oracle_id": "0b6db929-1b6a-4372-8146-aa047258b552",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some cards get power, toughness, and/or abilities once you have the city's blessing. If another card has an ability that triggers when creatures with certain characteristics enter the battlefield (such as Mentor of the Meek or Elemental Bond do), use the entering permanent's characteristics after you have the city's blessing to determine whether those abilities trigger. This is true even if the entering permanent is your tenth permanent.",
+      "oracle_id": "0b6db929-1b6a-4372-8146-aa047258b552",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren’t permanents.",
+      "oracle_id": "10d1d6ca-95f8-48da-8798-37c8aadb1f1f",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn’t a triggered ability and doesn’t use the stack. Players can respond to a spell that will give you your tenth permanent, but they can’t respond to you getting the city’s blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can’t respond before you get the city’s blessing.",
+      "oracle_id": "10d1d6ca-95f8-48da-8798-37c8aadb1f1f",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gaining the city’s blessing after a Detective you control has become blocked won’t cause that Detective to become unblocked.",
+      "oracle_id": "10d1d6ca-95f8-48da-8798-37c8aadb1f1f",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don't get the city’s blessing until it resolves. Players may respond to that spell by trying to change whether you get the city’s blessing.",
+      "oracle_id": "10d1d6ca-95f8-48da-8798-37c8aadb1f1f",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don’t control a permanent or resolving spell with ascend, you don’t get the city’s blessing. For example, if you control ten permanents, lose control of two, then cast Detective of the Month, you won’t have the city’s blessing.",
+      "oracle_id": "10d1d6ca-95f8-48da-8798-37c8aadb1f1f",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the “legend rule” or due to being a creature with 0 toughness), you get the city’s blessing before it leaves the battlefield.",
+      "oracle_id": "10d1d6ca-95f8-48da-8798-37c8aadb1f1f",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city’s blessing, you have it for the rest of the game, even if you lose control of some or all your permanents. The city’s blessing isn’t a permanent itself and can’t be removed by any effect.",
+      "oracle_id": "10d1d6ca-95f8-48da-8798-37c8aadb1f1f",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren't permanents.",
+      "oracle_id": "3875aef0-3102-4fbf-be90-e4139f7a2348",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn't a triggered ability and doesn't use the stack. Players can respond to a spell that will give you your tenth permanent, but they can't respond to getting the city's blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can't respond before you get the city's blessing.",
+      "oracle_id": "3875aef0-3102-4fbf-be90-e4139f7a2348",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don't get the city's blessing until it resolves. Players may respond to that spell by trying to change whether you get the city's blessing.",
+      "oracle_id": "3875aef0-3102-4fbf-be90-e4139f7a2348",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don't control a permanent or resolving spell with ascend, you don't get the city's blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won't have the city's blessing and the spell will affect creatures you control.",
+      "oracle_id": "3875aef0-3102-4fbf-be90-e4139f7a2348",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the \"Legend Rule\" or due to being a creature with 0 toughness), you get the city's blessing before it leaves the battlefield.",
+      "oracle_id": "3875aef0-3102-4fbf-be90-e4139f7a2348",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city's blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city's blessing isn't a permanent itself and can't be removed by any effect.",
+      "oracle_id": "3875aef0-3102-4fbf-be90-e4139f7a2348",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Wayward Swordtooth's middle ability is cumulative if you control more than one. It's also cumulative with other effects that let you play additional lands, such as the one from Enter the Unknown.",
+      "oracle_id": "3875aef0-3102-4fbf-be90-e4139f7a2348",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren't permanents.",
+      "oracle_id": "3bb518ff-399b-4ce7-b9ad-a1d563dd7792",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn't a triggered ability and doesn't use the stack. Players can respond to a spell that will give you your tenth permanent, but they can't respond to getting the city's blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can't respond before you get the city's blessing.",
+      "oracle_id": "3bb518ff-399b-4ce7-b9ad-a1d563dd7792",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don't get the city's blessing until it resolves. Players may respond to that spell by trying to change whether you get the city's blessing.",
+      "oracle_id": "3bb518ff-399b-4ce7-b9ad-a1d563dd7792",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don't control a permanent or resolving spell with ascend, you don't get the city's blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won't have the city's blessing and the spell will affect creatures you control.",
+      "oracle_id": "3bb518ff-399b-4ce7-b9ad-a1d563dd7792",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the \"Legend Rule\" or due to being a creature with 0 toughness), you get the city's blessing before it leaves the battlefield.",
+      "oracle_id": "3bb518ff-399b-4ce7-b9ad-a1d563dd7792",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city's blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city's blessing isn't a permanent itself and can't be removed by any effect.",
+      "oracle_id": "3bb518ff-399b-4ce7-b9ad-a1d563dd7792",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren’t permanents.",
+      "oracle_id": "3c7ea8d0-d866-4c02-bdfc-13bbc87c094a",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn’t a triggered ability and doesn’t use the stack. Players can respond to a spell that will give you your tenth permanent, but they can’t respond to getting the city’s blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can’t respond before you get the city’s blessing.",
+      "oracle_id": "3c7ea8d0-d866-4c02-bdfc-13bbc87c094a",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don’t get the city’s blessing until it resolves. Players may respond to that spell by trying to change whether you get the city’s blessing.",
+      "oracle_id": "3c7ea8d0-d866-4c02-bdfc-13bbc87c094a",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don’t control a permanent or resolving spell with ascend, you don’t get the city’s blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won’t have the city’s blessing and the spell will affect creatures you control.",
+      "oracle_id": "3c7ea8d0-d866-4c02-bdfc-13bbc87c094a",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the “Legend Rule” or due to being a creature with 0 toughness), you get the city’s blessing before it leaves the battlefield.",
+      "oracle_id": "3c7ea8d0-d866-4c02-bdfc-13bbc87c094a",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once Slippery Scoundrel has become blocked, getting the city’s blessing won’t cause it to become unblocked.",
+      "oracle_id": "3c7ea8d0-d866-4c02-bdfc-13bbc87c094a",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city’s blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city’s blessing isn’t a permanent itself and can’t be removed by any effect.",
+      "oracle_id": "3c7ea8d0-d866-4c02-bdfc-13bbc87c094a",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some cards get power, toughness, and/or abilities once you have the city’s blessing. If another card has an ability that triggers when creatures with certain characteristics enter the battlefield (such as Mentor of the Meek or Elemental Bond do), use the entering permanent’s characteristics after you have the city’s blessing to determine whether those abilities trigger. This is true even if the entering permanent is your tenth permanent.",
+      "oracle_id": "3c7ea8d0-d866-4c02-bdfc-13bbc87c094a",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any enters abilities of the copied creature will trigger when Clone enters. Any \"as [this creature] enters\" or \"[this creature] enters with\" abilities of the chosen creature will also work.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Clone copies exactly what was printed on the original creature and nothing else (unless that creature is copying something else or is a token; see below). It doesn't copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, or so on.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Clone's ability doesn't target the chosen creature.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Clone somehow enters at the same time as another creature, Clone can't become a copy of that creature. You may choose only a creature that's already on the battlefield.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature has {X} in its mana cost, X is considered to be 0.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature is a token, Clone copies the original characteristics of that token as stated by the effect that created the token.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature is copying something else (for example, if the copied creature is an Evil Twin), then Clone enters as whatever that creature copied.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose not to copy anything. In that case, Clone enters as a 0/0 Shapeshifter creature, and is probably put into the graveyard immediately.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren't permanents.",
+      "oracle_id": "48b84b58-1a06-4bb4-be1f-ad3ca69e66dc",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn't a triggered ability and doesn't use the stack. Players can respond to a spell that will give you your tenth permanent, but they can't respond to getting the city's blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can't respond before you get the city's blessing.",
+      "oracle_id": "48b84b58-1a06-4bb4-be1f-ad3ca69e66dc",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don't get the city's blessing until it resolves. Players may respond to that spell by trying to change whether you get the city's blessing.",
+      "oracle_id": "48b84b58-1a06-4bb4-be1f-ad3ca69e66dc",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don't control a permanent or resolving spell with ascend, you don't get the city's blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won't have the city's blessing and the spell will affect creatures you control.",
+      "oracle_id": "48b84b58-1a06-4bb4-be1f-ad3ca69e66dc",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the “Legend Rule” or due to being a creature with 0 toughness), you get the city's blessing before it leaves the battlefield.",
+      "oracle_id": "48b84b58-1a06-4bb4-be1f-ad3ca69e66dc",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city's blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city's blessing isn't a permanent itself and can't be removed by any effect.",
+      "oracle_id": "48b84b58-1a06-4bb4-be1f-ad3ca69e66dc",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren't permanents.",
+      "oracle_id": "6640bcfc-4bdc-4380-8b51-61b906f9aee6",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn't a triggered ability and doesn't use the stack. Players can respond to a spell that will give you your tenth permanent, but they can't respond to getting the city's blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can't respond before you get the city's blessing.",
+      "oracle_id": "6640bcfc-4bdc-4380-8b51-61b906f9aee6",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Storm Fleet Swashbuckler gains double strike after it has dealt regular combat damage, it won't go back and deal first-strike combat damage. On the other hand, if it gains first strike somehow and then it gains double strike after dealing first-strike combat damage, it will also deal regular combat damage.",
+      "oracle_id": "6640bcfc-4bdc-4380-8b51-61b906f9aee6",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don't get the city's blessing until it resolves. Players may respond to that spell by trying to change whether you get the city's blessing.",
+      "oracle_id": "6640bcfc-4bdc-4380-8b51-61b906f9aee6",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don't control a permanent or resolving spell with ascend, you don't get the city's blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won't have the city's blessing and the spell will affect creatures you control.",
+      "oracle_id": "6640bcfc-4bdc-4380-8b51-61b906f9aee6",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the \"Legend Rule\" or due to being a creature with 0 toughness), you get the city's blessing before it leaves the battlefield.",
+      "oracle_id": "6640bcfc-4bdc-4380-8b51-61b906f9aee6",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city's blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city's blessing isn't a permanent itself and can't be removed by any effect.",
+      "oracle_id": "6640bcfc-4bdc-4380-8b51-61b906f9aee6",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some cards get power, toughness, and/or abilities once you have the city's blessing. If another card has an ability that triggers when creatures with certain characteristics enter the battlefield (such as Mentor of the Meek or Elemental Bond do), use the entering permanent's characteristics after you have the city's blessing to determine whether those abilities trigger. This is true even if the entering permanent is your tenth permanent.",
+      "oracle_id": "6640bcfc-4bdc-4380-8b51-61b906f9aee6",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren't permanents.",
+      "oracle_id": "72adf091-4491-4afe-b893-b8d20ad38a86",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn't a triggered ability and doesn't use the stack. Players can respond to a spell that will give you your tenth permanent, but they can't respond to you getting the city's blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can't respond before you get the city's blessing.",
+      "oracle_id": "72adf091-4491-4afe-b893-b8d20ad38a86",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don't get the city's blessing until it resolves. Players may respond to that spell by trying to change whether you get the city's blessing.",
+      "oracle_id": "72adf091-4491-4afe-b893-b8d20ad38a86",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don't control a permanent or resolving spell with ascend, you don't get the city's blessing. For example, if you control ten permanents, lose control of two, then cast Illustrious Wanderglyph, you won't have the city's blessing.",
+      "oracle_id": "72adf091-4491-4afe-b893-b8d20ad38a86",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the \"legend rule\" or due to being a creature with 0 toughness), you get the city's blessing before it leaves the battlefield.",
+      "oracle_id": "72adf091-4491-4afe-b893-b8d20ad38a86",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city's blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city's blessing isn't a permanent itself and can't be removed by any effect.",
+      "oracle_id": "72adf091-4491-4afe-b893-b8d20ad38a86",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren’t permanents.",
+      "oracle_id": "830d3450-18e7-4bac-b330-3906ef5e4514",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "As each Elemental token enters the battlefield, you choose which opponent or opposing planeswalker it’s attacking. It doesn’t have to attack the same player or planeswalker that Tilonalli’s Summoner is attacking.",
+      "oracle_id": "830d3450-18e7-4bac-b330-3906ef5e4514",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn’t a triggered ability and doesn’t use the stack. Players can respond to a spell that will give you your tenth permanent, but they can’t respond to getting the city’s blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can’t respond before you get the city’s blessing.",
+      "oracle_id": "830d3450-18e7-4bac-b330-3906ef5e4514",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don’t get the city’s blessing until it resolves. Players may respond to that spell by trying to change whether you get the city’s blessing.",
+      "oracle_id": "830d3450-18e7-4bac-b330-3906ef5e4514",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don’t control a permanent or resolving spell with ascend, you don’t get the city’s blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won’t have the city’s blessing and the spell will affect creatures you control.",
+      "oracle_id": "830d3450-18e7-4bac-b330-3906ef5e4514",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the “Legend Rule” or due to being a creature with 0 toughness), you get the city’s blessing before it leaves the battlefield.",
+      "oracle_id": "830d3450-18e7-4bac-b330-3906ef5e4514",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city’s blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city’s blessing isn’t a permanent itself and can’t be removed by any effect.",
+      "oracle_id": "830d3450-18e7-4bac-b330-3906ef5e4514",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some cards have triggered abilities that check if you have the city’s blessing, but don’t use an intervening “if” clause. These abilities trigger regardless of whether you have the city’s blessing and check whether you do only as they resolve.",
+      "oracle_id": "830d3450-18e7-4bac-b330-3906ef5e4514",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Whether you have the city’s blessing is checked only as the delayed triggered ability resolves during the end step. The tokens you create can help you ascend.",
+      "oracle_id": "830d3450-18e7-4bac-b330-3906ef5e4514",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren't permanents.",
+      "oracle_id": "a336c10a-b5bd-47ff-ba2d-31e27af1e15a",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn't a triggered ability and doesn't use the stack. Players can respond to a spell that will give you your tenth permanent, but they can't respond to getting the city's blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can't respond before you get the city's blessing.",
+      "oracle_id": "a336c10a-b5bd-47ff-ba2d-31e27af1e15a",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Because damage remains marked on a creature until it's removed as the turn ends, nonlethal damage dealt to a Saproling you control may become lethal if Tendershoot Dryad leaves the battlefield during that turn.",
+      "oracle_id": "a336c10a-b5bd-47ff-ba2d-31e27af1e15a",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don't get the city's blessing until it resolves. Players may respond to that spell by trying to change whether you get the city's blessing.",
+      "oracle_id": "a336c10a-b5bd-47ff-ba2d-31e27af1e15a",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don't control a permanent or resolving spell with ascend, you don't get the city's blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won't have the city's blessing and the spell will affect creatures you control.",
+      "oracle_id": "a336c10a-b5bd-47ff-ba2d-31e27af1e15a",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the \"Legend Rule\" or due to being a creature with 0 toughness), you get the city's blessing before it leaves the battlefield.",
+      "oracle_id": "a336c10a-b5bd-47ff-ba2d-31e27af1e15a",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city's blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city's blessing isn't a permanent itself and can't be removed by any effect.",
+      "oracle_id": "a336c10a-b5bd-47ff-ba2d-31e27af1e15a",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some cards get power, toughness, and/or abilities once you have the city's blessing. If another card has an ability that triggers when creatures with certain characteristics enter the battlefield (such as Mentor of the Meek or Elemental Bond do), use the entering permanent's characteristics after you have the city's blessing to determine whether those abilities trigger. This is true even if the entering permanent is your tenth permanent.",
+      "oracle_id": "a336c10a-b5bd-47ff-ba2d-31e27af1e15a",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren't permanents.",
+      "oracle_id": "a3afd8b9-d499-40f7-be41-f8fee6636a1d",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn't a triggered ability and doesn't use the stack. Players can respond to a spell that will give you your tenth permanent, but they can't respond to getting the city's blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can't respond before you get the city's blessing.",
+      "oracle_id": "a3afd8b9-d499-40f7-be41-f8fee6636a1d",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the mana cost of the revealed card includes {X}, X is considered to be 0.",
+      "oracle_id": "a3afd8b9-d499-40f7-be41-f8fee6636a1d",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the revealed card doesn't have a mana cost (because it's a land card, for example), its mana value is 0.",
+      "oracle_id": "a3afd8b9-d499-40f7-be41-f8fee6636a1d",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don't get the city's blessing until it resolves. Players may respond to that spell by trying to change whether you get the city's blessing.",
+      "oracle_id": "a3afd8b9-d499-40f7-be41-f8fee6636a1d",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don't control a permanent or resolving spell with ascend, you don't get the city's blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won't have the city's blessing and the spell will affect creatures you control.",
+      "oracle_id": "a3afd8b9-d499-40f7-be41-f8fee6636a1d",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the \"Legend Rule\" or due to being a creature with 0 toughness), you get the city's blessing before it leaves the battlefield.",
+      "oracle_id": "a3afd8b9-d499-40f7-be41-f8fee6636a1d",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Two-Headed Giant game, Twilight Prophet's last ability causes the opposing team to lose twice X life and you gain X life.",
+      "oracle_id": "a3afd8b9-d499-40f7-be41-f8fee6636a1d",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city's blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city's blessing isn't a permanent itself and can't be removed by any effect.",
+      "oracle_id": "a3afd8b9-d499-40f7-be41-f8fee6636a1d",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some cards have triggered abilities with an intervening \"if\" clause that checks whether you have the city's blessing. These are worded \"[Trigger condition], if you have the city's blessing, [effect].\" You must already have the city's blessing in order for these abilities to trigger; otherwise they do nothing. In other words, there's no way to have the ability trigger if you don't have the city's blessing, even if you intend to get it in response to the triggered ability.",
+      "oracle_id": "a3afd8b9-d499-40f7-be41-f8fee6636a1d",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a split card, such as cards with aftermath from the Amonkhet block, is based on the combined mana cost of its two halves.",
+      "oracle_id": "a3afd8b9-d499-40f7-be41-f8fee6636a1d",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren’t permanents.",
+      "oracle_id": "a6e12be3-4166-4bd7-8254-e28b7c8588c7",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don’t get the city’s blessing until it resolves. Players may respond to that spell by trying to change whether you get the city’s blessing.",
+      "oracle_id": "a6e12be3-4166-4bd7-8254-e28b7c8588c7",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don’t control a permanent or resolving spell with ascend, you don’t get the city’s blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won’t have the city’s blessing and the spell will affect creatures you control.",
+      "oracle_id": "a6e12be3-4166-4bd7-8254-e28b7c8588c7",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you have the city’s blessing and choose not to put the target nonland permanent on top of its owner’s library, it’s returned to its owner’s hand.",
+      "oracle_id": "a6e12be3-4166-4bd7-8254-e28b7c8588c7",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the “Legend Rule” or due to being a creature with 0 toughness), you get the city’s blessing before it leaves the battlefield.",
+      "oracle_id": "a6e12be3-4166-4bd7-8254-e28b7c8588c7",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city’s blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city’s blessing isn’t a permanent itself and can’t be removed by any effect.",
+      "oracle_id": "a6e12be3-4166-4bd7-8254-e28b7c8588c7",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren’t permanents.",
+      "oracle_id": "a7c36b66-4f58-41af-b1c5-704ff0d9eac8",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn’t a triggered ability and doesn’t use the stack. Players can respond to a spell that will give you your tenth permanent, but they can’t respond to getting the city’s blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can’t respond before you get the city’s blessing.",
+      "oracle_id": "a7c36b66-4f58-41af-b1c5-704ff0d9eac8",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don’t get the city’s blessing until it resolves. Players may respond to that spell by trying to change whether you get the city’s blessing.",
+      "oracle_id": "a7c36b66-4f58-41af-b1c5-704ff0d9eac8",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don’t control a permanent or resolving spell with ascend, you don’t get the city’s blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won’t have the city’s blessing and the spell will affect creatures you control.",
+      "oracle_id": "a7c36b66-4f58-41af-b1c5-704ff0d9eac8",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the “Legend Rule” or due to being a creature with 0 toughness), you get the city’s blessing before it leaves the battlefield.",
+      "oracle_id": "a7c36b66-4f58-41af-b1c5-704ff0d9eac8",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city’s blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city’s blessing isn’t a permanent itself and can’t be removed by any effect.",
+      "oracle_id": "a7c36b66-4f58-41af-b1c5-704ff0d9eac8",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some cards have triggered abilities with an intervening “if” clause that checks whether you have the city’s blessing. These are worded “[Trigger condition], if you have the city’s blessing, [effect].” You must already have the city’s blessing in order for these abilities to trigger; otherwise they do nothing. In other words, there’s no way to have the ability trigger if you don’t have the city’s blessing, even if you intend to get it in response to the triggered ability.",
+      "oracle_id": "a7c36b66-4f58-41af-b1c5-704ff0d9eac8",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "This is not modal. If the target changes from an artifact to an enchantment or vice versa, this still destroys it.",
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren't permanents.",
+      "oracle_id": "b4ce2c8f-a19c-461e-8a2e-0ec2bd3ebca3",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any enters-the-battlefield abilities of tokens you create will trigger when they enter the battlefield. Any \"As [this permanent] enters the battlefield\" or \"[This permanent] enters the battlefield with\" abilities of the tokens will also work.",
+      "oracle_id": "b4ce2c8f-a19c-461e-8a2e-0ec2bd3ebca3",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn't a triggered ability and doesn't use the stack. Players can respond to a spell that will give you your tenth permanent, but they can't respond to you getting the city's blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can't respond before you get the city's blessing.",
+      "oracle_id": "b4ce2c8f-a19c-461e-8a2e-0ec2bd3ebca3",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each of the token copies you create copies the original characteristics of the token it's copying as stated by the effect that created that token. The newly created token doesn't copy whether the original token is tapped or untapped, whether it has any counters on it, whether it has any Auras and/or Equipment attached to it, or any non-copy effects that changed its power, toughness, types, color, and so on.",
+      "oracle_id": "b4ce2c8f-a19c-461e-8a2e-0ec2bd3ebca3",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the creature token created by Ocelot Pride's last ability is your tenth permanent, you'll get the city's blessing before the ability would check to see if you have the city's blessing.",
+      "oracle_id": "b4ce2c8f-a19c-461e-8a2e-0ec2bd3ebca3",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the original token is copying something else, the token copy you create will use the copiable values of the original token. In most cases, it will be a copy of whatever the original token is copying. If it's copying a permanent or card with {X} in its mana cost, X is 0.",
+      "oracle_id": "b4ce2c8f-a19c-461e-8a2e-0ec2bd3ebca3",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don't control a permanent or resolving spell with ascend, you don't get the city's blessing. For example, if you control ten permanents, lose control of two, then cast Ocelot Pride, you won't have the city's blessing.",
+      "oracle_id": "b4ce2c8f-a19c-461e-8a2e-0ec2bd3ebca3",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the \"legend rule\" or due to being a creature with 0 toughness), you get the city's blessing before it leaves the battlefield.",
+      "oracle_id": "b4ce2c8f-a19c-461e-8a2e-0ec2bd3ebca3",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ocelot Pride doesn't need to have been on the battlefield when you gained life. For example, if a creature with lifelink deals combat damage on your turn and you cast Ocelot Pride during your second main phase, its last ability will trigger at the beginning of your end step.",
+      "oracle_id": "b4ce2c8f-a19c-461e-8a2e-0ec2bd3ebca3",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ocelot Pride's last ability doesn't target any of the tokens.",
+      "oracle_id": "b4ce2c8f-a19c-461e-8a2e-0ec2bd3ebca3",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city's blessing, you have it for the rest of the game, even if you lose control of some or all your permanents. The city's blessing isn't a permanent itself and can't be removed by any effect.",
+      "oracle_id": "b4ce2c8f-a19c-461e-8a2e-0ec2bd3ebca3",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren't permanents.",
+      "oracle_id": "b7d7c131-b628-4b35-b40b-1087589ebdd0",
+      "published_at": "2023-11-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn't a triggered ability and doesn't use the stack. Players can respond to a spell that will give you your tenth permanent, but they can't respond to you getting the city's blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can't respond before you get the city's blessing.",
+      "oracle_id": "b7d7c131-b628-4b35-b40b-1087589ebdd0",
+      "published_at": "2023-11-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don't control a permanent or resolving spell with ascend, you don't get the city's blessing. For example, if you control ten permanents, lose control of two, then cast Andúril, Narsil Reforged, you won't have the city's blessing.",
+      "oracle_id": "b7d7c131-b628-4b35-b40b-1087589ebdd0",
+      "published_at": "2023-11-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the \"legend rule\" or due to being a creature with 0 toughness), you get the city's blessing before it leaves the battlefield.",
+      "oracle_id": "b7d7c131-b628-4b35-b40b-1087589ebdd0",
+      "published_at": "2023-11-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city's blessing, you have it for the rest of the game, even if you lose control of some or all your permanents. The city's blessing isn't a permanent itself and can't be removed by any effect.",
+      "oracle_id": "b7d7c131-b628-4b35-b40b-1087589ebdd0",
+      "published_at": "2023-11-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren’t permanents.",
+      "oracle_id": "ba682da8-50f5-478f-99cc-60a57d229a04",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn’t a triggered ability and doesn’t use the stack. Players can respond to a spell that will give you your tenth permanent, but they can’t respond to getting the city’s blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can’t respond before you get the city’s blessing.",
+      "oracle_id": "ba682da8-50f5-478f-99cc-60a57d229a04",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If another creature you control is dealt lethal damage at the same time that Mausoleum Harpy is dealt lethal damage, Mausoleum Harpy won’t be saved by the +1/+1 counter that would have been put on it.",
+      "oracle_id": "ba682da8-50f5-478f-99cc-60a57d229a04",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don’t get the city’s blessing until it resolves. Players may respond to that spell by trying to change whether you get the city’s blessing.",
+      "oracle_id": "ba682da8-50f5-478f-99cc-60a57d229a04",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don’t control a permanent or resolving spell with ascend, you don’t get the city’s blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won’t have the city’s blessing and the spell will affect creatures you control.",
+      "oracle_id": "ba682da8-50f5-478f-99cc-60a57d229a04",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the “Legend Rule” or due to being a creature with 0 toughness), you get the city’s blessing before it leaves the battlefield.",
+      "oracle_id": "ba682da8-50f5-478f-99cc-60a57d229a04",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city’s blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city’s blessing isn’t a permanent itself and can’t be removed by any effect.",
+      "oracle_id": "ba682da8-50f5-478f-99cc-60a57d229a04",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some cards have triggered abilities with an intervening “if” clause that checks whether you have the city’s blessing. These are worded “[Trigger condition], if you have the city’s blessing, [effect].” You must already have the city’s blessing in order for these abilities to trigger; otherwise they do nothing. In other words, there’s no way to have the ability trigger if you don’t have the city’s blessing, even if you intend to get it in response to the triggered ability.",
+      "oracle_id": "ba682da8-50f5-478f-99cc-60a57d229a04",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren’t permanents.",
+      "oracle_id": "c0dda0d0-1fae-4777-ba86-9fe7990bf3a8",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don’t get the city’s blessing until it resolves. Players may respond to that spell by trying to change whether you get the city’s blessing.",
+      "oracle_id": "c0dda0d0-1fae-4777-ba86-9fe7990bf3a8",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don’t control a permanent or resolving spell with ascend, you don’t get the city’s blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won’t have the city’s blessing and the spell will affect creatures you control.",
+      "oracle_id": "c0dda0d0-1fae-4777-ba86-9fe7990bf3a8",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the “Legend Rule” or due to being a creature with 0 toughness), you get the city’s blessing before it leaves the battlefield.",
+      "oracle_id": "c0dda0d0-1fae-4777-ba86-9fe7990bf3a8",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city’s blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city’s blessing isn’t a permanent itself and can’t be removed by any effect.",
+      "oracle_id": "c0dda0d0-1fae-4777-ba86-9fe7990bf3a8",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect causes Dress Down to become a creature, it will lose its own abilities along with all other creatures. This includes the triggered ability that causes it to be sacrificed at the beginning of the end step.",
+      "oracle_id": "c1cbbda0-e02b-4b9c-8669-ea87ca629520",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect grants a creature an ability after Dress Down has entered the battlefield, it won't lose that ability. For example, if a land becomes a creature while Dress Down is on the battlefield, it will still gain any abilities given to it by the effect that animated it. It will, however, lose any abilities it already had.",
+      "oracle_id": "c1cbbda0-e02b-4b9c-8669-ea87ca629520",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren't permanents.",
+      "oracle_id": "d0896996-ee31-402e-b642-4e7cca4929fe",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn't a triggered ability and doesn't use the stack. Players can respond to a spell that will give you your tenth permanent, but they can't respond to getting the city's blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can't respond before you get the city's blessing.",
+      "oracle_id": "d0896996-ee31-402e-b642-4e7cca4929fe",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don't get the city's blessing until it resolves. Players may respond to that spell by trying to change whether you get the city's blessing.",
+      "oracle_id": "d0896996-ee31-402e-b642-4e7cca4929fe",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don't control a permanent or resolving spell with ascend, you don't get the city's blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won't have the city's blessing and the spell will affect creatures you control.",
+      "oracle_id": "d0896996-ee31-402e-b642-4e7cca4929fe",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the \"Legend Rule\" or due to being a creature with 0 toughness), you get the city's blessing before it leaves the battlefield.",
+      "oracle_id": "d0896996-ee31-402e-b642-4e7cca4929fe",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city's blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city's blessing isn't a permanent itself and can't be removed by any effect.",
+      "oracle_id": "d0896996-ee31-402e-b642-4e7cca4929fe",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren’t permanents.",
+      "oracle_id": "da522912-1bc2-4d70-b426-94d10edb2afe",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don’t get the city’s blessing until it resolves. Players may respond to that spell by trying to change whether you get the city’s blessing.",
+      "oracle_id": "da522912-1bc2-4d70-b426-94d10edb2afe",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don’t control a permanent or resolving spell with ascend, you don’t get the city’s blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won’t have the city’s blessing and the spell will affect creatures you control.",
+      "oracle_id": "da522912-1bc2-4d70-b426-94d10edb2afe",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the “Legend Rule” or due to being a creature with 0 toughness), you get the city’s blessing before it leaves the battlefield.",
+      "oracle_id": "da522912-1bc2-4d70-b426-94d10edb2afe",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city’s blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city’s blessing isn’t a permanent itself and can’t be removed by any effect.",
+      "oracle_id": "da522912-1bc2-4d70-b426-94d10edb2afe",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "When Vona’s Hunger resolves, first the player whose turn it is (if that player is an opponent) chooses which creature or creatures they will sacrifice, then each other opponent in turn order does the same, then all chosen creatures are sacrificed at the same time. Players will know choices made by earlier players when making their choices.",
+      "oracle_id": "da522912-1bc2-4d70-b426-94d10edb2afe",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren't permanents.",
+      "oracle_id": "e0190e13-89f6-4b51-a277-bf3eb842963e",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn't a triggered ability and doesn't use the stack. Players can respond to a spell that will give you your tenth permanent, but they can't respond to getting the city's blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can't respond before you get the city's blessing.",
+      "oracle_id": "e0190e13-89f6-4b51-a277-bf3eb842963e",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don't get the city's blessing until it resolves. Players may respond to that spell by trying to change whether you get the city's blessing.",
+      "oracle_id": "e0190e13-89f6-4b51-a277-bf3eb842963e",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don't control a permanent or resolving spell with ascend, you don't get the city's blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won't have the city's blessing and the spell will affect creatures you control.",
+      "oracle_id": "e0190e13-89f6-4b51-a277-bf3eb842963e",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the \"Legend Rule\" or due to being a creature with 0 toughness), you get the city's blessing before it leaves the battlefield.",
+      "oracle_id": "e0190e13-89f6-4b51-a277-bf3eb842963e",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city's blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city's blessing isn't a permanent itself and can't be removed by any effect.",
+      "oracle_id": "e0190e13-89f6-4b51-a277-bf3eb842963e",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some cards get power, toughness, and/or abilities once you have the city's blessing. If another card has an ability that triggers when creatures with certain characteristics enter the battlefield (such as Mentor of the Meek or Elemental Bond do), use the entering permanent's characteristics after you have the city's blessing to determine whether those abilities trigger. This is true even if the entering permanent is your tenth permanent.",
+      "oracle_id": "e0190e13-89f6-4b51-a277-bf3eb842963e",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren’t permanents.",
+      "oracle_id": "e45a1c99-a020-49ab-8971-35c6bcd096c8",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "How Pride of Conquerors affects your creatures is determined at the time it resolves. If you don’t get the city’s blessing until later in the turn, your creatures still only get +1/+1.",
+      "oracle_id": "e45a1c99-a020-49ab-8971-35c6bcd096c8",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don’t get the city’s blessing until it resolves. Players may respond to that spell by trying to change whether you get the city’s blessing.",
+      "oracle_id": "e45a1c99-a020-49ab-8971-35c6bcd096c8",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don’t control a permanent or resolving spell with ascend, you don’t get the city’s blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won’t have the city’s blessing and the spell will affect creatures you control.",
+      "oracle_id": "e45a1c99-a020-49ab-8971-35c6bcd096c8",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the “Legend Rule” or due to being a creature with 0 toughness), you get the city’s blessing before it leaves the battlefield.",
+      "oracle_id": "e45a1c99-a020-49ab-8971-35c6bcd096c8",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city’s blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city’s blessing isn’t a permanent itself and can’t be removed by any effect.",
+      "oracle_id": "e45a1c99-a020-49ab-8971-35c6bcd096c8",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Pride of Conquerors affects only creatures you control at the time it resolves. Creatures you begin to control later in the turn won’t get a bonus.",
+      "oracle_id": "e45a1c99-a020-49ab-8971-35c6bcd096c8",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren’t permanents.",
+      "oracle_id": "e4648fa3-0343-414b-b04d-07fe0d132145",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Golden Demise affects only creatures that are on the battlefield at the time it resolves. Creatures that enter the battlefield later in the turn won’t get -2/-2. Similarly, if you have the city’s blessing, creatures that come under your opponents’ control later in the turn won’t get -2/-2.",
+      "oracle_id": "e4648fa3-0343-414b-b04d-07fe0d132145",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don’t get the city’s blessing until it resolves. Players may respond to that spell by trying to change whether you get the city’s blessing.",
+      "oracle_id": "e4648fa3-0343-414b-b04d-07fe0d132145",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don’t control a permanent or resolving spell with ascend, you don’t get the city’s blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won’t have the city’s blessing and the spell will affect creatures you control.",
+      "oracle_id": "e4648fa3-0343-414b-b04d-07fe0d132145",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the “Legend Rule” or due to being a creature with 0 toughness), you get the city’s blessing before it leaves the battlefield.",
+      "oracle_id": "e4648fa3-0343-414b-b04d-07fe0d132145",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city’s blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city’s blessing isn’t a permanent itself and can’t be removed by any effect.",
+      "oracle_id": "e4648fa3-0343-414b-b04d-07fe0d132145",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren't permanents.",
+      "oracle_id": "e8cfb24a-7e52-4e39-a9e1-969b4a65b62e",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn't a triggered ability and doesn't use the stack. Players can respond to a spell that will give you your tenth permanent, but they can't respond to getting the city's blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can't respond before you get the city's blessing.",
+      "oracle_id": "e8cfb24a-7e52-4e39-a9e1-969b4a65b62e",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don't get the city's blessing until it resolves. Players may respond to that spell by trying to change whether you get the city's blessing.",
+      "oracle_id": "e8cfb24a-7e52-4e39-a9e1-969b4a65b62e",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don't control a permanent or resolving spell with ascend, you don't get the city's blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won't have the city's blessing and the spell will affect creatures you control.",
+      "oracle_id": "e8cfb24a-7e52-4e39-a9e1-969b4a65b62e",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the \"Legend Rule\" or due to being a creature with 0 toughness), you get the city's blessing before it leaves the battlefield.",
+      "oracle_id": "e8cfb24a-7e52-4e39-a9e1-969b4a65b62e",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city's blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city's blessing isn't a permanent itself and can't be removed by any effect.",
+      "oracle_id": "e8cfb24a-7e52-4e39-a9e1-969b4a65b62e",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some cards get power, toughness, and/or abilities once you have the city's blessing. If another card has an ability that triggers when creatures with certain characteristics enter the battlefield (such as Mentor of the Meek or Elemental Bond do), use the entering permanent's characteristics after you have the city's blessing to determine whether those abilities trigger. This is true even if the entering permanent is your tenth permanent.",
+      "oracle_id": "e8cfb24a-7e52-4e39-a9e1-969b4a65b62e",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren’t permanents.",
+      "oracle_id": "f7a8066e-f8a4-4202-8825-0327d11e58c3",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn’t a triggered ability and doesn’t use the stack. Players can respond to a spell that will give you your tenth permanent, but they can’t respond to getting the city’s blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can’t respond before you get the city’s blessing.",
+      "oracle_id": "f7a8066e-f8a4-4202-8825-0327d11e58c3",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don’t get the city’s blessing until it resolves. Players may respond to that spell by trying to change whether you get the city’s blessing.",
+      "oracle_id": "f7a8066e-f8a4-4202-8825-0327d11e58c3",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don’t control a permanent or resolving spell with ascend, you don’t get the city’s blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won’t have the city’s blessing and the spell will affect creatures you control.",
+      "oracle_id": "f7a8066e-f8a4-4202-8825-0327d11e58c3",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the “Legend Rule” or due to being a creature with 0 toughness), you get the city’s blessing before it leaves the battlefield.",
+      "oracle_id": "f7a8066e-f8a4-4202-8825-0327d11e58c3",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city’s blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city’s blessing isn’t a permanent itself and can’t be removed by any effect.",
+      "oracle_id": "f7a8066e-f8a4-4202-8825-0327d11e58c3",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some cards have triggered abilities that check if you have the city’s blessing, but don’t use an intervening “if” clause. These abilities trigger regardless of whether you have the city’s blessing and check whether you do only as they resolve.",
+      "oracle_id": "f7a8066e-f8a4-4202-8825-0327d11e58c3",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren’t permanents.",
+      "oracle_id": "f8bf5df2-b783-4796-b2c6-eb4dd4167d62",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn’t a triggered ability and doesn’t use the stack. Players can respond to a spell that will give you your tenth permanent, but they can’t respond to getting the city’s blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can’t respond before you get the city’s blessing.",
+      "oracle_id": "f8bf5df2-b783-4796-b2c6-eb4dd4167d62",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don’t get the city’s blessing until it resolves. Players may respond to that spell by trying to change whether you get the city’s blessing.",
+      "oracle_id": "f8bf5df2-b783-4796-b2c6-eb4dd4167d62",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don’t control a permanent or resolving spell with ascend, you don’t get the city’s blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won’t have the city’s blessing and the spell will affect creatures you control.",
+      "oracle_id": "f8bf5df2-b783-4796-b2c6-eb4dd4167d62",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the “Legend Rule” or due to being a creature with 0 toughness), you get the city’s blessing before it leaves the battlefield.",
+      "oracle_id": "f8bf5df2-b783-4796-b2c6-eb4dd4167d62",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city’s blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city’s blessing isn’t a permanent itself and can’t be removed by any effect.",
+      "oracle_id": "f8bf5df2-b783-4796-b2c6-eb4dd4167d62",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some cards have triggered abilities with an intervening “if” clause that checks whether you have the city’s blessing. These are worded “[Trigger condition], if you have the city’s blessing, [effect].” You must already have the city’s blessing in order for these abilities to trigger; otherwise they do nothing. In other words, there’s no way to have the ability trigger if you don’t have the city’s blessing, even if you intend to get it in response to the triggered ability.",
+      "oracle_id": "f8bf5df2-b783-4796-b2c6-eb4dd4167d62",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent is any object on the battlefield, including tokens and lands. Spells and emblems aren't permanents.",
+      "oracle_id": "fc8d3933-f7fe-4849-aae7-737ce6f067de",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ascend on a permanent isn't a triggered ability and doesn't use the stack. Players can respond to a spell that will give you your tenth permanent, but they can't respond to getting the city's blessing once you control that tenth permanent. This means that if your tenth permanent is a land you play, players can't respond before you get the city's blessing.",
+      "oracle_id": "fc8d3933-f7fe-4849-aae7-737ce6f067de",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with ascend, you don't get the city's blessing until it resolves. Players may respond to that spell by trying to change whether you get the city's blessing.",
+      "oracle_id": "fc8d3933-f7fe-4849-aae7-737ce6f067de",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control ten permanents but don't control a permanent or resolving spell with ascend, you don't get the city's blessing. For example, if you control ten permanents, lose control of one, then cast Golden Demise, you won't have the city's blessing and the spell will affect creatures you control.",
+      "oracle_id": "fc8d3933-f7fe-4849-aae7-737ce6f067de",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your tenth permanent enters the battlefield and then a permanent leaves the battlefield immediately afterwards (most likely due to the \"Legend Rule\" or due to being a creature with 0 toughness), you get the city's blessing before it leaves the battlefield.",
+      "oracle_id": "fc8d3933-f7fe-4849-aae7-737ce6f067de",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you have the city's blessing, you have it for the rest of the game, even if you lose control of some or all of your permanents. The city's blessing isn't a permanent itself and can't be removed by any effect.",
+      "oracle_id": "fc8d3933-f7fe-4849-aae7-737ce6f067de",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some cards get power, toughness, and/or abilities once you have the city's blessing. If another card has an ability that triggers when creatures with certain characteristics enter the battlefield (such as Mentor of the Meek or Elemental Bond do), use the entering permanent's characteristics after you have the city's blessing to determine whether those abilities trigger. This is true even if the entering permanent is your tenth permanent.",
+      "oracle_id": "fc8d3933-f7fe-4849-aae7-737ce6f067de",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

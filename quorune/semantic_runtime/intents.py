@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..city_blessing_model import AscendIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..random_discard import RandomDiscardIntent
 from .control_intents import ControlIntent
@@ -1619,6 +1620,7 @@ SemanticIntent: TypeAlias = (
     | DomainEffectIntent
     | DiscardWholeHandsIntent
     | RandomDiscardIntent
+    | AscendIntent
 )
 ResultShape: TypeAlias = Literal["single", "by_player"]
 

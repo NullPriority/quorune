@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "fea7daa1f844366478af277008246d8fb4cc697c11989e7c81470e2e364cdee4",
-  "declaration_source_fingerprint": "c4010f81a6fe539eca531b0e7f55796b2fb3211ed67fc98a5c2f184cd41c0640",
+  "registry_fingerprint": "06399b6e42ff8d66f4b553e9ac8a18c6cf96fadf85c807b8f036efc351112b26",
+  "declaration_source_fingerprint": "1f68f2c9587265d7c5f281ccdb5395d2f375c367250a07f08108c2f01c5a8783",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -41911,6 +41911,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_actual_aspirant_tenth_entry_seals_flying_before_zone_trigger_discovery",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "City blessing comes from its independent public designation owner. Current source controller supplies the static condition and layer6 flying is reapplied before canonical entry facts; multiple persistent player holders retain separate conditions and replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
       "official_rule_ids": [
         "604.1",
@@ -42298,6 +42321,29 @@
         "commander_review"
       ],
       "applicability_note": "Recompute the same typed public-state predicate for paired layer-6 ability grants and layer-7c fixed power/toughness modifiers."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "City blessing comes from its independent public designation owner. Current source controller supplies the static condition and layer6 flying is reapplied before canonical entry facts; multiple persistent player holders retain separate conditions and replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -43015,6 +43061,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_actual_aspirant_tenth_entry_seals_flying_before_zone_trigger_discovery",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "City blessing comes from its independent public designation owner. Current source controller supplies the static condition and layer6 flying is reapplied before canonical entry facts; multiple persistent player holders retain separate conditions and replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
       "test_id": "tests.test_casting_activation_metadata.CastingActivationMetadataCompilerTests.test_self_graveyard_permission_preserves_general_public_condition",
       "official_rule_ids": [
         "604.1",
@@ -43701,6 +43770,29 @@
         "commander_review"
       ],
       "applicability_note": "Use only public counts and effective graveyard characteristics while keeping every hidden hand identity out of opponent projection."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "City blessing comes from its independent public designation owner. Current source controller supplies the static condition and layer6 flying is reapplied before canonical entry facts; multiple persistent player holders retain separate conditions and replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -96145,6 +96237,486 @@
       "applicability_note": "Execute an already-authorized instruction to untap one resolved battlefield permanent through the canonical tap-state path, including the represented stun-counter replacement."
     },
     {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_actual_ability_loss_prevents_award_until_real_source_restoration",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Aspirant and Dress Down/control/removal casts plus canonical tenth-token entry check designation ownership and before-trigger/SBA timing. A spell instruction waits for resolution and is absent if countered. Multiple holders, current static controller, persistence after source/count changes, private draws/hands and preaction save-load/replay are checked; older absent state remains unchanged."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_actual_aspirant_tenth_entry_seals_flying_before_zone_trigger_discovery",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Aspirant and Dress Down/control/removal casts plus canonical tenth-token entry check designation ownership and before-trigger/SBA timing. A spell instruction waits for resolution and is absent if countered. Multiple holders, current static controller, persistence after source/count changes, private draws/hands and preaction save-load/replay are checked; older absent state remains unchanged."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_actual_clone_copied_ascend_uses_receiver_controller_before_entry_facts",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Clone copies an unblessed opponent Aspirant through ordinary replacement selection, then the receiving controller with ten permanents gains its own designation/flying; donor stays unblessed. A phased-out source cannot award with ten other permanents. Wrong actor rollback, pending copy load and full preaction replay are checked."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_phased_out_source_cannot_award_despite_ten_other_permanents",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Clone copies an unblessed opponent Aspirant through ordinary replacement selection, then the receiving controller with ten permanents gains its own designation/flying; donor stays unblessed. A phased-out source cannot award with ten other permanents. Wrong actor rollback, pending copy load and full preaction replay are checked."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Aspirant and Dress Down/control/removal casts plus canonical tenth-token entry check designation ownership and before-trigger/SBA timing. A spell instruction waits for resolution and is absent if countered. Multiple holders, current static controller, persistence after source/count changes, private draws/hands and preaction save-load/replay are checked; older absent state remains unchanged."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_spell_ascend_waits_for_resolution_and_countered_spell_does_not_award",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Aspirant and Dress Down/control/removal casts plus canonical tenth-token entry check designation ownership and before-trigger/SBA timing. A spell instruction waits for resolution and is absent if countered. Multiple holders, current static controller, persistence after source/count changes, private draws/hands and preaction save-load/replay are checked; older absent state remains unchanged."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_tenth_zero_toughness_token_awards_before_sba_and_source_departure_does_not_revoke",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Aspirant and Dress Down/control/removal casts plus canonical tenth-token entry check designation ownership and before-trigger/SBA timing. A spell instruction waits for resolution and is absent if countered. Multiple holders, current static controller, persistence after source/count changes, private draws/hands and preaction save-load/replay are checked; older absent state remains unchanged."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_actual_clone_copied_ascend_uses_receiver_controller_before_entry_facts",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Clone copies an unblessed opponent Aspirant through ordinary replacement selection, then the receiving controller with ten permanents gains its own designation/flying; donor stays unblessed. A phased-out source cannot award with ten other permanents. Wrong actor rollback, pending copy load and full preaction replay are checked."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Aspirant and Dress Down/control/removal casts plus canonical tenth-token entry check designation ownership and before-trigger/SBA timing. A spell instruction waits for resolution and is absent if countered. Multiple holders, current static controller, persistence after source/count changes, private draws/hands and preaction save-load/replay are checked; older absent state remains unchanged."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_ascend_city_blessing.AscendCompilerTests.test_original_simple_ascend_condition_cards_and_spell_keyword_are_exact",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Aspirant and Dress Down/control/removal casts plus canonical tenth-token entry check designation ownership and before-trigger/SBA timing. A spell instruction waits for resolution and is absent if countered. Multiple holders, current static controller, persistence after source/count changes, private draws/hands and preaction save-load/replay are checked; older absent state remains unchanged."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ascend_city_blessing.AscendCompilerTests.test_designation_is_not_a_counter_and_old_absent_state_remains_unchanged",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Aspirant and Dress Down/control/removal casts plus canonical tenth-token entry check designation ownership and before-trigger/SBA timing. A spell instruction waits for resolution and is absent if countered. Multiple holders, current static controller, persistence after source/count changes, private draws/hands and preaction save-load/replay are checked; older absent state remains unchanged."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ascend_city_blessing.AscendCompilerTests.test_unknown_ascend_parameters_and_unestablished_status_stay_residual",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Aspirant and Dress Down/control/removal casts plus canonical tenth-token entry check designation ownership and before-trigger/SBA timing. A spell instruction waits for resolution and is absent if countered. Multiple holders, current static controller, persistence after source/count changes, private draws/hands and preaction save-load/replay are checked; older absent state remains unchanged."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ascend_city_blessing.AscendCompilerTests.test_withdrawn_designation_owner_prevents_keyword_and_condition_promotion",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Aspirant and Dress Down/control/removal casts plus canonical tenth-token entry check designation ownership and before-trigger/SBA timing. A spell instruction waits for resolution and is absent if countered. Multiple holders, current static controller, persistence after source/count changes, private draws/hands and preaction save-load/replay are checked; older absent state remains unchanged."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_phased_out_source_cannot_award_despite_ten_other_permanents",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Clone copies an unblessed opponent Aspirant through ordinary replacement selection, then the receiving controller with ten permanents gains its own designation/flying; donor stays unblessed. A phased-out source cannot award with ten other permanents. Wrong actor rollback, pending copy load and full preaction replay are checked."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ascend_city_blessing.AscendCompilerTests.test_designation_is_not_a_counter_and_old_absent_state_remains_unchanged",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Aspirant and Dress Down/control/removal casts plus canonical tenth-token entry check designation ownership and before-trigger/SBA timing. A spell instruction waits for resolution and is absent if countered. Multiple holders, current static controller, persistence after source/count changes, private draws/hands and preaction save-load/replay are checked; older absent state remains unchanged."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ascend_city_blessing.AscendCompilerTests.test_original_simple_ascend_condition_cards_and_spell_keyword_are_exact",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Aspirant and Dress Down/control/removal casts plus canonical tenth-token entry check designation ownership and before-trigger/SBA timing. A spell instruction waits for resolution and is absent if countered. Multiple holders, current static controller, persistence after source/count changes, private draws/hands and preaction save-load/replay are checked; older absent state remains unchanged."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_spell_ascend_waits_for_resolution_and_countered_spell_does_not_award",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Aspirant and Dress Down/control/removal casts plus canonical tenth-token entry check designation ownership and before-trigger/SBA timing. A spell instruction waits for resolution and is absent if countered. Multiple holders, current static controller, persistence after source/count changes, private draws/hands and preaction save-load/replay are checked; older absent state remains unchanged."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_actual_ability_loss_prevents_award_until_real_source_restoration",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Aspirant and Dress Down/control/removal casts plus canonical tenth-token entry check designation ownership and before-trigger/SBA timing. A spell instruction waits for resolution and is absent if countered. Multiple holders, current static controller, persistence after source/count changes, private draws/hands and preaction save-load/replay are checked; older absent state remains unchanged."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_actual_aspirant_tenth_entry_seals_flying_before_zone_trigger_discovery",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Aspirant and Dress Down/control/removal casts plus canonical tenth-token entry check designation ownership and before-trigger/SBA timing. A spell instruction waits for resolution and is absent if countered. Multiple holders, current static controller, persistence after source/count changes, private draws/hands and preaction save-load/replay are checked; older absent state remains unchanged."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_actual_clone_copied_ascend_uses_receiver_controller_before_entry_facts",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Clone copies an unblessed opponent Aspirant through ordinary replacement selection, then the receiving controller with ten permanents gains its own designation/flying; donor stays unblessed. A phased-out source cannot award with ten other permanents. Wrong actor rollback, pending copy load and full preaction replay are checked."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_phased_out_source_cannot_award_despite_ten_other_permanents",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Clone copies an unblessed opponent Aspirant through ordinary replacement selection, then the receiving controller with ten permanents gains its own designation/flying; donor stays unblessed. A phased-out source cannot award with ten other permanents. Wrong actor rollback, pending copy load and full preaction replay are checked."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Aspirant and Dress Down/control/removal casts plus canonical tenth-token entry check designation ownership and before-trigger/SBA timing. A spell instruction waits for resolution and is absent if countered. Multiple holders, current static controller, persistence after source/count changes, private draws/hands and preaction save-load/replay are checked; older absent state remains unchanged."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_spell_ascend_waits_for_resolution_and_countered_spell_does_not_award",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Aspirant and Dress Down/control/removal casts plus canonical tenth-token entry check designation ownership and before-trigger/SBA timing. A spell instruction waits for resolution and is absent if countered. Multiple holders, current static controller, persistence after source/count changes, private draws/hands and preaction save-load/replay are checked; older absent state remains unchanged."
+    },
+    {
+      "capability_id": "player.designation.citys_blessing",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_tenth_zero_toughness_token_awards_before_sba_and_source_departure_does_not_revoke",
+      "official_rule_ids": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Aspirant and Dress Down/control/removal casts plus canonical tenth-token entry check designation ownership and before-trigger/SBA timing. A spell instruction waits for resolution and is absent if countered. Multiple holders, current static controller, persistence after source/count changes, private draws/hands and preaction save-load/replay are checked; older absent state remains unchanged."
+    },
+    {
       "capability_id": "priority.stack.split_second",
       "evidence_class": "interaction",
       "test_id": "tests.test_split_second_rules.SplitSecondRuntimeTests.test_actual_morph_face_up_special_action_remains_legal_during_split_second",
@@ -148091,5 +148663,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "a9fe6a25077c1aebfda90e4b4b1a0da6a69ebd64c2220ac550c6afce11ecb07b"
+  "fingerprint": "8738a7a114c102a8ba8269bbad67f4b947a6ccf30174ed56171e5d296eae2374"
 }

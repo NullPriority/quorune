@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 310,
+  "registry_version": 311,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -244,6 +244,106 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "player.designation.citys_blessing",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "110.1",
+        "400.7",
+        "702.131a",
+        "702.131b",
+        "702.131c",
+        "702.131d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Acquire the persistent public player city blessing designation from a current permanent Ascend component or a resolving spell Ascend instruction, and expose one shared controller-relative boolean condition.",
+        "inputs": [
+          "current trusted static Ascend components and controller",
+          "current controlled phased-in permanent count",
+          "locked spell instruction controller",
+          "existing player designation state",
+          "current static or resolving condition actor"
+        ],
+        "outputs": [
+          "one persistent public player designation when count reaches ten",
+          "continuous characteristics reapplied before trigger facts/SBAs",
+          "independent spell-time acquisition only on resolution",
+          "shared condition snapshots without hidden card identities"
+        ],
+        "exclusions": [
+          "unrepresented follow-up conditional or quantity bodies",
+          "untrusted or absent Ascend components",
+          "acquisition merely from casting an Ascend spell",
+          "counter manipulation of a designation"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.city_blessing_model.player_has_citys_blessing",
+        "quorune.compiler.ascend_nodes.ascend_keyword_node",
+        "quorune.rules.city_blessing.award_citys_blessing",
+        "quorune.rules.city_blessing.synchronize_citys_blessing",
+        "quorune.rules.city_blessing_shapes.ascend_spell_node_capabilities",
+        "quorune.semantic_runtime.city_blessing.AscendStaticHandler",
+        "quorune.semantic_runtime.city_blessing.AscendSpellHandler",
+        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver.snapshot"
+      ],
+      "positive_tests": [
+        "test_original_simple_ascend_condition_cards_and_spell_keyword_are_exact",
+        "test_designation_is_not_a_counter_and_old_absent_state_remains_unchanged"
+      ],
+      "negative_tests": [
+        "test_unknown_ascend_parameters_and_unestablished_status_stay_residual",
+        "test_withdrawn_designation_owner_prevents_keyword_and_condition_promotion",
+        "test_designation_is_not_a_counter_and_old_absent_state_remains_unchanged",
+        "test_phased_out_source_cannot_award_despite_ten_other_permanents"
+      ],
+      "interaction_tests": [
+        "test_actual_aspirant_tenth_entry_seals_flying_before_zone_trigger_discovery",
+        "test_tenth_zero_toughness_token_awards_before_sba_and_source_departure_does_not_revoke",
+        "test_spell_ascend_waits_for_resolution_and_countered_spell_does_not_award",
+        "test_actual_ability_loss_prevents_award_until_real_source_restoration",
+        "test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders",
+        "test_actual_clone_copied_ascend_uses_receiver_controller_before_entry_facts",
+        "test_phased_out_source_cannot_award_despite_ten_other_permanents"
+      ],
+      "multiplayer_tests": [
+        "test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders",
+        "test_actual_clone_copied_ascend_uses_receiver_controller_before_entry_facts"
+      ],
+      "privacy_tests": [
+        "test_spell_ascend_waits_for_resolution_and_countered_spell_does_not_award"
+      ],
+      "replay_tests": [
+        "test_actual_aspirant_tenth_entry_seals_flying_before_zone_trigger_discovery",
+        "test_tenth_zero_toughness_token_awards_before_sba_and_source_departure_does_not_revoke",
+        "test_spell_ascend_waits_for_resolution_and_countered_spell_does_not_award",
+        "test_actual_ability_loss_prevents_award_until_real_source_restoration",
+        "test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders",
+        "test_actual_clone_copied_ascend_uses_receiver_controller_before_entry_facts",
+        "test_phased_out_source_cannot_award_despite_ten_other_permanents"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Exact keyword/face-type lowering and current trusted static components are required. The controller status query derives the designation capability; withdrawal blocks keyword and condition-only promotion. Unknown parameter/status bodies remain residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the Ascend keyword node prevents all five complete original/simple compiler witnesses. The native tenth entry and 0toughness token witnesses require acquisition before event fact capture and SBAs, and a countered spell must not award.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "activation.random_discard.fixed",
       "version": 1,
@@ -8655,7 +8755,7 @@
     },
     {
       "id": "continuous.characteristics.fixed_public_state",
-      "version": 15,
+      "version": 16,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -8674,7 +8774,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply fixed supported keywords and power/toughness modifiers in layers 6 and 7c while one closed authoritative public scalar, object, cycle-safe query, sealed history, distinct graveyard characteristic, hand, starting-life, player-counter, or designation condition is true. Compose one recipient-relative declaration requirement or restriction with fixed characteristics behind that same current public condition. Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition. A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope. Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost. Versioned flat all/any compositions retain each closed leaf and current source-bound snapshot, including distinct query quantities and status producer dependencies.",
+        "summary": "Apply fixed supported keywords and power/toughness modifiers in layers 6 and 7c while one closed authoritative public scalar, object, cycle-safe query, sealed history, distinct graveyard characteristic, hand, starting-life, player-counter, or designation condition is true. Compose one recipient-relative declaration requirement or restriction with fixed characteristics behind that same current public condition. Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition. A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope. Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost. Versioned flat all/any compositions retain each closed leaf and current source-bound snapshot, including distinct query quantities and status producer dependencies. The controller city blessing boolean uses its canonical persistent public designation owner and current source controller.",
         "inputs": [
           "active phased-in battlefield source",
           "source controller turn, life, public hand, graveyard, current or sealed turn-history, opponent poison, monarch, and starting-life facts",
@@ -8752,7 +8852,8 @@
         "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
         "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
         "test_boolean_public_conditions_keep_independent_leaf_snapshots_and_operators",
-        "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays"
+        "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
+        "test_actual_aspirant_tenth_entry_seals_flying_before_zone_trigger_discovery"
       ],
       "negative_tests": [
         "test_unrepresented_conditions_and_bodies_remain_residual",
@@ -8793,7 +8894,8 @@
         "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
         "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
         "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
-        "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays"
+        "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
+        "test_actual_aspirant_tenth_entry_seals_flying_before_zone_trigger_discovery"
       ],
       "multiplayer_tests": [
         "test_turn_gated_attachment_and_anthem_compose",
@@ -8803,7 +8905,8 @@
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
         "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
-        "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays"
+        "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
+        "test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders"
       ],
       "privacy_tests": [
         "test_hand_count_condition_projects_and_replays_without_hidden_identity",
@@ -8830,7 +8933,8 @@
         "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
         "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
         "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
-        "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays"
+        "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
+        "test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders"
       ],
       "required_evidence": [
         "positive",

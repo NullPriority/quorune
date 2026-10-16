@@ -265,6 +265,7 @@ from .stack_counter_handlers import (
     STACK_COUNTER_HANDLERS,
 )
 from .generic import GENERIC_HANDLERS
+from .city_blessing import AscendSpellHandler
 from .handlers import SemanticNodeHandler
 from .intents import (
     AddManaIntent,
@@ -392,6 +393,7 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
     registry = SemanticHandlerRegistry(
         (
             *GENERIC_HANDLERS,
+            AscendSpellHandler(),
             WholeHandDiscardHandler(),
             RandomDiscardHandler(),
             *TAP_STATE_HANDLERS,

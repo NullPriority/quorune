@@ -3390,6 +3390,8 @@ class CommanderEngine(
         ] | None = None,
         trigger_batch: list[StackItem] | None = None,
     ) -> list[str]:
+        from .rules.city_blessing import synchronize_citys_blessing
+        synchronize_citys_blessing(self,reason='before semantic trigger discovery')
         return dispatch_semantic_event(
             self,
             event,
@@ -6531,6 +6533,8 @@ class CommanderEngine(
     def _synchronize_world_supertype_timestamps(self) -> None:
         """Observe simultaneous gains/losses of the World supertype."""
 
+        from .rules.city_blessing import synchronize_citys_blessing
+        synchronize_citys_blessing(self,reason='before state-based actions')
         synchronize_day_night(
             self, reason="continuous day/night synchronization"
         )

@@ -401,6 +401,9 @@ class _FixedPublicStateSnapshotResolver:
         controller_is_monarch = kind is (
             FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH
         ) and getattr(self.state, "monarch", None) == source.controller
+        from ..city_blessing_model import player_has_citys_blessing
+        controller_has_citys_blessing=(kind is FixedPublicStateConditionKind.CONTROLLER_HAS_CITYS_BLESSING
+            and player_has_citys_blessing(controller))
         attached = (
             self.state.cards.get(source.attached_to)
             if kind is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY
@@ -449,6 +452,7 @@ class _FixedPublicStateSnapshotResolver:
             opponent_poison_counter_counts=opponent_poison_counter_counts,
             player_hand_counts=player_hand_counts,
             controller_is_monarch=controller_is_monarch,
+            controller_has_citys_blessing=controller_has_citys_blessing,
             controller_speed=player_speed(controller) or 0,
             source_query_matches=(
                 self._query_matches(source, condition)

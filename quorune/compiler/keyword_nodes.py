@@ -96,7 +96,7 @@ from .dependency_gate import (
     explicit_capabilities_gate,
     keyword_dependency_gate,
 )
-from .day_night_nodes import day_night_keyword_node
+from .face_keyword_nodes import face_keyword_node
 from .token_production_keyword_nodes import fixed_afterlife_keyword_node, fixed_token_action_keyword_node
 from ..fixed_token_production import AFTERLIFE_MECHANIC_ID
 from .devoid_characteristics import DEVOID_MECHANIC_ID
@@ -359,11 +359,11 @@ def closed_special_keyword_node(
     umbra = umbra_armor_keyword_node(**values)
     if umbra is not None:
         return umbra
-    day_night = day_night_keyword_node(
+    face_keyword = face_keyword_node(
         record=record, face_id=face_id, **values
     )
-    if day_night is not None:
-        return day_night
+    if face_keyword is not None:
+        return face_keyword
     afterlife = fixed_afterlife_keyword_node(**values)
     if afterlife is not None:
         return afterlife

@@ -146,6 +146,17 @@ player and persists through phase boundaries. A source tap symbol retains its
 usual control-duration and haste restriction, and countering the activated
 ability does not refund either cost.
 
+Ascend has separate typed permanent and spell paths. A current trusted static
+component awards the controlling player the city's blessing when that player
+controls ten phased-in permanents. The spell instruction checks only when it
+resolves. One rules owner stores the persistent public player designation;
+it is not a counter and does not transfer or disappear with a source. Zone
+facts, complete simultaneous moves, control changes, instruction completion
+and state-based stabilization synchronize acquisition before subsequent trigger
+checks. Read-only snapshots and projection only observe the marker. The shared
+public-state condition supplies its current source controller's designation
+to existing characteristic owners; unresolved follow-up bodies remain residual.
+
 Fixed random-discard activation costs use an optional typed scalar that is
 omitted from older ability payloads. The activating player must hold the full
 count. The canonical random selector binds a distinct hand subset to the

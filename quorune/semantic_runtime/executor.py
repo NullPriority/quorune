@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..city_blessing_model import AscendIntent
 from .life_batch_intent import LifeLossBatchIntent
 from .counter_movement_intent import MoveCountersIntent
 from .exploit_intent import ExploitSacrificeIntent
@@ -714,6 +715,10 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
         )
     results: list[tuple[str, object]] = []
     for intent in plan.intents:
+        if isinstance(intent,AscendIntent):
+            from ..rules.city_blessing import award_citys_blessing
+            results.append((intent.player,award_citys_blessing(sink,intent.player,reason=intent.reason)))
+            continue
         if isinstance(intent, STACK_INTENT_TYPES):
             results.append(execute_stack_intent(sink, intent))
             continue
@@ -843,6 +848,8 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
             results.append((intent.operation, result))
             continue
         raise TypeError(f"Unsupported semantic intent {type(intent).__name__}")
+    from ..rules.city_blessing import synchronize_citys_blessing
+    synchronize_citys_blessing(sink,reason='semantic instruction committed')
     if plan.result_shape == "by_player":
         return dict(results)
     return results[0][1]
