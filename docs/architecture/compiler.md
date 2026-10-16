@@ -1320,16 +1320,23 @@ resolving permanent retain the choice as copiable values; ordinary zone reset
 restores printed characteristics on other transitions. Variable sizes, complex
 mana symbols and independently unsupported siblings remain residual.
 
-`compiler/keyword_nodes.py` owns one closed ordinary fixed-mana Morph
-production. It lowers the turn-up cost to a typed all-zone runtime component;
+`compiler/keyword_nodes.py` owns fixed-mana Morph, Megamorph and Disguise
+productions. They lower the turn-up cost to a typed all-zone runtime component;
 the casting proposal owner separately supplies the face-down `{3}` creature-
 spell alternative, suppresses printed costs and abilities, and retains
-external cost modifiers that apply to the represented face-down spell. The
-same descriptor later authorizes a controller-only no-stack turn-face-up
-action through the current effective-keyword boundary. Megamorph, variable,
-hybrid, Phyrexian, snow, nonmana, copied, granted, text-changed, multiface,
-merged, and residual turn-up families remain source-spanned residuals or
-fail-closed runtime exclusions.
+external cost modifiers that apply to the represented face-down spell.
+Disguise retains its face-down Ward, while Megamorph places its counter before
+turn-up triggers. The same descriptor later authorizes a controller-only
+no-stack turn-face-up action through the current effective-keyword boundary.
+Ordinary descriptors retain their original serialized shape. Schema-two
+descriptors add fixed two-color hybrid symbols and reuse the existing immutable
+mana-option expansion. Each currently payable combination has its own offer,
+with its chosen cost bound into the action identity and fingerprint. Commit
+revalidates that option and pays its complete requirements through the canonical
+mana payer without a spell or activated-ability spending context. Pending load
+and replay retain the same selection. Variable, monocolored hybrid, Phyrexian,
+snow, nonmana, conditionally reduced, copied, granted, text-changed, multiface,
+merged and residual turn-up families retain their source-spanned exclusions.
 
 `compiler/cascade_nodes.py` owns ordinary printed Cascade as one independently
 source-spanned stack-zone trigger per instance. The casting transaction

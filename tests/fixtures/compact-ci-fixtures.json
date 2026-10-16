@@ -396,6 +396,17 @@
         "tests/fixtures/batched-support-assurance-cards.json"
       ],
       "rationale": "The bounded original-card dictionary verifies remaining transformed Saga replacement siblings reject complete runtime admission beside fixed control and public-quantity mana leaves."
+    },
+    {
+      "source": "tests/test_copy_objects.py",
+      "symbol": "EntryCopySelectorContractTests.test_qualified_copy_originals_bind_and_dependencies_fail_closed",
+      "card_names": [],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/entry-copy-cards.json"
+      ],
+      "rationale": "The fixed four-original selector loop delegates its current card name through the existing assert_original_closed helper before controlled dependency-removal compiler checks. The canonical entry-copy fixture owns those original records."
     }
   ],
   "full_database_only": []

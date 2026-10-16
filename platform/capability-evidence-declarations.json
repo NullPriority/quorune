@@ -11237,83 +11237,676 @@
     {
       "capability_id": "casting.disguise.fixed_mana",
       "evidence_class": "interaction",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Schema-two fixed hybrid descriptors keep ordinary schema-one serialization, exact bounded payment alternatives and method identity. Native admitted Disguise cards use offered and accepted special actions with complete fees, principal-correct hidden identity, atomic invalid-option rejection, pending load and pre-action replay; the shared generic-fee omission is detected."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_actual_hybrid_dog_walker_all_payments_trigger_after_turn_up_and_load",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Schema-two fixed hybrid descriptors keep ordinary schema-one serialization, exact bounded payment alternatives and method identity. Native admitted Disguise cards use offered and accepted special actions with complete fees, principal-correct hidden identity, atomic invalid-option rejection, pending load and pre-action replay; the shared generic-fee omission is detected."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_actual_manifested_hybrid_original_uses_its_disguise_alternative_after_load",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Soul Summons manifests the original hybrid Disguise creature with plain face-down characteristics. Pending load retains the distinct Disguise alternative and its selected payment; the real action pays the full fee, restores printed characteristics, and preserves hidden identity and pre-action replay."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "interaction",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_disguise_ward_uses_face_down_characteristics_only",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.21","702.168","702.168a","702.168b","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Use the canonical current Ward fragment only while the Disguise card is face down, including opponent targeting and reveal removal."
     },
     {
       "capability_id": "casting.disguise.fixed_mana",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Schema-two fixed hybrid descriptors keep ordinary schema-one serialization, exact bounded payment alternatives and method identity. Native admitted Disguise cards use offered and accepted special actions with complete fees, principal-correct hidden identity, atomic invalid-option rejection, pending load and pre-action replay; the shared generic-fee omission is detected."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_disguise_ward_uses_face_down_characteristics_only",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.21","702.168","702.168a","702.168b","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Create one Ward occurrence for an opponent-controlled targeting spell in four-player priority state."
     },
     {
       "capability_id": "casting.disguise.fixed_mana",
       "evidence_class": "mutation",
       "test_id": "tests.test_morph_rules.FixedManaMorphCompilerTests.test_fixed_face_down_methods_compile_and_fail_closed",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.21","702.168","702.168a","702.168b","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Remove or block the shared face-down keyword production and prove the real Disguise card loses exact admission."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_hybrid_payment_omission_mutant_is_killed_after_complete_original_admission",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Schema-two fixed hybrid descriptors keep ordinary schema-one serialization, exact bounded payment alternatives and method identity. Native admitted Disguise cards use offered and accepted special actions with complete fees, principal-correct hidden identity, atomic invalid-option rejection, pending load and pre-action replay; the shared generic-fee omission is detected."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_morph_rules.FixedManaMorphModelTests.test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Schema-two fixed hybrid descriptors keep ordinary schema-one serialization, exact bounded payment alternatives and method identity. Native admitted Disguise cards use offered and accepted special actions with complete fees, principal-correct hidden identity, atomic invalid-option rejection, pending load and pre-action replay; the shared generic-fee omission is detected."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Schema-two fixed hybrid descriptors keep ordinary schema-one serialization, exact bounded payment alternatives and method identity. Native admitted Disguise cards use offered and accepted special actions with complete fees, principal-correct hidden identity, atomic invalid-option rejection, pending load and pre-action replay; the shared generic-fee omission is detected."
     },
     {
       "capability_id": "casting.disguise.fixed_mana",
       "evidence_class": "negative",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_layer_six_removal_uses_shared_face_down_method_query",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.21","702.168","702.168a","702.168b","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Withhold the turn-up action when the shared current effective keyword query removes Disguise at layer 6."
     },
     {
       "capability_id": "casting.disguise.fixed_mana",
       "evidence_class": "positive",
       "test_id": "tests.test_morph_rules.FixedManaMorphCompilerTests.test_fixed_face_down_methods_compile_and_fail_closed",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.21","702.168","702.168a","702.168b","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Lower one source-spanned fixed ordinary-mana Disguise line to its method-pinned runtime descriptor."
     },
     {
-  "capability_id": "casting.disguise.fixed_mana",
-  "evidence_class": "positive",
-  "test_id": "tests.test_morph_rules.FixedManaMorphModelTests.test_printed_turn_up_method_preserves_advertised_identity_and_fingerprint",
-  "official_rule_ids": [
-    "116.2b",
-    "601.2b",
-    "601.2f",
-    "601.2h",
-    "702.21",
-    "702.168",
-    "702.168a",
-    "702.168b",
-    "708.2",
-    "708.4",
-    "708.5",
-    "708.8",
-    "708.9"
-  ],
-  "supported_profiles": [
-    "traditional",
-    "commander_duel",
-    "commander_review"
-  ],
-  "applicability_note": "Ordinary printed Morph, Megamorph and Disguise offers rebuild the same signed unsuffixed action identity from the advertised method; explicitly selected Manifest alternatives retain distinct method identities."
-},
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_morph_rules.FixedManaMorphCompilerTests.test_nine_actual_fixed_hybrid_disguise_originals_bind_completely",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Schema-two fixed hybrid descriptors keep ordinary schema-one serialization, exact bounded payment alternatives and method identity. Native admitted Disguise cards use offered and accepted special actions with complete fees, principal-correct hidden identity, atomic invalid-option rejection, pending load and pre-action replay; the shared generic-fee omission is detected."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_morph_rules.FixedManaMorphModelTests.test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Schema-two fixed hybrid descriptors keep ordinary schema-one serialization, exact bounded payment alternatives and method identity. Native admitted Disguise cards use offered and accepted special actions with complete fees, principal-correct hidden identity, atomic invalid-option rejection, pending load and pre-action replay; the shared generic-fee omission is detected."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_morph_rules.FixedManaMorphModelTests.test_printed_turn_up_method_preserves_advertised_identity_and_fingerprint",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary printed Morph, Megamorph and Disguise offers rebuild the same signed unsuffixed action identity from the advertised method; explicitly selected Manifest alternatives retain distinct method identities."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Schema-two fixed hybrid descriptors keep ordinary schema-one serialization, exact bounded payment alternatives and method identity. Native admitted Disguise cards use offered and accepted special actions with complete fees, principal-correct hidden identity, atomic invalid-option rejection, pending load and pre-action replay; the shared generic-fee omission is detected."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_actual_hybrid_dog_walker_all_payments_trigger_after_turn_up_and_load",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Schema-two fixed hybrid descriptors keep ordinary schema-one serialization, exact bounded payment alternatives and method identity. Native admitted Disguise cards use offered and accepted special actions with complete fees, principal-correct hidden identity, atomic invalid-option rejection, pending load and pre-action replay; the shared generic-fee omission is detected."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_actual_manifested_hybrid_original_uses_its_disguise_alternative_after_load",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Soul Summons manifests the original hybrid Disguise creature with plain face-down characteristics. Pending load retains the distinct Disguise alternative and its selected payment; the real action pays the full fee, restores printed characteristics, and preserves hidden identity and pre-action replay."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Schema-two fixed hybrid descriptors keep ordinary schema-one serialization, exact bounded payment alternatives and method identity. Native admitted Disguise cards use offered and accepted special actions with complete fees, principal-correct hidden identity, atomic invalid-option rejection, pending load and pre-action replay; the shared generic-fee omission is detected."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_actual_manifested_hybrid_original_uses_its_disguise_alternative_after_load",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Soul Summons manifests the original hybrid Disguise creature with plain face-down characteristics. Pending load retains the distinct Disguise alternative and its selected payment; the real action pays the full fee, restores printed characteristics, and preserves hidden identity and pre-action replay."
+    },
     {
       "capability_id": "casting.disguise.fixed_mana",
       "evidence_class": "privacy",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_disguise_ward_uses_face_down_characteristics_only",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.21","702.168","702.168a","702.168b","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Project the public face-down creature and Ward occurrence without disclosing its printed identity to opponents."
     },
     {
       "capability_id": "casting.disguise.fixed_mana",
       "evidence_class": "replay",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Schema-two fixed hybrid descriptors keep ordinary schema-one serialization, exact bounded payment alternatives and method identity. Native admitted Disguise cards use offered and accepted special actions with complete fees, principal-correct hidden identity, atomic invalid-option rejection, pending load and pre-action replay; the shared generic-fee omission is detected."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_actual_hybrid_dog_walker_all_payments_trigger_after_turn_up_and_load",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Schema-two fixed hybrid descriptors keep ordinary schema-one serialization, exact bounded payment alternatives and method identity. Native admitted Disguise cards use offered and accepted special actions with complete fees, principal-correct hidden identity, atomic invalid-option rejection, pending load and pre-action replay; the shared generic-fee omission is detected."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_actual_manifested_hybrid_original_uses_its_disguise_alternative_after_load",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Soul Summons manifests the original hybrid Disguise creature with plain face-down characteristics. Pending load retains the distinct Disguise alternative and its selected payment; the real action pays the full fee, restores printed characteristics, and preserves hidden identity and pre-action replay."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "replay",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_disguise_ward_uses_face_down_characteristics_only",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.21","702.168","702.168a","702.168b","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Replay the face-down cast, opponent target commitment, Ward occurrence, and authoritative state hash."
     },
     {
@@ -12046,211 +12639,692 @@
       "capability_id": "casting.megamorph.fixed_mana",
       "evidence_class": "interaction",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_megamorph_counter_precedes_face_up_trigger_and_replays",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Commit the Megamorph counter through the canonical owner before detecting and resolving the source's face-up trigger."
     },
     {
       "capability_id": "casting.megamorph.fixed_mana",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_megamorph_counter_precedes_face_up_trigger_and_replays",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Resolve the face-down spell, special action, and resulting trigger across four-player priority state."
     },
     {
       "capability_id": "casting.megamorph.fixed_mana",
       "evidence_class": "mutation",
       "test_id": "tests.test_morph_rules.FixedManaMorphCompilerTests.test_fixed_face_down_methods_compile_and_fail_closed",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Remove or block the shared face-down keyword production and prove the real Megamorph card loses exact admission."
     },
     {
       "capability_id": "casting.megamorph.fixed_mana",
       "evidence_class": "negative",
+      "test_id": "tests.test_morph_rules.FixedManaMorphModelTests.test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Schema-two fixed hybrid descriptors keep ordinary schema-one serialization, exact bounded payment alternatives and method identity. Native admitted Disguise cards use offered and accepted special actions with complete fees, principal-correct hidden identity, atomic invalid-option rejection, pending load and pre-action replay; the shared generic-fee omission is detected."
+    },
+    {
+      "capability_id": "casting.megamorph.fixed_mana",
+      "evidence_class": "negative",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_layer_six_removal_uses_shared_face_down_method_query",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Withhold the turn-up action when the shared current effective keyword query removes Megamorph at layer 6."
     },
     {
       "capability_id": "casting.megamorph.fixed_mana",
       "evidence_class": "positive",
       "test_id": "tests.test_morph_rules.FixedManaMorphCompilerTests.test_fixed_face_down_methods_compile_and_fail_closed",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Lower one source-spanned fixed ordinary-mana Megamorph line to its method-pinned runtime descriptor."
     },
     {
-  "capability_id": "casting.megamorph.fixed_mana",
-  "evidence_class": "positive",
-  "test_id": "tests.test_morph_rules.FixedManaMorphModelTests.test_printed_turn_up_method_preserves_advertised_identity_and_fingerprint",
-  "official_rule_ids": [
-    "116.2b",
-    "601.2b",
-    "601.2f",
-    "601.2h",
-    "702.37",
-    "702.37c",
-    "702.37e",
-    "708.2",
-    "708.4",
-    "708.5",
-    "708.8",
-    "708.9"
-  ],
-  "supported_profiles": [
-    "traditional",
-    "commander_duel",
-    "commander_review"
-  ],
-  "applicability_note": "Ordinary printed Morph, Megamorph and Disguise offers rebuild the same signed unsuffixed action identity from the advertised method; explicitly selected Manifest alternatives retain distinct method identities."
-},
+      "capability_id": "casting.megamorph.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_morph_rules.FixedManaMorphModelTests.test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Schema-two fixed hybrid descriptors keep ordinary schema-one serialization, exact bounded payment alternatives and method identity. Native admitted Disguise cards use offered and accepted special actions with complete fees, principal-correct hidden identity, atomic invalid-option rejection, pending load and pre-action replay; the shared generic-fee omission is detected."
+    },
+    {
+      "capability_id": "casting.megamorph.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_morph_rules.FixedManaMorphModelTests.test_printed_turn_up_method_preserves_advertised_identity_and_fingerprint",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary printed Morph, Megamorph and Disguise offers rebuild the same signed unsuffixed action identity from the advertised method; explicitly selected Manifest alternatives retain distinct method identities."
+    },
     {
       "capability_id": "casting.megamorph.fixed_mana",
       "evidence_class": "privacy",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_megamorph_counter_replacement_suspends_and_replays",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Expose the competing counter replacement order only to the affected controller while the card remains face down during suspension."
     },
     {
       "capability_id": "casting.megamorph.fixed_mana",
       "evidence_class": "replay",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_megamorph_counter_replacement_suspends_and_replays",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Replay the rolled-back special action, selected counter replacement order, reveal, and final authoritative hash."
     },
     {
       "capability_id": "casting.morph.fixed_mana",
       "evidence_class": "interaction",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_face_down_departure_reveals_identity_and_resets_method",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37a","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37a",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Reveal a face-down permanent to every seat as it leaves the battlefield, create the destination incarnation face up, and remove the Morph method marker through the zone-object owner."
     },
     {
       "capability_id": "casting.morph.fixed_mana",
       "evidence_class": "interaction",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_face_down_static_source_is_inert_until_turned_face_up",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37a","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37a",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Suppress every trusted static runtime component while its source is face down, then restore the same typed component after the Morph effect ends."
     },
     {
       "capability_id": "casting.morph.fixed_mana",
       "evidence_class": "interaction",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_morph_cast_turn_up_privacy_and_replay",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37a","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37a",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compose casting, zone transition, face-down continuous characteristics, fixed mana payment, priority, state stabilization, and reveal without creating a turn-up stack object."
     },
     {
       "capability_id": "casting.morph.fixed_mana",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_morph_cast_turn_up_privacy_and_replay",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37a","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37a",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Resolve the face-down spell across a four-player priority round and reveal the face-up identity to every seat only after the controller commits the special action."
     },
     {
       "capability_id": "casting.morph.fixed_mana",
       "evidence_class": "mutation",
       "test_id": "tests.test_morph_rules.FixedManaMorphCompilerTests.test_morph_compiler_mutation_is_killed",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37a","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37a",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Remove the closed Morph production and prove the real card loses exact capability trust rather than retaining a hidden fallback."
     },
     {
       "capability_id": "casting.morph.fixed_mana",
       "evidence_class": "negative",
       "test_id": "tests.test_morph_rules.FixedManaMorphCompilerTests.test_nonordinary_morph_costs_remain_residual",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37a","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37a",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Keep variable and nonmana Morph costs outside the fixed ordinary-mana contract without an executable fallback."
     },
     {
       "capability_id": "casting.morph.fixed_mana",
       "evidence_class": "negative",
+      "test_id": "tests.test_morph_rules.FixedManaMorphModelTests.test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37a",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Schema-two fixed hybrid descriptors keep ordinary schema-one serialization, exact bounded payment alternatives and method identity. Native admitted Disguise cards use offered and accepted special actions with complete fees, principal-correct hidden identity, atomic invalid-option rejection, pending load and pre-action replay; the shared generic-fee omission is detected."
+    },
+    {
+      "capability_id": "casting.morph.fixed_mana",
+      "evidence_class": "negative",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_partial_card_does_not_receive_a_morph_cast_offer",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37a","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37a",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Withhold Morph when turning the card face up would expose a separate material residual, even though the independently exact Morph handler itself is trusted."
     },
     {
       "capability_id": "casting.morph.fixed_mana",
       "evidence_class": "negative",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_stale_morph_cast_contract_rolls_back_before_payment",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37a","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37a",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Revalidate the complete CardProgram and exact typed Morph descriptor before mana payment when a copied-value mutation makes the advertised cast contract stale."
     },
     {
       "capability_id": "casting.morph.fixed_mana",
       "evidence_class": "negative",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_stale_or_ability_removed_turn_up_rolls_back",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37a","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37a",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Recompute would-be-face-up effective keyword presence and reject a stale action before mana or face state changes when layer 6 removes Morph."
     },
     {
       "capability_id": "casting.morph.fixed_mana",
       "evidence_class": "positive",
       "test_id": "tests.test_morph_rules.FixedManaMorphCompilerTests.test_fixed_mana_morph_compiles_source_spanned_typed_program",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37a","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37a",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Lower one source-spanned ordinary fixed-mana Morph line to a trusted immutable descriptor and exact CardProgram ability."
     },
     {
-  "capability_id": "casting.morph.fixed_mana",
-  "evidence_class": "positive",
-  "test_id": "tests.test_morph_rules.FixedManaMorphModelTests.test_printed_turn_up_method_preserves_advertised_identity_and_fingerprint",
-  "official_rule_ids": [
-    "116.2b",
-    "601.2b",
-    "601.2f",
-    "601.2h",
-    "702.37",
-    "702.37a",
-    "702.37c",
-    "702.37e",
-    "708.2",
-    "708.4",
-    "708.5",
-    "708.8",
-    "708.9"
-  ],
-  "supported_profiles": [
-    "traditional",
-    "commander_duel",
-    "commander_review"
-  ],
-  "applicability_note": "Ordinary printed Morph, Megamorph and Disguise offers rebuild the same signed unsuffixed action identity from the advertised method; explicitly selected Manifest alternatives retain distinct method identities."
-},
+      "capability_id": "casting.morph.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_morph_rules.FixedManaMorphModelTests.test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37a",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Schema-two fixed hybrid descriptors keep ordinary schema-one serialization, exact bounded payment alternatives and method identity. Native admitted Disguise cards use offered and accepted special actions with complete fees, principal-correct hidden identity, atomic invalid-option rejection, pending load and pre-action replay; the shared generic-fee omission is detected."
+    },
+    {
+      "capability_id": "casting.morph.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_morph_rules.FixedManaMorphModelTests.test_printed_turn_up_method_preserves_advertised_identity_and_fingerprint",
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37a",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary printed Morph, Megamorph and Disguise offers rebuild the same signed unsuffixed action identity from the advertised method; explicitly selected Manifest alternatives retain distinct method identities."
+    },
     {
       "capability_id": "casting.morph.fixed_mana",
       "evidence_class": "positive",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_morph_cast_turn_up_privacy_and_replay",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37a","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37a",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Offer and pay the distinct face-down cast cost, preserve its layer-1b characteristics through resolution, then pay the fixed no-stack turn-face-up action."
     },
     {
       "capability_id": "casting.morph.fixed_mana",
       "evidence_class": "privacy",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_morph_cast_turn_up_privacy_and_replay",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37a","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37a",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Expose the face-down identity only to its controller view on the stack and battlefield while every opponent receives the stable public face-down object."
     },
     {
       "capability_id": "casting.morph.fixed_mana",
       "evidence_class": "replay",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_morph_cast_turn_up_privacy_and_replay",
-      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37a","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
-      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "official_rule_ids": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37a",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Replay the exact cast, multiplayer passes, face-down persistence, turn-up payment, public reveal, and final authoritative state hash."
     },
     {

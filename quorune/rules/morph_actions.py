@@ -122,31 +122,53 @@ def build_turn_face_up_offer(
     host: MorphActionHost,
     seat: str,
     card: Any,
-    *, method: str | None = None,
+    *, method: str | None = None, mana_cost_option: str | None = None,
 ) -> ActionOffer | None:
+    spec = _eligible_spec(host, seat, card, method=method)
+    if spec is None:
+        return None
+    return _build_turn_face_up_offer(host, seat, card, spec,
+        method=method, mana_cost_option=mana_cost_option)
+
+
+def _build_turn_face_up_offer(host, seat, card, spec, *, method, mana_cost_option):
     from ..manifest import is_manifested
 
-    spec = _eligible_spec(host, seat, card, method=method)
-    if spec is None or not host._cost_is_affordable(
+    options = getattr(spec, 'mana_cost_options', ())
+    requirements = spec.requirements_dict
+    if options:
+        option = next((value for value in options
+            if type(mana_cost_option) is str and value.option_id == mana_cost_option), None)
+        if option is None:
+            return None
+        requirements = dict(option.requirements)
+    elif mana_cost_option is not None:
+        return None
+    if not host._cost_is_affordable(
         seat,
-        spec.requirements_dict,
+        requirements,
         spend_context=None,
     ):
         return None
     return ActionOffer(
-        action_id=f"turn-face-up:{card.ref}" + (f':{method}' if method is not None and is_manifested(card) else ''),
+        action_id=f"turn-face-up:{card.ref}" + (f':{method}' if method is not None and is_manifested(card) else '')
+            + (f':{mana_cost_option}' if mana_cost_option is not None else ''),
         action="turn_face_up",
         seat=seat,
-        label=f"Turn {card.printed_name} face up — {spec.cost_text}",
+        label=f"Turn {card.printed_name} face up — " + (
+            ''.join(f'{{{requirements[key]}}}' if key == 'GENERIC' else f'{{{key}}}' * requirements[key]
+                for key in ('GENERIC', 'W', 'U', 'B', 'R', 'G', 'C') if requirements[key])
+            if options else spec.cost_text),
         expiry_revision=host.state.revision,
         payload=freeze_json(
             {
                 "kind": "turn_face_up",
                 "card": card.ref,
                 "cost": spec.cost_text,
-                "requirements": spec.requirements_dict,
+                "requirements": requirements,
                 "auto_pay": True,
                 "method": spec.method,
+                **({'mana_cost_option': mana_cost_option} if options else {}),
             }
         ),
     )
@@ -155,8 +177,18 @@ def build_turn_face_up_offer(
 def build_turn_face_up_offers(host, seat, card):
     from ..manifest import is_manifested
     methods = ('manifest', *FACE_DOWN_CAST_METHODS) if is_manifested(card) else (None,)
-    return tuple(offer for method in methods
-        if (offer := build_turn_face_up_offer(host, seat, card, method=method)) is not None)
+    offers = []
+    for method in methods:
+        spec = _eligible_spec(host, seat, card, method=method)
+        if spec is None:
+            continue
+        options = getattr(spec, 'mana_cost_options', ())
+        for option in options or (None,):
+            offer = _build_turn_face_up_offer(host, seat, card, spec, method=method,
+                mana_cost_option=option.option_id if option is not None else None)
+            if offer is not None:
+                offers.append(offer)
+    return tuple(offers)
 
 
 def commit_turn_face_up(
@@ -176,7 +208,8 @@ def commit_turn_face_up(
         controlled_only=True,
     )
     method = response.get('method')
-    offer = build_turn_face_up_offer(host, seat, card, method=method)
+    offer = build_turn_face_up_offer(host, seat, card, method=method,
+        mana_cost_option=response.get('mana_cost_option'))
     if offer is None:
         raise GameRuleError("This permanent cannot currently be turned face up")
     supplied = response.get("proposal_fingerprint")
@@ -192,10 +225,11 @@ def commit_turn_face_up(
     spec = _eligible_spec(host, seat, card, method=method)
     if spec is None:
         raise GameRuleError("The face-down method contract changed before payment")
+    requirements = offer.to_dict()['requirements']
     clear_mana_undo_stack(host.state.players[seat].stats)
     spent, activations = host._pay_for_cost(
         seat,
-        spec.requirements_dict,
+        requirements,
         response,
         spend_context=None,
     )
@@ -257,7 +291,7 @@ def commit_turn_face_up(
         {
             "object": card.ref,
             "method": spec.method,
-            "requirements": spec.requirements_dict,
+            "requirements": requirements,
             "payment": {key: value for key, value in spent.items() if value},
             "mana_sources": [
                 activation.get("source_ref") or activation.get("source")

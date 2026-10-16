@@ -14292,6 +14292,38 @@
       ],
       "interaction_order": 5,
       "assertion": "Actual Lightning Bolt marks three damage on fully admitted Goham while blue is more common. Its actual regeneration activation resolves; casting a black creature creates a color tie and makes current toughness three. Before priority, canonical state-based destruction consumes regeneration, taps and clears damage while retaining the battlefield incarnation and exact 3/3 stats. Pending load and pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_actual_hybrid_dog_walker_all_payments_trigger_after_turn_up_and_load",
+      "piece_ids": [
+        "capability.casting.disguise.fixed_mana",
+        "capability.token.creation.fixed_definition",
+        "capability.trigger.event.normalized_public_action"
+      ],
+      "capability_ids": [
+        "casting.disguise.fixed_mana",
+        "token.creation.fixed_definition",
+        "trigger.event.normalized_public_action"
+      ],
+      "interaction_order": 3,
+      "assertion": "Actual Dog Walker casts face down with its generic fee paid in colorless mana, then turns up through each of the two-red, mixed-red-white and two-white hybrid payment offers. The no-stack turn-up action restores vigilance and only then puts its printed trigger on the stack. Pending load retains that trigger; actual resolution creates exactly two tapped white 1/1 Dogs and pre-action replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_actual_manifested_hybrid_original_uses_its_disguise_alternative_after_load",
+      "piece_ids": [
+        "capability.casting.disguise.fixed_mana",
+        "capability.keyword_action.manifest.card"
+      ],
+      "capability_ids": [
+        "casting.disguise.fixed_mana",
+        "keyword_action.manifest.card"
+      ],
+      "interaction_order": 2,
+      "assertion": "Soul Summons actually manifests Riftburst Hellion; its plain face-down characteristics remain distinct from Disguise. After pending load, the Disguise-specific hybrid payment offer pays the complete fee and turns the same incarnation face up, with private projection and pre-action replay preserved."
     }
   ]
 }

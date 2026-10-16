@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 332,
+  "registry_version": 333,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -18761,24 +18761,107 @@
     },
     {
       "id": "casting.morph.fixed_mana",
-      "version": 3,
-      "official_rules": ["116.2b", "601.2b", "601.2f", "601.2h", "702.37", "702.37a", "702.37c", "702.37e", "708.2", "708.4", "708.5", "708.8", "708.9"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 4,
+      "official_rules": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37a",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Compile one ordinary fixed-mana Morph ability into a face-down creature-spell alternative and its identity-pinned no-stack turn-face-up special action.",
-        "inputs": ["one physical normal-layout permanent card", "one source-spanned ordinary Morph line", "one fixed ordinary mana morph cost", "current priority", "current face-up effective Morph presence"],
-        "outputs": ["a private server-authored face-down cast offer for {3}", "layer-1b 2/2 colorless nameless typeless creature characteristics", "a controller-scoped fixed-cost turn-face-up offer", "canonical mana payment", "public reveal without a stack object", "zone-departure reveal and exact replay"],
-        "exclusions": ["Megamorph, disguise, manifest, cloak, and other face-down methods", "variable, hybrid, Phyrexian, snow, or nonmana morph costs", "copied, granted, or text-changed Morph", "card copies, spell copies, tokens, multiface cards, and merged permanents", "turn-face-up triggers or replacement abilities on cards whose complete CardProgram remains residual", "dynamic characteristic counts and unrepresented static ability addition or removal"]
+        "summary": "Compile one ordinary fixed-mana Morph ability into a face-down creature-spell alternative and its identity-pinned no-stack turn-face-up special action. Schema-two fixed two-color hybrid turn-up costs expand through the existing immutable mana options. Every currently payable combination has a separate authoritative special-action offer; the selected combination is revalidated and paid with no activation-only spending context.",
+        "inputs": [
+          "one physical normal-layout permanent card",
+          "one source-spanned ordinary Morph line",
+          "one fixed ordinary mana morph cost",
+          "current priority",
+          "current face-up effective Morph presence"
+        ],
+        "outputs": [
+          "a private server-authored face-down cast offer for {3}",
+          "layer-1b 2/2 colorless nameless typeless creature characteristics",
+          "a controller-scoped fixed-cost turn-face-up offer",
+          "canonical mana payment",
+          "public reveal without a stack object",
+          "zone-departure reveal and exact replay"
+        ],
+        "exclusions": [
+          "Megamorph, disguise, manifest, cloak, and other face-down methods",
+          "variable, Phyrexian, snow, or nonmana morph costs",
+          "copied, granted, or text-changed Morph",
+          "card copies, spell copies, tokens, multiface cards, and merged permanents",
+          "turn-face-up triggers or replacement abilities on cards whose complete CardProgram remains residual",
+          "dynamic characteristic counts and unrepresented static ability addition or removal",
+          "monocolored hybrid, Phyrexian, snow, variable, nonmana or conditionally reduced turn-up costs"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.morph.FixedManaMorphSpec", "quorune.compiler.keyword_nodes.fixed_mana_morph_keyword_node", "quorune.semantic_runtime.morph.FixedManaMorphHandler", "quorune.card_programs.admission.CompleteCardProgramAdmission", "quorune.compiler.program_composition._node_group_provenance", "quorune.compiled_morph.compiled_fixed_mana_morph_spec", "quorune.rules.casting.proposal.build_cast_offer", "quorune.rules.casting.commit.commit_cast", "quorune.rules.morph_actions.build_turn_face_up_offer", "quorune.rules.morph_actions.commit_turn_face_up", "quorune.characteristic_evaluation.evaluate_card_characteristics", "quorune.turn_priority_owner.TurnPriorityDecisionOwner.complete_special_action", "quorune.projection.StateProjector"],
-      "positive_tests": ["test_fixed_mana_morph_compiles_source_spanned_typed_program", "test_morph_cast_turn_up_privacy_and_replay", "test_printed_turn_up_method_preserves_advertised_identity_and_fingerprint"],
-      "negative_tests": ["test_nonordinary_morph_costs_remain_residual", "test_partial_card_does_not_receive_a_morph_cast_offer", "test_stale_morph_cast_contract_rolls_back_before_payment", "test_stale_or_ability_removed_turn_up_rolls_back"],
-      "interaction_tests": ["test_face_down_departure_reveals_identity_and_resets_method", "test_face_down_static_source_is_inert_until_turned_face_up", "test_morph_cast_turn_up_privacy_and_replay"],
-      "multiplayer_tests": ["test_morph_cast_turn_up_privacy_and_replay"],
-      "privacy_tests": ["test_morph_cast_turn_up_privacy_and_replay"],
-      "replay_tests": ["test_morph_cast_turn_up_privacy_and_replay"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.morph.FixedManaMorphSpec",
+        "quorune.compiler.keyword_nodes.fixed_mana_morph_keyword_node",
+        "quorune.semantic_runtime.morph.FixedManaMorphHandler",
+        "quorune.card_programs.admission.CompleteCardProgramAdmission",
+        "quorune.compiler.program_composition._node_group_provenance",
+        "quorune.compiled_morph.compiled_fixed_mana_morph_spec",
+        "quorune.rules.casting.proposal.build_cast_offer",
+        "quorune.rules.casting.commit.commit_cast",
+        "quorune.rules.morph_actions.build_turn_face_up_offer",
+        "quorune.rules.morph_actions.commit_turn_face_up",
+        "quorune.characteristic_evaluation.evaluate_card_characteristics",
+        "quorune.turn_priority_owner.TurnPriorityDecisionOwner.complete_special_action",
+        "quorune.projection.StateProjector",
+        "quorune.activation_mana_cost.fixed_complex_activation_mana_options"
+      ],
+      "positive_tests": [
+        "test_fixed_mana_morph_compiles_source_spanned_typed_program",
+        "test_morph_cast_turn_up_privacy_and_replay",
+        "test_printed_turn_up_method_preserves_advertised_identity_and_fingerprint",
+        "test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict"
+      ],
+      "negative_tests": [
+        "test_nonordinary_morph_costs_remain_residual",
+        "test_partial_card_does_not_receive_a_morph_cast_offer",
+        "test_stale_morph_cast_contract_rolls_back_before_payment",
+        "test_stale_or_ability_removed_turn_up_rolls_back",
+        "test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict"
+      ],
+      "interaction_tests": [
+        "test_face_down_departure_reveals_identity_and_resets_method",
+        "test_face_down_static_source_is_inert_until_turned_face_up",
+        "test_morph_cast_turn_up_privacy_and_replay"
+      ],
+      "multiplayer_tests": [
+        "test_morph_cast_turn_up_privacy_and_replay"
+      ],
+      "privacy_tests": [
+        "test_morph_cast_turn_up_privacy_and_replay"
+      ],
+      "replay_tests": [
+        "test_morph_cast_turn_up_privacy_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "The capability has no child capability dependencies; its runtime handler, compiler-pinned complete-card admission certificate, exact state marker, current effective keyword query, and closed cost shape all fail closed independently.",
       "implementation_mutation_status": "killed",
@@ -18788,24 +18871,103 @@
     },
     {
       "id": "casting.megamorph.fixed_mana",
-      "version": 2,
-      "official_rules": ["116.2b", "601.2b", "601.2f", "601.2h", "702.37", "702.37c", "702.37e", "708.2", "708.4", "708.5", "708.8", "708.9"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 3,
+      "official_rules": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.37",
+        "702.37c",
+        "702.37e",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Compile one ordinary fixed-mana Megamorph ability into the shared face-down cast and turn-up special action, then place its +1/+1 counter through the canonical replacement-aware counter owner before face-up triggers are detected.",
-        "inputs": ["one physical normal-layout permanent card", "one source-spanned ordinary Megamorph line", "one fixed ordinary mana turn-up cost", "current priority", "current face-up effective Megamorph presence"],
-        "outputs": ["private server-authored face-down cast for {3}", "layer-1b 2/2 face-down characteristics", "fixed-cost turn-face-up offer", "replacement-aware +1/+1 counter placement", "face-up event after counter commit", "exact replay"],
-        "exclusions": ["Morph, disguise, manifest, cloak, and other face-down methods", "variable, hybrid, Phyrexian, snow, or nonmana costs", "copied, granted, or text-changed Megamorph", "card copies, spell copies, tokens, multiface cards, and merged permanents", "as-turned-face-up replacement abilities", "dynamic characteristic counts outside the correct characteristic boundary"]
+        "summary": "Compile one ordinary fixed-mana Megamorph ability into the shared face-down cast and turn-up special action, then place its +1/+1 counter through the canonical replacement-aware counter owner before face-up triggers are detected. Schema-two fixed two-color hybrid turn-up costs expand through the existing immutable mana options. Every currently payable combination has a separate authoritative special-action offer; the selected combination is revalidated and paid with no activation-only spending context.",
+        "inputs": [
+          "one physical normal-layout permanent card",
+          "one source-spanned ordinary Megamorph line",
+          "one fixed ordinary mana turn-up cost",
+          "current priority",
+          "current face-up effective Megamorph presence"
+        ],
+        "outputs": [
+          "private server-authored face-down cast for {3}",
+          "layer-1b 2/2 face-down characteristics",
+          "fixed-cost turn-face-up offer",
+          "replacement-aware +1/+1 counter placement",
+          "face-up event after counter commit",
+          "exact replay"
+        ],
+        "exclusions": [
+          "Morph, disguise, manifest, cloak, and other face-down methods",
+          "variable, Phyrexian, snow, or nonmana costs",
+          "copied, granted, or text-changed Megamorph",
+          "card copies, spell copies, tokens, multiface cards, and merged permanents",
+          "as-turned-face-up replacement abilities",
+          "dynamic characteristic counts outside the correct characteristic boundary",
+          "monocolored hybrid, Phyrexian, snow, variable, nonmana or conditionally reduced turn-up costs"
+        ]
       },
-      "dependencies": ["counter.placement.quantity_replacement"],
-      "implementation_components": ["quorune.morph.FixedManaFaceDownMethodSpec", "quorune.compiler.keyword_nodes.fixed_mana_morph_keyword_node", "quorune.semantic_runtime.morph.FixedManaMorphHandler", "quorune.compiled_morph.compiled_fixed_mana_face_down_method_spec", "quorune.rules.casting.proposal.build_cast_offer", "quorune.rules.casting.commit.commit_cast", "quorune.rules.morph_actions.commit_turn_face_up", "quorune.counter_placement.prepare_counter_placements", "quorune.counter_placement.commit_prepared_counter_placements", "quorune.mana_payment_continuations.execute_mana_choice_capable_priority_action"],
-      "positive_tests": ["test_fixed_face_down_methods_compile_and_fail_closed", "test_printed_turn_up_method_preserves_advertised_identity_and_fingerprint"],
-      "negative_tests": ["test_fixed_face_down_methods_compile_and_fail_closed", "test_layer_six_removal_uses_shared_face_down_method_query"],
-      "interaction_tests": ["test_megamorph_counter_precedes_face_up_trigger_and_replays", "test_megamorph_counter_replacement_suspends_and_replays"],
-      "multiplayer_tests": ["test_megamorph_counter_precedes_face_up_trigger_and_replays"],
-      "privacy_tests": ["test_megamorph_counter_precedes_face_up_trigger_and_replays", "test_megamorph_counter_replacement_suspends_and_replays"],
-      "replay_tests": ["test_megamorph_counter_precedes_face_up_trigger_and_replays", "test_megamorph_counter_replacement_suspends_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "counter.placement.quantity_replacement"
+      ],
+      "implementation_components": [
+        "quorune.morph.FixedManaFaceDownMethodSpec",
+        "quorune.compiler.keyword_nodes.fixed_mana_morph_keyword_node",
+        "quorune.semantic_runtime.morph.FixedManaMorphHandler",
+        "quorune.compiled_morph.compiled_fixed_mana_face_down_method_spec",
+        "quorune.rules.casting.proposal.build_cast_offer",
+        "quorune.rules.casting.commit.commit_cast",
+        "quorune.rules.morph_actions.commit_turn_face_up",
+        "quorune.counter_placement.prepare_counter_placements",
+        "quorune.counter_placement.commit_prepared_counter_placements",
+        "quorune.mana_payment_continuations.execute_mana_choice_capable_priority_action",
+        "quorune.activation_mana_cost.fixed_complex_activation_mana_options"
+      ],
+      "positive_tests": [
+        "test_fixed_face_down_methods_compile_and_fail_closed",
+        "test_printed_turn_up_method_preserves_advertised_identity_and_fingerprint",
+        "test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict"
+      ],
+      "negative_tests": [
+        "test_fixed_face_down_methods_compile_and_fail_closed",
+        "test_layer_six_removal_uses_shared_face_down_method_query",
+        "test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict"
+      ],
+      "interaction_tests": [
+        "test_megamorph_counter_precedes_face_up_trigger_and_replays",
+        "test_megamorph_counter_replacement_suspends_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_megamorph_counter_precedes_face_up_trigger_and_replays"
+      ],
+      "privacy_tests": [
+        "test_megamorph_counter_precedes_face_up_trigger_and_replays",
+        "test_megamorph_counter_replacement_suspends_and_replays"
+      ],
+      "replay_tests": [
+        "test_megamorph_counter_precedes_face_up_trigger_and_replays",
+        "test_megamorph_counter_replacement_suspends_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking canonical counter placement prevents Megamorph's exact keyword node and complete-card runtime admission; there is no direct counter mutation fallback.",
       "implementation_mutation_status": "killed",
@@ -18815,28 +18977,118 @@
     },
     {
       "id": "casting.disguise.fixed_mana",
-      "version": 2,
-      "official_rules": ["116.2b", "601.2b", "601.2f", "601.2h", "702.21", "702.168", "702.168a", "702.168b", "708.2", "708.4", "708.5", "708.8", "708.9"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 3,
+      "official_rules": [
+        "116.2b",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.21",
+        "702.168",
+        "702.168a",
+        "702.168b",
+        "708.2",
+        "708.4",
+        "708.5",
+        "708.8",
+        "708.9",
+        "107.4e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Compile one ordinary fixed-mana Disguise ability into the shared face-down cast and turn-up special action with a canonical fixed-generic Ward fragment while face down.",
-        "inputs": ["one physical normal-layout permanent card", "one source-spanned ordinary Disguise line", "one fixed ordinary mana turn-up cost", "current priority", "current face-up effective Disguise presence"],
-        "outputs": ["private server-authored face-down cast for {3}", "layer-1b 2/2 face-down creature characteristics", "current Ward {2} fragment while face down", "fixed-cost turn-face-up offer", "Ward removal on reveal", "exact replay"],
-        "exclusions": ["Morph, Megamorph, cloak, manifest, and other face-down methods", "variable, hybrid, Phyrexian, snow, or nonmana costs", "copied, granted, or text-changed Disguise", "card copies, spell copies, tokens, multiface cards, and merged permanents", "as-turned-face-up replacement abilities", "ability-changing interactions outside the shared current effective keyword boundary"]
+        "summary": "Compile one ordinary fixed-mana Disguise ability into the shared face-down cast and turn-up special action with a canonical fixed-generic Ward fragment while face down. Schema-two fixed two-color hybrid turn-up costs expand through the existing immutable mana options. Every currently payable combination has a separate authoritative special-action offer; the selected combination is revalidated and paid with no activation-only spending context.",
+        "inputs": [
+          "one physical normal-layout permanent card",
+          "one source-spanned ordinary Disguise line",
+          "one fixed ordinary mana turn-up cost",
+          "current priority",
+          "current face-up effective Disguise presence"
+        ],
+        "outputs": [
+          "private server-authored face-down cast for {3}",
+          "layer-1b 2/2 face-down creature characteristics",
+          "current Ward {2} fragment while face down",
+          "fixed-cost turn-face-up offer",
+          "Ward removal on reveal",
+          "exact replay"
+        ],
+        "exclusions": [
+          "Morph, Megamorph, cloak, manifest, and other face-down methods",
+          "variable, Phyrexian, snow, or nonmana costs",
+          "copied, granted, or text-changed Disguise",
+          "card copies, spell copies, tokens, multiface cards, and merged permanents",
+          "as-turned-face-up replacement abilities",
+          "ability-changing interactions outside the shared current effective keyword boundary",
+          "monocolored hybrid, Phyrexian, snow, variable, nonmana or conditionally reduced turn-up costs"
+        ]
       },
-      "dependencies": ["trigger.keyword.ward.fixed_generic"],
-      "implementation_components": ["quorune.morph.FixedManaFaceDownMethodSpec", "quorune.morph.face_down_characteristics", "quorune.compiler.keyword_nodes.fixed_mana_morph_keyword_node", "quorune.semantic_runtime.morph.FixedManaMorphHandler", "quorune.compiled_morph.compiled_fixed_mana_face_down_method_spec", "quorune.rules.casting.proposal.build_cast_offer", "quorune.rules.casting.commit.commit_cast", "quorune.rules.morph_actions.commit_turn_face_up", "quorune.trigger_processing.collect_ward_occurrences"],
-      "positive_tests": ["test_fixed_face_down_methods_compile_and_fail_closed", "test_printed_turn_up_method_preserves_advertised_identity_and_fingerprint"],
-      "negative_tests": ["test_fixed_face_down_methods_compile_and_fail_closed", "test_layer_six_removal_uses_shared_face_down_method_query"],
-      "interaction_tests": ["test_disguise_ward_uses_face_down_characteristics_only"],
-      "multiplayer_tests": ["test_disguise_ward_uses_face_down_characteristics_only"],
-      "privacy_tests": ["test_disguise_ward_uses_face_down_characteristics_only"],
-      "replay_tests": ["test_disguise_ward_uses_face_down_characteristics_only"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "trigger.keyword.ward.fixed_generic"
+      ],
+      "implementation_components": [
+        "quorune.morph.FixedManaFaceDownMethodSpec",
+        "quorune.morph.face_down_characteristics",
+        "quorune.compiler.keyword_nodes.fixed_mana_morph_keyword_node",
+        "quorune.semantic_runtime.morph.FixedManaMorphHandler",
+        "quorune.compiled_morph.compiled_fixed_mana_face_down_method_spec",
+        "quorune.rules.casting.proposal.build_cast_offer",
+        "quorune.rules.casting.commit.commit_cast",
+        "quorune.rules.morph_actions.commit_turn_face_up",
+        "quorune.trigger_processing.collect_ward_occurrences",
+        "quorune.activation_mana_cost.fixed_complex_activation_mana_options"
+      ],
+      "positive_tests": [
+        "test_fixed_face_down_methods_compile_and_fail_closed",
+        "test_printed_turn_up_method_preserves_advertised_identity_and_fingerprint",
+        "test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict",
+        "test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay",
+        "test_actual_hybrid_dog_walker_all_payments_trigger_after_turn_up_and_load",
+        "test_nine_actual_fixed_hybrid_disguise_originals_bind_completely",
+        "test_actual_manifested_hybrid_original_uses_its_disguise_alternative_after_load"
+      ],
+      "negative_tests": [
+        "test_fixed_face_down_methods_compile_and_fail_closed",
+        "test_layer_six_removal_uses_shared_face_down_method_query",
+        "test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict",
+        "test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay"
+      ],
+      "interaction_tests": [
+        "test_disguise_ward_uses_face_down_characteristics_only",
+        "test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay",
+        "test_actual_hybrid_dog_walker_all_payments_trigger_after_turn_up_and_load",
+        "test_actual_manifested_hybrid_original_uses_its_disguise_alternative_after_load"
+      ],
+      "multiplayer_tests": [
+        "test_disguise_ward_uses_face_down_characteristics_only",
+        "test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay"
+      ],
+      "privacy_tests": [
+        "test_disguise_ward_uses_face_down_characteristics_only",
+        "test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay",
+        "test_actual_manifested_hybrid_original_uses_its_disguise_alternative_after_load"
+      ],
+      "replay_tests": [
+        "test_disguise_ward_uses_face_down_characteristics_only",
+        "test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay",
+        "test_actual_hybrid_dog_walker_all_payments_trigger_after_turn_up_and_load",
+        "test_actual_manifested_hybrid_original_uses_its_disguise_alternative_after_load"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking fixed-generic Ward prevents Disguise's exact keyword node and complete-card runtime admission; face-down characteristics cannot gain an untrusted executable Ward fallback.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Focused compiler, characteristic-fragment, current-ability, and Ward-consumption assertions reject method-specific or prose-driven survivors.",
+      "implementation_mutation_rationale": "Focused compiler, characteristic-fragment, current-ability, and Ward-consumption assertions reject method-specific or prose-driven survivors. The hybrid generic-fee omission mutant keeps complete original admission but fails the exact native mana balance.",
       "blockers": [],
       "status": "trusted"
     },

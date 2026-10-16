@@ -4669,6 +4669,22 @@
         "test_regeneration_rules",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "fixed-hybrid-face-down-payment-contract",
+      "patterns": [
+        "quorune/morph.py",
+        "quorune/rules/morph_actions.py",
+        "quorune/activation_mana_cost.py",
+        "tests/fixtures/face-down-method-cards.json"
+      ],
+      "test_modules": [
+        "test_morph_rules",
+        "test_manifest",
+        "test_complex_activation_mana_costs",
+        "test_card_program_trust",
+        "test_fixed_counter_keyword_activations"
+      ]
     }
   ],
   "symbol_rules": [
