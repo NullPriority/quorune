@@ -330,6 +330,9 @@ payment. The trigger retains the creating ability's controller and source
 incarnation. Repeated payments, nested optional costs and unrepresented
 paid-object antecedents remain residual. Earlier payment schemas keep their
 existing decoding and timing.
+Source damage in these frames uses the shared current/last-known source owner;
+a departed source's controller and keywords remain independent of the
+controller of the reflexive ability.
 
 `ability.activated.mana.color-set.v1` binds a compiler-pinned relative object
 query to the activating seat and reads only matching public battlefield

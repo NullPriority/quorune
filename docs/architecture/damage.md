@@ -1,7 +1,7 @@
 ---
 title: "Damage transaction"
 status: "current"
-authoritative_source: "quorune/damage.py, quorune/damage_values.py, quorune/damage_results.py, quorune/turn_history.py, quorune/counter_placement.py, quorune/counter_removal.py, quorune/life_state.py, quorune/fixed_damage_set*, quorune/rules/damage_capability_shapes.py, and quorune/combat_damage_*"
+authoritative_source: "quorune/rules/stack_damage_sources.py, quorune/damage.py, quorune/damage_values.py, quorune/damage_results.py, quorune/turn_history.py, quorune/counter_placement.py, quorune/counter_removal.py, quorune/life_state.py, quorune/fixed_damage_set*, quorune/rules/damage_capability_shapes.py, and quorune/combat_damage_*"
 verified: "2026-08-07"
 audience: "rules, semantics, replay, and architecture contributors"
 maintenance: "hand-maintained"
@@ -22,6 +22,22 @@ partners. Recipient color and supertype facts accompany them. Redirection
 replaces these facts with the destination snapshot; it recomputes block-pair
 and shared-color relations instead of inheriting the former recipient's scope.
 Empty source and redirection extensions preserve their legacy serialized form.
+
+Fixed source damage retains its physical and logical source identity in the
+creating stack frame. While that incarnation remains in its expected zone,
+damage uses current effective source facts. Immediately before departure, the
+zone owner pins the complete damage-source snapshot into matching stack and
+waiting-trigger frames. Resolution uses those last-known facts after departure
+and never reads a returned incarnation. This includes source controller and
+keywords such as lifelink; the resolving ability keeps its own controller.
+Current facts are read at the individual damage instruction after any paid
+prefix. Once a damage proposal is sealed, replacement-choice resumption retains
+that proposal's source facts.
+Single-recipient, opponent-set and fixed affected-set damage feed the same
+validated snapshot into the canonical transaction. A source-excluding affected
+set excludes the original incarnation, so a returned creature is another object.
+Face-down source snapshots withhold hidden Oracle identity. Legacy frames
+without a represented physical source retain their existing compatibility path.
 
 ```mermaid
 flowchart LR

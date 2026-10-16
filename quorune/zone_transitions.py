@@ -37,6 +37,7 @@ from .life_state import (
 from .kicker import KICKER_ANNOTATION
 from .model import CardInstance, GameState, StackItem
 from .relative_power_target import pin_host_relative_power_source_departures
+from .zone_trigger_processing import _damage_source_characteristics
 from .scalar_effect_amounts import pin_scalar_characteristic_departures
 from .station import pin_host_station_departures
 from .semantic_runtime import (
@@ -102,6 +103,7 @@ class ZoneTransitionOwner:
             (item, copy.deepcopy(item.context))
             for item in self.state.stack
         )
+        pending_before = tuple(self.state.pending_trigger_batches)
         try:
             pin_scalar_characteristic_departures(self.host, cards, error_type=StateInvariantError)
             from .token_copy_references import pin_copy_characteristic_departures
@@ -116,9 +118,14 @@ class ZoneTransitionOwner:
                 cards,
                 error_type=StateInvariantError,
             )
+            from .rules.stack_damage_sources import pin_stack_damage_departures
+            pin_stack_damage_departures(self.host, cards, error_type=StateInvariantError)
         except StateInvariantError:
             for item, context in contexts:
                 item.context = context
+            from .trigger_processing import replace_pending_trigger_batch
+            for index, batch in enumerate(pending_before):
+                replace_pending_trigger_batch(self.host, index, batch)
             raise
 
     def semantic_event_sources(self, *, zones: set[str] | None = None) -> list[CardInstance]:
@@ -476,7 +483,7 @@ class ZoneTransitionOwner:
             card,
         )
         characteristics = (
-            copy.deepcopy(self.host._effective_card_data(card))
+            _damage_source_characteristics(self.host, card)
             if semantic_events
             else {}
         )
@@ -948,7 +955,7 @@ class ZoneTransitionOwner:
             sources=sources,
             source_zones={source.object_id: source.zone for source in sources},
             source_characteristics={
-                source.object_id: copy.deepcopy(self.host._effective_card_data(source))
+                source.object_id: _damage_source_characteristics(self.host, source)
                 for source in sources
             },
         )

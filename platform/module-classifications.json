@@ -9785,6 +9785,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/stack_damage_sources.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/staged_cast_lifecycles.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -13758,5 +13772,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "1653350ecee6aa1fd167024999201dee8f0642379820020bd36bd69171876e74"
+  "fingerprint": "0296ccb05595afa9f9b17014094bdc4086da9c13a0e70ae4f1b7ce017b8c4e52"
 }

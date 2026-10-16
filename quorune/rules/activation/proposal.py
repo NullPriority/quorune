@@ -249,7 +249,8 @@ def _creature_power_damage_context(
         )
     from ...scalar_effect_amounts import scalar_source_context
     from ...token_copy_references import copy_source_context
-    return scalar_source_context(host, source, program.effects) | copy_source_context(host, source, program.effects) | (
+    from ..stack_damage_sources import fixed_damage_source_context
+    return scalar_source_context(host, source, program.effects) | copy_source_context(host, source, program.effects) | fixed_damage_source_context(host, source, (program.effects, program.target_schema)) | (
         {CREATURE_POWER_DAMAGE_LKI_CONTEXT: source_lki}
         if source_lki is not None
         else {}

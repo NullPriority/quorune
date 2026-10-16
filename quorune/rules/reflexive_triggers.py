@@ -32,6 +32,9 @@ def enqueue_reflexive_trigger(host, intent):
     if source is not None:
         if not context.get('source_logical_object_id'):
             context['source_logical_object_id'] = source.logical_object_id
+        if source.logical_object_id == context['source_logical_object_id'] and 'source_damage_snapshot' not in context:
+            from .stack_damage_sources import fixed_damage_source_context
+            context.update(fixed_damage_source_context(host, source, consequence.effects))
     context.update(event='trigger.reflexive', reflexive_parent=parent.ref,
         dynamic_effects=consequence.to_dict()['effects'])
     if consequence.target_schema is not None:

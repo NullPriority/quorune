@@ -12,6 +12,7 @@ from .damage import (
     source_snapshot,
 )
 from .damage_values import DamageProposal
+from .damage_source import DamageSourceSnapshot
 from .affected_permanents import (
     AffectedPermanentSetError,
     AffectedPermanentSetSpec,
@@ -140,6 +141,7 @@ def snapshot_fixed_damage_set(
     actor: str,
     spec: FixedDamageSetSpec,
     source_ref: str | None = None,
+    source_logical_object_id: str | None = None,
 ) -> FixedDamageSetSnapshot:
     """Materialize one immutable simultaneous recipient set from public facts."""
 
@@ -191,7 +193,8 @@ def snapshot_fixed_damage_set(
                     query=group.query,
                     controller_relation=group.controller_relation,
                     target_controller=group.target_controller,
-                    exclude_source=group.exclude_source,
+                    exclude_source=group.exclude_source and (source_logical_object_id is None or any(
+                        row.ref == source_ref and row.logical_object_id == source_logical_object_id for row in rows)),
                 ),
                 actor=actor,
                 active_seats=active,
@@ -231,6 +234,7 @@ def resolve_fixed_damage_set(
         str | None | Mapping[str, object]
     ] = (),
     replacement_event_ids: Sequence[str] = (),
+    source_override: Mapping[str, Any] | None = None,
 ) -> DamageBatchResult:
     """Resolve one fixed set as one canonical simultaneous damage batch."""
 
@@ -244,11 +248,22 @@ def resolve_fixed_damage_set(
         raise FixedDamageSetError(
             "Fixed damage set amount must be a nonnegative integer"
         )
+    try:
+        source = (DamageSourceSnapshot.from_dict(dict(source_override)) if source_override is not None
+                  else source_snapshot(host, source_ref, controller=actor))
+    except (DamageError, TypeError, ValueError) as exc:
+        raise FixedDamageSetError(str(exc)) from exc
+    if source.ref != source_ref:
+        raise FixedDamageSetError('Fixed damage source snapshot identity changed')
+    if source_override is not None:
+        from .rules.stack_damage_sources import refresh_stack_damage_source
+        source = refresh_stack_damage_source(host, source, sealed=bool(replacement_event_ids))
     snapshot = snapshot_fixed_damage_set(
         host,
         actor=actor,
         spec=spec,
         source_ref=source_ref,
+        source_logical_object_id=source.logical_object_id,
     )
     event_ids = tuple(replacement_event_ids)
     if any(type(value) is not str or not value for value in event_ids):
@@ -260,7 +275,6 @@ def resolve_fixed_damage_set(
             "Fixed damage replacement event identity count is stale"
         )
     try:
-        source = source_snapshot(host, source_ref, controller=actor)
         proposals: list[DamageProposal] = []
         for index, recipient in enumerate(snapshot.recipients):
             current = recipient_snapshot(host, recipient.ref, actor=actor)

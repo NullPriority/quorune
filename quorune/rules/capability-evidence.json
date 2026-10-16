@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "a2dd0e2513b6cb1032d7fa59a6ebc171f618a07ddea4ff90bd652655b8a8cc02",
-  "declaration_source_fingerprint": "8c8931576d01b98e529e7ebeb79a938acaf6e7feccd9119c068aaae34d56643e",
+  "registry_fingerprint": "1b3b51c28d08ac98b23f65e4a17353f1bd30ae3a2db56194b7626e92ba4c45a9",
+  "declaration_source_fingerprint": "2b517eff311494a032c67e8810cc1cc0abac38d282c18146c81155c10627f7fc",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -76035,6 +76035,776 @@
       "applicability_note": "Apply wither damage to creatures as -1/-1 counters."
     },
     {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_hellion_fixed_damage_set_retains_departed_source_lifelink",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_myr_death_trigger_uses_predeparture_source_facts_and_controller",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_roastmaster_keeps_ability_opponents_separate_from_damage_source_controller",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source information is sampled at the actual damage instruction after its paid prefix, while a sealed canonical damage proposal keeps its source facts through replacement-choice resumption. Actual Aura sacrifice removes lifelink before damage; source departure facts retain their original logical incarnation."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiValueTests.test_other_creatures_include_a_new_incarnation_of_the_original_damage_source",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiValueTests.test_prepared_damage_event_keeps_its_sealed_source_facts",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source information is sampled at the actual damage instruction after its paid prefix, while a sealed canonical damage proposal keeps its source facts through replacement-choice resumption. Actual Aura sacrifice removes lifelink before damage; source departure facts retain their original logical incarnation."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_hellion_fixed_damage_set_retains_departed_source_lifelink",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_myr_death_trigger_uses_predeparture_source_facts_and_controller",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_roastmaster_keeps_ability_opponents_separate_from_damage_source_controller",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source information is sampled at the actual damage instruction after its paid prefix, while a sealed canonical damage proposal keeps its source facts through replacement-choice resumption. Actual Aura sacrifice removes lifelink before damage; source departure facts retain their original logical incarnation."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiValueTests.test_other_creatures_include_a_new_incarnation_of_the_original_damage_source",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiValueTests.test_prepared_damage_event_keeps_its_sealed_source_facts",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source information is sampled at the actual damage instruction after its paid prefix, while a sealed canonical damage proposal keeps its source facts through replacement-choice resumption. Actual Aura sacrifice removes lifelink before damage; source departure facts retain their original logical incarnation."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiValueTests.test_source_binding_never_reads_a_new_incarnation_and_rejects_wrong_identity",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiValueTests.test_source_damage_capability_is_required_before_program_admission",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiValueTests.test_waiting_batches_pin_once_and_failed_snapshot_preparation_publishes_no_updates",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_hellion_fixed_damage_set_retains_departed_source_lifelink",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_myr_death_trigger_uses_predeparture_source_facts_and_controller",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_roastmaster_keeps_ability_opponents_separate_from_damage_source_controller",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source information is sampled at the actual damage instruction after its paid prefix, while a sealed canonical damage proposal keeps its source facts through replacement-choice resumption. Actual Aura sacrifice removes lifelink before damage; source departure facts retain their original logical incarnation."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiValueTests.test_prepared_damage_event_keeps_its_sealed_source_facts",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source information is sampled at the actual damage instruction after its paid prefix, while a sealed canonical damage proposal keeps its source facts through replacement-choice resumption. Actual Aura sacrifice removes lifelink before damage; source departure facts retain their original logical incarnation."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiValueTests.test_source_damage_capability_is_required_before_program_admission",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiValueTests.test_face_down_source_snapshots_withhold_hidden_oracle_identity",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_hellion_fixed_damage_set_retains_departed_source_lifelink",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_myr_death_trigger_uses_predeparture_source_facts_and_controller",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_roastmaster_keeps_ability_opponents_separate_from_damage_source_controller",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source information is sampled at the actual damage instruction after its paid prefix, while a sealed canonical damage proposal keeps its source facts through replacement-choice resumption. Actual Aura sacrifice removes lifelink before damage; source departure facts retain their original logical incarnation."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_myr_death_trigger_uses_predeparture_source_facts_and_controller",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiValueTests.test_waiting_batches_pin_once_and_failed_snapshot_preparation_publishes_no_updates",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
       "capability_id": "damage.trigger.noncombat",
       "evidence_class": "negative",
       "test_id": "tests.test_monarch_rules.MonarchRuleTests.test_nonqualifying_damage_does_not_create_a_transfer_trigger",
@@ -144524,5 +145294,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "6ebd8134552a231dd606cc51cc87d1dd424cfcd8997a8184c83213120e2948e9"
+  "fingerprint": "3f3eca1be94de2519b7789bd3f48c89cb32ea601744bf87cc392c62121262341"
 }

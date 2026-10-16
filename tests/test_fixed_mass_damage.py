@@ -379,6 +379,7 @@ class FixedMassDamageCompilerTests(unittest.TestCase):
         )
         self.assertTrue(
             {
+                "damage.source.stack_current_or_lki",
                 "damage.amount.positive",
                 "damage.batch.fixed_set",
                 "damage.result.player_life",
@@ -417,6 +418,7 @@ class FixedMassDamageCompilerTests(unittest.TestCase):
         )
         self.assertEqual(
             {
+                "damage.source.stack_current_or_lki",
                 "damage.amount.positive",
                 "damage.batch.fixed_set",
                 "damage.result.multitype_permanent",

@@ -126,7 +126,7 @@ def _fixed_set_damage_capabilities(
     )
     if not valid_target or targeted and "cr-115-targets" not in mechanics:
         return ()
-    dependencies = {"damage.amount.positive", "damage.batch.fixed_set"}
+    dependencies = {"damage.amount.positive", "damage.batch.fixed_set", "damage.source.stack_current_or_lki"}
     if any(isinstance(group, PlayerDamageGroup) for group in spec.groups):
         dependencies.add("damage.result.player_life")
     permanent_groups = tuple(
@@ -189,7 +189,7 @@ def _fixed_direct_damage_capabilities(
         direct_target = DirectPermanentTargetSpec.from_target_schema(schema)
     if domain is None and direct_target is None:
         return ()
-    dependencies = {"damage.amount.positive"}
+    dependencies = {"damage.amount.positive", "damage.source.stack_current_or_lki"}
     if domain in _PLAYER_DAMAGE_DOMAINS:
         dependencies.add("damage.result.player_life")
     if domain in _PERMANENT_DAMAGE_DOMAINS or direct_target is not None:
@@ -226,7 +226,7 @@ def fixed_damage_node_capabilities(
     if (target_schema is None and set(effect)=={'op','source','target','amount'}
             and effect.get('op')=='damage' and effect.get('source')=='$source'
             and effect.get('target')=='$controller' and _positive_int(effect.get('amount'))):
-        return ('damage.amount.positive','damage.result.player_life')
+        return ('damage.amount.positive','damage.result.player_life','damage.source.stack_current_or_lki')
     if (
         target_schema is None
         and set(effect) == {"op", "source", "amount"}
@@ -234,7 +234,7 @@ def fixed_damage_node_capabilities(
         and effect.get("source") == "$source"
         and _positive_int(effect.get("amount"))
     ):
-        return ("damage.amount.positive", "damage.result.player_life")
+        return ("damage.amount.positive", "damage.result.player_life", "damage.source.stack_current_or_lki")
     return _fixed_direct_damage_capabilities(effect, target_schema, mechanics)
 
 

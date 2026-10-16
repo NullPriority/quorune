@@ -106,12 +106,15 @@ def capture_departure_trigger_sources(
         sources=sources,
         source_zones={source.object_id: source.zone for source in sources},
         source_characteristics={
-            source.object_id: copy.deepcopy(
-                host._effective_card_data(source)
-            )
+            source.object_id: _damage_source_characteristics(host, source)
             for source in sources
         },
     )
+
+
+def _damage_source_characteristics(host, source):
+    from .rules.stack_damage_sources import capture_damage_source_characteristics
+    return capture_damage_source_characteristics(host, source)
 
 
 def dispatch_zone_change_occurrence(

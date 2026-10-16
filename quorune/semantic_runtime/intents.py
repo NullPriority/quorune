@@ -434,6 +434,7 @@ class DealFixedDamageSetIntent:
     reason: str
     replacement_selections: tuple[str | FrozenMap, ...] = ()
     replacement_event_ids: tuple[str, ...] = ()
+    source_snapshot: FrozenMap | None = None
 
     def __post_init__(self) -> None:
         if any(
@@ -469,6 +470,12 @@ class DealFixedDamageSetIntent:
                 "Fixed damage-set replacement event identities must be unique"
             )
         object.__setattr__(self, "replacement_event_ids", event_ids)
+        if self.source_snapshot is not None:
+            from ..damage_source import DamageSourceSnapshot
+            snapshot = DamageSourceSnapshot.from_dict(dict(self.source_snapshot))
+            if snapshot.ref != self.source_ref:
+                raise ValueError('Fixed damage-set source snapshot identity changed')
+            object.__setattr__(self, 'source_snapshot', FrozenMap(snapshot.to_dict()))
 
 
 @dataclass(frozen=True, slots=True)

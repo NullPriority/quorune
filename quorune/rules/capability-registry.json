@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 303,
+  "registry_version": 304,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -244,6 +244,114 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "damage.source.stack_current_or_lki",
+      "version": 1,
+      "official_rules": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Represented fixed source damage binds current source characteristics while the original incarnation remains in its expected zone, otherwise immediate last-known facts retained in its stack or waiting-trigger frame.",
+        "inputs": [
+          "typed source identity and expected logical incarnation",
+          "current effective public characteristics",
+          "rollback-safe immediate predeparture damage source facts",
+          "registered fixed single, opponent-set and affected-set damage instructions"
+        ],
+        "outputs": [
+          "source-correct controller and keyword facts",
+          "canonical DamageSourceSnapshot override",
+          "distinct ability-controller and damage-source-controller semantics",
+          "incarnation-correct other-object exclusion"
+        ],
+        "exclusions": [
+          "unrepresented non-card source identities",
+          "arbitrary raw source references outside the represented frame",
+          "new player binding or runtime Oracle interpretation"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.rules.stack_damage_sources.fixed_damage_source_context",
+        "quorune.rules.stack_damage_sources.pin_stack_damage_departures",
+        "quorune.rules.stack_damage_sources.bound_stack_damage_source",
+        "quorune.rules.damage_snapshots.source_snapshot",
+        "quorune.semantic_runtime.values.resolve_semantic_value",
+        "quorune.fixed_damage_set.resolve_fixed_damage_set",
+        "quorune.trigger_processing.replace_pending_trigger_batch",
+        "quorune.rules.stack_damage_sources.refresh_stack_damage_source"
+      ],
+      "positive_tests": [
+        "test_source_damage_capability_is_required_before_program_admission",
+        "test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
+        "test_original_hellion_fixed_damage_set_retains_departed_source_lifelink",
+        "test_original_myr_death_trigger_uses_predeparture_source_facts_and_controller",
+        "test_original_roastmaster_keeps_ability_opponents_separate_from_damage_source_controller",
+        "test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant",
+        "test_prepared_damage_event_keeps_its_sealed_source_facts"
+      ],
+      "negative_tests": [
+        "test_source_damage_capability_is_required_before_program_admission",
+        "test_source_binding_never_reads_a_new_incarnation_and_rejects_wrong_identity",
+        "test_waiting_batches_pin_once_and_failed_snapshot_preparation_publishes_no_updates",
+        "test_other_creatures_include_a_new_incarnation_of_the_original_damage_source",
+        "test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant",
+        "test_prepared_damage_event_keeps_its_sealed_source_facts"
+      ],
+      "interaction_tests": [
+        "test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
+        "test_original_hellion_fixed_damage_set_retains_departed_source_lifelink",
+        "test_original_myr_death_trigger_uses_predeparture_source_facts_and_controller",
+        "test_original_roastmaster_keeps_ability_opponents_separate_from_damage_source_controller",
+        "test_other_creatures_include_a_new_incarnation_of_the_original_damage_source",
+        "test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant",
+        "test_prepared_damage_event_keeps_its_sealed_source_facts"
+      ],
+      "multiplayer_tests": [
+        "test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
+        "test_original_hellion_fixed_damage_set_retains_departed_source_lifelink",
+        "test_original_myr_death_trigger_uses_predeparture_source_facts_and_controller",
+        "test_original_roastmaster_keeps_ability_opponents_separate_from_damage_source_controller"
+      ],
+      "privacy_tests": [
+        "test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
+        "test_face_down_source_snapshots_withhold_hidden_oracle_identity"
+      ],
+      "replay_tests": [
+        "test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
+        "test_original_hellion_fixed_damage_set_retains_departed_source_lifelink",
+        "test_original_myr_death_trigger_uses_predeparture_source_facts_and_controller",
+        "test_original_roastmaster_keeps_ability_opponents_separate_from_damage_source_controller",
+        "test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The independent source capability is required by every represented fixed-damage node; malformed/mismatched source snapshots are rejected and new incarnations cannot supply old-source information.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The actual original Crook source-departure witness detects omission of immediate departure pinning, after full paid actions, privacy, pending load and complete pre-action replay.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "trigger.reflexive.fixed_action_result",
       "version": 1,
