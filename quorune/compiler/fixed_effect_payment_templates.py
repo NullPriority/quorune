@@ -26,6 +26,8 @@ def fixed_effect_payment_spec(text: str) -> FixedEffectPaymentSpec | None:
     value=text.strip()
     exile = _owned_graveyard_exile_payment(value)
     if exile is not None:return exile
+    tap = _fixed_untapped_permanent_payment(value)
+    if tap is not None:return tap
     energy=re.fullmatch(r'pay (?P<symbols>(?:\{E\})+)',value,re.I)
     if energy is not None:return FixedEffectPaymentSpec('energy',amount=len(energy['symbols'])//3)
     mana=re.fullmatch(r"pay (?P<cost>(?:\{(?:[0-9]+|[WUBRGC])\})+)",value,re.I)
@@ -53,6 +55,22 @@ def fixed_effect_payment_spec(text: str) -> FixedEffectPaymentSpec | None:
             predicate=zone_cost.predicate
         return FixedEffectPaymentSpec('sacrifice',predicate=replace(predicate,controller='$controller'))
     return None
+
+
+def _fixed_untapped_permanent_payment(value):
+    from .activated_tap_costs import fixed_tap_activation_cost_choice
+    from ..object_predicate import ObjectQuerySpec
+    normalized=value.casefold()
+    surface,nonhuman=re.subn(r'\bnon-human (?=creatures?\b)','',normalized,count=1)
+    choice=fixed_tap_activation_cost_choice(surface)
+    if choice is None:return None
+    predicate=ObjectQuerySpec.from_dict(choice.predicate)
+    if nonhuman and predicate.types_all!=('creature',):return None
+    predicate=replace(predicate,controller='$controller',
+        exclude_ref='$source.zone_object' if choice.another else None,
+        excluded_subtypes=('human',) if nonhuman else ())
+    try:return FixedEffectPaymentSpec('tap',amount=choice.count,predicate=predicate,schema_version=3)
+    except (TypeError,ValueError):return None
 
 
 def _owned_graveyard_exile_payment(value):

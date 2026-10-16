@@ -34513,6 +34513,384 @@
       "applicability_note": "Actual original Kishla, Young Necromancer, Master Skald and Tymaret pay their owned graveyard exile costs through real cast and resolving choices. Stored controller does not replace owner, exact-two rejects partial/duplicate selections, If/When target timing remains distinct, exiled original targets do not return, mandatory mill survives decline, and private four-seat projection/rollback/pending-load/preaction replay agree."
     },
     {
+      "capability_id": "cost.tap.controlled_untapped_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_tap_payments.FixedTapPaymentCompilerTests.test_another_exclusion_binds_only_the_original_source_incarnation",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.12",
+        "302.6",
+        "400.7",
+        "506.4b",
+        "603.3a",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Raff, Civil Servant and Redcap use real casts and resolution-time tap choices. Exact distinct counts, fresh creatures, current controller versus owner, locked payer after control changes, non-Human and another predicates, vigilant attacking source, tap-trigger group, atomic rejection, principal privacy and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "cost.tap.controlled_untapped_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_tap_payments.FixedTapPaymentRuntimeTests.test_actual_civil_servant_excludes_vigilant_source_and_uses_currently_controlled_citizen",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.12",
+        "302.6",
+        "400.7",
+        "506.4b",
+        "603.3a",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Raff, Civil Servant and Redcap use real casts and resolution-time tap choices. Exact distinct counts, fresh creatures, current controller versus owner, locked payer after control changes, non-Human and another predicates, vigilant attacking source, tap-trigger group, atomic rejection, principal privacy and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "cost.tap.controlled_untapped_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_tap_payments.FixedTapPaymentRuntimeTests.test_actual_raff_taps_exactly_two_fresh_creatures_with_locked_payer_and_private_replay",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.12",
+        "302.6",
+        "400.7",
+        "506.4b",
+        "603.3a",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Raff, Civil Servant and Redcap use real casts and resolution-time tap choices. Exact distinct counts, fresh creatures, current controller versus owner, locked payer after control changes, non-Human and another predicates, vigilant attacking source, tap-trigger group, atomic rejection, principal privacy and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "cost.tap.controlled_untapped_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_tap_payments.FixedTapPaymentRuntimeTests.test_actual_redcap_can_tap_its_vigilant_attacking_self_without_leaving_combat_or_can_decline",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.12",
+        "302.6",
+        "400.7",
+        "506.4b",
+        "603.3a",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Raff, Civil Servant and Redcap use real casts and resolution-time tap choices. Exact distinct counts, fresh creatures, current controller versus owner, locked payer after control changes, non-Human and another predicates, vigilant attacking source, tap-trigger group, atomic rejection, principal privacy and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "cost.tap.controlled_untapped_resolution",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_tap_payments.FixedTapPaymentRuntimeTests.test_actual_raff_taps_exactly_two_fresh_creatures_with_locked_payer_and_private_replay",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.12",
+        "302.6",
+        "400.7",
+        "506.4b",
+        "603.3a",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Raff, Civil Servant and Redcap use real casts and resolution-time tap choices. Exact distinct counts, fresh creatures, current controller versus owner, locked payer after control changes, non-Human and another predicates, vigilant attacking source, tap-trigger group, atomic rejection, principal privacy and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "cost.tap.controlled_untapped_resolution",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_tap_payments.FixedTapPaymentCompilerTests.test_fixed_untapped_controlled_costs_preserve_quality_count_and_result_timing",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.12",
+        "302.6",
+        "400.7",
+        "506.4b",
+        "603.3a",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Raff, Civil Servant and Redcap use real casts and resolution-time tap choices. Exact distinct counts, fresh creatures, current controller versus owner, locked payer after control changes, non-Human and another predicates, vigilant attacking source, tap-trigger group, atomic rejection, principal privacy and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "cost.tap.controlled_untapped_resolution",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_tap_payments.FixedTapPaymentCompilerTests.test_source_variable_linked_and_combined_tap_costs_stay_residual",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.12",
+        "302.6",
+        "400.7",
+        "506.4b",
+        "603.3a",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Raff, Civil Servant and Redcap use real casts and resolution-time tap choices. Exact distinct counts, fresh creatures, current controller versus owner, locked payer after control changes, non-Human and another predicates, vigilant attacking source, tap-trigger group, atomic rejection, principal privacy and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "cost.tap.controlled_untapped_resolution",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_tap_payments.FixedTapPaymentCompilerTests.test_tap_payload_rejects_wrong_version_or_open_predicates",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.12",
+        "302.6",
+        "400.7",
+        "506.4b",
+        "603.3a",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Raff, Civil Servant and Redcap use real casts and resolution-time tap choices. Exact distinct counts, fresh creatures, current controller versus owner, locked payer after control changes, non-Human and another predicates, vigilant attacking source, tap-trigger group, atomic rejection, principal privacy and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "cost.tap.controlled_untapped_resolution",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_tap_payments.FixedTapPaymentCompilerTests.test_withdrawn_tap_payment_capability_prevents_promotion",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.12",
+        "302.6",
+        "400.7",
+        "506.4b",
+        "603.3a",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Raff, Civil Servant and Redcap use real casts and resolution-time tap choices. Exact distinct counts, fresh creatures, current controller versus owner, locked payer after control changes, non-Human and another predicates, vigilant attacking source, tap-trigger group, atomic rejection, principal privacy and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "cost.tap.controlled_untapped_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_tap_payments.FixedTapPaymentCompilerTests.test_fixed_untapped_controlled_costs_preserve_quality_count_and_result_timing",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.12",
+        "302.6",
+        "400.7",
+        "506.4b",
+        "603.3a",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Raff, Civil Servant and Redcap use real casts and resolution-time tap choices. Exact distinct counts, fresh creatures, current controller versus owner, locked payer after control changes, non-Human and another predicates, vigilant attacking source, tap-trigger group, atomic rejection, principal privacy and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "cost.tap.controlled_untapped_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_tap_payments.FixedTapPaymentCompilerTests.test_tap_payload_rejects_wrong_version_or_open_predicates",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.12",
+        "302.6",
+        "400.7",
+        "506.4b",
+        "603.3a",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Raff, Civil Servant and Redcap use real casts and resolution-time tap choices. Exact distinct counts, fresh creatures, current controller versus owner, locked payer after control changes, non-Human and another predicates, vigilant attacking source, tap-trigger group, atomic rejection, principal privacy and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "cost.tap.controlled_untapped_resolution",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_tap_payments.FixedTapPaymentRuntimeTests.test_actual_raff_taps_exactly_two_fresh_creatures_with_locked_payer_and_private_replay",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.12",
+        "302.6",
+        "400.7",
+        "506.4b",
+        "603.3a",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Raff, Civil Servant and Redcap use real casts and resolution-time tap choices. Exact distinct counts, fresh creatures, current controller versus owner, locked payer after control changes, non-Human and another predicates, vigilant attacking source, tap-trigger group, atomic rejection, principal privacy and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "cost.tap.controlled_untapped_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_tap_payments.FixedTapPaymentRuntimeTests.test_actual_civil_servant_excludes_vigilant_source_and_uses_currently_controlled_citizen",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.12",
+        "302.6",
+        "400.7",
+        "506.4b",
+        "603.3a",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Raff, Civil Servant and Redcap use real casts and resolution-time tap choices. Exact distinct counts, fresh creatures, current controller versus owner, locked payer after control changes, non-Human and another predicates, vigilant attacking source, tap-trigger group, atomic rejection, principal privacy and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "cost.tap.controlled_untapped_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_tap_payments.FixedTapPaymentRuntimeTests.test_actual_raff_taps_exactly_two_fresh_creatures_with_locked_payer_and_private_replay",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.12",
+        "302.6",
+        "400.7",
+        "506.4b",
+        "603.3a",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Raff, Civil Servant and Redcap use real casts and resolution-time tap choices. Exact distinct counts, fresh creatures, current controller versus owner, locked payer after control changes, non-Human and another predicates, vigilant attacking source, tap-trigger group, atomic rejection, principal privacy and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "cost.tap.controlled_untapped_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_tap_payments.FixedTapPaymentRuntimeTests.test_actual_redcap_can_tap_its_vigilant_attacking_self_without_leaving_combat_or_can_decline",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.12",
+        "302.6",
+        "400.7",
+        "506.4b",
+        "603.3a",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Raff, Civil Servant and Redcap use real casts and resolution-time tap choices. Exact distinct counts, fresh creatures, current controller versus owner, locked payer after control changes, non-Human and another predicates, vigilant attacking source, tap-trigger group, atomic rejection, principal privacy and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "cost.tap.controlled_untapped_resolution",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_tap_payments.FixedTapPaymentRuntimeTests.test_actual_civil_servant_excludes_vigilant_source_and_uses_currently_controlled_citizen",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.12",
+        "302.6",
+        "400.7",
+        "506.4b",
+        "603.3a",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Raff, Civil Servant and Redcap use real casts and resolution-time tap choices. Exact distinct counts, fresh creatures, current controller versus owner, locked payer after control changes, non-Human and another predicates, vigilant attacking source, tap-trigger group, atomic rejection, principal privacy and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "cost.tap.controlled_untapped_resolution",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_tap_payments.FixedTapPaymentRuntimeTests.test_actual_raff_taps_exactly_two_fresh_creatures_with_locked_payer_and_private_replay",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.12",
+        "302.6",
+        "400.7",
+        "506.4b",
+        "603.3a",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Raff, Civil Servant and Redcap use real casts and resolution-time tap choices. Exact distinct counts, fresh creatures, current controller versus owner, locked payer after control changes, non-Human and another predicates, vigilant attacking source, tap-trigger group, atomic rejection, principal privacy and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "cost.tap.controlled_untapped_resolution",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_tap_payments.FixedTapPaymentRuntimeTests.test_actual_redcap_can_tap_its_vigilant_attacking_self_without_leaving_combat_or_can_decline",
+      "official_rule_ids": [
+        "118.1",
+        "118.3",
+        "118.12",
+        "302.6",
+        "400.7",
+        "506.4b",
+        "603.3a",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Raff, Civil Servant and Redcap use real casts and resolution-time tap choices. Exact distinct counts, fresh creatures, current controller versus owner, locked payer after control changes, non-Human and another predicates, vigilant attacking source, tap-trigger group, atomic rejection, principal privacy and pending-load/preaction replay are covered."
+    },
+    {
       "capability_id": "counter.characteristic.keyword",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_counter_replacement_suspends_and_resumes_remaining_sequence_exactly",

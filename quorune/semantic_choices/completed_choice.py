@@ -20,7 +20,7 @@ def _intent_types():
         typed.DestroyPermanentIntent, typed.ExilePermanentIntent, typed.ReturnPermanentToOwnerHandIntent,
         typed.ReturnGraveyardCardToOwnerHandIntent,
         typed.RecordChoiceIntent, typed.ExploreCompletedIntent, typed.ConniveCompletedIntent,
-        typed.SetPermanentTappedIntent, typed.ProhibitNextUntapIntent, DomainEffectIntent, ExploitSacrificeIntent,
+        typed.SetPermanentTappedIntent, typed.SetPermanentsTappedIntent, typed.ProhibitNextUntapIntent, DomainEffectIntent, ExploitSacrificeIntent,
         typed.PlaceCountersIntent,typed.PlacePlayerCountersIntent,typed.PlaceCounterBatchIntent,
         typed.QueueReflexiveTriggerIntent,
     )}

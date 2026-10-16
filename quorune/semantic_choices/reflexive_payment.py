@@ -27,7 +27,7 @@ def _validated(effect, actor, query, *, continuation):
     if actor not in query.active_seats or raw['player'] != actor:
         raise SemanticChoiceError('Reflexive payment controller changed')
     if (payment.kind in {'discard','exile'} and payment.predicate.owner != actor
-            or payment.kind == 'sacrifice' and payment.predicate.controller != actor):
+            or payment.kind in {'sacrifice','tap'} and payment.predicate.controller != actor):
         raise SemanticChoiceError('Reflexive payment object relation changed')
     if continuation:
         if any(type(effect[key]) is not str or not effect[key]

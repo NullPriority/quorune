@@ -45,7 +45,7 @@ def _validated(
     payment = spec.payment
     if payment is not None and (
         payment.kind in {'discard','exile'} and payment.predicate.owner != actor
-        or payment.kind == 'sacrifice' and payment.predicate.controller != actor
+        or payment.kind in {'sacrifice','tap'} and payment.predicate.controller != actor
     ):
         raise SemanticChoiceError('Source maintenance payment relation changed')
     return spec

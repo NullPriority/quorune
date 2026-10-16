@@ -338,6 +338,15 @@ results keep their original target timing; selected graveyard-return identities
 survive a paid prefix, so a target exiled as the cost remains exiled. Explicitly
 linked new-zone objects retain their separate reference ownership.
 
+The same cost schema also represents fixed counts of controlled untapped
+permanents. The compiler reuses the fixed activation tap selector, while
+resolution keeps the trigger's locked payer. These worded costs can tap newly
+entered creatures. `another` excludes the original source incarnation through
+`$source.zone_object`; a returned new object is distinct. The canonical tap-set
+intent commits every selected member before discovering tap triggers. Tapping
+an attacking creature does not remove it from combat. Variable, linked and
+source-self tap costs remain residual.
+
 Resolution-time payment schema 4 composes one existing fixed action with a
 `reflexive_trigger_program`. This immutable body retains unbound targets and
 quantities until it resolves in its own stack frame. The existing payment

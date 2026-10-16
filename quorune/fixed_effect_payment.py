@@ -15,6 +15,23 @@ FIXED_EFFECT_PAYMENT_CAPABILITY = "effect.choice.optional_fixed_mana_payment"
 _MANA_KEYS = frozenset({"GENERIC", "W", "U", "B", "R", "G", "C"})
 
 
+def _validate_fixed_tap_predicate(predicate: ObjectQuerySpec | None) -> None:
+    if not isinstance(predicate,ObjectQuerySpec):
+        raise ValueError('Tap payments require a closed current-object predicate')
+    allowed=ObjectQuerySpec(zones=('battlefield',),controller=predicate.controller,
+        tapped=False,known_to_actor=True,exclude_ref=predicate.exclude_ref,
+        types_all=predicate.types_all,subtypes_all=predicate.subtypes_all,
+        excluded_subtypes=predicate.excluded_subtypes)
+    if (predicate!=allowed or type(allowed.controller) is not str or not allowed.controller
+            or not set(allowed.types_all)<={'artifact','battle','creature','enchantment','land','planeswalker'}
+            or not (allowed.types_all or allowed.subtypes_all)
+            or any(canonical_creature_subtype(value)!=value and value not in {
+                'food','gate','forest','island','mountain','plains','swamp'} for value in allowed.subtypes_all)
+            or allowed.excluded_subtypes not in ((),('human',))
+            or allowed.excluded_subtypes and allowed.types_all!=('creature',)):
+        raise ValueError('Tap payment predicate is outside the closed controlled untapped family')
+
+
 @dataclass(frozen=True, slots=True)
 class FixedEffectPaymentSpec:
     kind: str
@@ -24,9 +41,9 @@ class FixedEffectPaymentSpec:
     schema_version: int = 2
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != (3 if self.kind == 'exile' else 2):
+        if type(self.schema_version) is not int or self.schema_version != (3 if self.kind in {'exile','tap'} else 2):
             raise ValueError("Fixed effect payment version does not match its cost kind")
-        if self.kind not in {"mana", "life", "discard", "sacrifice", "energy", "exile"}:
+        if self.kind not in {"mana", "life", "discard", "sacrifice", "energy", "exile", "tap"}:
             raise ValueError("Fixed effect payment kind is unsupported")
         if type(self.amount) is not int or self.amount <= 0:
             raise ValueError("Fixed effect payment amount must be positive")
@@ -38,7 +55,9 @@ class FixedEffectPaymentSpec:
             object.__setattr__(self, "requirements", FrozenMap(self.requirements))
         elif self.requirements is not None:
             raise ValueError("Nonmana payments cannot carry mana requirements")
-        if self.kind in {"discard", "sacrifice", "exile"}:
+        if self.kind == 'tap':
+            _validate_fixed_tap_predicate(self.predicate)
+        elif self.kind in {"discard", "sacrifice", "exile"}:
             zone = {'discard':'hand','sacrifice':'battlefield','exile':'graveyard'}[self.kind]
             if (self.kind != 'exile' and self.amount not in ({1,2}if self.kind=='discard'else {1})) or not isinstance(self.predicate, ObjectQuerySpec) or self.predicate.zones != (zone,):
                 raise ValueError("Zone payments require one closed current-object predicate")
@@ -85,5 +104,6 @@ class FixedEffectPaymentSpec:
                  'energy':('cost.energy.fixed_resolution_payment',),
                  "discard":("choice.affected_player.fixed_discard", "zone.change.destination_replacement"),
                  "sacrifice":("choice.affected_player.fixed_sacrifice", "zone.change.destination_replacement"),
-                 'exile':('cost.exile.owned_graveyard_resolution','zone.change.destination_replacement')}
+                 'exile':('cost.exile.owned_graveyard_resolution','zone.change.destination_replacement'),
+                 'tap':('cost.tap.controlled_untapped_resolution',)}
         return (FIXED_EFFECT_PAYMENT_CAPABILITY, *costs[self.kind])

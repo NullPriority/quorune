@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 306,
+  "registry_version": 307,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -244,6 +244,98 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "cost.tap.controlled_untapped_resolution",
+      "version": 1,
+      "official_rules": [
+        "118.1",
+        "118.3",
+        "118.12",
+        "302.6",
+        "400.7",
+        "506.4b",
+        "603.3a",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Fixed exact-count resolution-time tap costs select currently controlled untapped permanents, without a tap symbol restriction.",
+        "inputs": [
+          "locked resolving payer",
+          "current controlled untapped permanent characteristics",
+          "fixed positive count",
+          "original source incarnation for another",
+          "typed independent If or When result"
+        ],
+        "outputs": [
+          "public legal-cost set",
+          "exact all-or-decline choice",
+          "canonical simultaneous tap group",
+          "unchanged ordinary or reflexive result timing"
+        ],
+        "exclusions": [
+          "source-self tap-it costs",
+          "variable or linked counts",
+          "color-sharing or Conspire",
+          "unrepresented qualities or combined costs"
+        ]
+      },
+      "dependencies": [
+        "effect.choice.optional_fixed_mana_payment",
+        "permanent.tap.effect"
+      ],
+      "implementation_components": [
+        "quorune.fixed_effect_payment.FixedEffectPaymentSpec",
+        "quorune.compiler.fixed_effect_payment_templates._fixed_untapped_permanent_payment",
+        "quorune.semantic_choices.fixed_effect_payment.prepare_fixed_payment_cost",
+        "quorune.semantic_choices.fixed_effect_payment.complete_fixed_payment_cost",
+        "quorune.tap_state.dispatch_tap_state_group"
+      ],
+      "positive_tests": [
+        "test_fixed_untapped_controlled_costs_preserve_quality_count_and_result_timing",
+        "test_tap_payload_rejects_wrong_version_or_open_predicates"
+      ],
+      "negative_tests": [
+        "test_source_variable_linked_and_combined_tap_costs_stay_residual",
+        "test_withdrawn_tap_payment_capability_prevents_promotion",
+        "test_tap_payload_rejects_wrong_version_or_open_predicates"
+      ],
+      "interaction_tests": [
+        "test_another_exclusion_binds_only_the_original_source_incarnation",
+        "test_actual_raff_taps_exactly_two_fresh_creatures_with_locked_payer_and_private_replay",
+        "test_actual_civil_servant_excludes_vigilant_source_and_uses_currently_controlled_citizen",
+        "test_actual_redcap_can_tap_its_vigilant_attacking_self_without_leaving_combat_or_can_decline"
+      ],
+      "multiplayer_tests": [
+        "test_actual_raff_taps_exactly_two_fresh_creatures_with_locked_payer_and_private_replay"
+      ],
+      "privacy_tests": [
+        "test_actual_raff_taps_exactly_two_fresh_creatures_with_locked_payer_and_private_replay"
+      ],
+      "replay_tests": [
+        "test_actual_raff_taps_exactly_two_fresh_creatures_with_locked_payer_and_private_replay",
+        "test_actual_civil_servant_excludes_vigilant_source_and_uses_currently_controlled_citizen",
+        "test_actual_redcap_can_tap_its_vigilant_attacking_self_without_leaving_combat_or_can_decline"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Versioned closed controlled untapped predicates and independent result capabilities are mandatory. Withdrawing the tap cost capability prevents exact promotion.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the fixed tap payment producer rejects all eight complete timing and quality compiler witnesses. Actual trusted cards must tap their exact selected group before their result.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "cost.exile.owned_graveyard_resolution",
       "version": 1,
