@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 317,
+  "registry_version": 318,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -244,6 +244,95 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "zone.entry.color_designation_composition",
+      "version": 1,
+      "official_rules": [
+        "105.1",
+        "109.5",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Exclude one canonical color from an intrinsic entry choice and compose a complete unconditional enters-tapped paragraph with its bound as-it-enters color choice. Reuse existing finite replacement effects and immutable ordering journal.",
+        "inputs": [
+          "one explicit entering source",
+          "plain color choice or one literal excluded WUBRG color",
+          "optional complete unconditional tapped-entry leaf",
+          "destination controller and original entering incarnation"
+        ],
+        "outputs": [
+          "only legal finite color variants are offered and accepted",
+          "one retained public choice on the entering incarnation",
+          "independently owned tapped and choice effects preserve replacement ordering",
+          "duplicate same-kind designations retain linking residuals"
+        ],
+        "exclusions": [
+          "unknown colors or variable exclusions",
+          "ambiguous it subjects without a complete explicit prefix",
+          "conditional/reveal/payment entry prefixes",
+          "unknown siblings or duplicate unrepresented choice linking"
+        ]
+      },
+      "dependencies": [
+        "zone.entry.public_designation"
+      ],
+      "implementation_components": [
+        "quorune.compiler.entry_color_composition.composed_entry_color_designation_handler",
+        "quorune.compiler.entry_color_composition._single_color_designation",
+        "quorune.compiler.entry_designation_templates.scope_entry_designation_faces",
+        "quorune.semantic_runtime.entry_color_exclusion.ExcludedColorEntryDesignationHandler",
+        "quorune.semantic_runtime.entry_designations.EntryDesignationHandler.subject_replacement_effects"
+      ],
+      "positive_tests": [
+        "test_excluded_color_and_complete_tapped_paragraph_keep_typed_leaf_owners",
+        "test_excluded_choice_uses_destination_controller_and_only_one_fresh_entry_value"
+      ],
+      "negative_tests": [
+        "test_open_exclusions_prefixes_tails_and_duplicate_linking_stay_residual",
+        "test_excluded_descriptor_dependency_and_value_validation_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_actual_gate_excludes_forbidden_choice_and_fixed_or_chosen_modes_match_commands",
+        "test_actual_thriving_tapped_color_replacements_work_in_both_offered_orders",
+        "test_actual_sunken_plain_compound_entry_preserves_restricted_mana_spending"
+      ],
+      "multiplayer_tests": [
+        "test_actual_gate_excludes_forbidden_choice_and_fixed_or_chosen_modes_match_commands",
+        "test_excluded_choice_uses_destination_controller_and_only_one_fresh_entry_value"
+      ],
+      "privacy_tests": [
+        "test_actual_gate_excludes_forbidden_choice_and_fixed_or_chosen_modes_match_commands"
+      ],
+      "replay_tests": [
+        "test_actual_gate_excludes_forbidden_choice_and_fixed_or_chosen_modes_match_commands",
+        "test_actual_thriving_tapped_color_replacements_work_in_both_offered_orders",
+        "test_actual_sunken_plain_compound_entry_preserves_restricted_mana_spending"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Every complete paragraph retains both its entry-state and designation capabilities. Withdrawal prevents admission. Plain schema1 and creature-type choices keep their original owner; duplicate intrinsic color choices, including mixed descriptor variants, fail closed.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting new compiler composition rejects all four new generic entry forms while plain entry still uses the legacy leaf. Omitting the excluded-color filter exposes a fifth forbidden choice and the actual Gate choice assertion rejects it. Actual native tapped-state, both offered orders, fixed-or-chosen modes and restricted spending prevent incomplete composition.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "mana.production.source_chosen_color",
       "version": 1,

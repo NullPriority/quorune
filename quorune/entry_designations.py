@@ -11,6 +11,9 @@ from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
 
 ENTRY_DESIGNATION_HANDLER_ID = "replacement.zone.entry-designation.v1"
 ENTRY_DESIGNATION_CAPABILITY = "zone.entry.public_designation"
+EXCLUDED_COLOR_ENTRY_HANDLER_ID = "replacement.zone.entry-color-exclusion.v2"
+ENTRY_COLOR_COMPOSITION_CAPABILITY = "zone.entry.color_designation_composition"
+ENTRY_DESIGNATION_HANDLER_IDS = (ENTRY_DESIGNATION_HANDLER_ID, EXCLUDED_COLOR_ENTRY_HANDLER_ID)
 CHOSEN_CHARACTERISTICS_HANDLER_ID = "continuous.characteristics.chosen-designation.v1"
 CHOSEN_CHARACTERISTICS_CAPABILITY = "continuous.characteristics.chosen_designation"
 CONDITIONAL_CHOSEN_CHARACTERISTICS_HANDLER_ID = "continuous.characteristics.conditional-chosen-designation.v1"

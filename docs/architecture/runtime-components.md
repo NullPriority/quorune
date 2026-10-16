@@ -857,3 +857,20 @@ existing payment/usage transaction is delegated to
 `rules/activation/payment_commit.py` without changing cost order or mutation
 owners. Mana still resolves immediately for the current activator. Departure
 clears the designation and re-entry obtains a fresh choice.
+
+### Entry color exclusions and tapped paragraphs
+
+`replacement.zone.entry-color-exclusion.v2` validates one excluded canonical
+WUBRG color. It delegates to the existing intrinsic entry replacement producer,
+which offers only the remaining values to the battlefield destination controller.
+The plain schema-1 color and creature-type descriptors keep their encodings.
+Both variants participate in duplicate same-kind choice scoping.
+
+`compiler/entry_color_composition.py` recognizes complete unconditional
+enters-tapped plus bound as-it-enters color paragraphs. It emits separate,
+independently owned tap-state and designation descriptors with the full original
+source span. The canonical immutable replacement journal orders and applies
+them; the zone owner stores one choice and tapped state on the entering
+incarnation. Unknown exclusions, ambiguous subjects, conditional prefixes and
+unrepresented sibling clauses remain residual. Chosen-color mana and spending
+restrictions continue through their existing shared output and payment owners.

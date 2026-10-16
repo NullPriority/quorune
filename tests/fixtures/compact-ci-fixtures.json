@@ -56,6 +56,7 @@
     "tests/fixtures/echo-rules-cards.json",
     "tests/fixtures/energy-activation-cards.json",
     "tests/fixtures/enlist-cards.json",
+    "tests/fixtures/entry-color-composition-cards.json",
     "tests/fixtures/entry-copy-cards.json",
     "tests/fixtures/entry-designation-cards.json",
     "tests/fixtures/event-card-return.json",

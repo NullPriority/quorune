@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "dd82f24d8f2a30072cf46f794ed44a7aaf9c47acec105469b4acca1091c4458b",
-  "declaration_source_fingerprint": "99bccb138528e7b6ae0b6a40d35e297958ccccbed37527ca35147e1ab995d8b8",
+  "registry_fingerprint": "9703717726e69788e903dd8d60cc1048029760d8ec83a2e0ca0b0ca2f25626f2",
+  "declaration_source_fingerprint": "60042e14837b479f4958cd65cd6233a1472b3919bff1d5db16902794d5adac19",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -143323,6 +143323,300 @@
       "applicability_note": "Replay the public reveal and exact-object conditional discard with the same final state."
     },
     {
+      "capability_id": "zone.entry.color_designation_composition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_color_composition.EntryColorCompositionRuntimeTests.test_actual_gate_excludes_forbidden_choice_and_fixed_or_chosen_modes_match_commands",
+      "official_rule_ids": [
+        "105.1",
+        "109.5",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Finite color exclusion and complete tapped-entry composition retain existing replacement, destination-controller and incarnation owners. Actual Gate/Thriving/Sunken land play covers forbidden/wrong-principal rollback, offered replacement orders, pending load/replay, exact fixed-or-chosen mana and restricted land-ability spending; four-player projection keeps private hands hidden."
+    },
+    {
+      "capability_id": "zone.entry.color_designation_composition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_color_composition.EntryColorCompositionRuntimeTests.test_actual_sunken_plain_compound_entry_preserves_restricted_mana_spending",
+      "official_rule_ids": [
+        "105.1",
+        "109.5",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Finite color exclusion and complete tapped-entry composition retain existing replacement, destination-controller and incarnation owners. Actual Gate/Thriving/Sunken land play covers forbidden/wrong-principal rollback, offered replacement orders, pending load/replay, exact fixed-or-chosen mana and restricted land-ability spending; four-player projection keeps private hands hidden."
+    },
+    {
+      "capability_id": "zone.entry.color_designation_composition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_color_composition.EntryColorCompositionRuntimeTests.test_actual_thriving_tapped_color_replacements_work_in_both_offered_orders",
+      "official_rule_ids": [
+        "105.1",
+        "109.5",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Finite color exclusion and complete tapped-entry composition retain existing replacement, destination-controller and incarnation owners. Actual Gate/Thriving/Sunken land play covers forbidden/wrong-principal rollback, offered replacement orders, pending load/replay, exact fixed-or-chosen mana and restricted land-ability spending; four-player projection keeps private hands hidden."
+    },
+    {
+      "capability_id": "zone.entry.color_designation_composition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_entry_color_composition.EntryColorCompositionCompilerTests.test_excluded_choice_uses_destination_controller_and_only_one_fresh_entry_value",
+      "official_rule_ids": [
+        "105.1",
+        "109.5",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Finite color exclusion and complete tapped-entry composition retain existing replacement, destination-controller and incarnation owners. Actual Gate/Thriving/Sunken land play covers forbidden/wrong-principal rollback, offered replacement orders, pending load/replay, exact fixed-or-chosen mana and restricted land-ability spending; four-player projection keeps private hands hidden."
+    },
+    {
+      "capability_id": "zone.entry.color_designation_composition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_entry_color_composition.EntryColorCompositionRuntimeTests.test_actual_gate_excludes_forbidden_choice_and_fixed_or_chosen_modes_match_commands",
+      "official_rule_ids": [
+        "105.1",
+        "109.5",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Finite color exclusion and complete tapped-entry composition retain existing replacement, destination-controller and incarnation owners. Actual Gate/Thriving/Sunken land play covers forbidden/wrong-principal rollback, offered replacement orders, pending load/replay, exact fixed-or-chosen mana and restricted land-ability spending; four-player projection keeps private hands hidden."
+    },
+    {
+      "capability_id": "zone.entry.color_designation_composition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_entry_color_composition.EntryColorCompositionCompilerTests.test_excluded_color_and_complete_tapped_paragraph_keep_typed_leaf_owners",
+      "official_rule_ids": [
+        "105.1",
+        "109.5",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Finite color exclusion and complete tapped-entry composition retain existing replacement, destination-controller and incarnation owners. Actual Gate/Thriving/Sunken land play covers forbidden/wrong-principal rollback, offered replacement orders, pending load/replay, exact fixed-or-chosen mana and restricted land-ability spending; four-player projection keeps private hands hidden."
+    },
+    {
+      "capability_id": "zone.entry.color_designation_composition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_color_composition.EntryColorCompositionCompilerTests.test_excluded_descriptor_dependency_and_value_validation_fail_closed",
+      "official_rule_ids": [
+        "105.1",
+        "109.5",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Finite color exclusion and complete tapped-entry composition retain existing replacement, destination-controller and incarnation owners. Actual Gate/Thriving/Sunken land play covers forbidden/wrong-principal rollback, offered replacement orders, pending load/replay, exact fixed-or-chosen mana and restricted land-ability spending; four-player projection keeps private hands hidden."
+    },
+    {
+      "capability_id": "zone.entry.color_designation_composition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_color_composition.EntryColorCompositionCompilerTests.test_open_exclusions_prefixes_tails_and_duplicate_linking_stay_residual",
+      "official_rule_ids": [
+        "105.1",
+        "109.5",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Finite color exclusion and complete tapped-entry composition retain existing replacement, destination-controller and incarnation owners. Actual Gate/Thriving/Sunken land play covers forbidden/wrong-principal rollback, offered replacement orders, pending load/replay, exact fixed-or-chosen mana and restricted land-ability spending; four-player projection keeps private hands hidden."
+    },
+    {
+      "capability_id": "zone.entry.color_designation_composition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_color_composition.EntryColorCompositionCompilerTests.test_excluded_choice_uses_destination_controller_and_only_one_fresh_entry_value",
+      "official_rule_ids": [
+        "105.1",
+        "109.5",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Finite color exclusion and complete tapped-entry composition retain existing replacement, destination-controller and incarnation owners. Actual Gate/Thriving/Sunken land play covers forbidden/wrong-principal rollback, offered replacement orders, pending load/replay, exact fixed-or-chosen mana and restricted land-ability spending; four-player projection keeps private hands hidden."
+    },
+    {
+      "capability_id": "zone.entry.color_designation_composition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_color_composition.EntryColorCompositionCompilerTests.test_excluded_color_and_complete_tapped_paragraph_keep_typed_leaf_owners",
+      "official_rule_ids": [
+        "105.1",
+        "109.5",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Finite color exclusion and complete tapped-entry composition retain existing replacement, destination-controller and incarnation owners. Actual Gate/Thriving/Sunken land play covers forbidden/wrong-principal rollback, offered replacement orders, pending load/replay, exact fixed-or-chosen mana and restricted land-ability spending; four-player projection keeps private hands hidden."
+    },
+    {
+      "capability_id": "zone.entry.color_designation_composition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_entry_color_composition.EntryColorCompositionRuntimeTests.test_actual_gate_excludes_forbidden_choice_and_fixed_or_chosen_modes_match_commands",
+      "official_rule_ids": [
+        "105.1",
+        "109.5",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Finite color exclusion and complete tapped-entry composition retain existing replacement, destination-controller and incarnation owners. Actual Gate/Thriving/Sunken land play covers forbidden/wrong-principal rollback, offered replacement orders, pending load/replay, exact fixed-or-chosen mana and restricted land-ability spending; four-player projection keeps private hands hidden."
+    },
+    {
+      "capability_id": "zone.entry.color_designation_composition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_entry_color_composition.EntryColorCompositionRuntimeTests.test_actual_gate_excludes_forbidden_choice_and_fixed_or_chosen_modes_match_commands",
+      "official_rule_ids": [
+        "105.1",
+        "109.5",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Finite color exclusion and complete tapped-entry composition retain existing replacement, destination-controller and incarnation owners. Actual Gate/Thriving/Sunken land play covers forbidden/wrong-principal rollback, offered replacement orders, pending load/replay, exact fixed-or-chosen mana and restricted land-ability spending; four-player projection keeps private hands hidden."
+    },
+    {
+      "capability_id": "zone.entry.color_designation_composition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_entry_color_composition.EntryColorCompositionRuntimeTests.test_actual_sunken_plain_compound_entry_preserves_restricted_mana_spending",
+      "official_rule_ids": [
+        "105.1",
+        "109.5",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Finite color exclusion and complete tapped-entry composition retain existing replacement, destination-controller and incarnation owners. Actual Gate/Thriving/Sunken land play covers forbidden/wrong-principal rollback, offered replacement orders, pending load/replay, exact fixed-or-chosen mana and restricted land-ability spending; four-player projection keeps private hands hidden."
+    },
+    {
+      "capability_id": "zone.entry.color_designation_composition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_entry_color_composition.EntryColorCompositionRuntimeTests.test_actual_thriving_tapped_color_replacements_work_in_both_offered_orders",
+      "official_rule_ids": [
+        "105.1",
+        "109.5",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Finite color exclusion and complete tapped-entry composition retain existing replacement, destination-controller and incarnation owners. Actual Gate/Thriving/Sunken land play covers forbidden/wrong-principal rollback, offered replacement orders, pending load/replay, exact fixed-or-chosen mana and restricted land-ability spending; four-player projection keeps private hands hidden."
+    },
+    {
       "capability_id": "zone.entry.fixed_copy",
       "evidence_class": "interaction",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
@@ -150203,5 +150497,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "9458439946db8c8faa46aa75e7d3b1921c20e8ad0956cba7df20997d60f0e016"
+  "fingerprint": "cb4595193f0dae12f79bba8e0d3fd4df926f99d970c986d707c262ed7ba31976"
 }

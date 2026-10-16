@@ -394,6 +394,7 @@
       "test_deathtouch_rules",
       "test_deterministic_full_game",
       "test_draw_replacement_components",
+      "test_entry_color_composition",
       "test_evolve_counter_placement",
       "test_exact_artifact_engines",
       "test_exact_keyword_families",

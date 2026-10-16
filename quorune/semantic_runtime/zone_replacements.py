@@ -62,6 +62,7 @@ from .conditional_entry_counters import ConditionalSelfEntryCounterHandler
 from .sunburst import SunburstEntryCounterHandler
 from .entry_choices import ReadAheadEntryChoiceHandler, RiotEntryChoiceHandler
 from .entry_designations import EntryDesignationHandler
+from .entry_color_exclusion import ExcludedColorEntryDesignationHandler
 from .entry_copy import EntryCopyHandler, entry_copy_replacement_effects
 from .entry_reveal import EntryRevealHandler,entry_reveal_replacement_effects
 from .kicker import FixedKickedEntryHandler
@@ -437,6 +438,7 @@ def default_zone_change_replacement_registry(
             EntryStateReplacementHandler(),
             FixedEntryConditionReplacementHandler(),
             EntryDesignationHandler(),
+            ExcludedColorEntryDesignationHandler(),
             EntryCopyHandler(),
             EntryRevealHandler(),
             ReadAheadEntryChoiceHandler(),
