@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 305,
+  "registry_version": 306,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -244,6 +244,96 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "cost.exile.owned_graveyard_resolution",
+      "version": 1,
+      "official_rules": [
+        "118.1",
+        "118.11",
+        "118.12",
+        "400.7",
+        "406.2",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Pay one positive fixed count of owned public graveyard cards through the existing resolution-time action choice, with represented card-quality predicates and exact all-or-decline selection.",
+        "inputs": [
+          "locked resolving payer",
+          "current owned graveyard card identities and represented qualities",
+          "fixed positive cardinality",
+          "typed independently closed result and If/When timing"
+        ],
+        "outputs": [
+          "exact public legal-cost set",
+          "canonical simultaneous ordinary move to exile",
+          "replacement-aware completed action",
+          "unchanged ordinary conditional or separate reflexive consequence timing"
+        ],
+        "exclusions": [
+          "source-self exile-it references",
+          "hidden or external zones",
+          "named or linked card groups",
+          "variable, random or all-card counts",
+          "unrepresented paid-object antecedents"
+        ]
+      },
+      "dependencies": [
+        "effect.choice.optional_fixed_mana_payment",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.fixed_effect_payment.FixedEffectPaymentSpec",
+        "quorune.compiler.fixed_effect_payment_templates.fixed_effect_payment_spec",
+        "quorune.semantic_choices.fixed_effect_payment.prepare_fixed_payment_cost",
+        "quorune.semantic_choices.fixed_effect_payment.complete_fixed_payment_cost",
+        "quorune.rules.reflexive_payment_shapes.reflexive_payment_node_capabilities"
+      ],
+      "positive_tests": [
+        "test_owned_graveyard_exile_costs_use_versioned_card_predicates_and_keep_if_when_timing",
+        "test_new_exile_schema_round_trips_and_old_payment_payload_is_unchanged"
+      ],
+      "negative_tests": [
+        "test_source_specific_hidden_variable_and_linked_exile_costs_remain_residual",
+        "test_new_exile_schema_round_trips_and_old_payment_payload_is_unchanged"
+      ],
+      "interaction_tests": [
+        "test_actual_kishla_exiles_owned_card_despite_foreign_stored_controller_then_selects_result",
+        "test_actual_young_necromancer_requires_two_distinct_cards_before_return_targets",
+        "test_actual_skald_selects_before_cost_and_exiled_target_does_not_return",
+        "test_actual_tymaret_mills_before_union_cost_and_decline_keeps_the_mandatory_prefix"
+      ],
+      "multiplayer_tests": [
+        "test_actual_kishla_exiles_owned_card_despite_foreign_stored_controller_then_selects_result"
+      ],
+      "privacy_tests": [
+        "test_actual_kishla_exiles_owned_card_despite_foreign_stored_controller_then_selects_result"
+      ],
+      "replay_tests": [
+        "test_actual_kishla_exiles_owned_card_despite_foreign_stored_controller_then_selects_result",
+        "test_actual_young_necromancer_requires_two_distinct_cards_before_return_targets",
+        "test_actual_skald_selects_before_cost_and_exiled_target_does_not_return",
+        "test_actual_tymaret_mills_before_union_cost_and_decline_keeps_the_mandatory_prefix"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Owned known card-only graveyard predicates, typed cost schema and independent result ownership are required before promotion; v2 cannot encode new exile actions.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the owned-graveyard cost producer rejects all six complete compiler timing/quality cases; native witnesses require the actual exile and exact count before consequence.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "damage.source.stack_current_or_lki",
       "version": 1,
@@ -12237,7 +12327,7 @@
     },
     {
       "id": "card.return.own_graveyard_to_owner_hand",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "108.3",
         "109.5",
@@ -12256,7 +12346,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Compile and execute one mandatory, optional, fixed-homogeneous, or closed-sequence instruction returning target cards matching a fixed public characteristic predicate from the resolving controller's graveyard to their owners' hands through target revalidation and the canonical replacement-aware zone-change owner.",
+        "summary": "Compile and execute one mandatory, optional, fixed-homogeneous, or closed-sequence instruction returning target cards matching a fixed public characteristic predicate from the resolving controller's graveyard to their owners' hands through target revalidation and the canonical replacement-aware zone-change owner. Runtime target identity is retained across paid prefixes; a selected target that becomes another zone object is skipped without undoing the paid cost, while independently linked new-object references retain their own ownership.",
         "inputs": [
           "one source-spanned own-graveyard return clause",
           "one or more public physical card objects owned by the resolving controller",
@@ -12297,7 +12387,9 @@
         "quorune.rules.single_object_zone_transition.validate_single_object_zone_transition_plan",
         "quorune.rules.single_object_zone_transition.commit_prevalidated_single_object_zone_transition",
         "quorune.return_to_hand.prepare_graveyard_card_return_to_owner_hand",
-        "quorune.return_to_hand.commit_graveyard_card_return_to_owner_hand"
+        "quorune.return_to_hand.commit_graveyard_card_return_to_owner_hand",
+        "quorune.semantic_runtime.direct_target_fields.bound_graveyard_return_target_snapshot",
+        "quorune.return_to_hand.return_graveyard_card_to_owner_hand"
       ],
       "positive_tests": [
         "test_spell_trigger_and_activated_contexts_share_graveyard_return_lowering",
@@ -12306,20 +12398,25 @@
         "test_own_graveyard_card_returns_to_hand_with_new_identity",
         "test_compiled_regrowth_is_owner_scoped_private_and_replays",
         "test_numeric_owned_graveyard_return_preserves_kind_and_bound",
-        "test_original_numeric_graveyard_returns_share_target_legality_and_replay"
+        "test_original_numeric_graveyard_returns_share_target_legality_and_replay",
+        "test_actual_skald_selects_before_cost_and_exiled_target_does_not_return"
       ],
       "negative_tests": [
         "test_unsupported_graveyard_return_variants_remain_material_residuals",
         "test_graveyard_return_shape_mutants_fail_closed",
         "test_opponent_noncard_and_stale_graveyard_objects_fail_before_mutation",
-        "test_numeric_owned_graveyard_return_preserves_kind_and_bound"
+        "test_numeric_owned_graveyard_return_preserves_kind_and_bound",
+        "test_actual_skald_selects_before_cost_and_exiled_target_does_not_return",
+        "test_return_target_binding_rejects_a_new_incarnation_without_reading_it"
       ],
       "interaction_tests": [
         "test_destination_replacement_preserves_graveyard_return_result",
         "test_compiled_regrowth_is_owner_scoped_private_and_replays",
         "test_characteristic_target_offer_commit_and_replay",
         "test_original_numeric_graveyard_returns_share_target_legality_and_replay",
-        "test_original_salvagers_target_exiled_in_response_is_not_returned"
+        "test_original_salvagers_target_exiled_in_response_is_not_returned",
+        "test_actual_skald_selects_before_cost_and_exiled_target_does_not_return",
+        "test_return_target_binding_rejects_a_new_incarnation_without_reading_it"
       ],
       "multiplayer_tests": [
         "test_compiled_regrowth_is_owner_scoped_private_and_replays",
@@ -12336,7 +12433,8 @@
         "test_compiled_regrowth_is_owner_scoped_private_and_replays",
         "test_characteristic_target_offer_commit_and_replay",
         "test_original_numeric_graveyard_returns_share_target_legality_and_replay",
-        "test_original_salvagers_target_exiled_in_response_is_not_returned"
+        "test_original_salvagers_target_exiled_in_response_is_not_returned",
+        "test_actual_skald_selects_before_cost_and_exiled_target_does_not_return"
       ],
       "required_evidence": [
         "positive",

@@ -325,12 +325,20 @@ class ReturnGraveyardCardToOwnerHandIntent:
     object_ref: str
     reason: str
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    target_snapshot: FrozenMap | None = None
 
     def __post_init__(self) -> None:
         if not all((self.actor, self.object_ref, self.reason)):
             raise ValueError(
                 "Graveyard-return intents require actor, object, and reason"
             )
+        if self.target_snapshot is not None:
+            snapshot=self.target_snapshot
+            if (not isinstance(snapshot,Mapping) or set(snapshot)!={'ref','object_id','zone_change_counter'}
+                    or snapshot['ref']!=self.object_ref or type(snapshot['object_id']) is not str or not snapshot['object_id']
+                    or type(snapshot['zone_change_counter']) is not int or snapshot['zone_change_counter']<0):
+                raise ValueError('Graveyard-return target identity snapshot is malformed')
+            object.__setattr__(self,'target_snapshot',FrozenMap(snapshot))
         object.__setattr__(
             self,
             "replacement_selections",

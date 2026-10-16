@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
-from .context import ReadOnlyHandlerContext
+from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .direct_target_fields import validate_direct_target_effect
 from .intents import (
     IntentPlan,
@@ -96,17 +96,19 @@ class ReturnGraveyardCardToOwnerHandHandler:
             reference_field="card",
             family_label="Graveyard-card return",
             allow_replacement_selections=True,
+            additional_allowed_fields=('target_snapshot',),
         )
+        try:
+            intent=ReturnGraveyardCardToOwnerHandIntent(actor=context.actor,object_ref=fields.object_ref,
+                reason=fields.reason,replacement_selections=fields.replacement_selections,
+                target_snapshot=effect.get('target_snapshot'))
+        except ValueError as exc:
+            raise SemanticNodeError(str(exc)) from exc
         return IntentPlan(
             operation=self.operation,
             handler_id=self.handler_id,
             intents=(
-                ReturnGraveyardCardToOwnerHandIntent(
-                    actor=context.actor,
-                    object_ref=fields.object_ref,
-                    reason=fields.reason,
-                    replacement_selections=fields.replacement_selections,
-                ),
+                intent,
             ),
         )
 

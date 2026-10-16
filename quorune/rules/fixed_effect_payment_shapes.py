@@ -52,7 +52,7 @@ def fixed_effect_payment_node_capabilities(*,effects:Sequence[Mapping[str,Any]],
             return ()
         payment = spec.payment
         if payment is not None and (
-            payment.kind == 'discard' and payment.predicate.owner != '$controller'
+            payment.kind in {'discard','exile'} and payment.predicate.owner != '$controller'
             or payment.kind == 'sacrifice' and payment.predicate.controller != '$controller'
         ):
             return ()
@@ -62,7 +62,7 @@ def fixed_effect_payment_node_capabilities(*,effects:Sequence[Mapping[str,Any]],
     try:payment=FixedEffectPaymentSpec.from_dict(wrapper['payment'])
     except (ValueError,TypeError,KeyError):return ()
     if ('cost'in wrapper)!=(payment.kind=='mana') or payment.kind=='mana'and dict(wrapper['cost'])!=dict(payment.requirements):return ()
-    if payment.kind=='discard'and payment.predicate.owner!='$controller':return ()
+    if payment.kind in {'discard','exile'}and payment.predicate.owner!='$controller':return ()
     if payment.kind=='sacrifice'and payment.predicate.controller!='$controller':return ()
     nested=wrapper['effects']
     if not isinstance(nested,(list,tuple))or not 1<=len(nested)<=4 or any(not isinstance(e,Mapping)or e.get('op')in {'offer_optional_effect',OPTIONAL_MANA_PAYMENT_OPERATION}for e in nested):return ()

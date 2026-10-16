@@ -95,6 +95,18 @@ def _resolve_typed_numeric_amount(host, value, item):
     raise SemanticNodeError('Typed numeric value kind is unsupported')
 
 
+def _resolve_effect_mapping(host, value, item):
+    from ..rules.stack_damage_sources import bound_stack_damage_source
+    from .direct_target_fields import bound_graveyard_return_target_snapshot
+    try:
+        value = {**value, **bound_stack_damage_source(host, value, item),
+            **bound_graveyard_return_target_snapshot(value, item,
+                lambda reference: resolve_semantic_value(host, reference, item))}
+    except (TypeError, ValueError) as exc:
+        raise SemanticNodeError(str(exc)) from exc
+    return {key: resolve_semantic_value(host, child, item) for key, child in value.items()}
+
+
 def resolve_semantic_value(
     host: SemanticValueHost,
     value: Any,
@@ -115,15 +127,7 @@ def resolve_semantic_value(
     if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND):
         return _resolve_typed_numeric_amount(host, value, item)
     if isinstance(value, dict):
-        from ..rules.stack_damage_sources import bound_stack_damage_source
-        try:
-            value = {**value, **bound_stack_damage_source(host, value, item)}
-        except (TypeError, ValueError) as exc:
-            raise SemanticNodeError(str(exc)) from exc
-        return {
-            key: resolve_semantic_value(host, child, item)
-            for key, child in value.items()
-        }
+        return _resolve_effect_mapping(host, value, item)
     if not isinstance(value, str) or not value.startswith("$"):
         return value
     if value == "$controller":

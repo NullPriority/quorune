@@ -252,7 +252,12 @@ def return_graveyard_card_to_owner_hand(
     actor: str,
     reason: str,
     replacement_selections: Sequence[str | Mapping[str, Any]] = (),
-) -> ReturnToHandResult:
+    target_snapshot: Mapping[str, Any] | None = None,
+) -> ReturnToHandResult | None:
+    if target_snapshot is not None:
+        from .selection.target_query import target_identity_matches_snapshot
+        if not target_identity_matches_snapshot(host,object_ref,target_snapshot):
+            return None
     card = host._resolve_object(actor, object_ref, zones={"graveyard"})
     return commit_graveyard_card_return_to_owner_hand(
         host,

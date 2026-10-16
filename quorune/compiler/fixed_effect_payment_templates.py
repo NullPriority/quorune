@@ -24,6 +24,8 @@ Compiled = tuple[str | None, tuple[Mapping[str, Any], ...], Mapping[str, Any] | 
 
 def fixed_effect_payment_spec(text: str) -> FixedEffectPaymentSpec | None:
     value=text.strip()
+    exile = _owned_graveyard_exile_payment(value)
+    if exile is not None:return exile
     energy=re.fullmatch(r'pay (?P<symbols>(?:\{E\})+)',value,re.I)
     if energy is not None:return FixedEffectPaymentSpec('energy',amount=len(energy['symbols'])//3)
     mana=re.fullmatch(r"pay (?P<cost>(?:\{(?:[0-9]+|[WUBRGC])\})+)",value,re.I)
@@ -51,6 +53,25 @@ def fixed_effect_payment_spec(text: str) -> FixedEffectPaymentSpec | None:
             predicate=zone_cost.predicate
         return FixedEffectPaymentSpec('sacrifice',predicate=replace(predicate,controller='$controller'))
     return None
+
+
+def _owned_graveyard_exile_payment(value):
+    match=re.fullmatch(r'exile (?P<count>a|an|one|two|three|four|five|six|seven|eight|nine|ten|[1-9][0-9]*) (?P<cards>.+?) from your graveyard',value,re.I)
+    if match is None:return None
+    from .fixed_numbers import fixed_number
+    from .cast_cost_modifier_templates import fixed_spell_predicate
+    from ..object_predicate import ObjectQuerySpec
+    amount=1 if match['count'].casefold() in {'a','an'} else fixed_number(match['count'])
+    noun='card' if amount==1 else 'cards'
+    cards=match['cards'].casefold()
+    if cards==noun:predicate=ObjectQuerySpec()
+    elif cards.endswith(' '+noun):predicate=fixed_spell_predicate(cards[:-len(noun)].strip()+' spells you cast')
+    else:return None
+    if predicate is None:return None
+    try:
+        return FixedEffectPaymentSpec('exile',amount=amount,schema_version=3,
+            predicate=replace(predicate,zones=('graveyard',),owner='$controller',token=False,known_to_actor=True))
+    except (TypeError,ValueError):return None
 
 
 def fixed_effect_payment_template(text: str, *, compile_effect: Callable[[str], Compiled]) -> Compiled | None:

@@ -24,9 +24,9 @@ class FixedEffectPaymentSpec:
     schema_version: int = 2
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 2:
-            raise ValueError("Fixed effect payments require version 2")
-        if self.kind not in {"mana", "life", "discard", "sacrifice", "energy"}:
+        if type(self.schema_version) is not int or self.schema_version != (3 if self.kind == 'exile' else 2):
+            raise ValueError("Fixed effect payment version does not match its cost kind")
+        if self.kind not in {"mana", "life", "discard", "sacrifice", "energy", "exile"}:
             raise ValueError("Fixed effect payment kind is unsupported")
         if type(self.amount) is not int or self.amount <= 0:
             raise ValueError("Fixed effect payment amount must be positive")
@@ -38,9 +38,9 @@ class FixedEffectPaymentSpec:
             object.__setattr__(self, "requirements", FrozenMap(self.requirements))
         elif self.requirements is not None:
             raise ValueError("Nonmana payments cannot carry mana requirements")
-        if self.kind in {"discard", "sacrifice"}:
-            zone = "hand" if self.kind == "discard" else "battlefield"
-            if self.amount not in ({1,2}if self.kind=='discard'else {1}) or not isinstance(self.predicate, ObjectQuerySpec) or self.predicate.zones != (zone,):
+        if self.kind in {"discard", "sacrifice", "exile"}:
+            zone = {'discard':'hand','sacrifice':'battlefield','exile':'graveyard'}[self.kind]
+            if (self.kind != 'exile' and self.amount not in ({1,2}if self.kind=='discard'else {1})) or not isinstance(self.predicate, ObjectQuerySpec) or self.predicate.zones != (zone,):
                 raise ValueError("Zone payments require one closed current-object predicate")
             allowed = ObjectQuerySpec(zones=(zone,), owner=self.predicate.owner,
                 controller=self.predicate.controller, types_all=self.predicate.types_all,
@@ -60,11 +60,14 @@ class FixedEffectPaymentSpec:
                 raise ValueError('Zone payment quality is not a canonical represented characteristic')
             if self.kind=='discard'and (allowed.controller is not None or allowed.subtypes_all or allowed.subtypes_any or allowed.supertypes_all or allowed.excluded_types or allowed.token is not None):
                 raise ValueError('Discard costs use only the closed owned-card quality')
+            if self.kind == 'exile' and (type(allowed.owner) is not str or not allowed.owner
+                    or allowed.controller is not None or allowed.token is not False or allowed.known_to_actor is not True):
+                raise ValueError('Graveyard exile costs require known owned cards without controller restrictions')
         elif self.predicate is not None:
             raise ValueError("Resource payments cannot carry object predicates")
 
     def to_dict(self) -> dict[str, Any]:
-        return {"schema_version":2, "kind":self.kind, "amount":self.amount,
+        return {"schema_version":self.schema_version, "kind":self.kind, "amount":self.amount,
                 "requirements":thaw_value(self.requirements) if self.requirements is not None else None,
                 "predicate":self.predicate.to_dict() if self.predicate is not None else None}
 
@@ -81,5 +84,6 @@ class FixedEffectPaymentSpec:
         costs = {"mana":(), "life":("casting.additional_cost.fixed_life_payment",),
                  'energy':('cost.energy.fixed_resolution_payment',),
                  "discard":("choice.affected_player.fixed_discard", "zone.change.destination_replacement"),
-                 "sacrifice":("choice.affected_player.fixed_sacrifice", "zone.change.destination_replacement")}
+                 "sacrifice":("choice.affected_player.fixed_sacrifice", "zone.change.destination_replacement"),
+                 'exile':('cost.exile.owned_graveyard_resolution','zone.change.destination_replacement')}
         return (FIXED_EFFECT_PAYMENT_CAPABILITY, *costs[self.kind])

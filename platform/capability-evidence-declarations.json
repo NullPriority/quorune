@@ -5019,6 +5019,52 @@
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
       "evidence_class": "interaction",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentCompilerTests.test_return_target_binding_rejects_a_new_incarnation_without_reading_it",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Master Skald chooses its artifact-creature target before its cost; exiling that original target pays the cost and leaves it exiled instead of rejecting the entire choice or returning a new object. Explicit target identity persists through bound effects and completed-choice serialization; a different incarnation is never read. Pending save/load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentRuntimeTests.test_actual_skald_selects_before_cost_and_exiled_target_does_not_return",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Master Skald chooses its artifact-creature target before its cost; exiling that original target pays the cost and leaves it exiled instead of rejecting the entire choice or returning a new object. Explicit target identity persists through bound effects and completed-choice serialization; a different incarnation is never read. Pending save/load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "interaction",
       "test_id": "tests.test_graveyard_return_rules.GraveyardReturnRuleTests.test_characteristic_target_offer_commit_and_replay",
       "official_rule_ids": ["108.3", "109.5", "115.1", "115.1a", "115.1b", "400.2", "400.3", "400.7", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -5182,6 +5228,52 @@
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
       "evidence_class": "negative",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentCompilerTests.test_return_target_binding_rejects_a_new_incarnation_without_reading_it",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Master Skald chooses its artifact-creature target before its cost; exiling that original target pays the cost and leaves it exiled instead of rejecting the entire choice or returning a new object. Explicit target identity persists through bound effects and completed-choice serialization; a different incarnation is never read. Pending save/load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentRuntimeTests.test_actual_skald_selects_before_cost_and_exiled_target_does_not_return",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Master Skald chooses its artifact-creature target before its cost; exiling that original target pays the cost and leaves it exiled instead of rejecting the entire choice or returning a new object. Explicit target identity persists through bound effects and completed-choice serialization; a different incarnation is never read. Pending save/load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "negative",
       "test_id": "tests.test_graveyard_return_rules.GraveyardReturnRuleTests.test_opponent_noncard_and_stale_graveyard_objects_fail_before_mutation",
       "official_rule_ids": ["108.3", "109.5", "115.1", "115.1a", "115.1b", "400.2", "400.3", "400.7", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -5217,6 +5309,29 @@
         "commander_review"
       ],
       "applicability_note": "Fixed mana-value upper bounds refine canonical owned-graveyard target predicates. Original Leonin Squire cast and Auriok Salvagers activation reject foreign, wrong-kind and over-limit targets without state/payment; Purify the Grave response prevents stale-target return. Costs, retained public knowledge, unrelated private hands and pending save/load/full replay are asserted."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentRuntimeTests.test_actual_skald_selects_before_cost_and_exiled_target_does_not_return",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Master Skald chooses its artifact-creature target before its cost; exiling that original target pays the cost and leaves it exiled instead of rejecting the entire choice or returning a new object. Explicit target identity persists through bound effects and completed-choice serialization; a different incarnation is never read. Pending save/load and full pre-action replay agree."
     },
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
@@ -5334,6 +5449,29 @@
         "commander_review"
       ],
       "applicability_note": "Fixed mana-value upper bounds refine canonical owned-graveyard target predicates. Original Leonin Squire cast and Auriok Salvagers activation reject foreign, wrong-kind and over-limit targets without state/payment; Purify the Grave response prevents stale-target return. Costs, retained public knowledge, unrelated private hands and pending save/load/full replay are asserted."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentRuntimeTests.test_actual_skald_selects_before_cost_and_exiled_target_does_not_return",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Master Skald chooses its artifact-creature target before its cost; exiling that original target pays the cost and leaves it exiled instead of rejecting the entire choice or returning a new object. Explicit target identity persists through bound effects and completed-choice serialization; a different incarnation is never read. Pending save/load and full pre-action replay agree."
     },
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
@@ -34050,6 +34188,329 @@
         "commander_review"
       ],
       "applicability_note": "Fixed energy resolution cost through existing optional payment and canonical player-counter transaction; source-bound consequence and pending/full replay."
+    },
+    {
+      "capability_id": "cost.exile.owned_graveyard_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentRuntimeTests.test_actual_kishla_exiles_owned_card_despite_foreign_stored_controller_then_selects_result",
+      "official_rule_ids": [
+        "118.1",
+        "118.11",
+        "118.12",
+        "400.7",
+        "406.2",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Kishla, Young Necromancer, Master Skald and Tymaret pay their owned graveyard exile costs through real cast and resolving choices. Stored controller does not replace owner, exact-two rejects partial/duplicate selections, If/When target timing remains distinct, exiled original targets do not return, mandatory mill survives decline, and private four-seat projection/rollback/pending-load/preaction replay agree."
+    },
+    {
+      "capability_id": "cost.exile.owned_graveyard_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentRuntimeTests.test_actual_skald_selects_before_cost_and_exiled_target_does_not_return",
+      "official_rule_ids": [
+        "118.1",
+        "118.11",
+        "118.12",
+        "400.7",
+        "406.2",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Kishla, Young Necromancer, Master Skald and Tymaret pay their owned graveyard exile costs through real cast and resolving choices. Stored controller does not replace owner, exact-two rejects partial/duplicate selections, If/When target timing remains distinct, exiled original targets do not return, mandatory mill survives decline, and private four-seat projection/rollback/pending-load/preaction replay agree."
+    },
+    {
+      "capability_id": "cost.exile.owned_graveyard_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentRuntimeTests.test_actual_tymaret_mills_before_union_cost_and_decline_keeps_the_mandatory_prefix",
+      "official_rule_ids": [
+        "118.1",
+        "118.11",
+        "118.12",
+        "400.7",
+        "406.2",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Kishla, Young Necromancer, Master Skald and Tymaret pay their owned graveyard exile costs through real cast and resolving choices. Stored controller does not replace owner, exact-two rejects partial/duplicate selections, If/When target timing remains distinct, exiled original targets do not return, mandatory mill survives decline, and private four-seat projection/rollback/pending-load/preaction replay agree."
+    },
+    {
+      "capability_id": "cost.exile.owned_graveyard_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentRuntimeTests.test_actual_young_necromancer_requires_two_distinct_cards_before_return_targets",
+      "official_rule_ids": [
+        "118.1",
+        "118.11",
+        "118.12",
+        "400.7",
+        "406.2",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Kishla, Young Necromancer, Master Skald and Tymaret pay their owned graveyard exile costs through real cast and resolving choices. Stored controller does not replace owner, exact-two rejects partial/duplicate selections, If/When target timing remains distinct, exiled original targets do not return, mandatory mill survives decline, and private four-seat projection/rollback/pending-load/preaction replay agree."
+    },
+    {
+      "capability_id": "cost.exile.owned_graveyard_resolution",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentRuntimeTests.test_actual_kishla_exiles_owned_card_despite_foreign_stored_controller_then_selects_result",
+      "official_rule_ids": [
+        "118.1",
+        "118.11",
+        "118.12",
+        "400.7",
+        "406.2",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Kishla, Young Necromancer, Master Skald and Tymaret pay their owned graveyard exile costs through real cast and resolving choices. Stored controller does not replace owner, exact-two rejects partial/duplicate selections, If/When target timing remains distinct, exiled original targets do not return, mandatory mill survives decline, and private four-seat projection/rollback/pending-load/preaction replay agree."
+    },
+    {
+      "capability_id": "cost.exile.owned_graveyard_resolution",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentCompilerTests.test_owned_graveyard_exile_costs_use_versioned_card_predicates_and_keep_if_when_timing",
+      "official_rule_ids": [
+        "118.1",
+        "118.11",
+        "118.12",
+        "400.7",
+        "406.2",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Kishla, Young Necromancer, Master Skald and Tymaret pay their owned graveyard exile costs through real cast and resolving choices. Stored controller does not replace owner, exact-two rejects partial/duplicate selections, If/When target timing remains distinct, exiled original targets do not return, mandatory mill survives decline, and private four-seat projection/rollback/pending-load/preaction replay agree."
+    },
+    {
+      "capability_id": "cost.exile.owned_graveyard_resolution",
+      "evidence_class": "negative",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentCompilerTests.test_new_exile_schema_round_trips_and_old_payment_payload_is_unchanged",
+      "official_rule_ids": [
+        "118.1",
+        "118.11",
+        "118.12",
+        "400.7",
+        "406.2",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Kishla, Young Necromancer, Master Skald and Tymaret pay their owned graveyard exile costs through real cast and resolving choices. Stored controller does not replace owner, exact-two rejects partial/duplicate selections, If/When target timing remains distinct, exiled original targets do not return, mandatory mill survives decline, and private four-seat projection/rollback/pending-load/preaction replay agree."
+    },
+    {
+      "capability_id": "cost.exile.owned_graveyard_resolution",
+      "evidence_class": "negative",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentCompilerTests.test_source_specific_hidden_variable_and_linked_exile_costs_remain_residual",
+      "official_rule_ids": [
+        "118.1",
+        "118.11",
+        "118.12",
+        "400.7",
+        "406.2",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Kishla, Young Necromancer, Master Skald and Tymaret pay their owned graveyard exile costs through real cast and resolving choices. Stored controller does not replace owner, exact-two rejects partial/duplicate selections, If/When target timing remains distinct, exiled original targets do not return, mandatory mill survives decline, and private four-seat projection/rollback/pending-load/preaction replay agree."
+    },
+    {
+      "capability_id": "cost.exile.owned_graveyard_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentCompilerTests.test_new_exile_schema_round_trips_and_old_payment_payload_is_unchanged",
+      "official_rule_ids": [
+        "118.1",
+        "118.11",
+        "118.12",
+        "400.7",
+        "406.2",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Kishla, Young Necromancer, Master Skald and Tymaret pay their owned graveyard exile costs through real cast and resolving choices. Stored controller does not replace owner, exact-two rejects partial/duplicate selections, If/When target timing remains distinct, exiled original targets do not return, mandatory mill survives decline, and private four-seat projection/rollback/pending-load/preaction replay agree."
+    },
+    {
+      "capability_id": "cost.exile.owned_graveyard_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentCompilerTests.test_owned_graveyard_exile_costs_use_versioned_card_predicates_and_keep_if_when_timing",
+      "official_rule_ids": [
+        "118.1",
+        "118.11",
+        "118.12",
+        "400.7",
+        "406.2",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Kishla, Young Necromancer, Master Skald and Tymaret pay their owned graveyard exile costs through real cast and resolving choices. Stored controller does not replace owner, exact-two rejects partial/duplicate selections, If/When target timing remains distinct, exiled original targets do not return, mandatory mill survives decline, and private four-seat projection/rollback/pending-load/preaction replay agree."
+    },
+    {
+      "capability_id": "cost.exile.owned_graveyard_resolution",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentRuntimeTests.test_actual_kishla_exiles_owned_card_despite_foreign_stored_controller_then_selects_result",
+      "official_rule_ids": [
+        "118.1",
+        "118.11",
+        "118.12",
+        "400.7",
+        "406.2",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Kishla, Young Necromancer, Master Skald and Tymaret pay their owned graveyard exile costs through real cast and resolving choices. Stored controller does not replace owner, exact-two rejects partial/duplicate selections, If/When target timing remains distinct, exiled original targets do not return, mandatory mill survives decline, and private four-seat projection/rollback/pending-load/preaction replay agree."
+    },
+    {
+      "capability_id": "cost.exile.owned_graveyard_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentRuntimeTests.test_actual_kishla_exiles_owned_card_despite_foreign_stored_controller_then_selects_result",
+      "official_rule_ids": [
+        "118.1",
+        "118.11",
+        "118.12",
+        "400.7",
+        "406.2",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Kishla, Young Necromancer, Master Skald and Tymaret pay their owned graveyard exile costs through real cast and resolving choices. Stored controller does not replace owner, exact-two rejects partial/duplicate selections, If/When target timing remains distinct, exiled original targets do not return, mandatory mill survives decline, and private four-seat projection/rollback/pending-load/preaction replay agree."
+    },
+    {
+      "capability_id": "cost.exile.owned_graveyard_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentRuntimeTests.test_actual_skald_selects_before_cost_and_exiled_target_does_not_return",
+      "official_rule_ids": [
+        "118.1",
+        "118.11",
+        "118.12",
+        "400.7",
+        "406.2",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Kishla, Young Necromancer, Master Skald and Tymaret pay their owned graveyard exile costs through real cast and resolving choices. Stored controller does not replace owner, exact-two rejects partial/duplicate selections, If/When target timing remains distinct, exiled original targets do not return, mandatory mill survives decline, and private four-seat projection/rollback/pending-load/preaction replay agree."
+    },
+    {
+      "capability_id": "cost.exile.owned_graveyard_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentRuntimeTests.test_actual_tymaret_mills_before_union_cost_and_decline_keeps_the_mandatory_prefix",
+      "official_rule_ids": [
+        "118.1",
+        "118.11",
+        "118.12",
+        "400.7",
+        "406.2",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Kishla, Young Necromancer, Master Skald and Tymaret pay their owned graveyard exile costs through real cast and resolving choices. Stored controller does not replace owner, exact-two rejects partial/duplicate selections, If/When target timing remains distinct, exiled original targets do not return, mandatory mill survives decline, and private four-seat projection/rollback/pending-load/preaction replay agree."
+    },
+    {
+      "capability_id": "cost.exile.owned_graveyard_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentRuntimeTests.test_actual_young_necromancer_requires_two_distinct_cards_before_return_targets",
+      "official_rule_ids": [
+        "118.1",
+        "118.11",
+        "118.12",
+        "400.7",
+        "406.2",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Kishla, Young Necromancer, Master Skald and Tymaret pay their owned graveyard exile costs through real cast and resolving choices. Stored controller does not replace owner, exact-two rejects partial/duplicate selections, If/When target timing remains distinct, exiled original targets do not return, mandatory mill survives decline, and private four-seat projection/rollback/pending-load/preaction replay agree."
+    },
+    {
+      "capability_id": "cost.exile.owned_graveyard_resolution",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentRuntimeTests.test_actual_kishla_exiles_owned_card_despite_foreign_stored_controller_then_selects_result",
+      "official_rule_ids": [
+        "118.1",
+        "118.11",
+        "118.12",
+        "400.7",
+        "406.2",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Kishla, Young Necromancer, Master Skald and Tymaret pay their owned graveyard exile costs through real cast and resolving choices. Stored controller does not replace owner, exact-two rejects partial/duplicate selections, If/When target timing remains distinct, exiled original targets do not return, mandatory mill survives decline, and private four-seat projection/rollback/pending-load/preaction replay agree."
+    },
+    {
+      "capability_id": "cost.exile.owned_graveyard_resolution",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_graveyard_exile_payments.GraveyardExilePaymentRuntimeTests.test_actual_young_necromancer_requires_two_distinct_cards_before_return_targets",
+      "official_rule_ids": [
+        "118.1",
+        "118.11",
+        "118.12",
+        "400.7",
+        "406.2",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Kishla, Young Necromancer, Master Skald and Tymaret pay their owned graveyard exile costs through real cast and resolving choices. Stored controller does not replace owner, exact-two rejects partial/duplicate selections, If/When target timing remains distinct, exiled original targets do not return, mandatory mill survives decline, and private four-seat projection/rollback/pending-load/preaction replay agree."
     },
     {
       "capability_id": "counter.characteristic.keyword",

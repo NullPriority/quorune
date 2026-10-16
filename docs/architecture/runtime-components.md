@@ -328,6 +328,16 @@ their receiving permanent and its controller, including as that permanent
 enters. A created trigger survives the live grant ending. New-object and
 unestablished antecedents remain residual.
 
+Fixed payment cost schema 3 adds positive fixed-count exile of owned public
+graveyard cards. The existing object-choice owner offers the represented card
+qualities and accepts the complete count or a decline. One canonical ordinary
+zone move commits the selected cards to exile with destination replacements.
+Stored card controller does not replace graveyard ownership. Cost schema 2
+retains its existing encoding for earlier payment kinds. Ordinary conditional
+results keep their original target timing; selected graveyard-return identities
+survive a paid prefix, so a target exiled as the cost remains exiled. Explicitly
+linked new-zone objects retain their separate reference ownership.
+
 Resolution-time payment schema 4 composes one existing fixed action with a
 `reflexive_trigger_program`. This immutable body retains unbound targets and
 quantities until it resolves in its own stack frame. The existing payment

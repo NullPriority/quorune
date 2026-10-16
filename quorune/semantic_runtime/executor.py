@@ -477,6 +477,7 @@ def _execute_permanent_object_intent(
             actor=intent.actor,
             reason=intent.reason,
             replacement_selections=intent.replacement_selections,
+            target_snapshot=intent.target_snapshot,
         ),
     )
 

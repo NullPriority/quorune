@@ -395,6 +395,7 @@
       "test_fixed_homogeneous_target_sets",
       "test_fixed_mana_value_target_predicates",
       "test_graft_rules",
+      "test_graveyard_exile_payments",
       "test_life_state",
       "test_monarch_rules",
       "test_player_speed",

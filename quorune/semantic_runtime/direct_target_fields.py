@@ -19,6 +19,23 @@ class DirectTargetFields:
     replacement_selections: tuple[str | FrozenMap, ...] = ()
 
 
+def bound_graveyard_return_target_snapshot(effect, item, resolve_reference):
+    """Retain the original target identity across resolution-time prefixes."""
+    if effect.get('op') != 'return_graveyard_card_to_owner_hand':
+        return {}
+    reference = effect.get('card')
+    if not isinstance(reference, str) or not reference.startswith('$target'):
+        return {}
+    ref = resolve_reference(reference)
+    if not isinstance(ref, str):
+        return {}
+    snapshot = item.context.get('target_snapshots', {}).get(ref)
+    if not isinstance(snapshot, Mapping) or snapshot.get('object_id') is None or snapshot.get('zone_change_counter') is None:
+        return {}
+    return {'target_snapshot':{'ref':ref,'object_id':snapshot['object_id'],
+        'zone_change_counter':snapshot['zone_change_counter']}}
+
+
 def validate_direct_target_effect(
     effect: Mapping[str, Any],
     context: ReadOnlyHandlerContext,

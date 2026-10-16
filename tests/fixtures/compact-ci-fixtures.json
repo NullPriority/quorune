@@ -84,6 +84,7 @@
     "tests/fixtures/graft-cards.json",
     "tests/fixtures/granted-skulk-cards.json",
     "tests/fixtures/graveyard-copy-keyword-cards.json",
+    "tests/fixtures/graveyard-exile-payment-cards.json",
     "tests/fixtures/group-declaration-rules.json",
     "tests/fixtures/hand-entry-expansion-cards.json",
     "tests/fixtures/history-entry-characteristic-cards.json",

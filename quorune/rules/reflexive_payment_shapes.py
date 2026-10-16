@@ -34,7 +34,7 @@ def reflexive_payment_node_capabilities(*, effects, target_schema, mechanic_ids)
         effect = effects[0]
         payment, program = reflexive_payment_parts(effect)
         if (effect['player'] != '$controller'
-                or payment.kind == 'discard' and payment.predicate.owner != '$controller'
+                or payment.kind in {'discard','exile'} and payment.predicate.owner != '$controller'
                 or payment.kind == 'sacrifice' and payment.predicate.controller != '$controller'):
             return ()
         child_capabilities = reflexive_program_capabilities(program)

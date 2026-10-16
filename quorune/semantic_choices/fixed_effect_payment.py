@@ -39,7 +39,7 @@ def _validated(
         raise SemanticChoiceError(str(exc)) from exc
     if ('cost' in effect) != (spec.kind == 'mana') or spec.kind == 'mana' and dict(effect['cost']) != dict(spec.requirements):
         raise SemanticChoiceError('Fixed payment mana identity changed')
-    if spec.kind == 'discard' and spec.predicate.owner != actor or spec.kind == 'sacrifice' and spec.predicate.controller != actor:
+    if spec.kind in {'discard','exile'} and spec.predicate.owner != actor or spec.kind == 'sacrifice' and spec.predicate.controller != actor:
         raise SemanticChoiceError('Fixed payment object relation changed')
     effects = effect['effects']
     if not isinstance(effects, (tuple, list)) or not 1 <= len(effects) <= 4:
@@ -66,10 +66,10 @@ def prepare_fixed_payment_cost(
     """Publish the existing closed cost independently of its result branch."""
     actor = context.actor
     legal = ()
-    if spec.kind in {'discard', 'sacrifice'}:
+    if spec.kind in {'discard', 'sacrifice', 'exile'}:
         candidates = context.query.objects(
             zones=spec.predicate.zones,
-            owner=actor if spec.kind == 'discard' else None,
+            owner=actor if spec.kind in {'discard','exile'} else None,
             controller=actor if spec.kind == 'sacrifice' else None,
         )
         legal = tuple(sorted(
@@ -83,7 +83,7 @@ def prepare_fixed_payment_cost(
             maximum=spec.amount if payable else 0, optional=True,
             visibility='actor_private' if spec.kind == 'discard' else 'public',
             allowed_cardinalities=((0, spec.amount) if payable else (0,)) if spec.amount > 1 else None,
-            owner_relation='actor' if spec.kind == 'discard' else 'any',
+            owner_relation='actor' if spec.kind in {'discard','exile'} else 'any',
             controller_relation='actor' if spec.kind == 'sacrifice' else 'any',
         )
     else:
@@ -130,7 +130,7 @@ def complete_fixed_payment_cost(
     """Validate and commit one fixed cost through the canonical intent owner."""
     actor = effect['_choice_actor']
     label = effect['_stack_label']
-    if spec.kind in {'discard', 'sacrifice'}:
+    if spec.kind in {'discard', 'sacrifice', 'exile'}:
         unknown = set(response) - {'cards', 'pay', 'action', 'action_id', 'a', 'cap', 'reason', 'plan', 'next', 'choice_schema'}
         if unknown:
             raise SemanticChoiceError('Fixed object payment response has unknown fields: ' + ','.join(sorted(unknown)))
@@ -156,9 +156,9 @@ def complete_fixed_payment_cost(
                 raise SemanticChoiceError('Fixed payment object is stale or ineligible')
         intent = MoveObjectsSimultaneouslyIntent(
             actor=actor, object_refs=selected, expected_zones=spec.predicate.zones,
-            destination='graveyard', reason=label,
-            transition_kind=ZoneTransitionKind.DISCARD if spec.kind == 'discard' else ZoneTransitionKind.SACRIFICE,
-            owned_only=spec.kind == 'discard', controlled_only=spec.kind == 'sacrifice',
+            destination='exile' if spec.kind=='exile' else 'graveyard', reason=label,
+            transition_kind={'discard':ZoneTransitionKind.DISCARD,'sacrifice':ZoneTransitionKind.SACRIFICE,'exile':ZoneTransitionKind.ORDINARY}[spec.kind],
+            owned_only=spec.kind in {'discard','exile'}, controlled_only=spec.kind == 'sacrifice',
         )
     else:
         unknown = set(response) - {'pay', 'action', 'action_id', 'a', 'cap', 'reason', 'plan', 'next', 'choice_schema'}
