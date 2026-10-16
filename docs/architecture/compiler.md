@@ -2627,6 +2627,18 @@ query. Optional, payment, dynamic, aggregate, combined-event, targeted,
 multi-effect, other-counter, non-self, and broader damage forms remain
 source-spanned residuals.
 
+## Commander Learn
+
+The complete Learn instruction lowers to the existing optional-payment
+operation's closed schema-5 Learn action. Its capability is Commander-only;
+runtime also verifies the effective Commander rules profile. The locked
+controller may discard one current owned hand card, followed by one canonical
+private draw, or decline. Commander rule 903.11 prevents the outside-the-game
+Lesson option. Unknown profiles, broader subjects and unrepresented Learn
+replacement effects remain unsupported. See
+[ADR 0117](../adr/0117-commander-learn-payment-boundary.md) for the schema,
+format authority, payment delegation and replay boundary.
+
 ## Extending the compiler
 
 Add the smallest reusable grammar production and typed construct. Include

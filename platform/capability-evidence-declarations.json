@@ -55641,6 +55641,546 @@
       "applicability_note": "Replay the activated Investigate cost, Clue identity, token events, and final authoritative hash."
     },
     {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_actual_igneous_damage_then_private_discard_draw_rollback_load_and_replay",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commander Learn has an explicit closed action schema and authoritative effective-profile guard. Actual Igneous damage precedes actor-private discard and draw; Pop Quiz and Professor entry preserve composition. Decline/empty hand, owner withdrawal, wrong actor/card rollback, four-player privacy, pending load and pre-action replay retain canonical payment/draw ownership."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_actual_pop_quiz_draw_precedes_learn_and_professor_entry_uses_controller",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commander Learn has an explicit closed action schema and authoritative effective-profile guard. Actual Igneous damage precedes actor-private discard and draw; Pop Quiz and Professor entry preserve composition. Decline/empty hand, owner withdrawal, wrong actor/card rollback, four-player privacy, pending load and pre-action replay retain canonical payment/draw ownership."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_learn_discard_destination_replacement_resumes_once_before_draw",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Learn discard replacement suspends before draw, persists the pending choice and resumes with exactly one draw after the chosen canonical destination. A sequential two-Learn spell accepts the first newly drawn card in the second current-hand choice, with exact pre-action replay and no stale domain."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_two_learn_instructions_use_each_current_hand_after_prior_draw",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Learn discard replacement suspends before draw, persists the pending choice and resumes with exactly one draw after the chosen canonical destination. A sequential two-Learn spell accepts the first newly drawn card in the second current-hand choice, with exact pre-action replay and no stale domain."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_actual_igneous_damage_then_private_discard_draw_rollback_load_and_replay",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commander Learn has an explicit closed action schema and authoritative effective-profile guard. Actual Igneous damage precedes actor-private discard and draw; Pop Quiz and Professor entry preserve composition. Decline/empty hand, owner withdrawal, wrong actor/card rollback, four-player privacy, pending load and pre-action replay retain canonical payment/draw ownership."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_actual_pop_quiz_draw_precedes_learn_and_professor_entry_uses_controller",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commander Learn has an explicit closed action schema and authoritative effective-profile guard. Actual Igneous damage precedes actor-private discard and draw; Pop Quiz and Professor entry preserve composition. Decline/empty hand, owner withdrawal, wrong actor/card rollback, four-player privacy, pending load and pre-action replay retain canonical payment/draw ownership."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_learn_discard_destination_replacement_resumes_once_before_draw",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Learn discard replacement suspends before draw, persists the pending choice and resumes with exactly one draw after the chosen canonical destination. A sequential two-Learn spell accepts the first newly drawn card in the second current-hand choice, with exact pre-action replay and no stale domain."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_two_learn_instructions_use_each_current_hand_after_prior_draw",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Learn discard replacement suspends before draw, persists the pending choice and resumes with exactly one draw after the chosen canonical destination. A sequential two-Learn spell accepts the first newly drawn card in the second current-hand choice, with exact pre-action replay and no stale domain."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_commander_learn.CommanderLearnCompilerTests.test_learn_spell_entry_death_and_activation_have_explicit_commander_scope",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commander Learn has an explicit closed action schema and authoritative effective-profile guard. Actual Igneous damage precedes actor-private discard and draw; Pop Quiz and Professor entry preserve composition. Decline/empty hand, owner withdrawal, wrong actor/card rollback, four-player privacy, pending load and pre-action replay retain canonical payment/draw ownership."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_commander_learn.CommanderLearnCompilerTests.test_runtime_learn_requires_authoritative_commander_profile_and_locked_actor",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commander Learn has an explicit closed action schema and authoritative effective-profile guard. Actual Igneous damage precedes actor-private discard and draw; Pop Quiz and Professor entry preserve composition. Decline/empty hand, owner withdrawal, wrong actor/card rollback, four-player privacy, pending load and pre-action replay retain canonical payment/draw ownership."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_actual_igneous_damage_then_private_discard_draw_rollback_load_and_replay",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commander Learn has an explicit closed action schema and authoritative effective-profile guard. Actual Igneous damage precedes actor-private discard and draw; Pop Quiz and Professor entry preserve composition. Decline/empty hand, owner withdrawal, wrong actor/card rollback, four-player privacy, pending load and pre-action replay retain canonical payment/draw ownership."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "negative",
+      "test_id": "tests.test_commander_learn.CommanderLearnCompilerTests.test_learn_discard_and_draw_owner_withdrawals_prevent_complete_admission",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commander Learn has an explicit closed action schema and authoritative effective-profile guard. Actual Igneous damage precedes actor-private discard and draw; Pop Quiz and Professor entry preserve composition. Decline/empty hand, owner withdrawal, wrong actor/card rollback, four-player privacy, pending load and pre-action replay retain canonical payment/draw ownership."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "negative",
+      "test_id": "tests.test_commander_learn.CommanderLearnCompilerTests.test_other_profiles_and_unrepresented_learn_subjects_remain_residual",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commander Learn has an explicit closed action schema and authoritative effective-profile guard. Actual Igneous damage precedes actor-private discard and draw; Pop Quiz and Professor entry preserve composition. Decline/empty hand, owner withdrawal, wrong actor/card rollback, four-player privacy, pending load and pre-action replay retain canonical payment/draw ownership."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "negative",
+      "test_id": "tests.test_commander_learn.CommanderLearnCompilerTests.test_runtime_learn_requires_authoritative_commander_profile_and_locked_actor",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commander Learn has an explicit closed action schema and authoritative effective-profile guard. Actual Igneous damage precedes actor-private discard and draw; Pop Quiz and Professor entry preserve composition. Decline/empty hand, owner withdrawal, wrong actor/card rollback, four-player privacy, pending load and pre-action replay retain canonical payment/draw ownership."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "positive",
+      "test_id": "tests.test_commander_learn.CommanderLearnCompilerTests.test_learn_spell_entry_death_and_activation_have_explicit_commander_scope",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commander Learn has an explicit closed action schema and authoritative effective-profile guard. Actual Igneous damage precedes actor-private discard and draw; Pop Quiz and Professor entry preserve composition. Decline/empty hand, owner withdrawal, wrong actor/card rollback, four-player privacy, pending load and pre-action replay retain canonical payment/draw ownership."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "positive",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_actual_igneous_damage_then_private_discard_draw_rollback_load_and_replay",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commander Learn has an explicit closed action schema and authoritative effective-profile guard. Actual Igneous damage precedes actor-private discard and draw; Pop Quiz and Professor entry preserve composition. Decline/empty hand, owner withdrawal, wrong actor/card rollback, four-player privacy, pending load and pre-action replay retain canonical payment/draw ownership."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "positive",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_actual_learn_decline_and_empty_hand_never_draw_or_import_lesson",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commander Learn has an explicit closed action schema and authoritative effective-profile guard. Actual Igneous damage precedes actor-private discard and draw; Pop Quiz and Professor entry preserve composition. Decline/empty hand, owner withdrawal, wrong actor/card rollback, four-player privacy, pending load and pre-action replay retain canonical payment/draw ownership."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "positive",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_actual_pop_quiz_draw_precedes_learn_and_professor_entry_uses_controller",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commander Learn has an explicit closed action schema and authoritative effective-profile guard. Actual Igneous damage precedes actor-private discard and draw; Pop Quiz and Professor entry preserve composition. Decline/empty hand, owner withdrawal, wrong actor/card rollback, four-player privacy, pending load and pre-action replay retain canonical payment/draw ownership."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "positive",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_learn_discard_destination_replacement_resumes_once_before_draw",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Learn discard replacement suspends before draw, persists the pending choice and resumes with exactly one draw after the chosen canonical destination. A sequential two-Learn spell accepts the first newly drawn card in the second current-hand choice, with exact pre-action replay and no stale domain."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "positive",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_two_learn_instructions_use_each_current_hand_after_prior_draw",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Learn discard replacement suspends before draw, persists the pending choice and resumes with exactly one draw after the chosen canonical destination. A sequential two-Learn spell accepts the first newly drawn card in the second current-hand choice, with exact pre-action replay and no stale domain."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_actual_igneous_damage_then_private_discard_draw_rollback_load_and_replay",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commander Learn has an explicit closed action schema and authoritative effective-profile guard. Actual Igneous damage precedes actor-private discard and draw; Pop Quiz and Professor entry preserve composition. Decline/empty hand, owner withdrawal, wrong actor/card rollback, four-player privacy, pending load and pre-action replay retain canonical payment/draw ownership."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "replay",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_actual_igneous_damage_then_private_discard_draw_rollback_load_and_replay",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commander Learn has an explicit closed action schema and authoritative effective-profile guard. Actual Igneous damage precedes actor-private discard and draw; Pop Quiz and Professor entry preserve composition. Decline/empty hand, owner withdrawal, wrong actor/card rollback, four-player privacy, pending load and pre-action replay retain canonical payment/draw ownership."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "replay",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_actual_learn_decline_and_empty_hand_never_draw_or_import_lesson",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commander Learn has an explicit closed action schema and authoritative effective-profile guard. Actual Igneous damage precedes actor-private discard and draw; Pop Quiz and Professor entry preserve composition. Decline/empty hand, owner withdrawal, wrong actor/card rollback, four-player privacy, pending load and pre-action replay retain canonical payment/draw ownership."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "replay",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_actual_pop_quiz_draw_precedes_learn_and_professor_entry_uses_controller",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commander Learn has an explicit closed action schema and authoritative effective-profile guard. Actual Igneous damage precedes actor-private discard and draw; Pop Quiz and Professor entry preserve composition. Decline/empty hand, owner withdrawal, wrong actor/card rollback, four-player privacy, pending load and pre-action replay retain canonical payment/draw ownership."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "replay",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_learn_discard_destination_replacement_resumes_once_before_draw",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Learn discard replacement suspends before draw, persists the pending choice and resumes with exactly one draw after the chosen canonical destination. A sequential two-Learn spell accepts the first newly drawn card in the second current-hand choice, with exact pre-action replay and no stale domain."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "replay",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_two_learn_instructions_use_each_current_hand_after_prior_draw",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Learn discard replacement suspends before draw, persists the pending choice and resumes with exactly one draw after the chosen canonical destination. A sequential two-Learn spell accepts the first newly drawn card in the second current-hand choice, with exact pre-action replay and no stale domain."
+    },
+    {
+      "capability_id": "keyword_action.learn.commander",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_commander_learn.CommanderLearnRuntimeTests.test_actual_igneous_damage_then_private_discard_draw_rollback_load_and_replay",
+      "official_rule_ids": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commander Learn has an explicit closed action schema and authoritative effective-profile guard. Actual Igneous damage precedes actor-private discard and draw; Pop Quiz and Professor entry preserve composition. Decline/empty hand, owner withdrawal, wrong actor/card rollback, four-player privacy, pending load and pre-action replay retain canonical payment/draw ownership."
+    },
+    {
       "capability_id": "keyword_action.manifest.card",
       "evidence_class": "interaction",
       "test_id": "tests.test_manifest.ManifestEntryOwnerTests.test_manifested_instant_has_no_turn_up_offer_or_accepted_action",

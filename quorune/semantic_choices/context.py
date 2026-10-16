@@ -94,6 +94,9 @@ class SemanticChoiceQuery(
     Protocol,
 ):
     @property
+    def rules_profile(self) -> str: ...
+
+    @property
     def seats(self) -> tuple[str, ...]: ...
 
     @property
@@ -163,6 +166,7 @@ class SnapshotSemanticChoiceQuery:
     committed_discard_ids: tuple[str, ...] = ()
     defined_discard_characteristic_ids: tuple[str, ...] = ()
     resolution_condition_facts: FrozenMap = field(default_factory=FrozenMap)
+    rules_profile: str = ''
 
     def __post_init__(self) -> None:
         for field_name in (

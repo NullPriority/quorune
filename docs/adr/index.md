@@ -131,3 +131,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0114 — player speed and Max Speed applicability](0114-player-speed-and-max-speed-applicability.md)
 - [ADR 0115 — typed Manifest entry and turn-up](0115-typed-manifest-entry-and-turn-up.md)
 - [ADR 0116 — typed fixed energy payments](0116-typed-fixed-energy-payments.md)
+- [ADR 0117 — Commander Learn payment boundary](0117-commander-learn-payment-boundary.md)

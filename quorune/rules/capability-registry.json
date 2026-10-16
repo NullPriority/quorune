@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 322,
+  "registry_version": 323,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -244,6 +244,106 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "keyword_action.learn.commander",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "121.2",
+        "608.2c",
+        "701.9a",
+        "701.9b",
+        "701.48a",
+        "903.11",
+        "903.11a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Complete Learn action under Commander rule 903.11, retaining the optional one-card discard and following private draw through existing canonical owners.",
+        "inputs": [
+          "exact Learn instruction in a represented spell, entry/death trigger or activation",
+          "locked resolving controller and current owned hand",
+          "authoritative Commander rules profile"
+        ],
+        "outputs": [
+          "optional private discard selection",
+          "canonical discard before exactly one draw when paid",
+          "decline or empty hand with no draw and no outside-game import",
+          "persistent principal-bound continuation"
+        ],
+        "exclusions": [
+          "traditional outside-game Lesson retrieval",
+          "learn replacement effects",
+          "unrepresented subjects, repetition or conditional grammar",
+          "format-name display metadata as rules authority"
+        ]
+      },
+      "dependencies": [
+        "choice.affected_player.fixed_discard",
+        "effect.choice.optional_fixed_mana_payment",
+        "zone.change.destination_replacement",
+        "zone.draw.library_to_hand"
+      ],
+      "implementation_components": [
+        "quorune.commander_learn_model.validate_commander_learn_instruction",
+        "quorune.compiler.commander_learn_templates.commander_learn_effect_template",
+        "quorune.rules.commander_learn_shapes.commander_learn_node_capabilities",
+        "quorune.semantic_choices.commander_learn.prepare_commander_learn",
+        "quorune.semantic_choices.commander_learn.complete_commander_learn"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The exact Commander-only action requires its Learn, discard and draw owners. Unsupported profiles or altered action fields cannot gain complete admission; runtime revalidates the effective rules profile and locked actor.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Compiler omission prevents the complete spell/trigger/activation witnesses. Omitting the format guard admits unsupported profiles; omitting paid draw breaks actual Igneous hand/library consequences.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_learn_spell_entry_death_and_activation_have_explicit_commander_scope",
+        "test_actual_igneous_damage_then_private_discard_draw_rollback_load_and_replay",
+        "test_actual_learn_decline_and_empty_hand_never_draw_or_import_lesson",
+        "test_actual_pop_quiz_draw_precedes_learn_and_professor_entry_uses_controller",
+        "test_learn_discard_destination_replacement_resumes_once_before_draw",
+        "test_two_learn_instructions_use_each_current_hand_after_prior_draw"
+      ],
+      "negative_tests": [
+        "test_other_profiles_and_unrepresented_learn_subjects_remain_residual",
+        "test_learn_discard_and_draw_owner_withdrawals_prevent_complete_admission",
+        "test_runtime_learn_requires_authoritative_commander_profile_and_locked_actor"
+      ],
+      "interaction_tests": [
+        "test_actual_igneous_damage_then_private_discard_draw_rollback_load_and_replay",
+        "test_actual_pop_quiz_draw_precedes_learn_and_professor_entry_uses_controller",
+        "test_learn_discard_destination_replacement_resumes_once_before_draw",
+        "test_two_learn_instructions_use_each_current_hand_after_prior_draw"
+      ],
+      "multiplayer_tests": [
+        "test_actual_igneous_damage_then_private_discard_draw_rollback_load_and_replay",
+        "test_actual_pop_quiz_draw_precedes_learn_and_professor_entry_uses_controller",
+        "test_learn_discard_destination_replacement_resumes_once_before_draw",
+        "test_two_learn_instructions_use_each_current_hand_after_prior_draw"
+      ],
+      "privacy_tests": [
+        "test_actual_igneous_damage_then_private_discard_draw_rollback_load_and_replay"
+      ],
+      "replay_tests": [
+        "test_actual_igneous_damage_then_private_discard_draw_rollback_load_and_replay",
+        "test_actual_learn_decline_and_empty_hand_never_draw_or_import_lesson",
+        "test_actual_pop_quiz_draw_precedes_learn_and_professor_entry_uses_controller",
+        "test_learn_discard_destination_replacement_resumes_once_before_draw",
+        "test_two_learn_instructions_use_each_current_hand_after_prior_draw"
+      ]
+    },
     {
       "id": "life.loss.half_current_player",
       "version": 2,

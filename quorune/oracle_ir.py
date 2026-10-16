@@ -171,7 +171,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v393"
+ORACLE_COMPILER_VERSION = "oracle-ir-v394"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -425,7 +425,8 @@ def _reviewed_atomic_effect_template(
         text.strip(),
         card_name=card_name,
     )
-    compiled = prevention or _effect_template(
+    from .compiler.commander_learn_templates import commander_learn_effect_template
+    compiled = prevention or commander_learn_effect_template(text) or _effect_template(
         text,
         card_name=card_name,
         source_is_permanent=source_is_permanent,
@@ -686,7 +687,7 @@ def _keyword_nodes(
 
     multi_nodes = multi_keyword_nodes(**locals())
     if multi_nodes is not None: return multi_nodes
-    if mechanics in {("madness",), ("partner with",)}: return ()
+    if mechanics in {("madness",), ("partner with",), ("learn",)}: return ()
 
     keyword_event_effect = fixed_keyword_event_effect_node(node_id=node_id, line=line, material_line=material_line, span=span, mechanics=mechanics, capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
     if keyword_event_effect is not None: return (keyword_event_effect,)

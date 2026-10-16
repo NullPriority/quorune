@@ -1248,6 +1248,18 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/commander_learn_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/commander_pairing.py",
       "layer": "rules",
       "owning_subsystem": "commander_variant",
@@ -2043,6 +2055,21 @@
     },
     {
       "file": "quorune/compiler/combat_metadata_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/commander_learn_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -9038,6 +9065,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/commander_learn_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/component_resolution.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -10893,6 +10934,21 @@
     },
     {
       "file": "quorune/semantic_choices/bolster.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_choices",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/semantic_choices/commander_learn.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_choices",
       "allowed_dependency_layers": [
@@ -14346,5 +14402,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "12f57ca9819240a177ef61a95bf89b14dadaa9f883dd9609d3fa0a82bce1adcc"
+  "fingerprint": "b8325fb47ac12e6647e27c61cb1f4edbb3623a714ca37ea11506006fd406ce9c"
 }
