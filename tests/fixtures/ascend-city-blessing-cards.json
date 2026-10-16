@@ -94,16 +94,27 @@
       "type_line": "Land"
     },
     {
-      "cmc": 4.0,
-      "color_identity": [
-        "U"
-      ],
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "name": "Clone",
+      "mana_cost": "{3}{U}",
+      "type_line": "Creature — Shapeshifter",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield.",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
       "colors": [
         "U"
       ],
-      "defense": null,
+      "color_identity": [
+        "U"
+      ],
       "keywords": [],
+      "produced_mana": [],
       "layout": "normal",
+      "released_at": "2013-07-19",
+      "faces": [],
+      "cmc": 4.0,
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "legal",
@@ -128,17 +139,7 @@
         "timeless": "legal",
         "tlr": "not_legal",
         "vintage": "legal"
-      },
-      "loyalty": null,
-      "mana_cost": "{3}{U}",
-      "name": "Clone",
-      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
-      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield.",
-      "power": "0",
-      "produced_mana": [],
-      "released_at": "2013-07-19",
-      "toughness": "0",
-      "type_line": "Creature — Shapeshifter"
+      }
     },
     {
       "cmc": 2.0,
@@ -289,16 +290,25 @@
       "type_line": "Creature — Human Detective"
     },
     {
-      "cmc": 2.0,
-      "color_identity": [
-        "W"
-      ],
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "name": "Disenchant",
+      "mana_cost": "{1}{W}",
+      "type_line": "Instant",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2024-11-15",
       "colors": [
         "W"
       ],
-      "defense": null,
+      "color_identity": [
+        "W"
+      ],
       "keywords": [],
-      "layout": "normal",
+      "produced_mana": [],
       "legalities": {
         "alchemy": "legal",
         "brawl": "legal",
@@ -324,16 +334,8 @@
         "tlr": "legal",
         "vintage": "legal"
       },
-      "loyalty": null,
-      "mana_cost": "{1}{W}",
-      "name": "Disenchant",
-      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
-      "oracle_text": "Destroy target artifact or enchantment.",
-      "power": null,
-      "produced_mana": [],
-      "released_at": "2024-11-15",
-      "toughness": null,
-      "type_line": "Instant"
+      "faces": [],
+      "cmc": 2.0
     },
     {
       "cmc": 2.0,

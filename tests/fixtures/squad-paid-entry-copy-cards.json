@@ -307,28 +307,19 @@
       "cmc": 3.0
     },
     {
-      "oracle_id": "96312b75-3110-4506-9f95-0c6c17d9da11",
-      "name": "Securitron Squadron",
-      "mana_cost": "{1}{W}",
-      "type_line": "Artifact Creature — Robot",
-      "oracle_text": "Squad {3} (As an additional cost to cast this spell, you may pay {3} any number of times. When this creature enters, create that many tokens that are copies of it.)\nVigilance\nWhenever a creature token you control enters, put a +1/+1 counter on it.",
-      "power": "2",
-      "toughness": "2",
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "W"
-      ],
+      "cmc": 2.0,
       "color_identity": [
         "W"
       ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
       "keywords": [
         "Vigilance",
         "Squad"
       ],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2024-03-08",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "not_legal",
@@ -354,8 +345,16 @@
         "tlr": "legal",
         "vintage": "legal"
       },
-      "faces": [],
-      "cmc": 2.0
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Securitron Squadron",
+      "oracle_id": "96312b75-3110-4506-9f95-0c6c17d9da11",
+      "oracle_text": "Squad {3} (As an additional cost to cast this spell, you may pay {3} any number of times. When this creature enters, create that many tokens that are copies of it.)\nVigilance\nWhenever a creature token you control enters, put a +1/+1 counter on it.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-03-08",
+      "toughness": "2",
+      "type_line": "Artifact Creature — Robot"
     },
     {
       "oracle_id": "b34507d3-55ba-4629-9581-7983d0025e89",

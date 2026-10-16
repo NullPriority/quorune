@@ -1043,8 +1043,6 @@
       "oracle_text": "Instant and sorcery spells you cast cost {1} less to cast.",
       "power": "2",
       "toughness": "2",
-      "loyalty": null,
-      "defense": null,
       "colors": [
         "R",
         "U"
@@ -1058,29 +1056,7 @@
       "layout": "normal",
       "released_at": "2025-04-11",
       "legalities": {
-        "alchemy": "not_legal",
-        "brawl": "legal",
-        "commander": "legal",
-        "competitivebrawl": "legal",
-        "duel": "legal",
-        "future": "not_legal",
-        "gladiator": "legal",
-        "historic": "legal",
-        "legacy": "legal",
-        "modern": "legal",
-        "oathbreaker": "legal",
-        "oldschool": "not_legal",
-        "pauper": "legal",
-        "paupercommander": "legal",
-        "penny": "legal",
-        "pioneer": "legal",
-        "predh": "not_legal",
-        "premodern": "not_legal",
-        "standard": "not_legal",
-        "standardbrawl": "not_legal",
-        "timeless": "legal",
-        "tlr": "legal",
-        "vintage": "legal"
+        "commander": "legal"
       }
     },
     {

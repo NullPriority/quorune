@@ -201,7 +201,8 @@
       "oracle_id": "f1e8f746-1837-4ea8-9a07-e57946883353",
       "name": "Perilous Myr",
       "mana_cost": "{2}",
-      "type_line": "Artifact Creature \u2014 Phyrexian Myr",
+      "cmc": 2.0,
+      "type_line": "Artifact Creature — Phyrexian Myr",
       "oracle_text": "When this creature dies, it deals 2 damage to any target.",
       "power": "1",
       "toughness": "1",
@@ -214,31 +215,9 @@
       "layout": "normal",
       "released_at": "2020-11-20",
       "legalities": {
-        "alchemy": "not_legal",
-        "brawl": "legal",
         "commander": "legal",
-        "competitivebrawl": "legal",
-        "duel": "legal",
-        "future": "not_legal",
-        "gladiator": "legal",
-        "historic": "legal",
-        "legacy": "legal",
-        "modern": "legal",
-        "oathbreaker": "legal",
-        "oldschool": "not_legal",
-        "pauper": "legal",
-        "paupercommander": "legal",
-        "penny": "not_legal",
-        "pioneer": "not_legal",
-        "predh": "legal",
-        "premodern": "not_legal",
-        "standard": "not_legal",
-        "standardbrawl": "not_legal",
-        "timeless": "legal",
-        "tlr": "legal",
-        "vintage": "legal"
-      },
-      "cmc": 2.0
+        "duel": "legal"
+      }
     },
     {
       "oracle_id": "34edbf1b-0826-49f1-a04d-15cc8c543b22",
@@ -290,25 +269,14 @@
       "cmc": 3.0
     },
     {
-      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
-      "name": "Island",
-      "mana_cost": "",
-      "type_line": "Basic Land \u2014 Island",
-      "oracle_text": "({T}: Add {U}.)",
-      "power": null,
-      "toughness": null,
-      "loyalty": null,
-      "defense": null,
-      "colors": [],
+      "cmc": 0.0,
       "color_identity": [
         "U"
       ],
+      "colors": [],
+      "defense": null,
       "keywords": [],
-      "produced_mana": [
-        "U"
-      ],
       "layout": "normal",
-      "released_at": "2026-11-13",
       "legalities": {
         "alchemy": "legal",
         "brawl": "legal",
@@ -334,7 +302,18 @@
         "tlr": "legal",
         "vintage": "legal"
       },
-      "cmc": 0.0
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
     },
     {
       "oracle_id": "bc914bff-3c23-538c-8218-2d1507216ff7",

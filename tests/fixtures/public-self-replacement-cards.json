@@ -44,51 +44,30 @@
       "type_line": "Artifact Creature — Construct"
     },
     {
+      "oracle_id": "692a6833-3014-42f6-b1ad-333bb3292c65",
+      "name": "Thought Reflection",
+      "mana_cost": "{4}{U}{U}{U}",
       "cmc": 7.0,
-      "color_identity": [
-        "U"
-      ],
+      "type_line": "Enchantment",
+      "oracle_text": "If you would draw a card, draw two cards instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
       "colors": [
         "U"
       ],
-      "defense": null,
+      "color_identity": [
+        "U"
+      ],
       "keywords": [],
-      "layout": "normal",
-      "legalities": {
-        "alchemy": "not_legal",
-        "brawl": "not_legal",
-        "commander": "legal",
-        "competitivebrawl": "not_legal",
-        "duel": "legal",
-        "future": "not_legal",
-        "gladiator": "not_legal",
-        "historic": "not_legal",
-        "legacy": "legal",
-        "modern": "legal",
-        "oathbreaker": "legal",
-        "oldschool": "not_legal",
-        "pauper": "not_legal",
-        "paupercommander": "not_legal",
-        "penny": "legal",
-        "pioneer": "not_legal",
-        "predh": "legal",
-        "premodern": "not_legal",
-        "standard": "not_legal",
-        "standardbrawl": "not_legal",
-        "timeless": "not_legal",
-        "tlr": "not_legal",
-        "vintage": "legal"
-      },
-      "loyalty": null,
-      "mana_cost": "{4}{U}{U}{U}",
-      "name": "Thought Reflection",
-      "oracle_id": "692a6833-3014-42f6-b1ad-333bb3292c65",
-      "oracle_text": "If you would draw a card, draw two cards instead.",
-      "power": null,
       "produced_mana": [],
+      "layout": "normal",
       "released_at": "2020-08-07",
-      "toughness": null,
-      "type_line": "Enchantment"
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
     },
     {
       "oracle_id": "fixture:self-replacement-entry",

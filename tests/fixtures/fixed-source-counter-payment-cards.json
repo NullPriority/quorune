@@ -193,26 +193,14 @@
       }
     },
     {
-      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
-      "name": "Island",
-      "mana_cost": "",
       "cmc": 0.0,
-      "type_line": "Basic Land — Island",
-      "oracle_text": "({T}: Add {U}.)",
-      "power": null,
-      "toughness": null,
-      "loyalty": null,
-      "defense": null,
-      "colors": [],
       "color_identity": [
         "U"
       ],
+      "colors": [],
+      "defense": null,
       "keywords": [],
-      "produced_mana": [
-        "U"
-      ],
       "layout": "normal",
-      "released_at": "2026-11-13",
       "legalities": {
         "alchemy": "legal",
         "brawl": "legal",
@@ -237,7 +225,19 @@
         "timeless": "legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",

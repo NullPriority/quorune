@@ -100,26 +100,14 @@
       }
     },
     {
-      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
-      "name": "Mountain",
-      "mana_cost": "",
-      "type_line": "Basic Land \u2014 Mountain",
-      "oracle_text": "({T}: Add {R}.)",
-      "power": null,
-      "toughness": null,
-      "loyalty": null,
-      "defense": null,
-      "layout": "normal",
-      "released_at": "2026-11-13",
       "cmc": 0.0,
-      "colors": [],
       "color_identity": [
         "R"
       ],
+      "colors": [],
+      "defense": null,
       "keywords": [],
-      "produced_mana": [
-        "R"
-      ],
+      "layout": "normal",
       "legalities": {
         "alchemy": "legal",
         "brawl": "legal",
@@ -144,7 +132,19 @@
         "timeless": "legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
     },
     {
       "oracle_id": "621bc39b-5636-477c-b2dc-751ea13f6101",
