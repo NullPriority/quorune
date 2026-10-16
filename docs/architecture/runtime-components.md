@@ -347,6 +347,18 @@ intent commits every selected member before discovering tap triggers. Tapping
 an attacking creature does not remove it from combat. Variable, linked and
 source-self tap costs remain residual.
 
+Cost schema 4 adds fixed removal of one named counter from the original source
+permanent. Its explicit source reference resolves through `$source.zone_object`;
+leaving and returning cannot substitute new counters for the old object. The
+choice rechecks the full counter amount and retained source identity before
+emitting the canonical counter-removal intent. The payer stays the trigger's
+controller, while an unqualified source-local removal remains available after
+the source changes controller. Cost pronouns are normalized only inside an
+established source-self event. Earlier cost encodings remain unchanged.
+Paid and optional legacy library searches pass their existing complete
+battlefield or hand shape validator before ordinary search execution resumes;
+counted-search schema 2 retains its existing model validation.
+
 Resolution-time payment schema 4 composes one existing fixed action with a
 `reflexive_trigger_program`. This immutable body retains unbound targets and
 quantities until it resolves in its own stack frame. The existing payment

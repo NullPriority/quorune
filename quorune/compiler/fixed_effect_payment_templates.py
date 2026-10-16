@@ -28,6 +28,8 @@ def fixed_effect_payment_spec(text: str) -> FixedEffectPaymentSpec | None:
     if exile is not None:return exile
     tap = _fixed_untapped_permanent_payment(value)
     if tap is not None:return tap
+    counter = _fixed_source_counter_payment(value)
+    if counter is not None:return counter
     energy=re.fullmatch(r'pay (?P<symbols>(?:\{E\})+)',value,re.I)
     if energy is not None:return FixedEffectPaymentSpec('energy',amount=len(energy['symbols'])//3)
     mana=re.fullmatch(r"pay (?P<cost>(?:\{(?:[0-9]+|[WUBRGC])\})+)",value,re.I)
@@ -55,6 +57,16 @@ def fixed_effect_payment_spec(text: str) -> FixedEffectPaymentSpec | None:
             predicate=zone_cost.predicate
         return FixedEffectPaymentSpec('sacrifice',predicate=replace(predicate,controller='$controller'))
     return None
+
+
+def _fixed_source_counter_payment(value):
+    from ..abilities import _source_counter_removal_cost
+    from ..rules.source_references import source_self_permanent_type
+    if source_self_permanent_type(value.rsplit(' from ',1)[-1]) is None:return None
+    parsed=_source_counter_removal_cost(value,card_name='source')
+    if parsed is None:return None
+    return FixedEffectPaymentSpec('remove_source_counter',schema_version=4,amount=parsed.amount,
+        counter_name=parsed.counter_name,source_ref='$source.zone_object')
 
 
 def _fixed_untapped_permanent_payment(value):

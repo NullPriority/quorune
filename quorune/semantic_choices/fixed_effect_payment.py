@@ -7,7 +7,7 @@ from typing import Any, Mapping
 from ..fixed_effect_payment import FixedEffectPaymentSpec
 from ..object_query import object_matches_query
 from ..replacement.immutable import FrozenMap
-from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent, PayLifeIntent, PayManaCostIntent, SetPermanentsTappedIntent
+from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent, PayLifeIntent, PayManaCostIntent, SetPermanentsTappedIntent, RemoveCountersIntent
 from ..semantic_runtime.energy_payment import PayEnergyIntent
 from ..zone_trigger_events import ZoneTransitionKind
 from .context import SemanticChoiceContext, SemanticChoiceQuery
@@ -59,6 +59,23 @@ def prepare_fixed_effect_payment(
     return prepare_fixed_payment_cost(spec, effect, context)
 
 
+def _source_counter_payment_row(spec,query):
+    row=query.object(spec.source_ref,zones=('battlefield',)) if spec.source_ref is not None else None
+    if row is None or row.phased_out:return None
+    count=row.counters.get(spec.counter_name,0)
+    if type(count) is not int or count<spec.amount:return None
+    return row
+
+
+def _source_counter_payment_intent(spec,effect,query):
+    row=_source_counter_payment_row(spec,query)
+    legal={value['ref']:value['logical_object_id'] for value in effect['_legal_objects']}
+    if row is None or legal.get(row.ref)!=row.logical_object_id:
+        raise SemanticChoiceError('Source counter payment is unavailable or changed incarnation')
+    return RemoveCountersIntent(actor=effect['_choice_actor'],object_ref=row.ref,counter_name=spec.counter_name,
+        amount=spec.amount,reason=effect['_stack_label'],source_ref=row.ref)
+
+
 def prepare_fixed_payment_cost(
     spec: FixedEffectPaymentSpec, effect: Mapping[str, Any],
     context: SemanticChoiceContext,
@@ -86,6 +103,11 @@ def prepare_fixed_payment_cost(
             owner_relation='actor' if spec.kind in {'discard','exile'} else 'any',
             controller_relation='actor' if spec.kind in {'sacrifice','tap'} else 'any',
         )
+    elif spec.kind=='remove_source_counter':
+        source=_source_counter_payment_row(spec,context.query)
+        legal=(source,) if source is not None else ()
+        payable=bool(legal)
+        choice=ScalarChoice(field_name='pay',legal_values=(True,False) if payable else (False,))
     else:
         payable = (
             context.query.player_life(actor) >= spec.amount if spec.kind == 'life'
@@ -168,7 +190,9 @@ def complete_fixed_payment_cost(
             raise SemanticChoiceError('Fixed resource payment choice must be boolean')
         if not response.get('pay', False):
             return SemanticChoiceCompletion()
-        if spec.kind == 'life':
+        if spec.kind=='remove_source_counter':
+            intent=_source_counter_payment_intent(spec,effect,query)
+        elif spec.kind == 'life':
             if query.player_life(actor) < spec.amount:
                 raise SemanticChoiceError('Fixed life payment is no longer payable')
             intent = PayLifeIntent(actor=actor, player=actor, amount=spec.amount, reason=label)

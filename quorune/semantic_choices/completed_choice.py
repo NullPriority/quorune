@@ -21,7 +21,7 @@ def _intent_types():
         typed.ReturnGraveyardCardToOwnerHandIntent,
         typed.RecordChoiceIntent, typed.ExploreCompletedIntent, typed.ConniveCompletedIntent,
         typed.SetPermanentTappedIntent, typed.SetPermanentsTappedIntent, typed.ProhibitNextUntapIntent, DomainEffectIntent, ExploitSacrificeIntent,
-        typed.PlaceCountersIntent,typed.PlacePlayerCountersIntent,typed.PlaceCounterBatchIntent,
+        typed.PlaceCountersIntent,typed.PlacePlayerCountersIntent,typed.PlaceCounterBatchIntent,typed.RemoveCountersIntent,
         typed.QueueReflexiveTriggerIntent,
     )}
 

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "207730678bdbdd7dcc40c7290475db8930121d06729d69486f75102a1c756249",
-  "declaration_source_fingerprint": "798f418633ccc36fb988e2b8b5dea42372e9bee358c12acf5232b710c7526645",
+  "registry_fingerprint": "1328495ce1791156cc3f12014b1c36b534365a689d6c1de9c3133865929692b0",
+  "declaration_source_fingerprint": "e26493f91496477792f6a640fad2eee283b4c9ef7fb71dd2317c30eee7b33e21",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -52185,6 +52185,468 @@
       "applicability_note": "Illegal targets and insufficient X payment leave state unchanged; resolution cannot modify a returned target incarnation."
     },
     {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentCompilerTests.test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Legacy fixed searches to battlefield or hand are accepted through their existing independent complete leaf shape; missing shuffle, wrong destination, extra fields or malformed count fail closed. Native Purestrain independently exercises paid battlefield search timing, privacy and replay."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentCompilerTests.test_public_counter_payment_uses_no_hidden_identity_and_rejects_stale_or_partial_resources",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Counter costs use public counter markers and current original source identity without reading hidden characteristics or imposing a controller restriction. Stale incarnations and insufficient exact counter resources reject; decline remains legal."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentRuntimeTests.test_actual_forgehammer_removes_two_oil_before_targeted_counterable_reflexive_frame",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Purestrain, Nazar and Forgehammer use real casts, attacks and resolution-time counter payments. Original source departure/return cannot substitute fresh counters; locked trigger controller may remove counters after a real control change; fixed amounts precede search, draw/life or separate targeted counterable reflexive results. Pending load, principal privacy, rollback and preaction replay are checked."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentRuntimeTests.test_actual_nazar_removes_foreign_controlled_source_counters_for_locked_trigger_controller",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Purestrain, Nazar and Forgehammer use real casts, attacks and resolution-time counter payments. Original source departure/return cannot substitute fresh counters; locked trigger controller may remove counters after a real control change; fixed amounts precede search, draw/life or separate targeted counterable reflexive results. Pending load, principal privacy, rollback and preaction replay are checked."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentRuntimeTests.test_actual_purestrain_removes_before_search_and_departed_or_returned_source_cannot_pay",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Purestrain, Nazar and Forgehammer use real casts, attacks and resolution-time counter payments. Original source departure/return cannot substitute fresh counters; locked trigger controller may remove counters after a real control change; fixed amounts precede search, draw/life or separate targeted counterable reflexive results. Pending load, principal privacy, rollback and preaction replay are checked."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentRuntimeTests.test_actual_nazar_removes_foreign_controlled_source_counters_for_locked_trigger_controller",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Purestrain, Nazar and Forgehammer use real casts, attacks and resolution-time counter payments. Original source departure/return cannot substitute fresh counters; locked trigger controller may remove counters after a real control change; fixed amounts precede search, draw/life or separate targeted counterable reflexive results. Pending load, principal privacy, rollback and preaction replay are checked."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentCompilerTests.test_fixed_source_counter_costs_keep_named_amount_source_and_if_when_timing",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Purestrain, Nazar and Forgehammer use real casts, attacks and resolution-time counter payments. Original source departure/return cannot substitute fresh counters; locked trigger controller may remove counters after a real control change; fixed amounts precede search, draw/life or separate targeted counterable reflexive results. Pending load, principal privacy, rollback and preaction replay are checked."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentCompilerTests.test_counter_cost_version_and_source_identity_round_trip_without_changing_old_payloads",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Purestrain, Nazar and Forgehammer use real casts, attacks and resolution-time counter payments. Original source departure/return cannot substitute fresh counters; locked trigger controller may remove counters after a real control change; fixed amounts precede search, draw/life or separate targeted counterable reflexive results. Pending load, principal privacy, rollback and preaction replay are checked."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentCompilerTests.test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Legacy fixed searches to battlefield or hand are accepted through their existing independent complete leaf shape; missing shuffle, wrong destination, extra fields or malformed count fail closed. Native Purestrain independently exercises paid battlefield search timing, privacy and replay."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentCompilerTests.test_public_counter_payment_uses_no_hidden_identity_and_rejects_stale_or_partial_resources",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Counter costs use public counter markers and current original source identity without reading hidden characteristics or imposing a controller restriction. Stale incarnations and insufficient exact counter resources reject; decline remains legal."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentCompilerTests.test_unbound_pronouns_other_objects_and_variable_or_unnamed_counters_remain_residual",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Purestrain, Nazar and Forgehammer use real casts, attacks and resolution-time counter payments. Original source departure/return cannot substitute fresh counters; locked trigger controller may remove counters after a real control change; fixed amounts precede search, draw/life or separate targeted counterable reflexive results. Pending load, principal privacy, rollback and preaction replay are checked."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentCompilerTests.test_withdrawn_counter_cost_capability_prevents_promotion",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Purestrain, Nazar and Forgehammer use real casts, attacks and resolution-time counter payments. Original source departure/return cannot substitute fresh counters; locked trigger controller may remove counters after a real control change; fixed amounts precede search, draw/life or separate targeted counterable reflexive results. Pending load, principal privacy, rollback and preaction replay are checked."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentCompilerTests.test_counter_cost_version_and_source_identity_round_trip_without_changing_old_payloads",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Purestrain, Nazar and Forgehammer use real casts, attacks and resolution-time counter payments. Original source departure/return cannot substitute fresh counters; locked trigger controller may remove counters after a real control change; fixed amounts precede search, draw/life or separate targeted counterable reflexive results. Pending load, principal privacy, rollback and preaction replay are checked."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentCompilerTests.test_fixed_source_counter_costs_keep_named_amount_source_and_if_when_timing",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Purestrain, Nazar and Forgehammer use real casts, attacks and resolution-time counter payments. Original source departure/return cannot substitute fresh counters; locked trigger controller may remove counters after a real control change; fixed amounts precede search, draw/life or separate targeted counterable reflexive results. Pending load, principal privacy, rollback and preaction replay are checked."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentCompilerTests.test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Legacy fixed searches to battlefield or hand are accepted through their existing independent complete leaf shape; missing shuffle, wrong destination, extra fields or malformed count fail closed. Native Purestrain independently exercises paid battlefield search timing, privacy and replay."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentCompilerTests.test_public_counter_payment_uses_no_hidden_identity_and_rejects_stale_or_partial_resources",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Counter costs use public counter markers and current original source identity without reading hidden characteristics or imposing a controller restriction. Stale incarnations and insufficient exact counter resources reject; decline remains legal."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentRuntimeTests.test_actual_nazar_removes_foreign_controlled_source_counters_for_locked_trigger_controller",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Purestrain, Nazar and Forgehammer use real casts, attacks and resolution-time counter payments. Original source departure/return cannot substitute fresh counters; locked trigger controller may remove counters after a real control change; fixed amounts precede search, draw/life or separate targeted counterable reflexive results. Pending load, principal privacy, rollback and preaction replay are checked."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentRuntimeTests.test_actual_forgehammer_removes_two_oil_before_targeted_counterable_reflexive_frame",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Purestrain, Nazar and Forgehammer use real casts, attacks and resolution-time counter payments. Original source departure/return cannot substitute fresh counters; locked trigger controller may remove counters after a real control change; fixed amounts precede search, draw/life or separate targeted counterable reflexive results. Pending load, principal privacy, rollback and preaction replay are checked."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentRuntimeTests.test_actual_nazar_removes_foreign_controlled_source_counters_for_locked_trigger_controller",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Purestrain, Nazar and Forgehammer use real casts, attacks and resolution-time counter payments. Original source departure/return cannot substitute fresh counters; locked trigger controller may remove counters after a real control change; fixed amounts precede search, draw/life or separate targeted counterable reflexive results. Pending load, principal privacy, rollback and preaction replay are checked."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentRuntimeTests.test_actual_purestrain_removes_before_search_and_departed_or_returned_source_cannot_pay",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Purestrain, Nazar and Forgehammer use real casts, attacks and resolution-time counter payments. Original source departure/return cannot substitute fresh counters; locked trigger controller may remove counters after a real control change; fixed amounts precede search, draw/life or separate targeted counterable reflexive results. Pending load, principal privacy, rollback and preaction replay are checked."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentRuntimeTests.test_actual_nazar_removes_foreign_controlled_source_counters_for_locked_trigger_controller",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Purestrain, Nazar and Forgehammer use real casts, attacks and resolution-time counter payments. Original source departure/return cannot substitute fresh counters; locked trigger controller may remove counters after a real control change; fixed amounts precede search, draw/life or separate targeted counterable reflexive results. Pending load, principal privacy, rollback and preaction replay are checked."
+    },
+    {
+      "capability_id": "cost.counter.source_fixed_resolution",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentRuntimeTests.test_actual_purestrain_removes_before_search_and_departed_or_returned_source_cannot_pay",
+      "official_rule_ids": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Purestrain, Nazar and Forgehammer use real casts, attacks and resolution-time counter payments. Original source departure/return cannot substitute fresh counters; locked trigger controller may remove counters after a real control change; fixed amounts precede search, draw/life or separate targeted counterable reflexive results. Pending load, principal privacy, rollback and preaction replay are checked."
+    },
+    {
       "capability_id": "cost.energy.fixed_resolution_payment",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_eddytrail_hawk_selects_target_before_energy_choice",
@@ -77695,6 +78157,25 @@
     {
       "capability_id": "effect.choice.optional_fixed",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentCompilerTests.test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1",
+        "201.5",
+        "603.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Legacy fixed searches to battlefield or hand are accepted through their existing independent complete leaf shape; missing shuffle, wrong destination, extra fields or malformed count fail closed. Native Purestrain independently exercises paid battlefield search timing, privacy and replay."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "interaction",
       "test_id": "tests.test_optional_draw_discard_sequences.OptionalDrawDiscardRuntimeTests.test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
       "official_rule_ids": [
         "109.5",
@@ -78094,6 +78575,25 @@
     {
       "capability_id": "effect.choice.optional_fixed",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentCompilerTests.test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1",
+        "201.5",
+        "603.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Legacy fixed searches to battlefield or hand are accepted through their existing independent complete leaf shape; missing shuffle, wrong destination, extra fields or malformed count fail closed. Native Purestrain independently exercises paid battlefield search timing, privacy and replay."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "negative",
       "test_id": "tests.test_optional_draw_discard_sequences.OptionalDrawDiscardCompilerTests.test_linked_dynamic_random_and_other_player_variants_stay_residual",
       "official_rule_ids": [
         "109.5",
@@ -78261,6 +78761,25 @@
         "commander_review"
       ],
       "applicability_note": "Lower the same exact controller choice around independently typed destroy, return, token, and life effects across spell, triggered, activated, and normalized-event contexts."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentCompilerTests.test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1",
+        "201.5",
+        "603.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Legacy fixed searches to battlefield or hand are accepted through their existing independent complete leaf shape; missing shuffle, wrong destination, extra fields or malformed count fail closed. Native Purestrain independently exercises paid battlefield search timing, privacy and replay."
     },
     {
       "capability_id": "effect.choice.optional_fixed",
@@ -78965,6 +79484,28 @@
     },
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentCompilerTests.test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Legacy fixed searches to battlefield or hand are accepted through their existing independent complete leaf shape; missing shuffle, wrong destination, extra fields or malformed count fail closed. Native Purestrain independently exercises paid battlefield search timing, privacy and replay."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_energy_payments.FixedEnergyPaymentActionTests.test_original_eddytrail_hawk_selects_target_before_energy_choice",
       "official_rule_ids": [
@@ -79295,6 +79836,28 @@
     },
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentCompilerTests.test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Legacy fixed searches to battlefield or hand are accepted through their existing independent complete leaf shape; missing shuffle, wrong destination, extra fields or malformed count fail closed. Native Purestrain independently exercises paid battlefield search timing, privacy and replay."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.BoundEventPaymentRuntimeTests.test_original_mirrorworks_paid_entry_creates_exact_copy_and_replays",
       "official_rule_ids": [
@@ -79534,6 +80097,28 @@
         "commander_review"
       ],
       "applicability_note": "Real trusted cast projects a form validated by the actual TypeScript client; only zero or two distinct cards are legal, invalid command submissions roll back, two cards enter one simultaneous move and exactly one consequence executes after pending save/load with pre-action replay."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentCompilerTests.test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Legacy fixed searches to battlefield or hand are accepted through their existing independent complete leaf shape; missing shuffle, wrong destination, extra fields or malformed count fail closed. Native Purestrain independently exercises paid battlefield search timing, privacy and replay."
     },
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
@@ -146530,5 +147115,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "9a79c8dc03ecd187acebce36be0fe25f401d04bef24f8c6376248c9e2744a3d2"
+  "fingerprint": "2312941c8aa9770f3169722d998a67bee53bb667bf5e99ce2d0fa78510eca126"
 }

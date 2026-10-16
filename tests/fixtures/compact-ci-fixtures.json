@@ -74,6 +74,7 @@
     "tests/fixtures/fixed-next-turn-draw-cards.json",
     "tests/fixtures/fixed-query-keyword-grant-cards.json",
     "tests/fixtures/fixed-resolution-mana-cards.json",
+    "tests/fixtures/fixed-source-counter-payment-cards.json",
     "tests/fixtures/fixed-spell-cost-reduction-cards.json",
     "tests/fixtures/fixed-stack-mana-value-cards.json",
     "tests/fixtures/fixed-tap-payment-cards.json",

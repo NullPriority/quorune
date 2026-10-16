@@ -7,6 +7,7 @@ from typing import Any, Mapping
 
 from .object_predicate import ObjectQuerySpec
 from .creature_subtypes import canonical_creature_subtype
+from .counter_names import normalized_counter_name
 from .replacement.immutable import FrozenMap, thaw_value
 
 
@@ -39,14 +40,24 @@ class FixedEffectPaymentSpec:
     requirements: FrozenMap | None = None
     predicate: ObjectQuerySpec | None = None
     schema_version: int = 2
+    counter_name: str | None = None
+    source_ref: str | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != (3 if self.kind in {'exile','tap'} else 2):
+        version=4 if self.kind=='remove_source_counter' else 3 if self.kind in {'exile','tap'} else 2
+        if type(self.schema_version) is not int or self.schema_version != version:
             raise ValueError("Fixed effect payment version does not match its cost kind")
-        if self.kind not in {"mana", "life", "discard", "sacrifice", "energy", "exile", "tap"}:
+        if self.kind not in {"mana", "life", "discard", "sacrifice", "energy", "exile", "tap", "remove_source_counter"}:
             raise ValueError("Fixed effect payment kind is unsupported")
         if type(self.amount) is not int or self.amount <= 0:
             raise ValueError("Fixed effect payment amount must be positive")
+        if self.kind=='remove_source_counter':
+            if (type(self.counter_name) is not str or not self.counter_name
+                    or normalized_counter_name(self.counter_name)!=self.counter_name
+                    or self.source_ref is not None and (type(self.source_ref) is not str or not self.source_ref)):
+                raise ValueError('Source counter payments require a canonical named counter and optional current source')
+        elif self.counter_name is not None or self.source_ref is not None:
+            raise ValueError('Only source counter payments carry counter and source fields')
         if self.kind == "mana":
             if not isinstance(self.requirements, Mapping) or set(self.requirements) != _MANA_KEYS or any(
                 type(value) is not int or value < 0 for value in self.requirements.values()
@@ -88,13 +99,17 @@ class FixedEffectPaymentSpec:
     def to_dict(self) -> dict[str, Any]:
         return {"schema_version":self.schema_version, "kind":self.kind, "amount":self.amount,
                 "requirements":thaw_value(self.requirements) if self.requirements is not None else None,
-                "predicate":self.predicate.to_dict() if self.predicate is not None else None}
+                "predicate":self.predicate.to_dict() if self.predicate is not None else None,
+                **({'counter_name':self.counter_name,'source_ref':self.source_ref} if self.kind=='remove_source_counter' else {})}
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "FixedEffectPaymentSpec":
-        if not isinstance(value, Mapping) or set(value) != {"schema_version", "kind", "amount", "requirements", "predicate"}:
+        fields={"schema_version", "kind", "amount", "requirements", "predicate"}
+        if isinstance(value,Mapping) and value.get('kind')=='remove_source_counter':fields|={'counter_name','source_ref'}
+        if not isinstance(value, Mapping) or set(value) != fields:
             raise ValueError("Fixed effect payment fields are malformed")
         return cls(kind=value["kind"], amount=value["amount"], schema_version=value["schema_version"],
+            counter_name=value.get('counter_name'),source_ref=value.get('source_ref'),
             requirements=FrozenMap(value["requirements"]) if isinstance(value["requirements"],Mapping) else value["requirements"],
             predicate=ObjectQuerySpec.from_dict(value["predicate"]) if isinstance(value["predicate"],Mapping) else value["predicate"])
 
@@ -105,5 +120,6 @@ class FixedEffectPaymentSpec:
                  "discard":("choice.affected_player.fixed_discard", "zone.change.destination_replacement"),
                  "sacrifice":("choice.affected_player.fixed_sacrifice", "zone.change.destination_replacement"),
                  'exile':('cost.exile.owned_graveyard_resolution','zone.change.destination_replacement'),
-                 'tap':('cost.tap.controlled_untapped_resolution',)}
+                 'tap':('cost.tap.controlled_untapped_resolution',),
+                 'remove_source_counter':('cost.counter.source_fixed_resolution',)}
         return (FIXED_EFFECT_PAYMENT_CAPABILITY, *costs[self.kind])

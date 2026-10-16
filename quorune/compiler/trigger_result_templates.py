@@ -63,7 +63,9 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     specialized = fixed_source_combat_growth_effect_template(body, event=binding.event.value, variant=binding.variant)
     if specialized[0] is not None:return specialized,True
     if binding.event.value.endswith('.self') or binding.variant in {'source_attacks','this_creature_blocks','this_creature_becomes_blocked','source_public_tap_state_transition','source_dealt_damage'}:
-        from .source_self_effect_templates import normalized_source_result_body, pin_source_result_incarnation
+        from .source_self_effect_templates import normalized_source_result_body, pin_source_result_incarnation, _source_self_counter_payment
+        payment=_source_self_counter_payment(body,card_name=card_name,compile_effect=effect_template)
+        if payment is not None:return payment,True
         normalized=normalized_source_result_body(body)
         if normalized is not None:
             value=effect_template(normalized,card_name=card_name)

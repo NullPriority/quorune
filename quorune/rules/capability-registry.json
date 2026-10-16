@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 307,
+  "registry_version": 308,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -244,6 +244,102 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "cost.counter.source_fixed_resolution",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "118.1",
+        "118.3",
+        "118.12",
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Remove one positive fixed quantity of one explicitly named counter from the original source battlefield object as a resolution-time cost.",
+        "inputs": [
+          "locked resolving payer",
+          "original source incarnation",
+          "explicit named counter and positive fixed amount",
+          "current public counter availability",
+          "independently closed If or When result"
+        ],
+        "outputs": [
+          "exact affordable-or-decline choice",
+          "canonical counter removal intent",
+          "old source exclusion after departure or return",
+          "preserved ordinary or reflexive result timing"
+        ],
+        "exclusions": [
+          "unnamed, variable or all-counter costs",
+          "other-object, distributed or linked costs",
+          "unbound source pronouns",
+          "nonbattlefield or phased-out sources"
+        ]
+      },
+      "dependencies": [
+        "effect.choice.optional_fixed_mana_payment",
+        "counter.removal.fixed_effect"
+      ],
+      "implementation_components": [
+        "quorune.fixed_effect_payment.FixedEffectPaymentSpec",
+        "quorune.compiler.fixed_effect_payment_templates._fixed_source_counter_payment",
+        "quorune.compiler.source_self_effect_templates._source_self_counter_payment",
+        "quorune.semantic_choices.fixed_effect_payment._source_counter_payment_intent",
+        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.remove_counters_intent"
+      ],
+      "positive_tests": [
+        "test_fixed_source_counter_costs_keep_named_amount_source_and_if_when_timing",
+        "test_counter_cost_version_and_source_identity_round_trip_without_changing_old_payloads",
+        "test_public_counter_payment_uses_no_hidden_identity_and_rejects_stale_or_partial_resources",
+        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes"
+      ],
+      "negative_tests": [
+        "test_unbound_pronouns_other_objects_and_variable_or_unnamed_counters_remain_residual",
+        "test_withdrawn_counter_cost_capability_prevents_promotion",
+        "test_public_counter_payment_uses_no_hidden_identity_and_rejects_stale_or_partial_resources",
+        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes"
+      ],
+      "interaction_tests": [
+        "test_actual_purestrain_removes_before_search_and_departed_or_returned_source_cannot_pay",
+        "test_actual_nazar_removes_foreign_controlled_source_counters_for_locked_trigger_controller",
+        "test_actual_forgehammer_removes_two_oil_before_targeted_counterable_reflexive_frame",
+        "test_public_counter_payment_uses_no_hidden_identity_and_rejects_stale_or_partial_resources",
+        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes"
+      ],
+      "multiplayer_tests": [
+        "test_actual_nazar_removes_foreign_controlled_source_counters_for_locked_trigger_controller"
+      ],
+      "privacy_tests": [
+        "test_actual_nazar_removes_foreign_controlled_source_counters_for_locked_trigger_controller"
+      ],
+      "replay_tests": [
+        "test_actual_purestrain_removes_before_search_and_departed_or_returned_source_cannot_pay",
+        "test_actual_nazar_removes_foreign_controlled_source_counters_for_locked_trigger_controller",
+        "test_actual_forgehammer_removes_two_oil_before_targeted_counterable_reflexive_frame"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Version4 original-source and canonical counter identity are mandatory. Withdrawing the cost capability blocks exact promotion; departed or returned source cannot pay from new counters.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the fixed source counter cost producer rejects all six complete If/When compiler witnesses; actual original card witnesses require the cost to commit before its consequence.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "cost.tap.controlled_untapped_resolution",
       "version": 1,
@@ -17216,7 +17312,7 @@
     },
     {
       "id": "effect.choice.optional_fixed",
-      "version": 4,
+      "version": 5,
       "official_rules": [
         "109.5",
         "608.2c",
@@ -17231,7 +17327,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Compile and resolve one exact leading 'you may' around one independently represented atomic effect by issuing the resolving controller a choice before the ordinary typed effect resumes. Fixed controller draw-then-discard sequences are one optional acceptance followed by ordered mandatory instructions, including when the draw is replaced or prevented. Finite you may have this-source or target-subject deal/gain/get/lose clauses normalize to that same independently closed action; target selection still precedes resolution-time optional acceptance. Context-proven source-self events bind optional have-it results to their actual source before composing the existing target-first optional leaf; current/last-known source information and original source incarnation retain their owners.",
+        "summary": "Compile and resolve one exact leading 'you may' around one independently represented atomic effect by issuing the resolving controller a choice before the ordinary typed effect resumes. Fixed controller draw-then-discard sequences are one optional acceptance followed by ordered mandatory instructions, including when the draw is replaced or prevented. Finite you may have this-source or target-subject deal/gain/get/lose clauses normalize to that same independently closed action; target selection still precedes resolution-time optional acceptance. Context-proven source-self events bind optional have-it results to their actual source before composing the existing target-first optional leaf; current/last-known source information and original source incarnation retain their owners. Fixed legacy library searches use the same independent battlefield/hand leaf shape validators before optional or paid execution.",
         "inputs": [
           "one source-spanned atomic resolution instruction",
           "the exact leading words you may",
@@ -17261,7 +17357,8 @@
         "quorune.semantic_choices.engine_coordination.continue_semantic_choice",
         "CommanderEngine._continue_resolution",
         "quorune.rules.optional_draw_discard.optional_draw_discard_is_closed",
-        "quorune.compiler.source_self_effect_templates.source_self_contextual_effect_template"
+        "quorune.compiler.source_self_effect_templates.source_self_contextual_effect_template",
+        "quorune.semantic_choices.optional_effect._represented_effect"
       ],
       "positive_tests": [
         "test_fixed_optional_draw_discard_compiles_original_order",
@@ -17273,7 +17370,8 @@
         "test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
         "test_original_optional_have_target_blink_prevents_new_incarnation_substitution",
         "test_spell_trigger_and_activation_share_optional_effect_lowering",
-        "test_optional_source_self_result_keeps_target_timing_and_complete_span"
+        "test_optional_source_self_result_keeps_target_timing_and_complete_span",
+        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes"
       ],
       "negative_tests": [
         "test_linked_dynamic_random_and_other_player_variants_stay_residual",
@@ -17283,7 +17381,8 @@
         "test_original_optional_have_modifier_targets_before_resolution_and_replays",
         "test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
         "test_original_optional_have_target_blink_prevents_new_incarnation_substitution",
-        "test_unestablished_or_new_object_pronouns_are_not_rebound_to_source"
+        "test_unestablished_or_new_object_pronouns_are_not_rebound_to_source",
+        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes"
       ],
       "interaction_tests": [
         "test_accepting_prevented_draw_still_discards_after_real_prior_draw",
@@ -17295,7 +17394,8 @@
         "test_original_optional_have_target_blink_prevents_new_incarnation_substitution",
         "test_original_rig_selects_a_flying_target_before_apply_or_decline",
         "test_original_arsonist_optional_death_damage_keeps_lki_and_trigger_controller",
-        "test_original_clash_grants_to_entering_recipients_and_pending_trigger_survives_grant_departure"
+        "test_original_clash_grants_to_entering_recipients_and_pending_trigger_survives_grant_departure",
+        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes"
       ],
       "multiplayer_tests": [
         "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
@@ -17342,7 +17442,7 @@
     },
     {
       "id": "effect.choice.optional_fixed_mana_payment",
-      "version": 6,
+      "version": 7,
       "official_rules": [
         "109.5",
         "118.12",
@@ -17360,7 +17460,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Resolve a complete fixed mana, energy, life, owned-card discard or controlled-permanent sacrifice payment with independently typed consequences through the existing optional-payment choice, preserving v1 payloads and explicit mandatory-prefix scope.",
+        "summary": "Resolve a complete fixed mana, energy, life, owned-card discard or controlled-permanent sacrifice payment with independently typed consequences through the existing optional-payment choice, preserving v1 payloads and explicit mandatory-prefix scope. Fixed legacy library searches use the same independent battlefield/hand leaf shape validators before optional or paid execution.",
         "inputs": [
           "one source-spanned spell, activation or existing normalized trigger",
           "one positive fixed ordinary mana, energy or life cost, one or two unqualified discards, one qualified discard or one controlled sacrifice",
@@ -17400,7 +17500,8 @@
         "quorune.semantic_runtime.intents.MoveObjectsSimultaneouslyIntent",
         "CommanderEngine._continue_resolution",
         "quorune.compiler.optional_payment_templates.binding_aware_optional_mana_payment_template",
-        "quorune.compiler.trigger_result_templates.binding_effect_template"
+        "quorune.compiler.trigger_result_templates.binding_effect_template",
+        "quorune.semantic_choices.optional_effect._represented_effect"
       ],
       "positive_tests": [
         "test_fixed_payment_composes_across_normalized_trigger_families",
@@ -17410,7 +17511,8 @@
         "test_two_card_payment_published_form_and_command_cardinalities_agree",
         "test_fixed_payment_preserves_bound_source_result_incarnation",
         "test_fixed_payment_can_wrap_sealed_entering_object_copy_recipe",
-        "test_fixed_payment_target_copy_retains_typed_origin_and_closure"
+        "test_fixed_payment_target_copy_retains_typed_origin_and_closure",
+        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes"
       ],
       "negative_tests": [
         "test_bound_payment_nested_variable_and_reflexive_forms_remain_residual",
@@ -17419,7 +17521,8 @@
         "test_nonfixed_nested_and_nonexact_forms_remain_residual",
         "test_original_cricket_unaffordable_payment_rejects_without_result",
         "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
-        "test_runtime_wrapper_rejects_wrong_actor_extra_fields_and_nesting"
+        "test_runtime_wrapper_rejects_wrong_actor_extra_fields_and_nesting",
+        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes"
       ],
       "interaction_tests": [
         "test_original_eddytrail_hawk_selects_target_before_energy_choice",
@@ -17428,7 +17531,8 @@
         "test_paid_attack_result_does_not_affect_reentered_source",
         "test_payment_replacement_choice_resumes_once_after_save_load_and_replays",
         "test_real_card_payment_is_private_commits_before_draw_and_replays",
-        "test_trusted_life_activation_and_declined_prefix_preserve_cost_scope"
+        "test_trusted_life_activation_and_declined_prefix_preserve_cost_scope",
+        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes"
       ],
       "multiplayer_tests": [
         "test_original_cricket_payment_is_private_affordable_and_replays",

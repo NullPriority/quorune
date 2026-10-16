@@ -395,6 +395,7 @@
       "test_fixed_effect_clause_sequences",
       "test_fixed_homogeneous_target_sets",
       "test_fixed_mana_value_target_predicates",
+      "test_fixed_source_counter_payments",
       "test_graft_rules",
       "test_graveyard_exile_payments",
       "test_life_state",

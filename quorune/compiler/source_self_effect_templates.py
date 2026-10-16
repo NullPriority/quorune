@@ -55,6 +55,10 @@ def source_self_contextual_effect_template(
 ) -> tuple[Any, ...] | None:
     """Delegate one source-bound body to its closed typed leaf owner."""
 
+    counter_payment = _source_self_counter_payment(text,card_name=card_name,compile_effect=compile_effect)
+    if counter_payment is not None:
+        return counter_payment
+
     optional = _source_self_optional_result(text, card_name=card_name,
         event_phrase=event_phrase, compile_effect=compile_effect)
     if optional is not None:
@@ -93,6 +97,15 @@ def source_self_contextual_effect_template(
     return declared_effect_amount_template(
         text, source_name=card_name, compile_fixed=compile_fixed,
     )
+
+
+def _source_self_counter_payment(text, *, card_name, compile_effect):
+    if compile_effect is None:return None
+    normalized=re.sub(r'^(you may remove [^.]+? counters? from) (?:it|him|her)(?=\.)',
+        r'\1 this permanent',text,flags=re.I)
+    if normalized==text:return None
+    compiled=compile_effect(normalized,card_name=card_name)
+    return compiled if compiled[0] is not None else None
 
 
 def _source_self_optional_result(text, *, card_name, event_phrase, compile_effect):
