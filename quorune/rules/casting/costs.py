@@ -24,6 +24,7 @@ from ...compiled_flashback import (
 )
 from ...compiled_kicker import compiled_fixed_mana_kicker_spec
 from .paid_entry_copy_costs import with_paid_entry_copy_cost_schema
+from .multikicker_costs import with_multikicker_cost_schema
 from ...compiled_bestow import compiled_fixed_mana_bestow_spec
 from ...convoke import (
     CONVOKE_PAYMENT_SYMBOLS,
@@ -375,6 +376,7 @@ def _cast_schema_and_mechanics(
     for augment in (
         _with_kicker_cost,
         with_paid_entry_copy_cost_schema,
+        with_multikicker_cost_schema,
         _with_bestow_cost,
         with_fixed_public_alternative_costs,
     ):

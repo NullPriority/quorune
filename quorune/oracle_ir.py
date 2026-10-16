@@ -38,7 +38,7 @@ from .compiler.activated_mana_nodes import (
 from .compiler.ability_keyword_fragments import (
     lower_ability_keyword_fragments,
 )
-from .compiler.closed_static_nodes import closed_static_or_replacement_node
+from .compiler.closed_static_nodes import closed_static_card_node
 from .compiler.public_self_replacement_templates import is_fixed_public_self_replacement
 from .compiler.public_alternative_cost_nodes import (
     reject_cast_cost_composition,
@@ -1194,15 +1194,15 @@ def _compile_face(
             nodes.extend(event_nodes)
             continue
 
-        closed_static = closed_static_or_replacement_node(
+        closed_static = closed_static_card_node(
+            record=record,
             node_id=node_id,
             line=line,
             material_line=material_line,
             span=span,
-            source_name=face_name or record.name,
-            card_types=card_types,
+            face_name=face_name,
+            type_line=type_line,
             permanent_card_types=_PERMANENT_CARD_TYPES,
-            source_is_class=("class" in type_parts(type_line)[1]),
             capability_registry=capability_registry,
             capability_profile=capability_profile,
             residuals=residuals,

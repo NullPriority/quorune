@@ -37,9 +37,11 @@ from ..self_cast_reductions import (
     SelfSpellCostReductionSpec,
 )
 from ..rules.capabilities import load_default_capability_registry
+from ..multikicker_model import FixedManaMultikickerSpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 from .paid_entry_copy import PaidEntryCopyCostHandler
+from .multikicker import FixedManaMultikickerHandler
 
 
 CONVOKE_ACTIVE_ZONE = "stack"
@@ -527,7 +529,8 @@ class CastCostComponentRegistry(
         | DelveSpec
         | FixedManaEvokeSpec
         | FixedSpellCostReductionSpec
-        | SelfSpellCostReductionSpec,
+        | SelfSpellCostReductionSpec
+        | FixedManaMultikickerSpec,
     ]
 ):
     pass
@@ -547,6 +550,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             SelfSpellCostReductionHandler(),
             TypedAffinityCostHandler(),
             PaidEntryCopyCostHandler(),
+            FixedManaMultikickerHandler(),
         )
     )
     registry.require_registered_capabilities(load_default_capability_registry())

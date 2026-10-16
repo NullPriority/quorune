@@ -36,4 +36,6 @@ def expand_optional_mana_costs(host, card, base, schema, *, response=None, hint=
                 }
             )
     from .paid_entry_copy_costs import expand_paid_entry_copy_costs
-    return expand_paid_entry_copy_costs(expanded, schema, response=response, hint=hint)
+    from .multikicker_costs import expand_multikicker_costs
+    expanded = expand_paid_entry_copy_costs(expanded, schema, response=response, hint=hint)
+    return expand_multikicker_costs(expanded, schema, response=response, hint=hint)

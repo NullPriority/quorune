@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Iterable
 import re
 
+from ..characteristic_evaluation import type_parts
 from ..rules.capabilities import CapabilityRegistry
 from .declaration_nodes import (
     declaration_static_node,
@@ -22,6 +23,26 @@ from .public_alternative_cost_nodes import (
     fixed_public_alternative_cost_static_node,
 )
 from .static_runtime_nodes import runtime_handler_node, static_runtime_node
+
+
+def closed_static_card_node(*, record, node_id, line, material_line, span,
+        face_name, type_line, permanent_card_types, capability_registry, capability_profile, residuals):
+    """Bind a printed card face before dispatching ordinary static semantics.
+
+    Synthetic token abilities use the record-free dispatcher below and cannot
+    acquire a printed additional-cost instance from their creating card.
+    """
+    from .multikicker_nodes import multikicker_static_node
+    multikicker = multikicker_static_node(record=record, node_id=node_id, line=line,
+        material_line=material_line, span=span, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals)
+    if multikicker is not None:
+        return multikicker
+    card_types, subtypes, _supertypes = type_parts(type_line)
+    return closed_static_or_replacement_node(node_id=node_id, line=line, material_line=material_line,
+        span=span, source_name=face_name or record.name, card_types=card_types,
+        permanent_card_types=permanent_card_types, source_is_class='class' in subtypes,
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
 
 
 def closed_static_or_replacement_node(

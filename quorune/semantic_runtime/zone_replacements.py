@@ -44,7 +44,6 @@ from ..flashback import flashed_back_subject_replacements
 from ..cast_lifecycles import fixed_cast_lifecycle_subject_replacements
 from ..unearth import unearthed_leave_replacement
 from ..zone_trigger_events import ZoneTransitionKind
-from ..kicker import KICKER_ANNOTATION
 from ..madness import MADNESS_REPLACEMENT_HANDLER_ID
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
@@ -66,6 +65,7 @@ from .entry_color_exclusion import ExcludedColorEntryDesignationHandler
 from .entry_copy import EntryCopyHandler, entry_copy_replacement_effects
 from .entry_reveal import EntryRevealHandler,entry_reveal_replacement_effects
 from .kicker import FixedKickedEntryHandler
+from .multikicker import MultikickerEntryHandler, prospective_multikicker_fields
 from .madness import MadnessDiscardReplacementHandler
 from ..read_ahead import READ_AHEAD_ENTRY_HANDLER_ID
 from .entry_state import (
@@ -444,6 +444,7 @@ def default_zone_change_replacement_registry(
             ReadAheadEntryChoiceHandler(),
             RiotEntryChoiceHandler(),
             FixedKickedEntryHandler(),
+            MultikickerEntryHandler(),
             MadnessDiscardReplacementHandler(),
             DynamicSelfEntryCounterHandler(),
             SelfEntryCounterHandler(),
@@ -863,11 +864,7 @@ def _zone_change_snapshot_subjects(
                     ),
                     is_commander=bool(card.is_commander),
                     commander_designation_id=card.commander_designation_id,
-                    cast_option=(
-                        "kicked"
-                        if card.annotations.get(KICKER_ANNOTATION) is True
-                        else None
-                    ),
+                    **prospective_multikicker_fields(host, card, destination),
                 )
             )
         except (

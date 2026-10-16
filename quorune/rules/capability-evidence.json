@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "5b5e4108243fcd5b46e89eab518f30872496adf015e09e8e178f5aa181173e38",
-  "declaration_source_fingerprint": "ae7d16d17c0770246aae820250d0dcf23715ab823ab0ba9c01574637f2b69ba2",
+  "registry_fingerprint": "725952db1be9e9ab5ad2b855111fb7c2e339448c45e87d7e26ae048197e6f826",
+  "declaration_source_fingerprint": "1a4849ab0696df9f054723208d414318b6c2a30e7dbf66719fd8df1aaa02bb07",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -20255,6 +20255,406 @@
         "commander_review"
       ],
       "applicability_note": "Replay the exact cast, multiplayer passes, face-down persistence, turn-up payment, public reveal, and final authoritative state hash."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_creature_total_reduction_counter_replacement_and_invalid_counts",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One printed positive fixed ordinary-mana Multikicker instance; strict original admission, count0/1/2/6, complete prices, typed copied decisions, replacement-aware named entry counters, rollback, privacy and pending replay. Unknown costs, instances and siblings remain closed."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_warcaller_and_yearling_use_current_counters_and_departed_power",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original casts retain their linked repeated payment; pending nested counter replacement/load, unpaid blink, current counter-derived Elf bonuses and source current/LKI damage use canonical owners. Runtime fee, count and accepted-fact omission mutants are caught."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_pending_entry_order_load_and_later_unpaid_blink_keep_incarnations_distinct",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original casts retain their linked repeated payment; pending nested counter replacement/load, unpaid blink, current counter-derived Elf bonuses and source current/LKI damage use canonical owners. Runtime fee, count and accepted-fact omission mutants are caught."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_chalice_zero_one_two_and_six_payments_mana_privacy_and_replay",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One printed positive fixed ordinary-mana Multikicker instance; strict original admission, count0/1/2/6, complete prices, typed copied decisions, replacement-aware named entry counters, rollback, privacy and pending replay. Unknown costs, instances and siblings remain closed."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerCompilerTests.test_dependency_and_compiler_omissions_fail_closed",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One printed positive fixed ordinary-mana Multikicker instance; strict original admission, count0/1/2/6, complete prices, typed copied decisions, replacement-aware named entry counters, rollback, privacy and pending replay. Unknown costs, instances and siblings remain closed."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_native_fee_count_and_paid_fact_mutants_are_killed",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original casts retain their linked repeated payment; pending nested counter replacement/load, unpaid blink, current counter-derived Elf bonuses and source current/LKI damage use canonical owners. Runtime fee, count and accepted-fact omission mutants are caught."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerCompilerTests.test_variable_multiple_zero_and_unrepresented_siblings_stay_residual",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One printed positive fixed ordinary-mana Multikicker instance; strict original admission, count0/1/2/6, complete prices, typed copied decisions, replacement-aware named entry counters, rollback, privacy and pending replay. Unknown costs, instances and siblings remain closed."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerCompilerTests.test_actual_originals_close_with_source_spans_and_linked_counter_instances",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One printed positive fixed ordinary-mana Multikicker instance; strict original admission, count0/1/2/6, complete prices, typed copied decisions, replacement-aware named entry counters, rollback, privacy and pending replay. Unknown costs, instances and siblings remain closed."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_warcaller_and_yearling_use_current_counters_and_departed_power",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original casts retain their linked repeated payment; pending nested counter replacement/load, unpaid blink, current counter-derived Elf bonuses and source current/LKI damage use canonical owners. Runtime fee, count and accepted-fact omission mutants are caught."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_chalice_zero_one_two_and_six_payments_mana_privacy_and_replay",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One printed positive fixed ordinary-mana Multikicker instance; strict original admission, count0/1/2/6, complete prices, typed copied decisions, replacement-aware named entry counters, rollback, privacy and pending replay. Unknown costs, instances and siblings remain closed."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "property",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerValueTests.test_repeat_costs_and_integer_form_are_instance_bound_and_strict",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One printed positive fixed ordinary-mana Multikicker instance; strict original admission, count0/1/2/6, complete prices, typed copied decisions, replacement-aware named entry counters, rollback, privacy and pending replay. Unknown costs, instances and siblings remain closed."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_chalice_zero_one_two_and_six_payments_mana_privacy_and_replay",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One printed positive fixed ordinary-mana Multikicker instance; strict original admission, count0/1/2/6, complete prices, typed copied decisions, replacement-aware named entry counters, rollback, privacy and pending replay. Unknown costs, instances and siblings remain closed."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_warcaller_and_yearling_use_current_counters_and_departed_power",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original casts retain their linked repeated payment; pending nested counter replacement/load, unpaid blink, current counter-derived Elf bonuses and source current/LKI damage use canonical owners. Runtime fee, count and accepted-fact omission mutants are caught."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_pending_entry_order_load_and_later_unpaid_blink_keep_incarnations_distinct",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original casts retain their linked repeated payment; pending nested counter replacement/load, unpaid blink, current counter-derived Elf bonuses and source current/LKI damage use canonical owners. Runtime fee, count and accepted-fact omission mutants are caught."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_creature_total_reduction_counter_replacement_and_invalid_counts",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One printed positive fixed ordinary-mana Multikicker instance; strict original admission, count0/1/2/6, complete prices, typed copied decisions, replacement-aware named entry counters, rollback, privacy and pending replay. Unknown costs, instances and siblings remain closed."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_pending_entry_order_load_and_later_unpaid_blink_keep_incarnations_distinct",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original casts retain their linked repeated payment; pending nested counter replacement/load, unpaid blink, current counter-derived Elf bonuses and source current/LKI damage use canonical owners. Runtime fee, count and accepted-fact omission mutants are caught."
     },
     {
       "capability_id": "casting.payment.affinity",
@@ -75657,6 +76057,34 @@
     },
     {
       "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_warcaller_and_yearling_use_current_counters_and_departed_power",
+      "official_rule_ids": [
+        "107.2",
+        "115.1",
+        "115.1a",
+        "120.1",
+        "120.2",
+        "120.4",
+        "208.3",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "701.14",
+        "701.14a",
+        "701.14b",
+        "701.14c",
+        "701.14d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR608.2h current information and immediate same-incarnation departure LKI determine source power and damage facts. Updated stack and immutable waiting frames retain the ability controller; malformed and returned-incarnation data cannot replace the original. The native Yearling witness distinguishes power5 on departure from power4 at trigger creation."
+    },
+    {
+      "capability_id": "damage.creature_power.fixed_interaction",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_creature_power_departure_lki.CreaturePowerDepartureRuntimeTests.test_actual_goblin_departure_uses_latest_power_controller_and_lifelink",
       "official_rule_ids": [
@@ -75766,6 +76194,34 @@
         "commander_review"
       ],
       "applicability_note": "Reject changed kind, target role, source LKI, and distinct-target plan before capability closure."
+    },
+    {
+      "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_native_power_departure_pin_omission_is_killed",
+      "official_rule_ids": [
+        "107.2",
+        "115.1",
+        "115.1a",
+        "120.1",
+        "120.2",
+        "120.4",
+        "208.3",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "701.14",
+        "701.14a",
+        "701.14b",
+        "701.14c",
+        "701.14d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR608.2h current information and immediate same-incarnation departure LKI determine source power and damage facts. Updated stack and immutable waiting frames retain the ability controller; malformed and returned-incarnation data cannot replace the original. The native Yearling witness distinguishes power5 on departure from power4 at trigger creation."
     },
     {
       "capability_id": "damage.creature_power.fixed_interaction",
@@ -75993,6 +76449,34 @@
     },
     {
       "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_warcaller_and_yearling_use_current_counters_and_departed_power",
+      "official_rule_ids": [
+        "107.2",
+        "115.1",
+        "115.1a",
+        "120.1",
+        "120.2",
+        "120.4",
+        "208.3",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "701.14",
+        "701.14a",
+        "701.14b",
+        "701.14c",
+        "701.14d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR608.2h current information and immediate same-incarnation departure LKI determine source power and damage facts. Updated stack and immutable waiting frames retain the ability controller; malformed and returned-incarnation data cannot replace the original. The native Yearling witness distinguishes power5 on departure from power4 at trigger creation."
+    },
+    {
+      "capability_id": "damage.creature_power.fixed_interaction",
       "evidence_class": "privacy",
       "test_id": "tests.test_creature_power_departure_lki.CreaturePowerDepartureRuntimeTests.test_actual_goblin_departure_uses_latest_power_controller_and_lifelink",
       "official_rule_ids": [
@@ -76214,6 +76698,34 @@
         "commander_review"
       ],
       "applicability_note": "Replay target placement and resolution from a checkpoint containing the sealed dies-trigger power and damage-source snapshot."
+    },
+    {
+      "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_warcaller_and_yearling_use_current_counters_and_departed_power",
+      "official_rule_ids": [
+        "107.2",
+        "115.1",
+        "115.1a",
+        "120.1",
+        "120.2",
+        "120.4",
+        "208.3",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "701.14",
+        "701.14a",
+        "701.14b",
+        "701.14c",
+        "701.14d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR608.2h current information and immediate same-incarnation departure LKI determine source power and damage facts. Updated stack and immutable waiting frames retain the ability controller; malformed and returned-incarnation data cannot replace the original. The native Yearling witness distinguishes power5 on departure from power4 at trigger creation."
     },
     {
       "capability_id": "damage.creature_power.fixed_interaction",
@@ -107128,6 +107640,406 @@
         "commander_review"
       ],
       "applicability_note": "Preserve the nested counter replacement journal and doubled committed amount through exact replay."
+    },
+    {
+      "capability_id": "replacement.multikicker.named_entry_counters",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_creature_total_reduction_counter_replacement_and_invalid_counts",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One printed positive fixed ordinary-mana Multikicker instance; strict original admission, count0/1/2/6, complete prices, typed copied decisions, replacement-aware named entry counters, rollback, privacy and pending replay. Unknown costs, instances and siblings remain closed."
+    },
+    {
+      "capability_id": "replacement.multikicker.named_entry_counters",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_warcaller_and_yearling_use_current_counters_and_departed_power",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original casts retain their linked repeated payment; pending nested counter replacement/load, unpaid blink, current counter-derived Elf bonuses and source current/LKI damage use canonical owners. Runtime fee, count and accepted-fact omission mutants are caught."
+    },
+    {
+      "capability_id": "replacement.multikicker.named_entry_counters",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_pending_entry_order_load_and_later_unpaid_blink_keep_incarnations_distinct",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original casts retain their linked repeated payment; pending nested counter replacement/load, unpaid blink, current counter-derived Elf bonuses and source current/LKI damage use canonical owners. Runtime fee, count and accepted-fact omission mutants are caught."
+    },
+    {
+      "capability_id": "replacement.multikicker.named_entry_counters",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_chalice_zero_one_two_and_six_payments_mana_privacy_and_replay",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One printed positive fixed ordinary-mana Multikicker instance; strict original admission, count0/1/2/6, complete prices, typed copied decisions, replacement-aware named entry counters, rollback, privacy and pending replay. Unknown costs, instances and siblings remain closed."
+    },
+    {
+      "capability_id": "replacement.multikicker.named_entry_counters",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerCompilerTests.test_dependency_and_compiler_omissions_fail_closed",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One printed positive fixed ordinary-mana Multikicker instance; strict original admission, count0/1/2/6, complete prices, typed copied decisions, replacement-aware named entry counters, rollback, privacy and pending replay. Unknown costs, instances and siblings remain closed."
+    },
+    {
+      "capability_id": "replacement.multikicker.named_entry_counters",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_native_fee_count_and_paid_fact_mutants_are_killed",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original casts retain their linked repeated payment; pending nested counter replacement/load, unpaid blink, current counter-derived Elf bonuses and source current/LKI damage use canonical owners. Runtime fee, count and accepted-fact omission mutants are caught."
+    },
+    {
+      "capability_id": "replacement.multikicker.named_entry_counters",
+      "evidence_class": "negative",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerCompilerTests.test_variable_multiple_zero_and_unrepresented_siblings_stay_residual",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One printed positive fixed ordinary-mana Multikicker instance; strict original admission, count0/1/2/6, complete prices, typed copied decisions, replacement-aware named entry counters, rollback, privacy and pending replay. Unknown costs, instances and siblings remain closed."
+    },
+    {
+      "capability_id": "replacement.multikicker.named_entry_counters",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerCompilerTests.test_actual_originals_close_with_source_spans_and_linked_counter_instances",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One printed positive fixed ordinary-mana Multikicker instance; strict original admission, count0/1/2/6, complete prices, typed copied decisions, replacement-aware named entry counters, rollback, privacy and pending replay. Unknown costs, instances and siblings remain closed."
+    },
+    {
+      "capability_id": "replacement.multikicker.named_entry_counters",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_warcaller_and_yearling_use_current_counters_and_departed_power",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original casts retain their linked repeated payment; pending nested counter replacement/load, unpaid blink, current counter-derived Elf bonuses and source current/LKI damage use canonical owners. Runtime fee, count and accepted-fact omission mutants are caught."
+    },
+    {
+      "capability_id": "replacement.multikicker.named_entry_counters",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_chalice_zero_one_two_and_six_payments_mana_privacy_and_replay",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One printed positive fixed ordinary-mana Multikicker instance; strict original admission, count0/1/2/6, complete prices, typed copied decisions, replacement-aware named entry counters, rollback, privacy and pending replay. Unknown costs, instances and siblings remain closed."
+    },
+    {
+      "capability_id": "replacement.multikicker.named_entry_counters",
+      "evidence_class": "property",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerValueTests.test_repeat_costs_and_integer_form_are_instance_bound_and_strict",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One printed positive fixed ordinary-mana Multikicker instance; strict original admission, count0/1/2/6, complete prices, typed copied decisions, replacement-aware named entry counters, rollback, privacy and pending replay. Unknown costs, instances and siblings remain closed."
+    },
+    {
+      "capability_id": "replacement.multikicker.named_entry_counters",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_chalice_zero_one_two_and_six_payments_mana_privacy_and_replay",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One printed positive fixed ordinary-mana Multikicker instance; strict original admission, count0/1/2/6, complete prices, typed copied decisions, replacement-aware named entry counters, rollback, privacy and pending replay. Unknown costs, instances and siblings remain closed."
+    },
+    {
+      "capability_id": "replacement.multikicker.named_entry_counters",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_warcaller_and_yearling_use_current_counters_and_departed_power",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original casts retain their linked repeated payment; pending nested counter replacement/load, unpaid blink, current counter-derived Elf bonuses and source current/LKI damage use canonical owners. Runtime fee, count and accepted-fact omission mutants are caught."
+    },
+    {
+      "capability_id": "replacement.multikicker.named_entry_counters",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_pending_entry_order_load_and_later_unpaid_blink_keep_incarnations_distinct",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original casts retain their linked repeated payment; pending nested counter replacement/load, unpaid blink, current counter-derived Elf bonuses and source current/LKI damage use canonical owners. Runtime fee, count and accepted-fact omission mutants are caught."
+    },
+    {
+      "capability_id": "replacement.multikicker.named_entry_counters",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_creature_total_reduction_counter_replacement_and_invalid_counts",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One printed positive fixed ordinary-mana Multikicker instance; strict original admission, count0/1/2/6, complete prices, typed copied decisions, replacement-aware named entry counters, rollback, privacy and pending replay. Unknown costs, instances and siblings remain closed."
+    },
+    {
+      "capability_id": "replacement.multikicker.named_entry_counters",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_pending_entry_order_load_and_later_unpaid_blink_keep_incarnations_distinct",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original casts retain their linked repeated payment; pending nested counter replacement/load, unpaid blink, current counter-derived Elf bonuses and source current/LKI damage use canonical owners. Runtime fee, count and accepted-fact omission mutants are caught."
     },
     {
       "capability_id": "resolution.effect.fixed_cast_fact",
@@ -154768,5 +155680,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "36e877e32fd92f1837bcbe1221a27203201b829d9d787c5348533c37c1159b3f"
+  "fingerprint": "1d67443d05ec7754ce0767fa69a1a61fc72030f288f46d58e30a99c545c6c1b8"
 }

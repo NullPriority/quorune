@@ -104,8 +104,9 @@ def complete_stack_resolution(
 
     item.context.pop("currently_resolving", None)
     if item.card_object_id:
-        from .zone_object_state import mark_resolving_paid_entry_copy
+        from .zone_object_state import mark_resolving_paid_entry_copy, mark_multikicker_paid
         mark_resolving_paid_entry_copy(host.state.cards[item.card_object_id], item.context)
+        mark_multikicker_paid(host.state.cards[item.card_object_id], item.context)
     host.state.stack.remove(item)
     cleanup_ninjutsu_reveal(host, item)
     if item.context.get("copy_permanent_spell"):

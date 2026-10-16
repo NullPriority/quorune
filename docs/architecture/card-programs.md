@@ -2,7 +2,7 @@
 title: "CardProgram architecture"
 status: "current"
 authoritative_source: "quorune/card_programs and schemas/card-program-v2.schema.json"
-verified: "2026-09-04"
+verified: "2026-10-16"
 audience: "compiler, rules, replay, and extension contributors"
 maintenance: "hand-maintained"
 ---
@@ -71,6 +71,18 @@ untrusted permanent program may resolve without its arbiter boundary. An
 intrinsic Siege transformed-cast choice for a nonpermanent face likewise
 requires either a typed target schema or a current trusted target-free spell
 program before that choice is offered. Missing typed cast semantics fail closed.
+
+Printed fixed-positive-mana Multikicker uses a source-pinned cost component
+and an independent linked entry-counter component. The server prices the
+selected repeat count before total-cost modifiers and seals the instance,
+cost fingerprint and count; clients supply only the count. Zero payments use
+the ordinary cast and carry no new fact. Complete-card admission gates the
+paid branch, so an unsupported sibling cannot expose a payable partial card.
+The typed fact in `multikicker_model.py` remains distinct from ordinary Kicker's
+single-payment Boolean and from Offspring/Squad copy decisions. Spell copies
+retain casting decisions; permanent copies and later noncast entries receive
+no paid history. Unknown cost variants, instances and linked results remain
+residual. This adds no runtime Oracle parser or second component registry.
 
 ## Trust and replay
 

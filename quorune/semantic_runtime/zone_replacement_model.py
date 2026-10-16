@@ -142,6 +142,19 @@ def _validate_entry_event_flags(*values: Any) -> None:
         raise ZoneReplacementError("Zone replacement event flags must be boolean")
 
 
+def _frozen_multikicker_payment(value, origin, destination, cast_option):
+    if value is None:
+        return None
+    from ..multikicker_model import validate_multikicker_fact
+    try:
+        fact = validate_multikicker_fact(value)
+    except ValueError as exc:
+        raise ZoneReplacementError(str(exc)) from exc
+    if origin != 'stack' or destination != 'battlefield' or cast_option != 'kicked':
+        raise ZoneReplacementError('Multikicker snapshot requires its resolving spell')
+    return FrozenMap(fact)
+
+
 @dataclass(frozen=True, slots=True)
 class ZoneChangeSubjectSnapshot:
     object_id: str
@@ -169,6 +182,7 @@ class ZoneChangeSubjectSnapshot:
     effect_entry_counters: tuple[EffectEntryCounter, ...] = ()
     self_entry_counter_amounts: FrozenMap = field(default_factory=FrozenMap)
     cast_option: str | None = None
+    multikicker_paid: FrozenMap | None = None
     prospective_subject: bool = False
 
     def __post_init__(self) -> None:
@@ -243,6 +257,8 @@ class ZoneChangeSubjectSnapshot:
             ),
         )
         _validate_cast_option(self.cast_option)
+        object.__setattr__(self, 'multikicker_paid', _frozen_multikicker_payment(
+            self.multikicker_paid, self.origin, self.destination, self.cast_option))
         if type(self.is_card_object) is not bool:
             raise ZoneReplacementError(
                 "Zone replacement card-object state must be boolean"

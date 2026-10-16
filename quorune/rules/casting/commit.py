@@ -32,6 +32,7 @@ from ...cast_lifecycles import (
 )
 from ...compiled_kicker import compiled_fixed_mana_kicker_spec
 from .paid_entry_copy_costs import paid_entry_copy_cast_context
+from .multikicker_costs import multikicker_cast_context, validate_multikicker_commit
 from ...flashback import FLASHBACK_CAST_OPTION_ID
 from ...evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
 from ...kicker import KICKER_ANNOTATION, KICKER_MECHANIC_ID
@@ -889,6 +890,8 @@ def _create_spell_item(
     commit_prototype_cast(card,details.get('prototype'))
     if str(selected_option.get("kind") or "").casefold() == KICKER_MECHANIC_ID:
         mark_card_kicked(card)
+    from ...zone_object_state import mark_multikicker_paid
+    mark_multikicker_paid(card, multikicker_cast_context(selected_option))
     if selected_option.get("id") == FLASHBACK_CAST_OPTION_ID:
         mark_card_flashed_back(card)
     _mark_selected_cast_lifecycle(card, lifecycle_spec, rebound)
@@ -946,6 +949,7 @@ def _create_spell_item(
         context={
             **_cast_provenance_context(proposal, spent),
             **paid_entry_copy_cast_context(selected_option),
+            **multikicker_cast_context(selected_option),
             "target_groups": thaw_json(proposal.target_groups),
             "target_snapshots": thaw_json(proposal.target_snapshots),
             "targets_revalidated": False,
@@ -1287,6 +1291,10 @@ def _revalidate_cast_contracts(
                 ),
             )
     selected_option = dict(details["selected_cost_option"])
+    try:
+        validate_multikicker_commit(host, card, selected_option)
+    except ValueError as exc:
+        raise CastProposalError(str(exc), reason='stale_multikicker_contract') from exc
     if str(selected_option.get("kind") or "").casefold() == KICKER_MECHANIC_ID:
         current_kicker = compiled_fixed_mana_kicker_spec(host, card)
         if (
