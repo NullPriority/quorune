@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "1b3b51c28d08ac98b23f65e4a17353f1bd30ae3a2db56194b7626e92ba4c45a9",
-  "declaration_source_fingerprint": "2b517eff311494a032c67e8810cc1cc0abac38d282c18146c81155c10627f7fc",
+  "registry_fingerprint": "14879924d5949955720ebabbd133a3776cf31c7f2d0e08b9c04e798cb21dc880",
+  "declaration_source_fingerprint": "48049c9a9615a7842a01d8a31f3838cd13852f352abc3c0003935b4b5e328ddf",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -76842,7 +76842,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -76859,7 +76861,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -76876,7 +76880,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -76893,7 +76899,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -76910,7 +76918,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -76921,13 +76931,72 @@
     },
     {
       "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_self_optional_results.SourceSelfOptionalRuntimeTests.test_original_arsonist_optional_death_damage_keeps_lki_and_trigger_controller",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1",
+        "201.5",
+        "603.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self optional pronouns retain complete spans, target-before-choice timing, original-incarnation characteristic results and closed leaf dependencies. Actual Rig and Arsonist apply/decline paths preserve restrictions and source LKI. Actual Clash grants entering Spirit/non-Spirit recipients their own controller-scoped triggers; a pending recipient trigger survives grant-source departure. Wrong target/actor rollback, private four-seat projection and pending save/load/full pre-action replay remain exact."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_self_optional_results.SourceSelfOptionalRuntimeTests.test_original_clash_grants_to_entering_recipients_and_pending_trigger_survives_grant_departure",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1",
+        "201.5",
+        "603.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self optional pronouns retain complete spans, target-before-choice timing, original-incarnation characteristic results and closed leaf dependencies. Actual Rig and Arsonist apply/decline paths preserve restrictions and source LKI. Actual Clash grants entering Spirit/non-Spirit recipients their own controller-scoped triggers; a pending recipient trigger survives grant-source departure. Wrong target/actor rollback, private four-seat projection and pending save/load/full pre-action replay remain exact."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_self_optional_results.SourceSelfOptionalRuntimeTests.test_original_rig_selects_a_flying_target_before_apply_or_decline",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1",
+        "201.5",
+        "603.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self optional pronouns retain complete spans, target-before-choice timing, original-incarnation characteristic results and closed leaf dependencies. Actual Rig and Arsonist apply/decline paths preserve restrictions and source LKI. Actual Clash grants entering Spirit/non-Spirit recipients their own controller-scoped triggers; a pending recipient trigger survives grant-source departure. Wrong target/actor rollback, private four-seat projection and pending save/load/full pre-action replay remain exact."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectIntegrationTests.test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
       "official_rule_ids": [
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -76944,7 +77013,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -76961,7 +77032,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -76978,7 +77051,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -76995,7 +77070,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77006,13 +77083,72 @@
     },
     {
       "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_self_optional_results.SourceSelfOptionalRuntimeTests.test_original_arsonist_optional_death_damage_keeps_lki_and_trigger_controller",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1",
+        "201.5",
+        "603.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self optional pronouns retain complete spans, target-before-choice timing, original-incarnation characteristic results and closed leaf dependencies. Actual Rig and Arsonist apply/decline paths preserve restrictions and source LKI. Actual Clash grants entering Spirit/non-Spirit recipients their own controller-scoped triggers; a pending recipient trigger survives grant-source departure. Wrong target/actor rollback, private four-seat projection and pending save/load/full pre-action replay remain exact."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_self_optional_results.SourceSelfOptionalRuntimeTests.test_original_clash_grants_to_entering_recipients_and_pending_trigger_survives_grant_departure",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1",
+        "201.5",
+        "603.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self optional pronouns retain complete spans, target-before-choice timing, original-incarnation characteristic results and closed leaf dependencies. Actual Rig and Arsonist apply/decline paths preserve restrictions and source LKI. Actual Clash grants entering Spirit/non-Spirit recipients their own controller-scoped triggers; a pending recipient trigger survives grant-source departure. Wrong target/actor rollback, private four-seat projection and pending save/load/full pre-action replay remain exact."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_self_optional_results.SourceSelfOptionalRuntimeTests.test_original_rig_selects_a_flying_target_before_apply_or_decline",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1",
+        "201.5",
+        "603.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self optional pronouns retain complete spans, target-before-choice timing, original-incarnation characteristic results and closed leaf dependencies. Actual Rig and Arsonist apply/decline paths preserve restrictions and source LKI. Actual Clash grants entering Spirit/non-Spirit recipients their own controller-scoped triggers; a pending recipient trigger survives grant-source departure. Wrong target/actor rollback, private four-seat projection and pending save/load/full pre-action replay remain exact."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectCompilerTests.test_optional_effect_shape_and_handler_mutants_fail_closed",
       "official_rule_ids": [
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77029,7 +77165,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77040,13 +77178,34 @@
     },
     {
       "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_source_self_optional_results.SourceSelfOptionalCompilerTests.test_optional_source_self_result_keeps_target_timing_and_complete_span",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1",
+        "201.5",
+        "603.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self optional pronouns retain complete spans, target-before-choice timing, original-incarnation characteristic results and closed leaf dependencies. Actual Rig and Arsonist apply/decline paths preserve restrictions and source LKI. Actual Clash grants entering Spirit/non-Spirit recipients their own controller-scoped triggers; a pending recipient trigger survives grant-source departure. Wrong target/actor rollback, private four-seat projection and pending save/load/full pre-action replay remain exact."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectCompilerTests.test_optional_effect_exclusions_remain_material",
       "official_rule_ids": [
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77063,7 +77222,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77080,7 +77241,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77097,7 +77260,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77114,7 +77279,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77131,7 +77298,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77148,7 +77317,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77159,13 +77330,34 @@
     },
     {
       "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_self_optional_results.SourceSelfOptionalCompilerTests.test_unestablished_or_new_object_pronouns_are_not_rebound_to_source",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1",
+        "201.5",
+        "603.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self optional pronouns retain complete spans, target-before-choice timing, original-incarnation characteristic results and closed leaf dependencies. Actual Rig and Arsonist apply/decline paths preserve restrictions and source LKI. Actual Clash grants entering Spirit/non-Spirit recipients their own controller-scoped triggers; a pending recipient trigger survives grant-source departure. Wrong target/actor rollback, private four-seat projection and pending save/load/full pre-action replay remain exact."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectChoiceTests.test_optional_choice_apply_and_decline_resume_exact_effect",
       "official_rule_ids": [
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77182,7 +77374,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77199,7 +77393,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77216,7 +77412,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77233,7 +77431,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77250,7 +77450,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77267,7 +77469,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77284,7 +77488,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77295,13 +77501,91 @@
     },
     {
       "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_self_optional_results.SourceSelfOptionalCompilerTests.test_optional_source_self_result_keeps_target_timing_and_complete_span",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1",
+        "201.5",
+        "603.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self optional pronouns retain complete spans, target-before-choice timing, original-incarnation characteristic results and closed leaf dependencies. Actual Rig and Arsonist apply/decline paths preserve restrictions and source LKI. Actual Clash grants entering Spirit/non-Spirit recipients their own controller-scoped triggers; a pending recipient trigger survives grant-source departure. Wrong target/actor rollback, private four-seat projection and pending save/load/full pre-action replay remain exact."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_self_optional_results.SourceSelfOptionalRuntimeTests.test_original_arsonist_optional_death_damage_keeps_lki_and_trigger_controller",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1",
+        "201.5",
+        "603.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self optional pronouns retain complete spans, target-before-choice timing, original-incarnation characteristic results and closed leaf dependencies. Actual Rig and Arsonist apply/decline paths preserve restrictions and source LKI. Actual Clash grants entering Spirit/non-Spirit recipients their own controller-scoped triggers; a pending recipient trigger survives grant-source departure. Wrong target/actor rollback, private four-seat projection and pending save/load/full pre-action replay remain exact."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_self_optional_results.SourceSelfOptionalRuntimeTests.test_original_clash_grants_to_entering_recipients_and_pending_trigger_survives_grant_departure",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1",
+        "201.5",
+        "603.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self optional pronouns retain complete spans, target-before-choice timing, original-incarnation characteristic results and closed leaf dependencies. Actual Rig and Arsonist apply/decline paths preserve restrictions and source LKI. Actual Clash grants entering Spirit/non-Spirit recipients their own controller-scoped triggers; a pending recipient trigger survives grant-source departure. Wrong target/actor rollback, private four-seat projection and pending save/load/full pre-action replay remain exact."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_self_optional_results.SourceSelfOptionalRuntimeTests.test_original_rig_selects_a_flying_target_before_apply_or_decline",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1",
+        "201.5",
+        "603.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self optional pronouns retain complete spans, target-before-choice timing, original-incarnation characteristic results and closed leaf dependencies. Actual Rig and Arsonist apply/decline paths preserve restrictions and source LKI. Actual Clash grants entering Spirit/non-Spirit recipients their own controller-scoped triggers; a pending recipient trigger survives grant-source departure. Wrong target/actor rollback, private four-seat projection and pending save/load/full pre-action replay remain exact."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectIntegrationTests.test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
       "official_rule_ids": [
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77318,7 +77602,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77335,7 +77621,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77352,7 +77640,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77369,7 +77659,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77380,13 +77672,34 @@
     },
     {
       "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_source_self_optional_results.SourceSelfOptionalRuntimeTests.test_original_rig_selects_a_flying_target_before_apply_or_decline",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1",
+        "201.5",
+        "603.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self optional pronouns retain complete spans, target-before-choice timing, original-incarnation characteristic results and closed leaf dependencies. Actual Rig and Arsonist apply/decline paths preserve restrictions and source LKI. Actual Clash grants entering Spirit/non-Spirit recipients their own controller-scoped triggers; a pending recipient trigger survives grant-source departure. Wrong target/actor rollback, private four-seat projection and pending save/load/full pre-action replay remain exact."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectIntegrationTests.test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
       "official_rule_ids": [
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77403,7 +77716,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77420,7 +77735,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77437,7 +77754,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77454,7 +77773,9 @@
         "109.5",
         "608.2c",
         "608.2d",
-        "609.1"
+        "609.1",
+        "201.5",
+        "603.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -77462,6 +77783,82 @@
         "commander_review"
       ],
       "applicability_note": "Original Blightcaster native enchantment casts choose a target before resolution-time apply/decline; foreign principals cannot answer, decline preserves the creature and native Cloudshift prevents new-incarnation substitution. Original Forerunner observes native Sky Terror entry and applies one source-attributed damage result to each current creature, with complete pending reload and replay."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_self_optional_results.SourceSelfOptionalRuntimeTests.test_original_arsonist_optional_death_damage_keeps_lki_and_trigger_controller",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1",
+        "201.5",
+        "603.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self optional pronouns retain complete spans, target-before-choice timing, original-incarnation characteristic results and closed leaf dependencies. Actual Rig and Arsonist apply/decline paths preserve restrictions and source LKI. Actual Clash grants entering Spirit/non-Spirit recipients their own controller-scoped triggers; a pending recipient trigger survives grant-source departure. Wrong target/actor rollback, private four-seat projection and pending save/load/full pre-action replay remain exact."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_self_optional_results.SourceSelfOptionalRuntimeTests.test_original_clash_grants_to_entering_recipients_and_pending_trigger_survives_grant_departure",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1",
+        "201.5",
+        "603.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self optional pronouns retain complete spans, target-before-choice timing, original-incarnation characteristic results and closed leaf dependencies. Actual Rig and Arsonist apply/decline paths preserve restrictions and source LKI. Actual Clash grants entering Spirit/non-Spirit recipients their own controller-scoped triggers; a pending recipient trigger survives grant-source departure. Wrong target/actor rollback, private four-seat projection and pending save/load/full pre-action replay remain exact."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_self_optional_results.SourceSelfOptionalRuntimeTests.test_original_rig_selects_a_flying_target_before_apply_or_decline",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1",
+        "201.5",
+        "603.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self optional pronouns retain complete spans, target-before-choice timing, original-incarnation characteristic results and closed leaf dependencies. Actual Rig and Arsonist apply/decline paths preserve restrictions and source LKI. Actual Clash grants entering Spirit/non-Spirit recipients their own controller-scoped triggers; a pending recipient trigger survives grant-source departure. Wrong target/actor rollback, private four-seat projection and pending save/load/full pre-action replay remain exact."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_source_self_optional_results.SourceSelfOptionalRuntimeTests.test_original_rig_selects_a_flying_target_before_apply_or_decline",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1",
+        "201.5",
+        "603.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self optional pronouns retain complete spans, target-before-choice timing, original-incarnation characteristic results and closed leaf dependencies. Actual Rig and Arsonist apply/decline paths preserve restrictions and source LKI. Actual Clash grants entering Spirit/non-Spirit recipients their own controller-scoped triggers; a pending recipient trigger survives grant-source departure. Wrong target/actor rollback, private four-seat projection and pending save/load/full pre-action replay remain exact."
     },
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
@@ -145294,5 +145691,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "3f3eca1be94de2519b7789bd3f48c89cb32ea601744bf87cc392c62121262341"
+  "fingerprint": "7206ba1aed4f89de88211fc1dbb0d9a0a1ae70518c3431190472986f8566b083"
 }

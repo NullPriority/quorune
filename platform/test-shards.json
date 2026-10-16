@@ -408,6 +408,7 @@
       "test_server_data",
       "test_server_persistence",
       "test_source_references",
+      "test_source_self_optional_results",
       "test_spells_abilities_effects_general",
       "test_stack_counter_rules",
       "test_storm_rules",

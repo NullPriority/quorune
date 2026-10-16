@@ -319,6 +319,15 @@ Target-relative prices, unrecorded history, dynamic power/toughness, chosen or
 hidden facts, caps, floors, and open arithmetic fail closed rather than
 becoming a runtime prose query.
 
+An established source-self event can bind optional pronouns such as
+"you may have it deal" to that source before composing the existing optional
+result owner. The complete leaf retains its target restrictions and original
+source incarnation. Targets are chosen when the original trigger is placed;
+apply-or-decline is chosen when it resolves. Granted entry abilities belong to
+their receiving permanent and its controller, including as that permanent
+enters. A created trigger survives the live grant ending. New-object and
+unestablished antecedents remain residual.
+
 Resolution-time payment schema 4 composes one existing fixed action with a
 `reflexive_trigger_program`. This immutable body retains unbound targets and
 quantities until it resolves in its own stack frame. The existing payment
