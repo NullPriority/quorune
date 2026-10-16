@@ -53847,6 +53847,28 @@
     },
     {
       "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_state_optional_result_actions.AdditionalConditionalModifierRuntimeTests.test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The typed simultaneous-damage intent accepts canonical internal frozen source facts, preserves all facts and identity, and keeps the external wire decoder strict. Actual Forerunner optional apply across rollback/pending replay damages the complete creature set; omission of thaw recreates the legitimate apply rejection."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
       "official_rule_ids": [
@@ -53935,6 +53957,28 @@
     },
     {
       "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_state_optional_result_actions.AdditionalConditionalModifierRuntimeTests.test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The typed simultaneous-damage intent accepts canonical internal frozen source facts, preserves all facts and identity, and keeps the external wire decoder strict. Actual Forerunner optional apply across rollback/pending replay damages the complete creature set; omission of thaw recreates the legitimate apply rejection."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
       "official_rule_ids": [
@@ -53957,6 +54001,28 @@
     },
     {
       "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_state_optional_result_actions.AdditionalConditionalModifierRuntimeTests.test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The typed simultaneous-damage intent accepts canonical internal frozen source facts, preserves all facts and identity, and keeps the external wire decoder strict. Actual Forerunner optional apply across rollback/pending replay damages the complete creature set; omission of thaw recreates the legitimate apply rejection."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant",
       "official_rule_ids": [
@@ -53976,6 +54042,28 @@
         "commander_review"
       ],
       "applicability_note": "Source information is sampled at the actual damage instruction after its paid prefix, while a sealed canonical damage proposal keeps its source facts through replacement-choice resumption. Actual Aura sacrifice removes lifelink before damage; source departure facts retain their original logical incarnation."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiValueTests.test_fixed_damage_set_intent_thaws_immutable_facts_without_relaxing_wire_schema",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The typed simultaneous-damage intent accepts canonical internal frozen source facts, preserves all facts and identity, and keeps the external wire decoder strict. Actual Forerunner optional apply across rollback/pending replay damages the complete creature set; omission of thaw recreates the legitimate apply rejection."
     },
     {
       "capability_id": "damage.source.stack_current_or_lki",
@@ -54200,6 +54288,28 @@
     {
       "capability_id": "damage.source.stack_current_or_lki",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiValueTests.test_fixed_damage_set_intent_thaws_immutable_facts_without_relaxing_wire_schema",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The typed simultaneous-damage intent accepts canonical internal frozen source facts, preserves all facts and identity, and keeps the external wire decoder strict. Actual Forerunner optional apply across rollback/pending replay damages the complete creature set; omission of thaw recreates the legitimate apply rejection."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiValueTests.test_prepared_damage_event_keeps_its_sealed_source_facts",
       "official_rule_ids": [
         "113.7a",
@@ -54240,6 +54350,28 @@
         "commander_review"
       ],
       "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_state_optional_result_actions.AdditionalConditionalModifierRuntimeTests.test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The typed simultaneous-damage intent accepts canonical internal frozen source facts, preserves all facts and identity, and keeps the external wire decoder strict. Actual Forerunner optional apply across rollback/pending replay damages the complete creature set; omission of thaw recreates the legitimate apply rejection."
     },
     {
       "capability_id": "damage.source.stack_current_or_lki",
@@ -54394,6 +54526,28 @@
         "commander_review"
       ],
       "applicability_note": "Source information is sampled at the actual damage instruction after its paid prefix, while a sealed canonical damage proposal keeps its source facts through replacement-choice resumption. Actual Aura sacrifice removes lifelink before damage; source departure facts retain their original logical incarnation."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_state_optional_result_actions.AdditionalConditionalModifierRuntimeTests.test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The typed simultaneous-damage intent accepts canonical internal frozen source facts, preserves all facts and identity, and keeps the external wire decoder strict. Actual Forerunner optional apply across rollback/pending replay damages the complete creature set; omission of thaw recreates the legitimate apply rejection."
     },
     {
       "capability_id": "damage.source.stack_current_or_lki",

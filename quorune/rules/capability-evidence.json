@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "082b8f3bd33dfd68f09844009f9276406451a599a4be171232be5929a7be9d5a",
-  "declaration_source_fingerprint": "694777c6189171a4986bbd50570cf62e638fb48bee8deb7866b13c73645df407",
+  "registry_fingerprint": "71d71d119eb48a4b88c174bf9210eec9b7f69842ae04f734fc80bcb8c74f4ee6",
+  "declaration_source_fingerprint": "716068b64551330e6004d44202979d8de6bd8885fd9b0b1c06ccee81e22aeb59",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -81422,6 +81422,28 @@
     },
     {
       "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_state_optional_result_actions.AdditionalConditionalModifierRuntimeTests.test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The typed simultaneous-damage intent accepts canonical internal frozen source facts, preserves all facts and identity, and keeps the external wire decoder strict. Actual Forerunner optional apply across rollback/pending replay damages the complete creature set; omission of thaw recreates the legitimate apply rejection."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
       "official_rule_ids": [
@@ -81510,6 +81532,28 @@
     },
     {
       "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_state_optional_result_actions.AdditionalConditionalModifierRuntimeTests.test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The typed simultaneous-damage intent accepts canonical internal frozen source facts, preserves all facts and identity, and keeps the external wire decoder strict. Actual Forerunner optional apply across rollback/pending replay damages the complete creature set; omission of thaw recreates the legitimate apply rejection."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
       "official_rule_ids": [
@@ -81532,6 +81576,28 @@
     },
     {
       "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_state_optional_result_actions.AdditionalConditionalModifierRuntimeTests.test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The typed simultaneous-damage intent accepts canonical internal frozen source facts, preserves all facts and identity, and keeps the external wire decoder strict. Actual Forerunner optional apply across rollback/pending replay damages the complete creature set; omission of thaw recreates the legitimate apply rejection."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant",
       "official_rule_ids": [
@@ -81551,6 +81617,28 @@
         "commander_review"
       ],
       "applicability_note": "Source information is sampled at the actual damage instruction after its paid prefix, while a sealed canonical damage proposal keeps its source facts through replacement-choice resumption. Actual Aura sacrifice removes lifelink before damage; source departure facts retain their original logical incarnation."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiValueTests.test_fixed_damage_set_intent_thaws_immutable_facts_without_relaxing_wire_schema",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The typed simultaneous-damage intent accepts canonical internal frozen source facts, preserves all facts and identity, and keeps the external wire decoder strict. Actual Forerunner optional apply across rollback/pending replay damages the complete creature set; omission of thaw recreates the legitimate apply rejection."
     },
     {
       "capability_id": "damage.source.stack_current_or_lki",
@@ -81775,6 +81863,28 @@
     {
       "capability_id": "damage.source.stack_current_or_lki",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiValueTests.test_fixed_damage_set_intent_thaws_immutable_facts_without_relaxing_wire_schema",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The typed simultaneous-damage intent accepts canonical internal frozen source facts, preserves all facts and identity, and keeps the external wire decoder strict. Actual Forerunner optional apply across rollback/pending replay damages the complete creature set; omission of thaw recreates the legitimate apply rejection."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiValueTests.test_prepared_damage_event_keeps_its_sealed_source_facts",
       "official_rule_ids": [
         "113.7a",
@@ -81815,6 +81925,28 @@
         "commander_review"
       ],
       "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_state_optional_result_actions.AdditionalConditionalModifierRuntimeTests.test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The typed simultaneous-damage intent accepts canonical internal frozen source facts, preserves all facts and identity, and keeps the external wire decoder strict. Actual Forerunner optional apply across rollback/pending replay damages the complete creature set; omission of thaw recreates the legitimate apply rejection."
     },
     {
       "capability_id": "damage.source.stack_current_or_lki",
@@ -81969,6 +82101,28 @@
         "commander_review"
       ],
       "applicability_note": "Source information is sampled at the actual damage instruction after its paid prefix, while a sealed canonical damage proposal keeps its source facts through replacement-choice resumption. Actual Aura sacrifice removes lifelink before damage; source departure facts retain their original logical incarnation."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_state_optional_result_actions.AdditionalConditionalModifierRuntimeTests.test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The typed simultaneous-damage intent accepts canonical internal frozen source facts, preserves all facts and identity, and keeps the external wire decoder strict. Actual Forerunner optional apply across rollback/pending replay damages the complete creature set; omission of thaw recreates the legitimate apply rejection."
     },
     {
       "capability_id": "damage.source.stack_current_or_lki",
@@ -154026,5 +154180,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "c72196ed869cc23121aca950a4c14db4c82f948ed966b86d1ef496905422de75"
+  "fingerprint": "fa938044ffd5765e3071cd03167a15935f0d52b139ec89100e9140900052d05f"
 }

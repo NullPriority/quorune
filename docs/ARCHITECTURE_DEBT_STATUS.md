@@ -2,7 +2,7 @@
 title: "Architecture debt status"
 status: "generated"
 authoritative_source: "coverage/architecture-audit.json"
-verified: "80a1fae554455a25773e3ca64b0d741278e6e43abc024066d880f5e4ca1cccab"
+verified: "6571af09ff845efcb048ee47d8f891b5ca18a7e7faf1ba56e02bae3638bcd7a1"
 audience: "maintainers and rules contributors"
 maintenance: "generated"
 generated_source: "coverage/architecture-audit.json"
@@ -11,7 +11,7 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_architecture_audi
 
 # Architecture debt status
 
-Source fingerprint: `80a1fae554455a25773e3ca64b0d741278e6e43abc024066d880f5e4ca1cccab`
+Source fingerprint: `6571af09ff845efcb048ee47d8f891b5ca18a7e7faf1ba56e02bae3638bcd7a1`
 
 ## Current top-level state
 

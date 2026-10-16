@@ -36,6 +36,10 @@ that proposal's source facts.
 Single-recipient, opponent-set and fixed affected-set damage feed the same
 validated snapshot into the canonical transaction. A source-excluding affected
 set excludes the original incarnation, so a returned creature is another object.
+The fixed-set intent canonical-thaws internal immutable source facts before
+applying the strict wire snapshot decoder, then freezes the validated facts
+again. Optional-choice resumption therefore preserves source arrays and
+identity; the wire decoder still rejects malformed collections and identities.
 Face-down source snapshots withhold hidden Oracle identity. Legacy frames
 without a represented physical source retain their existing compatibility path.
 

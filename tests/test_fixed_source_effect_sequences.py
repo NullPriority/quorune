@@ -633,7 +633,7 @@ class FixedSourceEffectSequenceRuntimeTests(unittest.TestCase):
         self.prepare_priority(session)
         before = authoritative_state_hash(session.state)
         with patch(
-            "quorune.rules.activation.commit.commit_activation_usage",
+            "quorune.rules.activation.payment_commit.commit_activation_usage",
             return_value=None,
         ):
             result = session.act(

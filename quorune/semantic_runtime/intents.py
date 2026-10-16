@@ -19,7 +19,7 @@ from ..drawing.model import DiscardDrawnCardUnlessType, DrawnCardAction, RevealD
 from ..fixed_damage_set_model import FixedDamageSetSpec
 from ..impulse_access_model import ImpulseAccessDuration
 from ..creature_subtypes import canonical_creature_subtype
-from ..replacement.immutable import FrozenMap
+from ..replacement.immutable import FrozenMap, thaw_value
 from ..rules.library_scry import ScryArrangement
 from ..rules.library_selection import LibrarySelectionArrangement
 from ..rules.library_surveillance import SurveilArrangement
@@ -481,7 +481,7 @@ class DealFixedDamageSetIntent:
         object.__setattr__(self, "replacement_event_ids", event_ids)
         if self.source_snapshot is not None:
             from ..damage_source import DamageSourceSnapshot
-            snapshot = DamageSourceSnapshot.from_dict(dict(self.source_snapshot))
+            snapshot = DamageSourceSnapshot.from_dict(dict(thaw_value(self.source_snapshot)))
             if snapshot.ref != self.source_ref:
                 raise ValueError('Fixed damage-set source snapshot identity changed')
             object.__setattr__(self, 'source_snapshot', FrozenMap(snapshot.to_dict()))

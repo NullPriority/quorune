@@ -103,9 +103,18 @@ class CastingActivationMetadataCompilerTests(unittest.TestCase):
                 self.assertEqual((),program.residuals)
                 descriptor = next(d for ability in program.abilities for d in ability.handlers
                     if d['event'] == SELF_ZONE_CAST_PERMISSION_EVENT)
-                self.assertEqual('permission.cast.self-zone-public-state.v1', descriptor['handler_id'])
-                self.assertIn('source_condition',descriptor)
-                self.assertEqual('graveyard', next(a.active_zone for a in program.abilities if descriptor in a.handlers))
+                if index == 2:
+                    self.assertEqual('permission.cast.self-public-zones.v1', descriptor['handler_id'])
+                    self.assertEqual(['graveyard'], descriptor['source_zones'])
+                    scope = next(d for ability in program.abilities for d in ability.handlers
+                        if d['handler_id'] == 'ability.static.component-scope.v1')
+                    self.assertEqual({'kind': 'controller_speed_equals', 'designation': 'controller_speed', 'minimum': 4},
+                        scope['fragment']['value']['applicability'])
+                else:
+                    self.assertEqual('permission.cast.self-zone-public-state.v1', descriptor['handler_id'])
+                    self.assertIn('source_condition',descriptor)
+                self.assertEqual('all' if index == 2 else 'graveyard',
+                    next(a.active_zone for a in program.abilities if descriptor in a.handlers))
                 default_self_zone_cast_permission_registry().validate(descriptor)
                 program = self.compile(_record(text,suffix=363100001+index),trust_level='trusted')
                 self.assertTrue(bind_card_program_runtime(program,capability_registry=self.capabilities,

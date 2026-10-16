@@ -232,7 +232,7 @@ class PowerUpRuntimeTests(unittest.TestCase):
         self.assertTrue(accepted.ok,accepted.summary);self.resolve(session);self.replay(session,load=True)
 
     def test_actual_usage_mutant_is_killed_before_repeated_activation(self):
-        from quorune.rules.activation import commit as owner
+        from quorune.rules.activation import payment_commit as owner
         with patch.object(owner,'commit_activation_usage',return_value=None):
             with self.assertRaises(AssertionError):self.test_actual_old_source_pays_full_price_and_pending_activation_replays()
 

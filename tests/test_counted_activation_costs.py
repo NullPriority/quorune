@@ -42,9 +42,15 @@ class CountedActivationCompilerTests(unittest.TestCase):
     def test_counted_cost_rejects_open_qualities_partial_groups_and_unknown_counts(self):
         from test_fixed_activated_zone_change_costs import fixture_card
         registry = load_default_capability_registry()
+        promoted = compile_oracle_card(fixture_card('Fixed random cost witness',
+            'Discard two cards at random: Draw a card.'), capability_registry=registry,
+            capability_profile='commander_review')
+        self.assertEqual('exact', promoted.status, promoted.material_residuals)
+        self.assertEqual(2, promoted.faces[0].nodes[0].cost['random_discard_payment'])
+        self.assertIn('activation.random_discard.fixed', promoted.faces[0].nodes[0].capability_dependencies)
         for cost in (
             'Sacrifice eleven Goblins', 'Sacrifice any number of Goblins',
-            'Discard two cards at random', 'Sacrifice two creatures and an artifact',
+            'Discard two creature cards at random', 'Sacrifice two creatures and an artifact',
             'Sacrifice two creatures with total power 4', 'Sacrifice two Boguses',
             'Exile two other cards from your graveyard', 'Return two target lands to their owners hands',
         ):

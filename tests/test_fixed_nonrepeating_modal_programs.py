@@ -245,7 +245,7 @@ class FixedNonrepeatingModalCompilerTests(unittest.TestCase):
 
         assert_exact()
         with patch(
-            "quorune.oracle_ir.fixed_nonrepeating_modal_template",
+            "quorune.compiler.whole_modal_templates.fixed_nonrepeating_modal_template",
             return_value=None,
         ), patch(
             "quorune.compiler.modal_context_nodes."

@@ -21,6 +21,24 @@ import test_self_public_zone_casting as zone_actions
 
 
 class FixedDamageSourceLkiValueTests(unittest.TestCase):
+    def test_fixed_damage_set_intent_thaws_immutable_facts_without_relaxing_wire_schema(self):
+        from quorune.damage_source import DamageError, DamageSourceSnapshot
+        from quorune.fixed_damage_set_model import FixedDamageSetSpec, PlayerDamageGroup, PlayerDamageRelation
+        from quorune.replacement.immutable import FrozenMap, thaw_value
+        from quorune.semantic_runtime.intents import DealFixedDamageSetIntent
+        snapshot = self.snapshot()
+        spec = FixedDamageSetSpec((PlayerDamageGroup(PlayerDamageRelation.ALL),))
+        intent = DealFixedDamageSetIntent(actor='A', source_ref=snapshot.ref, amount=1, spec=spec,
+            reason='Immutable damage source regression', source_snapshot=FrozenMap(snapshot.to_dict()))
+        self.assertEqual(snapshot.to_dict(), thaw_value(intent.source_snapshot))
+        self.assertEqual(snapshot, DamageSourceSnapshot.from_dict(thaw_value(intent.source_snapshot)))
+        malformed = {**snapshot.to_dict(), 'types': ('creature',)}
+        with self.assertRaises(DamageError):
+            DamageSourceSnapshot.from_dict(malformed)
+        with self.assertRaises(ValueError):
+            DealFixedDamageSetIntent(actor='A', source_ref='another-source', amount=1, spec=spec,
+                reason='Wrong source', source_snapshot=FrozenMap(snapshot.to_dict()))
+
     def test_source_damage_capability_is_required_before_program_admission(self):
         from quorune.oracle_ir import compile_oracle_card
         from quorune.rules.capabilities import CapabilityRegistry

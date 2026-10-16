@@ -61,17 +61,19 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         from quorune.semantics import SemanticRegistry
 
         expected = {
-            'Securitron Squadron': (
-                'capability.counter.producer.fixed_event_object',
-                'residual.replacement.replacement-applicability',
-                'residual.replacement.self-replacement-and-prevention-ordering',
-            ),
             'Merfolk Windrobber': (
                 'capability.zone.mill.event_recipient',
                 'residual.target_or_choice.conditional-effect',
             ),
         }
         registry = load_default_capability_registry()
+        promoted = self.db.lookup('Securitron Squadron')
+        promoted_ir = compile_oracle_card(promoted, capability_registry=registry, capability_profile='commander_review')
+        self.assertEqual('exact', promoted_ir.status, promoted_ir.material_residuals)
+        promoted_program = compile_best_available_card_program(self.db, promoted, semantic_registry=SemanticRegistry(),
+            capability_registry=registry, capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(promoted_program, capability_registry=registry,
+            profile='commander_review')['strict_capability_ready'])
         for name, pieces in expected.items():
             with self.subTest(name=name):
                 card = self.db.lookup(name)

@@ -13,7 +13,7 @@ from quorune.compiler.life_templates import fixed_life_effect_template
 from quorune.deck import DeckLoader
 from quorune.model import CardInstance
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
-from quorune import oracle_ir as oracle_ir_module
+from quorune.compiler import fractional_player_templates as player_result_templates
 from quorune.record import (
     authoritative_state_hash,
     checkpoint_envelope,
@@ -242,7 +242,7 @@ class FixedPlayerLifeCompilerTests(unittest.TestCase):
 
         assert_exact()
         with mock.patch.object(
-            oracle_ir_module,
+            player_result_templates,
             "fixed_life_effect_template",
             return_value=None,
         ):
@@ -327,7 +327,7 @@ class EachPlayerLifeCompilerTests(unittest.TestCase):
     def test_each_player_producer_and_authority_omissions_fail_closed(self):
         text = "Each player loses 1 life."
         registry = load_default_capability_registry()
-        with mock.patch.object(oracle_ir_module, "fixed_life_effect_template", return_value=None):
+        with mock.patch.object(player_result_templates, "fixed_life_effect_template", return_value=None):
             self.assertNotEqual("exact", compile_oracle_card(
                 fixture_card(text), capability_registry=registry,
             ).status)

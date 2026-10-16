@@ -347,6 +347,7 @@
     "functional-10": [
       "test_activated_draw_abilities",
       "test_activating_abilities_rules",
+      "test_batch_interaction_recovery",
       "test_beginning_of_combat_rules",
       "test_block_keyword_triggers",
       "test_bloodthirst_rules",

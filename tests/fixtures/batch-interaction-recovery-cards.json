@@ -1,0 +1,2408 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned original carriers for12 newly applicable #519 interactions; source card identity rows reused from canonical compact fixtures when present",
+  "cards": [
+    {
+      "oracle_id": "169a26d2-7bc9-4403-9c92-98d4bd5ca4f3",
+      "name": "Temple of the Dragon Queen",
+      "mana_cost": "",
+      "type_line": "Land",
+      "oracle_text": "As this land enters, you may reveal a Dragon card from your hand. This land enters tapped unless you revealed a Dragon card this way or you control a Dragon.\nAs this land enters, choose a color.\n{T}: Add one mana of the chosen color.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 0.0
+    },
+    {
+      "oracle_id": "17fae94e-558f-449a-b30c-e3c37a068b79",
+      "name": "Lightwheel Enhancements",
+      "mana_cost": "{W}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature or Vehicle\nStart your engines! (If you have no speed, it starts at 1. It increases once on each of your turns when an opponent loses life. Max speed is 4.)\nEnchanted permanent gets +1/+1 and has vigilance.\nMax speed — You may cast this card from your graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "cmc": 1.0,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Max speed",
+        "Enchant",
+        "Start your engines!"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1a840210-204d-41cd-afc0-46abf7ea5f87",
+      "name": "Apocalypse Hydra",
+      "mana_cost": "{X}{R}{G}",
+      "type_line": "Creature — Hydra",
+      "oracle_text": "This creature enters with X +1/+1 counters on it. If X is 5 or more, it enters with an additional X +1/+1 counters on it.\n{1}{R}, Remove a +1/+1 counter from this creature: It deals 1 damage to any target.",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R"
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-06-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "1e94e647-9150-4b22-aa9f-d195f64fb20a",
+      "name": "Slaying Fire",
+      "mana_cost": "{2}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Slaying Fire deals 3 damage to any target.\nAdamant — If at least three red mana was spent to cast this spell, it deals 4 damage instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Adamant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-10-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "27c84ad1-1491-459b-bf8a-0146062084dc",
+      "name": "Fiery Impulse",
+      "mana_cost": "{R}",
+      "type_line": "Instant",
+      "oracle_text": "Fiery Impulse deals 2 damage to target creature.\nSpell mastery — If there are two or more instant and/or sorcery cards in your graveyard, Fiery Impulse deals 3 damage instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Spell mastery"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "2d125ef5-074c-44eb-a1d0-c308d48bfbc2",
+      "name": "Invasion of Karsus // Refraction Elemental",
+      "mana_cost": "{2}{R}{R} // ",
+      "type_line": "Battle — Siege // Creature — Elemental",
+      "oracle_text": "Invasion of Karsus: (As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen this Siege enters, it deals 3 damage to each creature and each planeswalker.\n//\nRefraction Elemental: Ward—Pay 2 life.\nWhenever you cast a spell, this creature deals 2 damage to each opponent.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Transform",
+        "Ward"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2023-04-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0,
+      "card_faces": [
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": "4",
+          "loyalty": null,
+          "mana_cost": "{2}{R}{R}",
+          "name": "Invasion of Karsus",
+          "oracle_text": "(As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen this Siege enters, it deals 3 damage to each creature and each planeswalker.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Battle — Siege"
+        },
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Refraction Elemental",
+          "oracle_text": "Ward—Pay 2 life.\nWhenever you cast a spell, this creature deals 2 damage to each opponent.",
+          "power": "4",
+          "toughness": "4",
+          "type_line": "Creature — Elemental"
+        }
+      ]
+    },
+    {
+      "oracle_id": "3f244320-3e74-4eff-ba4e-a345700c40c9",
+      "name": "Javelin of Lightning",
+      "mana_cost": "{1}{R}",
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "Flash\nWhen this Equipment enters, attach it to target creature you control.\nDuring your turn, equipped creature gets +2/+0 and has first strike.\nEquip {4} ({4}: Attach to target creature you control. Equip only as a sorcery.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Equip",
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "52ad1a31-3ad8-4ead-ba77-675cad7e4a14",
+      "name": "Thermal Blast",
+      "mana_cost": "{4}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Thermal Blast deals 3 damage to target creature.\nThreshold — Thermal Blast deals 5 damage instead if there are seven or more cards in your graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Threshold"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2001-10-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 5.0
+    },
+    {
+      "oracle_id": "53a59ba9-f4e9-460b-928a-ce6d7ae883f7",
+      "name": "Silken Strength",
+      "mana_cost": "{1}{G}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Flash\nEnchant creature or Vehicle\nWhen this Aura enters, untap enchanted permanent.\nEnchanted permanent gets +1/+2 and has reach.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Enchant",
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "660d44a2-391a-416c-b46c-ddcc3739f527",
+      "name": "Valgavoth's Lair",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Enchantment Land",
+      "oracle_text": "Hexproof\nThis land enters tapped. As it enters, choose a color.\n{T}: Add one mana of the chosen color.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Hexproof"
+      ],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "name": "Invasion of Kaldheim // Pyre of the World Tree",
+      "mana_cost": "{3}{R} // ",
+      "type_line": "Battle — Siege // Enchantment",
+      "oracle_text": "Invasion of Kaldheim: (As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen this Siege enters, exile all cards from your hand, then draw that many cards. Until the end of your next turn, you may play cards exiled this way.\n//\nPyre of the World Tree: Discard a land card: This enchantment deals 2 damage to any target.\nWhenever you discard a land card, exile the top card of your library. You may play that card this turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Transform"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2023-04-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0,
+      "card_faces": [
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": "4",
+          "loyalty": null,
+          "mana_cost": "{3}{R}",
+          "name": "Invasion of Kaldheim",
+          "oracle_text": "(As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen this Siege enters, exile all cards from your hand, then draw that many cards. Until the end of your next turn, you may play cards exiled this way.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Battle — Siege"
+        },
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Pyre of the World Tree",
+          "oracle_text": "Discard a land card: This enchantment deals 2 damage to any target.\nWhenever you discard a land card, exile the top card of your library. You may play that card this turn.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment"
+        }
+      ]
+    },
+    {
+      "oracle_id": "6d776c7b-4ca1-48cd-88c7-dfbbe5a56a0b",
+      "name": "Kumano, Master Yamabushi",
+      "mana_cost": "{3}{R}{R}",
+      "type_line": "Legendary Creature — Human Shaman",
+      "oracle_text": "{1}{R}: Kumano deals 1 damage to any target.\nIf a creature dealt damage by Kumano this turn would die, exile it instead.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2004-10-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 5.0
+    },
+    {
+      "oracle_id": "7647940e-c99c-401c-ad1d-9ec730f66b6f",
+      "name": "Balduvian Trading Post",
+      "mana_cost": "",
+      "type_line": "Land",
+      "oracle_text": "If this land would enter, sacrifice an untapped Mountain instead. If you do, put this land onto the battlefield. If you don't, put it into its owner's graveyard.\n{T}: Add {C}{R}.\n{1}, {T}: This land deals 1 damage to target attacking creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "C",
+        "R"
+      ],
+      "layout": "normal",
+      "released_at": "2008-09-22",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 0.0
+    },
+    {
+      "oracle_id": "814f30a1-c0d6-4243-839d-0645d7bcbe4c",
+      "name": "Roadside Assistance",
+      "mana_cost": "{2}{W}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature or Vehicle\nWhen this Aura enters, create a 1/1 colorless Pilot creature token with \"This token saddles Mounts and crews Vehicles as though its power were 2 greater.\"\nEnchanted permanent gets +1/+1 and has lifelink.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "86a7dba7-aff9-4086-b149-03eee812249f",
+      "name": "Caldera Hellion",
+      "mana_cost": "{3}{R}{R}",
+      "type_line": "Creature — Hellion",
+      "oracle_text": "Devour 1 (As this creature enters, you may sacrifice any number of creatures. It enters with that many +1/+1 counters on it.)\nWhen this creature enters, it deals 3 damage to each creature.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Devour"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-10-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 5.0
+    },
+    {
+      "oracle_id": "8c56530b-098a-4afd-9022-76bfaa1f6a7c",
+      "name": "Eelectrocute",
+      "mana_cost": "{1}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Eelectrocute deals 2 damage to any target.\nYou may cast this card from your graveyard as long as you've rolled a 6 this turn. If you cast it this way and it would be put into your graveyard, exile it instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "97bff952-3bc8-41d0-b03f-5c76f3c7e0a3",
+      "name": "Firecannon Blast",
+      "mana_cost": "{1}{R}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Firecannon Blast deals 3 damage to target creature.\nRaid — Firecannon Blast deals 6 damage instead if you attacked this turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Raid"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-09-29",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "a0ce2f5a-9c0b-4801-9105-72f84d8a4a1f",
+      "name": "Arrow Storm",
+      "mana_cost": "{3}{R}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Arrow Storm deals 4 damage to any target.\nRaid — If you attacked this turn, instead Arrow Storm deals 5 damage to that permanent or player and the damage can't be prevented.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Raid"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-09-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 5.0
+    },
+    {
+      "oracle_id": "ab48147c-0bd7-4875-8e11-0e26185453dd",
+      "name": "Cackling Flames",
+      "mana_cost": "{3}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Cackling Flames deals 3 damage to any target.\nHellbent — Cackling Flames deals 5 damage instead if you have no cards in hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Hellbent"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2006-05-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "ac5258c1-5b46-4892-a445-bfd56875f039",
+      "name": "Plasma Bolt",
+      "mana_cost": "{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Plasma Bolt deals 2 damage to any target.\nVoid — Plasma Bolt deals 3 damage instead if a nonland permanent left the battlefield this turn or a spell was warped this turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Void"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "ae198ce9-097b-4204-b599-12bdb36f5195",
+      "name": "Summary Judgment",
+      "mana_cost": "{1}{W}",
+      "type_line": "Instant",
+      "oracle_text": "Summary Judgment deals 3 damage to target tapped creature.\nAddendum — If you cast this spell during your main phase, it deals 5 damage instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Addendum"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-01-12",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "b23cba46-6ed2-442d-bc39-7c4933f6b083",
+      "name": "Unholy Heat",
+      "mana_cost": "{R}",
+      "type_line": "Instant",
+      "oracle_text": "Unholy Heat deals 2 damage to target creature or planeswalker.\nDelirium — Unholy Heat deals 6 damage instead if there are four or more card types among cards in your graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Delirium"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "b2cefcd6-4b81-479c-86ff-1695b836972c",
+      "name": "Kruphix, God of Horizons",
+      "mana_cost": "{3}{G}{U}",
+      "type_line": "Legendary Enchantment Creature — God",
+      "oracle_text": "Indestructible\nAs long as your devotion to green and blue is less than seven, Kruphix isn't a creature.\nYou have no maximum hand size.\nIf you would lose unspent mana, that mana becomes colorless instead.",
+      "power": "4",
+      "toughness": "7",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [
+        "Indestructible"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 5.0
+    },
+    {
+      "oracle_id": "b8cf8614-14f4-4c20-9697-2e5ea34e0039",
+      "name": "Crater's Claws",
+      "mana_cost": "{X}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Crater's Claws deals X damage to any target.\nFerocious — Crater's Claws deals X plus 2 damage instead if you control a creature with power 4 or greater.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Ferocious"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-09-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "cbbad3da-695e-4527-9678-0942f3751287",
+      "name": "Jaya Ballard, Task Mage",
+      "mana_cost": "{1}{R}{R}",
+      "type_line": "Legendary Creature — Human Spellshaper",
+      "oracle_text": "{R}, {T}, Discard a card: Destroy target blue permanent.\n{1}{R}, {T}, Discard a card: Jaya Ballard deals 3 damage to any target. A creature dealt damage this way can't be regenerated this turn.\n{5}{R}{R}, {T}, Discard a card: Jaya Ballard deals 6 damage to each creature and each player.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-03-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "d12e374d-ed09-4d5e-bb7a-6c7d9ea80a1e",
+      "name": "Brimstone Volley",
+      "mana_cost": "{2}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Brimstone Volley deals 3 damage to any target.\nMorbid — Brimstone Volley deals 5 damage instead if a creature died this turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Morbid"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-08-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "d211c03a-03cd-40c5-b7c8-ada352fd01a6",
+      "name": "Galvanic Blast",
+      "mana_cost": "{R}",
+      "type_line": "Instant",
+      "oracle_text": "Galvanic Blast deals 2 damage to any target.\nMetalcraft — Galvanic Blast deals 4 damage instead if you control three or more artifacts.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Metalcraft"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-08-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "dc55e69e-e1b8-4129-902c-c71bcb952418",
+      "name": "Lightning Surge",
+      "mana_cost": "{3}{R}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Lightning Surge deals 4 damage to any target.\nThreshold — If there are seven or more cards in your graveyard, instead Lightning Surge deals 6 damage to that permanent or player and the damage can't be prevented.\nFlashback {5}{R}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Threshold",
+        "Flashback"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2002-05-27",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 5.0
+    },
+    {
+      "oracle_id": "defa9b92-4b54-4b00-852e-6c5ec4015643",
+      "name": "Kamahl's Sledge",
+      "mana_cost": "{5}{R}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Kamahl's Sledge deals 4 damage to target creature.\nThreshold — If there are seven or more cards in your graveyard, instead Kamahl's Sledge deals 4 damage to that creature and 4 damage to that creature's controller.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Threshold"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2002-02-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 7.0
+    },
+    {
+      "oracle_id": "f895ec2e-7481-4280-a5c0-38b58c440faf",
+      "name": "Frostwielder",
+      "mana_cost": "{2}{R}{R}",
+      "type_line": "Creature — Human Shaman",
+      "oracle_text": "If a creature dealt damage by this creature this turn would die, exile it instead.\n{T}: This creature deals 1 damage to any target.",
+      "power": "1",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2004-10-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "fixture:assurance-untap-land",
+      "name": "Generic Assurance Untap Land",
+      "mana_cost": "{0}",
+      "type_line": "Instant",
+      "oracle_text": "Untap target land.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "faces": [],
+      "cmc": 0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "169a26d2-7bc9-4403-9c92-98d4bd5ca4f3",
+      "published_at": "2021-07-23",
+      "source": "wotc",
+      "comment": "A Dragon card is a card with the creature type Dragon in its type line. Similarly, a creature on the battlefield is a Dragon if it has the Dragon creature type. A card that has \"Dragon\" in the name (such as Temple of the Dragon Queen) isn't a Dragon card unless it also has the Dragon creature type."
+    },
+    {
+      "oracle_id": "17fae94e-558f-449a-b30c-e3c37a068b79",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "“Max speed — [ability]” means “As long as you have max speed, this object has [ability].” If the granted ability functions in a zone other than the battlefield, the max speed ability does too."
+    },
+    {
+      "oracle_id": "17fae94e-558f-449a-b30c-e3c37a068b79",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "A player “has max speed” if their speed is 4."
+    },
+    {
+      "oracle_id": "17fae94e-558f-449a-b30c-e3c37a068b79",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "Each player tracks their speed (or lack thereof) separately. Increasing your speed has no effect on whether another player has speed."
+    },
+    {
+      "oracle_id": "17fae94e-558f-449a-b30c-e3c37a068b79",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "If an effect needs to know what a player’s speed is and that player doesn’t have a speed, their speed is considered 0."
+    },
+    {
+      "oracle_id": "17fae94e-558f-449a-b30c-e3c37a068b79",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "Your speed doesn’t change until a spell or ability says so, such as the inherent triggered ability that cares about opponents losing life during your turn. Notably, losing control of permanents with start your engines! doesn’t affect your speed."
+    },
+    {
+      "oracle_id": "17fae94e-558f-449a-b30c-e3c37a068b79",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "Start your engines! isn’t a triggered ability. Increasing your speed to 1 is something that happens as a state-based action as soon as you control a permanent with the ability. Notably, this includes gaining control of a permanent with the ability that another player controls."
+    },
+    {
+      "oracle_id": "1a840210-204d-41cd-afc0-46abf7ea5f87",
+      "published_at": "2009-02-01",
+      "source": "wotc",
+      "comment": "The first ability checks the number you chose for X, not the amount of mana you actually spent."
+    },
+    {
+      "oracle_id": "1a840210-204d-41cd-afc0-46abf7ea5f87",
+      "published_at": "2009-02-01",
+      "source": "wotc",
+      "comment": "For example, if X is 4, Apocalypse Hydra enters with four +1/+1 counters on it, but if X is 5, it enters with ten +1/+1 counters on it."
+    },
+    {
+      "oracle_id": "1e94e647-9150-4b22-aa9f-d195f64fb20a",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell without paying its mana cost, you can't choose to cast it and pay unless another rule or effect allows you to cast that spell for a cost. Similarly, you can't waive a cost reduction unless that effect says you may."
+    },
+    {
+      "oracle_id": "1e94e647-9150-4b22-aa9f-d195f64fb20a",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If an instant or sorcery spell has an adamant ability, you perform the spell's instructions in order. You don't perform the adamant instruction before the spell resolves or before any other effects printed above it."
+    },
+    {
+      "oracle_id": "1e94e647-9150-4b22-aa9f-d195f64fb20a",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If you copy a spell that has an adamant ability, no mana was spent to cast the copy at all, so that ability won't apply."
+    },
+    {
+      "oracle_id": "1e94e647-9150-4b22-aa9f-d195f64fb20a",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Adamant effects check what mana was actually spent to cast a spell. If an effect allows you to spend mana “as though it were mana” of any color or type, that allows you to spend mana you couldn't otherwise spend, but it doesn't change what mana you spent to cast the spell."
+    },
+    {
+      "oracle_id": "27c84ad1-1491-459b-bf8a-0146062084dc",
+      "published_at": "2015-06-22",
+      "source": "wotc",
+      "comment": "Check to see if there are two or more instant and/or sorcery cards in your graveyard as the spell resolves to determine whether the spell mastery ability applies. The spell itself won’t count because it’s still on the stack as you make this check."
+    },
+    {
+      "oracle_id": "2d125ef5-074c-44eb-a1d0-c308d48bfbc2",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If a Siege never had defense counters on it (perhaps because a permanent became a copy of one), it can’t have its last defense counter removed. It will be put into its owner’s graveyard. You won’t exile it or cast the other face."
+    },
+    {
+      "oracle_id": "2d125ef5-074c-44eb-a1d0-c308d48bfbc2",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "Sieges each have an intrinsic triggered ability. That ability is “When the last defense counter is removed from this permanent, exile it, then you may cast it transformed without paying its mana cost.”"
+    },
+    {
+      "oracle_id": "2d125ef5-074c-44eb-a1d0-c308d48bfbc2",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "Only creatures controlled by a battle’s protector can block creatures that are attacking that battle. This means a Siege’s controller can never assign creatures to block for it."
+    },
+    {
+      "oracle_id": "2d125ef5-074c-44eb-a1d0-c308d48bfbc2",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "In a multiplayer game, if the protector of a battle leaves the game and that battle is not currently being attacked, its controller chooses a new protector for it as a state-based action. If it is being attacked, its controller chooses a new protector for it once no creatures are attacking it. This means that it continues to be attacked and can be dealt combat damage as normal."
+    },
+    {
+      "oracle_id": "2d125ef5-074c-44eb-a1d0-c308d48bfbc2",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "A battle’s “defense” is displayed in the bottom right corner of the card. A battle enters the battlefield with that number of defense counters. If another permanent enters the battlefield as a copy of a battle, it also enters with that number of defense counters."
+    },
+    {
+      "oracle_id": "2d125ef5-074c-44eb-a1d0-c308d48bfbc2",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "Damage dealt to a battle causes that many defense counters to be removed from it."
+    },
+    {
+      "oracle_id": "2d125ef5-074c-44eb-a1d0-c308d48bfbc2",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "A Siege’s controller can’t be its protector. If a Siege’s protector ever gains control of it, they choose a new player to be its protector. This is a state-based action."
+    },
+    {
+      "oracle_id": "2d125ef5-074c-44eb-a1d0-c308d48bfbc2",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If a battle has no defense counters, and it isn’t the source of a triggered ability that has triggered but not yet left the stack, that battle is put into its owner’s graveyard. This is a state-based action. This doesn’t cause a Siege’s intrinsic triggered ability to trigger."
+    },
+    {
+      "oracle_id": "2d125ef5-074c-44eb-a1d0-c308d48bfbc2",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If a battle that’s being attacked somehow stops being a battle, it is removed from combat. Similarly, if its controller changes in the middle of combat, it is removed from combat."
+    },
+    {
+      "oracle_id": "2d125ef5-074c-44eb-a1d0-c308d48bfbc2",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "A battle can be dealt damage and be target of spells and/or abilities that target “any target.”"
+    },
+    {
+      "oracle_id": "2d125ef5-074c-44eb-a1d0-c308d48bfbc2",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If a permanent that is represented by a transforming double-faced card becomes a copy of a Siege, it will be exiled as that Siege’s triggered ability resolves, then it will be cast transformed. Note that this applies only to transforming double-faced cards, not to modal double-faced cards that can normally be played using either face."
+    },
+    {
+      "oracle_id": "2d125ef5-074c-44eb-a1d0-c308d48bfbc2",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If a token or a card that isn’t represented by a transforming double-faced card becomes a copy of a Siege, it can’t be cast as its triggered ability resolves. It will remain in exile. If it’s a token, it will cease to exist the next time state-based actions are performed."
+    },
+    {
+      "oracle_id": "2d125ef5-074c-44eb-a1d0-c308d48bfbc2",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If a non-battle permanent that is already on the battlefield become a copy of a Siege, its controller chooses one of their opponents to be that battle’s protector. However, it will most likely be put into its owner’s graveyard because it has no defense counters (see below)."
+    },
+    {
+      "oracle_id": "2d125ef5-074c-44eb-a1d0-c308d48bfbc2",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "A battle can be attacked by all players other than its protector. Notably, this means a Siege’s controller can attack it."
+    },
+    {
+      "oracle_id": "2d125ef5-074c-44eb-a1d0-c308d48bfbc2",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "Battles can’t attack or block, even if one also becomes a creature. If an attacking or blocking creature somehow becomes a battle in addition to being a creature, it is removed from combat."
+    },
+    {
+      "oracle_id": "2d125ef5-074c-44eb-a1d0-c308d48bfbc2",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "As a Siege enters the battlefield, its controller chooses an opponent to be its protector."
+    },
+    {
+      "oracle_id": "3f244320-3e74-4eff-ba4e-a345700c40c9",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "Javelin of Lightning doesn't enter the battlefield attached to a creature. Instead, the Equipment enters the battlefield and then a triggered ability attaches it to a creature. You may cast Javelin of Lightning even if you don't control any creatures."
+    },
+    {
+      "oracle_id": "3f244320-3e74-4eff-ba4e-a345700c40c9",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "Attaching an Equipment with its enters-the-battlefield triggered ability isn't the same as using its equip ability. You don't pay mana for the attachment, and the timing restrictions for equip abilities don't apply."
+    },
+    {
+      "oracle_id": "3f244320-3e74-4eff-ba4e-a345700c40c9",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If the target creature becomes an illegal target, the Equipment remains on the battlefield unattached."
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "In a multiplayer game, if the protector of a battle leaves the game and that battle is not currently being attacked, its controller chooses a new protector for it as a state-based action. If it is being attacked, its controller chooses a new protector for it once no creatures are attacking it. This means that it continues to be attacked and can be dealt combat damage as normal."
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "A Siege’s controller can’t be its protector. If a Siege’s protector ever gains control of it, they choose a new player to be its protector. This is a state-based action."
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "Battles can’t attack or block, even if one also becomes a creature. If an attacking or blocking creature somehow becomes a battle in addition to being a creature, it is removed from combat."
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "A battle can be attacked by all players other than its protector. Notably, this means a Siege’s controller can attack it."
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "A battle can be dealt damage and be target of spells and/or abilities that target “any target.”"
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "Both Invasion of Kaldheim and Pyre of the World Tree have an ability that allow you to play cards from exile. You may play those cards during the specified duration even if the permanent with the ability leaves the battlefield or you lose control of it."
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If a non-battle permanent that is already on the battlefield become a copy of a Siege, its controller chooses one of their opponents to be that battle’s protector. However, it will most likely be put into its owner’s graveyard because it has no defense counters (see below)."
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If that ability triggers during the cleanup step because you discarded a land card to bring your hand size down to your maximum hand size, you will get priority after the ability resolves, so you’ll have a chance to cast an instant card or a card with flash you exiled. Whether you cast the exiled card or not, there will be then be another cleanup step before the turn ends."
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "Unless an effect allows you to play additional lands that turn, you can play an exiled land card only if you haven’t played a land yet that turn."
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "The last ability of Pyre of the World Tree will trigger whenever you discard a land card for any reason, not just because you activated its other ability."
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "Playing the exiled cards follows the normal rules for playing those cards. You must pay their costs, and you must follow all applicable timing rules. For example, if one of the cards is a creature card, you can cast that card by paying its mana cost only during your main phase while the stack is empty."
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If a battle has no defense counters, and it isn’t the source of a triggered ability that has triggered but not yet left the stack, that battle is put into its owner’s graveyard. This is a state-based action. This doesn’t cause a Siege’s intrinsic triggered ability to trigger."
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "Any cards you don’t play will remain exiled."
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "Sieges each have an intrinsic triggered ability. That ability is “When the last defense counter is removed from this permanent, exile it, then you may cast it transformed without paying its mana cost.”"
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If a token or a card that isn’t represented by a transforming double-faced card becomes a copy of a Siege, it can’t be cast as its triggered ability resolves. It will remain in exile. If it’s a token, it will cease to exist the next time state-based actions are performed."
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "A battle’s “defense” is displayed in the bottom right corner of the card. A battle enters the battlefield with that number of defense counters. If another permanent enters the battlefield as a copy of a battle, it also enters with that number of defense counters."
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "Only creatures controlled by a battle’s protector can block creatures that are attacking that battle. This means a Siege’s controller can never assign creatures to block for it."
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "As a Siege enters the battlefield, its controller chooses an opponent to be its protector."
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If a permanent that is represented by a transforming double-faced card becomes a copy of a Siege, it will be exiled as that Siege’s triggered ability resolves, then it will be cast transformed. Note that this applies only to transforming double-faced cards, not to modal double-faced cards that can normally be played using either face."
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "Damage dealt to a battle causes that many defense counters to be removed from it."
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If a Siege never had defense counters on it (perhaps because a permanent became a copy of one), it can’t have its last defense counter removed. It will be put into its owner’s graveyard. You won’t exile it or cast the other face."
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If a battle that’s being attacked somehow stops being a battle, it is removed from combat. Similarly, if its controller changes in the middle of combat, it is removed from combat."
+    },
+    {
+      "oracle_id": "6d776c7b-4ca1-48cd-88c7-dfbbe5a56a0b",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "If a creature dealt damage by Kumano this turn would be put into a graveyard, exile it, even if it's going to the graveyard at the same time as Kumano."
+    },
+    {
+      "oracle_id": "6d776c7b-4ca1-48cd-88c7-dfbbe5a56a0b",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "Kumano, Master Yamabushi must be on the battlefield when the creature would be put into a graveyard in order to exile it."
+    },
+    {
+      "oracle_id": "7647940e-c99c-401c-ad1d-9ec730f66b6f",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "You sacrifice the Mountain before this card is put onto the battlefield, and do so no matter how it is put onto the battlefield."
+    },
+    {
+      "oracle_id": "7647940e-c99c-401c-ad1d-9ec730f66b6f",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "This card produces two different types of mana. If an effect adds one mana of the same type as the mana produced by this card, you choose which of the two types it produces."
+    },
+    {
+      "oracle_id": "814f30a1-c0d6-4243-839d-0645d7bcbe4c",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "Saddling a Mount or crewing a Vehicle doesn’t cause the token’s power to change."
+    },
+    {
+      "oracle_id": "86a7dba7-aff9-4086-b149-03eee812249f",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If you cast this as a spell, you choose how many and which creatures to devour as part of the resolution of that spell. (It can't be countered at this point.) The same is true of a spell or ability that lets you put a creature with devour onto the battlefield."
+    },
+    {
+      "oracle_id": "86a7dba7-aff9-4086-b149-03eee812249f",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "You may sacrifice only creatures that are already on the battlefield. If a creature with devour and another creature are entering under your control at the same time, the creature with devour can't devour that other creature. The creature with devour also can't devour itself."
+    },
+    {
+      "oracle_id": "86a7dba7-aff9-4086-b149-03eee812249f",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "You may choose not to sacrifice any creatures for the Devour ability."
+    },
+    {
+      "oracle_id": "86a7dba7-aff9-4086-b149-03eee812249f",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If multiple creatures with devour are entering under your control at the same time, you may use each one's devour ability. A creature you already control can be devoured by only one of them, however. (In other words, you can't sacrifice the same creature to satisfy multiple devour abilities.) All creatures devoured this way are sacrificed at the same time."
+    },
+    {
+      "oracle_id": "86a7dba7-aff9-4086-b149-03eee812249f",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Caldera Hellion will deal 3 damage to itself (as well as to each other creature) when its \"enters\" ability resolves. This damage will be lethal if Caldera Hellion hasn't devoured any creatures and its toughness hasn't been increased by any other means."
+    },
+    {
+      "oracle_id": "8c56530b-098a-4afd-9022-76bfaa1f6a7c",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "For the last ability, it doesn't matter how many pips the die you rolled a 6 on had, whether that was a six-sided die or a d20. As long as you rolled a 6 on any die that turn, you may cast Eelectrocute from your graveyard."
+    },
+    {
+      "oracle_id": "8c56530b-098a-4afd-9022-76bfaa1f6a7c",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If you cast Eelectrocute from your graveyard, you still pay its costs."
+    },
+    {
+      "oracle_id": "8c56530b-098a-4afd-9022-76bfaa1f6a7c",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If you cast Eelectrocute from your graveyard using another permission, you won't exile it instead (unless that permission also states that you exile it)."
+    },
+    {
+      "oracle_id": "97bff952-3bc8-41d0-b03f-5c76f3c7e0a3",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Raid abilities evaluate the entire turn to see if you attacked with a creature. That creature doesn't have to still be on the battlefield. Similarly, the player, planeswalker, or battle it attacked doesn't have to still be in the game or on the battlefield."
+    },
+    {
+      "oracle_id": "97bff952-3bc8-41d0-b03f-5c76f3c7e0a3",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Raid abilities care only that you attacked with a creature. It doesn't matter how many creatures you attacked with or which player, planeswalker, or battle those creatures attacked."
+    },
+    {
+      "oracle_id": "a0ce2f5a-9c0b-4801-9105-72f84d8a4a1f",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Raid abilities care only that you attacked with a creature. It doesn't matter how many creatures you attacked with or which player, planeswalker, or battle those creatures attacked."
+    },
+    {
+      "oracle_id": "a0ce2f5a-9c0b-4801-9105-72f84d8a4a1f",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Raid abilities evaluate the entire turn to see if you attacked with a creature. That creature doesn't have to still be on the battlefield. Similarly, the player, planeswalker, or battle it attacked doesn't have to still be in the game or on the battlefield."
+    },
+    {
+      "oracle_id": "ae198ce9-097b-4204-b599-12bdb36f5195",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Addendum abilities of instant spells apply while the spell is resolving, not immediately after casting it. If the spell is countered, you don't get the addendum bonus."
+    },
+    {
+      "oracle_id": "ae198ce9-097b-4204-b599-12bdb36f5195",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If an effect copies a spell with an addendum ability while it's on the stack, the copy wasn't cast at all, so you won't get the addendum bonus."
+    },
+    {
+      "oracle_id": "b23cba46-6ed2-442d-bc39-7c4933f6b083",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "The card types that can appear in a graveyard are artifact, battle, creature, enchantment, instant, kindred, land, planeswalker, and sorcery. Legendary, basic, and snow are supertypes, not card types; Kavu and Equipment are subtypes, not card types."
+    },
+    {
+      "oracle_id": "b23cba46-6ed2-442d-bc39-7c4933f6b083",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Unholy Heat checks your graveyard as it resolves to determine if it deals 2 or 6 damage. At that time, Unholy Heat isn't in the graveyard yet."
+    },
+    {
+      "oracle_id": "b2cefcd6-4b81-479c-86ff-1695b836972c",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If unspent mana has any restrictions or riders associated with it (for example, if it was produced by Cavern of Souls), those restrictions or riders will remain associated with that mana when it becomes colorless."
+    },
+    {
+      "oracle_id": "b2cefcd6-4b81-479c-86ff-1695b836972c",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "As long as Kruphix is on the battlefield, you'll keep unspent mana as steps and phases end (although it will become colorless). This means you can add mana and spend it during a future step, phase, or turn. Once Kruphix leaves the battlefield, you have until the end of the current step or phase to use the mana before it disappears."
+    },
+    {
+      "oracle_id": "b2cefcd6-4b81-479c-86ff-1695b836972c",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If an effect causes a God to lose all abilities, its ability that causes it to stop being a creature still applies if appropriate."
+    },
+    {
+      "oracle_id": "b2cefcd6-4b81-479c-86ff-1695b836972c",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "When a God enters the battlefield, your devotion to its color (including the mana symbols in the mana cost of the God itself) will determine if a creature entered the battlefield or not for abilities that trigger whenever a creature enters the battlefield."
+    },
+    {
+      "oracle_id": "b2cefcd6-4b81-479c-86ff-1695b836972c",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "The type-changing ability that can make a God not be a creature functions only on the battlefield. It's always a creature card in other zones, regardless of your devotion to its color. It's always a creature spell while it's on the stack."
+    },
+    {
+      "oracle_id": "b2cefcd6-4b81-479c-86ff-1695b836972c",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Your devotion to two colors is the number of mana symbols among mana costs of permanents you control that are the first color, the second, or both. If an effect counts your devotion to two colors, a hybrid symbol that is both of those colors is counted just once."
+    },
+    {
+      "oracle_id": "b2cefcd6-4b81-479c-86ff-1695b836972c",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Counters put on a God remain on it while it's not a creature, even if they have no effect."
+    },
+    {
+      "oracle_id": "b2cefcd6-4b81-479c-86ff-1695b836972c",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a God stops being a creature, it loses the type creature and the creature type God. It continues to be a legendary enchantment."
+    },
+    {
+      "oracle_id": "b2cefcd6-4b81-479c-86ff-1695b836972c",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a God is attacking or blocking and it stops being a creature, it will be removed from combat. It won't rejoin combat if it resumes being a creature later during that combat."
+    },
+    {
+      "oracle_id": "b2cefcd6-4b81-479c-86ff-1695b836972c",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "The abilities of Gods function as long as they're on the battlefield, regardless of whether they're creatures."
+    },
+    {
+      "oracle_id": "b2cefcd6-4b81-479c-86ff-1695b836972c",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "As a God enters the battlefield, your devotion to its color will determine whether any replacement effects that affect creatures entering the battlefield apply to that God. Because replacement effects are considered before the God is on the battlefield, the mana symbols in its mana cost won't be counted when determining this."
+    },
+    {
+      "oracle_id": "b8cf8614-14f4-4c20-9697-2e5ea34e0039",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Ferocious abilities of instants and sorceries that don’t use the word “instead” will provide an additional effect if you control a creature with power 4 or greater as they resolve."
+    },
+    {
+      "oracle_id": "b8cf8614-14f4-4c20-9697-2e5ea34e0039",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "If you control a creature with power 4 or greater, Crater’s Claws with X equals 0 will deal 2 damage, with X equals 1 will deal 3 damage, and so on."
+    },
+    {
+      "oracle_id": "b8cf8614-14f4-4c20-9697-2e5ea34e0039",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Some ferocious abilities that appear on instants and sorceries use the word “instead.” These spells have an upgraded effect if you control a creature with power 4 or greater as they resolve. For these, you only get the upgraded effect, not both effects."
+    },
+    {
+      "oracle_id": "dc55e69e-e1b8-4129-902c-c71bcb952418",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "It either deals 4 damage or 6 damage. It does not deal 10 damage."
+    },
+    {
+      "oracle_id": "dc55e69e-e1b8-4129-902c-c71bcb952418",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "At the time this spell is resolving, it is on the stack and not in the graveyard. This means that you should not count this card when determining whether the Threshold effect occurs."
+    },
+    {
+      "oracle_id": "dc55e69e-e1b8-4129-902c-c71bcb952418",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast."
+    },
+    {
+      "oracle_id": "dc55e69e-e1b8-4129-902c-c71bcb952418",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\""
+    },
+    {
+      "oracle_id": "dc55e69e-e1b8-4129-902c-c71bcb952418",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way."
+    },
+    {
+      "oracle_id": "dc55e69e-e1b8-4129-902c-c71bcb952418",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery."
+    },
+    {
+      "oracle_id": "dc55e69e-e1b8-4129-902c-c71bcb952418",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions."
+    },
+    {
+      "oracle_id": "dc55e69e-e1b8-4129-902c-c71bcb952418",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was."
+    },
+    {
+      "oracle_id": "f895ec2e-7481-4280-a5c0-38b58c440faf",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "Frostwielder must be on the battlefield when the creature would be put into a graveyard in order to exile it."
+    }
+  ],
+  "admission_boundaries": [
+    {
+      "oracle_id": "814f30a1-c0d6-4243-839d-0645d7bcbe4c",
+      "name": "Roadside Assistance",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.continuous.characteristics.fixed_public_setting"
+      ]
+    },
+    {
+      "oracle_id": "b2cefcd6-4b81-479c-86ff-1695b836972c",
+      "name": "Kruphix, God of Horizons",
+      "piece_ids": [
+        "capability.continuous.characteristics.conditional_creature_type_removal",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "cbbad3da-695e-4527-9678-0942f3751287",
+      "name": "Jaya Ballard, Task Mage",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.regeneration"
+      ]
+    },
+    {
+      "oracle_id": "1a840210-204d-41cd-afc0-46abf7ea5f87",
+      "name": "Apocalypse Hydra",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "1e94e647-9150-4b22-aa9f-d195f64fb20a",
+      "name": "Slaying Fire",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "27c84ad1-1491-459b-bf8a-0146062084dc",
+      "name": "Fiery Impulse",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "2d125ef5-074c-44eb-a1d0-c308d48bfbc2",
+      "name": "Invasion of Karsus // Refraction Elemental",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "52ad1a31-3ad8-4ead-ba77-675cad7e4a14",
+      "name": "Thermal Blast",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "66914a34-59b3-48a0-9305-ebd956d34f02",
+      "name": "Invasion of Kaldheim // Pyre of the World Tree",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "6d776c7b-4ca1-48cd-88c7-dfbbe5a56a0b",
+      "name": "Kumano, Master Yamabushi",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "7647940e-c99c-401c-ad1d-9ec730f66b6f",
+      "name": "Balduvian Trading Post",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "86a7dba7-aff9-4086-b149-03eee812249f",
+      "name": "Caldera Hellion",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "8c56530b-098a-4afd-9022-76bfaa1f6a7c",
+      "name": "Eelectrocute",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "97bff952-3bc8-41d0-b03f-5c76f3c7e0a3",
+      "name": "Firecannon Blast",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "a0ce2f5a-9c0b-4801-9105-72f84d8a4a1f",
+      "name": "Arrow Storm",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "ab48147c-0bd7-4875-8e11-0e26185453dd",
+      "name": "Cackling Flames",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "ac5258c1-5b46-4892-a445-bfd56875f039",
+      "name": "Plasma Bolt",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "ae198ce9-097b-4204-b599-12bdb36f5195",
+      "name": "Summary Judgment",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "b23cba46-6ed2-442d-bc39-7c4933f6b083",
+      "name": "Unholy Heat",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "b8cf8614-14f4-4c20-9697-2e5ea34e0039",
+      "name": "Crater's Claws",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "d12e374d-ed09-4d5e-bb7a-6c7d9ea80a1e",
+      "name": "Brimstone Volley",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "d211c03a-03cd-40c5-b7c8-ada352fd01a6",
+      "name": "Galvanic Blast",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "dc55e69e-e1b8-4129-902c-c71bcb952418",
+      "name": "Lightning Surge",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "defa9b92-4b54-4b00-852e-6c5ec4015643",
+      "name": "Kamahl's Sledge",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "f895ec2e-7481-4280-a5c0-38b58c440faf",
+      "name": "Frostwielder",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "169a26d2-7bc9-4403-9c92-98d4bd5ca4f3",
+      "name": "Temple of the Dragon Queen",
+      "piece_ids": [
+        "capability.mana.production.source_chosen_color",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    }
+  ]
+}

@@ -14141,11 +14141,11 @@
       "applicable_high_risk_pairs": 423,
       "applicable_piece_pairs": 125703,
       "available": true,
-      "covered_high_risk_pairs": 411,
-      "covered_piece_pairs": 1293,
+      "covered_high_risk_pairs": 423,
+      "covered_piece_pairs": 1305,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "c1e503f569feeab574bd126963bd9909b5ad7da7d51a94aeaafd51fbfd0c9760",
-      "uncovered_high_risk_pairs": 12
+      "source_fingerprint": "3366ac904b0435c14adaaa5f9d063ff7948a5cc5cc64869b641587a394720460",
+      "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
     "missing_dedicated_owners": [],
@@ -34835,7 +34835,7 @@
             "visibility": "public"
           }
         ],
-        "primary_test_count": 371,
+        "primary_test_count": 372,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_activated_draw_abilities",
@@ -34859,6 +34859,7 @@
           "test_aura_targeting_entry",
           "test_backup_rules",
           "test_basic_land_type_mana",
+          "test_batch_interaction_recovery",
           "test_batch_retained_owner_composition",
           "test_beginning_of_combat_rules",
           "test_beginning_phase_rules",
@@ -34935,8 +34936,7 @@
           "test_defender_permission",
           "test_delayed_triggers",
           "test_destruction_rules",
-          "test_deterministic_full_game",
-          "test_devoid_characteristics"
+          "test_deterministic_full_game"
         ],
         "privacy_sensitivity": "not explicitly declared",
         "prohibited_runtime_oracle_text_accesses": 0,
@@ -36737,7 +36737,7 @@
             "visibility": "private"
           }
         ],
-        "primary_test_count": 308,
+        "primary_test_count": 309,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_activated_draw_abilities",
@@ -36757,6 +36757,7 @@
           "test_aura_targeting_entry",
           "test_backup_rules",
           "test_basic_land_type_mana",
+          "test_batch_interaction_recovery",
           "test_batch_retained_owner_composition",
           "test_batched_support_measurement",
           "test_bestow_rules",
@@ -36837,8 +36838,7 @@
           "test_fixed_combat_entry_keyword_lifecycles",
           "test_fixed_control_effects",
           "test_fixed_controller_effect_sequences",
-          "test_fixed_counter_additional_costs",
-          "test_fixed_counter_controller_effect_sequences"
+          "test_fixed_counter_additional_costs"
         ],
         "privacy_sensitivity": "not explicitly declared",
         "prohibited_runtime_oracle_text_accesses": 0,
@@ -37167,7 +37167,7 @@
             "visibility": "public"
           }
         ],
-        "primary_test_count": 345,
+        "primary_test_count": 346,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_activated_draw_abilities",
@@ -37189,6 +37189,7 @@
           "test_aura_targeting_entry",
           "test_backup_rules",
           "test_basic_land_type_mana",
+          "test_batch_interaction_recovery",
           "test_batch_retained_owner_composition",
           "test_beginning_of_combat_rules",
           "test_beginning_phase_rules",
@@ -37267,8 +37268,7 @@
           "test_echo_rules",
           "test_end_of_combat_rules",
           "test_end_step_rules",
-          "test_ending_phase_rules",
-          "test_energy_activation_costs"
+          "test_ending_phase_rules"
         ],
         "privacy_sensitivity": "not explicitly declared",
         "prohibited_runtime_oracle_text_accesses": 0,
@@ -37376,7 +37376,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 79,
+        "primary_test_count": 80,
         "primary_tests": [
           "test_bloodthirst_rules",
           "test_capability_implementation_mutations",
@@ -37410,6 +37410,7 @@
           "test_fixed_combat_entry_keyword_lifecycles",
           "test_fixed_counter_additional_costs",
           "test_fixed_counter_keyword_activations",
+          "test_fixed_damage_source_lki",
           "test_fixed_entry_conditions",
           "test_fixed_keyword_entry_counters",
           "test_fixed_keyword_event_effects",
@@ -38233,7 +38234,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 158,
+        "primary_test_count": 159,
         "primary_tests": [
           "test_activation_restrictions",
           "test_additional_token_compiler",
@@ -38296,6 +38297,7 @@
           "test_fixed_counter_player_cast_triggers",
           "test_fixed_counter_removal_effects",
           "test_fixed_counter_zone_triggers",
+          "test_fixed_damage_source_lki",
           "test_fixed_energy_payments",
           "test_fixed_entry_conditions",
           "test_fixed_entry_return_triggers",
@@ -38333,8 +38335,7 @@
           "test_kicker_rules",
           "test_leveler_bands",
           "test_linked_exile_return",
-          "test_loyalty_abilities",
-          "test_loyalty_counter_cost_replacements"
+          "test_loyalty_abilities"
         ],
         "privacy_sensitivity": "not explicitly declared",
         "prohibited_runtime_oracle_text_accesses": 0,
@@ -39890,7 +39891,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1420,
     "compiler_module_physical_lines": 1482,
-    "compiler_version": "oracle-ir-v396",
+    "compiler_version": "oracle-ir-v397",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -40173,22 +40174,22 @@
       "effective_date": "2026-08-07",
       "evidence": {
         "class_counts": {
-          "interaction": 1495,
-          "multiplayer": 714,
-          "mutation": 602,
-          "negative": 1238,
-          "positive": 1331,
+          "interaction": 1496,
+          "multiplayer": 715,
+          "mutation": 603,
+          "negative": 1239,
+          "positive": 1333,
           "privacy": 600,
           "property": 20,
-          "replay": 1097,
+          "replay": 1098,
           "rollback": 156
         },
-        "declaration_count": 7253,
-        "declaration_source_fingerprint": "694777c6189171a4986bbd50570cf62e638fb48bee8deb7866b13c73645df407",
-        "fingerprint": "c72196ed869cc23121aca950a4c14db4c82f948ed966b86d1ef496905422de75",
-        "registry_fingerprint": "082b8f3bd33dfd68f09844009f9276406451a599a4be171232be5929a7be9d5a"
+        "declaration_count": 7260,
+        "declaration_source_fingerprint": "716068b64551330e6004d44202979d8de6bd8885fd9b0b1c06ccee81e22aeb59",
+        "fingerprint": "fa938044ffd5765e3071cd03167a15935f0d52b139ec89100e9140900052d05f",
+        "registry_fingerprint": "71d71d119eb48a4b88c174bf9210eec9b7f69842ae04f734fc80bcb8c74f4ee6"
       },
-      "fingerprint": "082b8f3bd33dfd68f09844009f9276406451a599a4be171232be5929a7be9d5a",
+      "fingerprint": "71d71d119eb48a4b88c174bf9210eec9b7f69842ae04f734fc80bcb8c74f4ee6",
       "implementation_mutation_status_counts": {
         "killed": 411,
         "not_run": 4
@@ -40198,7 +40199,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "registry_version": 325,
+      "registry_version": 326,
       "schema_version": 1,
       "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
       "status_counts": {
@@ -40557,7 +40558,7 @@
         "contract_fingerprint": "1ec0efe6cc7917b4ef90cea81b4c1e546b73fc6153e967d4e4e535809b9dd45c",
         "exact_cards_with_template": 755,
         "exact_nodes": 912,
-        "fingerprint": "4e9a22a1930055bedfee456a59f9bbe844d5681e62804c2721f3576a8af3eeef",
+        "fingerprint": "bdc79ad5130d26b9dc3d2923b114ace61aaaa5744131e8024f3b1063d4e63bf9",
         "grammar_source_fingerprint": "1117d0a614866ccc4deeb07e19451f789f43c3c8107febf05afaa67bb6b54c2f",
         "identity_fingerprint": "99bb6d4ead7c141c16ee931c83c7e86679b00167087ab7474eaf6ebf055119c9",
         "present": true,
@@ -40569,7 +40570,7 @@
         "contract_fingerprint": "1ec0efe6cc7917b4ef90cea81b4c1e546b73fc6153e967d4e4e535809b9dd45c",
         "exact_cards_with_template": 777,
         "exact_nodes": 945,
-        "fingerprint": "bdf713d55d84990ffea817aafbc253ff800d22d4e735482633d9b19921c66e87",
+        "fingerprint": "863bbc08faf5f73cf2ee792caecbda1b507141c9a9cff7fa15fefae3e421458c",
         "grammar_source_fingerprint": "1117d0a614866ccc4deeb07e19451f789f43c3c8107febf05afaa67bb6b54c2f",
         "identity_fingerprint": "88c711892f132f8c0157923b3ec036266c1d96d8413c9af35b027bbba228e6ed",
         "present": true,
@@ -40588,7 +40589,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "c932d439756d9caf430520656862ae923a290cb19f3b2b4ea652d1b98f1eeeea",
+      "fingerprint": "4f0b2e50c8d63a7f4406847a8def677a3cb4b73820e1648e8bc1855d88acaaac",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -41418,7 +41419,7 @@
       "playwright_e2e_journeys": 11
     },
     "mutation_testing": {
-      "capability_mutation_declarations": 602,
+      "capability_mutation_declarations": 603,
       "configured_tools": [],
       "focused_executable_suite": true,
       "mutation_score": null
@@ -41446,8 +41447,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 6501,
-      "discovered_total": 9810,
+      "conventional_ast_cases": 6506,
+      "discovered_total": 9815,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 275,
@@ -41457,7 +41458,7 @@
         "server_named": 53
       },
       "reconciles": true,
-      "test_files": 477
+      "test_files": 478
     }
   }
 }

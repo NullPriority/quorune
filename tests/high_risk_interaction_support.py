@@ -906,7 +906,7 @@ _WITNESSES = {
         "{1}, {T}: You may put a land card from your hand onto the "
         "battlefield tapped.\n"
         "{4}, {T}: Draw a card. If you control eight or more lands, draw "
-        "two cards instead.",
+        "X cards instead.",
         "{1}{G}{U}",
         power="2",
         toughness="3",

@@ -6412,7 +6412,7 @@
     },
     "semantic_transition_declaration": {
       "transition_id": "batched-conditional-static-payments-and-copy-closure-v396",
-      "compiler_version": "oracle-ir-v396",
+      "compiler_version": "oracle-ir-v397",
       "bundle_id": "bundle:batched-conditional-static-payments-and-copy-closure-v396",
       "candidate_ids": [
         "bundle:batched-conditional-static-payments-and-copy-closure-v396"

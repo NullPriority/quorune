@@ -312,12 +312,17 @@ class FixedOptionalManaPaymentCompilerTests(unittest.TestCase):
                 self.assertEqual(text,ir.faces[0].oracle_text[node.span.start:node.span.end])
 
     def test_fixed_resolution_payment_rejects_partial_nested_and_linked_grammar(self):
+        promoted = compile_oracle_card(payment_record(
+            'You may discard a card. When you do, draw a card.', type_line='Instant'),
+            capability_registry=self.capabilities, capability_profile='commander_review')
+        self.assertEqual('exact', promoted.status, promoted.material_residuals)
+        self.assertIn('trigger.reflexive.fixed_action_result', promoted.faces[0].nodes[0].capability_dependencies)
         cases=(
             'You may discard a card at random. If you do, draw a card.',
             'You may discard any number of cards. If you do, draw a card.',
             'You may pay {X}. If you do, draw a card.',
             'You may sacrifice a creature or discard a card. If you do, draw a card.',
-            'You may discard a card. When you do, draw a card.',
+            'You may discard a card. When you do, draw cards equal to its mana value.',
             'You may discard a card. If you do, draw cards equal to its mana value.',
             'You may discard a card. If you do, you may pay {1}. If you do, draw a card.',
         )
@@ -364,6 +369,9 @@ class FixedOptionalManaPaymentCompilerTests(unittest.TestCase):
         self.assertFalse(binding['compatible_ready'],binding)
 
     def test_nonfixed_nested_and_nonexact_forms_remain_residual(self):
+        promoted = self.compile('Whenever you cast a creature spell, you may pay {G}. When you do, draw a card.')
+        self.assertEqual('exact', promoted.status, promoted.material_residuals)
+        self.assertIn('trigger.reflexive.fixed_action_result', promoted.faces[0].nodes[0].capability_dependencies)
         fixtures = (
             "Whenever you cast a creature spell, you may pay {X}. If you do, "
             "draw a card.",
@@ -377,7 +385,7 @@ class FixedOptionalManaPaymentCompilerTests(unittest.TestCase):
             "draw a card.",
             "Whenever you cast a creature spell, you may pay X life. If you do, "
             "draw a card.",
-            "Whenever you cast a creature spell, you may pay {G}. When you do, "
+            "Whenever you cast a creature spell, you may pay {G}. When you do not, "
             "draw a card.",
             "Whenever you cast a creature spell, you may pay {G}. If you do, "
             "you may draw a card.",

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 325,
+  "registry_version": 326,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -2006,7 +2006,7 @@
     },
     {
       "id": "damage.source.stack_current_or_lki",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "113.7a",
         "113.8",
@@ -2024,7 +2024,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Represented fixed source damage binds current source characteristics while the original incarnation remains in its expected zone, otherwise immediate last-known facts retained in its stack or waiting-trigger frame.",
+        "summary": "Represented fixed source damage binds current source characteristics while the original incarnation remains in its expected zone, otherwise immediate last-known facts retained in its stack or waiting-trigger frame. Internal immutable damage-set intents canonical-thaw their frozen source collections before strict wire validation, retain source identity and refreeze the validated facts.",
         "inputs": [
           "typed source identity and expected logical incarnation",
           "current effective public characteristics",
@@ -2052,7 +2052,8 @@
         "quorune.semantic_runtime.values.resolve_semantic_value",
         "quorune.fixed_damage_set.resolve_fixed_damage_set",
         "quorune.trigger_processing.replace_pending_trigger_batch",
-        "quorune.rules.stack_damage_sources.refresh_stack_damage_source"
+        "quorune.rules.stack_damage_sources.refresh_stack_damage_source",
+        "quorune.semantic_runtime.intents.DealFixedDamageSetIntent"
       ],
       "positive_tests": [
         "test_source_damage_capability_is_required_before_program_admission",
@@ -2061,7 +2062,9 @@
         "test_original_myr_death_trigger_uses_predeparture_source_facts_and_controller",
         "test_original_roastmaster_keeps_ability_opponents_separate_from_damage_source_controller",
         "test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant",
-        "test_prepared_damage_event_keeps_its_sealed_source_facts"
+        "test_prepared_damage_event_keeps_its_sealed_source_facts",
+        "test_fixed_damage_set_intent_thaws_immutable_facts_without_relaxing_wire_schema",
+        "test_original_optional_have_source_damage_preserves_recipient_set_and_replays"
       ],
       "negative_tests": [
         "test_source_damage_capability_is_required_before_program_admission",
@@ -2069,7 +2072,8 @@
         "test_waiting_batches_pin_once_and_failed_snapshot_preparation_publishes_no_updates",
         "test_other_creatures_include_a_new_incarnation_of_the_original_damage_source",
         "test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant",
-        "test_prepared_damage_event_keeps_its_sealed_source_facts"
+        "test_prepared_damage_event_keeps_its_sealed_source_facts",
+        "test_fixed_damage_set_intent_thaws_immutable_facts_without_relaxing_wire_schema"
       ],
       "interaction_tests": [
         "test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
@@ -2078,13 +2082,15 @@
         "test_original_roastmaster_keeps_ability_opponents_separate_from_damage_source_controller",
         "test_other_creatures_include_a_new_incarnation_of_the_original_damage_source",
         "test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant",
-        "test_prepared_damage_event_keeps_its_sealed_source_facts"
+        "test_prepared_damage_event_keeps_its_sealed_source_facts",
+        "test_original_optional_have_source_damage_preserves_recipient_set_and_replays"
       ],
       "multiplayer_tests": [
         "test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
         "test_original_hellion_fixed_damage_set_retains_departed_source_lifelink",
         "test_original_myr_death_trigger_uses_predeparture_source_facts_and_controller",
-        "test_original_roastmaster_keeps_ability_opponents_separate_from_damage_source_controller"
+        "test_original_roastmaster_keeps_ability_opponents_separate_from_damage_source_controller",
+        "test_original_optional_have_source_damage_preserves_recipient_set_and_replays"
       ],
       "privacy_tests": [
         "test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
@@ -2095,7 +2101,8 @@
         "test_original_hellion_fixed_damage_set_retains_departed_source_lifelink",
         "test_original_myr_death_trigger_uses_predeparture_source_facts_and_controller",
         "test_original_roastmaster_keeps_ability_opponents_separate_from_damage_source_controller",
-        "test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant"
+        "test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant",
+        "test_original_optional_have_source_damage_preserves_recipient_set_and_replays"
       ],
       "required_evidence": [
         "positive",
@@ -2108,7 +2115,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The independent source capability is required by every represented fixed-damage node; malformed/mismatched source snapshots are rejected and new incarnations cannot supply old-source information.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "The actual original Crook source-departure witness detects omission of immediate departure pinning, after full paid actions, privacy, pending load and complete pre-action replay.",
+      "implementation_mutation_rationale": "The actual original Crook source-departure witness detects omission of immediate departure pinning, after full paid actions, privacy, pending load and complete pre-action replay. Omitting the typed-intent thaw recreates the actual Forerunner valid-apply failure; the native mutant is killed with no fixture or import error.",
       "blockers": [],
       "status": "trusted"
     },
