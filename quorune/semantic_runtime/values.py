@@ -20,6 +20,7 @@ from .explore import explore_source_controller
 from .query_effect_amounts import resolve_public_query_amount, resolve_cast_x_amount
 from ..scalar_effect_amount_model import SCALAR_AMOUNT_KIND
 from ..scalar_effect_amounts import resolve_scalar_effect_amount
+from .direct_target_fields import bound_mutation_target_overrides
 
 
 _INDEX_GROUP = "index"
@@ -99,6 +100,10 @@ def _resolve_effect_mapping(host, value, item):
     from ..rules.stack_damage_sources import bound_stack_damage_source
     from .direct_target_fields import bound_graveyard_return_target_snapshot
     try:
+        missing = bound_mutation_target_overrides(host, value, item,
+            lambda reference: resolve_semantic_value(host, reference, item))
+        if missing:
+            return {**value, **missing}
         value = {**value, **bound_stack_damage_source(host, value, item),
             **bound_graveyard_return_target_snapshot(value, item,
                 lambda reference: resolve_semantic_value(host, reference, item))}

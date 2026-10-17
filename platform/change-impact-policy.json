@@ -4624,6 +4624,40 @@
         "test_static_characteristic_settings",
         "test_typed_ability_fragments"
       ]
+    },
+    {
+      "id": "bound-target-incarnation-during-resolution",
+      "patterns": [
+        "quorune/semantic_runtime/direct_target_fields.py",
+        "quorune/semantic_runtime/values.py",
+        "quorune/selection/target_query.py",
+        "tests/test_shared_modal_target_resolution.py"
+      ],
+      "test_modules": [
+        "test_attached_counter_placement",
+        "test_card_program_trust",
+        "test_cast_creature_targets",
+        "test_counter_qualified_zone_events",
+        "test_damage_replacement_multiplayer",
+        "test_fixed_nonrepeating_modal_programs",
+        "test_fixed_source_characteristic_effects",
+        "test_fixed_source_counter_payments",
+        "test_fixed_tap_payments",
+        "test_game_record_v3",
+        "test_graveyard_exile_payments",
+        "test_linked_exile_return",
+        "test_public_query_effect_amounts",
+        "test_reflexive_payments",
+        "test_return_to_hand_rules",
+        "test_scalar_effect_amounts",
+        "test_scheduled_player_triggers",
+        "test_semantic_handlers",
+        "test_shared_modal_target_resolution",
+        "test_spree_mode_costs",
+        "test_targeted_counter_effect_clauses",
+        "test_targeted_return_to_hand_effect_clauses",
+        "test_transmute"
+      ]
     }
   ],
   "symbol_rules": [

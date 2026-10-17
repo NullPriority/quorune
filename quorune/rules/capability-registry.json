@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 330,
+  "registry_version": 331,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -17184,28 +17184,95 @@
     },
     {
       "id": "target.revalidate_resolution",
-      "version": 1,
-      "official_rules": ["115.1", "608.2b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Revalidate a selected public target's logical object and target restrictions immediately before resolution.",
-        "inputs": ["selected public target", "target schema", "current logical object identity"],
-        "outputs": ["legal target", "illegal target", "all-targets-illegal result"],
-        "exclusions": ["retargeting", "targets in hidden zones", "spells with zero targets"]
+        "summary": "Revalidate a selected public target's logical object and target restrictions immediately before resolution. Later scalar mutations of selected targets also retain the original incarnation across earlier resolution instructions; a departed target is skipped while a surviving target can be used again.",
+        "inputs": [
+          "selected public target",
+          "target schema",
+          "current logical object identity"
+        ],
+        "outputs": [
+          "legal target",
+          "illegal target",
+          "all-targets-illegal result"
+        ],
+        "exclusions": [
+          "retargeting",
+          "targets in hidden zones",
+          "spells with zero targets"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.targets", "CommanderEngine semantic target revalidation"],
-      "positive_tests": ["test_count_distinct_and_partial_resolution"],
-      "negative_tests": ["test_all_targets_illegal_counters_by_rules", "test_target_that_leaves_and_returns_is_a_new_illegal_object"],
-      "interaction_tests": ["test_modes_reb_and_pyroblast_use_actual_target_rules", "test_target_player_draw_validates_target_resolves_privately_and_replays", "test_hexproof_counter_feeds_offer_and_resolution_revalidation", "test_fell_faces_compose_target_revalidation_with_tapped_entry", "test_target_revalidation_and_self_return_coexist_on_one_card", "test_target_opponent_drain_replacement_and_replay_are_exact", "test_target_player_characteristic_set_resolves_and_replays"],
-      "multiplayer_tests": ["test_target_player_characteristic_set_resolves_and_replays"],
-      "privacy_tests": ["test_hidden_zones_are_rejected_by_target_schema", "test_target_player_characteristic_set_resolves_and_replays"],
-      "replay_tests": ["test_deflecting_swat_free_cost_and_exact_retarget", "test_target_player_characteristic_set_resolves_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "privacy", "replay"],
+      "implementation_components": [
+        "CommanderEngine semantic target revalidation",
+        "quorune.selection.target_query.target_identity_matches_snapshot",
+        "quorune.semantic_runtime.direct_target_fields.bound_mutation_target_overrides",
+        "quorune.semantic_runtime.values.resolve_semantic_value",
+        "quorune.targets"
+      ],
+      "positive_tests": [
+        "test_bound_liveness_policy_contains_only_registered_scalar_mutations",
+        "test_count_distinct_and_partial_resolution",
+        "test_departed_bound_target_never_rebinds_but_live_repeated_target_survives",
+        "test_original_kolaghan_later_damage_does_not_affect_departed_artifact_creature",
+        "test_original_raid_reuses_surviving_target_and_ignores_departed_target"
+      ],
+      "negative_tests": [
+        "test_all_targets_illegal_counters_by_rules",
+        "test_initial_unknown_and_wrong_domain_targets_still_reject_atomically",
+        "test_literal_unknown_information_and_historical_references_keep_existing_boundaries",
+        "test_target_that_leaves_and_returns_is_a_new_illegal_object"
+      ],
+      "interaction_tests": [
+        "test_fell_faces_compose_target_revalidation_with_tapped_entry",
+        "test_hexproof_counter_feeds_offer_and_resolution_revalidation",
+        "test_modes_reb_and_pyroblast_use_actual_target_rules",
+        "test_original_kolaghan_later_damage_does_not_affect_departed_artifact_creature",
+        "test_original_raid_reuses_surviving_target_and_ignores_departed_target",
+        "test_target_opponent_drain_replacement_and_replay_are_exact",
+        "test_target_player_characteristic_set_resolves_and_replays",
+        "test_target_player_draw_validates_target_resolves_privately_and_replays",
+        "test_target_revalidation_and_self_return_coexist_on_one_card"
+      ],
+      "multiplayer_tests": [
+        "test_original_raid_reuses_surviving_target_and_ignores_departed_target",
+        "test_target_player_characteristic_set_resolves_and_replays"
+      ],
+      "privacy_tests": [
+        "test_hidden_zones_are_rejected_by_target_schema",
+        "test_original_raid_reuses_surviving_target_and_ignores_departed_target",
+        "test_target_player_characteristic_set_resolves_and_replays"
+      ],
+      "replay_tests": [
+        "test_deflecting_swat_free_cost_and_exact_retarget",
+        "test_original_kolaghan_later_damage_does_not_affect_departed_artifact_creature",
+        "test_original_raid_reuses_surviving_target_and_ignores_departed_target",
+        "test_target_player_characteristic_set_resolves_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "This capability has no capability dependencies.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "",
+      "implementation_mutation_rationale": "Omitting the bound mutation identity guard restores the original Requisition Raid failure after its first mode removes a shared target. The native witness also retains a shield-surviving target for the second destruction, and verifies actor-correct private replay and rollback.",
       "blockers": [],
       "status": "trusted"
     },
