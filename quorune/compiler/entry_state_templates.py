@@ -318,6 +318,10 @@ def static_entry_state_handler(
 ) -> EntryStateHandlerTemplate | None:
     """Lower one exact tap-state replacement from a closed grammar."""
 
+    from .external_entry_state_templates import external_entry_state_handler
+    external=external_entry_state_handler(text)
+    if external is not None:return external
+
     normalized = text.strip()
     if _unconditional_match(normalized, source_name):
         return (

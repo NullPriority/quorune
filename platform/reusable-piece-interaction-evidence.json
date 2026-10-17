@@ -14566,6 +14566,96 @@
       ],
       "interaction_order": 3,
       "assertion": "Actual Woe Strider pays Escape mana and four other-card exiles. Its fixed entry amount remains sealed across private Hardened Scales/Branching Evolution ordering and pending load; counters commit before its Goat trigger. Actual Clone and Flicker of Fate receive no inherited Escape casting fact or counters; each action segment replays from its pre-action checkpoint."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_copied_source_survives_original_and_loses_rule_to_humble",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.entry.tapped_state.external_source"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.entry.tapped_state.external_source"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual targeted Unsummon returns the original Loxodon while its independent Clone still taps opposing entrants. Actual targeted Humble removes the copied source ability and the next opposing creature enters untapped. Pending load and pre-action replay preserve the current source identity."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_copied_source_survives_original_and_loses_rule_to_humble",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.zone.entry.tapped_state.external_source"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "zone.entry.tapped_state.external_source"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Humble removes the copied external entry source ability without changing its incarnation. A later opposing entrant is untapped; current layer-six source applicability, pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_root_maze_uses_copied_entry_types_and_ignores_plain_creatures",
+      "piece_ids": [
+        "capability.zone.entry.fixed_copy",
+        "capability.zone.entry.tapped_state.external_source"
+      ],
+      "capability_ids": [
+        "zone.entry.fixed_copy",
+        "zone.entry.tapped_state.external_source"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Clone enters as original Memnite, so Root Maze sees its prospective artifact-creature types and makes it enter tapped. A subsequent plain creature stays untapped. The pending copy choice loads and every command segment replays."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_orb_does_not_tap_itself_but_taps_later_creature_and_token",
+      "piece_ids": [
+        "capability.counter.producer.dynamic_self_entry",
+        "capability.zone.entry.tapped_state.external_source"
+      ],
+      "capability_ids": [
+        "counter.producer.dynamic_self_entry",
+        "zone.entry.tapped_state.external_source"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Orb enters untapped. A later actual Woe Strider Escape pays its four-card exile/mana costs and enters tapped with two +1/+1 counters; its Goat trigger creates a tapped token. Pending spell load and replay preserve both entry replacements."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_orb_does_not_tap_itself_but_taps_later_creature_and_token",
+      "piece_ids": [
+        "capability.casting.lifecycle.fixed_zone_cast",
+        "capability.zone.entry.tapped_state.external_source"
+      ],
+      "capability_ids": [
+        "casting.lifecycle.fixed_zone_cast",
+        "zone.entry.tapped_state.external_source"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Woe Strider Escape under existing Orb retains its selected cost, counters and mandatory tapped entry. The resulting Goat also enters tapped, while Orb did not tap itself. Actual casts, pending spell load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_external_and_untapped_land_replacements_choose_for_affected_controller",
+      "piece_ids": [
+        "capability.zone.entry.tapped_state",
+        "capability.zone.entry.tapped_state.external_source"
+      ],
+      "capability_ids": [
+        "zone.entry.tapped_state",
+        "zone.entry.tapped_state.external_source"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual B land-play command encounters existing Orb plus a fully admitted constructed controller-lands-untapped source. B privately selects either first replacement, producing the two distinct final states; other-principal selection rolls back, and pending load/pre-action replay preserve the ordering."
     }
   ]
 }

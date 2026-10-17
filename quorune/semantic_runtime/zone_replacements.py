@@ -73,6 +73,7 @@ from .entry_state import (
     EntryStateReplacementHandler,
     FixedEntryConditionReplacementHandler,
 )
+from .external_entry_state import ExternalEntryStateHandler
 from .zone_replacement_model import (
     PreparedZoneChange,
     SUPPORTED_ZONE_DESTINATIONS,
@@ -436,6 +437,7 @@ def default_zone_change_replacement_registry(
         (
             ConditionalSelfEntryCounterHandler(),
             EntryStateReplacementHandler(),
+            ExternalEntryStateHandler(),
             FixedEntryConditionReplacementHandler(),
             EntryDesignationHandler(),
             ExcludedColorEntryDesignationHandler(),
@@ -563,7 +565,8 @@ def collect_zone_change_replacement_effects(
             active_zone="battlefield",
         )
         for program in programs:
-            if not program_matches_face(record, program, source):
+            if (not program_matches_face(record, program, source)
+                    or not program_static_component_is_applicable(host,program,source)):
                 continue
             for descriptor_index, descriptor in enumerate(program.handlers):
                 effects.append(

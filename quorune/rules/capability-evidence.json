@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "067fc6ebd2d571f48d98f4ed57a16a58c97b9ff9c56b0e36ccda2e7b2dafdea3",
-  "declaration_source_fingerprint": "2daa5f15fbca0d4bcdbca3e8bb85bc8b0b6ed3c96f3488d7026dc33205192768",
+  "registry_fingerprint": "64f970dcc9cdb419729fb857d3f0bbeb1bd3158b9557e4bb8028af65f4a72b4a",
+  "declaration_source_fingerprint": "844190ed2f1c7a62bc736d6f3afdd973ff48adad52a1ecfec3737b8f1932f40f",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -156309,6 +156309,576 @@
       "applicability_note": "Persist the exact replacement batch, effects, priority frame, land response, and applied journal in a versioned continuation."
     },
     {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_copied_source_survives_original_and_loses_rule_to_humble",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Clone entry re-evaluates prospective copied types against Root Maze. A copied Loxodon source survives the original returning to hand; actual Humble removes that source rule, changing the next opponent creature entry. Strict programs, actual actions, pending load and pre-action replay are used."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_external_and_untapped_land_replacements_choose_for_affected_controller",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_orb_does_not_tap_itself_but_taps_later_creature_and_token",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_root_maze_uses_copied_entry_types_and_ignores_plain_creatures",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Clone entry re-evaluates prospective copied types against Root Maze. A copied Loxodon source survives the original returning to hand; actual Humble removes that source rule, changing the next opponent creature entry. Strict programs, actual actions, pending load and pre-action replay are used."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_simultaneous_entry_owner_freezes_only_preexisting_ambient_sources",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_external_and_untapped_land_replacements_choose_for_affected_controller",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_kismet_cast_affects_every_opponent_but_not_its_controller",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_external_source_omission_is_killed_by_actual_command_witness",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "negative",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedCompilerTests.test_external_entry_grammar_source_spans_and_dependency_gates",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "negative",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedCompilerTests.test_external_entry_model_and_event_scope_are_closed",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "negative",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_copied_source_survives_original_and_loses_rule_to_humble",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Clone entry re-evaluates prospective copied types against Root Maze. A copied Loxodon source survives the original returning to hand; actual Humble removes that source rule, changing the next opponent creature entry. Strict programs, actual actions, pending load and pre-action replay are used."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "negative",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_orb_does_not_tap_itself_but_taps_later_creature_and_token",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "negative",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_root_maze_uses_copied_entry_types_and_ignores_plain_creatures",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Clone entry re-evaluates prospective copied types against Root Maze. A copied Loxodon source survives the original returning to hand; actual Humble removes that source rule, changing the next opponent creature entry. Strict programs, actual actions, pending load and pre-action replay are used."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "negative",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_simultaneous_entry_owner_freezes_only_preexisting_ambient_sources",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "positive",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedCompilerTests.test_external_entry_grammar_source_spans_and_dependency_gates",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "positive",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_copied_source_survives_original_and_loses_rule_to_humble",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Clone entry re-evaluates prospective copied types against Root Maze. A copied Loxodon source survives the original returning to hand; actual Humble removes that source rule, changing the next opponent creature entry. Strict programs, actual actions, pending load and pre-action replay are used."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "positive",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_kismet_cast_affects_every_opponent_but_not_its_controller",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "positive",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_orb_does_not_tap_itself_but_taps_later_creature_and_token",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "positive",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_root_maze_uses_copied_entry_types_and_ignores_plain_creatures",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Clone entry re-evaluates prospective copied types against Root Maze. A copied Loxodon source survives the original returning to hand; actual Humble removes that source rule, changing the next opponent creature entry. Strict programs, actual actions, pending load and pre-action replay are used."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "positive",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_originals_admit_only_the_complete_external_entry_family",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_external_and_untapped_land_replacements_choose_for_affected_controller",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_kismet_cast_affects_every_opponent_but_not_its_controller",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "property",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedCompilerTests.test_external_entry_model_and_event_scope_are_closed",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "replay",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_copied_source_survives_original_and_loses_rule_to_humble",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Clone entry re-evaluates prospective copied types against Root Maze. A copied Loxodon source survives the original returning to hand; actual Humble removes that source rule, changing the next opponent creature entry. Strict programs, actual actions, pending load and pre-action replay are used."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "replay",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_external_and_untapped_land_replacements_choose_for_affected_controller",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "replay",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_kismet_cast_affects_every_opponent_but_not_its_controller",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "replay",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_orb_does_not_tap_itself_but_taps_later_creature_and_token",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "replay",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_root_maze_uses_copied_entry_types_and_ignores_plain_creatures",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Clone entry re-evaluates prospective copied types against Root Maze. A copied Loxodon source survives the original returning to hand; actual Humble removes that source rule, changing the next opponent creature entry. Strict programs, actual actions, pending load and pre-action replay are used."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_external_and_untapped_land_replacements_choose_for_affected_controller",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state.external_source",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_actual_kismet_cast_affects_every_opponent_but_not_its_controller",
+      "official_rule_ids": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed source-owned external entry tap-state grammar, controller/type scope, preexisting source snapshot, actual Kismet/Orb/Woe Strider casts, replacement ordering, rollback, four-seat projection, pending load and pre-action replay. Canonical simultaneous owner checks do not claim support for the residual mass-return spells."
+    },
+    {
       "capability_id": "zone.entry.tapped_state.fixed_condition",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_entry_conditions.FixedEntryConditionRuntimeTests.test_effective_basic_subtypes_feed_entry_condition_without_cycle",
@@ -161344,5 +161914,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "a85222e725237b29805db7667ad8f48270170d4214773c48c7f179f30bd475c7"
+  "fingerprint": "25eb5c638c1f6a17f1d7eff086ac0b61231821cc0dfe185f3ed4c65926d0bc72"
 }

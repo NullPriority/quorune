@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 336,
+  "registry_version": 337,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -26001,6 +26001,109 @@
       "dependency_fail_closed_rationale": "Blocking either the capacity or duration owner prevents exact admission. Controlled missing-dependency and compiler-omission tests preserve whole-card rejection.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the typed rule journal commit makes the actual original activation retain ordinary capacity and is detected by its native block and replay witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "zone.entry.tapped_state.external_source",
+      "version": 1,
+      "official_rules": [
+        "207.2c",
+        "207.2d",
+        "614.1d",
+        "614.4",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One current battlefield source makes later entering permanents of a fixed permanent-type union enter tapped, globally or relative to its current controller; use the canonical immutable zone-entry replacement transaction.",
+        "inputs": [
+          "trusted full source-spanned CardProgram",
+          "current effective source component and controller",
+          "current pre-entry battlefield source snapshot",
+          "prospective entering types and destination controller",
+          "complete competing replacement set"
+        ],
+        "outputs": [
+          "one source-owned mandatory tapped-state replacement",
+          "affected-controller ordering and private continuation",
+          "shared atomic zone commit and exact replay"
+        ],
+        "exclusions": [
+          "source own entry and other simultaneous entrants when source is not already on battlefield",
+          "source-state conditions",
+          "qualified or mixed-qualification unions",
+          "cast-method-specific entry states",
+          "entry-copy tapped exceptions",
+          "unrepresented independently unsupported siblings"
+        ]
+      },
+      "dependencies": [
+        "zone.entry.tapped_state"
+      ],
+      "implementation_components": [
+        "quorune.external_entry_state_model.ExternalEntryStateSpec",
+        "quorune.compiler.external_entry_state_templates.external_entry_state_handler",
+        "quorune.semantic_runtime.external_entry_state.ExternalEntryStateHandler",
+        "quorune.semantic_runtime.zone_replacements.collect_zone_change_replacement_effects",
+        "quorune.semantic_runtime.zone_replacements.capture_zone_change_replacement_snapshot",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
+      ],
+      "positive_tests": [
+        "test_actual_copied_source_survives_original_and_loses_rule_to_humble",
+        "test_actual_kismet_cast_affects_every_opponent_but_not_its_controller",
+        "test_actual_orb_does_not_tap_itself_but_taps_later_creature_and_token",
+        "test_actual_root_maze_uses_copied_entry_types_and_ignores_plain_creatures",
+        "test_external_entry_grammar_source_spans_and_dependency_gates",
+        "test_originals_admit_only_the_complete_external_entry_family"
+      ],
+      "negative_tests": [
+        "test_actual_copied_source_survives_original_and_loses_rule_to_humble",
+        "test_actual_orb_does_not_tap_itself_but_taps_later_creature_and_token",
+        "test_actual_root_maze_uses_copied_entry_types_and_ignores_plain_creatures",
+        "test_external_entry_grammar_source_spans_and_dependency_gates",
+        "test_external_entry_model_and_event_scope_are_closed",
+        "test_simultaneous_entry_owner_freezes_only_preexisting_ambient_sources"
+      ],
+      "interaction_tests": [
+        "test_actual_copied_source_survives_original_and_loses_rule_to_humble",
+        "test_actual_external_and_untapped_land_replacements_choose_for_affected_controller",
+        "test_actual_orb_does_not_tap_itself_but_taps_later_creature_and_token",
+        "test_actual_root_maze_uses_copied_entry_types_and_ignores_plain_creatures",
+        "test_simultaneous_entry_owner_freezes_only_preexisting_ambient_sources"
+      ],
+      "multiplayer_tests": [
+        "test_actual_external_and_untapped_land_replacements_choose_for_affected_controller",
+        "test_actual_kismet_cast_affects_every_opponent_but_not_its_controller"
+      ],
+      "privacy_tests": [
+        "test_actual_external_and_untapped_land_replacements_choose_for_affected_controller",
+        "test_actual_kismet_cast_affects_every_opponent_but_not_its_controller"
+      ],
+      "replay_tests": [
+        "test_actual_copied_source_survives_original_and_loses_rule_to_humble",
+        "test_actual_external_and_untapped_land_replacements_choose_for_affected_controller",
+        "test_actual_kismet_cast_affects_every_opponent_but_not_its_controller",
+        "test_actual_orb_does_not_tap_itself_but_taps_later_creature_and_token",
+        "test_actual_root_maze_uses_copied_entry_types_and_ignores_plain_creatures"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Exact source grammar requires the external source capability and ordinary entry-state owner; removal of either preserves a material residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Removing the source-owned ambient replacement preserves admission but is detected by actual Orb/Woe Strider casts and token entry.",
       "blockers": [],
       "status": "trusted"
     }

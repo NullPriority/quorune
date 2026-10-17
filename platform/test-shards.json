@@ -147,6 +147,7 @@
       "test_commander_characteristic_grants",
       "test_copied_self_entry_counters",
       "test_escaped_entry_counters",
+      "test_external_entry_tapped",
       "test_fixed_counter_keyword_activations",
       "test_fixed_counter_removal_effects",
       "test_fixed_damage_effect_clauses",

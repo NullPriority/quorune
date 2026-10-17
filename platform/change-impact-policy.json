@@ -4733,6 +4733,26 @@
         "test_card_program_trust",
         "test_copy_objects"
       ]
+    },
+    {
+      "id": "external-entry-tapped-contract",
+      "patterns": [
+        "quorune/external_entry_state_model.py",
+        "quorune/compiler/external_entry_state_templates.py",
+        "quorune/compiler/entry_state_templates.py",
+        "quorune/compiler/runtime_templates.py",
+        "quorune/semantic_runtime/external_entry_state.py",
+        "quorune/semantic_runtime/zone_replacements.py",
+        "tests/fixtures/external-entry-tapped-cards.json",
+        "tests/test_external_entry_tapped.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_external_entry_tapped",
+        "test_fixed_entry_conditions",
+        "test_typed_land_entry_participation",
+        "test_zone_replacement_compiler"
+      ]
     }
   ],
   "symbol_rules": [

@@ -48,6 +48,7 @@ from .draw_templates import (
     static_draw_restriction_handler,
 )
 from .entry_state_templates import static_entry_state_handler
+from ..external_entry_state_model import EXTERNAL_ENTRY_STATE_HANDLER_ID
 from .fixed_self_entry_counter_templates import (
     dynamic_self_entry_counter_handler,
     fixed_self_entry_counter_handler,
@@ -281,6 +282,8 @@ def _source_permanent_participation_template(
         kind="replacement_effect",
         event="zone.change",
         active_zone="all" if relation == "affected_object" else "battlefield",
+        runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,)
+            if entry_state[1]['handler_id']==EXTERNAL_ENTRY_STATE_HANDLER_ID else (),
         dependency_reason=(
             "generic battlefield-entry state depends on an untrusted "
             "rules capability"

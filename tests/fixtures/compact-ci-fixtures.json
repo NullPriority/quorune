@@ -67,6 +67,7 @@
     "tests/fixtures/event-player-subject-cards.json",
     "tests/fixtures/exert-cards.json",
     "tests/fixtures/explore-cards.json",
+    "tests/fixtures/external-entry-tapped-cards.json",
     "tests/fixtures/extort-cards.json",
     "tests/fixtures/fading-cards.json",
     "tests/fixtures/fixed-battlefield-query-characteristics-cards.json",

@@ -55,6 +55,17 @@ and publishes its reveal; unchosen candidates remain private. The replacement
 journal preserves the decision through save/load and replay. Decline sets tapped
 entry, while acceptance leaves other tap-state replacements in force.
 
+Fixed external entry-tapped replacements use the same immutable zone-entry
+snapshot and commit owner. A current battlefield source selects a fixed union
+of permanent card types and a global, controller, or opponent scope. The
+prospective entrant's types and destination controller determine applicability;
+the source's current effective ability determines whether the rule exists.
+General sources affect later entries, including tokens, and do not affect their
+own entry or other permanents entering alongside them. Competing tapped and
+untapped replacements use the affected controller's private ordering choice.
+Qualified unions, source-state conditions, and cast-specific or copy-entry tap
+instructions remain separate contracts.
+
 Exert adds a separately selected optional attack cost. Current typed abilities
 and trusted linked result identities govern both the offer and accepted
 declaration. The canonical tap-state owner records the exerting player and
