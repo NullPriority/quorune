@@ -15390,6 +15390,66 @@
       ],
       "interaction_order": 2,
       "assertion": "The original Dauntless Dismantler has a represented external tapped-entry replacement beside its unrepresented variable mass-destruction target domain. The actual compiled source retains material residuals, no construction error, and unresolved strict runtime admission. The exact thirteen complete originals still bind normally."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_alternative_counter_uses_the_same_quantity_replacement_and_replay",
+      "piece_ids": [
+        "capability.counter.placement.quantity_replacement",
+        "capability.counter.producer.fixed_keyword_entry_choice"
+      ],
+      "capability_ids": [
+        "counter.placement.quantity_replacement",
+        "counter.producer.fixed_keyword_entry_choice"
+      ],
+      "interaction_order": 2,
+      "assertion": "A strict original Helica Glider chooses a first strike counter through the real named alternative; existing trusted Doubling Season quantity replacement places two, and pending/replay retains the selected branch."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_both_branches_have_named_forms_atomic_authority_private_pending_load_and_replay",
+      "piece_ids": [
+        "capability.counter.characteristic.keyword",
+        "capability.counter.producer.fixed_keyword_entry_choice"
+      ],
+      "capability_ids": [
+        "counter.characteristic.keyword",
+        "counter.producer.fixed_keyword_entry_choice"
+      ],
+      "interaction_order": 2,
+      "assertion": "A strict original Flycatcher chooses either vigilance or reach, receives only that counter and effective keyword, rejects unauthorized/unknown choices atomically, and preserves private pending load and pre-cast replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_copied_token_gets_its_own_choice_without_inheriting_source_counters",
+      "piece_ids": [
+        "capability.counter.producer.fixed_keyword_entry_choice",
+        "capability.token.creation.fixed_copy"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_keyword_entry_choice",
+        "token.creation.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "A current admitted fixed token-copy spell copies a strict original entry-choice body. No token exists before the named entry choice completes; its fresh counter differs from the source counters and pending/pre-cast replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_manifested_original_has_no_entry_counter_or_new_entry_on_turn_up",
+      "piece_ids": [
+        "capability.counter.producer.fixed_keyword_entry_choice",
+        "capability.keyword_action.manifest.card"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_keyword_entry_choice",
+        "keyword_action.manifest.card"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Soul Summons manifests a strict original entry-choice creature without its front-face replacement or keyword counter. Private load and native printed-mana turn-up preserve zero counters and do not create a new entry choice."
     }
   ]
 }

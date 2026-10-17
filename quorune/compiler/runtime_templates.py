@@ -72,6 +72,7 @@ class StaticRuntimeTemplate:
     dependency_reason: str
     active_zone: str = "battlefield"
     runtime_coverage: tuple[str, ...] = ()
+    mechanics: tuple[str, ...] = ()
 
 
 def _trigger_multiplier_template(text: str) -> StaticRuntimeTemplate | None:
@@ -518,13 +519,17 @@ def _self_entry_counter_runtime_template(
 ) -> StaticRuntimeTemplate | None:
     if source_name is None or source_is_class:
         return None
-    fixed = fixed_self_entry_counter_handler(text, source_name=source_name)
+    from .fixed_self_entry_counter_templates import fixed_keyword_counter_entry_choice_handler
+    from ..keyword_counters import KeywordCounterEntryChoiceSpec
+    choice = fixed_keyword_counter_entry_choice_handler(text, source_name=source_name)
+    fixed = choice or fixed_self_entry_counter_handler(text, source_name=source_name)
     if fixed is not None:
         return StaticRuntimeTemplate(
             compiled=fixed,
             kind="replacement_effect",
             event="zone.change",
             active_zone="all",
+            mechanics=KeywordCounterEntryChoiceSpec.from_descriptor(choice[1]).mechanics if choice else (),
             dependency_reason=(
                 "generic fixed self-entry counters depend on the canonical "
                 "zone and counter replacement owners"

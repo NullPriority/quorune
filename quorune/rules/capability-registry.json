@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 355,
+  "registry_version": 356,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -8846,6 +8846,127 @@
       "dependency_fail_closed_rationale": "The source-spanned entry replacement remains material whenever the canonical counter quantity-replacement owner or any separately required keyword-counter characteristic capability is unavailable.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Focused compiler and runtime mutations remove the generic source-spanned descriptor or its affected-object entry replacement, and the representative fixed counter assertion rejects both survivors.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "counter.producer.fixed_keyword_entry_choice",
+      "version": 1,
+      "official_rules": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Choose exactly one of two distinct ordinary keyword counters as this source enters through the current prospective-controller replacement and counter-placement owners.",
+        "inputs": [
+          "one complete source-relative enters-with-choice sentence",
+          "two distinct represented ordinary keyword counter names",
+          "current prospective source ability component",
+          "affected destination controller and entering incarnation"
+        ],
+        "outputs": [
+          "one replacement with two mandatory named counter-result branches",
+          "canonical replacement-aware counter placement",
+          "seat-scoped pending choice and deterministic replay"
+        ],
+        "exclusions": [
+          "variable amounts or multiple counters per option",
+          "unknown keywords, non-keyword counters, or more than two alternatives",
+          "choice controlled by another named player",
+          "unrepresented conditional or linked clauses",
+          "unrepresented counter-halving replacements and independent counter-placement prohibitions"
+        ]
+      },
+      "dependencies": [
+        "counter.characteristic.keyword",
+        "counter.placement.quantity_replacement"
+      ],
+      "implementation_components": [
+        "quorune.compiler.fixed_self_entry_counter_templates.fixed_keyword_counter_entry_choice_handler",
+        "quorune.compiler.runtime_templates.static_runtime_template",
+        "quorune.compiler.static_runtime_nodes.runtime_handler_node",
+        "quorune.compiler.static_runtime_nodes.static_runtime_node",
+        "quorune.keyword_counters.KeywordCounterEntryChoiceSpec",
+        "quorune.replacement.ordering.replacement_choice_payload",
+        "quorune.semantic_runtime.entry_choices.KeywordCounterEntryChoiceHandler",
+        "quorune.semantic_runtime.zone_replacements.capture_zone_change_replacement_snapshot"
+      ],
+      "positive_tests": [
+        "test_actual_alternative_counter_uses_the_same_quantity_replacement_and_replay",
+        "test_actual_both_branches_have_named_forms_atomic_authority_private_pending_load_and_replay",
+        "test_actual_copied_token_gets_its_own_choice_without_inheriting_source_counters",
+        "test_closed_choice_model_codec_labels_and_historical_defaults",
+        "test_current_prospective_ability_removal_suppresses_the_original_entry_choice",
+        "test_departed_subject_does_not_apply_the_old_choice_to_a_new_incarnation",
+        "test_destination_controller_chooses_independently_of_the_entering_cards_owner",
+        "test_manifested_original_has_no_entry_counter_or_new_entry_on_turn_up",
+        "test_nearby_unknown_choices_and_omitted_producer_remain_residual",
+        "test_source_spanned_choices_require_both_existing_counter_owners"
+      ],
+      "negative_tests": [
+        "test_actual_both_branches_have_named_forms_atomic_authority_private_pending_load_and_replay",
+        "test_closed_choice_model_codec_labels_and_historical_defaults",
+        "test_departed_subject_does_not_apply_the_old_choice_to_a_new_incarnation",
+        "test_destination_controller_chooses_independently_of_the_entering_cards_owner",
+        "test_manifested_original_has_no_entry_counter_or_new_entry_on_turn_up",
+        "test_nearby_unknown_choices_and_omitted_producer_remain_residual",
+        "test_runtime_omission_cannot_silently_satisfy_the_native_entry_choice",
+        "test_source_spanned_choices_require_both_existing_counter_owners",
+        "test_unrepresented_counter_halving_source_stays_outside_complete_admission"
+      ],
+      "interaction_tests": [
+        "test_actual_alternative_counter_uses_the_same_quantity_replacement_and_replay",
+        "test_actual_both_branches_have_named_forms_atomic_authority_private_pending_load_and_replay",
+        "test_actual_copied_token_gets_its_own_choice_without_inheriting_source_counters",
+        "test_current_prospective_ability_removal_suppresses_the_original_entry_choice",
+        "test_departed_subject_does_not_apply_the_old_choice_to_a_new_incarnation",
+        "test_destination_controller_chooses_independently_of_the_entering_cards_owner",
+        "test_manifested_original_has_no_entry_counter_or_new_entry_on_turn_up"
+      ],
+      "multiplayer_tests": [
+        "test_actual_alternative_counter_uses_the_same_quantity_replacement_and_replay",
+        "test_actual_both_branches_have_named_forms_atomic_authority_private_pending_load_and_replay",
+        "test_actual_copied_token_gets_its_own_choice_without_inheriting_source_counters",
+        "test_current_prospective_ability_removal_suppresses_the_original_entry_choice",
+        "test_departed_subject_does_not_apply_the_old_choice_to_a_new_incarnation",
+        "test_destination_controller_chooses_independently_of_the_entering_cards_owner",
+        "test_manifested_original_has_no_entry_counter_or_new_entry_on_turn_up"
+      ],
+      "privacy_tests": [
+        "test_actual_both_branches_have_named_forms_atomic_authority_private_pending_load_and_replay",
+        "test_destination_controller_chooses_independently_of_the_entering_cards_owner",
+        "test_manifested_original_has_no_entry_counter_or_new_entry_on_turn_up"
+      ],
+      "replay_tests": [
+        "test_actual_alternative_counter_uses_the_same_quantity_replacement_and_replay",
+        "test_actual_both_branches_have_named_forms_atomic_authority_private_pending_load_and_replay",
+        "test_actual_copied_token_gets_its_own_choice_without_inheriting_source_counters",
+        "test_current_prospective_ability_removal_suppresses_the_original_entry_choice",
+        "test_destination_controller_chooses_independently_of_the_entering_cards_owner",
+        "test_manifested_original_has_no_entry_counter_or_new_entry_on_turn_up"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Either existing counter owner or the fixed entry-choice owner being unavailable leaves the source sentence material.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the producer or the subject replacement must fail the independent native choice or exact compiler witness.",
       "blockers": [],
       "status": "trusted"
     },

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "194ab00284a1ae54ce35a97618b475f4b72251fa8e4d9bdafec01771ba018c64",
-  "declaration_source_fingerprint": "5d562864f9b4fd36ef252ac50edc4897d25e72ff486084f65b7581c0491c41b7",
+  "registry_fingerprint": "c628a903b17efad1dd00dd143c733bf543c8d8067ca104ab40efa196ea2c08de",
+  "declaration_source_fingerprint": "1d69cc807dbc4ee4afc29f09ba6478e5854e0931305cd46d624f26b091ef2047",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -78867,6 +78867,946 @@
         "commander_review"
       ],
       "applicability_note": "Abort a stale Fading entry continuation after the proposed object leaves the stack without placing counters, reentering the object, or mutating any card snapshot."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_actual_alternative_counter_uses_the_same_quantity_replacement_and_replay",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_actual_both_branches_have_named_forms_atomic_authority_private_pending_load_and_replay",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_actual_copied_token_gets_its_own_choice_without_inheriting_source_counters",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_current_prospective_ability_removal_suppresses_the_original_entry_choice",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_departed_subject_does_not_apply_the_old_choice_to_a_new_incarnation",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_destination_controller_chooses_independently_of_the_entering_cards_owner",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_manifested_original_has_no_entry_counter_or_new_entry_on_turn_up",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_actual_alternative_counter_uses_the_same_quantity_replacement_and_replay",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_actual_both_branches_have_named_forms_atomic_authority_private_pending_load_and_replay",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_actual_copied_token_gets_its_own_choice_without_inheriting_source_counters",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_current_prospective_ability_removal_suppresses_the_original_entry_choice",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_departed_subject_does_not_apply_the_old_choice_to_a_new_incarnation",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_destination_controller_chooses_independently_of_the_entering_cards_owner",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_manifested_original_has_no_entry_counter_or_new_entry_on_turn_up",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceCompilerTests.test_nearby_unknown_choices_and_omitted_producer_remain_residual",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_runtime_omission_cannot_silently_satisfy_the_native_entry_choice",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceCompilerTests.test_closed_choice_model_codec_labels_and_historical_defaults",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceCompilerTests.test_nearby_unknown_choices_and_omitted_producer_remain_residual",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceCompilerTests.test_source_spanned_choices_require_both_existing_counter_owners",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_actual_both_branches_have_named_forms_atomic_authority_private_pending_load_and_replay",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_departed_subject_does_not_apply_the_old_choice_to_a_new_incarnation",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_destination_controller_chooses_independently_of_the_entering_cards_owner",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_manifested_original_has_no_entry_counter_or_new_entry_on_turn_up",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_runtime_omission_cannot_silently_satisfy_the_native_entry_choice",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_unrepresented_counter_halving_source_stays_outside_complete_admission",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceCompilerTests.test_closed_choice_model_codec_labels_and_historical_defaults",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceCompilerTests.test_nearby_unknown_choices_and_omitted_producer_remain_residual",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceCompilerTests.test_source_spanned_choices_require_both_existing_counter_owners",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_actual_alternative_counter_uses_the_same_quantity_replacement_and_replay",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_actual_both_branches_have_named_forms_atomic_authority_private_pending_load_and_replay",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_actual_copied_token_gets_its_own_choice_without_inheriting_source_counters",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_current_prospective_ability_removal_suppresses_the_original_entry_choice",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_departed_subject_does_not_apply_the_old_choice_to_a_new_incarnation",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_destination_controller_chooses_independently_of_the_entering_cards_owner",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_manifested_original_has_no_entry_counter_or_new_entry_on_turn_up",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_actual_both_branches_have_named_forms_atomic_authority_private_pending_load_and_replay",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_destination_controller_chooses_independently_of_the_entering_cards_owner",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_manifested_original_has_no_entry_counter_or_new_entry_on_turn_up",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "property",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceCompilerTests.test_closed_choice_model_codec_labels_and_historical_defaults",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "replay",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_actual_alternative_counter_uses_the_same_quantity_replacement_and_replay",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "replay",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_actual_both_branches_have_named_forms_atomic_authority_private_pending_load_and_replay",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "replay",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_actual_copied_token_gets_its_own_choice_without_inheriting_source_counters",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "replay",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_current_prospective_ability_removal_suppresses_the_original_entry_choice",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "replay",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_destination_controller_chooses_independently_of_the_entering_cards_owner",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "replay",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_manifested_original_has_no_entry_counter_or_new_entry_on_turn_up",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_actual_both_branches_have_named_forms_atomic_authority_private_pending_load_and_replay",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
+    },
+    {
+      "capability_id": "counter.producer.fixed_keyword_entry_choice",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_destination_controller_chooses_independently_of_the_entering_cards_owner",
+      "official_rule_ids": [
+        "122.1b",
+        "122.6",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two fixed keyword-counter entry results share current prospective applicability, named controller-owned choices, canonical placement, face-down/copy/incarnation boundaries and exact replay. Reviewed interaction programs retain their explicit compatibility status."
     },
     {
       "capability_id": "counter.producer.fixed_multikind_effect",
@@ -178228,5 +179168,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "2de03c692ff9fd4a46f270f363224a5abf9b4e28e1456dea9e86cd4070d776bb"
+  "fingerprint": "07f01f3ef66611d13cab042059a5582bfa60f1d6e720eb8b411106a034ff62d8"
 }

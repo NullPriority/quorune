@@ -220,6 +220,7 @@
       "test_codex_cli_runner",
       "test_continuous_compiler_hardening",
       "test_declare_attackers_rules",
+      "test_entry_keyword_counter_choices",
       "test_exact_deck_triggers",
       "test_explore_compiler",
       "test_fixed_affected_player_discards",

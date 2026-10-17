@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Choose between two fixed entry keyword counters through named, controller-owned
+  replacement choices, preserving counter quantities, copy and face-down
+  boundaries, historical replacement defaults, and exact replay.
+
 - Pay fixed nonmana Morph prices through current-resource queries and canonical
   life, selected reveal, discard, and return owners, preserving private
   face-down casts, replacement continuations, incarnation checks, and replay.

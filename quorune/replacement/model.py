@@ -401,6 +401,7 @@ class ReplacementEffect:
     chooser: str = "affected_player"
     label: str = ""
     application_group_id: str | None = None
+    decline_label: str | None = None
 
     def __post_init__(self) -> None:
         if not self.effect_id or not self.source_id:
@@ -461,6 +462,13 @@ class ReplacementEffect:
                 "Only optional replacements may define decline operations"
             )
         object.__setattr__(self, "decline_operations", lowered_decline)
+        if self.decline_label is not None and (
+            type(self.decline_label) is not str or not self.decline_label.strip()
+            or not self.optional or not lowered_decline
+        ):
+            raise ReplacementEffectError(
+                "A named alternative requires optional replacement result operations"
+            )
 
     def to_dict(self) -> dict[str, Any]:
         result = {
@@ -481,6 +489,8 @@ class ReplacementEffect:
             ]
         if self.application_group_id is not None:
             result["application_group_id"] = self.application_group_id
+        if self.decline_label is not None:
+            result["decline_label"] = self.decline_label
         return result
 
     @classmethod
@@ -501,7 +511,7 @@ class ReplacementEffect:
         unknown = sorted(
             actual
             - required
-            - {"application_group_id", "decline_operations"}
+            - {"application_group_id", "decline_operations", "decline_label"}
         )
         if missing or unknown:
             details: list[str] = []
@@ -549,6 +559,7 @@ class ReplacementEffect:
             optional=value["optional"],
             chooser=str(value["chooser"] or ""),
             label=str(value["label"] or ""),
+            decline_label=value.get("decline_label"),
             application_group_id=(
                 str(value["application_group_id"])
                 if value.get("application_group_id") is not None

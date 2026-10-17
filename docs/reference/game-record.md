@@ -1,7 +1,7 @@
 ---
 title: "Game Record v3"
 status: "current"
-authoritative_source: "quorune/record.py, persistence implementation, and Game Record schemas"
+authoritative_source: "quorune/record.py, quorune/replacement/model.py, quorune/replacement/ordering.py, persistence implementation, and Game Record schemas"
 verified: "2026-08-06"
 audience: "engine, persistence, replay, and analyst contributors"
 maintenance: "hand-maintained"
@@ -73,6 +73,12 @@ registered program identity; the resolving spell's generic fallback records
 the originally announced physical spell. A pending copied-Aura attachment
 choice retains the chosen replacement result and resumes without refreshing
 the copy from its source.
+
+Replacement effects with a mandatory alternative result may serialize an
+optional `decline_label` for that second branch. It requires the existing
+optional-replacement and alternative-operation fields, changes only the
+projected label, and survives pending save/load. Historical effects omit this
+field and retain their serialized values and default decline wording.
 
 The manifest pins engine, card-data, rules, compiler, CardProgram, capability,
 semantic-handler, runtime-component, profile, and record-format identity as

@@ -702,7 +702,7 @@ def replacement_choice_payload(
         options.append(
             {
                 "id": value,
-                "label": f"Decline {label}" if declined else label,
+                "label": (effect.decline_label or f"Decline {label}") if declined else label,
                 "source": effect.source_id,
                 "decline": declined,
             }
