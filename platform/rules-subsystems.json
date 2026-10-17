@@ -6411,14 +6411,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "intrinsic-mana-ability-layer-correction",
-      "compiler_version": "oracle-ir-v409",
+      "transition_id": "intrinsic-mana-repeat-evaluation-correction",
+      "compiler_version": "oracle-ir-v414",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Correct intrinsic basic-land mana materialization after type-changing effects and before layer-six ability removal, so an admitted Humble removes Dryad Arbor mana despite retained Forest type. Preserve explicit later grants, ordinary intrinsic types, expiry restoration, shared advertised/accepted legality, automatic-payment rejection, privacy and replay. No new support grammar or feature harvest."
+      "non_harvest_reason": "Correct repeated characteristic evaluation after intrinsic mana materialization: rebuild only evaluator-owned descriptors at the type/ability boundary, preserve ability removal, printed activations and reserved-ID rejection. No new grammar or support harvest. Exact failed-main production fix-forward."
     },
 
     "forecast_corrections": [

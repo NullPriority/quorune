@@ -2,7 +2,7 @@
 title: "Reusable rules piece matrix"
 status: "generated"
 authoritative_source: "coverage/reusable-piece-matrix.json.gz"
-verified: "93d173d0ab09bdd5a74a5eae6857d90b7ecf7a5feaca5f35b6bb0d21971fa255"
+verified: "302cf6de52d1a4d32dc598efff01898caa43e8cb655d6c648b4512b00fa2ff22"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---

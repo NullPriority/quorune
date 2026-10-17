@@ -14154,7 +14154,7 @@
       "covered_high_risk_pairs": 423,
       "covered_piece_pairs": 1312,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "5d48920793bd806aed50eb064764375e4e3fb6d7341b45f9e6d5fa7b6291b43c",
+      "source_fingerprint": "907f1595e3195a05db0ceb640cfc9a6dcab2e2e700e60223011b6b9640ffd59a",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -14543,7 +14543,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 258815,
+      "logical_lines": 258828,
       "methods": {
         "dunder": 662,
         "private": 999,
@@ -15525,6 +15525,13 @@
           "physical_lines": 625
         },
         {
+          "file": "quorune/continuous_effects.py",
+          "functions_and_methods": 13,
+          "language": "python",
+          "logical_lines": 547,
+          "physical_lines": 599
+        },
+        {
           "file": "quorune/compiler/class_context_nodes.py",
           "functions_and_methods": 14,
           "language": "python",
@@ -15572,13 +15579,6 @@
           "language": "python",
           "logical_lines": 535,
           "physical_lines": 579
-        },
-        {
-          "file": "quorune/continuous_effects.py",
-          "functions_and_methods": 12,
-          "language": "python",
-          "logical_lines": 534,
-          "physical_lines": 580
         },
         {
           "file": "web/src/styles.css",
@@ -22051,7 +22051,7 @@
           "physical_lines": 1690
         }
       ],
-      "physical_lines": 283998,
+      "physical_lines": 284017,
       "python_file_count": 1007,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -22069,7 +22069,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 4295,
+      "top_level_functions": 4296,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -29094,7 +29094,7 @@
         {
           "condition": "op == \"add_ability\"",
           "file": "quorune/continuous_effects.py",
-          "line": 339,
+          "line": 343,
           "string_literals": [
             "add_ability"
           ],
@@ -29103,7 +29103,7 @@
         {
           "condition": "op == \"remove_ability\"",
           "file": "quorune/continuous_effects.py",
-          "line": 345,
+          "line": 349,
           "string_literals": [
             "remove_ability"
           ],
@@ -29112,7 +29112,7 @@
         {
           "condition": "op == \"add_rules_text\"",
           "file": "quorune/continuous_effects.py",
-          "line": 351,
+          "line": 355,
           "string_literals": [
             "add_rules_text"
           ],
@@ -29121,7 +29121,7 @@
         {
           "condition": "op == \"add_ability_fragment\"",
           "file": "quorune/continuous_effects.py",
-          "line": 358,
+          "line": 362,
           "string_literals": [
             "add_ability_fragment"
           ],
@@ -29130,7 +29130,7 @@
         {
           "condition": "op == \"remove_ability_fragment\"",
           "file": "quorune/continuous_effects.py",
-          "line": 365,
+          "line": 369,
           "string_literals": [
             "remove_ability_fragment"
           ],
@@ -29139,7 +29139,7 @@
         {
           "condition": "op == \"remove_all_abilities\"",
           "file": "quorune/continuous_effects.py",
-          "line": 382,
+          "line": 386,
           "string_literals": [
             "remove_all_abilities"
           ],
@@ -29148,7 +29148,7 @@
         {
           "condition": "op == \"copy_values\"",
           "file": "quorune/continuous_effects.py",
-          "line": 397,
+          "line": 401,
           "string_literals": [
             "copy_values"
           ],
@@ -29157,7 +29157,7 @@
         {
           "condition": "op == \"face_down\"",
           "file": "quorune/continuous_effects.py",
-          "line": 400,
+          "line": 404,
           "string_literals": [
             "face_down"
           ],
@@ -29166,7 +29166,7 @@
         {
           "condition": "op == \"set_controller\"",
           "file": "quorune/continuous_effects.py",
-          "line": 403,
+          "line": 407,
           "string_literals": [
             "set_controller"
           ],
@@ -29175,7 +29175,7 @@
         {
           "condition": "op == \"replace_text\"",
           "file": "quorune/continuous_effects.py",
-          "line": 406,
+          "line": 410,
           "string_literals": [
             "replace_text"
           ],
@@ -29184,7 +29184,7 @@
         {
           "condition": "op == \"remove_creature_card_type\"",
           "file": "quorune/continuous_effects.py",
-          "line": 424,
+          "line": 428,
           "string_literals": [
             "remove_creature_card_type"
           ],
@@ -29193,7 +29193,7 @@
         {
           "condition": "op in {\"set_types\", \"add_types\", \"remove_types\"}",
           "file": "quorune/continuous_effects.py",
-          "line": 434,
+          "line": 438,
           "string_literals": [
             "add_types",
             "remove_types",
@@ -29204,7 +29204,7 @@
         {
           "condition": "op == \"set_types\"",
           "file": "quorune/continuous_effects.py",
-          "line": 446,
+          "line": 450,
           "string_literals": [
             "set_types"
           ],
@@ -29213,7 +29213,7 @@
         {
           "condition": "op == \"add_types\"",
           "file": "quorune/continuous_effects.py",
-          "line": 448,
+          "line": 452,
           "string_literals": [
             "add_types"
           ],
@@ -29222,7 +29222,7 @@
         {
           "condition": "op in {\"set_colors\", \"add_colors\", \"remove_colors\"}",
           "file": "quorune/continuous_effects.py",
-          "line": 459,
+          "line": 463,
           "string_literals": [
             "add_colors",
             "remove_colors",
@@ -29233,7 +29233,7 @@
         {
           "condition": "op == \"set_colors\"",
           "file": "quorune/continuous_effects.py",
-          "line": 461,
+          "line": 465,
           "string_literals": [
             "set_colors"
           ],
@@ -29242,7 +29242,7 @@
         {
           "condition": "op == \"add_colors\"",
           "file": "quorune/continuous_effects.py",
-          "line": 463,
+          "line": 467,
           "string_literals": [
             "add_colors"
           ],
@@ -29251,7 +29251,7 @@
         {
           "condition": "op == \"remove_all_colors\"",
           "file": "quorune/continuous_effects.py",
-          "line": 468,
+          "line": 472,
           "string_literals": [
             "remove_all_colors"
           ],
@@ -29260,14 +29260,14 @@
         {
           "condition": "_apply_ability_operation(state, operation)",
           "file": "quorune/continuous_effects.py",
-          "line": 471,
+          "line": 475,
           "string_literals": [],
           "symbol": "_apply_operation"
         },
         {
           "condition": "op == \"set_power\"",
           "file": "quorune/continuous_effects.py",
-          "line": 473,
+          "line": 477,
           "string_literals": [
             "set_power"
           ],
@@ -29276,7 +29276,7 @@
         {
           "condition": "op == \"set_toughness\"",
           "file": "quorune/continuous_effects.py",
-          "line": 476,
+          "line": 480,
           "string_literals": [
             "set_toughness"
           ],
@@ -29285,7 +29285,7 @@
         {
           "condition": "op == \"set_power_toughness\"",
           "file": "quorune/continuous_effects.py",
-          "line": 479,
+          "line": 483,
           "string_literals": [
             "set_power_toughness"
           ],
@@ -29294,7 +29294,7 @@
         {
           "condition": "op == \"modify_power_toughness\"",
           "file": "quorune/continuous_effects.py",
-          "line": 487,
+          "line": 491,
           "string_literals": [
             "modify_power_toughness"
           ],
@@ -29303,7 +29303,7 @@
         {
           "condition": "op == \"switch_power_toughness\"",
           "file": "quorune/continuous_effects.py",
-          "line": 497,
+          "line": 501,
           "string_literals": [
             "switch_power_toughness"
           ],
@@ -39924,7 +39924,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1420,
     "compiler_module_physical_lines": 1482,
-    "compiler_version": "oracle-ir-v409",
+    "compiler_version": "oracle-ir-v414",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -40207,22 +40207,22 @@
       "effective_date": "2026-08-07",
       "evidence": {
         "class_counts": {
-          "interaction": 1503,
+          "interaction": 1504,
           "multiplayer": 718,
-          "mutation": 606,
-          "negative": 1243,
-          "positive": 1337,
+          "mutation": 607,
+          "negative": 1245,
+          "positive": 1338,
           "privacy": 603,
-          "property": 23,
+          "property": 24,
           "replay": 1103,
           "rollback": 159
         },
-        "declaration_count": 7295,
-        "declaration_source_fingerprint": "febf453cde6e2678f7e9e55df533aece02b84084a7072785dc6278a45da70519",
-        "fingerprint": "7c6ad31820415c225a08c294e75a7be00af30afcedd0a67097a860695ee1fa4b",
-        "registry_fingerprint": "a54d563bfa69c38711f62a6b92c5e536dd15f68382db10805a049fb2b3e016f8"
+        "declaration_count": 7301,
+        "declaration_source_fingerprint": "e7d68233ee9dfef5c57c5e32e7c3a0ec3c8089e792aeaccb55108981403485b4",
+        "fingerprint": "6be0503dca5ecb2b66ea581d17cf6bfd772c6072ea750ae2332c5b2af9a45331",
+        "registry_fingerprint": "a8a9063a43c8cdc5dc811893c8ef8d7df1fb7ceb8cb37867cc5bfcf6a006f38d"
       },
-      "fingerprint": "a54d563bfa69c38711f62a6b92c5e536dd15f68382db10805a049fb2b3e016f8",
+      "fingerprint": "a8a9063a43c8cdc5dc811893c8ef8d7df1fb7ceb8cb37867cc5bfcf6a006f38d",
       "implementation_mutation_status_counts": {
         "killed": 411,
         "not_run": 4
@@ -40232,7 +40232,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "registry_version": 329,
+      "registry_version": 330,
       "schema_version": 1,
       "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
       "status_counts": {
@@ -40591,7 +40591,7 @@
         "contract_fingerprint": "1ec0efe6cc7917b4ef90cea81b4c1e546b73fc6153e967d4e4e535809b9dd45c",
         "exact_cards_with_template": 755,
         "exact_nodes": 912,
-        "fingerprint": "15fb01e06b1278f2881ba38d78eb983410b20ff9183825bee238de51c55f5961",
+        "fingerprint": "83e10129767362b1d7f6c632ed3a20a1203643f9a0c73b9f07b677dc7cc745c7",
         "grammar_source_fingerprint": "1117d0a614866ccc4deeb07e19451f789f43c3c8107febf05afaa67bb6b54c2f",
         "identity_fingerprint": "99bb6d4ead7c141c16ee931c83c7e86679b00167087ab7474eaf6ebf055119c9",
         "present": true,
@@ -40603,7 +40603,7 @@
         "contract_fingerprint": "1ec0efe6cc7917b4ef90cea81b4c1e546b73fc6153e967d4e4e535809b9dd45c",
         "exact_cards_with_template": 777,
         "exact_nodes": 945,
-        "fingerprint": "16bbe70bf9bce83a8572079a5a0036f61595c965d7c8bd0ac2412acecfb77181",
+        "fingerprint": "132255e85bb5e785d17db2bfa7d60b69b9909141f092a44a4e4370493cd51c14",
         "grammar_source_fingerprint": "1117d0a614866ccc4deeb07e19451f789f43c3c8107febf05afaa67bb6b54c2f",
         "identity_fingerprint": "88c711892f132f8c0157923b3ec036266c1d96d8413c9af35b027bbba228e6ed",
         "present": true,
@@ -40622,7 +40622,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "78c1e54520b79b52797cea96cca58a4464fa4fb0db5c20bf8ed1cef85966efe5",
+      "fingerprint": "4993dcd607b901522d596560a61a270a1759853a93ea4f905d74462afee5780f",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -41452,7 +41452,7 @@
       "playwright_e2e_journeys": 11
     },
     "mutation_testing": {
-      "capability_mutation_declarations": 606,
+      "capability_mutation_declarations": 607,
       "configured_tools": [],
       "focused_executable_suite": true,
       "mutation_score": null
@@ -41480,8 +41480,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 6522,
-      "discovered_total": 9831,
+      "conventional_ast_cases": 6526,
+      "discovered_total": 9835,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 275,
