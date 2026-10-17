@@ -15525,6 +15525,126 @@
       ],
       "interaction_order": 2,
       "assertion": "Accepted block and priority commands resolve first and regular strike separately, removing one counter in each damage occurrence and preventing both; replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_denial_suppresses_counters_and_static_grants_then_static_effects_resume",
+      "piece_ids": [
+        "capability.continuous.ability.opponent_keyword_prohibition",
+        "capability.counter.characteristic.keyword"
+      ],
+      "capability_ids": [
+        "continuous.ability.opponent_keyword_prohibition",
+        "counter.characteristic.keyword"
+      ],
+      "interaction_order": 2,
+      "assertion": "Two actual opposing Archetypes suppress flying on both sides, including an original keyword counter. Ending one prohibition permits the remaining static/counter grant without changing the counter map."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_denial_suppresses_counters_and_static_grants_then_static_effects_resume",
+      "piece_ids": [
+        "capability.continuous.ability.fixed_query_keyword_grant",
+        "capability.continuous.ability.opponent_keyword_prohibition"
+      ],
+      "capability_ids": [
+        "continuous.ability.fixed_query_keyword_grant",
+        "continuous.ability.opponent_keyword_prohibition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual opposed Archetype static grants do not bypass the current prohibition regardless of timestamp; ending the denial resumes the surviving grant."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_hexproof_prohibition_changes_offered_and_accepted_target_legality",
+      "piece_ids": [
+        "capability.continuous.ability.opponent_keyword_prohibition",
+        "capability.target.protection.hexproof_permanent"
+      ],
+      "capability_ids": [
+        "continuous.ability.opponent_keyword_prohibition",
+        "target.protection.hexproof_permanent"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Archetype of Endurance suppresses an opponent creature hexproof counter; the canonical Shock offer includes that target, accepted damage resolves, and pre-action replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_flying_prohibition_allows_a_grounded_blocker_and_replays",
+      "piece_ids": [
+        "capability.combat.block.flying",
+        "capability.continuous.ability.opponent_keyword_prohibition"
+      ],
+      "capability_ids": [
+        "combat.block.flying",
+        "continuous.ability.opponent_keyword_prohibition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Archetype of Imagination suppresses the attacking creature flying counter, permitting an accepted grounded block through native legality with replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_trample_prohibition_keeps_all_blocked_damage_off_the_player",
+      "piece_ids": [
+        "capability.combat.damage.assignment.trample",
+        "capability.continuous.ability.opponent_keyword_prohibition"
+      ],
+      "capability_ids": [
+        "combat.damage.assignment.trample",
+        "continuous.ability.opponent_keyword_prohibition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Archetype of Aggression suppresses Trample on an eight-power attacker; its accepted blocked assignment cannot spill to the player, and replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_deathtouch_prohibition_keeps_the_nonlethal_blocker_alive",
+      "piece_ids": [
+        "capability.continuous.ability.opponent_keyword_prohibition",
+        "capability.damage.result.deathtouch"
+      ],
+      "capability_ids": [
+        "continuous.ability.opponent_keyword_prohibition",
+        "damage.result.deathtouch"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Archetype of Finality suppresses the attacker deathtouch counter; two native combat damage is nonlethal to the blocker and replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_first_strike_prohibition_removes_the_extra_damage_step",
+      "piece_ids": [
+        "capability.combat.damage.participation.strike_steps",
+        "capability.continuous.ability.opponent_keyword_prohibition"
+      ],
+      "capability_ids": [
+        "combat.damage.participation.strike_steps",
+        "continuous.ability.opponent_keyword_prohibition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Archetype of Courage denies the attacker first strike while granting it to the blocker; native damage steps retain expected participation and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_copied_denial_component_keeps_working_after_the_original_leaves",
+      "piece_ids": [
+        "capability.continuous.ability.opponent_keyword_prohibition",
+        "capability.token.creation.fixed_copy"
+      ],
+      "capability_ids": [
+        "continuous.ability.opponent_keyword_prohibition",
+        "token.creation.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "A normally admitted fixed-copy spell copies the actual Archetype prohibition component; it continues suppressing the opponent keyword after actual Doom Blade removes the original, with replay."
     }
   ]
 }

@@ -597,6 +597,10 @@ def _render_characteristics(
     for field in ("power", "toughness", "loyalty", "defense"):
         if values[field] is not None:
             result[field] = str(values[field])
+    if values.get('prohibited_keywords'):
+        result['prohibited_keywords'] = list(values['prohibited_keywords'])
+    else:
+        result.pop('prohibited_keywords', None)
     if render_type_line:
         left = [
             *_ordered_words(

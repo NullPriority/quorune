@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 357,
+  "registry_version": 358,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -28351,6 +28351,168 @@
       "dependency_fail_closed_rationale": "The fixed producer and existing partial counter-removal owner are required; unrepresented amounts and siblings remain material.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting only canonical counter removal preserves damage prevention but violates the independent native counter consequence. Omitting the compiler producer restores a material residual.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.ability.opponent_keyword_prohibition",
+      "version": 1,
+      "official_rules": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Remove one fixed ordinary keyword from current opponent creatures and prohibit static/counter grants while applicable; resolved grants denied at creation retain immutable target-incarnation exclusions.",
+        "inputs": [
+          "one fixed identical lose/cannot-have-or-gain keyword sentence",
+          "current source control and static-component presence",
+          "current recipient type/control and keyword counter facts"
+        ],
+        "outputs": [
+          "layer-6 keyword prohibition independent of grant timestamps",
+          "static and counter grants resume after prohibition ends",
+          "denied resolving grants remain absent after prohibition ends; other results survive"
+        ],
+        "exclusions": [
+          "unknown or parameterized keywords",
+          "mismatched removal/prohibition keywords",
+          "unrepresented scopes and antecedents"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.compiler.keyword_prohibition_templates.opponent_keyword_prohibition_handler",
+        "quorune.continuous_effect_state.create_resolution_continuous_effect",
+        "quorune.continuous_effect_state.create_resolution_continuous_effect_components",
+        "quorune.continuous_effects.evaluate_continuous_effects",
+        "quorune.keyword_prohibition.denied_resolution_keyword_grants",
+        "quorune.keyword_prohibition.prepare_resolution_keyword_exclusions",
+        "quorune.semantic_runtime.keyword_prohibitions.OpponentKeywordProhibitionHandler"
+      ],
+      "positive_tests": [
+        "test_actual_copied_denial_component_keeps_working_after_the_original_leaves",
+        "test_actual_deathtouch_prohibition_keeps_the_nonlethal_blocker_alive",
+        "test_actual_denial_suppresses_counters_and_static_grants_then_static_effects_resume",
+        "test_actual_denied_leap_keeps_its_private_draw_and_does_not_resume_flying",
+        "test_actual_denied_resolving_grant_does_not_appear_after_denial_source_leaves",
+        "test_actual_first_strike_prohibition_removes_the_extra_damage_step",
+        "test_actual_flying_prohibition_allows_a_grounded_blocker_and_replays",
+        "test_actual_hexproof_prohibition_changes_offered_and_accepted_target_legality",
+        "test_actual_trample_prohibition_keeps_all_blocked_damage_off_the_player",
+        "test_codec_preserves_old_effects_and_closes_malformed_exclusions",
+        "test_current_source_control_recomputes_opponents_and_ability_removal_ends_denial",
+        "test_detached_resolution_proposal_query_does_not_mutate_live_state",
+        "test_exact_source_span_keyword_owner_and_nearest_unsupported_forms",
+        "test_historical_annotation_grant_cannot_bypass_current_prohibition",
+        "test_keyword_qualified_effect_depends_on_prohibition_before_its_scope_is_evaluated",
+        "test_one_resolving_set_preserves_other_keywords_and_modifiers_for_each_recipient",
+        "test_preexisting_resolved_grant_resumes_when_a_later_prohibition_ends",
+        "test_prohibition_differs_from_ordinary_removal_and_survives_later_grants",
+        "test_returned_recipient_does_not_inherit_its_old_resolution_grant_or_exclusion",
+        "test_reused_characteristic_state_does_not_retain_an_expired_prohibition",
+        "test_same_effect_losing_creature_type_allows_a_keyword_grant_before_source_departure",
+        "test_same_effect_removing_the_prohibition_source_ability_allows_its_other_grant",
+        "test_same_effect_type_changes_are_applied_before_keyword_grant_denial"
+      ],
+      "negative_tests": [
+        "test_actual_copied_denial_component_keeps_working_after_the_original_leaves",
+        "test_actual_deathtouch_prohibition_keeps_the_nonlethal_blocker_alive",
+        "test_actual_denial_suppresses_counters_and_static_grants_then_static_effects_resume",
+        "test_actual_denied_leap_keeps_its_private_draw_and_does_not_resume_flying",
+        "test_actual_denied_resolving_grant_does_not_appear_after_denial_source_leaves",
+        "test_actual_first_strike_prohibition_removes_the_extra_damage_step",
+        "test_actual_flying_prohibition_allows_a_grounded_blocker_and_replays",
+        "test_actual_hexproof_prohibition_changes_offered_and_accepted_target_legality",
+        "test_actual_trample_prohibition_keeps_all_blocked_damage_off_the_player",
+        "test_codec_preserves_old_effects_and_closes_malformed_exclusions",
+        "test_current_source_control_recomputes_opponents_and_ability_removal_ends_denial",
+        "test_detached_resolution_proposal_query_does_not_mutate_live_state",
+        "test_exact_source_span_keyword_owner_and_nearest_unsupported_forms",
+        "test_historical_annotation_grant_cannot_bypass_current_prohibition",
+        "test_keyword_qualified_effect_depends_on_prohibition_before_its_scope_is_evaluated",
+        "test_one_resolving_set_preserves_other_keywords_and_modifiers_for_each_recipient",
+        "test_preexisting_resolved_grant_resumes_when_a_later_prohibition_ends",
+        "test_prohibition_differs_from_ordinary_removal_and_survives_later_grants",
+        "test_returned_recipient_does_not_inherit_its_old_resolution_grant_or_exclusion",
+        "test_reused_characteristic_state_does_not_retain_an_expired_prohibition",
+        "test_same_effect_losing_creature_type_allows_a_keyword_grant_before_source_departure",
+        "test_same_effect_removing_the_prohibition_source_ability_allows_its_other_grant",
+        "test_same_effect_type_changes_are_applied_before_keyword_grant_denial"
+      ],
+      "interaction_tests": [
+        "test_actual_copied_denial_component_keeps_working_after_the_original_leaves",
+        "test_actual_deathtouch_prohibition_keeps_the_nonlethal_blocker_alive",
+        "test_actual_denial_suppresses_counters_and_static_grants_then_static_effects_resume",
+        "test_actual_denied_leap_keeps_its_private_draw_and_does_not_resume_flying",
+        "test_actual_denied_resolving_grant_does_not_appear_after_denial_source_leaves",
+        "test_actual_first_strike_prohibition_removes_the_extra_damage_step",
+        "test_actual_flying_prohibition_allows_a_grounded_blocker_and_replays",
+        "test_actual_hexproof_prohibition_changes_offered_and_accepted_target_legality",
+        "test_actual_trample_prohibition_keeps_all_blocked_damage_off_the_player",
+        "test_current_source_control_recomputes_opponents_and_ability_removal_ends_denial",
+        "test_detached_resolution_proposal_query_does_not_mutate_live_state",
+        "test_one_resolving_set_preserves_other_keywords_and_modifiers_for_each_recipient",
+        "test_preexisting_resolved_grant_resumes_when_a_later_prohibition_ends",
+        "test_returned_recipient_does_not_inherit_its_old_resolution_grant_or_exclusion",
+        "test_same_effect_losing_creature_type_allows_a_keyword_grant_before_source_departure",
+        "test_same_effect_removing_the_prohibition_source_ability_allows_its_other_grant",
+        "test_same_effect_type_changes_are_applied_before_keyword_grant_denial"
+      ],
+      "multiplayer_tests": [
+        "test_actual_copied_denial_component_keeps_working_after_the_original_leaves",
+        "test_actual_deathtouch_prohibition_keeps_the_nonlethal_blocker_alive",
+        "test_actual_denial_suppresses_counters_and_static_grants_then_static_effects_resume",
+        "test_actual_denied_leap_keeps_its_private_draw_and_does_not_resume_flying",
+        "test_actual_denied_resolving_grant_does_not_appear_after_denial_source_leaves",
+        "test_actual_first_strike_prohibition_removes_the_extra_damage_step",
+        "test_actual_flying_prohibition_allows_a_grounded_blocker_and_replays",
+        "test_actual_hexproof_prohibition_changes_offered_and_accepted_target_legality",
+        "test_actual_trample_prohibition_keeps_all_blocked_damage_off_the_player",
+        "test_current_source_control_recomputes_opponents_and_ability_removal_ends_denial",
+        "test_detached_resolution_proposal_query_does_not_mutate_live_state",
+        "test_one_resolving_set_preserves_other_keywords_and_modifiers_for_each_recipient",
+        "test_preexisting_resolved_grant_resumes_when_a_later_prohibition_ends",
+        "test_returned_recipient_does_not_inherit_its_old_resolution_grant_or_exclusion",
+        "test_same_effect_losing_creature_type_allows_a_keyword_grant_before_source_departure",
+        "test_same_effect_removing_the_prohibition_source_ability_allows_its_other_grant",
+        "test_same_effect_type_changes_are_applied_before_keyword_grant_denial"
+      ],
+      "privacy_tests": [
+        "test_actual_denied_leap_keeps_its_private_draw_and_does_not_resume_flying"
+      ],
+      "replay_tests": [
+        "test_actual_copied_denial_component_keeps_working_after_the_original_leaves",
+        "test_actual_deathtouch_prohibition_keeps_the_nonlethal_blocker_alive",
+        "test_actual_denied_leap_keeps_its_private_draw_and_does_not_resume_flying",
+        "test_actual_denied_resolving_grant_does_not_appear_after_denial_source_leaves",
+        "test_actual_first_strike_prohibition_removes_the_extra_damage_step",
+        "test_actual_flying_prohibition_allows_a_grounded_blocker_and_replays",
+        "test_actual_hexproof_prohibition_changes_offered_and_accepted_target_legality",
+        "test_actual_trample_prohibition_keeps_all_blocked_damage_off_the_player"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Unknown keyword bodies and omitted prohibition lowering remain material; each keyword gameplay owner is independently required.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the compiler leaves the sentence residual. Omitting only prohibition lowering preserves the original grant but violates independent native opposing-counter/static keyword consequences.",
       "blockers": [],
       "status": "trusted"
     }

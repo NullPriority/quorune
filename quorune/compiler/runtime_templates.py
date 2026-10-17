@@ -360,6 +360,12 @@ def _continuous_static_runtime_template(
     source_name: str | None,
     source_is_class: bool,
 ) -> StaticRuntimeTemplate | None:
+    from .keyword_prohibition_templates import opponent_keyword_prohibition_handler
+    prohibition = None if source_is_class else opponent_keyword_prohibition_handler(text)
+    if prohibition is not None:
+        return StaticRuntimeTemplate(compiled=prohibition, kind='static_ability', event='characteristics.evaluate',
+            dependency_reason='Fixed keyword denial requires its prohibition and keyword gameplay owners',
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,))
     """Select one closed continuous-characteristic production."""
 
     label = re.fullmatch(r"(?P<label>[A-Za-z][A-Za-z ',-]*[A-Za-z])\s+—\s+(?P<body>.+)", text)

@@ -234,6 +234,7 @@
       "test_library_rules",
       "test_mulligan_and_turns",
       "test_multiplayer_rules",
+      "test_opponent_keyword_prohibition",
       "test_rule_capabilities",
       "test_saga_counter_progression",
       "test_self_counter_keyword_actions",

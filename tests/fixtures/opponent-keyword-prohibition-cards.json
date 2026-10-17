@@ -1,0 +1,694 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "fixed_opponent_keyword_denial",
+  "source": "Pinned Oracle and rulings for fixed opponent keyword prohibition and direct native controls.",
+  "cards": [
+    {
+      "oracle_id": "263408e6-b315-4af5-8cb8-3fd1aa88e48c",
+      "name": "Archetype of Aggression",
+      "mana_cost": "{1}{R}{R}",
+      "cmc": 3.0,
+      "type_line": "Enchantment Creature \u2014 Human Warrior",
+      "oracle_text": "Creatures you control have trample.\nCreatures your opponents control lose trample and can't have or gain trample.",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-02-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "59e7f2ae-4535-4191-98be-3e65b6b2befa",
+      "name": "Doom Blade",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Destroy target nonblack creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "79254223-3fa6-4b7c-8163-1e48bf5cb708",
+      "name": "Archetype of Endurance",
+      "mana_cost": "{6}{G}{G}",
+      "cmc": 8.0,
+      "type_line": "Enchantment Creature \u2014 Boar",
+      "oracle_text": "Creatures you control have hexproof.\nCreatures your opponents control lose hexproof and can't have or gain hexproof.",
+      "power": "6",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-02-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "79b48704-480d-4905-b87a-40b127894670",
+      "name": "Archetype of Courage",
+      "mana_cost": "{1}{W}{W}",
+      "cmc": 3.0,
+      "type_line": "Enchantment Creature \u2014 Human Soldier",
+      "oracle_text": "Creatures you control have first strike.\nCreatures your opponents control lose first strike and can't have or gain first strike.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-02-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a5458de0-0f61-49a3-a013-d90f92559809",
+      "name": "Archetype of Imagination",
+      "mana_cost": "{4}{U}{U}",
+      "cmc": 6.0,
+      "type_line": "Enchantment Creature \u2014 Human Wizard",
+      "oracle_text": "Creatures you control have flying.\nCreatures your opponents control lose flying and can't have or gain flying.",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a6f72f15-d103-49fb-a808-054b278d00a8",
+      "name": "Melira, Sylvok Outcast",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature \u2014 Human Scout",
+      "oracle_text": "You can't get poison counters.\nCreatures you control can't have -1/-1 counters put on them.\nCreatures your opponents control lose infect.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-05-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a9d288b8-cdc1-4e55-a0c9-d6edfc95e65d",
+      "name": "Shock",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Shock deals 2 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e89a3ce0-6b38-4326-a7af-8575af371baa",
+      "name": "Leap",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Target creature gains flying until end of turn.\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1998-03-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "eb4e9ce9-1917-46b1-b01c-645f5920ef9c",
+      "name": "Archetype of Finality",
+      "mana_cost": "{4}{B}{B}",
+      "cmc": 6.0,
+      "type_line": "Enchantment Creature \u2014 Gorgon",
+      "oracle_text": "Creatures you control have deathtouch.\nCreatures your opponents control lose deathtouch and can't have or gain deathtouch.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-02-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ed7bdb3e-5c51-4547-9266-76a791e0b2b0",
+      "name": "Humility",
+      "mana_cost": "{2}{W}{W}",
+      "cmc": 4.0,
+      "type_line": "Enchantment",
+      "oracle_text": "All creatures lose all abilities and have base power and toughness 1/1.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-05-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f7518456-45ed-41d4-bd3c-5aacea28eb35",
+      "name": "Jump",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Target creature gains flying until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2009-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "263408e6-b315-4af5-8cb8-3fd1aa88e48c",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "The Archetype\u2019s second ability applies to each creature controlled by any of your opponents, no matter when it entered the battlefield."
+    },
+    {
+      "oracle_id": "263408e6-b315-4af5-8cb8-3fd1aa88e48c",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "Conversely, continuous effects generated by static abilities (such as an Aura that granted the appropriate ability) would resume applying if the Archetype left the battlefield."
+    },
+    {
+      "oracle_id": "263408e6-b315-4af5-8cb8-3fd1aa88e48c",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "While you control an Archetype, continuous effects generated by the resolution of spells and abilities that would give the specified ability to creatures your opponents control aren\u2019t created. For example, if you control Archetype of Courage, a spell cast by an opponent that gives creatures they control first strike wouldn\u2019t cause the creatures to have first strike, even if later in the turn Archetype of Courage left the battlefield. (If the spell has additional effects, such as raising the power of the creatures, those effects will apply as normal.)"
+    },
+    {
+      "oracle_id": "263408e6-b315-4af5-8cb8-3fd1aa88e48c",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "If you and an opponent each control the same Archetype, no creature controlled by any player will have the appropriate ability."
+    },
+    {
+      "oracle_id": "79254223-3fa6-4b7c-8163-1e48bf5cb708",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "The Archetype\u2019s second ability applies to each creature controlled by any of your opponents, no matter when it entered the battlefield."
+    },
+    {
+      "oracle_id": "79254223-3fa6-4b7c-8163-1e48bf5cb708",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "Conversely, continuous effects generated by static abilities (such as an Aura that granted the appropriate ability) would resume applying if the Archetype left the battlefield."
+    },
+    {
+      "oracle_id": "79254223-3fa6-4b7c-8163-1e48bf5cb708",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "If you and an opponent each control the same Archetype, no creature controlled by any player will have the appropriate ability."
+    },
+    {
+      "oracle_id": "79254223-3fa6-4b7c-8163-1e48bf5cb708",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "While you control an Archetype, continuous effects generated by the resolution of spells and abilities that would give the specified ability to creatures your opponents control aren\u2019t created. For example, if you control Archetype of Courage, a spell cast by an opponent that gives creatures they control first strike wouldn\u2019t cause the creatures to have first strike, even if later in the turn Archetype of Courage left the battlefield. (If the spell has additional effects, such as raising the power of the creatures, those effects will apply as normal.)"
+    },
+    {
+      "oracle_id": "79b48704-480d-4905-b87a-40b127894670",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "While you control an Archetype, continuous effects generated by the resolution of spells and abilities that would give the specified ability to creatures your opponents control aren\u2019t created. For example, if you control Archetype of Courage, a spell cast by an opponent that gives creatures they control first strike wouldn\u2019t cause the creatures to have first strike, even if later in the turn Archetype of Courage left the battlefield. (If the spell has additional effects, such as raising the power of the creatures, those effects will apply as normal.)"
+    },
+    {
+      "oracle_id": "79b48704-480d-4905-b87a-40b127894670",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "The Archetype\u2019s second ability applies to each creature controlled by any of your opponents, no matter when it entered the battlefield."
+    },
+    {
+      "oracle_id": "79b48704-480d-4905-b87a-40b127894670",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "Conversely, continuous effects generated by static abilities (such as an Aura that granted the appropriate ability) would resume applying if the Archetype left the battlefield."
+    },
+    {
+      "oracle_id": "79b48704-480d-4905-b87a-40b127894670",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "If you and an opponent each control the same Archetype, no creature controlled by any player will have the appropriate ability."
+    },
+    {
+      "oracle_id": "a5458de0-0f61-49a3-a013-d90f92559809",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "While you control an Archetype, continuous effects generated by the resolution of spells and abilities that would give the specified ability to creatures your opponents control aren't created. For example, if you control Archetype of Courage, a spell cast by an opponent that gives creatures they control first strike wouldn't cause the creatures to have first strike, even if later in the turn Archetype of Courage left the battlefield. (If the spell has additional effects, such as raising the power of the creatures, those effects will apply as normal.)"
+    },
+    {
+      "oracle_id": "a5458de0-0f61-49a3-a013-d90f92559809",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "The Archetype's second ability applies to each creature controlled by any of your opponents, no matter when it entered the battlefield."
+    },
+    {
+      "oracle_id": "a5458de0-0f61-49a3-a013-d90f92559809",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "If you and an opponent each control the same Archetype, no creature controlled by any player will have the appropriate ability."
+    },
+    {
+      "oracle_id": "a5458de0-0f61-49a3-a013-d90f92559809",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "Conversely, continuous effects generated by static abilities (such as an Aura that granted the appropriate ability) would resume applying if the Archetype left the battlefield."
+    },
+    {
+      "oracle_id": "a6f72f15-d103-49fb-a808-054b278d00a8",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "Melira doesn't remove any poison counters you already have or any -1/-1 counters already on creatures you control."
+    },
+    {
+      "oracle_id": "a6f72f15-d103-49fb-a808-054b278d00a8",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "It's possible for a creature an opponent controls to gain infect after Melira enters. For example, your opponent could cast Glistening Oil on a creature, and then Melira's ability and Glistening Oil's ability would be applied in timestamp order, with the most recent effect winning. The damage dealt to you by such a creature won't result in you losing life (because the creature has infect) or in you getting poison counters (because Melira stops them). Similarly, damage dealt to a creature you control by such a creature won't result in damage being marked on the creature or in -1/-1 counters. However, abilities that check whether damage was dealt (such as lifelink or Whispering Specter's triggered ability) will still see that damage."
+    },
+    {
+      "oracle_id": "a6f72f15-d103-49fb-a808-054b278d00a8",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "Damage dealt to planeswalkers you control causes loyalty counters to be removed from them, regardless of whether Melira is on the battlefield."
+    },
+    {
+      "oracle_id": "a6f72f15-d103-49fb-a808-054b278d00a8",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "If a creature with infect enters under an opponent's control after Melira enters, that creature loses infect."
+    },
+    {
+      "oracle_id": "eb4e9ce9-1917-46b1-b01c-645f5920ef9c",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "While you control an Archetype, continuous effects generated by the resolution of spells and abilities that would give the specified ability to creatures your opponents control aren\u2019t created. For example, if you control Archetype of Courage, a spell cast by an opponent that gives creatures they control first strike wouldn\u2019t cause the creatures to have first strike, even if later in the turn Archetype of Courage left the battlefield. (If the spell has additional effects, such as raising the power of the creatures, those effects will apply as normal.)"
+    },
+    {
+      "oracle_id": "eb4e9ce9-1917-46b1-b01c-645f5920ef9c",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "If you and an opponent each control the same Archetype, no creature controlled by any player will have the appropriate ability."
+    },
+    {
+      "oracle_id": "eb4e9ce9-1917-46b1-b01c-645f5920ef9c",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "Conversely, continuous effects generated by static abilities (such as an Aura that granted the appropriate ability) would resume applying if the Archetype left the battlefield."
+    },
+    {
+      "oracle_id": "eb4e9ce9-1917-46b1-b01c-645f5920ef9c",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "The Archetype\u2019s second ability applies to each creature controlled by any of your opponents, no matter when it entered the battlefield."
+    },
+    {
+      "oracle_id": "f7518456-45ed-41d4-bd3c-5aacea28eb35",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "To work as an evasion ability, an attacking creature must already have flying when the declare blockers step begins. Once a creature has become blocked, giving it flying won\u2019t change that."
+    },
+    {
+      "oracle_id": "ed7bdb3e-5c51-4547-9266-76a791e0b2b0",
+      "published_at": "2006-02-01",
+      "source": "wotc",
+      "comment": "With a Humility and two Opalescences on the battlefield, if Humility has the latest timestamp, then all creatures are 1/1 with no abilities. If the timestamp order is Opalescence, Humility, Opalescence, the second Opalescence is 1/1, and the Humility and first Opalescence are 4/4. If Humility has the earliest timestamp, then everything is 4/4."
+    },
+    {
+      "oracle_id": "ed7bdb3e-5c51-4547-9266-76a791e0b2b0",
+      "published_at": "2007-02-01",
+      "source": "wotc",
+      "comment": "Removes all creature abilities. This includes mana abilities. Animated lands will also lose the ability to tap for mana."
+    },
+    {
+      "oracle_id": "ed7bdb3e-5c51-4547-9266-76a791e0b2b0",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "This is the current interaction between Humility and Opalescence:\u00a0The type-changing effect applies at layer 4, but the rest happens in the applicable layers. The rest of it will apply even if the permanent loses its ability before it's finished applying. So if Opalescence, Humility, and Worship are on the battlefield and Opalescence entered before Humility, the following is true: Layer 4: Humility and Worship each become creatures that are still enchantments. (Opalescence). Layer 6: Humility and Worship each lose their abilities. (Humility) Layer 7b: Humility becomes 4/4 and Worship becomes 4/4. (Opalescence). Humility becomes 1/1 and Worship becomes 1/1 (Humility). But if Humility entered before Opalescence, the following is true: Layer 4: Humility and Worship each become creatures that are still enchantments (Opalescence). Layer 6: Humility and Worship each lose their abilities (Humility). Layer 7b: Humility becomes 1/1 and Worship becomes 1/1 (Humility). Humility becomes 4/4 and Worship becomes 4/4 (Opalescence)."
+    }
+  ]
+}

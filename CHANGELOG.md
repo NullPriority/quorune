@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Apply fixed opponent keyword prohibitions through layer 6, preserving
+  current control and source abilities, static and counter grant resumption,
+  denied resolving grants, unrelated spell consequences, and exact replay.
+
 - Prevent fixed self damage with one additional counter removal per simultaneous
   occurrence, preserving unpreventable damage, protection choice, current
   ability presence, counter ownership, nested preparation, and replay.

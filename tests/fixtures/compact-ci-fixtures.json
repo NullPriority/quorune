@@ -140,6 +140,7 @@
     "tests/fixtures/noncreature-subtype-targets.json",
     "tests/fixtures/nonmana-morph-cards.json",
     "tests/fixtures/nonmodal-face-mana-value-cards.json",
+    "tests/fixtures/opponent-keyword-prohibition-cards.json",
     "tests/fixtures/optional-draw-discard-sequences.json",
     "tests/fixtures/optional-object-action-counters.json",
     "tests/fixtures/ordered-quantity-results.json",

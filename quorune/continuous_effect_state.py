@@ -21,6 +21,7 @@ from .block_capacity_rule_model import ResolvedBlockCapacityRule
 from .declaration_fragments import DeclarationRestrictionTemplate
 from .object_predicate import ObjectQuerySpec
 from .object_query import ObjectQueryResult, object_matches_query, object_query_result
+from .keyword_prohibition import prepare_resolution_keyword_exclusions
 
 
 class ContinuousEffectStateError(ValueError):
@@ -326,6 +327,7 @@ def create_resolution_continuous_effect(
         applies=ObjectQuerySpec(zones=("battlefield",)),
         locked_objects=identities,
     )
+    effect, = prepare_resolution_keyword_exclusions(host, targets, (effect,))
     return commit_continuous_effect(host.state, effect)
 
 
@@ -402,6 +404,7 @@ def create_resolution_continuous_effect_components(
         raise ContinuousEffectStateError(
             "Continuous-effect identity is already committed"
         )
+    effects = prepare_resolution_keyword_exclusions(host, targets, effects)
     journal.extend(effects)
     return effects
 

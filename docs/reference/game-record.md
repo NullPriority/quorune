@@ -80,6 +80,13 @@ optional-replacement and alternative-operation fields, changes only the
 projected label, and survives pending save/load. Historical effects omit this
 field and retain their serialized values and default decline wording.
 
+Resolution-created continuous effects may serialize `denied_keyword_grants`
+as closed physical-object, logical-incarnation, and keyword triples. Each
+triple must name a locked target and an ability-add operation in that effect.
+These exclusions preserve a prohibited grant's absence across source departure
+and save/load. Historical effects omit the field and retain their exact form;
+current static prohibitions are recomputed from represented layer-6 sources.
+
 The manifest pins engine, card-data, rules, compiler, CardProgram, capability,
 semantic-handler, runtime-component, profile, and record-format identity as
 applicable. Loading rejects internal disagreement before replay begins.

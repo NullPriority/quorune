@@ -280,6 +280,15 @@ restrictions from current effective static abilities through one read-only
 query, so ability removal affects static restrictions without erasing an
 independent rule that already resolved.
 
+Fixed opponent-creature keyword prohibitions use the same layer-6 owner but
+remain distinct from ordinary keyword removal. A prohibition suppresses that
+keyword regardless of grant timestamp, including keyword counters, while
+leaving other characteristics intact. Static and counter grants resume when
+the prohibition ends. A resolving grant records immutable target-incarnation
+exclusions for keywords it cannot add; ending the prohibition later does not
+create the denied grant. Same-effect type changes and source ability removal
+are evaluated in a detached proposal before those exclusions are committed.
+
 ## Inputs and outputs
 
 - Inputs: a pinned `GameState`, semantic registry, server-issued action ID,

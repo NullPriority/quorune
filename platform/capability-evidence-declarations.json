@@ -36250,6 +36250,2211 @@
       "applicability_note": "Explicit graveyard-active static grant keeps owner-relative live public conditions and current recipient queries through canonical layer evaluation."
     },
     {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_copied_denial_component_keeps_working_after_the_original_leaves",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_deathtouch_prohibition_keeps_the_nonlethal_blocker_alive",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_denial_suppresses_counters_and_static_grants_then_static_effects_resume",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_denied_leap_keeps_its_private_draw_and_does_not_resume_flying",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_denied_resolving_grant_does_not_appear_after_denial_source_leaves",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_first_strike_prohibition_removes_the_extra_damage_step",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_flying_prohibition_allows_a_grounded_blocker_and_replays",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_hexproof_prohibition_changes_offered_and_accepted_target_legality",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_trample_prohibition_keeps_all_blocked_damage_off_the_player",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_current_source_control_recomputes_opponents_and_ability_removal_ends_denial",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_detached_resolution_proposal_query_does_not_mutate_live_state",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_one_resolving_set_preserves_other_keywords_and_modifiers_for_each_recipient",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_preexisting_resolved_grant_resumes_when_a_later_prohibition_ends",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_returned_recipient_does_not_inherit_its_old_resolution_grant_or_exclusion",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_same_effect_losing_creature_type_allows_a_keyword_grant_before_source_departure",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_same_effect_removing_the_prohibition_source_ability_allows_its_other_grant",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_same_effect_type_changes_are_applied_before_keyword_grant_denial",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_copied_denial_component_keeps_working_after_the_original_leaves",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_deathtouch_prohibition_keeps_the_nonlethal_blocker_alive",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_denial_suppresses_counters_and_static_grants_then_static_effects_resume",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_denied_leap_keeps_its_private_draw_and_does_not_resume_flying",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_denied_resolving_grant_does_not_appear_after_denial_source_leaves",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_first_strike_prohibition_removes_the_extra_damage_step",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_flying_prohibition_allows_a_grounded_blocker_and_replays",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_hexproof_prohibition_changes_offered_and_accepted_target_legality",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_trample_prohibition_keeps_all_blocked_damage_off_the_player",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_current_source_control_recomputes_opponents_and_ability_removal_ends_denial",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_detached_resolution_proposal_query_does_not_mutate_live_state",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_one_resolving_set_preserves_other_keywords_and_modifiers_for_each_recipient",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_preexisting_resolved_grant_resumes_when_a_later_prohibition_ends",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_returned_recipient_does_not_inherit_its_old_resolution_grant_or_exclusion",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_same_effect_losing_creature_type_allows_a_keyword_grant_before_source_departure",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_same_effect_removing_the_prohibition_source_ability_allows_its_other_grant",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_same_effect_type_changes_are_applied_before_keyword_grant_denial",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionCompilerTests.test_exact_source_span_keyword_owner_and_nearest_unsupported_forms",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_omitting_prohibition_is_killed_by_current_native_keyword_consequences",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionCompilerTests.test_codec_preserves_old_effects_and_closes_malformed_exclusions",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionCompilerTests.test_exact_source_span_keyword_owner_and_nearest_unsupported_forms",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionCompilerTests.test_historical_annotation_grant_cannot_bypass_current_prohibition",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionCompilerTests.test_keyword_qualified_effect_depends_on_prohibition_before_its_scope_is_evaluated",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionCompilerTests.test_prohibition_differs_from_ordinary_removal_and_survives_later_grants",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionCompilerTests.test_reused_characteristic_state_does_not_retain_an_expired_prohibition",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_copied_denial_component_keeps_working_after_the_original_leaves",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_deathtouch_prohibition_keeps_the_nonlethal_blocker_alive",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_denial_suppresses_counters_and_static_grants_then_static_effects_resume",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_denied_leap_keeps_its_private_draw_and_does_not_resume_flying",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_denied_resolving_grant_does_not_appear_after_denial_source_leaves",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_first_strike_prohibition_removes_the_extra_damage_step",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_flying_prohibition_allows_a_grounded_blocker_and_replays",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_hexproof_prohibition_changes_offered_and_accepted_target_legality",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_trample_prohibition_keeps_all_blocked_damage_off_the_player",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_current_source_control_recomputes_opponents_and_ability_removal_ends_denial",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_detached_resolution_proposal_query_does_not_mutate_live_state",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_one_resolving_set_preserves_other_keywords_and_modifiers_for_each_recipient",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_preexisting_resolved_grant_resumes_when_a_later_prohibition_ends",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_returned_recipient_does_not_inherit_its_old_resolution_grant_or_exclusion",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_same_effect_losing_creature_type_allows_a_keyword_grant_before_source_departure",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_same_effect_removing_the_prohibition_source_ability_allows_its_other_grant",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_same_effect_type_changes_are_applied_before_keyword_grant_denial",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionCompilerTests.test_codec_preserves_old_effects_and_closes_malformed_exclusions",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionCompilerTests.test_exact_source_span_keyword_owner_and_nearest_unsupported_forms",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionCompilerTests.test_historical_annotation_grant_cannot_bypass_current_prohibition",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionCompilerTests.test_keyword_qualified_effect_depends_on_prohibition_before_its_scope_is_evaluated",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionCompilerTests.test_prohibition_differs_from_ordinary_removal_and_survives_later_grants",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionCompilerTests.test_reused_characteristic_state_does_not_retain_an_expired_prohibition",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_copied_denial_component_keeps_working_after_the_original_leaves",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_deathtouch_prohibition_keeps_the_nonlethal_blocker_alive",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_denial_suppresses_counters_and_static_grants_then_static_effects_resume",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_denied_leap_keeps_its_private_draw_and_does_not_resume_flying",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_denied_resolving_grant_does_not_appear_after_denial_source_leaves",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_first_strike_prohibition_removes_the_extra_damage_step",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_flying_prohibition_allows_a_grounded_blocker_and_replays",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_hexproof_prohibition_changes_offered_and_accepted_target_legality",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_trample_prohibition_keeps_all_blocked_damage_off_the_player",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_current_source_control_recomputes_opponents_and_ability_removal_ends_denial",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_detached_resolution_proposal_query_does_not_mutate_live_state",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_one_resolving_set_preserves_other_keywords_and_modifiers_for_each_recipient",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_preexisting_resolved_grant_resumes_when_a_later_prohibition_ends",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_returned_recipient_does_not_inherit_its_old_resolution_grant_or_exclusion",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_same_effect_losing_creature_type_allows_a_keyword_grant_before_source_departure",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_same_effect_removing_the_prohibition_source_ability_allows_its_other_grant",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_same_effect_type_changes_are_applied_before_keyword_grant_denial",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_denied_leap_keeps_its_private_draw_and_does_not_resume_flying",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "property",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionCompilerTests.test_codec_preserves_old_effects_and_closes_malformed_exclusions",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "property",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionCompilerTests.test_exact_source_span_keyword_owner_and_nearest_unsupported_forms",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "property",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionCompilerTests.test_historical_annotation_grant_cannot_bypass_current_prohibition",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "property",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionCompilerTests.test_keyword_qualified_effect_depends_on_prohibition_before_its_scope_is_evaluated",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "property",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionCompilerTests.test_prohibition_differs_from_ordinary_removal_and_survives_later_grants",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "property",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionCompilerTests.test_reused_characteristic_state_does_not_retain_an_expired_prohibition",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_copied_denial_component_keeps_working_after_the_original_leaves",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_deathtouch_prohibition_keeps_the_nonlethal_blocker_alive",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_denied_leap_keeps_its_private_draw_and_does_not_resume_flying",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_denied_resolving_grant_does_not_appear_after_denial_source_leaves",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_first_strike_prohibition_removes_the_extra_damage_step",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_flying_prohibition_allows_a_grounded_blocker_and_replays",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_hexproof_prohibition_changes_offered_and_accepted_target_legality",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_trample_prohibition_keeps_all_blocked_damage_off_the_player",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_copied_denial_component_keeps_working_after_the_original_leaves",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_deathtouch_prohibition_keeps_the_nonlethal_blocker_alive",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_denied_leap_keeps_its_private_draw_and_does_not_resume_flying",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_denied_resolving_grant_does_not_appear_after_denial_source_leaves",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_first_strike_prohibition_removes_the_extra_damage_step",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_flying_prohibition_allows_a_grounded_blocker_and_replays",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_hexproof_prohibition_changes_offered_and_accepted_target_legality",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
+      "capability_id": "continuous.ability.opponent_keyword_prohibition",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_opponent_keyword_prohibition.OpponentKeywordProhibitionRuntimeTests.test_actual_trample_prohibition_keeps_all_blocked_damage_off_the_player",
+      "official_rule_ids": [
+        "113.10",
+        "113.10b",
+        "113.10c",
+        "113.11",
+        "613.1f",
+        "613.7",
+        "613.8",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
+    },
+    {
       "capability_id": "continuous.ability.temporary_quoted_grant",
       "evidence_class": "interaction",
       "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay",

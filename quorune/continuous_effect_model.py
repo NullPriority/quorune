@@ -99,6 +99,7 @@ _OPERATION_LAYERS = {
     "remove_all_colors": Layer.COLOR,
     "add_ability": Layer.ABILITY,
     "remove_ability": Layer.ABILITY,
+    "prohibit_ability": Layer.ABILITY,
     "remove_all_abilities": Layer.ABILITY,
     "add_rules_text": Layer.ABILITY,
     "add_ability_fragment": Layer.ABILITY,
@@ -319,7 +320,7 @@ def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
         colors = _nonempty_words(value, field_name=op)
         if any(color.upper() not in set("WUBRGC") for color in colors):
             raise ContinuousEffectError("Color operations require Magic color symbols")
-    elif op in {"add_ability", "remove_ability", "add_rules_text"}:
+    elif op in {"add_ability", "remove_ability", "prohibit_ability", "add_rules_text"}:
         if field is not None or type(value) is not str or not value:
             raise ContinuousEffectError(f"{op} requires one nonempty ability string")
     elif op in {"add_ability_fragment", "remove_ability_fragment"}:
@@ -542,6 +543,7 @@ class ContinuousEffect:
     duration_source: ContinuousObjectIdentity | None = None
     duration_controller: str | None = None
     duration_history: SourceContinuitySnapshot | None = None
+    denied_keyword_grants: tuple[tuple[str, str, str], ...] = ()
 
     def __post_init__(self) -> None:
         for name, value in (
@@ -647,6 +649,19 @@ class ContinuousEffect:
             )
         object.__setattr__(self, "locked_objects", locked)
         _validate_continuous_effect_identity_scope(self, locked)
+        denied = self.denied_keyword_grants
+        if not isinstance(denied, (tuple, list)) or any(
+            not isinstance(row, (tuple, list)) or len(row) != 3
+            or any(type(value) is not str or not value for value in row) for row in denied
+        ):
+            raise ContinuousEffectError('Denied keyword grants require closed object, incarnation and keyword triples')
+        denied = tuple(tuple(row) for row in denied)
+        allowed = {str(op.value).casefold() for op in operations if op.op == 'add_ability'}
+        if (len(set(denied)) != len(denied) or (denied and self.origin is not ContinuousEffectOrigin.RESOLUTION)
+                or any(ContinuousObjectIdentity(row[0], row[1]) not in locked
+                    or row[2] != row[2].casefold() or row[2] not in allowed for row in denied)):
+            raise ContinuousEffectError('Denied keyword grants must name a locked resolution target and added keyword')
+        object.__setattr__(self, 'denied_keyword_grants', denied)
 
     def to_dict(self) -> dict[str, Any]:
         payload = {
@@ -677,6 +692,8 @@ class ContinuousEffect:
             payload.update({"duration_source": self.duration_source.to_dict(),
                             "duration_controller": self.duration_controller,
                             "duration_history": self.duration_history.to_dict()})
+        if self.denied_keyword_grants:
+            payload['denied_keyword_grants'] = [list(row) for row in self.denied_keyword_grants]
         return payload
 
     @classmethod
@@ -702,7 +719,7 @@ class ContinuousEffect:
             raise ContinuousEffectError(
                 "Continuous effect fields are missing or unknown"
             )
-        actual_fields = frozenset(value)
+        actual_fields = frozenset(set(value) - {'denied_keyword_grants'})
         if actual_fields not in {
             frozenset(legacy_fields),
             frozenset(relation_fields),
@@ -782,6 +799,7 @@ class ContinuousEffect:
                     SourceContinuitySnapshot.from_dict(value["duration_history"])
                     if "duration_history" in value else None
                 ),
+                denied_keyword_grants=value.get('denied_keyword_grants', ()),
             )
         except (TypeError, ValueError) as exc:
             if isinstance(exc, ContinuousEffectError):
