@@ -214,6 +214,12 @@ characteristics, static owners, activation catalogs and event discovery.
 Fixed additive copy exceptions retain other types while adding represented
 card types or creature subtypes. These exceptions are copiable values and
 survive later ability removal; unknown words and unrepresented grants reject.
+Creature-copy entry exceptions can also add one quoted activated or triggered
+ability when its independently compiled child closes over trusted capabilities.
+The shared promotion owner recognizes the exact source-return shape through its
+existing capability matcher. Added fragments remain copiable, and repeated
+grants retain their multiplicity. Static, recursive, and unbound-value grants
+remain outside this entry-copy grammar.
 Departure LKI retains that provenance for already-triggered abilities; the
 new zone incarnation discards the old copy. Copied Aura attachment uses the
 existing affected-controller choice before entry. Its retained replacement

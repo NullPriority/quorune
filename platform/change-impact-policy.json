@@ -4837,6 +4837,27 @@
         "test_paid_entry_copy",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "copiable-entry-quoted-ability-contract",
+      "patterns": [
+        "quorune/compiler/entry_copy_ability_nodes.py",
+        "quorune/compiler/attached_granted_ability_nodes.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "tests/test_copiable_entry_ability_grants.py",
+        "tests/fixtures/copiable-entry-ability-grant-cards.json"
+      ],
+      "test_modules": [
+        "test_additional_token_compiler",
+        "test_card_program_trust",
+        "test_copiable_entry_ability_grants",
+        "test_copy_objects",
+        "test_fixed_controller_effect_sequences",
+        "test_fixed_copy_type_exceptions",
+        "test_return_to_hand_rules",
+        "test_targeted_return_to_hand_effect_clauses",
+        "test_typed_grant_carriers"
+      ]
     }
   ],
   "symbol_rules": [

@@ -2762,6 +2762,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/entry_copy_ability_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/entry_copy_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -14789,5 +14804,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "5d089798cfaaec6ba8461d60cb13af543bd56c684293ef0d89b13fdd65b57e9b"
+  "fingerprint": "4b74c43e3d949457290388fd977fd766753129c0b9e61af6d5a3d2f8a279258e"
 }

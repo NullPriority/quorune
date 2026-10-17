@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "247ebd4c2b565c047b1c1d6f244682e86c201dbeccc094113b03234d18d2ec9f",
-  "declaration_source_fingerprint": "0256ea423573fd81891f43691c7e9007cc5fd04c152cb103b1a5f07fe9655395",
+  "registry_fingerprint": "f4847faf72438fb6922d7ca477e009bdb338ff60dae29b68e883f4261422fc50",
+  "declaration_source_fingerprint": "ba19fbb019f163d3619af75d133045624330fbb9bcb4c94be97018cc7513cc6b",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -106035,6 +106035,26 @@
     {
       "capability_id": "permanent.return.owner_hand",
       "evidence_class": "interaction",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_copy_added_activation_is_copiable_and_uses_its_own_source",
+      "official_rule_ids": [
+        "108.3",
+        "110.2",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "permanent.return.owner_hand",
+      "evidence_class": "interaction",
       "test_id": "tests.test_return_to_hand_rules.ReturnToOwnerHandRuleTests.test_destination_replacement_preserves_typed_result",
       "official_rule_ids": [
         "108.3",
@@ -106071,6 +106091,26 @@
         "commander_review"
       ],
       "applicability_note": "Share one tapped opponent-controlled predicate across target advertisement, command validation, resolution, owner-hand movement, and replay."
+    },
+    {
+      "capability_id": "permanent.return.owner_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_copy_added_activation_is_copiable_and_uses_its_own_source",
+      "official_rule_ids": [
+        "108.3",
+        "110.2",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
     },
     {
       "capability_id": "permanent.return.owner_hand",
@@ -106115,6 +106155,26 @@
     {
       "capability_id": "permanent.return.owner_hand",
       "evidence_class": "mutation",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_source_return_promotion_omission_is_killed_without_forced_trust",
+      "official_rule_ids": [
+        "108.3",
+        "110.2",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "permanent.return.owner_hand",
+      "evidence_class": "mutation",
       "test_id": "tests.test_return_to_hand_rules.ReturnToOwnerHandRuleTests.test_return_transaction_mutants_are_killed",
       "official_rule_ids": [
         "108.3",
@@ -106151,6 +106211,46 @@
         "commander_review"
       ],
       "applicability_note": "Remove the shared direct-target return compiler and prove the expanded source-spanned clause returns to a material residual."
+    },
+    {
+      "capability_id": "permanent.return.owner_hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityCompilerTests.test_source_return_promotion_preserves_exact_shape_and_dependencies",
+      "official_rule_ids": [
+        "108.3",
+        "110.2",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "permanent.return.owner_hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_original_copiable_grant_carriers_require_normal_registration_and_child_closure",
+      "official_rule_ids": [
+        "108.3",
+        "110.2",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
     },
     {
       "capability_id": "permanent.return.owner_hand",
@@ -106211,6 +106311,46 @@
         "commander_review"
       ],
       "applicability_note": "Keep optional, qualified, aggregate, graveyard, controller-hand, and compound return wording outside the bounded family."
+    },
+    {
+      "capability_id": "permanent.return.owner_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityCompilerTests.test_source_return_promotion_preserves_exact_shape_and_dependencies",
+      "official_rule_ids": [
+        "108.3",
+        "110.2",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "permanent.return.owner_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_copy_added_activation_is_copiable_and_uses_its_own_source",
+      "official_rule_ids": [
+        "108.3",
+        "110.2",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
     },
     {
       "capability_id": "permanent.return.owner_hand",
@@ -106295,6 +106435,26 @@
     {
       "capability_id": "permanent.return.owner_hand",
       "evidence_class": "privacy",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_copy_added_activation_is_copiable_and_uses_its_own_source",
+      "official_rule_ids": [
+        "108.3",
+        "110.2",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "permanent.return.owner_hand",
+      "evidence_class": "privacy",
       "test_id": "tests.test_return_to_hand_rules.ReturnToOwnerHandRuleTests.test_compiled_return_is_multiplayer_private_and_replays",
       "official_rule_ids": [
         "108.3",
@@ -106331,6 +106491,46 @@
         "commander_review"
       ],
       "applicability_note": "Use only public battlefield characteristics for target legality and preserve the returned owner's private hand boundary."
+    },
+    {
+      "capability_id": "permanent.return.owner_hand",
+      "evidence_class": "property",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityCompilerTests.test_source_return_promotion_preserves_exact_shape_and_dependencies",
+      "official_rule_ids": [
+        "108.3",
+        "110.2",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "permanent.return.owner_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_copy_added_activation_is_copiable_and_uses_its_own_source",
+      "official_rule_ids": [
+        "108.3",
+        "110.2",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
     },
     {
       "capability_id": "permanent.return.owner_hand",
@@ -106371,6 +106571,26 @@
         "commander_review"
       ],
       "applicability_note": "Replay the expanded public target predicate, payment, owner-hand move, and final authoritative hash exactly."
+    },
+    {
+      "capability_id": "permanent.return.owner_hand",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_copy_added_activation_is_copiable_and_uses_its_own_source",
+      "official_rule_ids": [
+        "108.3",
+        "110.2",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
     },
     {
       "capability_id": "permanent.return.owner_hand",
@@ -155213,8 +155433,11 @@
     {
       "capability_id": "zone.entry.fixed_copy",
       "evidence_class": "interaction",
-      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_clone_inherits_phantasmal_target_trigger_on_its_own_source",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155222,11 +155445,87 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_copy_added_activation_is_copiable_and_uses_its_own_source",
+      "official_rule_ids": [
         "115.10a",
         "201.5",
         "613.1g",
-        "707.9"
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_copy_of_copy_keeps_both_connive_triggers_and_private_choices",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155240,6 +155539,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155247,11 +155549,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155265,6 +155565,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155272,11 +155575,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155290,6 +155591,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155297,11 +155601,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155315,6 +155617,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155322,11 +155627,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155340,6 +155643,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155347,11 +155653,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155365,6 +155669,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155372,11 +155679,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155390,6 +155695,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155397,11 +155705,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155415,6 +155721,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_frostkite_eligibility_uses_current_power_but_copy_keeps_base_values",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155422,11 +155731,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155440,6 +155747,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155447,11 +155757,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155465,6 +155773,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_protege_cascade_permanent_qualifies_and_copied_mana_ability_works",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155472,11 +155783,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155490,6 +155799,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_actual_synth_exception_is_copiable_and_survives_ability_removal",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155497,11 +155809,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -155513,8 +155823,11 @@
     {
       "capability_id": "zone.entry.fixed_copy",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_copy_added_activation_is_copiable_and_uses_its_own_source",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155522,11 +155835,61 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_copy_of_copy_keeps_both_connive_triggers_and_private_choices",
+      "official_rule_ids": [
         "115.10a",
         "201.5",
         "613.1g",
-        "707.9"
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155540,6 +155903,9 @@
       "evidence_class": "multiplayer",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155547,11 +155913,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155565,6 +155929,9 @@
       "evidence_class": "multiplayer",
       "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155572,11 +155939,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155590,6 +155955,9 @@
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_actual_synth_exception_is_copiable_and_survives_ability_removal",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155597,11 +155965,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -155613,8 +155979,11 @@
     {
       "capability_id": "zone.entry.fixed_copy",
       "evidence_class": "mutation",
-      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_intrinsic_copy_producer_omission_mutant_is_killed",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_copy_added_fragment_omission_is_killed_by_actual_activated_copy",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155622,11 +155991,35 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_intrinsic_copy_producer_omission_mutant_is_killed",
+      "official_rule_ids": [
         "115.10a",
         "201.5",
         "613.1g",
-        "707.9"
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155640,6 +156033,9 @@
       "evidence_class": "mutation",
       "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_qualified_copy_predicate_omission_is_killed_by_actual_equipment_choices",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155647,11 +156043,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155665,6 +156059,9 @@
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_copied_type_omission_is_killed_by_actual_synth",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155672,11 +156069,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -155688,8 +156083,11 @@
     {
       "capability_id": "zone.entry.fixed_copy",
       "evidence_class": "negative",
-      "test_id": "tests.test_copy_objects.EntryCopyContractTests.test_entry_copy_contract_rejects_hidden_targets_open_tails_and_malformed_values",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityCompilerTests.test_copiable_quoted_grants_consume_one_closed_child_and_keep_near_misses_residual",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155697,11 +156095,87 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_controller_qualified_copy_cannot_choose_an_opponent_creature",
+      "official_rule_ids": [
         "115.10a",
         "201.5",
         "613.1g",
-        "707.9"
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_original_copiable_grant_carriers_require_normal_registration_and_child_closure",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_copy_objects.EntryCopyContractTests.test_entry_copy_contract_rejects_hidden_targets_open_tails_and_malformed_values",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155715,6 +156189,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_copy_objects.EntryCopyContractTests.test_registered_entry_copy_handler_rejects_open_fields_and_has_no_mutation_context",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155722,11 +156199,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155740,6 +156215,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155747,11 +156225,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155765,6 +156241,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155772,11 +156251,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155790,6 +156267,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_copy_objects.EntryCopySelectorContractTests.test_qualified_copy_compiler_keeps_unknown_siblings_and_selectors_residual",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155797,11 +156277,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155815,6 +156293,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_copy_objects.EntryCopySelectorContractTests.test_qualified_copy_originals_bind_and_dependencies_fail_closed",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155822,11 +156303,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155840,6 +156319,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_copy_objects.EntryCopySelectorContractTests.test_qualified_copy_schema_rejects_hidden_mixed_and_unrepresented_queries",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155847,11 +156329,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155865,6 +156345,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionCompilerTests.test_fixed_copy_type_exceptions_consume_full_type_words",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155872,11 +156355,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -155890,6 +156371,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_original_type_exception_carriers_require_whole_card_admission",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155897,11 +156381,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -155913,8 +156395,11 @@
     {
       "capability_id": "zone.entry.fixed_copy",
       "evidence_class": "positive",
-      "test_id": "tests.test_copy_objects.EntryCopyContractTests.test_intrinsic_copy_entry_has_an_independent_source_spanned_replacement_owner",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityCompilerTests.test_copiable_quoted_grants_consume_one_closed_child_and_keep_near_misses_residual",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155922,11 +156407,139 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_clone_inherits_phantasmal_target_trigger_on_its_own_source",
+      "official_rule_ids": [
         "115.10a",
         "201.5",
         "613.1g",
-        "707.9"
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_copy_added_activation_is_copiable_and_uses_its_own_source",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_copy_of_copy_keeps_both_connive_triggers_and_private_choices",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_original_copiable_grant_carriers_require_normal_registration_and_child_closure",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_copy_objects.EntryCopyContractTests.test_intrinsic_copy_entry_has_an_independent_source_spanned_replacement_owner",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155940,6 +156553,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155947,11 +156563,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155965,6 +156579,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155972,11 +156589,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -155990,6 +156605,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -155997,11 +156615,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156015,6 +156631,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156022,11 +156641,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156040,6 +156657,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156047,11 +156667,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156065,6 +156683,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_copy_objects.EntryCopySelectorContractTests.test_qualified_copy_originals_bind_and_dependencies_fail_closed",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156072,11 +156693,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156090,6 +156709,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156097,11 +156719,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156115,6 +156735,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_frostkite_eligibility_uses_current_power_but_copy_keeps_base_values",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156122,11 +156745,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156140,6 +156761,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156147,11 +156771,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156165,6 +156787,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_protege_cascade_permanent_qualifies_and_copied_mana_ability_works",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156172,11 +156797,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156190,6 +156813,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionCompilerTests.test_fixed_copy_type_exceptions_consume_full_type_words",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156197,11 +156823,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -156215,6 +156839,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_original_type_exception_carriers_require_whole_card_admission",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156222,11 +156849,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -156238,8 +156863,11 @@
     {
       "capability_id": "zone.entry.fixed_copy",
       "evidence_class": "privacy",
-      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_copy_added_activation_is_copiable_and_uses_its_own_source",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156247,11 +156875,61 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_copy_of_copy_keeps_both_connive_triggers_and_private_choices",
+      "official_rule_ids": [
         "115.10a",
         "201.5",
         "613.1g",
-        "707.9"
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156265,6 +156943,9 @@
       "evidence_class": "privacy",
       "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156272,11 +156953,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156290,6 +156969,9 @@
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_actual_synth_exception_is_copiable_and_survives_ability_removal",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156297,11 +156979,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -156313,8 +156993,11 @@
     {
       "capability_id": "zone.entry.fixed_copy",
       "evidence_class": "property",
-      "test_id": "tests.test_copy_objects.EntryCopySelectorContractTests.test_qualified_copy_queries_round_trip_and_preserve_legacy_schema",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityCompilerTests.test_copiable_quoted_grants_consume_one_closed_child_and_keep_near_misses_residual",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156322,11 +157005,35 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "property",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorContractTests.test_qualified_copy_queries_round_trip_and_preserve_legacy_schema",
+      "official_rule_ids": [
         "115.10a",
         "201.5",
         "613.1g",
-        "707.9"
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156338,8 +157045,11 @@
     {
       "capability_id": "zone.entry.fixed_copy",
       "evidence_class": "replay",
-      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_clone_inherits_phantasmal_target_trigger_on_its_own_source",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156347,11 +157057,113 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_copy_added_activation_is_copiable_and_uses_its_own_source",
+      "official_rule_ids": [
         "115.10a",
         "201.5",
         "613.1g",
-        "707.9"
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_copy_of_copy_keeps_both_connive_triggers_and_private_choices",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_controller_qualified_copy_cannot_choose_an_opponent_creature",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156365,6 +157177,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156372,11 +157187,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156390,6 +157203,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156397,11 +157213,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156415,6 +157229,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156422,11 +157239,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156440,6 +157255,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156447,11 +157265,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156465,6 +157281,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156472,11 +157291,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156490,6 +157307,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156497,11 +157317,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156515,6 +157333,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156522,11 +157343,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156540,6 +157359,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_frostkite_eligibility_uses_current_power_but_copy_keeps_base_values",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156547,11 +157369,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156565,6 +157385,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156572,11 +157395,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156590,6 +157411,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_protege_cascade_permanent_qualifies_and_copied_mana_ability_works",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156597,11 +157421,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156615,6 +157437,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_actual_synth_exception_is_copiable_and_survives_ability_removal",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156622,11 +157447,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -156638,8 +157461,11 @@
     {
       "capability_id": "zone.entry.fixed_copy",
       "evidence_class": "rollback",
-      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_copy_added_activation_is_copiable_and_uses_its_own_source",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156647,11 +157473,61 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_actual_copy_of_copy_keeps_both_connive_triggers_and_private_choices",
+      "official_rule_ids": [
         "115.10a",
         "201.5",
         "613.1g",
-        "707.9"
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Exact copiable creature-entry children use normal generated registration. Actual Mercurial/Clone/Humble return-source and ability-loss boundary; Image copied sacrifice trigger; Copycrook copy-of-copy preserves two connives with private choices. Unsupported siblings, blocked child owners, rollback, pending load/replay and omission mutants remain explicit."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156665,6 +157541,9 @@
       "evidence_class": "rollback",
       "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156672,11 +157551,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "traditional",
@@ -156690,6 +157567,9 @@
       "evidence_class": "rollback",
       "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_actual_synth_exception_is_copiable_and_survives_ability_removal",
       "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
         "614.12",
         "614.12a",
         "616.1c",
@@ -156697,11 +157577,9 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b",
-        "115.10a",
-        "201.5",
-        "613.1g",
-        "707.9"
+        "707.9",
+        "707.9a",
+        "707.9b"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -163573,5 +164451,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "018facd6e454b3ce860239e0aa70ef4a0844079e7106f156d00f4a73457575a2"
+  "fingerprint": "534fc79152dca5e332171637db854260cb6d7b387946ff36c6d3325cc7ab622d"
 }
