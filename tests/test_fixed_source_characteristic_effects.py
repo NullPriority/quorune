@@ -330,10 +330,11 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
                     in enumerate(spec.layer_operations())
                 ]
                 for lower_case in (False, True):
+                    case_initial = copy.deepcopy(initial)
                     if lower_case:
-                        initial.card_types = {value.casefold() for value in initial.card_types}
-                        initial.subtypes = {value.casefold() for value in initial.subtypes}
-                    current = evaluate_continuous_effects(initial, layers).characteristics
+                        case_initial.card_types = {value.casefold() for value in case_initial.card_types}
+                        case_initial.subtypes = {value.casefold() for value in case_initial.subtypes}
+                    current = evaluate_continuous_effects(case_initial, layers).characteristics
                     self.assertEqual({value.casefold() for value in expected_types},
                                      {value.casefold() for value in current["card_types"]})
                     self.assertEqual({value.casefold() for value in expected_subtypes},
