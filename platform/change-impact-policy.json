@@ -5118,7 +5118,8 @@
         "test_nonmana_morph",
         "test_morph_rules",
         "test_card_program_trust",
-        "test_counted_activation_costs"
+        "test_counted_activation_costs",
+        "test_choice_forms"
       ]
     },
     {

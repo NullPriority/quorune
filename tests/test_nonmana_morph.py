@@ -192,10 +192,10 @@ class FixedNonmanaMorphRuntimeTests(unittest.TestCase):
                 foreign = self.add(session.engine, 'Walking Corpse', zone='hand', seat='B', ref='nonmana-foreign-card')
                 action = self.cast_face_down(session, source)
                 schema = next(row for row in self.offers(session) if row['id']==action)['choice_schema']['discard_cards']
-                self.assertIn(zombie.ref, schema['items']['enum'])
-                self.assertNotIn(foreign.ref, schema['items']['enum'])
+                self.assertIn(zombie.ref, schema['legal_refs'])
+                self.assertNotIn(foreign.ref, schema['legal_refs'])
                 if name == 'Putrid Raptor':
-                    self.assertNotIn(wrong.ref, schema['items']['enum'])
+                    self.assertNotIn(wrong.ref, schema['legal_refs'])
                     self.reject(session, action, discard_cards=[wrong.ref])
                 for refs in ([], [zombie.ref, zombie.ref], [foreign.ref], ['missing']):
                     self.reject(session, action, discard_cards=refs)
@@ -429,3 +429,37 @@ class FixedNonmanaMorphRuntimeTests(unittest.TestCase):
         self.assertFalse(session.engine._can_block(session.state.cards[source.object_id], session.state.cards[blocker.object_id])[0])
         self.assertTrue(session.engine._can_block(session.state.cards[source.object_id], session.state.cards[control.object_id])[0])
         self.replay(session, load=True)
+
+    def test_nonmana_resource_offers_supply_usable_owned_reference_forms(self):
+        cases = [('Raven Guild Initiate','return_cards','Storm Crow','battlefield',1),
+            ('Putrid Raptor','discard_cards','Walking Corpse','hand',1),
+            ('Watcher of the Roost','reveal_cards','Elite Vanguard','hand',1),
+            ('Fathom Seer','return_cards','Island','battlefield',2)]
+        for index,(name, field, resource, zone, count) in enumerate(cases):
+            session = self.session(70237080 + index)
+            source = self.add(session.engine, name, zone='hand', ref='nonmana-form-source')
+            selected = [self.add(session.engine, resource, zone=zone, ref='nonmana-form-payment-' + str(i))
+                for i in range(count)]
+            foreign = self.add(session.engine, resource, zone=zone, seat='B', ref='nonmana-form-foreign')
+            action = self.cast_face_down(session, source)
+            offered = next(row for row in session.packet('pilot:A', full=True)['decision']['legal_actions']
+                if row['id']==action)
+            form = offered.get('form')
+            self.assertIsNotNone(form, 'The supported payment must be selectable in the projected action form')
+            control = next(row for row in form['fields'] if row['name']==field)
+            self.assertEqual('refs', control['control'])
+            self.assertTrue(control['required'])
+            self.assertEqual((count,count), (control['minimum'],control['maximum']))
+            legal = {row['value'] for row in control['options']}
+            self.assertLessEqual({card.ref for card in selected}, legal)
+            self.assertNotIn(foreign.ref, legal)
+            if zone=='hand':
+                for viewer in 'BCD':
+                    packet = json.dumps(session.packet('pilot:'+viewer, full=True))
+                    for card in selected:
+                        self.assertNotIn(card.ref, packet)
+            result = session.act('pilot:A', {'action_id':action, field:[card.ref for card in selected]})
+            self.assertTrue(result.ok, result.summary)
+            self.assertFalse(session.state.cards[source.object_id].face_down)
+            self.resolve(session)
+            self.replay(session, load=True)

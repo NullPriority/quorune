@@ -18,6 +18,8 @@ payment, including special actions taken while Split Second is on the stack.
 Printed fixed nonmana Morph prices share that same action and whole-source
 admission. Typed costs query current hand colors or controlled subtypes and
 pay through the life, selected-hand-reveal, or simultaneous zone-cost owners.
+Resource offers use the shared reference-array choice descriptors with exact
+cardinality and principal-scoped candidates, including their ordinary UI forms.
 Revealing publishes only the selected eligible card. Discards and returns use
 their canonical response fields and retain replacement continuations across
 save/load. Returning the source itself ends the action without inventing a

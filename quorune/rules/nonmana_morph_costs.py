@@ -48,8 +48,8 @@ def nonmana_morph_offer_fields(host, seat, spec):
     if len(refs) < cost.count:
         return None
     field = zone_cost.choice_field if zone_cost else 'reveal_cards'
-    return {'choice_schema': {field: {'type': 'array', 'min_items': cost.count,
-        'max_items': cost.count, 'items': {'enum': list(refs)}}}}
+    return {'choice_schema': {field: {'type': 'object_ref_array', 'legal_refs': list(refs),
+        'minimum': cost.count, 'maximum': cost.count, 'label': cost.cost_text}}}
 
 
 def pay_nonmana_morph_cost(host, seat, source, spec, response):
