@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 337,
+  "registry_version": 338,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -14032,28 +14032,99 @@
     },
     {
       "id": "mana.intrinsic.basic_land_type",
-      "version": 1,
-      "official_rules": ["305.6", "305.7", "605.1a", "605.2", "605.3a", "605.3b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Compile each printed land face's basic land subtypes into typed CardProgram declarations and derive the corresponding stackless tap-mana abilities from the object's current effective land types.",
-        "inputs": ["source-pinned face type line", "current effective land card type and basic land subtypes", "current source-cost availability", "selected intrinsic basic land type"],
-        "outputs": ["face-pinned immutable intrinsic mana declarations", "one distinct advertised ability per current represented basic land subtype", "immediate stackless mana-pool result", "replayable activation command"],
-        "exclusions": ["type-setting effects outside the represented continuous-effect evaluator", "unrepresented layer-6 ability addition or removal dependencies", "mana-production replacement and trigger effects", "arbitrary rule or resolving-effect payment windows"]
+        "summary": "Compile printed basic-land-type declarations and materialize current intrinsic mana after type changes within characteristic evaluation, before layer-six ability removal or grants. Discover and activate only the surviving typed abilities.",
+        "inputs": [
+          "source-pinned face type line",
+          "current effective land card type and basic land subtypes",
+          "current source-cost availability",
+          "selected intrinsic basic land type",
+          "layer-ordered current type, removal, and grant effects"
+        ],
+        "outputs": [
+          "face-pinned immutable intrinsic mana declarations",
+          "one distinct advertised ability per current represented basic land subtype",
+          "immediate stackless mana-pool result",
+          "replayable activation command"
+        ],
+        "exclusions": [
+          "type-setting effects outside the represented continuous-effect evaluator",
+          "unrepresented layer-6 ability addition or removal dependencies",
+          "mana-production replacement and trigger effects",
+          "arbitrary rule or resolving-effect payment windows"
+        ]
       },
-      "dependencies": ["activation.tap_untap_cost.haste"],
-      "implementation_components": ["quorune.intrinsic_basic_land_mana.IntrinsicBasicLandManaSpec", "quorune.compiler.card_form_rules.compile_intrinsic_basic_land_mana_forms", "quorune.compiler.activated_mana_nodes.activated_oracle_node", "quorune.rules.activation.query.activated_abilities", "quorune.characteristic_evaluation.evaluate_card_characteristics", "quorune.mana_activation.complete_mana_activation"],
-      "positive_tests": ["test_intrinsic_basic_land_mana_compiler_binds_type_line_and_reminder"],
-      "negative_tests": ["test_intrinsic_basic_land_mana_rejects_malformed_descriptors_and_near_misses"],
-      "interaction_tests": ["test_intrinsic_basic_land_mana_uses_live_effective_land_types"],
-      "multiplayer_tests": ["test_intrinsic_basic_land_mana_offer_submission_and_replay_are_controller_scoped"],
-      "privacy_tests": [],
-      "replay_tests": ["test_intrinsic_basic_land_mana_offer_submission_and_replay_are_controller_scoped"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "replay"],
+      "dependencies": [
+        "activation.tap_untap_cost.haste"
+      ],
+      "implementation_components": [
+        "quorune.characteristic_evaluation.evaluate_card_characteristics",
+        "quorune.compiler.activated_mana_nodes.activated_oracle_node",
+        "quorune.compiler.card_form_rules.compile_intrinsic_basic_land_mana_forms",
+        "quorune.continuous_effects.evaluate_continuous_effects",
+        "quorune.intrinsic_basic_land_mana.IntrinsicBasicLandManaSpec",
+        "quorune.intrinsic_land_abilities.intrinsic_land_mana_abilities",
+        "quorune.mana_activation.complete_mana_activation",
+        "quorune.rules.activation.query.activated_abilities"
+      ],
+      "positive_tests": [
+        "test_actual_cleanup_restores_current_forest_and_added_swamp_mana",
+        "test_intrinsic_basic_land_mana_compiler_binds_type_line_and_reminder",
+        "test_type_changes_precede_intrinsic_mana_and_later_ability_loss"
+      ],
+      "negative_tests": [
+        "test_actual_clone_copies_land_type_but_not_the_source_ability_removal",
+        "test_actual_humble_removes_dryad_intrinsic_mana_and_rejects_activation",
+        "test_intrinsic_basic_land_mana_rejects_malformed_descriptors_and_near_misses"
+      ],
+      "interaction_tests": [
+        "test_actual_cleanup_restores_current_forest_and_added_swamp_mana",
+        "test_actual_clone_copies_land_type_but_not_the_source_ability_removal",
+        "test_actual_humble_removes_dryad_intrinsic_mana_and_rejects_activation",
+        "test_explicit_later_mana_grant_survives_without_recreating_intrinsic",
+        "test_intrinsic_basic_land_mana_uses_live_effective_land_types"
+      ],
+      "multiplayer_tests": [
+        "test_actual_humble_removes_dryad_intrinsic_mana_and_rejects_activation",
+        "test_intrinsic_basic_land_mana_offer_submission_and_replay_are_controller_scoped"
+      ],
+      "privacy_tests": [
+        "test_actual_humble_removes_dryad_intrinsic_mana_and_rejects_activation"
+      ],
+      "replay_tests": [
+        "test_actual_cleanup_restores_current_forest_and_added_swamp_mana",
+        "test_actual_clone_copies_land_type_but_not_the_source_ability_removal",
+        "test_actual_humble_removes_dryad_intrinsic_mana_and_rejects_activation",
+        "test_intrinsic_basic_land_mana_offer_submission_and_replay_are_controller_scoped"
+      ],
+      "required_evidence": [
+        "interaction",
+        "multiplayer",
+        "negative",
+        "positive",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Trusted CardProgram compilation closes over the shared tap-source cost capability and fails before promotion when either capability is blocked.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_intrinsic_basic_land_mana_compiler_and_runtime_mutants_are_killed rejects both a compiler color swap and omission of a live effective basic land subtype.",
+      "implementation_mutation_rationale": "Existing compiler/type-omission mutations remain covered. Reintroducing intrinsic mana immediately after ability removal is killed by actual fully admitted Humble/Dryad Arbor offers and activation rejection.",
       "blockers": [],
       "status": "trusted"
     },

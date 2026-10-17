@@ -4753,6 +4753,29 @@
         "test_typed_land_entry_participation",
         "test_zone_replacement_compiler"
       ]
+    },
+    {
+      "id": "intrinsic-mana-ability-layer-boundary",
+      "patterns": [
+        "quorune/basic_land_types.py",
+        "quorune/intrinsic_land_abilities.py",
+        "quorune/intrinsic_basic_land_mana.py",
+        "quorune/continuous_effects.py",
+        "quorune/rules/activation/query.py",
+        "tests/test_intrinsic_basic_land_mana.py",
+        "tests/test_intrinsic_mana_ability_loss.py",
+        "tests/fixtures/intrinsic-mana-ability-loss-cards.json"
+      ],
+      "test_modules": [
+        "test_basic_land_type_mana",
+        "test_card_program_trust",
+        "test_continuous_effect_components",
+        "test_continuous_effect_duration",
+        "test_game_record_v3",
+        "test_intrinsic_basic_land_mana",
+        "test_intrinsic_mana_ability_loss",
+        "test_typed_ability_fragments"
+      ]
     }
   ],
   "symbol_rules": [

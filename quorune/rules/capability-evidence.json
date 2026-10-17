@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "64f970dcc9cdb419729fb857d3f0bbeb1bd3158b9557e4bb8028af65f4a72b4a",
-  "declaration_source_fingerprint": "844190ed2f1c7a62bc736d6f3afdd973ff48adad52a1ecfec3737b8f1932f40f",
+  "registry_fingerprint": "a18e3ee7fe03874b45c491721a442541ee0524558450c96ba4b573ad0e0858ab",
+  "declaration_source_fingerprint": "bbfa1d6cf76bab813c87486c7ae35fb2e046c83d59af2acc7b0fb57e42585bbf",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -100066,7 +100066,9 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "613.1d",
+        "613.1f"
       ],
       "supported_profiles": [
         "traditional",
@@ -100074,6 +100076,111 @@
         "commander_review"
       ],
       "applicability_note": "Derive and withdraw the intrinsic mana ability from the same live effective type-line boundary when an additive layer-4 source enters and leaves."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaAbilityLossRuntimeTests.test_actual_cleanup_restores_current_forest_and_added_swamp_mana",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Intrinsic mana materializes after current type changes and before ability removal. Actual original Dryad Arbor/Humble action, rejected mana activation and automatic cast, four-seat privacy/rollback, pending load and replay; actual cleanup restores Forest and Urborg-added Swamp. Isolated later grants stay distinct from regenerated intrinsic mana."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaAbilityLossRuntimeTests.test_actual_clone_copies_land_type_but_not_the_source_ability_removal",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted Clone copies a humbled original Dryad Arbor. The copy derives its own intrinsic Forest mana and original 1/1 stats, while the source remains stripped. Summoning sickness keeps the new copy activation unavailable; pending copy choice loads and pre-action replay agrees."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaAbilityLossRuntimeTests.test_actual_humble_removes_dryad_intrinsic_mana_and_rejects_activation",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Intrinsic mana materializes after current type changes and before ability removal. Actual original Dryad Arbor/Humble action, rejected mana activation and automatic cast, four-seat privacy/rollback, pending load and replay; actual cleanup restores Forest and Urborg-added Swamp. Isolated later grants stay distinct from regenerated intrinsic mana."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaLayerBoundaryTests.test_explicit_later_mana_grant_survives_without_recreating_intrinsic",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Intrinsic mana materializes after current type changes and before ability removal. Actual original Dryad Arbor/Humble action, rejected mana activation and automatic cast, four-seat privacy/rollback, pending load and replay; actual cleanup restores Forest and Urborg-added Swamp. Isolated later grants stay distinct from regenerated intrinsic mana."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaAbilityLossRuntimeTests.test_actual_humble_removes_dryad_intrinsic_mana_and_rejects_activation",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Intrinsic mana materializes after current type changes and before ability removal. Actual original Dryad Arbor/Humble action, rejected mana activation and automatic cast, four-seat privacy/rollback, pending load and replay; actual cleanup restores Forest and Urborg-added Swamp. Isolated later grants stay distinct from regenerated intrinsic mana."
     },
     {
       "capability_id": "mana.intrinsic.basic_land_type",
@@ -100085,7 +100192,9 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "613.1d",
+        "613.1f"
       ],
       "supported_profiles": [
         "traditional",
@@ -100104,7 +100213,9 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "613.1d",
+        "613.1f"
       ],
       "supported_profiles": [
         "traditional",
@@ -100112,6 +100223,27 @@
         "commander_review"
       ],
       "applicability_note": "Kill both a compiler reminder-color mismatch and omission of one current effective basic land subtype at runtime."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaAbilityLossRuntimeTests.test_late_intrinsic_recreation_mutant_is_killed_by_native_humble",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Intrinsic mana materializes after current type changes and before ability removal. Actual original Dryad Arbor/Humble action, rejected mana activation and automatic cast, four-seat privacy/rollback, pending load and replay; actual cleanup restores Forest and Urborg-added Swamp. Isolated later grants stay distinct from regenerated intrinsic mana."
     },
     {
       "capability_id": "mana.intrinsic.basic_land_type",
@@ -100123,7 +100255,9 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "613.1d",
+        "613.1f"
       ],
       "supported_profiles": [
         "traditional",
@@ -100131,6 +100265,48 @@
         "commander_review"
       ],
       "applicability_note": "Reject malformed versioned declarations, mismatched subtype-symbol pairs, nonland subtypes, and reminder text that differs from the printed type line."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "negative",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaAbilityLossRuntimeTests.test_actual_clone_copies_land_type_but_not_the_source_ability_removal",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted Clone copies a humbled original Dryad Arbor. The copy derives its own intrinsic Forest mana and original 1/1 stats, while the source remains stripped. Summoning sickness keeps the new copy activation unavailable; pending copy choice loads and pre-action replay agrees."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "negative",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaAbilityLossRuntimeTests.test_actual_humble_removes_dryad_intrinsic_mana_and_rejects_activation",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Intrinsic mana materializes after current type changes and before ability removal. Actual original Dryad Arbor/Humble action, rejected mana activation and automatic cast, four-seat privacy/rollback, pending load and replay; actual cleanup restores Forest and Urborg-added Swamp. Isolated later grants stay distinct from regenerated intrinsic mana."
     },
     {
       "capability_id": "mana.intrinsic.basic_land_type",
@@ -100142,7 +100318,9 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "613.1d",
+        "613.1f"
       ],
       "supported_profiles": [
         "traditional",
@@ -100150,6 +100328,153 @@
         "commander_review"
       ],
       "applicability_note": "Bind one-, two-, and three-type current Oracle reminders to immutable face-pinned CardProgram declarations sourced from the complete printed type line."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "positive",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaAbilityLossRuntimeTests.test_actual_cleanup_restores_current_forest_and_added_swamp_mana",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Intrinsic mana materializes after current type changes and before ability removal. Actual original Dryad Arbor/Humble action, rejected mana activation and automatic cast, four-seat privacy/rollback, pending load and replay; actual cleanup restores Forest and Urborg-added Swamp. Isolated later grants stay distinct from regenerated intrinsic mana."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "positive",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaLayerBoundaryTests.test_type_changes_precede_intrinsic_mana_and_later_ability_loss",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Intrinsic mana materializes after current type changes and before ability removal. Actual original Dryad Arbor/Humble action, rejected mana activation and automatic cast, four-seat privacy/rollback, pending load and replay; actual cleanup restores Forest and Urborg-added Swamp. Isolated later grants stay distinct from regenerated intrinsic mana."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaAbilityLossRuntimeTests.test_actual_humble_removes_dryad_intrinsic_mana_and_rejects_activation",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Intrinsic mana materializes after current type changes and before ability removal. Actual original Dryad Arbor/Humble action, rejected mana activation and automatic cast, four-seat privacy/rollback, pending load and replay; actual cleanup restores Forest and Urborg-added Swamp. Isolated later grants stay distinct from regenerated intrinsic mana."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "property",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaLayerBoundaryTests.test_type_changes_precede_intrinsic_mana_and_later_ability_loss",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Intrinsic mana materializes after current type changes and before ability removal. Actual original Dryad Arbor/Humble action, rejected mana activation and automatic cast, four-seat privacy/rollback, pending load and replay; actual cleanup restores Forest and Urborg-added Swamp. Isolated later grants stay distinct from regenerated intrinsic mana."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "replay",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaAbilityLossRuntimeTests.test_actual_cleanup_restores_current_forest_and_added_swamp_mana",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Intrinsic mana materializes after current type changes and before ability removal. Actual original Dryad Arbor/Humble action, rejected mana activation and automatic cast, four-seat privacy/rollback, pending load and replay; actual cleanup restores Forest and Urborg-added Swamp. Isolated later grants stay distinct from regenerated intrinsic mana."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "replay",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaAbilityLossRuntimeTests.test_actual_clone_copies_land_type_but_not_the_source_ability_removal",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted Clone copies a humbled original Dryad Arbor. The copy derives its own intrinsic Forest mana and original 1/1 stats, while the source remains stripped. Summoning sickness keeps the new copy activation unavailable; pending copy choice loads and pre-action replay agrees."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "replay",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaAbilityLossRuntimeTests.test_actual_humble_removes_dryad_intrinsic_mana_and_rejects_activation",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Intrinsic mana materializes after current type changes and before ability removal. Actual original Dryad Arbor/Humble action, rejected mana activation and automatic cast, four-seat privacy/rollback, pending load and replay; actual cleanup restores Forest and Urborg-added Swamp. Isolated later grants stay distinct from regenerated intrinsic mana."
     },
     {
       "capability_id": "mana.intrinsic.basic_land_type",
@@ -100161,7 +100486,9 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "613.1d",
+        "613.1f"
       ],
       "supported_profiles": [
         "traditional",
@@ -100169,6 +100496,27 @@
         "commander_review"
       ],
       "applicability_note": "Replay the selected subtype identity, stackless tap cost, controller-scoped mana result, and final state hash exactly."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaAbilityLossRuntimeTests.test_actual_humble_removes_dryad_intrinsic_mana_and_rejects_activation",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Intrinsic mana materializes after current type changes and before ability removal. Actual original Dryad Arbor/Humble action, rejected mana activation and automatic cast, four-seat privacy/rollback, pending load and replay; actual cleanup restores Forest and Urborg-added Swamp. Isolated later grants stay distinct from regenerated intrinsic mana."
     },
     {
       "capability_id": "mana.production.fixed_resolution",
@@ -161914,5 +162262,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "25eb5c638c1f6a17f1d7eff086ac0b61231821cc0dfe185f3ed4c65926d0bc72"
+  "fingerprint": "721e21f8190f50a7c9d6b39b14ae06aba0ff46fb6718d320f0a717f8b036a9ef"
 }

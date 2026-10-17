@@ -25,6 +25,7 @@ from .ability_fragments import (
 from .abilities import ActivatedAbility
 from .replacement.immutable import thaw_value
 from .creature_subtypes import canonical_creature_subtype
+from .intrinsic_land_abilities import intrinsic_land_mana_abilities
 
 
 _SUBLAYER_ORDER = {
@@ -521,7 +522,12 @@ def evaluate_continuous_effects(
         present.append(effect)
     ordered, cycles = order_continuous_effects(present)
     applied: list[str] = []
+    intrinsic_ready=False
     for effect in ordered:
+        if not intrinsic_ready and effect.layer>Layer.TYPE:
+            base.activated_abilities.extend(intrinsic_land_mana_abilities(
+                base.card_types,base.subtypes,existing_abilities=base.activated_abilities))
+            intrinsic_ready=True
         if effect.relation in {
             ContinuousEffectRelation.SOURCE_OBJECT,
             ContinuousEffectRelation.SOURCE_ATTACHED_TO_OBJECT,
@@ -563,6 +569,9 @@ def evaluate_continuous_effects(
         if effect.layer == Layer.COPY and effect.sublayer == "1a":
             base.copiable_values = base.snapshot()
         applied.append(effect.effect_id)
+    if not intrinsic_ready:
+        base.activated_abilities.extend(intrinsic_land_mana_abilities(
+            base.card_types,base.subtypes,existing_abilities=base.activated_abilities))
     return ContinuousEvaluation(
         characteristics=base.snapshot(),
         applied_effects=tuple(applied),

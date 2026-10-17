@@ -14656,6 +14656,51 @@
       ],
       "interaction_order": 2,
       "assertion": "An actual B land-play command encounters existing Orb plus a fully admitted constructed controller-lands-untapped source. B privately selects either first replacement, producing the two distinct final states; other-principal selection rolls back, and pending load/pre-action replay preserve the ordering."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_humble_removes_dryad_intrinsic_mana_and_rejects_activation",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.mana.intrinsic.basic_land_type"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "mana.intrinsic.basic_land_type"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual admitted Humble resolves on Dryad Arbor. Forest type remains but the intrinsic green mana action disappears; direct activation and an automatic-payment cast reject atomically. Four-seat private hand projection, pending spell load and pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_cleanup_restores_current_forest_and_added_swamp_mana",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.add_all_lands",
+        "capability.mana.intrinsic.basic_land_type"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.add_all_lands",
+        "mana.intrinsic.basic_land_type"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual admitted Urborg adds Swamp to Dryad Arbor before Humble removes its intrinsic abilities. Ordinary pass/empty-attack/cleanup-discard commands advance through cleanup, restoring both Forest and Swamp mana. A real Forest activation succeeds and the complete command sequence replays."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_clone_copies_land_type_but_not_the_source_ability_removal",
+      "piece_ids": [
+        "capability.mana.intrinsic.basic_land_type",
+        "capability.zone.entry.fixed_copy"
+      ],
+      "capability_ids": [
+        "mana.intrinsic.basic_land_type",
+        "zone.entry.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Clone copies a humbled original Dryad Arbor through a pending entry choice. The copy has the original 1/1 stats and its own type-derived Forest mana, with summoning sickness preventing immediate activation. The source remains stripped; pending load and pre-action replay agree."
     }
   ]
 }

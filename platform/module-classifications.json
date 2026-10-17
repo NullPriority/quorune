@@ -448,6 +448,18 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/basic_land_types.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/bestow.py",
       "layer": "rules",
       "owning_subsystem": "casting_bestow",
@@ -7066,6 +7078,20 @@
     },
     {
       "file": "quorune/intrinsic_basic_land_mana.py",
+      "layer": "rules",
+      "owning_subsystem": "mana_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/intrinsic_land_abilities.py",
       "layer": "rules",
       "owning_subsystem": "mana_rules",
       "allowed_dependency_layers": [
@@ -14679,5 +14705,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "ab76e69d73b3d3a185ec9d53e3f7722c7673ea975f62289e73c53c2654889a77"
+  "fingerprint": "80bc46e05ee31ae622aa0b0eb1adc5ebfc1a15f7f87acd4aeeda1de33431341f"
 }

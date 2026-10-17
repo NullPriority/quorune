@@ -309,6 +309,12 @@ discovery consumes that catalog, rule-derived basic-land-type abilities, typed
 layer-6 grants, and typed token characteristics; it does not reinterpret Oracle
 prose. Copy effects preserve the catalog, ability-removal effects remove it,
 and a text-changing effect clears descriptors compiled from the replaced text.
+Intrinsic basic-land mana abilities materialize from the current land types
+after layer 4 within characteristic evaluation. Later ability removal can
+remove them while the land keeps those types, and later layer-6 grants remain
+distinct. Offers, direct activation, and automatic payment consume the surviving
+typed abilities. Ending a removal restores the intrinsic abilities on the next
+evaluation without changing the land's types.
 The catalog unifies discovery for ordinary Crew, Cycling, fixed Typecycling,
 fixed counter-keyword activations, and represented mana abilities without
 replacing those families' specialized execution owners or capability closure.
