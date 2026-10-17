@@ -16,6 +16,9 @@ from .errors import StateInvariantError
 
 
 STORM_SEMANTIC_KEY = "builtin:storm"
+from .replicate_model import REPLICATE_SEMANTIC_KEY
+from .conspire_model import CONSPIRE_SEMANTIC_KEY
+SPELL_COPY_TRIGGER_KEYS = frozenset({STORM_SEMANTIC_KEY, REPLICATE_SEMANTIC_KEY, CONSPIRE_SEMANTIC_KEY})
 
 
 class StormHost(Protocol):
@@ -86,26 +89,14 @@ def prior_storm_spell_count(host: StormHost) -> int:
     )
 
 
-def storm_trigger_items(
-    host: StormHost,
-    *,
-    spell: StackItem,
-    card: CardInstance,
-    program: Any,
-    prior_spell_count: int,
-) -> tuple[StackItem, ...]:
-    """Create one APNAP-placeable occurrence per typed Storm instance."""
+def spell_copy_template(host, spell, program):
+    """Lock the source spell and choices for a represented copy-on-cast trigger."""
 
-    if type(prior_spell_count) is not int or prior_spell_count < 0:
-        raise StateInvariantError("Storm prior-spell count is malformed")
-    specs = compiled_storm_specs(host, card)
-    if not specs:
-        return ()
     target_groups = copy.deepcopy(dict(spell.context.get("target_groups") or {}))
     target_snapshots = copy.deepcopy(
         dict(spell.context.get("target_snapshots") or {})
     )
-    template = {
+    return {
         "label": spell.label,
         "source_spell_ref": spell.ref,
         "controller": spell.controller,
@@ -122,6 +113,24 @@ def storm_trigger_items(
             host._stack_target_schema(spell, program)
         ),
     }
+
+
+def storm_trigger_items(
+    host: StormHost,
+    *,
+    spell: StackItem,
+    card: CardInstance,
+    program: Any,
+    prior_spell_count: int,
+) -> tuple[StackItem, ...]:
+    """Create one APNAP-placeable occurrence per typed Storm instance."""
+
+    if type(prior_spell_count) is not int or prior_spell_count < 0:
+        raise StateInvariantError("Storm prior-spell count is malformed")
+    specs = compiled_storm_specs(host, card)
+    if not specs:
+        return ()
+    template = spell_copy_template(host, spell, program)
     result = []
     for index, spec in enumerate(specs, start=1):
         ref = host._next_ref("S")
@@ -179,6 +188,16 @@ def validated_storm_trigger(
         if type(instance) is not int or instance <= 0:
             raise StateInvariantError("Storm trigger instance is malformed")
     return count, copy.deepcopy(dict(template))
+
+
+def validated_spell_copy_trigger(item):
+    if item.semantic_key == CONSPIRE_SEMANTIC_KEY:
+        from .conspire import validated_conspire_trigger
+        return validated_conspire_trigger(item)
+    if item.semantic_key == REPLICATE_SEMANTIC_KEY:
+        from .replicate import validated_replicate_trigger
+        return validated_replicate_trigger(item)
+    return validated_storm_trigger(item)
 
 
 __all__ = [

@@ -1374,6 +1374,8 @@ class ContinuousEffectComponentRegistry(
 @lru_cache(maxsize=1)
 def default_continuous_effect_component_registry(
 ) -> ContinuousEffectComponentRegistry:
+    from .basic_type_addition import ScopedBasicTypeAdditionHandler
+    from .basic_type_setting import FixedBasicTypeSettingHandler
     from .chosen_characteristics import ChosenCharacteristicsHandler
     from .conditional_chosen_characteristics import ConditionalChosenCharacteristicsHandler
     from .attached_continuous import AttachedFixedCharacteristicsHandler
@@ -1400,6 +1402,8 @@ def default_continuous_effect_component_registry(
                 handler_id="continuous.anthem.source-counter-query.v3", schema_version=3,
             ),
             AddBasicLandTypeHandler(),
+            ScopedBasicTypeAdditionHandler(),
+            FixedBasicTypeSettingHandler(),
             FixedQueryAbilityGrantHandler(),
             FixedQueryKeywordGrantHandler(),
             FixedQueryCharacteristicGrantHandler(),

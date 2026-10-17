@@ -680,3 +680,394 @@ class AdditionalConditionalModifierRuntimeTests(PublicStateActionFixture, unitte
                 self.assertNotIn(removed, engine._combat_keywords(session.state.cards[bodies[0].object_id]))
                 self.assertIn("vigilance", engine._combat_keywords(session.state.cards[bodies[0].object_id]))
                 self.replay(session, load=True)
+
+
+class OtherwiseAttachedStatRuntimeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+
+    @classmethod
+    def setUpClass(cls):
+        import tempfile
+        from pathlib import Path
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from scripts.build_test_database import build_fixture_database
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'otherwise-stats.sqlite3'
+        build_fixture_database([ROOT / 'tests/fixtures/bound-effect-program-cards.json',
+            ROOT / 'tests/fixtures/fixed-public-state-characteristics-cards.json'], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('Otherwise Aura stats', [DeckEntry('Generic Bound Commander', 1, 'commander'),
+            DeckEntry('Generic Bound Plains', 30)], ['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    import test_bound_effect_programs as _bound
+    session = _bound.BoundEffectProgramRuntimeTests.session
+    add = _bound.BoundEffectProgramRuntimeTests.add
+    ready = _bound.BoundEffectProgramRuntimeTests.ready
+    checkpoint = _bound.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = _bound.BoundEffectProgramRuntimeTests.resolve
+    replay = _bound.BoundEffectProgramRuntimeTests.replay
+
+    def assert_original_closed(self, name):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
+        program = compile_best_available_card_program(self.db, self.db.lookup(name),
+            semantic_registry=SemanticRegistry(), capability_registry=self.registry,
+            capability_profile='commander_review')
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'], name + ': ' + binding['trust_basis'])
+
+    def cast_at(self, session, source, target):
+        while session.pending_principals()[0] != 'pilot:A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        action = next(row for row in actions if row.get('card') == source.ref and row['id'].startswith('cast:'))
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [target.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.replay(session, load=True)
+        self.resolve(session)
+
+    def test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization(self):
+        from quorune.record import authoritative_state_hash
+        self.assert_original_closed("Serra's Boon")
+        session = self.session(525001)
+        engine = session.engine
+        aura = self.add(engine, "Serra's Boon", zone='hand')
+        body = self.add(engine, 'Serra Angel', seat='B')
+        frog = self.add(engine, 'Turn to Frog', zone='hand')
+        private = self.add(engine, 'Generic Bound Body', seat='C', zone='hand', ref='otherwise-private-hand')
+        action = self.ready(session, aura, {'W': 2, 'U': 1, 'C': 4})
+        self.checkpoint(session)
+        before = authoritative_state_hash(engine.state)
+        self.assertFalse(session.act('pilot:B', {'action_id': action['id'], 'targets': [body.ref], 'pay': 'auto'}).ok)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        self.cast_at(session, aura, body)
+        self.assertEqual(body.object_id, engine.state.cards[aura.object_id].attached_to)
+        self.assertEqual((5, 6), (engine._numeric_stat(body.object_id, 'power'), engine._numeric_stat(body.object_id, 'toughness')))
+        self.assertNotIn(private.ref, json.dumps(session.packet('pilot:D', full=True)))
+        self.assertIn(private.ref, json.dumps(session.packet('pilot:C', full=True)))
+        self.cast_at(session, frog, body)
+        self.assertEqual('graveyard', engine.state.cards[body.object_id].zone)
+        self.assertEqual('graveyard', engine.state.cards[aura.object_id].zone)
+        self.assertEqual(40, engine.state.players['B'].life)
+        self.replay(session, load=True)
+
+
+    def test_actual_otherwise_auras_cover_typed_branches_and_counter_composition(self):
+        cases = (("Serra's Boon", 'Serra Angel', (5, 6), 0),
+            ('Sea Legs', 'Headstrong Brute', (3, 5), 0),
+            ('Nyx Infusion', 'Nyxborn Colossus', (8, 9), 0),
+            ('Clutch of Undeath', 'Scathe Zombies', (5, 5), 0),
+            ('Gift of Fangs', 'Vampire Nighthawk', (5, 6), 1),
+            ('Phyrexian Boon', 'Vampire Nighthawk', (4, 4), 0),
+            ('Phyrexian Boon', 'Hill Giant', (2, 1), 0),
+            ("Tahngarth's Rage", 'Hill Giant', (1, 2), 0))
+        for index, (name, target, expected, counters) in enumerate(cases):
+            with self.subTest(name=name, target=target):
+                self.assert_original_closed(name)
+                session = self.session(525010 + index)
+                engine = session.engine
+                aura = self.add(engine, name, zone='hand')
+                body = self.add(engine, target, seat='B')
+                if counters:
+                    body.counters['+1/+1'] = counters
+                self.ready(session, aura, {'W': 6, 'U': 6, 'B': 6, 'R': 6, 'C': 6})
+                self.checkpoint(session)
+                self.cast_at(session, aura, body)
+                self.assertEqual('battlefield', engine.state.cards[body.object_id].zone)
+                self.assertEqual(expected, (engine._numeric_stat(body.object_id, 'power'), engine._numeric_stat(body.object_id, 'toughness')))
+                self.assertEqual(counters, engine.state.cards[body.object_id].counters.get('+1/+1', 0))
+                self.replay(session, load=True)
+
+    def test_actual_sea_legs_tracks_type_change_and_source_removal(self):
+        self.assert_original_closed('Sea Legs')
+        session = self.session(525002)
+        engine = session.engine
+        aura = self.add(engine, 'Sea Legs', zone='hand')
+        body = self.add(engine, 'Headstrong Brute', seat='B')
+        frog = self.add(engine, 'Turn to Frog', zone='hand')
+        removal = self.add(engine, 'Disenchant', zone='hand')
+        self.ready(session, aura, {'U': 2, 'W': 1, 'C': 4})
+        self.checkpoint(session)
+        self.cast_at(session, aura, body)
+        self.assertEqual((3, 5), (engine._numeric_stat(body.object_id, 'power'), engine._numeric_stat(body.object_id, 'toughness')))
+        self.cast_at(session, frog, body)
+        self.assertEqual('battlefield', engine.state.cards[body.object_id].zone)
+        self.assertEqual((-1, 1), (engine._numeric_stat(body.object_id, 'power'), engine._numeric_stat(body.object_id, 'toughness')))
+        self.cast_at(session, removal, aura)
+        self.assertEqual('graveyard', engine.state.cards[aura.object_id].zone)
+        self.assertEqual((1, 1), (engine._numeric_stat(body.object_id, 'power'), engine._numeric_stat(body.object_id, 'toughness')))
+        self.replay(session, load=True)
+
+    def test_actual_tahngarth_rage_updates_at_attack_and_keeps_damage_and_replay_exact(self):
+        from quorune.engine import TURN_STEPS
+        self.assert_original_closed("Tahngarth's Rage")
+        session = self.session(525003)
+        engine = session.engine
+        aura = self.add(engine, "Tahngarth's Rage", zone='hand')
+        body = self.add(engine, 'Hill Giant')
+        body.acquired_control_turn_count = -1
+        self.ready(session, aura, {'R': 1})
+        engine.state.phase_index = TURN_STEPS.index(('precombat_main', 'main'))
+        self.checkpoint(session)
+        self.cast_at(session, aura, body)
+        self.assertEqual((1, 2), (engine._numeric_stat(body.object_id, 'power'), engine._numeric_stat(body.object_id, 'toughness')))
+        for _ in range(24):
+            if session.state.pending_decision.kind != 'priority':
+                break
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        self.assertEqual('combat.attackers', session.state.pending_decision.kind)
+        accepted = session.act('pilot:A', {'a': 'attack', 'atk': {body.ref: 'B'}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual((6, 3), (engine._numeric_stat(body.object_id, 'power'), engine._numeric_stat(body.object_id, 'toughness')))
+        for _ in range(48):
+            decision = session.state.pending_decision
+            if engine.state.players['B'].life == 34 and engine.state.cards[body.object_id].attacking is None:
+                break
+            if decision.kind == 'priority':
+                command = {'action_id': 'pass'}
+            elif decision.kind == 'combat.blockers':
+                command = {'action_id': 'block', 'blocks': {}}
+            else:
+                self.fail('Unexpected combat decision: ' + decision.kind)
+            accepted = session.act(session.pending_principals()[0], command)
+            self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(34, engine.state.players['B'].life)
+        self.assertIsNone(engine.state.cards[body.object_id].attacking)
+        self.assertEqual((1, 2), (engine._numeric_stat(body.object_id, 'power'), engine._numeric_stat(body.object_id, 'toughness')))
+        self.replay(session, load=True)
+
+    def test_otherwise_component_omissions_are_killed_after_complete_admission(self):
+        from quorune.compiler import otherwise_characteristic_templates as compiler
+        original = compiler.attached_otherwise_stat_handler
+        for keep in (0, 1):
+            def omitted(*args, **kwargs):
+                result = original(*args, **kwargs)
+                return None if result is None else (result[0], (result[1][keep],), result[2])
+            with self.subTest(keep=keep), mock.patch.object(compiler, 'attached_otherwise_stat_handler', side_effect=omitted):
+                self.assert_original_closed("Serra's Boon")
+                with self.assertRaises(AssertionError):
+                    self.test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization()
+
+
+class OtherwiseAttachedStatCompilerTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        OtherwiseAttachedStatRuntimeTests.setUpClass.__func__(cls)
+
+    @classmethod
+    def tearDownClass(cls):
+        OtherwiseAttachedStatRuntimeTests.tearDownClass.__func__(cls)
+
+    def test_seven_original_otherwise_stat_auras_bind_as_complete_programs(self):
+        for name in ("Serra's Boon", 'Sea Legs', 'Nyx Infusion', 'Clutch of Undeath',
+                "Tahngarth's Rage", 'Gift of Fangs', 'Phyrexian Boon'):
+            with self.subTest(name=name):
+                OtherwiseAttachedStatRuntimeTests.assert_original_closed(self, name)
+
+    def test_otherwise_composition_keeps_recipient_scope_and_rejects_unknown_branches(self):
+        from quorune.compiler.otherwise_characteristic_templates import attached_otherwise_stat_handler
+        text = "Enchanted creature gets +1/+2 as long as it's white. Otherwise, it gets -2/-1."
+        result = attached_otherwise_stat_handler(text, source_name='Diagnostic')
+        self.assertEqual(2, len(result[1]))
+        base, conditional = result[1]
+        self.assertEqual('source_attached_object', base['condition']['relation'])
+        self.assertEqual('attached_matches_query', conditional['source_condition']['kind'])
+        self.assertEqual(['W'], conditional['source_condition']['predicate']['colors_all'])
+        self.assertEqual((-2, -1), (base['modifier']['power'], base['modifier']['toughness']))
+        self.assertEqual((3, 3), (conditional['modifier']['power'], conditional['modifier']['toughness']))
+        for changed in (text + ' Then draw a card.', text.replace("it's white", 'it knows an unrepresented fact'),
+                text.replace('it gets -2/-1', 'it has base power and toughness 1/1'),
+                text.replace('it gets -2/-1', "it can't attack or block"),
+                text.replace('+1/+2', '+X/+X')):
+            with self.subTest(changed=changed):
+                self.assertIsNone(attached_otherwise_stat_handler(changed, source_name='Diagnostic'))
+        identical = text.replace('-2/-1', '+1/+2')
+        self.assertEqual(1, len(attached_otherwise_stat_handler(identical, source_name='Diagnostic')[1]))
+
+
+class MostCommonColorRuntimeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+
+    @classmethod
+    def setUpClass(cls):
+        OtherwiseAttachedStatRuntimeTests.setUpClass.__func__(cls)
+
+    @classmethod
+    def tearDownClass(cls):
+        OtherwiseAttachedStatRuntimeTests.tearDownClass.__func__(cls)
+
+    session = OtherwiseAttachedStatRuntimeTests.session
+    add = OtherwiseAttachedStatRuntimeTests.add
+    ready = OtherwiseAttachedStatRuntimeTests.ready
+    checkpoint = OtherwiseAttachedStatRuntimeTests.checkpoint
+    resolve = OtherwiseAttachedStatRuntimeTests.resolve
+    replay = OtherwiseAttachedStatRuntimeTests.replay
+    assert_original_closed = OtherwiseAttachedStatRuntimeTests.assert_original_closed
+
+    def cast_color_control(self, session, card, target=None):
+        while session.pending_principals()[0] != 'pilot:A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        action = next(row for row in actions if row.get('card') == card.ref and row['id'].startswith('cast:'))
+        command = {'action_id': action['id'], 'pay': 'auto'}
+        if target is not None:
+            command['targets'] = [target.ref]
+        accepted = session.act('pilot:A', command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.replay(session, load=True)
+        self.resolve(session)
+
+    def test_actual_halam_cast_and_bounce_tracks_all_seats_and_tied_color_counts(self):
+        from quorune.record import authoritative_state_hash
+        self.assert_original_closed('Halam Djinn')
+        session = self.session(526001)
+        engine = session.engine
+        source = self.add(engine, 'Halam Djinn', zone='hand')
+        goblin = self.add(engine, 'Raging Goblin', zone='hand')
+        bounce = self.add(engine, 'Unsummon', zone='hand')
+        frog = self.add(engine, 'Turn to Frog', zone='hand')
+        self.add(engine, 'Merfolk of the Pearl Trident', seat='B', ref='blue-count-one')
+        self.add(engine, 'Merfolk of the Pearl Trident', seat='C', ref='blue-count-two')
+        private = self.add(engine, 'Generic Bound Body', seat='D', zone='hand', ref='color-private-hand')
+        action = self.ready(session, source, {'R': 8, 'U': 8, 'C': 10})
+        self.checkpoint(session)
+        before = authoritative_state_hash(engine.state)
+        self.assertFalse(session.act('pilot:B', {'action_id':action['id'],'pay':'auto'}).ok)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        self.cast_color_control(session, source)
+        self.assertEqual((6, 5), (engine._numeric_stat(source.object_id, 'power'), engine._numeric_stat(source.object_id, 'toughness')))
+        self.assertIn('haste', engine._combat_keywords(engine.state.cards[source.object_id]))
+        self.cast_color_control(session, goblin)
+        self.assertEqual((4, 3), (engine._numeric_stat(source.object_id, 'power'), engine._numeric_stat(source.object_id, 'toughness')))
+        self.cast_color_control(session, bounce, goblin)
+        self.assertEqual('hand', engine.state.cards[goblin.object_id].zone)
+        self.assertEqual((6, 5), (engine._numeric_stat(source.object_id, 'power'), engine._numeric_stat(source.object_id, 'toughness')))
+        self.cast_color_control(session, goblin)
+        self.assertEqual((4, 3), (engine._numeric_stat(source.object_id, 'power'), engine._numeric_stat(source.object_id, 'toughness')))
+        self.cast_color_control(session, frog, goblin)
+        self.assertEqual('battlefield', engine.state.cards[goblin.object_id].zone)
+        self.assertEqual((6, 5), (engine._numeric_stat(source.object_id, 'power'), engine._numeric_stat(source.object_id, 'toughness')))
+        self.assertNotIn(private.ref, json.dumps(session.packet('pilot:B', full=True)))
+        self.assertIn(private.ref, json.dumps(session.packet('pilot:D', full=True)))
+        self.replay(session, load=True)
+
+
+    def test_all_five_original_djinn_count_their_own_color_and_keep_printed_rules(self):
+        expected = (('Sulam Djinn', (4, 4), 'trample'), ('Zanam Djinn', (3, 4), 'flying'),
+            ('Ruham Djinn', (3, 3), 'first strike'), ('Goham Djinn', (3, 3), None),
+            ('Halam Djinn', (4, 3), 'haste'))
+        for index, (name, stats, keyword) in enumerate(expected):
+            with self.subTest(name=name):
+                self.assert_original_closed(name)
+                session = self.session(526010 + index)
+                engine = session.engine
+                source = self.add(engine, name, zone='hand')
+                self.ready(session, source, {'W':8,'U':8,'B':8,'R':8,'G':8,'C':10})
+                self.checkpoint(session)
+                self.cast_color_control(session, source)
+                self.assertEqual(stats, (engine._numeric_stat(source.object_id,'power'), engine._numeric_stat(source.object_id,'toughness')))
+                if keyword is not None:
+                    self.assertIn(keyword, engine._combat_keywords(engine.state.cards[source.object_id]))
+                else:
+                    while session.pending_principals()[0] != 'pilot:A':
+                        self.assertTrue(session.act(session.pending_principals()[0], {'action_id':'pass'}).ok)
+                    actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                    action=next(row for row in actions if row['id'].startswith('activate:'+source.ref+':'))
+                    accepted=session.act('pilot:A',{'action_id':action['id'],'pay':'auto'})
+                    self.assertTrue(accepted.ok,accepted.summary)
+                    self.resolve(session)
+                self.replay(session,load=True)
+
+    def test_color_count_omission_is_killed_after_original_admission(self):
+        from quorune.card_programs.runtime import _FixedPublicStateSnapshotResolver
+        self.assert_original_closed('Halam Djinn')
+        with mock.patch.object(_FixedPublicStateSnapshotResolver, '_most_common_color_quantity', return_value=0):
+            with self.assertRaises(AssertionError):
+                self.test_actual_halam_cast_and_bounce_tracks_all_seats_and_tied_color_counts()
+
+    def test_actual_goham_regenerates_when_color_tie_makes_marked_damage_lethal(self):
+        self.assert_original_closed('Goham Djinn')
+        session=self.session(526002)
+        engine=session.engine
+        source=self.add(engine,'Goham Djinn')
+        bolt=self.add(engine,'Lightning Bolt',zone='hand')
+        zombie=self.add(engine,'Scathe Zombies',zone='hand')
+        self.add(engine,'Merfolk of the Pearl Trident',seat='B',ref='goham-blue-one')
+        self.add(engine,'Merfolk of the Pearl Trident',seat='C',ref='goham-blue-two')
+        self.ready(session,source,{'B':8,'R':8,'C':10})
+        self.checkpoint(session)
+        self.assertEqual((5,5),(engine._numeric_stat(source.object_id,'power'),engine._numeric_stat(source.object_id,'toughness')))
+        self.cast_color_control(session,bolt,source)
+        self.assertEqual(3,engine.state.cards[source.object_id].marked_damage)
+        while session.pending_principals()[0]!='pilot:A':
+            self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        activation=next(row for row in actions if row['id'].startswith('activate:'+source.ref+':'))
+        accepted=session.act('pilot:A',{'action_id':activation['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        self.cast_color_control(session,zombie)
+        current=engine.state.cards[source.object_id]
+        self.assertEqual('battlefield',current.zone)
+        self.assertTrue(current.tapped)
+        self.assertEqual(0,current.marked_damage)
+        self.assertEqual((3,3),(engine._numeric_stat(current.object_id,'power'),engine._numeric_stat(current.object_id,'toughness')))
+        self.replay(session,load=True)
+
+
+class MostCommonColorContractTests(unittest.TestCase):
+    def test_color_count_fact_round_trip_parameters_and_legacy_versions_are_strict(self):
+        from dataclasses import replace
+        from quorune.continuous_conditions import FixedPublicStateConditionSpec, FixedPublicStateConditionKind, FixedPublicStateFact
+        spec = FixedPublicStateConditionSpec(FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST,
+            amount=1, fact=FixedPublicStateFact.PERMANENT_COLOR_IS_MOST_COMMON, fact_parameter='R', schema_version=7)
+        self.assertEqual(spec, FixedPublicStateConditionSpec.from_dict(spec.to_dict()))
+        for change in ({'schema_version':True}, {'schema_version':3}, {'schema_version':4}, {'amount':2},
+                {'fact_parameter':'red'}, {'fact_parameter':'C'}, {'fact_parameter':''}, {'fact_parameter':'WU'}):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                replace(spec, **change)
+        bad = {**spec.to_dict(), 'unexpected':True}
+        with self.assertRaises(ValueError):
+            FixedPublicStateConditionSpec.from_dict(bad)
+
+    def test_color_ties_multicolor_colorless_phasing_and_public_boundaries(self):
+        from types import SimpleNamespace
+        from quorune.card_programs.runtime import _FixedPublicStateSnapshotResolver
+        from quorune.object_query import ObjectQueryResult
+        from quorune.continuous_conditions import FixedPublicStateConditionSpec, FixedPublicStateConditionKind, FixedPublicStateFact
+        def fact(color):
+            return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST,
+                amount=1, fact=FixedPublicStateFact.PERMANENT_COLOR_IS_MOST_COMMON, fact_parameter=color, schema_version=7)
+        def count(rows, color):
+            cards={row.object_id:SimpleNamespace(object_id=row.object_id,zone=row.zone,phased_out=row.phased_out) for row in rows}
+            by_id={row.object_id:row for row in rows}
+            reads=[]
+            resolver=_FixedPublicStateSnapshotResolver(SimpleNamespace(cards=cards),
+                lambda card:(reads.append(card.object_id) or by_id[card.object_id]),None)
+            value=resolver._public_fact_quantity(None,fact(color))
+            self.assertTrue(all(by_id[key].zone=='battlefield' and not by_id[key].phased_out for key in reads))
+            return value
+        def row(key, colors, **kwargs):
+            return ObjectQueryResult(key,key,'Public diagnostic','A','B','battlefield',colors=tuple(colors),**kwargs)
+        from dataclasses import replace
+        five=row('five','WUBRG',types=('artifact',))
+        for color in 'WUBRG':
+            with self.subTest(color=color):
+                self.assertEqual(1,count([],color))
+                self.assertEqual(1,count([five],color))
+        red=row('red','R');blue=row('blue','U');second=row('blue2','U')
+        self.assertEqual(1,count([red,blue],'R'))
+        self.assertEqual(0,count([red,blue,second],'R'))
+        self.assertEqual(1,count([red,blue,replace(second,phased_out=True)],'R'))
+        self.assertEqual(1,count([red,blue,replace(second,zone='hand')],'R'))
+        self.assertEqual(1,count([red,blue,row('colorless','',types=('artifact',))],'R'))
+        self.assertEqual(0,count([five,blue],'R'))
+        resolver=_FixedPublicStateSnapshotResolver(SimpleNamespace(cards={}),None,None)
+        self.assertIsNone(resolver._public_fact_quantity(None,fact('R')))

@@ -10,7 +10,7 @@ from ..errors import GameRuleError
 from ..model import StackItem
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..spell_copy_engine_adapter import dispatch_normalized_spell_copy_event
-from ..storm import STORM_SEMANTIC_KEY, validated_storm_trigger
+from ..storm import STORM_SEMANTIC_KEY, SPELL_COPY_TRIGGER_KEYS, validated_spell_copy_trigger
 from .copy_targets import copy_target_public_schema, prepare_copy_targets
 from .model import (
     SelectionContinuation,
@@ -66,7 +66,7 @@ class StormTargetChoiceOwnerMixin:
         )
 
     def _prepare_storm_resolution(self, item: StackItem) -> None:
-        count, template = validated_storm_trigger(item)
+        count, template = validated_spell_copy_trigger(item)
         if count == 0:
             self.state.stack.remove(item)
             self._log(
@@ -116,7 +116,7 @@ class StormTargetChoiceOwnerMixin:
                 item.controller: {
                     "stack": item.ref,
                     "prompt": (
-                        "Choose targets for each storm copy, or keep the "
+                        f"Choose targets for each {str(item.semantic_key).removeprefix('builtin:')} copy, or keep the "
                         "copied targets."
                     ),
                     "copies": copies,
@@ -158,12 +158,12 @@ class StormTargetChoiceOwnerMixin:
                     candidate
                     for candidate in self.state.stack
                     if candidate.ref == legacy_stack_ref
-                    and candidate.semantic_key == STORM_SEMANTIC_KEY
+                    and candidate.semantic_key in SPELL_COPY_TRIGGER_KEYS
                 ),
                 None,
             )
             if legacy_trigger is not None:
-                legacy_count, legacy_template = validated_storm_trigger(
+                legacy_count, legacy_template = validated_spell_copy_trigger(
                     legacy_trigger
                 )
                 legacy = SelectionContinuation(
@@ -201,7 +201,7 @@ class StormTargetChoiceOwnerMixin:
                 candidate
                 for candidate in self.state.stack
                 if candidate.ref == selection.stack_ref
-                and candidate.semantic_key == STORM_SEMANTIC_KEY
+                and candidate.semantic_key in SPELL_COPY_TRIGGER_KEYS
             ),
             None,
         )
@@ -209,7 +209,7 @@ class StormTargetChoiceOwnerMixin:
             raise GameRuleError("The storm trigger is no longer on the stack")
         if trigger.controller != seat:
             raise GameRuleError("Storm choice controller changed")
-        count, template = validated_storm_trigger(trigger)
+        count, template = validated_spell_copy_trigger(trigger)
         if "selection" in raw_continuation:
             payload = thaw_value(selection.payload)
             if selection.source_ref != self._stack_source_ref(trigger):
@@ -329,8 +329,8 @@ class StormTargetChoiceOwnerMixin:
                 )
         self._log(
             seat,
-            "stack.storm.copy",
-            f"{seat} created {len(copies)} storm copy/copies.",
+            "stack." + str(trigger.semantic_key).removeprefix("builtin:") + ".copy",
+            f"{seat} created {len(copies)} {str(trigger.semantic_key).removeprefix('builtin:')} copy/copies.",
             {
                 "source_trigger": trigger.ref,
                 "copies": [copy_item.ref for copy_item in copies],

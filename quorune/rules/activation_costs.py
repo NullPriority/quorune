@@ -61,13 +61,23 @@ def pay_counted_zone_change_activation_cost(
     """Validate a complete fixed cost, then commit one simultaneous zone batch."""
     cost = choice.fixed_zone_change_cost()
     raw = response.get('cost_cards') or response.get('cost_objects') or []
+    return pay_fixed_zone_change_cost(host, actor=actor, cost=cost, refs=raw,
+        response=response, reason='activated ability cost',
+        exclude_object_id=source.object_id if choice.another else None)
+
+
+def pay_fixed_zone_change_cost(host, *, actor, cost, refs, response, reason,
+        exclude_object_id=None):
+    """Revalidate and pay a typed object cost through one canonical zone batch."""
+    raw = refs
     if (
         cost is None or cost.count < 1 or not isinstance(raw, (list, tuple))
         or len(raw) != cost.count or any(type(ref) is not str for ref in raw)
         or len(set(raw)) != len(raw)
     ):
         raise GameRuleError('Activation requires its complete distinct selected cost')
-    legal = activation_choice_candidates(host, actor, source, choice)
+    legal = fixed_zone_change_cost_candidates(host, actor=actor, cost=cost,
+        exclude_object_id=exclude_object_id)
     if any(ref not in legal for ref in raw):
         raise GameRuleError('Activation cost object is stale or ineligible')
     cards = tuple(host._resolve_object(
@@ -79,7 +89,7 @@ def pay_counted_zone_change_activation_cost(
     selections = counted_activation_replacement_selections(response, tuple(card.ref for card in cards))
     host._move_cards_simultaneously(
         tuple((card.object_id, cost.destination_zone) for card in cards),
-        reason='activated ability cost', replacement_selections=tuple(selections),
+        reason=reason, replacement_selections=tuple(selections),
         transition_kinds={card.object_id: cost_transition_kind(cost.log_kind) for card in cards},
     )
     return [card.object_id for card in cards]

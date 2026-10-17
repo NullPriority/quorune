@@ -94,6 +94,10 @@ def reviewed_effect_template_composition(
 ) -> CompiledEffectTemplate:
     """Compile one reviewed effect or a closed composition of those effects."""
 
+    from .fixed_stack_spell_copy import fixed_stack_spell_copy_template
+    spell_copy = fixed_stack_spell_copy_template(text)
+    if spell_copy is not None:
+        return spell_copy
     atomic = compile_atomic(text)
     if atomic[0] is not None:
         return atomic

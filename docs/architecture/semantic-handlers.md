@@ -134,7 +134,12 @@ and source-pinned transform owner. The activation context captures the current
 transform count, while source-zone-object substitution rechecks incarnation.
 Shared current-face keyword queries consume trusted compiled keyword programs,
 so transforming removes old-face keywords while retaining costs and independent
-new-face abilities.
+new-face abilities. For a qualified Landwalk label omitted by the provider's
+keyword index, only an exact current printed-keyword declaration supplies the
+missing base characteristic. Conditional, stale or wrong-face declarations do
+not supply it. Copyable values capture that printed fact before later ability
+removal; copied and token values retain their own captured keyword data.
+Whole-card command admission remains a separate authority.
 
 Enlist's optional declaration taps and linked reflexive program use the
 existing tap, scalar, APNAP and continuous-effect owners. The trigger context

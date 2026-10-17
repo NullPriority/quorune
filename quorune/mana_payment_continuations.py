@@ -74,6 +74,7 @@ def issue_mana_payment_replacement_choice(
         resume_kind = "priority_action_cost"
     elif event_kinds == ("zone.change",) and action in {
         "cast",
+        "turn_face_up",
         "suspend",
         "stage_cast_lifecycle",
     }:

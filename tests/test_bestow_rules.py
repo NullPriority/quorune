@@ -175,7 +175,7 @@ class FixedManaBestowCompilerTests(unittest.TestCase):
 
         assert_exact()
         with patch(
-            "quorune.compiler.keyword_nodes.fixed_mana_bestow_keyword_node",
+            "quorune.compiler.casting_keyword_nodes.fixed_mana_bestow_keyword_node",
             return_value=None,
         ):
             with self.assertRaises(AssertionError):

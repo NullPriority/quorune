@@ -129,16 +129,109 @@
     ["stack_resolution", "triggers"]
   ],
   "ambient_high_risk_piece_pairs": [
+    [
+      "capability.attachment.aura.simple_object",
+      "capability.combat.block.landwalk.as_though"
+    ],
+    [
+      "capability.attachment.equip.fixed_mana",
+      "capability.combat.block.landwalk.qualified_type"
+    ],
+    ["capability.attachment.equip.fixed_mana", "capability.zone.entry.fixed_copy"],
     ["capability.casting.additional_cost.fixed_counter_placement", "capability.counter.placement.quantity_replacement"],
     ["capability.casting.additional_cost.fixed_sacrifice", "capability.trigger.event.normalized_zone_change"],
     ["capability.casting.additional_cost.fixed_sacrifice", "capability.zone.change.destination_replacement"],
     ["capability.casting.additional_cost.zone_change.fixed_discard", "capability.zone.change.destination_replacement"],
+    ["capability.casting.disguise.fixed_mana", "capability.keyword_action.manifest.card"],
+    ["capability.casting.disguise.fixed_mana", "capability.token.creation.fixed_definition"],
+    ["capability.casting.disguise.fixed_mana", "capability.trigger.event.normalized_public_action"],
+    ["capability.casting.multikicker.fixed_mana", "capability.replacement.multikicker.named_entry_counters"],
     ["capability.combat.attack.vigilance", "capability.counter.characteristic.keyword"],
+    ["capability.combat.block.capacity", "capability.combat.block.capacity.temporary"],
+    ["capability.combat.block.capacity", "capability.zone.entry.fixed_copy"],
+    ["capability.combat.block.capacity.temporary", "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"],
+    ["capability.combat.block.capacity.temporary", "capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn"],
+    ["capability.combat.block.capacity.temporary", "capability.permanent.untap.effect"],
+    ["capability.combat.block.capacity.temporary", "capability.resolution.effect_program.bound_references"],
+    ["capability.combat.block.capacity.temporary", "capability.resolution.effect_program.closed_components"],
+    ["capability.combat.block.capacity.temporary", "capability.target.revalidate_resolution"],
+    ["capability.combat.block.capacity.temporary", "capability.zone.linked_exile_return.fixed"],
+    [
+      "capability.combat.block.flying",
+      "capability.combat.block.landwalk.as_though"
+    ],
     ["capability.combat.block.flying", "capability.counter.characteristic.keyword"],
+    [
+      "capability.combat.block.landwalk.as_though",
+      "capability.combat.block.landwalk.basic_type"
+    ],
+    [
+      "capability.combat.block.landwalk.as_though",
+      "capability.combat.block.landwalk.qualified_type"
+    ],
+    [
+      "capability.combat.block.landwalk.as_though",
+      "capability.continuous.attached.fixed_characteristics"
+    ],
+    [
+      "capability.combat.block.landwalk.as_though",
+      "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+    ],
+    [
+      "capability.combat.block.landwalk.as_though",
+      "capability.permanent.destroy.effect"
+    ],
+    [
+      "capability.combat.block.landwalk.as_though",
+      "capability.permanent.return.owner_hand"
+    ],
+    [
+      "capability.combat.block.landwalk.as_though",
+      "capability.zone.entry.fixed_copy"
+    ],
+    [
+      "capability.combat.block.landwalk.as_though",
+      "capability.zone.linked_exile_return.fixed"
+    ],
+    [
+      "capability.combat.block.landwalk.qualified_type",
+      "capability.continuous.attached.fixed_characteristics"
+    ],
+    [
+      "capability.combat.block.landwalk.qualified_type",
+      "capability.continuous.basic_land_type.add_all_lands"
+    ],
+    [
+      "capability.combat.block.landwalk.qualified_type",
+      "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+    ],
+    [
+      "capability.combat.block.landwalk.qualified_type",
+      "capability.permanent.return.owner_hand"
+    ],
+    [
+      "capability.combat.block.landwalk.qualified_type",
+      "capability.zone.entry.fixed_copy"
+    ],
     ["capability.combat.block.menace", "capability.counter.characteristic.keyword"],
     ["capability.combat.damage.assignment.deathtouch", "capability.counter.characteristic.keyword"],
     ["capability.combat.damage.assignment.trample", "capability.counter.characteristic.keyword"],
     ["capability.combat.damage.participation.strike_steps", "capability.counter.characteristic.keyword"],
+    ["capability.combat.declaration.typed_components", "capability.continuous.characteristics.fixed_public_state"],
+    ["capability.continuous.attached.fixed_characteristics", "capability.continuous.characteristics.fixed_public_state"],
+    ["capability.continuous.attached.fixed_characteristics", "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"],
+    ["capability.continuous.attached.fixed_characteristics", "capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn"],
+    ["capability.continuous.attached.fixed_characteristics", "capability.permanent.destroy.effect"],
+    ["capability.continuous.attached.fixed_characteristics", "capability.zone.entry.fixed_copy"],
+    ["capability.continuous.characteristics.fixed_public_state", "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"],
+    ["capability.continuous.characteristics.fixed_public_state", "capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn"],
+    ["capability.continuous.characteristics.fixed_public_state", "capability.damage.amount.positive"],
+    ["capability.continuous.characteristics.fixed_public_state", "capability.damage.result.multitype_permanent"],
+    ["capability.continuous.characteristics.fixed_public_state", "capability.permanent.destroy.effect"],
+    ["capability.continuous.characteristics.fixed_public_state", "capability.permanent.destroy.state_based_damage"],
+    ["capability.continuous.characteristics.fixed_public_state", "capability.permanent.regeneration.self_activation"],
+    ["capability.continuous.characteristics.fixed_public_state", "capability.permanent.return.owner_hand"],
+    ["capability.continuous.resolution.fixed_characteristics_until_end_of_turn", "capability.zone.entry.fixed_copy"],
     ["capability.counter.characteristic.keyword", "capability.counter.placement.quantity_replacement"],
     ["capability.counter.characteristic.keyword", "capability.damage.result.deathtouch"],
     ["capability.counter.characteristic.keyword", "capability.damage.result.lifelink"],
@@ -155,7 +248,11 @@
       "capability.library.search.fixed_counted",
       "capability.zone.change.destination_replacement"
     ],
+    ["capability.state_query.permanent.public_state_predicate", "capability.zone.entry.fixed_copy"],
+    ["capability.target.protection.hexproof_permanent", "capability.zone.entry.fixed_copy"],
+    ["capability.timing.cast.printed_flash", "capability.zone.entry.fixed_copy"],
     ["capability.trigger.event.normalized_zone_change", "capability.zone.change.destination_replacement"],
+    ["capability.trigger.keyword.cascade", "capability.zone.entry.fixed_copy"],
     ["capability.zone.entry.tapped_state", "mechanic.cr-616-interaction-of-replacement-and-or-prevention-effects"]
   ],
   "complex_card_weights": {

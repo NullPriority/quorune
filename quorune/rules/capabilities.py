@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..landwalk import QUALIFIED_LANDWALK_KEYWORDS
 from .counter_placement_capability_shapes import counter_placement_covered_mechanics
 from .control_capability_shapes import fixed_control_node_capabilities
 from .city_blessing_shapes import ascend_spell_node_capabilities
@@ -298,6 +299,10 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'half-affected-player-domain-choice': ('choice.affected_player.half_domain',),
     'fixed-token-typed-ability-definition': ('token.creation.typed_ability_definition',),
     'fixed-spree-mode-costs': ('casting.additional_cost.spree_fixed_modes',),
+    'fixed-entwine-mode-costs': ('casting.additional_cost.entwine_fixed_modes',),
+    'overload': ('casting.alternative_cost.overload_fixed_mana',),
+    'cleave': ('casting.alternative_cost.cleave_fixed_mana',),
+    'fixed-stack-spell-copy': ('stack.copy.fixed_instant_or_sorcery', 'target.revalidate_resolution'),
     'fixed-public-event-set-counter':('counter.producer.fixed_public_set_event',),
     'ascend':('player.designation.citys_blessing',),
     **{name: ('keyword_action.manifest.card',) for name in ('manifest', 'cr-701-manifest')}, 'manifest dread': ('keyword_action.manifest_dread',), 'predefined-role-token': ('token.creation.predefined_role',),
@@ -342,6 +347,10 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     **{
         mechanic: ("combat.block.landwalk.basic_type",)
         for mechanic in _BASIC_LANDWALK_MECHANICS
+    },
+    **{
+        mechanic: ("combat.block.landwalk.qualified_type",)
+        for mechanic in QUALIFIED_LANDWALK_KEYWORDS
     },
     _DEFENDER_MECHANIC: ("combat.attack.defender",),
     _MENACE_MECHANIC: ("combat.block.menace",),
@@ -454,6 +463,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
         FIXED_SOURCE_CHARACTERISTIC_CAPABILITY,
     ),
     "fixed-temporary-defender-permission": ("combat.attack.defender_permission.temporary",),
+    "fixed-temporary-block-capacity": ("combat.block.capacity.temporary",),
     "temporary-as-unblocked-assignment": ("combat.damage.assignment.as_unblocked",),
     "temporary-toughness-assignment": ("combat.damage.assignment.toughness",),
     _FIXED_CONTROLLER_SEQUENCE_MECHANIC: (
@@ -481,6 +491,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         'half-affected-player-domain-choice',
         'fixed-token-typed-ability-definition',
         'fixed-spree-mode-costs',
+        'fixed-entwine-mode-costs',
         'fixed-public-event-set-counter',
         'ascend',
         "fixed-extra-turn-after-current",
@@ -500,7 +511,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         "return-to-owner-hand",
         _FIXED_TARGET_SEQUENCE_MECHANIC,
         _FIXED_SOURCE_SEQUENCE_MECHANIC,
-        FIXED_SOURCE_CHARACTERISTIC_MECHANIC, "fixed-temporary-defender-permission", "temporary-as-unblocked-assignment", "temporary-toughness-assignment",
+        FIXED_SOURCE_CHARACTERISTIC_MECHANIC, "fixed-temporary-defender-permission", "temporary-as-unblocked-assignment", "temporary-toughness-assignment", "fixed-temporary-block-capacity",
         _FIXED_CONTROLLER_SEQUENCE_MECHANIC,
         _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC,
         FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC,
@@ -1084,8 +1095,10 @@ def _targeted_effect_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanics: set[str],
 ) -> set[str]:
+    from .stack_spell_copy_shapes import fixed_stack_spell_copy_node_capabilities
     dependencies: set[str] = set()
     for resolver in (
+        fixed_stack_spell_copy_node_capabilities,
         fixed_extra_turn_node_capabilities,
         ascend_spell_node_capabilities,
         public_event_counter_set_node_capabilities,

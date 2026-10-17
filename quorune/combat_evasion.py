@@ -3,7 +3,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from . import aerial_blocking
-from .landwalk import basic_landwalk_block_verdict
+from .landwalk import (
+    LANDWALK_KEYWORDS, LandwalkLandCharacteristics,
+    basic_landwalk_block_verdict, landwalk_block_verdict,
+)
 
 
 FEAR_KEYWORD = "fear"
@@ -40,7 +43,7 @@ _REJECTION_REASONS = frozenset(
         "attacker_has_swampwalk",
         "attacker_has_mountainwalk",
         "attacker_has_forestwalk",
-    }
+    } | {"attacker_has_" + keyword.replace(" ", "_") for keyword in LANDWALK_KEYWORDS}
 )
 
 
@@ -128,7 +131,8 @@ class CombatEvasionVerdict:
 def combat_evasion_verdict(
     attacker: CombatantEvasionCharacteristics,
     blocker: CombatantEvasionCharacteristics,
-    defending_land_types: frozenset[str],
+    defending_land_types: frozenset[str] | tuple[LandwalkLandCharacteristics, ...],
+    *, ignored_landwalk_keywords: frozenset[str] = frozenset(),
 ) -> CombatEvasionVerdict:
     """Compose represented ordinary evasion restrictions fail-closed."""
 
@@ -141,10 +145,11 @@ def combat_evasion_verdict(
 
     # Validate every represented family before returning a restriction from
     # another family, so an unsupported landwalk variant cannot be masked.
-    landwalk = basic_landwalk_block_verdict(
-        attacker.keywords,
-        defending_land_types,
-    )
+    landwalk = (basic_landwalk_block_verdict(attacker.keywords, defending_land_types,
+            ignored_keywords=ignored_landwalk_keywords)
+        if isinstance(defending_land_types, frozenset)
+        else landwalk_block_verdict(attacker.keywords, defending_land_types,
+            ignored_keywords=ignored_landwalk_keywords))
     aerial = aerial_blocking.aerial_block_verdict(
         attacker.keywords,
         blocker.keywords,

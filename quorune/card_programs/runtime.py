@@ -144,6 +144,8 @@ class _FixedPublicStateSnapshotResolver:
         fact = condition.fact
         if not isinstance(fact, FixedPublicStateFact):
             return None
+        if fact is FixedPublicStateFact.PERMANENT_COLOR_IS_MOST_COMMON:
+            return self._most_common_color_quantity(condition)
         if fact in {
             FixedPublicStateFact.CONTROLLER_GRAVEYARD_DISTINCT_CARD_TYPES,
             FixedPublicStateFact.CONTROLLER_GRAVEYARD_DISTINCT_MANA_VALUES,
@@ -157,6 +159,21 @@ class _FixedPublicStateSnapshotResolver:
         }:
             return self._player_fact_quantity(source, fact)
         return self._history_fact_quantity(source, condition)
+
+    def _most_common_color_quantity(self, condition: FixedPublicStateConditionSpec) -> int | None:
+        if self.public_object_resolver is None:
+            return None
+        counts = dict.fromkeys('WUBRG', 0)
+        for candidate in self.state.cards.values():
+            if candidate.zone != 'battlefield' or candidate.phased_out:
+                continue
+            row = self._public_object(candidate)
+            assert row is not None
+            for color in set(row.colors):
+                if color not in counts:
+                    raise SemanticNodeError('A current public permanent color is malformed')
+                counts[color] += 1
+        return int(counts[str(condition.fact_parameter)] >= max(counts.values()))
 
     def _graveyard_fact_quantity(
         self,

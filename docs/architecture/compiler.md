@@ -9,11 +9,52 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+`compiler/cleave_spell_faces.py` derives normal and bracket-removed forms,
+including ordinary ordered body paragraphs. It shares paired-program assembly
+with Overload while preserving each form's target schema. Balanced source
+brackets, both complete leaf closures and distinct body fingerprints are
+required before either program is admitted. An unrepresented source or sibling
+keeps the whole spell residual.
+
+`compiler/overload_spell_faces.py` derives and validates both fixed Overload
+bodies at the whole-spell boundary. The normal physical spell and its separate
+target-free derived program retain the original source identity and spans.
+Generated-program lowering preserves their distinct identities; the adapter
+requires the derived program instead of silently admitting only the normal
+body. A declined pair keeps the keyword residual.
+
+Current source-pinned, trusted historical Overload programs retain their
+reviewed declared alternatives through the existing cost owner. This
+compatibility path requires the original reviewed program and target-free
+alternative; it does not admit incomplete generated pairs or add typed support.
+
+`compiler/fixed_stack_spell_copy.py` lowers the closed instant/sorcery copy
+clause, including its optional current-controller restriction. The activated
+effect gate delegates this same shape to capability validation. Parent cards
+with unclosed siblings retain their residuals and cannot execute the new copy
+program through strict source validation.
+
+`compiler/casting_keyword_nodes.py` owns the ordered dispatch of closed
+casting-cost keyword productions. It retains the existing lowering order and
+passes source-record context only to productions that require it. Ordinary
+Conspire uses this path to bind one complete printed tap-cost and copy-trigger
+declaration. The existing keyword entry points remain available; mutation
+witnesses patch the dispatch owner's actual lowerers.
+
 Public-quantity mana keeps its existing typed source-excluding count producer
 before consulting the newer live resolution count fallback. Existing optional
 source counters on admitted sacrifice and discard subscriptions keep the
 ordinary put-or-decline choice; that composition does not admit optional bodies
 for independently unclosed public-event families.
+
+Closed “Whenever you cycle or discard a card” wording lowers to the existing
+discard occurrence. Cycling pays a discard cost, so this subscription triggers
+once for that card rather than independently subscribing to both events. The
+“another card” form also excludes the observer. Existing controller predicates,
+current battlefield ability presence, APNAP placement and independently closed
+result bodies retain their ordinary owners. Source-directed results bind the
+triggering source's incarnation, so departure cannot retarget a returned object.
+Other event unions remain residual.
 
 Fixed positive Rampage values lower to typed combat-trigger fragments, preserving
 each printed instance. The existing block-transition and continuous-effect
@@ -594,12 +635,16 @@ check. Layer-4 animation feeds the existing cycle-safe dynamic-characteristic
 boundary before layer-7a counts, and the state-based owner detaches Equipment
 that becomes a creature. Dynamic or
 chosen values, copies, text or control changes, declaration riders,
-Protection, qualified landwalk, Banding, unsupported keywords, and non-until-end-of-turn
+Protection, unrepresented landwalk predicates, Banding, unsupported keywords, and non-until-end-of-turn
 durations remain source-spanned residuals.
-The shared map includes Plainswalk, Islandwalk, Swampwalk, Mountainwalk, and
-Forestwalk. Each grant requires the basic-land-type evasion consumer; actual
-blocking follows the defending player's current land subtypes, including
-nonbasic lands with a matching subtype.
+The shared map retains the five basic landwalk variants and adds Desertwalk,
+artifact, Legendary, nonbasic, Snow, and Snow/basic-land-type predicates.
+Ordinary grants retain the basic-land-type consumer; qualified grants declare
+the qualified Landwalk consumer. Blocking reads each defending phased-in
+land's current effective types, subtypes and supertypes. One land must satisfy
+every part of a compound predicate. Nonbasic means the absence of the Basic
+supertype, independently of basic land subtypes. Other evasion restrictions
+still apply.
 
 The same resolution-characteristic owner accepts a closed version-2 fixed
 animation or base-setting instruction. `compiler/fixed_resolution_characteristics.py`
@@ -949,9 +994,23 @@ a creature currently controlled by the condition player. Event and resolution
 consumers require the explicit numeric-condition capability and read complete
 effective stats. Static characteristic productions, aggregate total power,
 variable thresholds and linked numeric facts remain residual.
-Most-common or tied comparisons, dynamic amounts, top-library, chosen,
+Schema-seven public facts compare one printed color against all five current
+permanent color counts. The layer-5 public query includes each color of a
+multicolored permanent once, excludes phased-out objects, and reads every
+battlefield seat. A tie includes all-zero counts; colorless is not a sixth
+color. The condition follows current color and zone changes before state-based
+stabilization and does not inspect hidden card identities.
+
+Complete enchanted-creature additive stat clauses may also provide a fixed
+otherwise branch. The compiler combines an unconditional otherwise modifier
+with the difference between the two fixed branches under the live recipient
+condition. Both components retain the same source and attachment lifetime.
+Otherwise branches that set base statistics or change permissions remain
+residual.
+
+Other most-common or tied domains, dynamic amounts, top-library, chosen,
 hidden-identity, city blessing, dungeon, initiative, speed, sticker, crime,
-dice, open arithmetic, otherwise branches, per-opponent aggregate, unowned
+dice, open arithmetic, unrepresented otherwise branches, per-opponent aggregate, unowned
 history/designation, quoted-ability, type, color, ability-removal, Class-level,
 Protection, Ward, and unsupported-keyword forms remain source-spanned
 residuals. See
@@ -1306,16 +1365,23 @@ resolving permanent retain the choice as copiable values; ordinary zone reset
 restores printed characteristics on other transitions. Variable sizes, complex
 mana symbols and independently unsupported siblings remain residual.
 
-`compiler/keyword_nodes.py` owns one closed ordinary fixed-mana Morph
-production. It lowers the turn-up cost to a typed all-zone runtime component;
+`compiler/keyword_nodes.py` owns fixed-mana Morph, Megamorph and Disguise
+productions. They lower the turn-up cost to a typed all-zone runtime component;
 the casting proposal owner separately supplies the face-down `{3}` creature-
 spell alternative, suppresses printed costs and abilities, and retains
-external cost modifiers that apply to the represented face-down spell. The
-same descriptor later authorizes a controller-only no-stack turn-face-up
-action through the current effective-keyword boundary. Megamorph, variable,
-hybrid, Phyrexian, snow, nonmana, copied, granted, text-changed, multiface,
-merged, and residual turn-up families remain source-spanned residuals or
-fail-closed runtime exclusions.
+external cost modifiers that apply to the represented face-down spell.
+Disguise retains its face-down Ward, while Megamorph places its counter before
+turn-up triggers. The same descriptor later authorizes a controller-only
+no-stack turn-face-up action through the current effective-keyword boundary.
+Ordinary descriptors retain their original serialized shape. Schema-two
+descriptors add fixed two-color hybrid symbols and reuse the existing immutable
+mana-option expansion. Each currently payable combination has its own offer,
+with its chosen cost bound into the action identity and fingerprint. Commit
+revalidates that option and pays its complete requirements through the canonical
+mana payer without a spell or activated-ability spending context. Pending load
+and replay retain the same selection. Variable, monocolored hybrid, Phyrexian,
+snow, nonmana, conditionally reduced, copied, granted, text-changed, multiface,
+merged and residual turn-up families retain their source-spanned exclusions.
 
 `compiler/cascade_nodes.py` owns ordinary printed Cascade as one independently
 source-spanned stack-zone trigger per instance. The casting transaction
@@ -1630,6 +1696,11 @@ then requires the source grammar, emitted effects, target relation, closed
 capability shape, and declared capability closure to agree. The normal pinned
 corpus includes the fixed source Exploit result as a composing carrier; its
 inner target effect retains the same independent grammar and shape checks.
+For paired Overload and Cleave sources, the audit reconstructs each resolution
+body from the retained printed source and checks the fixed price, program role,
+body fingerprint, and alternative-cost capability before the ordinary target
+grammar checks. A keyword declaration cannot become part of the leaf body or
+hide a changed target or price from assurance.
 The compiler census derives grammatical shapes and representative identities from
 the complete corpus; it does not maintain a card list. Its synthetic contract
 also covers every accepted keyword, spell/trigger/activation context,
@@ -1861,11 +1932,24 @@ source-spanned residuals or explicit unsupported-interaction boundaries.
 
 ## Invariants
 
-Fixed keyword producers admit the five basic landwalk variants and ordinary
-Horsemanship through their existing block-legality capability owners. Live
-queried and attached grants use current recipient relationships, while exact
-resolution-locked grants retain their existing incarnation and duration rules.
-Chosen or qualified landwalk and as-though evasion overrides remain residual.
+Fixed keyword producers use the ordinary and qualified Landwalk consumers and
+the existing Horsemanship owner. Live queried and attached grants use current
+recipient relationships, while resolution-locked grants retain their existing
+incarnation and duration rules. Missing provider keyword indexes do not erase
+an exact trusted printed qualified-Landwalk declaration. That fact enters the
+ordinary base-characteristic pipeline before ability removal, face-down
+changes and copiable-value capture. Chosen or varying landwalk types,
+unrepresented compound predicates and other as-though domains remain residual.
+
+Fixed Landwalk block permissions compile as source-owned rule fragments.
+Named variants select that exact keyword, while all-Landwalk wording selects
+the represented family. They leave every ability present and alter only the
+Landwalk check for a proposed block. Global sources apply to every blocker;
+attached-blocker sources require the current reciprocal attachment identity.
+A fixed attached stat modifier may share the same complete clause without
+granted ability text. Source ability loss or departure ends its rule, while
+recipient ability loss does not remove an Aura-owned rule. Other evasion,
+restrictions, requirements and costs retain their own owners.
 
 Fading, Graft and Vanishing lower their separate entry and lifecycle abilities to
 the current counter and trigger owners. Graft emits a non-targeted optional

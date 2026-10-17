@@ -806,6 +806,38 @@ workflow. Architectural rationale remains in
 [ADR 0011](../adr/0011-counter-placement-event-and-mutation-owner.md), and
 [ADR 0008](../adr/0008-runtime-trust-and-governance-hardening.md).
 
+### Fixed attached otherwise stats
+
+Complete fixed additive P/T alternatives on an enchanted creature use the
+existing attached and public-condition owners. The compiler emits the
+otherwise modifier as a source-bound base and adds the difference between the
+two printed modifiers while the recipient condition holds. Both components
+remain ordinary layer-7c modifications with one attachment and source lifetime.
+
+The condition reads the enchanted creature's current color, types or combat
+state, independently of the Aura and either controller. Recipient ability
+removal does not remove its Aura effects. Source departure removes both stat
+components, and resulting toughness follows ordinary state-based actions.
+Base-setting, permission, variable and unrepresented otherwise branches stay
+outside this fixed additive production.
+
+### Qualified copy-entry choices
+
+Intrinsic copy entry keeps its historical schema-1 selection contract. A
+schema-2 descriptor adds closed public Equipment, nonland, fixed current-power
+and entered-this-turn predicates through the same replacement owner. The
+prospective entry controller supplies any relative controller relation. These
+choices do not target, so Hexproof and Shroud do not remove eligible choices.
+
+Eligibility reads current characteristics and the current incarnation's public
+entry history. The selected copy then retains separate copiable values,
+excluding temporary stat changes, counters, attachment state and unrelated
+effects. Typed copied programs and entry replacements keep their existing
+ownership. Cascade may put a permanent onto the battlefield in time to become
+an eligible copy source, including during another player's turn. Hidden-zone,
+unknown-exception and unrepresented recursive copy forms remain outside this
+contract.
+
 ### Conditional queried declaration grants
 
 `compiler/conditional_declaration_grants.py` composes an independently closed
@@ -822,6 +854,18 @@ ability loss, control changes, and query membership changes recompute it. The
 existing layer-6 and combat declaration owners govern both blocker domains and
 accepted commands. Source-relative opposing-controller rules and incomplete
 conditions or sibling clauses remain residual.
+
+### Temporary blocking capacity
+
+Plain instructions allowing one referenced creature to block additional or
+unlimited creatures this turn create `ResolvedBlockCapacityRule` values in the
+existing duration journal. They retain the affected incarnation, accumulate
+separate additional permissions and survive later ability removal. A departed
+or returned incarnation cannot inherit a pending or resolved permission.
+Direct creature targets use ordinary resolution revalidation; an optional fixed
+power/toughness modifier remains a separate characteristic component. Cleanup
+expires both components through the existing journal owner. Blocking capacity
+does not waive evasion, tapped-state or other declaration restrictions.
 
 ### Conditional chosen characteristics
 
@@ -889,10 +933,175 @@ base. The shared affordability, target validation and payment owners enforce
 that binding; resolution retains printed mode order and ordinary copy behavior.
 Variable prices and incomplete mode bodies remain residual.
 
+### Fixed Entwine mode costs
+
+`EntwineModeCost` binds one fixed additional mana vector to every mode of a
+complete choose-one spell. The version-1 `entwine` cost schema admits one
+ordinary mode or all printed modes. Intermediate subsets, repeated modes,
+variable or complex prices, and unresolved sibling modes remain residual.
+
+The existing cost-option and target owners bind each selection before total
+cost reductions and payment. Choosing all modes adds the Entwine price once,
+including when a typed permission waives the base mana cost. Resolution uses
+printed order, so later modes observe the results of earlier ones. The same
+public mode and cost-option fields serve offers and accepted commands.
+
+### Fixed mana Emerge alternatives
+
+`FixedManaEmergeSpec` declares one ordinary mana alternative for a normal
+creature card. The cost owner binds each option to a selected controlled
+creature's current incarnation and mana value. The existing sacrifice-cost
+owner retains selection, payment, owner-zone routing and committed events.
+
+Emerge reduces generic mana in the total after cost increases; excess reduction
+cannot pay colored or colorless obligations. A selected creature may tap for
+mana before being sacrificed. Validation after mana payment requires that same
+incarnation to remain available. Offers and submissions share the selected
+option and existing sacrifice-card fields, including their ordinary aliases.
+Copied characteristics supply current mana value. An ordinary cast retains its
+printed cost, mana value and cast triggers without an Emerge sacrifice.
+Complex prices, qualified sacrifices, other card forms and unresolved
+Emerge-paid result bodies remain outside this family.
+
+### Fixed mana Replicate and repeated additional payments
+
+`FixedRepeatedManaCostSpec` and the common optional-cost expansion represent
+source-pinned positive ordinary-mana costs and immutable paid counts. The
+Multikicker and Replicate owners retain distinct descriptors, cost options and
+count fields while sharing that arithmetic. Additional payments enter the
+total before increases and reductions and remain optional with a free base.
+
+`FixedManaReplicateSpec` binds one complete printed instance on a normal
+instant or sorcery. A paid cast creates one trigger with the correlated count
+and a locked spell template; an unpaid cast creates none. The existing spell
+copy targeting owner validates the separate typed trigger, offers independent
+new targets or retained targets, and creates copies through the ordinary copy
+owner. Countering the original leaves its trigger intact. Copies revalidate
+targets and do not count as casts or trigger Replicate again. Existing Storm
+descriptors, copy choices and historical continuations retain their format.
+
+Variable, nonmana, zero-priced, repeated or granted instances, permanent spells
+and unrepresented sibling bodies remain residual.
+
+### Fixed Cleave text variants
+
+`FixedManaCleaveSpec` binds one fixed alternative price to independently closed
+normal and bracket-removed bodies. Bracket derivation is compiler-only and
+rejects malformed, nested or empty brackets. All body paragraphs participate;
+an unknown sibling prevents the pair from closing.
+
+Overload and Cleave share immutable body fingerprints, paired-program assembly,
+leaf closure and price/program correlation through the closed
+`SpellTextVariantKind` values. Their source productions and serialized spell
+choices remain distinct. Cleave keeps each body's actual target schema, so
+both can be targeted or both can have no targets. The selected program has an
+empty mode list and its complete-source certificate remains mandatory.
+
+The normal price retains bracketed restrictions. Paying Cleave selects the
+derived program before target validation and rechecks it at commit. Copies
+retain that program and its remaining restrictions. Existing target
+revalidation, live quantity queries, private draws, total-cost modifiers and
+zone owners execute the typed effects. A free normal base cannot select the
+broader Cleave body. Unclosed bodies, complex or variable costs, repeated
+instances and unsupported source forms remain residual.
+
+### Fixed Overload text variants
+
+`FixedManaOverloadSpec` binds one fixed alternative price to fingerprints of
+the normal and overloaded spell bodies. The compiler derives the target-to-each
+body and requires both forms to close through existing effect owners. It emits
+a separate `spell_variant` program with no target schema. Both programs retain
+the original Oracle identity, source spans and complete-source certificate.
+Missing derived lowering keeps the whole card residual.
+
+The existing `cost_option` selects Overload. The casting owner correlates the
+price and complete generated program before validating targets, then checks
+the same choice at commit. The overloaded program has no modes or targets;
+live object sets are sampled by ordinary query/effect owners at resolution.
+Hexproof does not stop the effect, while applicable damage protection remains
+effective. Printed mana value is independent of the alternative price.
+
+The canonical copy owner retains the selected semantic program without new
+target or mode choices. Ordinary casting remains targeted. A separate free
+normal base cannot waive the chosen Overload price. Base-zone alternatives
+retain their existing order through `rules/casting/base_cost_options.py`;
+additional costs and total-cost modifiers keep their existing owners.
+Variable or complex prices, variable printed bases, unclosed bodies, repeated
+instances and other source forms remain residual.
+
+### Fixed instant and sorcery stack copies
+
+`FixedStackSpellCopySpec` represents one copy of a current instant or sorcery
+spell, with an optional current-controller restriction and explicit permission
+to choose new targets. The compiler retains the original source span and
+routes the same closed shape through spell, triggered, activated and granted
+ability lowering. Existing target validation and the staged stack-copy choice
+owner create the independent copy through `CopyStackItemIntent`.
+
+The copy retains modes, X, casting choices and original target incarnations.
+Unchanged targets can be retained after becoming illegal; newly selected
+targets must be legal. A departed and returned object is a new target only
+when explicitly selected as one. The copy producer still needs its own target
+spell to remain legal at resolution. Copies are not casts and pay no new costs.
+
+These programs declare a complete-source boundary. Current-source validation
+checks the compiler's exact whole-card certificate, preventing an independently
+recognized copy clause from executing beside an unclosed printed sibling.
+The existing handler-based admission contract remains unchanged. Multiple
+copies, extra qualifications, and type or color exceptions remain residual.
+
+### Ordinary Conspire tap payments and copy triggers
+
+`FixedConspireSpec` binds one printed Conspire instance to an optional pair of
+creature tap costs. The current object query supplies untapped controlled
+creatures; each must share a color with the current spell. The two creatures
+may match different colors of a multicolored spell, and their summoning
+sickness does not prevent this nonsymbol tap cost.
+
+Each represented pair has an ordinary cost option bound to its current logical
+incarnations. Existing affordability and mana-payment owners exclude those
+creatures as mana sources. The casting owner revalidates the pair after mana
+payment, then commits it through the existing tap-cost owner. A departed and
+returned creature invalidates the prior option. A free base retains the
+optional tap payment.
+
+The paid fact creates one separately validated Conspire trigger using the
+existing spell-copy template and target-choice owner. Countering the original
+does not remove the trigger. Copies can retain or change targets and are not
+casts; their effects use the ordinary runtime owners, including token copying.
+Existing Storm prompts, logs and saved continuation shapes retain their format.
+Multiple or granted instances, permanent spells, variable printed bases, mixed
+consuming payment mechanics and unresolved sibling bodies remain residual.
+
+### Fixed mana Disturb and source-local graveyard exile
+
+`FixedManaDisturbSpec` binds one front-face declaration to its transforming
+back face and fixed alternative price. Existing face and cost-option fields
+carry the cast. Graveyard authorization, back-face selection, target offers
+and submission validation share that authority. Total-cost modifiers observe
+the back face's spell type. A generic free-cast permission cannot waive the
+intrinsic Disturb price; independently authorized transformed-cast effects
+retain their existing authority.
+
+The resolving spell passes its chosen face to the ordinary permanent-entry
+owner. Original mana value still derives from the front cost. Copiable
+snapshots retain source Oracle and face provenance so ordinary physical and
+token copies execute the copied face's programs while retaining their own
+identity and mana value.
+
+The separately printed graveyard-to-exile clause uses a source-local zone
+replacement component, with the same current ability and face checks for
+stack and battlefield subjects. It applies to copied and token subjects
+without requiring a Disturb payment marker. Ability removal can suppress it;
+bounce and other zone resets remove copied/current back-face state normally.
+It participates in the ordinary replacement class, preserving affected-player
+choice among competing replacements. Complex prices, repeated declarations,
+other card forms and unrepresented sibling bodies remain residual.
+
 ### Typed token children in modal branches
 
 `compiler/modal_token_branches.py` adapts the existing typed token-node compiler
-for complete ordinary and Spree modal branches. Each branch retains its token
+for complete ordinary, Spree, and Entwine modal branches. Each branch retains its token
 fragments and independently closed generated child nodes. Identical branch
 bodies may share one immutable child definition; different source rows and
 abilities retain distinct keys. Unknown children or sibling branches keep the

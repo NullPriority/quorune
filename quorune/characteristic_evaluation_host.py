@@ -46,6 +46,7 @@ _STATIC_COMPONENT_PRESENCE_OPERATIONS = frozenset(
         "add_ability_fragment",
         "remove_ability_fragment",
         "remove_all_abilities",
+        "set_basic_land_types",
     }
 )
 
@@ -53,7 +54,7 @@ _STATIC_COMPONENT_PRESENCE_OPERATIONS = frozenset(
 def _static_component_presence_effects(
     effects: Sequence[ContinuousEffect],
 ) -> tuple[ContinuousEffect, ...]:
-    return tuple(
+    changes = tuple(
         effect
         for effect in effects
         if any(
@@ -61,6 +62,10 @@ def _static_component_presence_effects(
             for operation in effect.operations
         )
     )
+    if not changes:
+        return ()
+    # Earlier type changes can alter the affected sets of ability changes.
+    return tuple(effect for effect in effects if effect in changes or effect.layer<=Layer.TYPE)
 
 
 def _carries_query_power_toughness_definition(

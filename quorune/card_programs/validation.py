@@ -39,6 +39,10 @@ def program_source_is_current(
     card_db: "CardDatabase",
     program: "SemanticProgram",
 ) -> bool:
+    from .admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD, program_has_declared_complete_source_admission
+    if (program.provenance.get(REQUIRES_COMPLETE_CARD_PROGRAM_FIELD) is True
+            and not program_has_declared_complete_source_admission(program)):
+        return False
     if not program.oracle_id:
         return False
     try:

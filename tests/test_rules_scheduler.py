@@ -3208,6 +3208,7 @@ class RulesSchedulerTests(unittest.TestCase):
         probe_id = "fixed-face-down-lifecycle-existing-owner-v1"
         for source in (
             "Disguise {4}{W} (You may cast this card face down for {3}.)",
+            "Disguise {W/U}",
             "Megamorph {5}{G}",
             "When this creature is turned face up, draw a card.",
             "Whenever this Equipment is turned face up, attach it to target "
@@ -3217,7 +3218,8 @@ class RulesSchedulerTests(unittest.TestCase):
                 self.assertTrue(_matches_probe(probe_id, source))
         for source in (
             "Morph {3}",
-            "Disguise {W/U}",
+            "Disguise {2/W}",
+            "Disguise {W/P}",
             "Megamorph {X}{G}",
             "Whenever a permanent is turned face up, draw a card.",
             "When another creature is turned face up, draw a card.",

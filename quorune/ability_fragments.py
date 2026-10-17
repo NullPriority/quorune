@@ -41,6 +41,7 @@ from .declaration_fragments import (
 )
 from .defender_permission import DefenderAttackPermission
 from .block_capacity_model import BlockCapacitySpec
+from .landwalk_permission_model import LandwalkBlockPermission
 from .enlist_model import EnlistSpec
 from .exert_model import ExertAttackSpec
 from .as_unblocked import AsUnblockedAssignmentPermission
@@ -971,6 +972,7 @@ StaticAbilityFragment: TypeAlias = (
     | QueryPowerToughnessDefinitionSpec
     | DefenderAttackPermission
     | BlockCapacitySpec
+    | LandwalkBlockPermission
     | EnlistSpec
     | ExertAttackSpec
     | AsUnblockedAssignmentPermission
@@ -1034,6 +1036,8 @@ def ability_fragment_to_dict(
         kind = "defender_attack_permission"
     elif isinstance(fragment, BlockCapacitySpec):
         kind = "block_capacity"
+    elif isinstance(fragment, LandwalkBlockPermission):
+        kind = "landwalk_block_permission"
     elif isinstance(fragment, EnlistSpec):
         kind = 'enlist'
     elif isinstance(fragment, ExertAttackSpec):
@@ -1145,6 +1149,11 @@ def ability_fragment_from_dict(
         return DefenderAttackPermission.from_dict(value["value"])
     if value["kind"] == "block_capacity":
         return BlockCapacitySpec.from_dict(value["value"])
+    if value["kind"] == "landwalk_block_permission":
+        try:
+            return LandwalkBlockPermission.from_dict(value["value"])
+        except ValueError as exc:
+            raise AbilityFragmentError(str(exc)) from exc
     if value['kind']=='enlist':return EnlistSpec.from_dict(dict(value['value']))
     if value['kind']=='exert_as_attacks':return ExertAttackSpec.from_dict(dict(value['value']))
     if value["kind"] == "as_unblocked_assignment":
@@ -1206,6 +1215,7 @@ def canonical_ability_fragments(
                 QueryPowerToughnessDefinitionSpec,
                 DefenderAttackPermission,
                 BlockCapacitySpec,
+                LandwalkBlockPermission,
                 EnlistSpec,
                 ExertAttackSpec,
                 AsUnblockedAssignmentPermission,

@@ -568,8 +568,8 @@
     {
       "mechanic_id": "morph",
       "path": "mechanics/contracts/morph.json",
-      "sha256": "ba9a14268db3bb05ef524050b96b321dbd2007bec3f613ade321a577678309f2",
-      "version": 1
+      "sha256": "b3bae42b838774e90ac8ed72fa9639739a176bdc8dd17741d2107117aca410aa",
+      "version": 2
     },
     {
       "mechanic_id": "cr-802-attack-multiple-players-option",
@@ -3991,24 +3991,24 @@
     {
       "category": "additional_rules",
       "contract_path": "mechanics/contracts/morph.json",
-      "contract_sha256": "ba9a14268db3bb05ef524050b96b321dbd2007bec3f613ade321a577678309f2",
-      "contract_version": 1,
+      "contract_sha256": "b3bae42b838774e90ac8ed72fa9639739a176bdc8dd17741d2107117aca410aa",
+      "contract_version": 2,
       "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": "FixedManaMorphSpec, fixed_mana_morph_keyword_node, FixedManaMorphHandler, compiled_fixed_mana_morph_spec, casting proposal/commit, face-down characteristic evaluation, morph special-action owner, zone-object state, priority, projection, and replay",
-      "implementation_version": "typed-fixed-mana-morph-v1",
+      "implementation_component": "FixedManaMorphSpec, fixed_mana_morph_keyword_node, FixedManaMorphHandler, compiled_fixed_mana_morph_spec, casting proposal/commit, face-down characteristic evaluation, morph special-action owner, zone-object state, priority, projection, and replay, FixedNonmanaMorphSpec, FixedNonmanaMorphHandler, and canonical nonmana Morph cost queries/payment",
+      "implementation_version": "typed-fixed-morph-costs-v2",
       "kind": "keyword_ability",
       "known_blockers": [
         "Megamorph, Disguise, Manifest, Cloak, and other face-down methods",
-        "variable, hybrid, Phyrexian, snow, and nonmana Morph costs",
         "copied, granted, text-changed, and dynamically added Morph",
         "card copies, spell copies, tokens, multiface cards, and merged permanents",
         "turn-face-up triggers or replacement abilities on residual CardPrograms",
         "arbitrary static component ability addition and removal until one shared applicability query exists",
         "dynamic characteristic counts and affected copy or type-changing interactions",
-        "aggregate Morph and CR 708 coverage remain incomplete"
+        "aggregate Morph and CR 708 coverage remain incomplete",
+        "variable, conditionally reduced, monocolored hybrid, Phyrexian, snow, sacrifice, compound and other unrepresented Morph costs"
       ],
       "mechanic_id": "morph",
       "official_name": "Morph",
@@ -4026,7 +4026,14 @@
         "test_stale_or_ability_removed_turn_up_rolls_back",
         "test_stale_morph_cast_contract_rolls_back_before_payment",
         "test_face_down_departure_reveals_identity_and_resets_method",
-        "test_land_card_has_only_the_trusted_morph_cast_offer"
+        "test_land_card_has_only_the_trusted_morph_cast_offer",
+        "test_nonmana_cost_codec_is_closed_and_historical_mana_handler_rejects_it",
+        "test_compiler_nonmana_grammar_and_dependency_removal_fail_closed",
+        "test_all_ten_originals_admit_normally_and_unknown_siblings_remain_residual",
+        "test_actual_zombie_cutthroat_pays_life_to_turn_face_up_without_a_stack_item",
+        "test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load",
+        "test_current_type_can_return_source_without_a_spurious_turn_face_up_occurrence",
+        "test_actual_reveal_prices_publish_only_one_eligible_card_and_execute_face_up_triggers"
       ],
       "trust_level": "untrusted"
     },

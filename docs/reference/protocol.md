@@ -126,6 +126,9 @@ minimum, maximum, and membership, then canonicalizes every legal set into the
 printed order before target planning, stack construction, and execution. The
 browser mirrors that order from the server-issued schema and retains target
 groups that remain legal when the selected set changes.
+Priced modal selections also bind the exact server-issued cost option. Entwine
+offers one ordinary mode or all modes with its additional cost; a cheap
+one-mode option cannot authorize an all-mode submission.
 
 The client may choose presentation and automation policy. For example, an
 automatic pass still submits the ordinary server-issued `pass` action, and

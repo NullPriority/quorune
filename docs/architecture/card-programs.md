@@ -2,7 +2,7 @@
 title: "CardProgram architecture"
 status: "current"
 authoritative_source: "quorune/card_programs and schemas/card-program-v2.schema.json"
-verified: "2026-09-04"
+verified: "2026-10-16"
 audience: "compiler, rules, replay, and extension contributors"
 maintenance: "hand-maintained"
 ---
@@ -36,6 +36,26 @@ semantic key. Ambiguous ability identity, conflicting nonempty hashes, stale
 source data, unknown dependencies, material residuals, or fingerprint drift
 fail closed. Historical semantic-pack records remain compatibility inputs, not
 a second current runtime authority.
+
+Compiler-declared complete-source boundaries can also belong to ordinary
+effect programs. Their provenance explicitly requires the generated whole-card
+admission certificate. Source validation rejects missing, malformed or partial
+certificates before execution. This complements the existing handler-declared
+complete-card boundary without changing historical programs that lack the new
+provenance declaration.
+
+Source-derived spell variants retain separate semantic identities within the
+same CardProgram. A fixed Overload alternative binds the normal and derived
+body fingerprints to its price. Both executable programs must be present and
+current. The cast selects the derived program through its validated cost
+option, preserving ordinary spell characteristics and an empty mode list.
+Copies retain that selected program through the existing stack-copy owner.
+
+Fixed Cleave uses the same source-correlated program boundary with its own
+bracket-derived body, price and semantic identity. Each form retains its actual
+target schema; this includes variants where both forms are targeted or both are
+target-free. Neither paid-text choice creates a printed modal choice. Shared
+validation retains the existing Overload keys and payload shape.
 
 A current capability-bound counted search supersedes a reviewed search at the
 same key only when source hashes, event, costs, targets and result semantics
@@ -71,6 +91,18 @@ untrusted permanent program may resolve without its arbiter boundary. An
 intrinsic Siege transformed-cast choice for a nonpermanent face likewise
 requires either a typed target schema or a current trusted target-free spell
 program before that choice is offered. Missing typed cast semantics fail closed.
+
+Printed fixed-positive-mana Multikicker uses a source-pinned cost component
+and an independent linked entry-counter component. The server prices the
+selected repeat count before total-cost modifiers and seals the instance,
+cost fingerprint and count; clients supply only the count. Zero payments use
+the ordinary cast and carry no new fact. Complete-card admission gates the
+paid branch, so an unsupported sibling cannot expose a payable partial card.
+The typed fact in `multikicker_model.py` remains distinct from ordinary Kicker's
+single-payment Boolean and from Offspring/Squad copy decisions. Spell copies
+retain casting decisions; permanent copies and later noncast entries receive
+no paid history. Unknown cost variants, instances and linked results remain
+residual. This adds no runtime Oracle parser or second component registry.
 
 ## Trust and replay
 

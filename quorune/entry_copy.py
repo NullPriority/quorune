@@ -6,11 +6,14 @@ from dataclasses import dataclass, replace
 from typing import Any, Mapping
 
 from .creature_subtypes import canonical_creature_subtype
-from .object_predicate import ObjectQuerySpec
+from .object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
+from .target_numeric import TargetNumericCharacteristic, TargetNumericComparison
 from .token_copy_recipes import TokenCopyExceptionSpec
 
 ENTRY_COPY_HANDLER = 'replacement.zone.entry-copy.v1'
+ENTRY_COPY_QUERY_HANDLER = 'replacement.zone.entry-copy.v2'
 ENTRY_COPY_CAPABILITY = 'zone.entry.fixed_copy'
+ENTRY_COPY_QUERY_CAPABILITIES = (ENTRY_COPY_CAPABILITY, 'state_query.permanent.public_state_predicate')
 COPIABLE_ORACLE_FIELD = '_copiable_oracle_id'
 COPIABLE_FACE_FIELD = '_copiable_face_id'
 
@@ -68,6 +71,26 @@ def restore_prepared_copy_entry(value, *, revision):
     return PreparedZoneChange(**data)
 
 
+def _legacy_view_of_copy_query(query: ObjectQuerySpec) -> ObjectQuerySpec:
+    """Validate only represented extensions, then retain the legacy checks."""
+    if query.excluded_types and (query.excluded_types != ('land',) or query.types_all or query.types_any):
+        raise ValueError('Qualified copy excludes only lands from the permanent domain')
+    if query.numeric_characteristic is not None:
+        numeric = query.numeric_characteristic
+        if (query.types_all != ('creature',) or query.types_any or query.subtypes_all
+                or numeric.characteristic is not TargetNumericCharacteristic.POWER
+                or numeric.comparison is not TargetNumericComparison.AT_LEAST
+                or query.state_predicate is not None or query.excluded_types):
+            raise ValueError('Qualified copy uses one fixed creature-power minimum')
+    if query.state_predicate is not None and (
+            query.state_predicate != PermanentStatePredicateSpec(entered_this_turn=True)
+            or query.types_all or query.types_any or query.excluded_types or query.subtypes_all):
+        raise ValueError('Qualified copy history selects permanents that entered this turn')
+    equipment = query.types_all == ('artifact',) and query.subtypes_all == ('equipment',)
+    return replace(query, excluded_types=(), numeric_characteristic=None, state_predicate=None,
+        subtypes_all=() if equipment else query.subtypes_all)
+
+
 @dataclass(frozen=True, slots=True)
 class EntryCopySpec:
     selection: ObjectQuerySpec
@@ -75,11 +98,11 @@ class EntryCopySpec:
     schema_version: int = 1
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
             raise ValueError('Entry copy requires one current typed schema')
         if not isinstance(self.selection, ObjectQuerySpec) or not isinstance(self.exception, TokenCopyExceptionSpec):
             raise ValueError('Entry copy requires typed selection and copy exceptions')
-        query = self.selection
+        query = _legacy_view_of_copy_query(self.selection) if self.schema_version == 2 else self.selection
         permanent_types = {'artifact', 'battle', 'creature', 'enchantment', 'land', 'planeswalker'}
         if (query.zones != ('battlefield',) or query.owner is not None
                 or query.controller not in {None, '$controller'}

@@ -1,0 +1,3301 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_fixed_disturb",
+  "source": "Pinned originals with exact existing shared rows and original card_faces data; unresolved sibling bodies remain boundary controls",
+  "cards": [
+    {
+      "oracle_id": "c6bb4b41-8dae-429a-b928-ae9d39c74711",
+      "name": "Baithook Angler // Hook-Haunt Drifter",
+      "mana_cost": null,
+      "cmc": 2.0,
+      "type_line": "Creature — Human Peasant // Creature — Spirit",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying",
+        "Transform",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-09-24",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "legal",
+        "vintage": "legal",
+        "penny": "legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Baithook Angler",
+          "mana_cost": "{1}{U}",
+          "type_line": "Creature — Human Peasant",
+          "oracle_text": "Disturb {1}{U} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "U"
+          ],
+          "power": "2",
+          "toughness": "1",
+          "flavor_text": "Geor was determined to stay out until he got a bite from something big.",
+          "artist": "Uriah Voth",
+          "artist_id": "14cf4c0c-1a83-4366-ba61-6d0a26ee5a69",
+          "illustration_id": "2b0fb698-7547-4c72-8966-ff427b6dd960",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.jpg?1783925653",
+            "normal": "https://cards.scryfall.io/normal/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.jpg?1783925653",
+            "large": "https://cards.scryfall.io/large/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.jpg?1783925653",
+            "png": "https://cards.scryfall.io/png/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.png?1783925653",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.jpg?1783925653",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.jpg?1783925653",
+            "thumb": "https://cards.scryfall.io/thumb/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.webp?1783925653",
+            "grid": "https://cards.scryfall.io/grid/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.webp?1783925653",
+            "display": "https://cards.scryfall.io/display/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.webp?1783925653",
+            "art": "https://cards.scryfall.io/art/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.webp?1783925653",
+            "crop": "https://cards.scryfall.io/crop/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.webp?1783925653"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Hook-Haunt Drifter",
+          "mana_cost": "",
+          "type_line": "Creature — Spirit",
+          "oracle_text": "Flying\nIf Hook-Haunt Drifter would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "U"
+          ],
+          "color_indicator": [
+            "U"
+          ],
+          "power": "1",
+          "toughness": "2",
+          "flavor_text": "Even in death, he casts his lines, forever fishing for reasons long forgotten.",
+          "artist": "Uriah Voth",
+          "artist_id": "14cf4c0c-1a83-4366-ba61-6d0a26ee5a69",
+          "illustration_id": "d6ae2bc6-0248-4c0c-a835-baa2e386feb2",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.jpg?1783925653",
+            "normal": "https://cards.scryfall.io/normal/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.jpg?1783925653",
+            "large": "https://cards.scryfall.io/large/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.jpg?1783925653",
+            "png": "https://cards.scryfall.io/png/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.png?1783925653",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.jpg?1783925653",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.jpg?1783925653",
+            "thumb": "https://cards.scryfall.io/thumb/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.webp?1783925653",
+            "grid": "https://cards.scryfall.io/grid/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.webp?1783925653",
+            "display": "https://cards.scryfall.io/display/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.webp?1783925653",
+            "art": "https://cards.scryfall.io/art/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.webp?1783925653",
+            "crop": "https://cards.scryfall.io/crop/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.webp?1783925653"
+          }
+        }
+      ]
+    },
+    {
+      "oracle_id": "74c9cc13-c03f-4322-82af-b7bce1f2a0d8",
+      "name": "Beloved Beggar // Generous Soul",
+      "mana_cost": null,
+      "cmc": 2.0,
+      "type_line": "Creature — Human Peasant // Creature — Spirit",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Vigilance",
+        "Transform",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-09-24",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Beloved Beggar",
+          "mana_cost": "{1}{W}",
+          "type_line": "Creature — Human Peasant",
+          "oracle_text": "Disturb {4}{W}{W} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "W"
+          ],
+          "power": "0",
+          "toughness": "4",
+          "flavor_text": "Charity is rare on Innistrad, but kindness is always repaid.",
+          "artist": "Francisco Miyara",
+          "artist_id": "fa64fc53-a243-4a94-a4d2-97625ea24b4f",
+          "illustration_id": "5e95eadb-102f-4c55-9bd9-f1001c33d5db",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.jpg?1783925674",
+            "normal": "https://cards.scryfall.io/normal/front/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.jpg?1783925674",
+            "large": "https://cards.scryfall.io/large/front/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.jpg?1783925674",
+            "png": "https://cards.scryfall.io/png/front/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.png?1783925674",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.jpg?1783925674",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.jpg?1783925674",
+            "thumb": "https://cards.scryfall.io/thumb/front/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.webp?1783925674",
+            "grid": "https://cards.scryfall.io/grid/front/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.webp?1783925674",
+            "display": "https://cards.scryfall.io/display/front/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.webp?1783925674",
+            "art": "https://cards.scryfall.io/art/front/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.webp?1783925674",
+            "crop": "https://cards.scryfall.io/crop/front/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.webp?1783925674"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Generous Soul",
+          "mana_cost": "",
+          "type_line": "Creature — Spirit",
+          "oracle_text": "Flying, vigilance\nIf Generous Soul would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "W"
+          ],
+          "color_indicator": [
+            "W"
+          ],
+          "power": "4",
+          "toughness": "4",
+          "flavor_text": "As long as evil threatens his town, the Blessed Sleep can wait.",
+          "artist": "Francisco Miyara",
+          "artist_id": "fa64fc53-a243-4a94-a4d2-97625ea24b4f",
+          "illustration_id": "444cc20b-604d-4eb3-85db-0c0306c7340d",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.jpg?1783925674",
+            "normal": "https://cards.scryfall.io/normal/back/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.jpg?1783925674",
+            "large": "https://cards.scryfall.io/large/back/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.jpg?1783925674",
+            "png": "https://cards.scryfall.io/png/back/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.png?1783925674",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.jpg?1783925674",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.jpg?1783925674",
+            "thumb": "https://cards.scryfall.io/thumb/back/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.webp?1783925674",
+            "grid": "https://cards.scryfall.io/grid/back/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.webp?1783925674",
+            "display": "https://cards.scryfall.io/display/back/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.webp?1783925674",
+            "art": "https://cards.scryfall.io/art/back/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.webp?1783925674",
+            "crop": "https://cards.scryfall.io/crop/back/6/1/6109b54e-56c5-4014-9f6d-d5f7a0fd725d.webp?1783925674"
+          }
+        }
+      ]
+    },
+    {
+      "oracle_id": "5e1bd17d-3825-45c0-9e7c-6887b7e2cb5c",
+      "name": "Binding Geist // Spectral Binding",
+      "mana_cost": null,
+      "cmc": 3.0,
+      "type_line": "Creature — Spirit // Enchantment — Aura",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Transform",
+        "Enchant",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "not_legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "not_legal",
+        "competitivebrawl": "not_legal",
+        "alchemy": "not_legal",
+        "paupercommander": "legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Binding Geist",
+          "mana_cost": "{2}{U}",
+          "type_line": "Creature — Spirit",
+          "oracle_text": "Whenever this creature attacks, target creature an opponent controls gets -2/-0 until end of turn.\nDisturb {1}{U} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "U"
+          ],
+          "power": "3",
+          "toughness": "1",
+          "artist": "Campbell White",
+          "artist_id": "d281eab4-463a-4ba8-9039-8943737960a0",
+          "illustration_id": "5bd0f4d9-6527-4d6d-b381-ddf3a7e98b4e",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/7/3/730e4629-dc54-415d-9493-88885788ca19.jpg?1783924907",
+            "normal": "https://cards.scryfall.io/normal/front/7/3/730e4629-dc54-415d-9493-88885788ca19.jpg?1783924907",
+            "large": "https://cards.scryfall.io/large/front/7/3/730e4629-dc54-415d-9493-88885788ca19.jpg?1783924907",
+            "png": "https://cards.scryfall.io/png/front/7/3/730e4629-dc54-415d-9493-88885788ca19.png?1783924907",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/7/3/730e4629-dc54-415d-9493-88885788ca19.jpg?1783924907",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/7/3/730e4629-dc54-415d-9493-88885788ca19.jpg?1783924907",
+            "thumb": "https://cards.scryfall.io/thumb/front/7/3/730e4629-dc54-415d-9493-88885788ca19.webp?1783924907",
+            "grid": "https://cards.scryfall.io/grid/front/7/3/730e4629-dc54-415d-9493-88885788ca19.webp?1783924907",
+            "display": "https://cards.scryfall.io/display/front/7/3/730e4629-dc54-415d-9493-88885788ca19.webp?1783924907",
+            "art": "https://cards.scryfall.io/art/front/7/3/730e4629-dc54-415d-9493-88885788ca19.webp?1783924907",
+            "crop": "https://cards.scryfall.io/crop/front/7/3/730e4629-dc54-415d-9493-88885788ca19.webp?1783924907"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Spectral Binding",
+          "mana_cost": "",
+          "type_line": "Enchantment — Aura",
+          "oracle_text": "Enchant creature\nEnchanted creature gets -2/-0.\nIf Spectral Binding would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "U"
+          ],
+          "color_indicator": [
+            "U"
+          ],
+          "artist": "Campbell White",
+          "artist_id": "d281eab4-463a-4ba8-9039-8943737960a0",
+          "illustration_id": "e66a894d-13ad-4106-9941-90a6737d1f08",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/7/3/730e4629-dc54-415d-9493-88885788ca19.jpg?1783924907",
+            "normal": "https://cards.scryfall.io/normal/back/7/3/730e4629-dc54-415d-9493-88885788ca19.jpg?1783924907",
+            "large": "https://cards.scryfall.io/large/back/7/3/730e4629-dc54-415d-9493-88885788ca19.jpg?1783924907",
+            "png": "https://cards.scryfall.io/png/back/7/3/730e4629-dc54-415d-9493-88885788ca19.png?1783924907",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/7/3/730e4629-dc54-415d-9493-88885788ca19.jpg?1783924907",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/7/3/730e4629-dc54-415d-9493-88885788ca19.jpg?1783924907",
+            "thumb": "https://cards.scryfall.io/thumb/back/7/3/730e4629-dc54-415d-9493-88885788ca19.webp?1783924907",
+            "grid": "https://cards.scryfall.io/grid/back/7/3/730e4629-dc54-415d-9493-88885788ca19.webp?1783924907",
+            "display": "https://cards.scryfall.io/display/back/7/3/730e4629-dc54-415d-9493-88885788ca19.webp?1783924907",
+            "art": "https://cards.scryfall.io/art/back/7/3/730e4629-dc54-415d-9493-88885788ca19.webp?1783924907",
+            "crop": "https://cards.scryfall.io/crop/back/7/3/730e4629-dc54-415d-9493-88885788ca19.webp?1783924907"
+          }
+        }
+      ]
+    },
+    {
+      "oracle_id": "8845ba0d-c2f4-49e4-b06e-54a06a8297e0",
+      "name": "Brine Comber // Brinebound Gift",
+      "mana_cost": null,
+      "cmc": 3.0,
+      "type_line": "Creature — Spirit // Enchantment — Aura",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "keywords": [
+        "Transform",
+        "Enchant",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "not_legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "not_legal",
+        "competitivebrawl": "not_legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Brine Comber",
+          "mana_cost": "{1}{W}{U}",
+          "type_line": "Creature — Spirit",
+          "oracle_text": "Whenever this creature enters or becomes the target of an Aura spell, create a 1/1 white Spirit creature token with flying.\nDisturb {W}{U} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "U",
+            "W"
+          ],
+          "power": "1",
+          "toughness": "1",
+          "artist": "Olena Richards",
+          "artist_id": "fad4282c-49d1-4b5b-be1d-713369fc8bc8",
+          "illustration_id": "348ec7b8-21b5-4c84-adaa-77f983ad3e51",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.jpg?1783924801",
+            "normal": "https://cards.scryfall.io/normal/front/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.jpg?1783924801",
+            "large": "https://cards.scryfall.io/large/front/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.jpg?1783924801",
+            "png": "https://cards.scryfall.io/png/front/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.png?1783924801",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.jpg?1783924801",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.jpg?1783924801",
+            "thumb": "https://cards.scryfall.io/thumb/front/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.webp?1783924801",
+            "grid": "https://cards.scryfall.io/grid/front/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.webp?1783924801",
+            "display": "https://cards.scryfall.io/display/front/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.webp?1783924801",
+            "art": "https://cards.scryfall.io/art/front/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.webp?1783924801",
+            "crop": "https://cards.scryfall.io/crop/front/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.webp?1783924801"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Brinebound Gift",
+          "mana_cost": "",
+          "type_line": "Enchantment — Aura",
+          "oracle_text": "Enchant creature\nWhenever this Aura enters or enchanted creature becomes the target of an Aura spell, create a 1/1 white Spirit creature token with flying.\nIf this Aura would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "U",
+            "W"
+          ],
+          "color_indicator": [
+            "U",
+            "W"
+          ],
+          "artist": "Olena Richards",
+          "artist_id": "fad4282c-49d1-4b5b-be1d-713369fc8bc8",
+          "illustration_id": "7d860d46-3a79-43b6-89c0-ce628efaa207",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.jpg?1783924801",
+            "normal": "https://cards.scryfall.io/normal/back/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.jpg?1783924801",
+            "large": "https://cards.scryfall.io/large/back/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.jpg?1783924801",
+            "png": "https://cards.scryfall.io/png/back/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.png?1783924801",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.jpg?1783924801",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.jpg?1783924801",
+            "thumb": "https://cards.scryfall.io/thumb/back/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.webp?1783924801",
+            "grid": "https://cards.scryfall.io/grid/back/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.webp?1783924801",
+            "display": "https://cards.scryfall.io/display/back/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.webp?1783924801",
+            "art": "https://cards.scryfall.io/art/back/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.webp?1783924801",
+            "crop": "https://cards.scryfall.io/crop/back/8/d/8d233bc5-8a08-4d38-abd4-21a112141afd.webp?1783924801"
+          }
+        }
+      ]
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flashback"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}{U}",
+      "name": "Cackling Counterpart",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "oracle_text": "Create a token that's a copy of target creature you control.\nFlashback {5}{U}{U} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-01-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "c21d1ca3-3d19-4b4d-bbfa-07b5b7bcea4b",
+      "name": "Chaplain of Alms // Chapel Shieldgeist",
+      "mana_cost": null,
+      "cmc": 1.0,
+      "type_line": "Creature — Human Cleric // Creature — Spirit Cleric",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Transform",
+        "First strike",
+        "Ward",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-09-24",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Chaplain of Alms",
+          "mana_cost": "{W}",
+          "type_line": "Creature — Human Cleric",
+          "oracle_text": "First strike\nWard {1} (Whenever this creature becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)\nDisturb {3}{W} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "W"
+          ],
+          "power": "1",
+          "toughness": "1",
+          "artist": "Anastasia Ovchinnikova",
+          "artist_id": "3605d81f-5c97-4958-9dcc-d44a85e10305",
+          "illustration_id": "8f3d890b-3e1b-4389-b771-75f398b7ecea",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.jpg?1783925671",
+            "normal": "https://cards.scryfall.io/normal/front/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.jpg?1783925671",
+            "large": "https://cards.scryfall.io/large/front/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.jpg?1783925671",
+            "png": "https://cards.scryfall.io/png/front/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.png?1783925671",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.jpg?1783925671",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.jpg?1783925671",
+            "thumb": "https://cards.scryfall.io/thumb/front/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.webp?1783925671",
+            "grid": "https://cards.scryfall.io/grid/front/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.webp?1783925671",
+            "display": "https://cards.scryfall.io/display/front/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.webp?1783925671",
+            "art": "https://cards.scryfall.io/art/front/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.webp?1783925671",
+            "crop": "https://cards.scryfall.io/crop/front/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.webp?1783925671"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Chapel Shieldgeist",
+          "mana_cost": "",
+          "type_line": "Creature — Spirit Cleric",
+          "oracle_text": "Flying, first strike\nEach creature you control has ward {1}. (Whenever it becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)\nIf Chapel Shieldgeist would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "W"
+          ],
+          "color_indicator": [
+            "W"
+          ],
+          "power": "2",
+          "toughness": "1",
+          "artist": "Anastasia Ovchinnikova",
+          "artist_id": "3605d81f-5c97-4958-9dcc-d44a85e10305",
+          "illustration_id": "4cd7a274-0335-4333-9a41-18ba42dba2ba",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.jpg?1783925671",
+            "normal": "https://cards.scryfall.io/normal/back/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.jpg?1783925671",
+            "large": "https://cards.scryfall.io/large/back/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.jpg?1783925671",
+            "png": "https://cards.scryfall.io/png/back/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.png?1783925671",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.jpg?1783925671",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.jpg?1783925671",
+            "thumb": "https://cards.scryfall.io/thumb/back/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.webp?1783925671",
+            "grid": "https://cards.scryfall.io/grid/back/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.webp?1783925671",
+            "display": "https://cards.scryfall.io/display/back/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.webp?1783925671",
+            "art": "https://cards.scryfall.io/art/back/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.webp?1783925671",
+            "crop": "https://cards.scryfall.io/crop/back/2/0/20e94e17-2e4c-41cd-8cc5-39ab41037287.webp?1783925671"
+          }
+        }
+      ]
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "name": "Clone",
+      "mana_cost": "{3}{U}",
+      "type_line": "Creature — Shapeshifter",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield.",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-07-19",
+      "faces": [],
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "5d0b8dc6-f4b6-4650-805d-4240d4a4ab82",
+      "name": "Covert Cutpurse // Covetous Geist",
+      "mana_cost": null,
+      "cmc": 3.0,
+      "type_line": "Creature — Human Rogue // Creature — Spirit Rogue",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Deathtouch",
+        "Flying",
+        "Transform",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-09-24",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Covert Cutpurse",
+          "mana_cost": "{2}{B}",
+          "type_line": "Creature — Human Rogue",
+          "oracle_text": "When this creature enters, destroy target creature you don't control that was dealt damage this turn.\nDisturb {4}{B} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "B"
+          ],
+          "power": "2",
+          "toughness": "1",
+          "artist": "John Stanko",
+          "artist_id": "b0f038a0-73b5-4806-918e-9cd11b5f92e1",
+          "illustration_id": "79d1bebf-7b04-4ec6-89e0-7dd1e2130cae",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.jpg?1783925627",
+            "normal": "https://cards.scryfall.io/normal/front/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.jpg?1783925627",
+            "large": "https://cards.scryfall.io/large/front/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.jpg?1783925627",
+            "png": "https://cards.scryfall.io/png/front/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.png?1783925627",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.jpg?1783925627",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.jpg?1783925627",
+            "thumb": "https://cards.scryfall.io/thumb/front/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.webp?1783925627",
+            "grid": "https://cards.scryfall.io/grid/front/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.webp?1783925627",
+            "display": "https://cards.scryfall.io/display/front/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.webp?1783925627",
+            "art": "https://cards.scryfall.io/art/front/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.webp?1783925627",
+            "crop": "https://cards.scryfall.io/crop/front/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.webp?1783925627"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Covetous Geist",
+          "mana_cost": "",
+          "type_line": "Creature — Spirit Rogue",
+          "oracle_text": "Flying, deathtouch\nIf Covetous Geist would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "B"
+          ],
+          "color_indicator": [
+            "B"
+          ],
+          "power": "2",
+          "toughness": "2",
+          "flavor_text": "\"It has no need of wealth in the afterlife. It steals and kills purely for its own spiteful amusement.\"\n—Kaya",
+          "artist": "John Stanko",
+          "artist_id": "b0f038a0-73b5-4806-918e-9cd11b5f92e1",
+          "illustration_id": "d97487be-f3e0-447e-9405-fa37907c3c28",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.jpg?1783925627",
+            "normal": "https://cards.scryfall.io/normal/back/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.jpg?1783925627",
+            "large": "https://cards.scryfall.io/large/back/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.jpg?1783925627",
+            "png": "https://cards.scryfall.io/png/back/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.png?1783925627",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.jpg?1783925627",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.jpg?1783925627",
+            "thumb": "https://cards.scryfall.io/thumb/back/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.webp?1783925627",
+            "grid": "https://cards.scryfall.io/grid/back/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.webp?1783925627",
+            "display": "https://cards.scryfall.io/display/back/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.webp?1783925627",
+            "art": "https://cards.scryfall.io/art/back/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.webp?1783925627",
+            "crop": "https://cards.scryfall.io/crop/back/5/d/5db99746-8aee-42b8-acb0-ed69933d0ff8.webp?1783925627"
+          }
+        }
+      ]
+    },
+    {
+      "oracle_id": "8f3e6554-eb8a-4096-81a3-2411186d9cb4",
+      "name": "Covetous Castaway // Ghostly Castigator",
+      "mana_cost": null,
+      "cmc": 2.0,
+      "type_line": "Creature — Human // Creature — Spirit",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying",
+        "Transform",
+        "Mill",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Covetous Castaway",
+          "mana_cost": "{1}{U}",
+          "type_line": "Creature — Human",
+          "oracle_text": "When this creature dies, mill three cards. (Put the top three cards of your library into your graveyard.)\nDisturb {3}{U}{U} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "U"
+          ],
+          "power": "1",
+          "toughness": "3",
+          "artist": "Dan Murayama Scott",
+          "artist_id": "f852fa13-137e-40f2-bbc1-0f01df09c0e0",
+          "illustration_id": "d78832f0-5a36-4194-b5ee-dab87e3825f7",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.jpg?1783908171",
+            "normal": "https://cards.scryfall.io/normal/front/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.jpg?1783908171",
+            "large": "https://cards.scryfall.io/large/front/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.jpg?1783908171",
+            "png": "https://cards.scryfall.io/png/front/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.png?1783908171",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.jpg?1783908171",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.jpg?1783908171",
+            "thumb": "https://cards.scryfall.io/thumb/front/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.webp?1783908171",
+            "grid": "https://cards.scryfall.io/grid/front/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.webp?1783908171",
+            "display": "https://cards.scryfall.io/display/front/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.webp?1783908171",
+            "art": "https://cards.scryfall.io/art/front/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.webp?1783908171",
+            "crop": "https://cards.scryfall.io/crop/front/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.webp?1783908171"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Ghostly Castigator",
+          "mana_cost": "",
+          "type_line": "Creature — Spirit",
+          "oracle_text": "Flying\nWhen this creature enters, you may shuffle up to three target cards from your graveyard into your library.\nIf Ghostly Castigator would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "U"
+          ],
+          "color_indicator": [
+            "U"
+          ],
+          "power": "3",
+          "toughness": "4",
+          "artist": "Dan Murayama Scott",
+          "artist_id": "f852fa13-137e-40f2-bbc1-0f01df09c0e0",
+          "illustration_id": "8f8a01bd-d197-40bb-8a8a-c2780714cbc2",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.jpg?1783908171",
+            "normal": "https://cards.scryfall.io/normal/back/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.jpg?1783908171",
+            "large": "https://cards.scryfall.io/large/back/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.jpg?1783908171",
+            "png": "https://cards.scryfall.io/png/back/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.png?1783908171",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.jpg?1783908171",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.jpg?1783908171",
+            "thumb": "https://cards.scryfall.io/thumb/back/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.webp?1783908171",
+            "grid": "https://cards.scryfall.io/grid/back/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.webp?1783908171",
+            "display": "https://cards.scryfall.io/display/back/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.webp?1783908171",
+            "art": "https://cards.scryfall.io/art/back/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.webp?1783908171",
+            "crop": "https://cards.scryfall.io/crop/back/4/f/4ff66f14-aee6-4ad2-be70-1c9bb39089b3.webp?1783908171"
+          }
+        }
+      ]
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Shadow"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}{B}",
+      "name": "Dauthi Voidwalker",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "oracle_text": "Shadow (This creature can block or be blocked by only creatures with shadow.)\nIf a card would be put into an opponent's graveyard from anywhere, instead exile it with a void counter on it.\n{T}, Sacrifice this creature: Choose an exiled card an opponent owns with a void counter on it. You may play it this turn without paying its mana cost.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "2",
+      "type_line": "Creature — Dauthi Rogue"
+    },
+    {
+      "oracle_id": "45802eb2-6848-416c-95e0-c1c1ea0620d0",
+      "name": "Dennick, Pious Apprentice // Dennick, Pious Apparition",
+      "mana_cost": null,
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — Human Soldier // Legendary Creature — Spirit Soldier",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Lifelink",
+        "Investigate",
+        "Transform",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-09-24",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Dennick, Pious Apprentice",
+          "mana_cost": "{W}{U}",
+          "type_line": "Legendary Creature — Human Soldier",
+          "oracle_text": "Lifelink\nCards in graveyards can't be the targets of spells or abilities.\nDisturb {2}{W}{U} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "U",
+            "W"
+          ],
+          "power": "2",
+          "toughness": "3",
+          "artist": "Chris Rallis",
+          "artist_id": "a8e7b854-b15a-421a-b66d-6e68187ae285",
+          "illustration_id": "7e42efd5-d676-4847-b513-8ec2e2b752fb",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.jpg?1783925570",
+            "normal": "https://cards.scryfall.io/normal/front/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.jpg?1783925570",
+            "large": "https://cards.scryfall.io/large/front/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.jpg?1783925570",
+            "png": "https://cards.scryfall.io/png/front/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.png?1783925570",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.jpg?1783925570",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.jpg?1783925570",
+            "thumb": "https://cards.scryfall.io/thumb/front/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.webp?1783925570",
+            "grid": "https://cards.scryfall.io/grid/front/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.webp?1783925570",
+            "display": "https://cards.scryfall.io/display/front/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.webp?1783925570",
+            "art": "https://cards.scryfall.io/art/front/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.webp?1783925570",
+            "crop": "https://cards.scryfall.io/crop/front/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.webp?1783925570"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Dennick, Pious Apparition",
+          "mana_cost": "",
+          "type_line": "Legendary Creature — Spirit Soldier",
+          "oracle_text": "Flying\nWhenever one or more creature cards are put into graveyards from anywhere, investigate. This ability triggers only once each turn. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nIf Dennick would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "U",
+            "W"
+          ],
+          "color_indicator": [
+            "U",
+            "W"
+          ],
+          "power": "3",
+          "toughness": "2",
+          "artist": "Chris Rallis",
+          "artist_id": "a8e7b854-b15a-421a-b66d-6e68187ae285",
+          "illustration_id": "9b152992-8678-446a-a27d-046a83838a76",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.jpg?1783925570",
+            "normal": "https://cards.scryfall.io/normal/back/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.jpg?1783925570",
+            "large": "https://cards.scryfall.io/large/back/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.jpg?1783925570",
+            "png": "https://cards.scryfall.io/png/back/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.png?1783925570",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.jpg?1783925570",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.jpg?1783925570",
+            "thumb": "https://cards.scryfall.io/thumb/back/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.webp?1783925570",
+            "grid": "https://cards.scryfall.io/grid/back/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.webp?1783925570",
+            "display": "https://cards.scryfall.io/display/back/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.webp?1783925570",
+            "art": "https://cards.scryfall.io/art/back/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.webp?1783925570",
+            "crop": "https://cards.scryfall.io/crop/back/3/5/35cf2d72-931f-47b1-a1b4-916f0383551a.webp?1783925570"
+          }
+        }
+      ]
+    },
+    {
+      "oracle_id": "0a154fb2-9f23-4c22-baee-728492385d6d",
+      "name": "Devoted Grafkeeper // Departed Soulkeeper",
+      "mana_cost": null,
+      "cmc": 2.0,
+      "type_line": "Creature — Human Peasant // Creature — Spirit",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Transform",
+        "Mill",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-09-24",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "not_legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "not_legal",
+        "competitivebrawl": "not_legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Devoted Grafkeeper",
+          "mana_cost": "{W}{U}",
+          "type_line": "Creature — Human Peasant",
+          "oracle_text": "When this creature enters, mill two cards.\nWhenever you cast a spell from your graveyard, tap target creature you don't control.\nDisturb {1}{W}{U} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "U",
+            "W"
+          ],
+          "power": "2",
+          "toughness": "1",
+          "artist": "Raoul Vitale",
+          "artist_id": "c7c15d49-f84b-4d98-9a34-e80e8347b756",
+          "illustration_id": "e731efe0-fd2b-4757-a268-f5b0ec393978",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.jpg?1783925570",
+            "normal": "https://cards.scryfall.io/normal/front/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.jpg?1783925570",
+            "large": "https://cards.scryfall.io/large/front/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.jpg?1783925570",
+            "png": "https://cards.scryfall.io/png/front/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.png?1783925570",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.jpg?1783925570",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.jpg?1783925570",
+            "thumb": "https://cards.scryfall.io/thumb/front/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.webp?1783925570",
+            "grid": "https://cards.scryfall.io/grid/front/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.webp?1783925570",
+            "display": "https://cards.scryfall.io/display/front/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.webp?1783925570",
+            "art": "https://cards.scryfall.io/art/front/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.webp?1783925570",
+            "crop": "https://cards.scryfall.io/crop/front/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.webp?1783925570"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Departed Soulkeeper",
+          "mana_cost": "",
+          "type_line": "Creature — Spirit",
+          "oracle_text": "Flying\nThis creature can block only creatures with flying.\nIf Departed Soulkeeper would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "U",
+            "W"
+          ],
+          "color_indicator": [
+            "U",
+            "W"
+          ],
+          "power": "3",
+          "toughness": "1",
+          "artist": "Raoul Vitale",
+          "artist_id": "c7c15d49-f84b-4d98-9a34-e80e8347b756",
+          "illustration_id": "c24b11c5-c8ee-456b-a9b7-810c93267d3f",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.jpg?1783925570",
+            "normal": "https://cards.scryfall.io/normal/back/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.jpg?1783925570",
+            "large": "https://cards.scryfall.io/large/back/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.jpg?1783925570",
+            "png": "https://cards.scryfall.io/png/back/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.png?1783925570",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.jpg?1783925570",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.jpg?1783925570",
+            "thumb": "https://cards.scryfall.io/thumb/back/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.webp?1783925570",
+            "grid": "https://cards.scryfall.io/grid/back/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.webp?1783925570",
+            "display": "https://cards.scryfall.io/display/back/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.webp?1783925570",
+            "art": "https://cards.scryfall.io/art/back/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.webp?1783925570",
+            "crop": "https://cards.scryfall.io/crop/back/9/6/965e6bd5-dc32-406c-bc99-ceb15be4d3f2.webp?1783925570"
+          }
+        }
+      ]
+    },
+    {
+      "oracle_id": "2fcd5779-7234-49e3-b3c5-ebc07db74462",
+      "name": "Distracting Geist // Clever Distraction",
+      "mana_cost": null,
+      "cmc": 3.0,
+      "type_line": "Creature — Spirit // Enchantment — Aura",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Transform",
+        "Enchant",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Distracting Geist",
+          "mana_cost": "{2}{W}",
+          "type_line": "Creature — Spirit",
+          "oracle_text": "Whenever this creature attacks, tap target creature defending player controls.\nDisturb {4}{W} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "W"
+          ],
+          "power": "2",
+          "toughness": "1",
+          "flavor_text": "\"I never did enjoy studying.\"",
+          "artist": "Andrew Mar",
+          "artist_id": "adad79bf-cd52-456a-b170-740ed8bff0fc",
+          "illustration_id": "3ad2a7c4-2b68-40f5-a882-a8e29b3811a7",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.jpg?1783924930",
+            "normal": "https://cards.scryfall.io/normal/front/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.jpg?1783924930",
+            "large": "https://cards.scryfall.io/large/front/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.jpg?1783924930",
+            "png": "https://cards.scryfall.io/png/front/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.png?1783924930",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.jpg?1783924930",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.jpg?1783924930",
+            "thumb": "https://cards.scryfall.io/thumb/front/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.webp?1783924930",
+            "grid": "https://cards.scryfall.io/grid/front/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.webp?1783924930",
+            "display": "https://cards.scryfall.io/display/front/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.webp?1783924930",
+            "art": "https://cards.scryfall.io/art/front/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.webp?1783924930",
+            "crop": "https://cards.scryfall.io/crop/front/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.webp?1783924930"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Clever Distraction",
+          "mana_cost": "",
+          "type_line": "Enchantment — Aura",
+          "oracle_text": "Enchant creature\nEnchanted creature has \"Whenever this creature attacks, tap target creature defending player controls.\"\nIf Clever Distraction would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "W"
+          ],
+          "color_indicator": [
+            "W"
+          ],
+          "flavor_text": "\"Me neither.\"",
+          "artist": "Andrew Mar",
+          "artist_id": "adad79bf-cd52-456a-b170-740ed8bff0fc",
+          "illustration_id": "dd3547a7-0b17-44c6-b4ee-be0c3aaa3383",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.jpg?1783924930",
+            "normal": "https://cards.scryfall.io/normal/back/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.jpg?1783924930",
+            "large": "https://cards.scryfall.io/large/back/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.jpg?1783924930",
+            "png": "https://cards.scryfall.io/png/back/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.png?1783924930",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.jpg?1783924930",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.jpg?1783924930",
+            "thumb": "https://cards.scryfall.io/thumb/back/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.webp?1783924930",
+            "grid": "https://cards.scryfall.io/grid/back/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.webp?1783924930",
+            "display": "https://cards.scryfall.io/display/back/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.webp?1783924930",
+            "art": "https://cards.scryfall.io/art/back/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.webp?1783924930",
+            "crop": "https://cards.scryfall.io/crop/back/a/7/a7fc0939-6286-44de-a727-c83bfd3fa752.webp?1783924930"
+          }
+        }
+      ]
+    },
+    {
+      "oracle_id": "2cef4171-8151-4ee9-83a7-bcb5116451bf",
+      "name": "Dorothea, Vengeful Victim // Dorothea's Retribution",
+      "mana_cost": null,
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — Spirit // Enchantment — Aura",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Transform",
+        "Enchant",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "not_legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "not_legal",
+        "competitivebrawl": "not_legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Dorothea, Vengeful Victim",
+          "mana_cost": "{W}{U}",
+          "type_line": "Legendary Creature — Spirit",
+          "oracle_text": "Flying\nWhen Dorothea attacks or blocks, sacrifice it at end of combat.\nDisturb {1}{W}{U} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "U",
+            "W"
+          ],
+          "power": "4",
+          "toughness": "4",
+          "flavor_text": "\"Every day a Voldaren draws breath is a day I cannot rest.\"",
+          "artist": "Marta Nael",
+          "artist_id": "266ab861-ed64-4ba5-865c-f18758421cc3",
+          "illustration_id": "8fd26894-b144-4e71-9c4e-9a6d9e665100",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.jpg?1783924799",
+            "normal": "https://cards.scryfall.io/normal/front/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.jpg?1783924799",
+            "large": "https://cards.scryfall.io/large/front/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.jpg?1783924799",
+            "png": "https://cards.scryfall.io/png/front/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.png?1783924799",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.jpg?1783924799",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.jpg?1783924799",
+            "thumb": "https://cards.scryfall.io/thumb/front/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.webp?1783924799",
+            "grid": "https://cards.scryfall.io/grid/front/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.webp?1783924799",
+            "display": "https://cards.scryfall.io/display/front/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.webp?1783924799",
+            "art": "https://cards.scryfall.io/art/front/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.webp?1783924799",
+            "crop": "https://cards.scryfall.io/crop/front/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.webp?1783924799"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Dorothea's Retribution",
+          "mana_cost": "",
+          "type_line": "Enchantment — Aura",
+          "oracle_text": "Enchant creature\nEnchanted creature has \"Whenever this creature attacks, create a 4/4 white Spirit creature token with flying that's tapped and attacking. Sacrifice that token at end of combat.\"\nIf Dorothea's Retribution would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "U",
+            "W"
+          ],
+          "color_indicator": [
+            "U",
+            "W"
+          ],
+          "artist": "Marta Nael",
+          "artist_id": "266ab861-ed64-4ba5-865c-f18758421cc3",
+          "illustration_id": "d2cdcff6-96e0-4e80-a05c-4f58294d2e69",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.jpg?1783924799",
+            "normal": "https://cards.scryfall.io/normal/back/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.jpg?1783924799",
+            "large": "https://cards.scryfall.io/large/back/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.jpg?1783924799",
+            "png": "https://cards.scryfall.io/png/back/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.png?1783924799",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.jpg?1783924799",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.jpg?1783924799",
+            "thumb": "https://cards.scryfall.io/thumb/back/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.webp?1783924799",
+            "grid": "https://cards.scryfall.io/grid/back/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.webp?1783924799",
+            "display": "https://cards.scryfall.io/display/back/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.webp?1783924799",
+            "art": "https://cards.scryfall.io/art/back/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.webp?1783924799",
+            "crop": "https://cards.scryfall.io/crop/back/8/c/8c927707-abb5-4a9d-ac53-25df182d6e9b.webp?1783924799"
+          }
+        }
+      ]
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{W}",
+          "name": "Drogskol Infantry",
+          "oracle_text": "Disturb {3}{W} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "power": "2",
+          "toughness": "2",
+          "type_line": "Creature — Spirit Soldier"
+        },
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Drogskol Armaments",
+          "oracle_text": "Enchant creature\nEnchanted creature gets +2/+2.\nIf Drogskol Armaments would be put into a graveyard from anywhere, exile it instead.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Aura"
+        }
+      ],
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform",
+        "Enchant",
+        "Disturb"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W} // ",
+      "name": "Drogskol Infantry // Drogskol Armaments",
+      "oracle_id": "389bcb9f-4e66-4704-9968-a1c1574ec2c8",
+      "oracle_text": "Drogskol Infantry: Disturb {3}{W} (You may cast this card from your graveyard transformed for its disturb cost.)\n//\nDrogskol Armaments: Enchant creature\nEnchanted creature gets +2/+2.\nIf Drogskol Armaments would be put into a graveyard from anywhere, exile it instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-11-19",
+      "toughness": null,
+      "type_line": "Creature — Spirit Soldier // Enchantment — Aura"
+    },
+    {
+      "oracle_id": "830e3e37-a80c-4b0e-b9af-393ad4ca01d7",
+      "name": "Faithbound Judge // Sinner's Judgment",
+      "mana_cost": null,
+      "cmc": 3.0,
+      "type_line": "Creature — Spirit Soldier // Enchantment — Aura Curse",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Vigilance",
+        "Transform",
+        "Enchant",
+        "Defender",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Faithbound Judge",
+          "mana_cost": "{1}{W}{W}",
+          "type_line": "Creature — Spirit Soldier",
+          "oracle_text": "Defender, flying, vigilance\nAt the beginning of your upkeep, if this creature has two or fewer judgment counters on it, put a judgment counter on it.\nAs long as this creature has three or more judgment counters on it, it can attack as though it didn't have defender.\nDisturb {5}{W}{W}",
+          "colors": [
+            "W"
+          ],
+          "power": "4",
+          "toughness": "4",
+          "artist": "Svetlin Velinov",
+          "artist_id": "ffd063ae-c097-4f26-b2e6-b1e2137708bc",
+          "illustration_id": "b245805b-c86b-4f7f-b718-dcad7545b938",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.jpg?1783951787",
+            "normal": "https://cards.scryfall.io/normal/front/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.jpg?1783951787",
+            "large": "https://cards.scryfall.io/large/front/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.jpg?1783951787",
+            "png": "https://cards.scryfall.io/png/front/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.png?1783951787",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.jpg?1783951787",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.jpg?1783951787",
+            "thumb": "https://cards.scryfall.io/thumb/front/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.webp?1783951787",
+            "grid": "https://cards.scryfall.io/grid/front/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.webp?1783951787",
+            "display": "https://cards.scryfall.io/display/front/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.webp?1783951787",
+            "art": "https://cards.scryfall.io/art/front/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.webp?1783951787",
+            "crop": "https://cards.scryfall.io/crop/front/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.webp?1783951787"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Sinner's Judgment",
+          "mana_cost": "",
+          "type_line": "Enchantment — Aura Curse",
+          "oracle_text": "Enchant player\nAt the beginning of your upkeep, put a judgment counter on this Aura. Then if there are three or more judgment counters on it, enchanted player loses the game.\nIf Sinner's Judgment would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "W"
+          ],
+          "color_indicator": [
+            "W"
+          ],
+          "artist": "Svetlin Velinov",
+          "artist_id": "ffd063ae-c097-4f26-b2e6-b1e2137708bc",
+          "illustration_id": "b10eec5d-1aca-4dd1-b935-3380b725fe6f",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.jpg?1783951787",
+            "normal": "https://cards.scryfall.io/normal/back/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.jpg?1783951787",
+            "large": "https://cards.scryfall.io/large/back/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.jpg?1783951787",
+            "png": "https://cards.scryfall.io/png/back/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.png?1783951787",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.jpg?1783951787",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.jpg?1783951787",
+            "thumb": "https://cards.scryfall.io/thumb/back/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.webp?1783951787",
+            "grid": "https://cards.scryfall.io/grid/back/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.webp?1783951787",
+            "display": "https://cards.scryfall.io/display/back/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.webp?1783951787",
+            "art": "https://cards.scryfall.io/art/back/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.webp?1783951787",
+            "crop": "https://cards.scryfall.io/crop/back/d/b/db791fb6-b0ff-4ded-bd3d-9447cf398312.webp?1783951787"
+          }
+        }
+      ]
+    },
+    {
+      "oracle_id": "ba88575a-4b9a-40cd-abbc-4539912c9455",
+      "name": "Galedrifter // Waildrifter",
+      "mana_cost": null,
+      "cmc": 4.0,
+      "type_line": "Creature — Hippogriff // Creature — Hippogriff Spirit",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying",
+        "Transform",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-09-24",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "not_legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Galedrifter",
+          "mana_cost": "{3}{U}",
+          "type_line": "Creature — Hippogriff",
+          "oracle_text": "Flying\nDisturb {4}{U} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "U"
+          ],
+          "power": "3",
+          "toughness": "2",
+          "flavor_text": "\"If you're lost in a storm, follow a gryff. They always know which way calmer waters lie.\"\n—Geor, Havengul fisher",
+          "artist": "Daniel Ljunggren",
+          "artist_id": "0fbd4798-76eb-46d5-a5d4-1e3a25870e34",
+          "illustration_id": "8e4c7ecc-fdcb-44f6-bf9c-ff5740d6e03b",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.jpg?1783925646",
+            "normal": "https://cards.scryfall.io/normal/front/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.jpg?1783925646",
+            "large": "https://cards.scryfall.io/large/front/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.jpg?1783925646",
+            "png": "https://cards.scryfall.io/png/front/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.png?1783925646",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.jpg?1783925646",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.jpg?1783925646",
+            "thumb": "https://cards.scryfall.io/thumb/front/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.webp?1783925646",
+            "grid": "https://cards.scryfall.io/grid/front/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.webp?1783925646",
+            "display": "https://cards.scryfall.io/display/front/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.webp?1783925646",
+            "art": "https://cards.scryfall.io/art/front/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.webp?1783925646",
+            "crop": "https://cards.scryfall.io/crop/front/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.webp?1783925646"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Waildrifter",
+          "mana_cost": "",
+          "type_line": "Creature — Hippogriff Spirit",
+          "oracle_text": "Flying\nIf Waildrifter would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "U"
+          ],
+          "color_indicator": [
+            "U"
+          ],
+          "power": "2",
+          "toughness": "2",
+          "flavor_text": "\"Wait! That's no gryff—at least not anymore.\"\n—Geor, Havengul fisher",
+          "artist": "Daniel Ljunggren",
+          "artist_id": "0fbd4798-76eb-46d5-a5d4-1e3a25870e34",
+          "illustration_id": "0887f2fe-6b15-4fc5-9b25-2e891115adac",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.jpg?1783925646",
+            "normal": "https://cards.scryfall.io/normal/back/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.jpg?1783925646",
+            "large": "https://cards.scryfall.io/large/back/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.jpg?1783925646",
+            "png": "https://cards.scryfall.io/png/back/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.png?1783925646",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.jpg?1783925646",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.jpg?1783925646",
+            "thumb": "https://cards.scryfall.io/thumb/back/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.webp?1783925646",
+            "grid": "https://cards.scryfall.io/grid/back/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.webp?1783925646",
+            "display": "https://cards.scryfall.io/display/back/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.webp?1783925646",
+            "art": "https://cards.scryfall.io/art/back/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.webp?1783925646",
+            "crop": "https://cards.scryfall.io/crop/back/e/b/eb34c472-c6ff-4d83-ac8b-a8f279593f98.webp?1783925646"
+          }
+        }
+      ]
+    },
+    {
+      "oracle_id": "d2d753d4-3bb7-4503-8cc0-8f948b7a461e",
+      "name": "Gutter Skulker // Gutter Shortcut",
+      "mana_cost": null,
+      "cmc": 4.0,
+      "type_line": "Creature — Spirit // Enchantment — Aura",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Transform",
+        "Enchant",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "not_legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "not_legal",
+        "competitivebrawl": "not_legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "not_legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Gutter Skulker",
+          "mana_cost": "{3}{U}",
+          "type_line": "Creature — Spirit",
+          "oracle_text": "This creature can't be blocked as long as it's attacking alone.\nDisturb {3}{U} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "U"
+          ],
+          "power": "3",
+          "toughness": "3",
+          "flavor_text": "Geists have a knack for showing up wherever they're least expected.",
+          "artist": "Viko Menezes",
+          "artist_id": "92dfef2a-d0fa-42fd-bdd6-bc4c9286cb56",
+          "illustration_id": "537c0d28-7252-4401-86d2-0336f60db880",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.jpg?1783924900",
+            "normal": "https://cards.scryfall.io/normal/front/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.jpg?1783924900",
+            "large": "https://cards.scryfall.io/large/front/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.jpg?1783924900",
+            "png": "https://cards.scryfall.io/png/front/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.png?1783924900",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.jpg?1783924900",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.jpg?1783924900",
+            "thumb": "https://cards.scryfall.io/thumb/front/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.webp?1783924900",
+            "grid": "https://cards.scryfall.io/grid/front/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.webp?1783924900",
+            "display": "https://cards.scryfall.io/display/front/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.webp?1783924900",
+            "art": "https://cards.scryfall.io/art/front/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.webp?1783924900",
+            "crop": "https://cards.scryfall.io/crop/front/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.webp?1783924900"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Gutter Shortcut",
+          "mana_cost": "",
+          "type_line": "Enchantment — Aura",
+          "oracle_text": "Enchant creature\nEnchanted creature can't be blocked as long as it's attacking alone.\nIf Gutter Shortcut would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "U"
+          ],
+          "color_indicator": [
+            "U"
+          ],
+          "flavor_text": "Some people take that as inspiration.",
+          "artist": "Viko Menezes",
+          "artist_id": "92dfef2a-d0fa-42fd-bdd6-bc4c9286cb56",
+          "illustration_id": "c6302e8f-9fa1-4a31-995c-99c652a9800d",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.jpg?1783924900",
+            "normal": "https://cards.scryfall.io/normal/back/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.jpg?1783924900",
+            "large": "https://cards.scryfall.io/large/back/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.jpg?1783924900",
+            "png": "https://cards.scryfall.io/png/back/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.png?1783924900",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.jpg?1783924900",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.jpg?1783924900",
+            "thumb": "https://cards.scryfall.io/thumb/back/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.webp?1783924900",
+            "grid": "https://cards.scryfall.io/grid/back/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.webp?1783924900",
+            "display": "https://cards.scryfall.io/display/back/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.webp?1783924900",
+            "art": "https://cards.scryfall.io/art/back/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.webp?1783924900",
+            "crop": "https://cards.scryfall.io/crop/back/c/e/ceb84515-7b8f-444d-b6a9-61231621f9b7.webp?1783924900"
+          }
+        }
+      ]
+    },
+    {
+      "oracle_id": "fa1be67e-a07e-42ce-88be-446acd643dc6",
+      "name": "Heartless Summoning",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Creature spells you cast cost {2} less to cast.\nCreatures you control get -1/-1.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "not_legal",
+        "timeless": "not_legal",
+        "gladiator": "not_legal",
+        "pioneer": "not_legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "not_legal",
+        "competitivebrawl": "not_legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Humble",
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "oracle_text": "Until end of turn, target creature loses all abilities and has base power and toughness 0/1.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-06-10",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "493b2820-c250-48bd-9f3c-e1b5639ee101",
+      "name": "Katilda, Dawnhart Martyr // Katilda's Rising Dawn",
+      "mana_cost": null,
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Spirit Warlock // Legendary Enchantment — Aura",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Lifelink",
+        "Transform",
+        "Protection",
+        "Enchant",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Katilda, Dawnhart Martyr",
+          "mana_cost": "{1}{W}{W}",
+          "type_line": "Legendary Creature — Spirit Warlock",
+          "oracle_text": "Flying, lifelink, protection from Vampires\nKatilda's power and toughness are each equal to the number of permanents you control that are Spirits and/or enchantments.\nDisturb {3}{W}{W} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "W"
+          ],
+          "power": "*",
+          "toughness": "*",
+          "artist": "Manuel Castañón",
+          "artist_id": "35f11eeb-36ff-4059-bb70-d1274f5bd858",
+          "illustration_id": "c3172660-2a41-4954-b97a-7e655120f308",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.jpg?1783924922",
+            "normal": "https://cards.scryfall.io/normal/front/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.jpg?1783924922",
+            "large": "https://cards.scryfall.io/large/front/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.jpg?1783924922",
+            "png": "https://cards.scryfall.io/png/front/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.png?1783924922",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.jpg?1783924922",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.jpg?1783924922",
+            "thumb": "https://cards.scryfall.io/thumb/front/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.webp?1783924922",
+            "grid": "https://cards.scryfall.io/grid/front/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.webp?1783924922",
+            "display": "https://cards.scryfall.io/display/front/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.webp?1783924922",
+            "art": "https://cards.scryfall.io/art/front/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.webp?1783924922",
+            "crop": "https://cards.scryfall.io/crop/front/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.webp?1783924922"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Katilda's Rising Dawn",
+          "mana_cost": "",
+          "type_line": "Legendary Enchantment — Aura",
+          "oracle_text": "Enchant creature\nEnchanted creature has flying, lifelink, and protection from Vampires, and it gets +X/+X, where X is the number of permanents you control that are Spirits and/or enchantments.\nIf Katilda's Rising Dawn would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "W"
+          ],
+          "color_indicator": [
+            "W"
+          ],
+          "artist": "Manuel Castañón",
+          "artist_id": "35f11eeb-36ff-4059-bb70-d1274f5bd858",
+          "illustration_id": "b03e16bb-2480-4b5f-bfac-e3d13f19d539",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.jpg?1783924922",
+            "normal": "https://cards.scryfall.io/normal/back/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.jpg?1783924922",
+            "large": "https://cards.scryfall.io/large/back/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.jpg?1783924922",
+            "png": "https://cards.scryfall.io/png/back/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.png?1783924922",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.jpg?1783924922",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.jpg?1783924922",
+            "thumb": "https://cards.scryfall.io/thumb/back/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.webp?1783924922",
+            "grid": "https://cards.scryfall.io/grid/back/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.webp?1783924922",
+            "display": "https://cards.scryfall.io/display/back/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.webp?1783924922",
+            "art": "https://cards.scryfall.io/art/back/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.webp?1783924922",
+            "crop": "https://cards.scryfall.io/crop/back/0/e/0ef240aa-2a88-4ec4-888a-918466372adb.webp?1783924922"
+          }
+        }
+      ]
+    },
+    {
+      "oracle_id": "ee049bf3-b31c-4dcc-996f-bb076848432b",
+      "name": "Kindly Ancestor // Ancestor's Embrace",
+      "mana_cost": null,
+      "cmc": 3.0,
+      "type_line": "Creature — Spirit // Enchantment — Aura",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Lifelink",
+        "Transform",
+        "Enchant",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Kindly Ancestor",
+          "mana_cost": "{2}{W}",
+          "type_line": "Creature — Spirit",
+          "oracle_text": "Lifelink\nDisturb {1}{W} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "W"
+          ],
+          "power": "2",
+          "toughness": "3",
+          "flavor_text": "\"You look cold, dearie.\"",
+          "artist": "Justyna Dura",
+          "artist_id": "d2340aef-8ca9-4e0d-864c-6a4e8d5e350a",
+          "illustration_id": "265a6721-6684-4d9e-9ec1-10b3a41bfbc5",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/2/5/25193485-7f41-4b05-9a69-4c112679f97c.jpg?1783924921",
+            "normal": "https://cards.scryfall.io/normal/front/2/5/25193485-7f41-4b05-9a69-4c112679f97c.jpg?1783924921",
+            "large": "https://cards.scryfall.io/large/front/2/5/25193485-7f41-4b05-9a69-4c112679f97c.jpg?1783924921",
+            "png": "https://cards.scryfall.io/png/front/2/5/25193485-7f41-4b05-9a69-4c112679f97c.png?1783924921",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/2/5/25193485-7f41-4b05-9a69-4c112679f97c.jpg?1783924921",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/2/5/25193485-7f41-4b05-9a69-4c112679f97c.jpg?1783924921",
+            "thumb": "https://cards.scryfall.io/thumb/front/2/5/25193485-7f41-4b05-9a69-4c112679f97c.webp?1783924921",
+            "grid": "https://cards.scryfall.io/grid/front/2/5/25193485-7f41-4b05-9a69-4c112679f97c.webp?1783924921",
+            "display": "https://cards.scryfall.io/display/front/2/5/25193485-7f41-4b05-9a69-4c112679f97c.webp?1783924921",
+            "art": "https://cards.scryfall.io/art/front/2/5/25193485-7f41-4b05-9a69-4c112679f97c.webp?1783924921",
+            "crop": "https://cards.scryfall.io/crop/front/2/5/25193485-7f41-4b05-9a69-4c112679f97c.webp?1783924921"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Ancestor's Embrace",
+          "mana_cost": "",
+          "type_line": "Enchantment — Aura",
+          "oracle_text": "Enchant creature\nEnchanted creature has lifelink.\nIf Ancestor's Embrace would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "W"
+          ],
+          "color_indicator": [
+            "W"
+          ],
+          "flavor_text": "\"Thank you, Grandmother. I love you too.\"",
+          "artist": "Justyna Dura",
+          "artist_id": "d2340aef-8ca9-4e0d-864c-6a4e8d5e350a",
+          "illustration_id": "aac55665-cfdb-42c3-b7a5-89a324752899",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/2/5/25193485-7f41-4b05-9a69-4c112679f97c.jpg?1783924921",
+            "normal": "https://cards.scryfall.io/normal/back/2/5/25193485-7f41-4b05-9a69-4c112679f97c.jpg?1783924921",
+            "large": "https://cards.scryfall.io/large/back/2/5/25193485-7f41-4b05-9a69-4c112679f97c.jpg?1783924921",
+            "png": "https://cards.scryfall.io/png/back/2/5/25193485-7f41-4b05-9a69-4c112679f97c.png?1783924921",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/2/5/25193485-7f41-4b05-9a69-4c112679f97c.jpg?1783924921",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/2/5/25193485-7f41-4b05-9a69-4c112679f97c.jpg?1783924921",
+            "thumb": "https://cards.scryfall.io/thumb/back/2/5/25193485-7f41-4b05-9a69-4c112679f97c.webp?1783924921",
+            "grid": "https://cards.scryfall.io/grid/back/2/5/25193485-7f41-4b05-9a69-4c112679f97c.webp?1783924921",
+            "display": "https://cards.scryfall.io/display/back/2/5/25193485-7f41-4b05-9a69-4c112679f97c.webp?1783924921",
+            "art": "https://cards.scryfall.io/art/back/2/5/25193485-7f41-4b05-9a69-4c112679f97c.webp?1783924921",
+            "crop": "https://cards.scryfall.io/crop/back/2/5/25193485-7f41-4b05-9a69-4c112679f97c.webp?1783924921"
+          }
+        }
+      ]
+    },
+    {
+      "oracle_id": "67a025eb-6e65-435c-becb-b51085175292",
+      "name": "Lantern Bearer // Lanterns' Lift",
+      "mana_cost": null,
+      "cmc": 1.0,
+      "type_line": "Creature — Spirit // Enchantment — Aura",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying",
+        "Transform",
+        "Enchant",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "not_legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "not_legal",
+        "competitivebrawl": "not_legal",
+        "alchemy": "not_legal",
+        "paupercommander": "legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Lantern Bearer",
+          "mana_cost": "{U}",
+          "type_line": "Creature — Spirit",
+          "oracle_text": "Flying\nDisturb {2}{U} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "U"
+          ],
+          "power": "1",
+          "toughness": "1",
+          "flavor_text": "Val didn't know what the silent geist was offering . . .",
+          "artist": "Zoltan Boros",
+          "artist_id": "1885e6cb-c827-4896-994e-3d0a027d602f",
+          "illustration_id": "52e8a07d-c944-4eda-bf28-e3dd4a0f79ad",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.jpg?1783908166",
+            "normal": "https://cards.scryfall.io/normal/front/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.jpg?1783908166",
+            "large": "https://cards.scryfall.io/large/front/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.jpg?1783908166",
+            "png": "https://cards.scryfall.io/png/front/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.png?1783908166",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.jpg?1783908166",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.jpg?1783908166",
+            "thumb": "https://cards.scryfall.io/thumb/front/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.webp?1783908166",
+            "grid": "https://cards.scryfall.io/grid/front/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.webp?1783908166",
+            "display": "https://cards.scryfall.io/display/front/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.webp?1783908166",
+            "art": "https://cards.scryfall.io/art/front/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.webp?1783908166",
+            "crop": "https://cards.scryfall.io/crop/front/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.webp?1783908166"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Lanterns' Lift",
+          "mana_cost": "",
+          "type_line": "Enchantment — Aura",
+          "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1 and has flying.\nIf Lanterns' Lift would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "U"
+          ],
+          "color_indicator": [
+            "U"
+          ],
+          "flavor_text": ". . . but she knew it would be rude to refuse.",
+          "artist": "Zoltan Boros",
+          "artist_id": "1885e6cb-c827-4896-994e-3d0a027d602f",
+          "illustration_id": "83e95472-0f14-4817-a704-32e5a653eebe",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.jpg?1783908166",
+            "normal": "https://cards.scryfall.io/normal/back/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.jpg?1783908166",
+            "large": "https://cards.scryfall.io/large/back/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.jpg?1783908166",
+            "png": "https://cards.scryfall.io/png/back/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.png?1783908166",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.jpg?1783908166",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.jpg?1783908166",
+            "thumb": "https://cards.scryfall.io/thumb/back/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.webp?1783908166",
+            "grid": "https://cards.scryfall.io/grid/back/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.webp?1783908166",
+            "display": "https://cards.scryfall.io/display/back/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.webp?1783908166",
+            "art": "https://cards.scryfall.io/art/back/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.webp?1783908166",
+            "crop": "https://cards.scryfall.io/crop/back/0/e/0e568af8-9ddf-4efd-92ec-74a54b811c03.webp?1783908166"
+          }
+        }
+      ]
+    },
+    {
+      "oracle_id": "0761a0e7-d443-4bab-bb15-307c83d4a6a1",
+      "name": "Lunarch Veteran // Luminous Phantom",
+      "mana_cost": null,
+      "cmc": 1.0,
+      "type_line": "Creature — Human Cleric // Creature — Spirit Cleric",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Transform",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Lunarch Veteran",
+          "mana_cost": "{W}",
+          "type_line": "Creature — Human Cleric",
+          "oracle_text": "Whenever another creature you control enters, you gain 1 life.\nDisturb {1}{W} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "W"
+          ],
+          "power": "1",
+          "toughness": "1",
+          "flavor_text": "\"Even in our darkest times, Avacyn's light still guides us.\"",
+          "artist": "Igor Kieryluk",
+          "artist_id": "9c3e9d17-509f-485c-9360-46d897ce716b",
+          "illustration_id": "aebb64c7-ba52-48a7-902e-b21b0b2d04a8",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.jpg?1783908183",
+            "normal": "https://cards.scryfall.io/normal/front/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.jpg?1783908183",
+            "large": "https://cards.scryfall.io/large/front/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.jpg?1783908183",
+            "png": "https://cards.scryfall.io/png/front/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.png?1783908183",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.jpg?1783908183",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.jpg?1783908183",
+            "thumb": "https://cards.scryfall.io/thumb/front/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.webp?1783908183",
+            "grid": "https://cards.scryfall.io/grid/front/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.webp?1783908183",
+            "display": "https://cards.scryfall.io/display/front/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.webp?1783908183",
+            "art": "https://cards.scryfall.io/art/front/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.webp?1783908183",
+            "crop": "https://cards.scryfall.io/crop/front/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.webp?1783908183"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Luminous Phantom",
+          "mana_cost": "",
+          "type_line": "Creature — Spirit Cleric",
+          "oracle_text": "Flying\nWhenever another creature you control leaves the battlefield, you gain 1 life.\nIf Luminous Phantom would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "W"
+          ],
+          "color_indicator": [
+            "W"
+          ],
+          "power": "1",
+          "toughness": "1",
+          "artist": "Igor Kieryluk",
+          "artist_id": "9c3e9d17-509f-485c-9360-46d897ce716b",
+          "illustration_id": "101ab572-41f6-4122-b3a7-40ca14c4b0eb",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.jpg?1783908183",
+            "normal": "https://cards.scryfall.io/normal/back/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.jpg?1783908183",
+            "large": "https://cards.scryfall.io/large/back/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.jpg?1783908183",
+            "png": "https://cards.scryfall.io/png/back/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.png?1783908183",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.jpg?1783908183",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.jpg?1783908183",
+            "thumb": "https://cards.scryfall.io/thumb/back/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.webp?1783908183",
+            "grid": "https://cards.scryfall.io/grid/back/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.webp?1783908183",
+            "display": "https://cards.scryfall.io/display/back/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.webp?1783908183",
+            "art": "https://cards.scryfall.io/art/back/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.webp?1783908183",
+            "crop": "https://cards.scryfall.io/crop/back/4/3/438e3302-daf9-436b-8b08-24b3f33295f6.webp?1783908183"
+          }
+        }
+      ]
+    },
+    {
+      "oracle_id": "51233ade-70cd-4539-9f41-5ffab761da54",
+      "name": "Malevolent Hermit // Benevolent Geist",
+      "mana_cost": null,
+      "cmc": 2.0,
+      "type_line": "Creature — Human Wizard // Creature — Spirit Wizard",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying",
+        "Transform",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-09-24",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Malevolent Hermit",
+          "mana_cost": "{1}{U}",
+          "type_line": "Creature — Human Wizard",
+          "oracle_text": "{U}, Sacrifice this creature: Counter target noncreature spell unless its controller pays {3}.\nDisturb {2}{U} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "U"
+          ],
+          "power": "2",
+          "toughness": "1",
+          "artist": "Daarken",
+          "artist_id": "e607a0d4-fc12-4c01-9e3f-501f5269b9cb",
+          "illustration_id": "e4543968-8f2e-456a-a582-c75e866f5b02",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.jpg?1783925642",
+            "normal": "https://cards.scryfall.io/normal/front/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.jpg?1783925642",
+            "large": "https://cards.scryfall.io/large/front/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.jpg?1783925642",
+            "png": "https://cards.scryfall.io/png/front/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.png?1783925642",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.jpg?1783925642",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.jpg?1783925642",
+            "thumb": "https://cards.scryfall.io/thumb/front/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.webp?1783925642",
+            "grid": "https://cards.scryfall.io/grid/front/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.webp?1783925642",
+            "display": "https://cards.scryfall.io/display/front/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.webp?1783925642",
+            "art": "https://cards.scryfall.io/art/front/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.webp?1783925642",
+            "crop": "https://cards.scryfall.io/crop/front/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.webp?1783925642"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Benevolent Geist",
+          "mana_cost": "",
+          "type_line": "Creature — Spirit Wizard",
+          "oracle_text": "Flying\nNoncreature spells you control can't be countered.\nIf Benevolent Geist would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "U"
+          ],
+          "color_indicator": [
+            "U"
+          ],
+          "power": "2",
+          "toughness": "2",
+          "flavor_text": "All his old grudges suddenly seemed laughably petty. So he laughed.",
+          "artist": "Daarken",
+          "artist_id": "e607a0d4-fc12-4c01-9e3f-501f5269b9cb",
+          "illustration_id": "7ea2cc3d-ae55-423d-856b-761e89dc7d8a",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.jpg?1783925642",
+            "normal": "https://cards.scryfall.io/normal/back/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.jpg?1783925642",
+            "large": "https://cards.scryfall.io/large/back/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.jpg?1783925642",
+            "png": "https://cards.scryfall.io/png/back/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.png?1783925642",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.jpg?1783925642",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.jpg?1783925642",
+            "thumb": "https://cards.scryfall.io/thumb/back/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.webp?1783925642",
+            "grid": "https://cards.scryfall.io/grid/back/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.webp?1783925642",
+            "display": "https://cards.scryfall.io/display/back/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.webp?1783925642",
+            "art": "https://cards.scryfall.io/art/back/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.webp?1783925642",
+            "crop": "https://cards.scryfall.io/crop/back/e/7/e79269af-63eb-43d2-afee-c38fa14a0c5b.webp?1783925642"
+          }
+        }
+      ]
+    },
+    {
+      "oracle_id": "5768fe50-a134-492c-a725-5ed02610c39f",
+      "name": "Mirrorhall Mimic // Ghastly Mimicry",
+      "mana_cost": null,
+      "cmc": 4.0,
+      "type_line": "Creature — Spirit // Enchantment — Aura",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Transform",
+        "Enchant",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "not_legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Mirrorhall Mimic",
+          "mana_cost": "{3}{U}",
+          "type_line": "Creature — Spirit",
+          "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield, except it's a Spirit in addition to its other types.\nDisturb {3}{U}{U} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "U"
+          ],
+          "power": "0",
+          "toughness": "0",
+          "artist": "Justine Cruz",
+          "artist_id": "4d6acc42-7bac-42cb-ac57-a56355292e89",
+          "illustration_id": "c6ed3e66-c56e-4685-9139-4c5f09226053",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/8/2/823ad188-bd56-476d-9853-bed90bfad582.jpg?1783924898",
+            "normal": "https://cards.scryfall.io/normal/front/8/2/823ad188-bd56-476d-9853-bed90bfad582.jpg?1783924898",
+            "large": "https://cards.scryfall.io/large/front/8/2/823ad188-bd56-476d-9853-bed90bfad582.jpg?1783924898",
+            "png": "https://cards.scryfall.io/png/front/8/2/823ad188-bd56-476d-9853-bed90bfad582.png?1783924898",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/8/2/823ad188-bd56-476d-9853-bed90bfad582.jpg?1783924898",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/8/2/823ad188-bd56-476d-9853-bed90bfad582.jpg?1783924898",
+            "thumb": "https://cards.scryfall.io/thumb/front/8/2/823ad188-bd56-476d-9853-bed90bfad582.webp?1783924898",
+            "grid": "https://cards.scryfall.io/grid/front/8/2/823ad188-bd56-476d-9853-bed90bfad582.webp?1783924898",
+            "display": "https://cards.scryfall.io/display/front/8/2/823ad188-bd56-476d-9853-bed90bfad582.webp?1783924898",
+            "art": "https://cards.scryfall.io/art/front/8/2/823ad188-bd56-476d-9853-bed90bfad582.webp?1783924898",
+            "crop": "https://cards.scryfall.io/crop/front/8/2/823ad188-bd56-476d-9853-bed90bfad582.webp?1783924898"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Ghastly Mimicry",
+          "mana_cost": "",
+          "type_line": "Enchantment — Aura",
+          "oracle_text": "Enchant creature\nAt the beginning of your upkeep, create a token that's a copy of enchanted creature, except it's a Spirit in addition to its other types.\nIf Ghastly Mimicry would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "U"
+          ],
+          "color_indicator": [
+            "U"
+          ],
+          "artist": "Justine Cruz",
+          "artist_id": "4d6acc42-7bac-42cb-ac57-a56355292e89",
+          "illustration_id": "04080752-3733-403a-9bec-8cd39520fba1",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/8/2/823ad188-bd56-476d-9853-bed90bfad582.jpg?1783924898",
+            "normal": "https://cards.scryfall.io/normal/back/8/2/823ad188-bd56-476d-9853-bed90bfad582.jpg?1783924898",
+            "large": "https://cards.scryfall.io/large/back/8/2/823ad188-bd56-476d-9853-bed90bfad582.jpg?1783924898",
+            "png": "https://cards.scryfall.io/png/back/8/2/823ad188-bd56-476d-9853-bed90bfad582.png?1783924898",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/8/2/823ad188-bd56-476d-9853-bed90bfad582.jpg?1783924898",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/8/2/823ad188-bd56-476d-9853-bed90bfad582.jpg?1783924898",
+            "thumb": "https://cards.scryfall.io/thumb/back/8/2/823ad188-bd56-476d-9853-bed90bfad582.webp?1783924898",
+            "grid": "https://cards.scryfall.io/grid/back/8/2/823ad188-bd56-476d-9853-bed90bfad582.webp?1783924898",
+            "display": "https://cards.scryfall.io/display/back/8/2/823ad188-bd56-476d-9853-bed90bfad582.webp?1783924898",
+            "art": "https://cards.scryfall.io/art/back/8/2/823ad188-bd56-476d-9853-bed90bfad582.webp?1783924898",
+            "crop": "https://cards.scryfall.io/crop/back/8/2/823ad188-bd56-476d-9853-bed90bfad582.webp?1783924898"
+          }
+        }
+      ]
+    },
+    {
+      "oracle_id": "4d0a0027-53b3-45a1-8736-f0ac86b19342",
+      "name": "Mischievous Catgeist // Catlike Curiosity",
+      "mana_cost": null,
+      "cmc": 2.0,
+      "type_line": "Creature — Cat Spirit // Enchantment — Aura",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Transform",
+        "Enchant",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "not_legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "not_legal",
+        "competitivebrawl": "not_legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Mischievous Catgeist",
+          "mana_cost": "{1}{U}",
+          "type_line": "Creature — Cat Spirit",
+          "oracle_text": "Whenever this creature deals combat damage to a player, draw a card.\nDisturb {2}{U} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "U"
+          ],
+          "power": "1",
+          "toughness": "1",
+          "flavor_text": "\"I never get any knitting done, but I don't entirely mind.\"\n—Lorn, Lambholt innkeeper",
+          "artist": "Denman Rooke",
+          "artist_id": "5eedbc4b-34a3-4ca5-b3f5-9ac2f6b6adf7",
+          "illustration_id": "e85b8e54-dc20-4a71-ba2e-3e2dd1832d96",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.jpg?1783924899",
+            "normal": "https://cards.scryfall.io/normal/front/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.jpg?1783924899",
+            "large": "https://cards.scryfall.io/large/front/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.jpg?1783924899",
+            "png": "https://cards.scryfall.io/png/front/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.png?1783924899",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.jpg?1783924899",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.jpg?1783924899",
+            "thumb": "https://cards.scryfall.io/thumb/front/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.webp?1783924899",
+            "grid": "https://cards.scryfall.io/grid/front/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.webp?1783924899",
+            "display": "https://cards.scryfall.io/display/front/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.webp?1783924899",
+            "art": "https://cards.scryfall.io/art/front/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.webp?1783924899",
+            "crop": "https://cards.scryfall.io/crop/front/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.webp?1783924899"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Catlike Curiosity",
+          "mana_cost": "",
+          "type_line": "Enchantment — Aura",
+          "oracle_text": "Enchant creature\nEnchanted creature has \"Whenever this creature deals combat damage to a player, draw a card.\"\nIf Catlike Curiosity would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "U"
+          ],
+          "color_indicator": [
+            "U"
+          ],
+          "artist": "Denman Rooke",
+          "artist_id": "5eedbc4b-34a3-4ca5-b3f5-9ac2f6b6adf7",
+          "illustration_id": "8a882337-31b7-4b9b-ab1f-ca23397d29bd",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.jpg?1783924899",
+            "normal": "https://cards.scryfall.io/normal/back/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.jpg?1783924899",
+            "large": "https://cards.scryfall.io/large/back/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.jpg?1783924899",
+            "png": "https://cards.scryfall.io/png/back/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.png?1783924899",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.jpg?1783924899",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.jpg?1783924899",
+            "thumb": "https://cards.scryfall.io/thumb/back/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.webp?1783924899",
+            "grid": "https://cards.scryfall.io/grid/back/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.webp?1783924899",
+            "display": "https://cards.scryfall.io/display/back/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.webp?1783924899",
+            "art": "https://cards.scryfall.io/art/back/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.webp?1783924899",
+            "crop": "https://cards.scryfall.io/crop/back/a/3/a3ff628a-ef8e-45c4-84e7-a33ec28f025a.webp?1783924899"
+          }
+        }
+      ]
+    },
+    {
+      "oracle_id": "600db821-4210-4996-a3f7-e05a143e50c2",
+      "name": "Mourning Patrol // Morning Apparition",
+      "mana_cost": null,
+      "cmc": 3.0,
+      "type_line": "Creature — Human Soldier // Creature — Spirit Soldier",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Vigilance",
+        "Transform",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-09-24",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Mourning Patrol",
+          "mana_cost": "{2}{W}",
+          "type_line": "Creature — Human Soldier",
+          "oracle_text": "Vigilance\nDisturb {3}{W} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "W"
+          ],
+          "power": "2",
+          "toughness": "3",
+          "flavor_text": "\"It's creepy out here, isn't it, boy? I always feel like someone's watching us.\"",
+          "artist": "Greg Opalinski",
+          "artist_id": "b864fecb-d491-4f8d-b915-f6c93d0885fa",
+          "illustration_id": "0b447e71-8902-4094-8690-bdb858489230",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.jpg?1783925661",
+            "normal": "https://cards.scryfall.io/normal/front/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.jpg?1783925661",
+            "large": "https://cards.scryfall.io/large/front/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.jpg?1783925661",
+            "png": "https://cards.scryfall.io/png/front/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.png?1783925661",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.jpg?1783925661",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.jpg?1783925661",
+            "thumb": "https://cards.scryfall.io/thumb/front/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.webp?1783925661",
+            "grid": "https://cards.scryfall.io/grid/front/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.webp?1783925661",
+            "display": "https://cards.scryfall.io/display/front/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.webp?1783925661",
+            "art": "https://cards.scryfall.io/art/front/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.webp?1783925661",
+            "crop": "https://cards.scryfall.io/crop/front/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.webp?1783925661"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Morning Apparition",
+          "mana_cost": "",
+          "type_line": "Creature — Spirit Soldier",
+          "oracle_text": "Flying, vigilance\nIf Morning Apparition would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "W"
+          ],
+          "color_indicator": [
+            "W"
+          ],
+          "power": "2",
+          "toughness": "1",
+          "flavor_text": "\"You could see the spirits all along, couldn't you? Well, now I can too.\"",
+          "artist": "Greg Opalinski",
+          "artist_id": "b864fecb-d491-4f8d-b915-f6c93d0885fa",
+          "illustration_id": "615baeb9-d191-4f43-874c-5abfad173d50",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.jpg?1783925661",
+            "normal": "https://cards.scryfall.io/normal/back/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.jpg?1783925661",
+            "large": "https://cards.scryfall.io/large/back/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.jpg?1783925661",
+            "png": "https://cards.scryfall.io/png/back/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.png?1783925661",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.jpg?1783925661",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.jpg?1783925661",
+            "thumb": "https://cards.scryfall.io/thumb/back/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.webp?1783925661",
+            "grid": "https://cards.scryfall.io/grid/back/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.webp?1783925661",
+            "display": "https://cards.scryfall.io/display/back/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.webp?1783925661",
+            "art": "https://cards.scryfall.io/art/back/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.webp?1783925661",
+            "crop": "https://cards.scryfall.io/crop/back/2/d/2d3687e2-09e0-4753-aa02-88a19bde3330.webp?1783925661"
+          }
+        }
+      ]
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}{B}",
+      "name": "Murder",
+      "oracle_id": "938b4e2c-88d9-4637-bc00-e228920c9a78",
+      "oracle_text": "Destroy target creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant",
+      "faces": []
+    },
+    {
+      "oracle_id": "13c90d78-cfb1-4d40-a35e-1fd170450b45",
+      "name": "Overwhelmed Archivist // Archive Haunt",
+      "mana_cost": null,
+      "cmc": 3.0,
+      "type_line": "Creature — Human Wizard // Creature — Spirit Wizard",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying",
+        "Transform",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-09-24",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Overwhelmed Archivist",
+          "mana_cost": "{2}{U}",
+          "type_line": "Creature — Human Wizard",
+          "oracle_text": "When this creature enters, draw a card, then discard a card.\nDisturb {3}{U} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "U"
+          ],
+          "power": "3",
+          "toughness": "2",
+          "flavor_text": "\"Bah! As if I had time to preserve everything.\"",
+          "artist": "Cristi Balanescu",
+          "artist_id": "c09ede88-a1b5-4a18-9895-dc8a965d28a5",
+          "illustration_id": "d1fc17e9-e448-4658-9748-27899ab4f813",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.jpg?1783925639",
+            "normal": "https://cards.scryfall.io/normal/front/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.jpg?1783925639",
+            "large": "https://cards.scryfall.io/large/front/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.jpg?1783925639",
+            "png": "https://cards.scryfall.io/png/front/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.png?1783925639",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.jpg?1783925639",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.jpg?1783925639",
+            "thumb": "https://cards.scryfall.io/thumb/front/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.webp?1783925639",
+            "grid": "https://cards.scryfall.io/grid/front/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.webp?1783925639",
+            "display": "https://cards.scryfall.io/display/front/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.webp?1783925639",
+            "art": "https://cards.scryfall.io/art/front/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.webp?1783925639",
+            "crop": "https://cards.scryfall.io/crop/front/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.webp?1783925639"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Archive Haunt",
+          "mana_cost": "",
+          "type_line": "Creature — Spirit Wizard",
+          "oracle_text": "Flying\nWhenever this creature attacks, draw a card, then discard a card.\nIf Archive Haunt would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "U"
+          ],
+          "color_indicator": [
+            "U"
+          ],
+          "power": "2",
+          "toughness": "1",
+          "flavor_text": "Cleaning up his life's work was his afterlife's work.",
+          "artist": "Cristi Balanescu",
+          "artist_id": "c09ede88-a1b5-4a18-9895-dc8a965d28a5",
+          "illustration_id": "032e60fd-ed6e-4dde-8b57-602f6d8268b8",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.jpg?1783925639",
+            "normal": "https://cards.scryfall.io/normal/back/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.jpg?1783925639",
+            "large": "https://cards.scryfall.io/large/back/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.jpg?1783925639",
+            "png": "https://cards.scryfall.io/png/back/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.png?1783925639",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.jpg?1783925639",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.jpg?1783925639",
+            "thumb": "https://cards.scryfall.io/thumb/back/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.webp?1783925639",
+            "grid": "https://cards.scryfall.io/grid/back/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.webp?1783925639",
+            "display": "https://cards.scryfall.io/display/back/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.webp?1783925639",
+            "art": "https://cards.scryfall.io/art/back/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.webp?1783925639",
+            "crop": "https://cards.scryfall.io/crop/back/8/3/832288fd-8031-4c2b-ad3e-b1ec9f94d379.webp?1783925639"
+          }
+        }
+      ]
+    },
+    {
+      "oracle_id": "09c96077-3804-4f12-a613-5bebc5e0413f",
+      "name": "Sphere of Resistance",
+      "mana_cost": "{2}",
+      "type_line": "Artifact",
+      "oracle_text": "Spells cost {1} more to cast.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-06-16",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "not_legal",
+        "timeless": "not_legal",
+        "gladiator": "not_legal",
+        "pioneer": "not_legal",
+        "modern": "not_legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "not_legal",
+        "competitivebrawl": "not_legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "legal",
+        "predh": "legal",
+        "tlr": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "f08f7814-4585-41dd-b82e-ed2ef5e24242",
+      "name": "Transcendent Envoy",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Enchantment Creature — Griffin",
+      "oracle_text": "Flying\nAura spells you cast cost {1} less to cast.",
+      "power": "1",
+      "toughness": "2",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "4db96d32-b4c2-44e9-a73f-aca7dad279b6",
+      "name": "Twinblade Geist // Twinblade Invocation",
+      "mana_cost": null,
+      "cmc": 2.0,
+      "type_line": "Creature — Spirit Warrior // Enchantment — Aura",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Transform",
+        "Enchant",
+        "Double strike",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Twinblade Geist",
+          "mana_cost": "{1}{W}",
+          "type_line": "Creature — Spirit Warrior",
+          "oracle_text": "Double strike\nDisturb {2}{W} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "W"
+          ],
+          "power": "1",
+          "toughness": "1",
+          "flavor_text": "She faced down a howlpack alone, saving her town at the cost of her life.",
+          "artist": "Tuan Duong Chu",
+          "artist_id": "d84246f9-a536-485f-a21d-a237302ed100",
+          "illustration_id": "62868d68-fafd-4008-b274-d5513cb77395",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.jpg?1783908178",
+            "normal": "https://cards.scryfall.io/normal/front/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.jpg?1783908178",
+            "large": "https://cards.scryfall.io/large/front/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.jpg?1783908178",
+            "png": "https://cards.scryfall.io/png/front/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.png?1783908178",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.jpg?1783908178",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.jpg?1783908178",
+            "thumb": "https://cards.scryfall.io/thumb/front/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.webp?1783908178",
+            "grid": "https://cards.scryfall.io/grid/front/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.webp?1783908178",
+            "display": "https://cards.scryfall.io/display/front/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.webp?1783908178",
+            "art": "https://cards.scryfall.io/art/front/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.webp?1783908178",
+            "crop": "https://cards.scryfall.io/crop/front/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.webp?1783908178"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Twinblade Invocation",
+          "mana_cost": "",
+          "type_line": "Enchantment — Aura",
+          "oracle_text": "Enchant creature\nEnchanted creature has double strike.\nIf Twinblade Invocation would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "W"
+          ],
+          "color_indicator": [
+            "W"
+          ],
+          "flavor_text": "Since her passing, many more travelers have made it home alive.",
+          "artist": "Tuan Duong Chu",
+          "artist_id": "d84246f9-a536-485f-a21d-a237302ed100",
+          "illustration_id": "ba25ac4a-d3db-4881-99c5-302e953c0246",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.jpg?1783908178",
+            "normal": "https://cards.scryfall.io/normal/back/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.jpg?1783908178",
+            "large": "https://cards.scryfall.io/large/back/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.jpg?1783908178",
+            "png": "https://cards.scryfall.io/png/back/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.png?1783908178",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.jpg?1783908178",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.jpg?1783908178",
+            "thumb": "https://cards.scryfall.io/thumb/back/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.webp?1783908178",
+            "grid": "https://cards.scryfall.io/grid/back/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.webp?1783908178",
+            "display": "https://cards.scryfall.io/display/back/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.webp?1783908178",
+            "art": "https://cards.scryfall.io/art/back/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.webp?1783908178",
+            "crop": "https://cards.scryfall.io/crop/back/8/8/88bc8cdf-adfa-4a11-a8c0-484bc03edc65.webp?1783908178"
+          }
+        }
+      ]
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "a9d288b8-cdc1-4e55-a0c9-d6edfc95e65d",
+      "name": "Shock",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Shock deals 2 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If a card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If you cast a card this way, you may not cast it for any other alternative costs it has, but you may pay for additional costs, such as kicker costs. If the spell requires an additional cost, you must pay that cost."
+    },
+    {
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If an attacking creature has multiple evasion abilities, such as shadow and flying, a creature can block it only if that creature satisfies all of the appropriate evasion abilities."
+    },
+    {
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "While Dauthi Voidwalker is on the battlefield, nontoken creatures your opponents control won't die. They'll be exiled instead. Abilities that would trigger when those creatures die won't trigger."
+    },
+    {
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Playing a card with Dauthi Voidwalker's last ability is still subject to normal timing restrictions."
+    },
+    {
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If your opponent discards a card while you control Dauthi Voidwalker, abilities that function when that card is discarded still work, even though that card never reaches that player's graveyard. In addition, spells or abilities that check the characteristics of the discarded card can find that card in exile."
+    },
+    {
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Tokens still die while Dauthi Voidwalker is on the battlefield."
+    }
+  ]
+}

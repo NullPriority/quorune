@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import lru_cache
 import re
 from typing import Any, Mapping, Protocol, Sequence
 
-from ..card_program_faces import program_matches_face, selected_face_id
+from ..card_program_faces import program_matches_face, selected_face_id, prospective_face_view
+from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..commander_zones import (
     commander_hand_library_replacement_effect,
     CommanderZoneError,
@@ -44,7 +45,6 @@ from ..flashback import flashed_back_subject_replacements
 from ..cast_lifecycles import fixed_cast_lifecycle_subject_replacements
 from ..unearth import unearthed_leave_replacement
 from ..zone_trigger_events import ZoneTransitionKind
-from ..kicker import KICKER_ANNOTATION
 from ..madness import MADNESS_REPLACEMENT_HANDLER_ID
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
@@ -63,16 +63,20 @@ from .sunburst import SunburstEntryCounterHandler
 from .entry_choices import ReadAheadEntryChoiceHandler, RiotEntryChoiceHandler
 from .entry_designations import EntryDesignationHandler
 from .entry_color_exclusion import ExcludedColorEntryDesignationHandler
-from .entry_copy import EntryCopyHandler, entry_copy_replacement_effects
+from .entry_copy import EntryCopyHandler, entry_copy_handler, entry_copy_replacement_effects
 from .entry_reveal import EntryRevealHandler,entry_reveal_replacement_effects
 from .kicker import FixedKickedEntryHandler
+from .multikicker import MultikickerEntryHandler, prospective_multikicker_fields
 from .madness import MadnessDiscardReplacementHandler
+from .self_graveyard_exile import SelfGraveyardExileHandler
+from ..self_graveyard_exile_model import SELF_GRAVEYARD_EXILE_HANDLER
 from ..read_ahead import READ_AHEAD_ENTRY_HANDLER_ID
 from .entry_state import (
     ENTRY_STATE_HANDLER_ID,
     EntryStateReplacementHandler,
     FixedEntryConditionReplacementHandler,
 )
+from .external_entry_state import ExternalEntryStateHandler
 from .zone_replacement_model import (
     PreparedZoneChange,
     SUPPORTED_ZONE_DESTINATIONS,
@@ -436,15 +440,19 @@ def default_zone_change_replacement_registry(
         (
             ConditionalSelfEntryCounterHandler(),
             EntryStateReplacementHandler(),
+            ExternalEntryStateHandler(),
             FixedEntryConditionReplacementHandler(),
             EntryDesignationHandler(),
             ExcludedColorEntryDesignationHandler(),
             EntryCopyHandler(),
+            entry_copy_handler(2),
             EntryRevealHandler(),
             ReadAheadEntryChoiceHandler(),
             RiotEntryChoiceHandler(),
             FixedKickedEntryHandler(),
+            MultikickerEntryHandler(),
             MadnessDiscardReplacementHandler(),
+            SelfGraveyardExileHandler(),
             DynamicSelfEntryCounterHandler(),
             SelfEntryCounterHandler(),
             SelfTappedCounterEntryHandler(),
@@ -505,7 +513,8 @@ def _zone_change_programs_for_record(
     except ValueError:
         return programs
     entry_programs = tuple(
-        program
+        replace(program, coverage=[value for value in program.coverage
+            if value != CURRENT_ABILITY_FRAGMENT_COVERAGE])
         for program in generated
         if program.active_zone == active_zone
         and program.event == "zone.change"
@@ -514,6 +523,8 @@ def _zone_change_programs_for_record(
             for descriptor in program.handlers
         )
     )
+    # Historical v3 registries have no indexed current-component fragment for
+    # this replay-only adapter. Preserve their pre-fragment entry contract.
     return (*programs, *entry_programs)
 
 
@@ -561,9 +572,12 @@ def collect_zone_change_replacement_effects(
             active_zone="battlefield",
         )
         for program in programs:
-            if not program_matches_face(record, program, source):
+            if (not program_matches_face(record, program, source)
+                    or not program_static_component_is_applicable(host,program,source)):
                 continue
             for descriptor_index, descriptor in enumerate(program.handlers):
+                if descriptor.get('handler_id') == SELF_GRAVEYARD_EXILE_HANDLER:
+                    continue
                 effects.append(
                     registry.source_replacement_effect(
                         descriptor,
@@ -661,7 +675,7 @@ def _read_ahead_entry_is_supported(
         ) or not program_static_component_is_applicable(
             host,
             program,
-            card,
+            prospective_face_view(record, card, prospective_name),
             prospective_zone="battlefield",
             prospective_controller=destination_controller,
         ):
@@ -863,11 +877,7 @@ def _zone_change_snapshot_subjects(
                     ),
                     is_commander=bool(card.is_commander),
                     commander_designation_id=card.commander_designation_id,
-                    cast_option=(
-                        "kicked"
-                        if card.annotations.get(KICKER_ANNOTATION) is True
-                        else None
-                    ),
+                    **prospective_multikicker_fields(host, card, destination),
                 )
             )
         except (
@@ -934,7 +944,7 @@ def _zone_change_snapshot_effects(
             for descriptor_index, descriptor in enumerate(program.handlers):
                 if (
                     descriptor.get("handler_id")
-                    != MADNESS_REPLACEMENT_HANDLER_ID
+                    not in {MADNESS_REPLACEMENT_HANDLER_ID, SELF_GRAVEYARD_EXILE_HANDLER}
                 ):
                     continue
                 subject_effects.extend(
@@ -964,7 +974,7 @@ def _zone_change_snapshot_effects(
             ) or not program_static_component_is_applicable(
                 host,
                 program,
-                card,
+                prospective_face_view(record, card, subject.entry_face_id),
                 prospective_zone="battlefield",
                 prospective_controller=subject.destination_controller,
             ):

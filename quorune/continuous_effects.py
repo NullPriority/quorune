@@ -26,6 +26,7 @@ from .abilities import ActivatedAbility
 from .replacement.immutable import thaw_value
 from .creature_subtypes import canonical_creature_subtype
 from .intrinsic_land_abilities import intrinsic_land_mana_abilities
+from .basic_land_types import LAND_SUBTYPES
 
 
 _SUBLAYER_ORDER = {
@@ -434,6 +435,15 @@ def _apply_operation(
                 subtype for subtype in tuple(state.subtypes)
                 if canonical_creature_subtype(subtype) is not None
             )
+        return
+    if op == 'set_basic_land_types':
+        if not any(kind.casefold()=='land' for kind in state.card_types):
+            return
+        state.subtypes={subtype for subtype in state.subtypes
+            if subtype.casefold().replace('’',"'") not in LAND_SUBTYPES}|set(value)
+        state.abilities=[]
+        state.ability_fragments=[]
+        state.activated_abilities=[]
         return
     if op in {"set_types", "add_types", "remove_types"}:
         target = (

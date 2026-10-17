@@ -842,6 +842,43 @@ class FixedTargetEffectSequenceCompilerTests(unittest.TestCase):
         with self.assertRaises(TargetEffectAssuranceError):
             TargetEffectCorpusCollector().observe(record, mutated_ir)
 
+    def test_corpus_assurance_validates_both_source_bound_paid_spell_variants(self):
+        collector = TargetEffectCorpusCollector()
+        for keyword, body, cost in (
+                ('Overload', 'Target creature you control gets +2/+2 until end of turn.', '{5}{W}'),
+                ('Cleave', 'Target creature [you control] gets +2/+2 until end of turn.', '{2}{W}'),
+                ('Cleave', 'Target creature [you control] gets +2/+2 until end of turn.\nPut a +1/+1 counter on it.', '{2}{W}')):
+            with self.subTest(keyword=keyword):
+                text = body + '\n' + keyword + ' ' + cost
+                if keyword == 'Overload':
+                    text += ' (You may cast this spell for its overload cost. If you do, change "target" in its text to "each.")'
+                record = replace(self.record(text), keywords=(keyword,))
+                ir = compile_oracle_card(record, capability_registry=self.capabilities, capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                self.assertEqual(2, len(ir.faces[0].nodes))
+                self.assertTrue(all(node.text==text for node in ir.faces[0].nodes))
+                collector.observe(record, ir)
+                node = ir.faces[0].nodes[0]
+                malformed_cost = json.loads(json.dumps(node.cost))
+                malformed_cost[keyword.lower()]['requirements']['GENERIC'] += 1
+                mutations = (
+                    replace(node, cost=malformed_cost),
+                    replace(node, text=text.replace(cost, '{9}{W}')),
+                    replace(node, kind='spell_variant'),
+                    replace(node, runtime_coverage=()),
+                    replace(node, capability_dependencies=tuple(cap for cap in node.capability_dependencies
+                        if cap != 'casting.alternative_cost.' + keyword.lower() + '_fixed_mana')),
+                    replace(node, effects=({**node.effects[0], 'power': 3}, *node.effects[1:])),
+                )
+                for changed in mutations:
+                    with self.subTest(changed=changed), self.assertRaises(TargetEffectAssuranceError):
+                        mutant = replace(ir, faces=(replace(ir.faces[0], nodes=(changed,*ir.faces[0].nodes[1:])),))
+                        TargetEffectCorpusCollector().observe(record, mutant)
+        report = collector.report(compiler_version='paired-source-assurance', capability_registry=self.capabilities,
+            capability_profile='commander_review', card_data_snapshot={'oracle_source_sha256':'a'*64}, commander_legal_only=True)
+        self.assertEqual(5, report['total_nodes'])
+        self.assertEqual({'spell_ability':5}, report['dimensions']['contexts'])
+
     def test_corpus_assurance_report_is_canonical_and_stratified(self):
         collector = TargetEffectCorpusCollector()
         for text in (

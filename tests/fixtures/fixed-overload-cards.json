@@ -1,0 +1,2674 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_fixed_mana_overload",
+  "source": "Pinned Oracle/rulings originals; exact existing shared fixture rows retained; unresolved whole bodies remain boundary controls",
+  "cards": [
+    {
+      "oracle_id": "e6d13c0d-23ed-41f5-a726-f18d4bb44c9a",
+      "name": "Ashcoat Bear",
+      "mana_cost": "{1}{G}",
+      "type_line": "Creature — Bear",
+      "oracle_text": "Flash (You may cast this spell any time you could cast an instant.)",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2006-10-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "2dfad8c3-1973-4fc8-971d-f66cacd88070",
+      "name": "Blustersquall",
+      "mana_cost": "{U}",
+      "type_line": "Instant",
+      "oracle_text": "Tap target creature you don't control.\nOverload {3}{U} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-11-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "22ec98d2-0ac5-48a2-b48b-c6a98f35ecf0",
+      "name": "Break the Ice",
+      "mana_cost": "{B}{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "Destroy target land that is snow or could produce {C}.\nOverload {4}{B}{B} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-06-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "daf22b20-3d87-429c-99fe-2f3d4c6fee24",
+      "name": "Chemister's Trick",
+      "mana_cost": "{U}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Target creature you don't control gets -2/-0 until end of turn and attacks this turn if able.\nOverload {3}{U}{R} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-10-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "09038989-3c1f-4426-a150-e0a9374f34c3",
+      "name": "Corporeal Projection",
+      "mana_cost": "{U}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Target creature you control gains myriad until end of turn. (Whenever it attacks, for each opponent other than defending player, you may create a token copy that's tapped and attacking that player or a planeswalker they control. Exile the tokens at end of combat.)\nOverload {3}{U}{U}{R}{R} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "8c983da8-1436-4c06-af9c-91b72cab48c1",
+      "name": "Counterflux",
+      "mana_cost": "{U}{U}{R}",
+      "type_line": "Instant",
+      "oracle_text": "This spell can't be countered.\nCounter target spell you don't control.\nOverload {1}{U}{U}{R} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-11-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "d75b9c82-1b49-4c3e-a1b5-aeef57d6644b",
+      "name": "Cyclonic Rift",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Return target nonland permanent you don't control to its owner's hand.\nOverload {6}{U} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-01-12",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "b01d61cc-9844-4191-86a0-f2db6d42d6e5",
+      "name": "Damn",
+      "mana_cost": "{B}{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "Destroy target creature. A creature destroyed this way can't be regenerated.\nOverload {2}{W}{W} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "46537bac-b1eb-4c02-ba43-6c6b16c7729c",
+      "name": "Downsize",
+      "mana_cost": "{U}",
+      "type_line": "Instant",
+      "oracle_text": "Target creature you don't control gets -4/-0 until end of turn.\nOverload {2}{U} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-01-12",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "b02d24fd-62b4-4f78-96af-57f88c98c5c8",
+      "name": "Dragonshift",
+      "mana_cost": "{1}{U}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Until end of turn, target creature you control becomes a blue and red Dragon with base power and toughness 4/4, loses all abilities, and gains flying.\nOverload {3}{U}{U}{R}{R} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-05-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "61869f52-51a8-4126-af06-5f5c3d80c28c",
+      "name": "Dynacharge",
+      "mana_cost": "{R}",
+      "type_line": "Instant",
+      "oracle_text": "Target creature you control gets +2/+0 until end of turn.\nOverload {2}{R} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-03-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "7dce1e8c-5cfd-4626-9f23-7bb3f1b10c1e",
+      "name": "Eldritch Immunity",
+      "mana_cost": "{C}",
+      "type_line": "Kindred Instant — Eldrazi",
+      "oracle_text": "Target creature you control gains protection from each color until end of turn.\nOverload {4}{C} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "99fd4b51-1698-4168-9366-a6ea2df22361",
+      "name": "Electrickery",
+      "mana_cost": "{R}",
+      "type_line": "Instant",
+      "oracle_text": "Electrickery deals 1 damage to target creature you don't control.\nOverload {1}{R} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-10-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "8d9bd4cc-564b-4fdf-9462-b4bb30583642",
+      "name": "Fangs of Kalonia",
+      "mana_cost": "{1}{G}",
+      "type_line": "Sorcery",
+      "oracle_text": "Put a +1/+1 counter on target creature you control, then double the number of +1/+1 counters on each creature that had a +1/+1 counter put on it this way.\nOverload {4}{G}{G} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Overload",
+        "Double"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "385c1208-bfea-44e2-b236-4f38bc90db9f",
+      "name": "Gladecover Scout",
+      "mana_cost": "{G}",
+      "type_line": "Creature — Elf Scout",
+      "oracle_text": "Hexproof (This creature can't be the target of spells or abilities your opponents control.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Hexproof"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-07-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+      "name": "Llanowar Elves",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Creature — Elf Druid",
+      "oracle_text": "{T}: Add {G}.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "name": "March of Progress",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Choose target artifact creature you control. For each creature chosen this way, create a token that's a copy of it.\nOverload {6}{U} (You may cast this spell for its overload cost. If you do, change its text by replacing all instances of \"target\" with \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-11-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1d8e0d40-ab2c-46e2-80c2-69dfdd47aefc",
+      "name": "Mind Rake",
+      "mana_cost": "{2}{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "Target player discards two cards.\nOverload {1}{B} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "48ddba1e-2ad7-463f-9307-d2379a800e51",
+      "name": "Mizzium Mortars",
+      "mana_cost": "{1}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Mizzium Mortars deals 4 damage to target creature you don't control.\nOverload {3}{R}{R}{R} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "02d998a6-0afd-4be1-a209-05618fcc43ea",
+      "name": "Mizzium Skin",
+      "mana_cost": "{U}",
+      "type_line": "Instant",
+      "oracle_text": "Target creature you control gets +0/+1 and gains hexproof until end of turn.\nOverload {1}{U} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-10-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "name": "Mizzix's Mastery",
+      "mana_cost": "{3}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Exile target card that's an instant or sorcery from your graveyard. For each card exiled this way, copy it, and you may cast the copy without paying its mana cost. Exile Mizzix's Mastery.\nOverload {5}{R}{R}{R} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "name": "Reverberate",
+      "mana_cost": "{R}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "59925461-99f5-4217-8343-49c9b1ce24c1",
+      "name": "Rise and Shine",
+      "mana_cost": "{1}{U}",
+      "type_line": "Sorcery",
+      "oracle_text": "Target noncreature artifact you control becomes a 0/0 artifact creature. Put four +1/+1 counters on each artifact that became a creature this way.\nOverload {4}{U}{U} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-04-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "2fd025ef-14f5-4621-831d-dd12b7c604dd",
+      "name": "Scale Up",
+      "mana_cost": "{G}",
+      "type_line": "Sorcery",
+      "oracle_text": "Until end of turn, target creature you control becomes a green Wurm with base power and toughness 6/4.\nOverload {4}{G}{G} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "b6f61b77-d571-4508-a5e8-435b4e097f3a",
+      "name": "Spectacular Showdown",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Put a double strike counter on target creature, then goad each creature that had a double strike counter put on it this way. (Until your next turn, those creatures attack each combat if able and attack a player other than you if able.)\nOverload {4}{R}{R}{R} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Overload",
+        "Goad"
+      ],
+      "layout": "normal",
+      "released_at": "2024-02-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "09c96077-3804-4f12-a613-5bebc5e0413f",
+      "name": "Sphere of Resistance",
+      "mana_cost": "{2}",
+      "type_line": "Artifact",
+      "oracle_text": "Spells cost {1} more to cast.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-06-16",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "not_legal",
+        "timeless": "not_legal",
+        "gladiator": "not_legal",
+        "pioneer": "not_legal",
+        "modern": "not_legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "not_legal",
+        "competitivebrawl": "not_legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "legal",
+        "predh": "legal",
+        "tlr": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "45a60f56-35e4-46e5-838f-8b4407a67cd6",
+      "name": "Stirring Address",
+      "mana_cost": "{1}{W}",
+      "type_line": "Instant",
+      "oracle_text": "Target creature you control gets +2/+2 until end of turn.\nOverload {5}{W} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "95385d84-550c-4d6c-a889-62bdbc1d518d",
+      "name": "Street Spasm",
+      "mana_cost": "{X}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Street Spasm deals X damage to target creature without flying you don't control.\nOverload {X}{X}{R}{R} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "d5b4876f-d28d-40dc-be7f-2c4f4c0bd6b3",
+      "name": "Teleportal",
+      "mana_cost": "{U}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Target creature you control gets +1/+0 until end of turn and can't be blocked this turn.\nOverload {3}{U}{R} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-03-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Overload"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}",
+      "name": "Vandalblast",
+      "oracle_id": "3567c3c8-b3c7-45b7-935b-b1fdbc973720",
+      "oracle_text": "Destroy target artifact you don't control.\nOverload {4}{R} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "oracle_id": "2c46bc05-1133-4eaf-8865-eb8a1d880bd9",
+      "name": "Weapon Surge",
+      "mana_cost": "{R}",
+      "type_line": "Instant",
+      "oracle_text": "Target creature you control gets +1/+0 and gains first strike until end of turn.\nOverload {1}{R} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-08-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "499a4715-6776-461b-bee4-22ed172d455e",
+      "name": "Winds of Abandon",
+      "mana_cost": "{1}{W}",
+      "type_line": "Sorcery",
+      "oracle_text": "Exile target creature you don't control. For each creature exiled this way, its controller searches their library for a basic land card. Those players put those cards onto the battlefield tapped, then shuffle.\nOverload {4}{W}{W} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "aa7cd6e6-35a6-4c18-9d66-dc2a95206401",
+      "name": "Silver Knight",
+      "mana_cost": "{W}{W}",
+      "type_line": "Creature — Human Knight",
+      "oracle_text": "First strike, protection from red",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "First strike",
+        "Protection"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-04-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "2dfad8c3-1973-4fc8-971d-f66cacd88070",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "2dfad8c3-1973-4fc8-971d-f66cacd88070",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "2dfad8c3-1973-4fc8-971d-f66cacd88070",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "2dfad8c3-1973-4fc8-971d-f66cacd88070",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "22ec98d2-0ac5-48a2-b48b-c6a98f35ecf0",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "A land \"is snow\" if it has the snow supertype."
+    },
+    {
+      "oracle_id": "22ec98d2-0ac5-48a2-b48b-c6a98f35ecf0",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Break the Ice cares about what kind of mana could be produced by abilities of a land, even if that ability couldn't currently be activated. For example, a land with \"{T}: Add {C}\" is still a legal target even if it is currently tapped."
+    },
+    {
+      "oracle_id": "22ec98d2-0ac5-48a2-b48b-c6a98f35ecf0",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "22ec98d2-0ac5-48a2-b48b-c6a98f35ecf0",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "22ec98d2-0ac5-48a2-b48b-c6a98f35ecf0",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "22ec98d2-0ac5-48a2-b48b-c6a98f35ecf0",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "daf22b20-3d87-429c-99fe-2f3d4c6fee24",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "If, during a player's declare attacker's step, a creature is tapped, is affected by a spell or ability that says it can't attack, or hasn't been under that player's control continuously since the turn began (and doesn't have haste), then it doesn't attack. If there's a cost associated with having a creature attack, the player isn't forced to pay that cost, so it doesn't have to attack in that case either."
+    },
+    {
+      "oracle_id": "daf22b20-3d87-429c-99fe-2f3d4c6fee24",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "The controller of a creature that attacks if able still chooses which player or planeswalker it attacks."
+    },
+    {
+      "oracle_id": "daf22b20-3d87-429c-99fe-2f3d4c6fee24",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "If you cast Chemister's Trick with overload, only creatures you don't control that are on the battlefield when Chemister's Trick resolves are affected. Creatures that come under another player's control later in the turn are not."
+    },
+    {
+      "oracle_id": "daf22b20-3d87-429c-99fe-2f3d4c6fee24",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "daf22b20-3d87-429c-99fe-2f3d4c6fee24",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "daf22b20-3d87-429c-99fe-2f3d4c6fee24",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "daf22b20-3d87-429c-99fe-2f3d4c6fee24",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "09038989-3c1f-4426-a150-e0a9374f34c3",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "09038989-3c1f-4426-a150-e0a9374f34c3",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell is determined by only its mana cost, no matter what the total cost to cast that spell was."
+    },
+    {
+      "oracle_id": "09038989-3c1f-4426-a150-e0a9374f34c3",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If the defending player is your only opponent, no tokens are put onto the battlefield."
+    },
+    {
+      "oracle_id": "09038989-3c1f-4426-a150-e0a9374f34c3",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "The token creatures all enter the battlefield at the same time."
+    },
+    {
+      "oracle_id": "09038989-3c1f-4426-a150-e0a9374f34c3",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "You choose whether each token is attacking the player or a planeswalker they control as the token is created."
+    },
+    {
+      "oracle_id": "09038989-3c1f-4426-a150-e0a9374f34c3",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "09038989-3c1f-4426-a150-e0a9374f34c3",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Casting a spell with overload doesn't change that spell's mana cost. You just pay the overload cost instead."
+    },
+    {
+      "oracle_id": "09038989-3c1f-4426-a150-e0a9374f34c3",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Although the tokens enter the battlefield attacking, they were never declared as attackers. Abilities that trigger whenever a creature attacks won't trigger, including the myriad ability of the tokens. If there are any costs to have a creature attack, those costs won't apply to the tokens."
+    },
+    {
+      "oracle_id": "09038989-3c1f-4426-a150-e0a9374f34c3",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Each token copies exactly what was printed on the original creature and nothing else. It doesn't copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, and so on."
+    },
+    {
+      "oracle_id": "09038989-3c1f-4426-a150-e0a9374f34c3",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If myriad creates more than one token for any given player (due to an effect such as the one Doubling Season creates), you may choose separately for each token whether it's attacking the player or a planeswalker they control."
+    },
+    {
+      "oracle_id": "09038989-3c1f-4426-a150-e0a9374f34c3",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "09038989-3c1f-4426-a150-e0a9374f34c3",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Overload doesn't change when you can cast the spell."
+    },
+    {
+      "oracle_id": "09038989-3c1f-4426-a150-e0a9374f34c3",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied creature will trigger when the token enters the battlefield. Any \"as [this permanent] enters the battlefield\" or \"[this permanent] enters the battlefield with\" abilities of the copied creature will also work."
+    },
+    {
+      "oracle_id": "09038989-3c1f-4426-a150-e0a9374f34c3",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Effects that cause you to pay more or less for a spell will cause you to pay that much more or less while casting it for its overload cost, too."
+    },
+    {
+      "oracle_id": "09038989-3c1f-4426-a150-e0a9374f34c3",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "The term \"defending player\" in the myriad rules (or any other ability of an attacking creature) refers to the player the creature with myriad was attacking at the time it became an attacking creature this combat, the controller of the planeswalker the creature was attacking at the time it became an attacking creature this combat, or the protector of the battle this creature was attacking at the time it became an attacking creature this combat."
+    },
+    {
+      "oracle_id": "8c983da8-1436-4c06-af9c-91b72cab48c1",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "8c983da8-1436-4c06-af9c-91b72cab48c1",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "8c983da8-1436-4c06-af9c-91b72cab48c1",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "8c983da8-1436-4c06-af9c-91b72cab48c1",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "d75b9c82-1b49-4c3e-a1b5-aeef57d6644b",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "d75b9c82-1b49-4c3e-a1b5-aeef57d6644b",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "d75b9c82-1b49-4c3e-a1b5-aeef57d6644b",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "d75b9c82-1b49-4c3e-a1b5-aeef57d6644b",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "b01d61cc-9844-4191-86a0-f2db6d42d6e5",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "b01d61cc-9844-4191-86a0-f2db6d42d6e5",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "b01d61cc-9844-4191-86a0-f2db6d42d6e5",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "b01d61cc-9844-4191-86a0-f2db6d42d6e5",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "46537bac-b1eb-4c02-ba43-6c6b16c7729c",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "46537bac-b1eb-4c02-ba43-6c6b16c7729c",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "46537bac-b1eb-4c02-ba43-6c6b16c7729c",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "46537bac-b1eb-4c02-ba43-6c6b16c7729c",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "b02d24fd-62b4-4f78-96af-57f88c98c5c8",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you cast Dragonshift using overload, only creatures you control when it resolves will be affected. Creatures that come under your control later in the turn will not."
+    },
+    {
+      "oracle_id": "b02d24fd-62b4-4f78-96af-57f88c98c5c8",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Each affected creature will lose any abilities it may have gained prior to Dragonshift resolving. Notably, this includes the ability to cast the copies of a card with cipher that's encoded on the creature, although that ability will return after the turn ends."
+    },
+    {
+      "oracle_id": "b02d24fd-62b4-4f78-96af-57f88c98c5c8",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Effects that modify the power or toughness of an affected creature, such as the effects of Phytoburst or Legion's Initiative, will apply to it no matter when they started to take effect. The same is true for counters that change the creature's power or toughness (such as +1/+1 counters) and effects that switch its power and toughness."
+    },
+    {
+      "oracle_id": "b02d24fd-62b4-4f78-96af-57f88c98c5c8",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Each affected creature will lose all other colors and creature types and be only red, blue, and a Dragon. Each will retain any other types it may have had, such as artifact."
+    },
+    {
+      "oracle_id": "b02d24fd-62b4-4f78-96af-57f88c98c5c8",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If any of the affected creatures gains an ability after Dragonshift resolves, it will keep that ability."
+    },
+    {
+      "oracle_id": "b02d24fd-62b4-4f78-96af-57f88c98c5c8",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Dragonshift overwrites all previous effects that set a creature's power or toughness to specific values. However, effects that set a creature's power or toughness to specific values that start to apply after Dragonshift resolves will overwrite this effect."
+    },
+    {
+      "oracle_id": "b02d24fd-62b4-4f78-96af-57f88c98c5c8",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "b02d24fd-62b4-4f78-96af-57f88c98c5c8",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "b02d24fd-62b4-4f78-96af-57f88c98c5c8",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "b02d24fd-62b4-4f78-96af-57f88c98c5c8",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "61869f52-51a8-4126-af06-5f5c3d80c28c",
+      "published_at": "2017-03-14",
+      "source": "wotc",
+      "comment": "An overloaded Dynacharge affects only creatures you control at the time it resolves. Creatures you begin to control later in the turn won't get +2/+0."
+    },
+    {
+      "oracle_id": "61869f52-51a8-4126-af06-5f5c3d80c28c",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "61869f52-51a8-4126-af06-5f5c3d80c28c",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "61869f52-51a8-4126-af06-5f5c3d80c28c",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "61869f52-51a8-4126-af06-5f5c3d80c28c",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "7dce1e8c-5cfd-4626-9f23-7bb3f1b10c1e",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Overload doesn't change when you can cast the spell."
+    },
+    {
+      "oracle_id": "7dce1e8c-5cfd-4626-9f23-7bb3f1b10c1e",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "7dce1e8c-5cfd-4626-9f23-7bb3f1b10c1e",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Kindred is a card type that allows noncreature cards to have creature types. For example, Echoes of Eternity is an Eldrazi (although not a creature) while on the battlefield and an Eldrazi card (although not a creature card) in zones other than the battlefield."
+    },
+    {
+      "oracle_id": "7dce1e8c-5cfd-4626-9f23-7bb3f1b10c1e",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "While it appears only on cards that already have other card types, kindred is a card type and will be counted by effects that refer to the number of card types among cards in a zone."
+    },
+    {
+      "oracle_id": "7dce1e8c-5cfd-4626-9f23-7bb3f1b10c1e",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "7dce1e8c-5cfd-4626-9f23-7bb3f1b10c1e",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Effects that cause you to pay more or less for a spell will cause you to pay that much more or less while casting it for its overload cost, too."
+    },
+    {
+      "oracle_id": "7dce1e8c-5cfd-4626-9f23-7bb3f1b10c1e",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "7dce1e8c-5cfd-4626-9f23-7bb3f1b10c1e",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell is determined by only its mana cost, no matter what the total cost to cast that spell was."
+    },
+    {
+      "oracle_id": "99fd4b51-1698-4168-9366-a6ea2df22361",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "99fd4b51-1698-4168-9366-a6ea2df22361",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "99fd4b51-1698-4168-9366-a6ea2df22361",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "99fd4b51-1698-4168-9366-a6ea2df22361",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Note that if the spell with overload is dealing damage, protection from that spell's color will still prevent that damage."
+    },
+    {
+      "oracle_id": "99fd4b51-1698-4168-9366-a6ea2df22361",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "8d9bd4cc-564b-4fdf-9462-b4bb30583642",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "8d9bd4cc-564b-4fdf-9462-b4bb30583642",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "8d9bd4cc-564b-4fdf-9462-b4bb30583642",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "8d9bd4cc-564b-4fdf-9462-b4bb30583642",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "To double the number of +1/+1 counters on a creature, put a number of +1/+1 counters on it equal to the number it already has. Other cards that interact with putting counters on it will interact with this effect accordingly."
+    },
+    {
+      "oracle_id": "8d9bd4cc-564b-4fdf-9462-b4bb30583642",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Overload doesn’t change when you can cast the spell."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If you don’t pay the overload cost of a spell, that spell will have a single target. If you pay the overload cost, the spell won’t have any targets."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Each token copies exactly what was printed on the original artifact creature and nothing more (unless that creature is copying something else or is a token; see below. It doesn’t copy whether that creature is tapped or untapped, whether it has any counters on it or Auras attached to it, or any non-copy effects that have changed its power, toughness, types, color, and so on."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload “without paying its mana cost,” you can’t choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If the copied artifact creature has {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Casting a spell with overload doesn’t change that spell’s mana cost. You just pay the overload cost instead."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn’t target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If the chosen artifact creature is itself a token, the token March of Progress creates copies the original characteristics of that token as stated by the effect that created that token."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied artifact creature will trigger when the token enters the battlefield. Any “as [this creature] enters the battlefield” or “[this creature] enters the battlefield with” abilities of the chosen creature will also work."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If the chosen artifact creature is copying something else, then the token enters the battlefield as whatever the chosen creature is copying."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Effects that cause you to pay more or less for a spell will cause you to pay that much more or less while casting it for its overload cost, too."
+    },
+    {
+      "oracle_id": "1d8e0d40-ab2c-46e2-80c2-69dfdd47aefc",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "While most spells with overload affect only permanents you control or only permanents your opponents control, Mind Rake affects all players, including you, if it's overloaded."
+    },
+    {
+      "oracle_id": "1d8e0d40-ab2c-46e2-80c2-69dfdd47aefc",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "1d8e0d40-ab2c-46e2-80c2-69dfdd47aefc",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "1d8e0d40-ab2c-46e2-80c2-69dfdd47aefc",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "1d8e0d40-ab2c-46e2-80c2-69dfdd47aefc",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "48ddba1e-2ad7-463f-9307-d2379a800e51",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "48ddba1e-2ad7-463f-9307-d2379a800e51",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "48ddba1e-2ad7-463f-9307-d2379a800e51",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Note that if the spell with overload is dealing damage, protection from that spell's color will still prevent that damage."
+    },
+    {
+      "oracle_id": "48ddba1e-2ad7-463f-9307-d2379a800e51",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "48ddba1e-2ad7-463f-9307-d2379a800e51",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "02d998a6-0afd-4be1-a209-05618fcc43ea",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "02d998a6-0afd-4be1-a209-05618fcc43ea",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "02d998a6-0afd-4be1-a209-05618fcc43ea",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "02d998a6-0afd-4be1-a209-05618fcc43ea",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "The copies are created and cast during the resolution of Mizzix's Mastery. You can't wait to cast them later in the turn. Timing restrictions based on the copy's type are ignored. Other restrictions (such as \"Cast [this spell] only during combat\") are not."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "If you don't cast one of the copies (perhaps because there are no legal targets available or you don't want to), the copy will cease to exist."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "Mizzix's Mastery is still on the stack as it resolves. If you pay the overload cost, Mizzix's Mastery won't copy itself."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "If Mizzix's Mastery exiled multiple cards, you may cast the copies in any order. The last copy you cast will be the first one to resolve."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "The cards remain exiled no matter what happens to the copies."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost,\" you can't pay any alternative costs. You can, however, pay additional costs, such as kicker costs. If the card has any mandatory additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "If the copy has {X} in its mana cost, you must choose 0 as the value of X."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If the spell Reverberate copies has an X whose value was determined as it was cast (like Earthquake does), the copy has the same value of X."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "Reverberate can target (and copy) any instant or sorcery spell, not just one with targets. It doesn't matter who controls it."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "When Reverberate resolves, it creates a copy of a spell. You control the copy. That copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger. The copy will then resolve like a normal spell, after players get a chance to cast spells and activate abilities."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If the copy says that it affects \"you,\" it affects the controller of the copy, not the controller of the original spell. Similarly, if the copy says that it affects an \"opponent,\" it affects an opponent of the copy's controller, not an opponent of the original spell's controller."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If the spell Reverberate copies is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode. You can't choose a different one."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "You can't choose to pay any additional costs for the copy. However, effects based on any additional costs that were paid for the original spell are copied as though those same costs were paid for the copy too. For example, if a player sacrifices a 3/3 creature to cast Fling, and you copy it with Reverberate, the copy of Fling will also deal 3 damage to its target."
+    },
+    {
+      "oracle_id": "59925461-99f5-4217-8343-49c9b1ce24c1",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "59925461-99f5-4217-8343-49c9b1ce24c1",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "59925461-99f5-4217-8343-49c9b1ce24c1",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "59925461-99f5-4217-8343-49c9b1ce24c1",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "2fd025ef-14f5-4621-831d-dd12b7c604dd",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "Scale Up overwrites all previous effects that set the affected creatures' color, creature types, power, and/or toughness to specific values. Other effects that set these characteristics to specific values that start to apply after Scale Up resolves will overwrite that part of the effect."
+    },
+    {
+      "oracle_id": "2fd025ef-14f5-4621-831d-dd12b7c604dd",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "The affected creatures don't lose any abilities when they become Wurms."
+    },
+    {
+      "oracle_id": "2fd025ef-14f5-4621-831d-dd12b7c604dd",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "Effects that modify the affected creatures' power or toughness (such as the effects of Force of Virtue or Giant Growth) will apply no matter when they started to take effect. The same is true for counters that change the creatures' power or toughness (such as +1/+1 counters)."
+    },
+    {
+      "oracle_id": "2fd025ef-14f5-4621-831d-dd12b7c604dd",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "2fd025ef-14f5-4621-831d-dd12b7c604dd",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "2fd025ef-14f5-4621-831d-dd12b7c604dd",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "2fd025ef-14f5-4621-831d-dd12b7c604dd",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "b6f61b77-d571-4508-a5e8-435b4e097f3a",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "b6f61b77-d571-4508-a5e8-435b4e097f3a",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "b6f61b77-d571-4508-a5e8-435b4e097f3a",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "b6f61b77-d571-4508-a5e8-435b4e097f3a",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "09c96077-3804-4f12-a613-5bebc5e0413f",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "It affects all players, including you."
+    },
+    {
+      "oracle_id": "45a60f56-35e4-46e5-838f-8b4407a67cd6",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "45a60f56-35e4-46e5-838f-8b4407a67cd6",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "45a60f56-35e4-46e5-838f-8b4407a67cd6",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "45a60f56-35e4-46e5-838f-8b4407a67cd6",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "95385d84-550c-4d6c-a889-62bdbc1d518d",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Note that if the spell with overload is dealing damage, protection from that spell's color will still prevent that damage."
+    },
+    {
+      "oracle_id": "95385d84-550c-4d6c-a889-62bdbc1d518d",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "95385d84-550c-4d6c-a889-62bdbc1d518d",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "95385d84-550c-4d6c-a889-62bdbc1d518d",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "95385d84-550c-4d6c-a889-62bdbc1d518d",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "d5b4876f-d28d-40dc-be7f-2c4f4c0bd6b3",
+      "published_at": "2017-03-14",
+      "source": "wotc",
+      "comment": "The set of creatures that gets +1/+0 from an overloaded Teleportal is determined as the spell resolves. Creatures you begin to control later in the turn won't get +1/+0. However, because the second part of Teleportal's effect doesn't change the characteristics of any permanents, the set of creatures that can't be blocked is constantly updated. Any creature you control at the moment blockers are chosen can't be blocked."
+    },
+    {
+      "oracle_id": "d5b4876f-d28d-40dc-be7f-2c4f4c0bd6b3",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "d5b4876f-d28d-40dc-be7f-2c4f4c0bd6b3",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "d5b4876f-d28d-40dc-be7f-2c4f4c0bd6b3",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "d5b4876f-d28d-40dc-be7f-2c4f4c0bd6b3",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "3567c3c8-b3c7-45b7-935b-b1fdbc973720",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "3567c3c8-b3c7-45b7-935b-b1fdbc973720",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "3567c3c8-b3c7-45b7-935b-b1fdbc973720",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "3567c3c8-b3c7-45b7-935b-b1fdbc973720",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "2c46bc05-1133-4eaf-8865-eb8a1d880bd9",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "2c46bc05-1133-4eaf-8865-eb8a1d880bd9",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "2c46bc05-1133-4eaf-8865-eb8a1d880bd9",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "2c46bc05-1133-4eaf-8865-eb8a1d880bd9",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "499a4715-6776-461b-bee4-22ed172d455e",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "If a creature is exiled but ends up in another zone, it's still a \"creature exiled this way\" for Winds of Abandon."
+    },
+    {
+      "oracle_id": "499a4715-6776-461b-bee4-22ed172d455e",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "499a4715-6776-461b-bee4-22ed172d455e",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "499a4715-6776-461b-bee4-22ed172d455e",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "499a4715-6776-461b-bee4-22ed172d455e",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    }
+  ]
+}

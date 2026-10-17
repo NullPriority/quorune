@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-"""Typed ordinary fixed-mana face-down casting method contracts.
+"""Typed fixed-mana face-down casting method contracts.
 
 The represented family is deliberately narrower than the aggregate mechanics:
-one printed Morph, Megamorph, or Disguise ability with a fixed ordinary mana
-turn-up cost. Variable, hybrid, Phyrexian, snow, nonmana, copied, granted, and
+one printed Morph, Megamorph, or Disguise ability with a fixed ordinary or
+two-color hybrid mana turn-up cost. Variable, Phyrexian, snow, nonmana, copied, granted, and
 other face-down methods remain outside this contract.
 """
 
@@ -15,6 +15,7 @@ from typing import Any, Mapping, Protocol
 
 from .card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from .ability_fragments import ability_fragment_to_dict
+from .activation_mana_cost import ActivationManaCostOption, fixed_complex_activation_mana_options
 from .keyword_abilities import normalized_effective_keywords
 from .trigger_participation import WardSpec
 from .util import mana_cost_to_vector, stable_json
@@ -70,7 +71,7 @@ MORPH_FACE_DOWN_VALUES: dict[str, Any] = {
 }
 _FACE_DOWN_METHOD_LINE = re.compile(
     r"^(?P<method>Morph|Megamorph|Disguise)\s+"
-    r"(?P<cost>(?:\{(?:0|[1-9]\d*|[WUBRGC])\})+)\.?$",
+    r"(?P<cost>(?:\{(?:0|[1-9]\d*|[WUBRGC]|[WUBRG]/[WUBRG])\})+)\.?$",
     re.IGNORECASE,
 )
 _MANA_FIELDS = ("GENERIC", "W", "U", "B", "R", "G", "C")
@@ -85,9 +86,10 @@ class FixedManaFaceDownMethodSpec:
     requirements: tuple[int, int, int, int, int, int, int]
     method: str = MORPH_CAST_METHOD
     schema_version: int = 1
+    hybrid_symbols: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
             raise MorphError("Unsupported fixed-mana face-down schema version")
         if self.method not in FACE_DOWN_CAST_METHODS:
             raise MorphError("Unsupported fixed-mana face-down method")
@@ -99,6 +101,15 @@ class FixedManaFaceDownMethodSpec:
             raise MorphError(
                 "Fixed-mana face-down requirements must be seven nonnegative integers"
             )
+        if (not isinstance(self.hybrid_symbols, tuple)
+                or (self.schema_version == 1 and self.hybrid_symbols)
+                or (self.schema_version == 2 and not self.hybrid_symbols)
+                or any(type(symbol) is not str
+                    or re.fullmatch(r'[WUBRG]/[WUBRG]', symbol) is None
+                    or symbol[0] == symbol[2] for symbol in self.hybrid_symbols)):
+            raise MorphError("Hybrid face-down costs require schema 2 and distinct canonical colors")
+        if self.hybrid_symbols and not self.mana_cost_options:
+            raise MorphError("Hybrid face-down cost exceeds the fixed payment option boundary")
 
     @classmethod
     def from_cost(
@@ -108,13 +119,11 @@ class FixedManaFaceDownMethodSpec:
         method: str = MORPH_CAST_METHOD,
     ) -> "FixedManaFaceDownMethodSpec":
         requirements, complex_symbols = mana_cost_to_vector(cost)
-        if complex_symbols:
-            raise MorphError(
-                "Face-down cost is outside the fixed ordinary-mana family"
-            )
         return cls(
             tuple(int(requirements[field]) for field in _MANA_FIELDS),
             method=method,
+            schema_version=2 if complex_symbols else 1,
+            hybrid_symbols=tuple(str(symbol).upper() for symbol in complex_symbols),
         )
 
     @classmethod
@@ -122,9 +131,17 @@ class FixedManaFaceDownMethodSpec:
         cls,
         value: Mapping[str, Any],
     ) -> "FixedManaFaceDownMethodSpec":
+        if isinstance(value, Mapping) and value.get('schema_version') == 3:
+            from .nonmana_morph_model import FixedNonmanaMorphSpec
+            try:
+                return FixedNonmanaMorphSpec.from_dict(value)
+            except (KeyError, TypeError, ValueError) as exc:
+                raise MorphError(str(exc)) from exc
         if not isinstance(value, Mapping) or frozenset(value) not in {
             frozenset({"schema_version", "requirements"}),
             frozenset({"schema_version", "method", "requirements"}),
+            frozenset({"schema_version", "requirements", "hybrid_symbols"}),
+            frozenset({"schema_version", "method", "requirements", "hybrid_symbols"}),
         }:
             raise MorphError(
                 "Fixed-mana face-down descriptors have a closed shape"
@@ -136,15 +153,27 @@ class FixedManaFaceDownMethodSpec:
             raise MorphError(
                 "Fixed-mana face-down requirements have a closed shape"
             )
+        symbols = value.get("hybrid_symbols", ())
+        if not isinstance(symbols, (list, tuple)):
+            raise MorphError("Hybrid face-down symbols must be an array")
+        if ("hybrid_symbols" in value) != (value["schema_version"] == 2):
+            raise MorphError("Hybrid face-down fields require schema 2")
         return cls(
             tuple(requirements[field] for field in _MANA_FIELDS),
             method=value.get("method", MORPH_CAST_METHOD),
             schema_version=value["schema_version"],
+            hybrid_symbols=tuple(symbols),
         )
 
     @property
     def requirements_dict(self) -> dict[str, int]:
         return dict(zip(_MANA_FIELDS, self.requirements, strict=True))
+
+    @property
+    def mana_cost_options(self) -> tuple[ActivationManaCostOption, ...]:
+        return fixed_complex_activation_mana_options(
+            self.requirements_dict, self.hybrid_symbols,
+        )
 
     @property
     def cost_text(self) -> str:
@@ -154,6 +183,7 @@ class FixedManaFaceDownMethodSpec:
             parts.append(f"{{{generic}}}")
         for color in "WUBRGC":
             parts.extend(f"{{{color}}}" for _ in range(self.requirements_dict[color]))
+        parts.extend(f"{{{symbol}}}" for symbol in self.hybrid_symbols)
         return "".join(parts) or "{0}"
 
     @property
@@ -167,6 +197,8 @@ class FixedManaFaceDownMethodSpec:
         }
         if self.method != MORPH_CAST_METHOD:
             result["method"] = self.method
+        if self.schema_version == 2:
+            result["hybrid_symbols"] = list(self.hybrid_symbols)
         return result
 
 
@@ -199,13 +231,15 @@ def compile_fixed_mana_morph(
 def face_down_method_handler_descriptor(
     spec: FixedManaFaceDownMethodSpec,
 ) -> dict[str, Any]:
+    from .nonmana_morph_model import FixedNonmanaMorphSpec, NONMANA_MORPH_HANDLER
     payload_field = (
         "morph"
         if spec.method == MORPH_CAST_METHOD
         else "face_down_method"
     )
     return {
-        "handler_id": FACE_DOWN_METHOD_HANDLER_IDS[spec.method],
+        "handler_id": NONMANA_MORPH_HANDLER if isinstance(spec, FixedNonmanaMorphSpec)
+            else FACE_DOWN_METHOD_HANDLER_IDS[spec.method],
         "schema_version": 1,
         "event": FACE_DOWN_METHOD_RUNTIME_EVENTS[spec.method],
         REQUIRES_COMPLETE_CARD_PROGRAM_FIELD: True,

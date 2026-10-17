@@ -1,0 +1,1323 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_fixed_mana_cleave",
+  "source": "Pinned originals and rulings with exact existing shared fixture rows; both body closure remains mandatory",
+  "cards": [
+    {
+      "oracle_id": "271d8db6-8606-46d7-9812-75aa22fcfd8e",
+      "name": "Alchemist's Gambit",
+      "mana_cost": "{1}{R}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Cleave {4}{U}{U}{R} (You may cast this spell for its cleave cost. If you do, remove the words in square brackets.)\nTake an extra turn after this one. During that turn, damage can't be prevented. [At the beginning of that turn's end step, you lose the game.]\nExile Alchemist's Gambit.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Cleave"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "8651da8e-9b2c-4530-a521-aea490ad88d4",
+      "name": "Alchemist's Retrieval",
+      "mana_cost": "{U}",
+      "type_line": "Instant",
+      "oracle_text": "Cleave {1}{U} (You may cast this spell for its cleave cost. If you do, remove the words in square brackets.)\nReturn target nonland permanent [you control] to its owner's hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Cleave"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "ae96fe7e-8d89-4f44-9cc4-3c9b124fdc4b",
+      "name": "Dig Up",
+      "mana_cost": "{G}",
+      "type_line": "Sorcery",
+      "oracle_text": "Cleave {1}{B}{B}{G} (You may cast this spell for its cleave cost. If you do, remove the words in square brackets.)\nSearch your library for a [basic land] card, [reveal it,] put it into your hand, then shuffle.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "keywords": [
+        "Cleave"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "efe4194a-b3c5-4308-abfe-553e035f5e64",
+      "name": "Dread Fugue",
+      "mana_cost": "{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "Cleave {2}{B} (You may cast this spell for its cleave cost. If you do, remove the words in square brackets.)\nTarget player reveals their hand. You choose a nonland card from it [with mana value 2 or less]. That player discards that card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Cleave"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "83094dd2-b8e9-4753-a8a0-657b446def60",
+      "name": "Fierce Retribution",
+      "mana_cost": "{1}{W}",
+      "type_line": "Instant",
+      "oracle_text": "Cleave {5}{W} (You may cast this spell for its cleave cost. If you do, remove the words in square brackets.)\nDestroy target [attacking] creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Cleave"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "5f1386d5-b802-46b2-9803-275621ebda80",
+      "name": "Inspired Idea",
+      "mana_cost": "{2}{U}",
+      "type_line": "Sorcery",
+      "oracle_text": "Cleave {3}{U}{U} (You may cast this spell for its cleave cost. If you do, remove the words in square brackets.)\nDraw three cards. [Your maximum hand size is reduced by three for the rest of the game.]",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Cleave"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "06a1c404-d76f-4206-8740-7ad7488fac33",
+      "name": "Lantern Flare",
+      "mana_cost": "{1}{W}",
+      "type_line": "Instant",
+      "oracle_text": "Cleave {X}{R}{W} (You may cast this spell for its cleave cost. If you do, remove the words in square brackets.)\nLantern Flare deals X damage to target creature or planeswalker and you gain X life. [X is the number of creatures you control.]",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "keywords": [
+        "Cleave"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+      "name": "Llanowar Elves",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Creature — Elf Druid",
+      "oracle_text": "{T}: Add {G}.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d2f693d9-f338-41d6-b7e2-ddaa5f4bcc3b",
+      "name": "Lunar Rejection",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Cleave {3}{U} (You may cast this spell for its cleave cost. If you do, remove the words in square brackets.)\nReturn target [Wolf or Werewolf] creature to its owner's hand.\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Cleave"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "d9763c75-75f7-4766-8cca-84c899796e3c",
+      "name": "Parasitic Grasp",
+      "mana_cost": "{1}{B}",
+      "type_line": "Instant",
+      "oracle_text": "Cleave {1}{B}{B} (You may cast this spell for its cleave cost. If you do, remove the words in square brackets.)\nParasitic Grasp deals 3 damage to target [Human] creature. You gain 3 life.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Cleave"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "d41987b0-2ea0-4cc7-8608-70c486db76eb",
+      "name": "Path of Peril",
+      "mana_cost": "{1}{B}{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "Cleave {4}{W}{B} (You may cast this spell for its cleave cost. If you do, remove the words in square brackets.)\nDestroy all creatures [with mana value 2 or less].",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [
+        "Cleave"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "name": "Reverberate",
+      "mana_cost": "{R}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "09c96077-3804-4f12-a613-5bebc5e0413f",
+      "name": "Sphere of Resistance",
+      "mana_cost": "{2}",
+      "type_line": "Artifact",
+      "oracle_text": "Spells cost {1} more to cast.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-06-16",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "not_legal",
+        "timeless": "not_legal",
+        "gladiator": "not_legal",
+        "pioneer": "not_legal",
+        "modern": "not_legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "not_legal",
+        "competitivebrawl": "not_legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "legal",
+        "predh": "legal",
+        "tlr": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "a4630da0-fe9b-4ead-9621-eac4b7825c35",
+      "name": "Wash Away",
+      "mana_cost": "{U}",
+      "type_line": "Instant",
+      "oracle_text": "Cleave {1}{U}{U} (You may cast this spell for its cleave cost. If you do, remove the words in square brackets.)\nCounter target spell [that wasn't cast from its owner's hand].",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Cleave"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "banned",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "378567f8-7aef-42b6-853e-8591641052e8",
+      "name": "Winged Portent",
+      "mana_cost": "{1}{U}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Cleave {4}{G}{U} (You may cast this spell for its cleave cost. If you do, remove the words in square brackets.)\nDraw a card for each creature you control [with flying].",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [
+        "Cleave"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "d6ffdaf0-ac08-4de9-bbce-2eab2f86bcca",
+      "name": "Wind Drake",
+      "mana_cost": "{2}{U}",
+      "type_line": "Creature — Drake",
+      "oracle_text": "Flying",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-09-30",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "e6d13c0d-23ed-41f5-a726-f18d4bb44c9a",
+      "name": "Ashcoat Bear",
+      "mana_cost": "{1}{G}",
+      "type_line": "Creature — Bear",
+      "oracle_text": "Flash (You may cast this spell any time you could cast an instant.)",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2006-10-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "271d8db6-8606-46d7-9812-75aa22fcfd8e",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If you cast a spell for its cleave cost, that spell doesn't have any of the text in square brackets while it's on the stack."
+    },
+    {
+      "oracle_id": "271d8db6-8606-46d7-9812-75aa22fcfd8e",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "Exiling Alchemist's Gambit happens as part of its resolution. If the spell is countered, it will go to the graveyard as normal."
+    },
+    {
+      "oracle_id": "271d8db6-8606-46d7-9812-75aa22fcfd8e",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If you somehow skip the extra turn Alchemist's Gambit gives you or skip that turn's end step, the delayed triggered ability never triggers. (If you cast Alchemist's Gambit by paying its cleave cost, the delayed triggered ability is never created at all.)"
+    },
+    {
+      "oracle_id": "271d8db6-8606-46d7-9812-75aa22fcfd8e",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If multiple “extra turn” effects resolve in the same turn, the most recently created turn will be taken first."
+    },
+    {
+      "oracle_id": "271d8db6-8606-46d7-9812-75aa22fcfd8e",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "You can't cast a spell for both its cleave cost and another alternative cost. For example, if an effect gives an Alchemist's Retrieval in your graveyard a flashback cost of {U}, you can't cast it from your graveyard for its cleave cost."
+    },
+    {
+      "oracle_id": "271d8db6-8606-46d7-9812-75aa22fcfd8e",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If an effect allows you to “cast a spell without paying its mana cost,” you can't cast that spell for its cleave cost."
+    },
+    {
+      "oracle_id": "271d8db6-8606-46d7-9812-75aa22fcfd8e",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "A cleave cost is an alternative cost that's paid instead of the spell's mana cost. Casting a spell for its cleave cost doesn't change the spell's mana value."
+    },
+    {
+      "oracle_id": "8651da8e-9b2c-4530-a521-aea490ad88d4",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If you cast a spell for its cleave cost, that spell doesn't have any of the text in square brackets while it's on the stack."
+    },
+    {
+      "oracle_id": "8651da8e-9b2c-4530-a521-aea490ad88d4",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "You can't cast a spell for both its cleave cost and another alternative cost. For example, if an effect gives an Alchemist's Retrieval in your graveyard a flashback cost of {U}, you can't cast it from your graveyard for its cleave cost."
+    },
+    {
+      "oracle_id": "8651da8e-9b2c-4530-a521-aea490ad88d4",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "A cleave cost is an alternative cost that's paid instead of the spell's mana cost. Casting a spell for its cleave cost doesn't change the spell's mana value."
+    },
+    {
+      "oracle_id": "8651da8e-9b2c-4530-a521-aea490ad88d4",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If an effect allows you to “cast a spell without paying its mana cost,” you can't cast that spell for its cleave cost."
+    },
+    {
+      "oracle_id": "ae96fe7e-8d89-4f44-9cc4-3c9b124fdc4b",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "A cleave cost is an alternative cost that's paid instead of the spell's mana cost. Casting a spell for its cleave cost doesn't change the spell's mana value."
+    },
+    {
+      "oracle_id": "ae96fe7e-8d89-4f44-9cc4-3c9b124fdc4b",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If you cast a spell for its cleave cost, that spell doesn't have any of the text in square brackets while it's on the stack."
+    },
+    {
+      "oracle_id": "ae96fe7e-8d89-4f44-9cc4-3c9b124fdc4b",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "You can't cast a spell for both its cleave cost and another alternative cost. For example, if an effect gives an Alchemist's Retrieval in your graveyard a flashback cost of {U}, you can't cast it from your graveyard for its cleave cost."
+    },
+    {
+      "oracle_id": "ae96fe7e-8d89-4f44-9cc4-3c9b124fdc4b",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If an effect allows you to “cast a spell without paying its mana cost,” you can't cast that spell for its cleave cost."
+    },
+    {
+      "oracle_id": "ae96fe7e-8d89-4f44-9cc4-3c9b124fdc4b",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If you paid the cleave cost, you must put a card into your hand as Dig Up resolves (assuming there is at least one card in your library)."
+    },
+    {
+      "oracle_id": "efe4194a-b3c5-4308-abfe-553e035f5e64",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "A cleave cost is an alternative cost that's paid instead of the spell's mana cost. Casting a spell for its cleave cost doesn't change the spell's mana value."
+    },
+    {
+      "oracle_id": "efe4194a-b3c5-4308-abfe-553e035f5e64",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "You can't cast a spell for both its cleave cost and another alternative cost. For example, if an effect gives an Alchemist's Retrieval in your graveyard a flashback cost of {U}, you can't cast it from your graveyard for its cleave cost."
+    },
+    {
+      "oracle_id": "efe4194a-b3c5-4308-abfe-553e035f5e64",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If you cast a spell for its cleave cost, that spell doesn't have any of the text in square brackets while it's on the stack."
+    },
+    {
+      "oracle_id": "efe4194a-b3c5-4308-abfe-553e035f5e64",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If an effect allows you to “cast a spell without paying its mana cost,” you can't cast that spell for its cleave cost."
+    },
+    {
+      "oracle_id": "83094dd2-b8e9-4753-a8a0-657b446def60",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If an effect allows you to “cast a spell without paying its mana cost,” you can't cast that spell for its cleave cost."
+    },
+    {
+      "oracle_id": "83094dd2-b8e9-4753-a8a0-657b446def60",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If you cast a spell for its cleave cost, that spell doesn't have any of the text in square brackets while it's on the stack."
+    },
+    {
+      "oracle_id": "83094dd2-b8e9-4753-a8a0-657b446def60",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "A cleave cost is an alternative cost that's paid instead of the spell's mana cost. Casting a spell for its cleave cost doesn't change the spell's mana value."
+    },
+    {
+      "oracle_id": "83094dd2-b8e9-4753-a8a0-657b446def60",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "You can't cast a spell for both its cleave cost and another alternative cost. For example, if an effect gives an Alchemist's Retrieval in your graveyard a flashback cost of {U}, you can't cast it from your graveyard for its cleave cost."
+    },
+    {
+      "oracle_id": "5f1386d5-b802-46b2-9803-275621ebda80",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If an effect allows you to “cast a spell without paying its mana cost,” you can't cast that spell for its cleave cost."
+    },
+    {
+      "oracle_id": "5f1386d5-b802-46b2-9803-275621ebda80",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If you cast a spell for its cleave cost, that spell doesn't have any of the text in square brackets while it's on the stack."
+    },
+    {
+      "oracle_id": "5f1386d5-b802-46b2-9803-275621ebda80",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If multiple effects modify your hand size, apply them in timestamp order. For example, if you are affected by Null Profusion (an enchantment that sets a player's maximum hand size to two) and then resolve Inspired Idea without paying its cleave cost, your maximum hand size would be zero. However, if Null Profusion entered the battlefield after Inspired Idea resolved, your maximum hand size would be two."
+    },
+    {
+      "oracle_id": "5f1386d5-b802-46b2-9803-275621ebda80",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "You can't cast a spell for both its cleave cost and another alternative cost. For example, if an effect gives an Alchemist's Retrieval in your graveyard a flashback cost of {U}, you can't cast it from your graveyard for its cleave cost."
+    },
+    {
+      "oracle_id": "5f1386d5-b802-46b2-9803-275621ebda80",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If a player has more cards in their hand than their maximum hand size during the cleanup step of that player's turn, that player discards until they have that many cards. A player's maximum hand size isn't checked at any time other than their own cleanup step."
+    },
+    {
+      "oracle_id": "5f1386d5-b802-46b2-9803-275621ebda80",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If you currently have no maximum hand size, then reducing your maximum hand size by three will have no effect. If the effect causing you to have no maximum hand size ends, Inspired Idea's effect will apply at that time."
+    },
+    {
+      "oracle_id": "5f1386d5-b802-46b2-9803-275621ebda80",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "A cleave cost is an alternative cost that's paid instead of the spell's mana cost. Casting a spell for its cleave cost doesn't change the spell's mana value."
+    },
+    {
+      "oracle_id": "06a1c404-d76f-4206-8740-7ad7488fac33",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "You can't cast a spell for both its cleave cost and another alternative cost. For example, if an effect gives an Alchemist's Retrieval in your graveyard a flashback cost of {U}, you can't cast it from your graveyard for its cleave cost."
+    },
+    {
+      "oracle_id": "06a1c404-d76f-4206-8740-7ad7488fac33",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If you cast a spell for its cleave cost, that spell doesn't have any of the text in square brackets while it's on the stack."
+    },
+    {
+      "oracle_id": "06a1c404-d76f-4206-8740-7ad7488fac33",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If you're paying the cleave cost, you choose the value of X."
+    },
+    {
+      "oracle_id": "06a1c404-d76f-4206-8740-7ad7488fac33",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "A cleave cost is an alternative cost that's paid instead of the spell's mana cost. Casting a spell for its cleave cost doesn't change the spell's mana value."
+    },
+    {
+      "oracle_id": "06a1c404-d76f-4206-8740-7ad7488fac33",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If an effect allows you to “cast a spell without paying its mana cost,” you can't cast that spell for its cleave cost."
+    },
+    {
+      "oracle_id": "d2f693d9-f338-41d6-b7e2-ddaa5f4bcc3b",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If you cast a spell for its cleave cost, that spell doesn't have any of the text in square brackets while it's on the stack."
+    },
+    {
+      "oracle_id": "d2f693d9-f338-41d6-b7e2-ddaa5f4bcc3b",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "You can't cast a spell for both its cleave cost and another alternative cost. For example, if an effect gives an Alchemist's Retrieval in your graveyard a flashback cost of {U}, you can't cast it from your graveyard for its cleave cost."
+    },
+    {
+      "oracle_id": "d2f693d9-f338-41d6-b7e2-ddaa5f4bcc3b",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "A cleave cost is an alternative cost that's paid instead of the spell's mana cost. Casting a spell for its cleave cost doesn't change the spell's mana value."
+    },
+    {
+      "oracle_id": "d2f693d9-f338-41d6-b7e2-ddaa5f4bcc3b",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If an effect allows you to “cast a spell without paying its mana cost,” you can't cast that spell for its cleave cost."
+    },
+    {
+      "oracle_id": "d9763c75-75f7-4766-8cca-84c899796e3c",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "You can't cast a spell for both its cleave cost and another alternative cost. For example, if an effect gives an Alchemist's Retrieval in your graveyard a flashback cost of {U}, you can't cast it from your graveyard for its cleave cost."
+    },
+    {
+      "oracle_id": "d9763c75-75f7-4766-8cca-84c899796e3c",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If you cast a spell for its cleave cost, that spell doesn't have any of the text in square brackets while it's on the stack."
+    },
+    {
+      "oracle_id": "d9763c75-75f7-4766-8cca-84c899796e3c",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If an effect allows you to “cast a spell without paying its mana cost,” you can't cast that spell for its cleave cost."
+    },
+    {
+      "oracle_id": "d9763c75-75f7-4766-8cca-84c899796e3c",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "A cleave cost is an alternative cost that's paid instead of the spell's mana cost. Casting a spell for its cleave cost doesn't change the spell's mana value."
+    },
+    {
+      "oracle_id": "d41987b0-2ea0-4cc7-8608-70c486db76eb",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "A cleave cost is an alternative cost that's paid instead of the spell's mana cost. Casting a spell for its cleave cost doesn't change the spell's mana value."
+    },
+    {
+      "oracle_id": "d41987b0-2ea0-4cc7-8608-70c486db76eb",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If you cast a spell for its cleave cost, that spell doesn't have any of the text in square brackets while it's on the stack."
+    },
+    {
+      "oracle_id": "d41987b0-2ea0-4cc7-8608-70c486db76eb",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "You can't cast a spell for both its cleave cost and another alternative cost. For example, if an effect gives an Alchemist's Retrieval in your graveyard a flashback cost of {U}, you can't cast it from your graveyard for its cleave cost."
+    },
+    {
+      "oracle_id": "d41987b0-2ea0-4cc7-8608-70c486db76eb",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If an effect allows you to “cast a spell without paying its mana cost,” you can't cast that spell for its cleave cost."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If the spell Reverberate copies has an X whose value was determined as it was cast (like Earthquake does), the copy has the same value of X."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "Reverberate can target (and copy) any instant or sorcery spell, not just one with targets. It doesn't matter who controls it."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "When Reverberate resolves, it creates a copy of a spell. You control the copy. That copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger. The copy will then resolve like a normal spell, after players get a chance to cast spells and activate abilities."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If the copy says that it affects \"you,\" it affects the controller of the copy, not the controller of the original spell. Similarly, if the copy says that it affects an \"opponent,\" it affects an opponent of the copy's controller, not an opponent of the original spell's controller."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If the spell Reverberate copies is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode. You can't choose a different one."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "You can't choose to pay any additional costs for the copy. However, effects based on any additional costs that were paid for the original spell are copied as though those same costs were paid for the copy too. For example, if a player sacrifices a 3/3 creature to cast Fling, and you copy it with Reverberate, the copy of Fling will also deal 3 damage to its target."
+    },
+    {
+      "oracle_id": "09c96077-3804-4f12-a613-5bebc5e0413f",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "It affects all players, including you."
+    },
+    {
+      "oracle_id": "a4630da0-fe9b-4ead-9621-eac4b7825c35",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "You can't cast a spell for both its cleave cost and another alternative cost. For example, if an effect gives an Alchemist's Retrieval in your graveyard a flashback cost of {U}, you can't cast it from your graveyard for its cleave cost."
+    },
+    {
+      "oracle_id": "a4630da0-fe9b-4ead-9621-eac4b7825c35",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If you cast a spell for its cleave cost, that spell doesn't have any of the text in square brackets while it's on the stack."
+    },
+    {
+      "oracle_id": "a4630da0-fe9b-4ead-9621-eac4b7825c35",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "A cleave cost is an alternative cost that's paid instead of the spell's mana cost. Casting a spell for its cleave cost doesn't change the spell's mana value."
+    },
+    {
+      "oracle_id": "a4630da0-fe9b-4ead-9621-eac4b7825c35",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "Copies of spells are never cast from a player's hand, so Wash Away can counter copies of spells even if its cleave cost wasn't paid, regardless of whether the original spell being copied was cast from a player's hand."
+    },
+    {
+      "oracle_id": "a4630da0-fe9b-4ead-9621-eac4b7825c35",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If an effect allows you to “cast a spell without paying its mana cost,” you can't cast that spell for its cleave cost."
+    },
+    {
+      "oracle_id": "378567f8-7aef-42b6-853e-8591641052e8",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If an effect allows you to “cast a spell without paying its mana cost,” you can't cast that spell for its cleave cost."
+    },
+    {
+      "oracle_id": "378567f8-7aef-42b6-853e-8591641052e8",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "You can't cast a spell for both its cleave cost and another alternative cost. For example, if an effect gives an Alchemist's Retrieval in your graveyard a flashback cost of {U}, you can't cast it from your graveyard for its cleave cost."
+    },
+    {
+      "oracle_id": "378567f8-7aef-42b6-853e-8591641052e8",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If you cast a spell for its cleave cost, that spell doesn't have any of the text in square brackets while it's on the stack."
+    },
+    {
+      "oracle_id": "378567f8-7aef-42b6-853e-8591641052e8",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "A cleave cost is an alternative cost that's paid instead of the spell's mana cost. Casting a spell for its cleave cost doesn't change the spell's mana value."
+    }
+  ]
+}

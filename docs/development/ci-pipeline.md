@@ -305,9 +305,14 @@ push first derive an affected-owner plan from schema-5 input declarations. A
 pre-corpus quick-gate phase records the affected tests for the ordinary PR
 matrix, but executes only runtime/compile validation, the generated manifest
 plan, compiler-identity sentinel and canonical semantic-transition policy
-validation before any census. When their owners are affected, the same phase
-also checks the exact target-corpus carrier contract and mutation patch-target
-integrity. Shared quantity grammar changes select only the exact adjacent
+validation before any census. The canonical mechanic-contract loader validates
+the pinned effective date, source hash and rule references without opening the
+card database. Changed Python text readers require explicit encoding so Windows
+code pages cannot turn valid UTF-8 data into a late matrix failure. When their
+owners are affected, the phase checks exact target-corpus carrier contracts and mutation patch-target
+integrity, including both source-bound paid spell bodies and the combined
+cycle/discard public-action boundary, hybrid face-down probes and reviewed
+legacy text alternatives. Shared quantity grammar changes select only the exact adjacent
 exclusion and public-condition contract witnesses, not their whole modules.
 The reusable-piece policy sentinel also validates interaction evidence against
 the statically discovered test inventory before any corpus generation. Exact

@@ -134,7 +134,7 @@ class FixedZoneCastLifecycleCompilerTests(unittest.TestCase):
         record = self.db.lookup("Foretell Lifecycle Fixture")
 
         with patch(
-            "quorune.compiler.keyword_nodes.fixed_cast_lifecycle_keyword_node",
+            "quorune.compiler.casting_keyword_nodes.fixed_cast_lifecycle_keyword_node",
             return_value=None,
         ):
             compiled = compile_oracle_card(

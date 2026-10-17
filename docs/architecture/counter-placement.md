@@ -2,7 +2,7 @@
 title: "Counter placement and removal transactions"
 status: "current"
 authoritative_source: "quorune/counter_placement.py, quorune/counter_placement_events.py, quorune/counter_removal.py, quorune/counter_names.py, quorune/counter_state.py, quorune/counter_maximums.py, quorune/counter_placement_sets.py, quorune/counter_placement_targets.py, quorune/damage_results.py, quorune/player_result_events.py, quorune/token_creation.py, quorune/keyword_counters.py, quorune/leveler_bands.py, quorune/attachment_references.py, quorune/entry_counter_model.py, quorune/entry_counters.py, quorune/fixed_keyword_entry_counters.py, quorune/saga_progression.py, quorune/turn_counter_coordination.py, quorune/death_return.py, quorune/unleash.py, quorune/mentor.py, quorune/attack_counter_triggers.py, quorune/renown.py, quorune/modular.py, quorune/amass.py, quorune/zone_object_subtype_grants.py, quorune/relative_power_target.py, quorune/target_predicates.py, quorune/permanent_designations.py, quorune/zone_object_state.py, quorune/compiler/amass_templates.py, quorune/compiler/counter_maximum_templates.py, quorune/compiler/counter_removal_templates.py, quorune/compiler/fixed_counter_trigger_nodes.py, quorune/compiler/fixed_keyword_entry_nodes.py, quorune/compiler/fixed_self_entry_counter_templates.py, quorune/compiler/fixed_target_effect_sequences.py, quorune/compiler/fixed_source_effect_sequences.py, quorune/compiler/self_counter_keyword_actions.py, quorune/rules/optional_counter_capability_shapes.py, semantic_runtime/ability_fragments.py, semantic_runtime/counter_replacements.py, semantic_runtime/counter_removal_handlers.py, semantic_runtime/token_replacements.py, semantic_runtime/zone_replacements.py, semantic_runtime/self_entry_counters.py, semantic_runtime/block_restrictions.py, semantic_choices/amass.py, semantic_choices/death_return.py, semantic_choices/modular.py, semantic_choices/optional_counter_placement.py, ADR 0011, ADR 0034, ADR 0036, ADR 0037, ADR 0038, ADR 0039, ADR 0048, and ADR 0054"
-verified: "2026-09-03"
+verified: "2026-10-16"
 audience: "rules, semantics, replay, and architecture contributors"
 maintenance: "hand-maintained"
 ---
@@ -30,6 +30,15 @@ Replacement suspension seals the concrete requested amount and recipient
 incarnation; resumption neither repeats the prefix nor recounts changed zones.
 Source-counter last-known quantities, distributed results and independently
 unsupported costs or linked riders remain outside this query family.
+
+Represented Multikicker entry counters read the immutable paid count of the
+linked printed instance from the resolving spell. The prospective entry
+snapshot seals that count, including copied casting decisions, before the
+named counter request enters the same nested replacement transaction. Zero
+payments and noncast entries create no counter request. Quantity replacements
+therefore modify the complete requested amount once, and pending choice
+resumption retains that request. Zone-object reset removes the payment fact;
+blink and permanent-copy entry cannot reuse it.
 
 Ordinary effects dispatch from the placement owner. Physical and copied-token
 entry coordinators dispatch resolved entry-counter trees after all members
@@ -581,6 +590,14 @@ public object count evaluated through the cycle-safe layer-5 quantity boundary.
 The resolving-entry coordinator freezes the resulting nonnegative amount by
 component identity before replacement ordering; a private replacement choice,
 save/load, or exact replay cannot recompute it. Zero creates no counter child.
+Fixed “escapes with” counters use this same amount owner. The typed predicate
+requires an actual spell cast from the graveyard with the Escape alternative
+cost; graveyard origin alone does not qualify. The amount is placed through
+the normal entry and counter replacement transaction before enter triggers.
+Ordinary casts, copied spells, copied permanents, and later blink entries do
+not inherit that casting fact. Counter choices, linked “enters this way”
+triggers, granted abilities, and “instead” overrides of ordinary entry counters
+remain outside this grammar.
 Permanent spell copies reuse the canonical copy object's copied X but never
 inherit cast-origin, mana-payment, or mana-color facts. Programs carrying the
 current-component marker consult the shared layer-6 applicability owner at the

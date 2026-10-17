@@ -37,9 +37,19 @@ from ..self_cast_reductions import (
     SelfSpellCostReductionSpec,
 )
 from ..rules.capabilities import load_default_capability_registry
+from ..multikicker_model import FixedManaMultikickerSpec
+from ..emerge_model import FixedManaEmergeSpec
+from ..disturb_model import FixedManaDisturbSpec
+from ..replicate_model import FixedManaReplicateSpec
+from ..conspire_model import FixedConspireSpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 from .paid_entry_copy import PaidEntryCopyCostHandler
+from .multikicker import FixedManaMultikickerHandler
+from .emerge import FixedManaEmergeHandler
+from .disturb import FixedManaDisturbHandler
+from .replicate import FixedManaReplicateHandler
+from .conspire import FixedConspireHandler
 
 
 CONVOKE_ACTIVE_ZONE = "stack"
@@ -527,7 +537,12 @@ class CastCostComponentRegistry(
         | DelveSpec
         | FixedManaEvokeSpec
         | FixedSpellCostReductionSpec
-        | SelfSpellCostReductionSpec,
+        | SelfSpellCostReductionSpec
+        | FixedManaMultikickerSpec
+        | FixedManaEmergeSpec
+        | FixedManaDisturbSpec
+        | FixedManaReplicateSpec
+        | FixedConspireSpec,
     ]
 ):
     pass
@@ -547,6 +562,11 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             SelfSpellCostReductionHandler(),
             TypedAffinityCostHandler(),
             PaidEntryCopyCostHandler(),
+            FixedManaMultikickerHandler(),
+            FixedManaEmergeHandler(),
+            FixedManaDisturbHandler(),
+            FixedManaReplicateHandler(),
+            FixedConspireHandler(),
         )
     )
     registry.require_registered_capabilities(load_default_capability_registry())

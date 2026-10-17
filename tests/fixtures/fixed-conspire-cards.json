@@ -1,0 +1,1054 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_fixed_conspire",
+  "source": "Pinned original Oracle cards/rulings; exact existing shared rows retained; only bounded printed instances are candidates",
+  "cards": [
+    {
+      "oracle_id": "dd0cac88-0a78-408f-8eb0-080f79150180",
+      "name": "Aethertow",
+      "mana_cost": "{3}{W/U}",
+      "type_line": "Instant",
+      "oracle_text": "Put target attacking or blocking creature on top of its owner's library.\nConspire (As you cast this spell, you may tap two untapped creatures you control that share a color with it. When you do, copy it and you may choose a new target for the copy.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "keywords": [
+        "Conspire"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-03-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "baf3d4d9-0590-4d94-8f4e-1e726194b920",
+      "name": "Barkshell Blessing",
+      "mana_cost": "{G/W}",
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets +2/+2 until end of turn.\nConspire (As you cast this spell, you may tap two untapped creatures you control that share a color with it. When you do, copy it and you may choose a new target for the copy.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "keywords": [
+        "Conspire"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "566b4dcc-b7d7-4443-b2d0-954f1fc33a11",
+      "name": "Burn Trail",
+      "mana_cost": "{3}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Burn Trail deals 3 damage to any target.\nConspire (As you cast this spell, you may tap two untapped creatures you control that share a color with it. When you do, copy it and you may choose a new target for the copy.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Conspire"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "3efecb6c-7c21-4b3b-9612-e3916f91c680",
+      "name": "Disturbing Plot",
+      "mana_cost": "{1}{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "Return target creature card from a graveyard to its owner's hand.\nConspire (As you cast this spell, you may tap two untapped creatures you control that share a color with it. When you do, copy it and you may choose a new target for the copy.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Conspire"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "1ca875f0-50a7-4332-8643-c2b4bbda18b1",
+      "name": "Ghastly Discovery",
+      "mana_cost": "{2}{U}",
+      "type_line": "Sorcery",
+      "oracle_text": "Draw two cards, then discard a card.\nConspire (As you cast this spell, you may tap two untapped creatures you control that share a color with it. When you do, copy it.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Conspire"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "894a220b-1372-4a76-b38f-bf0d7001af41",
+      "name": "Giantbaiting",
+      "mana_cost": "{2}{R/G}",
+      "type_line": "Sorcery",
+      "oracle_text": "Create a 4/4 red and green Giant Warrior creature token with haste. Exile it at the beginning of the next end step.\nConspire (As you cast this spell, you may tap two untapped creatures you control that share a color with it. When you do, copy it.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R"
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "keywords": [
+        "Conspire"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-03-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "25fe48be-95c4-4011-8c60-4628fb5ecfcb",
+      "name": "Gleeful Sabotage",
+      "mana_cost": "{1}{G}",
+      "type_line": "Sorcery",
+      "oracle_text": "Destroy target artifact or enchantment.\nConspire (As you cast this spell, you may tap two untapped creatures you control that share a color with it. When you do, copy it and you may choose a new target for the copy.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Conspire"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2010-06-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+      "name": "Llanowar Elves",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Creature — Elf Druid",
+      "oracle_text": "{T}: Add {G}.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a30b659e-ae2b-4736-9b4f-a9805905bf75",
+      "name": "Memory Sluice",
+      "mana_cost": "{U/B}",
+      "type_line": "Sorcery",
+      "oracle_text": "Target player mills four cards.\nConspire (As you cast this spell, you may tap two untapped creatures you control that share a color with it. When you do, copy it and you may choose a new target for the copy.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "U"
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "keywords": [
+        "Conspire",
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Merfolk of the Pearl Trident",
+      "oracle_id": "218d9277-c179-4de3-9c7f-79b5a6d4fa38",
+      "oracle_text": "",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2012-07-13",
+      "toughness": "1",
+      "type_line": "Creature — Merfolk"
+    },
+    {
+      "oracle_id": "9bd5dc7a-11b0-48eb-bf52-2956dd3989ab",
+      "name": "Mine Excavation",
+      "mana_cost": "{1}{W}",
+      "type_line": "Sorcery",
+      "oracle_text": "Return target artifact or enchantment card from a graveyard to its owner's hand.\nConspire (As you cast this spell, you may tap two untapped creatures you control that share a color with it. When you do, copy it and you may choose a new target for the copy.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Conspire"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "30997b43-fc13-41d3-8064-1ccc2cb6fd2b",
+      "name": "Raging Goblin",
+      "mana_cost": "{R}",
+      "type_line": "Creature — Goblin Berserker",
+      "oracle_text": "Haste (This creature can attack and {T} as soon as it comes under your control.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2018-07-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Haste"
+      ],
+      "produced_mana": [],
+      "faces": [],
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "84b2d0f6-ad98-4a71-a3d5-645b0f2db6c6",
+      "name": "Rally the Galadhrim",
+      "mana_cost": "{2}{G}{U}",
+      "type_line": "Sorcery",
+      "oracle_text": "Create a token that's a copy of target creature you control.\nConspire (As you cast this spell, you may tap two untapped creatures you control that share a color with it. When you do, copy it and you may choose a new target for the copy.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [
+        "Conspire"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "09c96077-3804-4f12-a613-5bebc5e0413f",
+      "name": "Sphere of Resistance",
+      "mana_cost": "{2}",
+      "type_line": "Artifact",
+      "oracle_text": "Spells cost {1} more to cast.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-06-16",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "not_legal",
+        "timeless": "not_legal",
+        "gladiator": "not_legal",
+        "pioneer": "not_legal",
+        "modern": "not_legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "not_legal",
+        "competitivebrawl": "not_legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "legal",
+        "predh": "legal",
+        "tlr": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "04e9ac31-3377-4a4c-9337-53ee0ada882a",
+      "name": "Traitor's Roar",
+      "mana_cost": "{4}{B/R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Tap target untapped creature. It deals damage equal to its power to its controller.\nConspire (As you cast this spell, you may tap two untapped creatures you control that share a color with it. When you do, copy it and you may choose a new target for the copy.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "keywords": [
+        "Conspire"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 5.0
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "fea95888-e16a-4209-9cd4-623f7f4d2f67",
+      "name": "Walking Corpse",
+      "mana_cost": "{1}{B}",
+      "type_line": "Creature — Zombie",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "223fa044-d387-4884-bf4e-75f1b61c6a46",
+      "name": "Curiosity",
+      "mana_cost": "{U}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature\nWhenever enchanted creature deals damage to an opponent, you may draw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "894a220b-1372-4a76-b38f-bf0d7001af41",
+      "published_at": "2017-03-14",
+      "source": "wotc",
+      "comment": "The delayed triggered ability that exiles the token isn’t a characteristic of the token. If an effect such as populate copies the token, the new token won’t be exiled."
+    },
+    {
+      "oracle_id": "84b2d0f6-ad98-4a71-a3d5-645b0f2db6c6",
+      "published_at": "2023-11-03",
+      "source": "wotc",
+      "comment": "Conspire represents both an additional cost and a triggered ability that triggers when you cast the spell if you paid that cost."
+    },
+    {
+      "oracle_id": "84b2d0f6-ad98-4a71-a3d5-645b0f2db6c6",
+      "published_at": "2023-11-03",
+      "source": "wotc",
+      "comment": "Each creature you tap for conspire must share a color with Rally the Galadhrim For example, you could tap two green creatures, two blue creatures, or one of each. For either or both of the creatures, you may tap a multicolored creature that's green and/or blue, and possibly other colors as well."
+    },
+    {
+      "oracle_id": "84b2d0f6-ad98-4a71-a3d5-645b0f2db6c6",
+      "published_at": "2023-11-03",
+      "source": "wotc",
+      "comment": "If a spell with conspire has targets, you may choose new targets for the copy."
+    },
+    {
+      "oracle_id": "84b2d0f6-ad98-4a71-a3d5-645b0f2db6c6",
+      "published_at": "2023-11-03",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied creature will trigger when the token enters the battlefield. Any \"as [this creature] enters the battlefield\" or \"[this creature] enters the battlefield with\" abilities of the copied creature will also work."
+    },
+    {
+      "oracle_id": "84b2d0f6-ad98-4a71-a3d5-645b0f2db6c6",
+      "published_at": "2023-11-03",
+      "source": "wotc",
+      "comment": "The triggered ability that creates the copy can itself be countered by anything that can counter a triggered ability. If it is countered, no copies will be put onto the stack."
+    },
+    {
+      "oracle_id": "84b2d0f6-ad98-4a71-a3d5-645b0f2db6c6",
+      "published_at": "2023-11-03",
+      "source": "wotc",
+      "comment": "If the copied creature is a token, the token that's created copies the original characteristics of that token as stated by the effect that created that token."
+    },
+    {
+      "oracle_id": "84b2d0f6-ad98-4a71-a3d5-645b0f2db6c6",
+      "published_at": "2023-11-03",
+      "source": "wotc",
+      "comment": "If the copied creature is copying something else, then the token enters the battlefield as whatever that creature copied."
+    },
+    {
+      "oracle_id": "84b2d0f6-ad98-4a71-a3d5-645b0f2db6c6",
+      "published_at": "2023-11-03",
+      "source": "wotc",
+      "comment": "The token copies exactly what was printed on the original creature and nothing else (unless that creature is copying something else or is a token; see below). It doesn't copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, and so on."
+    },
+    {
+      "oracle_id": "84b2d0f6-ad98-4a71-a3d5-645b0f2db6c6",
+      "published_at": "2023-11-03",
+      "source": "wotc",
+      "comment": "The copy that conspire creates is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger."
+    },
+    {
+      "oracle_id": "84b2d0f6-ad98-4a71-a3d5-645b0f2db6c6",
+      "published_at": "2023-11-03",
+      "source": "wotc",
+      "comment": "If the copied creature has {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "84b2d0f6-ad98-4a71-a3d5-645b0f2db6c6",
+      "published_at": "2023-11-03",
+      "source": "wotc",
+      "comment": "A copy of a spell can be countered like any other spell, but it must be countered individually. Countering a spell with conspire won't affect the copy, and vice versa."
+    },
+    {
+      "oracle_id": "09c96077-3804-4f12-a613-5bebc5e0413f",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "It affects all players, including you."
+    },
+    {
+      "oracle_id": "04e9ac31-3377-4a4c-9337-53ee0ada882a",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "If you use conspire to copy Traitor’s Roar, but you don’t change its target, the copy will resolve just fine but the original doesn’t resolve. That’s because the copy will resolve first, and as part of its resolution, it will tap the targeted creature. Then, when the original Traitor’s Roar tries to resolve, it will have an illegal target (since it must target an untapped creature)."
+    },
+    {
+      "oracle_id": "223fa044-d387-4884-bf4e-75f1b61c6a46",
+      "published_at": "2011-09-22",
+      "source": "wotc",
+      "comment": "\"You\" refers to the controller of Curiosity, which may be different from the controller of the enchanted creature. \"An opponent\" refers to an opponent of Curiosity's controller."
+    },
+    {
+      "oracle_id": "223fa044-d387-4884-bf4e-75f1b61c6a46",
+      "published_at": "2011-09-22",
+      "source": "wotc",
+      "comment": "Any damage dealt by the enchanted creature to an opponent will cause Curiosity to trigger, not just combat damage."
+    },
+    {
+      "oracle_id": "223fa044-d387-4884-bf4e-75f1b61c6a46",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Curiosity doesn't trigger if the enchanted creature deals damage to a planeswalker or to a battle."
+    },
+    {
+      "oracle_id": "223fa044-d387-4884-bf4e-75f1b61c6a46",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "You draw one card each time the enchanted creature deals damage to an opponent, no matter how much damage it deals."
+    },
+    {
+      "oracle_id": "223fa044-d387-4884-bf4e-75f1b61c6a46",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "If you control Curiosity and it's enchanting an opponent's creature, you won't draw a card when that creature deals damage to you. The creature has to deal damage to one of your opponents for the ability to trigger."
+    }
+  ]
+}

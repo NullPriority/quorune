@@ -1216,8 +1216,13 @@ def _event_runtime_coverage(
 
 
 def _binding_effect_template(binding, body, *, card_name, effect_template):
-    return binding_effect_template(binding, body, card_name=card_name,
+    compiled, current = binding_effect_template(binding, body, card_name=card_name,
         effect_template=effect_template, source_counter_variants=_NONCOUNTER_PUBLIC_EVENT_VARIANTS)
+    from .cycle_or_discard_bindings import CYCLE_OR_DISCARD_CAPABILITY
+    if CYCLE_OR_DISCARD_CAPABILITY in binding.public_capabilities:
+        from .source_self_effect_templates import pin_source_result_incarnation
+        compiled = pin_source_result_incarnation(compiled)
+    return compiled, current
 
 
 def _counter_binding_accepts_result(binding,body_mechanics):

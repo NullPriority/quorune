@@ -38,7 +38,7 @@ from .compiler.activated_mana_nodes import (
 from .compiler.ability_keyword_fragments import (
     lower_ability_keyword_fragments,
 )
-from .compiler.closed_static_nodes import closed_static_or_replacement_node
+from .compiler.closed_static_nodes import closed_static_card_node
 from .compiler.public_self_replacement_templates import is_fixed_public_self_replacement
 from .compiler.public_alternative_cost_nodes import (
     reject_cast_cost_composition,
@@ -171,7 +171,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v421"
+ORACLE_COMPILER_VERSION = "oracle-ir-v430"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1088,6 +1088,20 @@ def _typed_whole_spell_face(
     capability_profile: str,
     residuals: list[OracleResidual],
 ) -> OracleFaceIR | None:
+    from .compiler.cleave_spell_faces import compile_fixed_cleave_face
+    cleave = compile_fixed_cleave_face(record=record, face_id=face_id, face_name=face_name,
+        oracle_text=oracle_text, material_rows=material_rows, effect_template=effect_template,
+        trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals)
+    if cleave is not None:
+        return cleave
+    from .compiler.overload_spell_faces import compile_fixed_overload_face
+    overload = compile_fixed_overload_face(record=record, face_id=face_id, face_name=face_name,
+        oracle_text=oracle_text, material_rows=material_rows, effect_template=effect_template,
+        trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals)
+    if overload is not None:
+        return overload
     additional_cost_face = _typed_additional_cost_face(
         record,
         face_id,
@@ -1194,15 +1208,15 @@ def _compile_face(
             nodes.extend(event_nodes)
             continue
 
-        closed_static = closed_static_or_replacement_node(
+        closed_static = closed_static_card_node(
+            record=record,
             node_id=node_id,
             line=line,
             material_line=material_line,
             span=span,
-            source_name=face_name or record.name,
-            card_types=card_types,
+            face_name=face_name,
+            type_line=type_line,
             permanent_card_types=_PERMANENT_CARD_TYPES,
-            source_is_class=("class" in type_parts(type_line)[1]),
             capability_registry=capability_registry,
             capability_profile=capability_profile,
             residuals=residuals,

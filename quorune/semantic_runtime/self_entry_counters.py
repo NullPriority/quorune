@@ -4,7 +4,7 @@ from dataclasses import dataclass,replace
 from typing import Any, Mapping, Sequence
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
-from ..card_program_faces import program_matches_face
+from ..card_program_faces import program_matches_face, prospective_face_view
 from ..entry_counter_model import (
     DYNAMIC_SELF_ENTRY_COUNTER_HANDLER_ID,
     DynamicEntryCounterAmountSpec,
@@ -198,6 +198,8 @@ class DynamicSelfEntryCounterHandler:
         "614.12",
         "614.16",
         "616.1",
+        "702.138b",
+        "702.138c",
     )
     capability_dependencies: tuple[str, ...] = (
         "counter.producer.dynamic_self_entry",
@@ -347,7 +349,7 @@ def dynamic_self_entry_counter_amounts_from_programs(
         ) or not program_static_component_is_applicable(
             host,
             program,
-            card,
+            prospective_face_view(record, card, prospective_name),
             prospective_zone=destination,
             prospective_controller=destination_controller,
         ):

@@ -47,3 +47,32 @@ def static_block_capacity_handler(text, *, source_name):
     if handler['handler_id']=='continuous.ability.fixed-query-keyword-grant.v1':
         handler['handler_id']='continuous.ability.fixed-query-grant.v1';capabilities.discard('continuous.ability.fixed_query_keyword_grant');capabilities.add('continuous.ability.fixed_query_grant')
     return 'fixed-composed-block-capacity-v1',handler,tuple(sorted(capabilities))
+
+
+def temporary_block_capacity_template(text, *, source_name, source_is_permanent, source_card_types):
+    from .fixed_resolution_characteristics import _subject
+    from ..block_capacity_rule_model import TEMPORARY_BLOCK_CAPACITY_MECHANIC
+    match = re.fullmatch(
+        r'(?P<subject>.+?) (?:(?:gets (?P<p>[+-]\d+)/(?P<t>[+-]\d+) until end of turn and )?)'
+        r'can block (?:(?:an additional (?P<count>creature|one creature|two creatures|three creatures|seven creatures|ninety-nine creatures))|'
+        r'(?P<any>any number of creatures)) this turn\.?', text.strip(), re.I)
+    if match is None:
+        return None
+    selected = _subject(match['subject'], source_name=source_name,
+        source_is_permanent=source_is_permanent, source_card_types=tuple(source_card_types))
+    if selected is None:
+        return None
+    selection, schema = selected
+    if 'predicate' in selection:
+        return None
+    if schema is None:
+        if selection != {'card': '$source.zone_object'} or 'creature' not in source_card_types:
+            return None
+    elif schema.get('types_any', schema.get('types_all')) != ['creature']:
+        return None
+    capacity = BlockCapacitySpec(unlimited=True) if match['any'] else BlockCapacitySpec(additional=_COUNTS[match['count'].casefold()])
+    effect = {'op': 'apply_source_characteristics_until_end_of_turn', 'schema_version': 10,
+        **selection, 'capacity': capacity.to_dict(), 'power': int(match['p'] or 0), 'toughness': int(match['t'] or 0)}
+    return ('fixed-temporary-block-capacity-v1', (effect,), schema,
+        (TEMPORARY_BLOCK_CAPACITY_MECHANIC, 'cr-611-continuous-effects',
+            *(('cr-115-targets',) if schema is not None else ())))

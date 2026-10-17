@@ -69,6 +69,10 @@ def copiable_card_characteristics(card, record, base):
     from .card_program_faces import selected_face_id
     result = dict(base)
     result.update(copy.deepcopy(dict(card.annotations.get('copy_overrides') or {})))
+    if record is not None and record.faces:
+        from .entry_copy import COPIABLE_ORACLE_FIELD, COPIABLE_FACE_FIELD
+        result.setdefault(COPIABLE_ORACLE_FIELD, record.oracle_id)
+        result.setdefault(COPIABLE_FACE_FIELD, selected_face_id(record, card))
     if (record is not None and record.layout == 'transform' and len(record.faces) == 2
             and selected_face_id(record, card) == record.faces[1].get('name')):
         # Mana value is derived, rather than itself copied. The back face's

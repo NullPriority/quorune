@@ -293,6 +293,12 @@ def fixed_public_fact_condition(
     """Parse one closed current public-fact threshold."""
 
     normalized = " ".join(text.strip().rstrip(".").split())
+    common = re.fullmatch(r'(?P<color>white|blue|black|red|green) is the most common color among all permanents or is tied for most common', normalized, re.I)
+    if common is not None:
+        return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST,
+            amount=1, fact=FixedPublicStateFact.PERMANENT_COLOR_IS_MOST_COMMON,
+            fact_parameter={'white':'W','blue':'U','black':'B','red':'R','green':'G'}[common['color'].casefold()],
+            schema_version=7)
     numeric = fixed_source_numeric_condition(normalized, source_pattern=source_pattern)
     if numeric is not None:
         return numeric

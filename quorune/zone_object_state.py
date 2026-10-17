@@ -8,6 +8,7 @@ from .paid_entry_copy_model import PAID_ENTRY_COPY_FIELD, validate_paid_entry_co
 
 from .model import CardInstance
 from .kicker import KICKER_ANNOTATION
+from .multikicker_model import MULTIKICKER_FIELD, validate_multikicker_fact
 from .flashback import FLASHBACK_CAST_ANNOTATION
 from .cast_lifecycles import (
     FixedCastLifecycleKind,
@@ -23,6 +24,7 @@ from .morph import (
     MORPH_METHOD_ANNOTATION,
     morph_face_down_annotation,
 )
+from .nonmana_morph_model import FixedNonmanaMorphSpec
 
 
 class ZoneObjectStateError(ValueError):
@@ -36,6 +38,21 @@ def mark_resolving_paid_entry_copy(card: CardInstance, context) -> None:
     if card.zone != 'stack':
         raise ZoneObjectStateError('Paid entry copy facts require the resolving spell incarnation')
     card.annotations[PAID_ENTRY_COPY_FIELD] = validate_paid_entry_copy_fact(value)
+
+
+def mark_multikicker_paid(card: CardInstance, context) -> None:
+    """Commit a cast decision to this spell incarnation, including a spell copy."""
+    value = context.get(MULTIKICKER_FIELD)
+    if value is None:
+        return
+    if not isinstance(card, CardInstance) or card.zone != 'stack':
+        raise ZoneObjectStateError('Multikicker facts require a stack incarnation')
+    fact = validate_multikicker_fact(value)
+    previous = card.annotations.get(MULTIKICKER_FIELD)
+    if previous is not None and validate_multikicker_fact(previous) != fact:
+        raise ZoneObjectStateError('Multikicker payment history changed')
+    card.annotations[MULTIKICKER_FIELD] = fact
+    card.annotations[KICKER_ANNOTATION] = True
 
 
 def stack_entry_cast_facts(card: CardInstance):
@@ -157,7 +174,7 @@ def mark_card_face_down_for_morph(
         or card.object_kind != "card"
         or type(controller) is not str
         or not controller
-        or not isinstance(spec, FixedManaMorphSpec)
+        or not isinstance(spec, (FixedManaMorphSpec, FixedNonmanaMorphSpec))
     ):
         raise ZoneObjectStateError("Face-down casting state is malformed")
     card.face_down = True

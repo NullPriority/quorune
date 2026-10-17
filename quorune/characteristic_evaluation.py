@@ -50,7 +50,7 @@ _SUPERTYPES = frozenset("basic legendary ongoing snow world".split())
 def type_parts(type_line: str) -> tuple[set[str], set[str], set[str]]:
     """Parse the public type-line vocabulary used by characteristic layers."""
 
-    normalized = type_line.replace("—", "-")
+    normalized = type_line.replace("—", "-").replace('’',"'")
     left, _, right = normalized.partition("-")
     word_pattern = r"[A-Za-z]+(?:[-'][A-Za-z]+)*"
     words = {

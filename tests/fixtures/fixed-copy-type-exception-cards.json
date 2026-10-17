@@ -1,0 +1,411 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_fixed_copy_type_exceptions",
+  "source": "Pinned original Oracle/rulings and exact shared fixture controls",
+  "cards": [
+    {
+      "oracle_id": "3d3553df-0036-47d9-b0e3-4a3261a0f73c",
+      "name": "Synth Infiltrator",
+      "mana_cost": "{3}{U}{U}",
+      "type_line": "Artifact Creature — Synth",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nYou may have this creature enter as a copy of any creature on the battlefield, except it's a Synth artifact creature in addition to its other types.",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Improvise"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-03-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 5.0
+    },
+    {
+      "oracle_id": "afcc68e2-3634-43ce-ae99-dd2ec735d146",
+      "name": "Sakashima's Student",
+      "mana_cost": "{2}{U}{U}",
+      "type_line": "Creature — Human Ninja",
+      "oracle_text": "Ninjutsu {1}{U} ({1}{U}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)\nYou may have this creature enter as a copy of any creature on the battlefield, except it's a Ninja in addition to its other creature types.",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Ninjutsu"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-11-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "name": "Clone",
+      "mana_cost": "{3}{U}",
+      "type_line": "Creature — Shapeshifter",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield.",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-07-19",
+      "faces": [],
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Humble",
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "oracle_text": "Until end of turn, target creature loses all abilities and has base power and toughness 0/1.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-06-10",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "3d3553df-0036-47d9-b0e3-4a3261a0f73c",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "You can choose not to have Synth Infiltrator enter the battlefield as a copy of another creature. If you do, it will probably die due to having 0 toughness. (This is probably not the kind of innovation the Institute would approve of.)"
+    },
+    {
+      "oracle_id": "3d3553df-0036-47d9-b0e3-4a3261a0f73c",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If the copied creature is a token, Synth Infiltrator copies the original characteristics of that token as stated by the effect that created that token, with the noted exceptions."
+    },
+    {
+      "oracle_id": "3d3553df-0036-47d9-b0e3-4a3261a0f73c",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If the copied creature is copying something else, then Synth Infiltrator enters the battlefield as whatever that creature copied, with the noted exceptions."
+    },
+    {
+      "oracle_id": "3d3553df-0036-47d9-b0e3-4a3261a0f73c",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "Except for being a Synth artifact creature in addition to its other types, Synth Infiltrator copies exactly what was printed on the original creature and nothing else (unless that creature is copying something else or is a token; see below). It doesn’t copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, and so on."
+    },
+    {
+      "oracle_id": "3d3553df-0036-47d9-b0e3-4a3261a0f73c",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied creature will trigger when Synth Infiltrator enters the battlefield. Any “as [this creature] enters the battlefield” or “[this creature] enters the battlefield with” abilities of the copied creature will also work."
+    },
+    {
+      "oracle_id": "3d3553df-0036-47d9-b0e3-4a3261a0f73c",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "Improvise doesn’t change Synth Infiltrator’s mana cost or mana value, and it can’t reduce Synth Infiltrator’s cost below {U}{U}."
+    },
+    {
+      "oracle_id": "3d3553df-0036-47d9-b0e3-4a3261a0f73c",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If the copied creature has {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "afcc68e2-3634-43ce-ae99-dd2ec735d146",
+      "published_at": "2012-06-01",
+      "source": "wotc",
+      "comment": "If Sakashima's Student somehow enters at the same time as another creature, Sakashima's Student can't become a copy of that creature. You may choose only a creature that's already on the battlefield."
+    },
+    {
+      "oracle_id": "afcc68e2-3634-43ce-ae99-dd2ec735d146",
+      "published_at": "2012-06-01",
+      "source": "wotc",
+      "comment": "Any \"enters\" abilities of the copied creature will trigger when Sakashima's Student enters. Any \"as [this creature] enters\" or \"[this creature] enters with\" abilities of the chosen creature (like devour) will also work."
+    },
+    {
+      "oracle_id": "afcc68e2-3634-43ce-ae99-dd2ec735d146",
+      "published_at": "2012-06-01",
+      "source": "wotc",
+      "comment": "You can choose not to copy anything. In that case, Sakashima's Student enters as a 0/0 creature, and is probably put into the graveyard immediately."
+    },
+    {
+      "oracle_id": "afcc68e2-3634-43ce-ae99-dd2ec735d146",
+      "published_at": "2012-06-01",
+      "source": "wotc",
+      "comment": "If the chosen creature is copying something else (for example, if the chosen creature is another Sakashima's Student), then your Sakashima's Student enters as whatever the chosen creature copied."
+    },
+    {
+      "oracle_id": "afcc68e2-3634-43ce-ae99-dd2ec735d146",
+      "published_at": "2012-06-01",
+      "source": "wotc",
+      "comment": "If the chosen creature is a token, Sakashima's Student copies the original characteristics of that token as stated by the effect that put the token onto the battlefield. Sakashima's Student is not a token."
+    },
+    {
+      "oracle_id": "afcc68e2-3634-43ce-ae99-dd2ec735d146",
+      "published_at": "2012-06-01",
+      "source": "wotc",
+      "comment": "Sakashima's Student copies exactly what was printed on the original creature (unless that creature is copying something else or is a token; see below) and it is a Ninja in addition to its other types. It doesn't copy whether that creature is tapped or untapped, whether it has any counters on it or any Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, or so on."
+    },
+    {
+      "oracle_id": "afcc68e2-3634-43ce-ae99-dd2ec735d146",
+      "published_at": "2012-06-01",
+      "source": "wotc",
+      "comment": "If the chosen creature has {X} in its mana cost, X is zero."
+    },
+    {
+      "oracle_id": "afcc68e2-3634-43ce-ae99-dd2ec735d146",
+      "published_at": "2012-06-01",
+      "source": "wotc",
+      "comment": "Because you return the unblocked attacking creature to its owner's hand while activating the ninjutsu ability, you can't have Sakashima's Student enter as a copy of that creature."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "If the copied creature has {X} in its mana cost, X is considered to be 0."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Clone copies exactly what was printed on the original creature and nothing else (unless that creature is copying something else or is a token; see below). It doesn't copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, or so on."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Any enters abilities of the copied creature will trigger when Clone enters. Any \"as [this creature] enters\" or \"[this creature] enters with\" abilities of the chosen creature will also work."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "If Clone somehow enters at the same time as another creature, Clone can't become a copy of that creature. You may choose only a creature that's already on the battlefield."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "If the copied creature is a token, Clone copies the original characteristics of that token as stated by the effect that created the token."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "If the copied creature is copying something else (for example, if the copied creature is an Evil Twin), then Clone enters as whatever that creature copied."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Clone's ability doesn't target the chosen creature."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "You can choose not to copy anything. In that case, Clone enters as a 0/0 Shapeshifter creature, and is probably put into the graveyard immediately."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble doesn’t counter abilities that have already triggered or been activated. In particular, casting this spell won’t stop a creature’s ability that says “At the beginning of your upkeep,” “When this creature enters the battlefield,” or similar from triggering."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble overwrites all previous effects that set the creature’s base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Humble resolves will overwrite this effect."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Effects that modify a creature’s power and/or toughness, such as the effect of Seal of Strength, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness and effects that switch its power and toughness."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "If the affected creature gains an ability after Humble resolves, it will keep that ability."
+    }
+  ]
+}

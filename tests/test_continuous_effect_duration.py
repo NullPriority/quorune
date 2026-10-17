@@ -1901,7 +1901,6 @@ class ContinuousEffectEngineTests(unittest.TestCase):
         engine = session.engine
         registry = load_default_capability_registry()
         witness_names = (
-            "Drogskol Infantry // Drogskol Armaments",
             "Wilt-Leaf Liege",
         )
         for name in witness_names:
@@ -1923,9 +1922,14 @@ class ContinuousEffectEngineTests(unittest.TestCase):
                 },
             )
 
-        # The private reveal-or-tapped entry owner now closes Flamekin Village;
-        # the other two cards still distinguish unsupported replacements from
-        # their independently exact continuous effects.
+        # Disturb and its source-local exile replacement now close Drogskol;
+        # Wilt-Leaf's effect-caused discard replacement remains unsupported.
+        drogskol = compile_oracle_card(self.db.lookup("Drogskol Infantry // Drogskol Armaments"),
+            capability_registry=registry, capability_profile="commander_review")
+        self.assertEqual("exact", drogskol.status, drogskol.material_residuals)
+        self.assertLessEqual({'casting.lifecycle.disturb_fixed_mana','zone.change.self_graveyard_exile'},
+            {dependency for face in drogskol.faces for node in face.nodes for dependency in node.capability_dependencies})
+        # The private reveal-or-tapped entry owner also closes Flamekin Village.
         village_ir = compile_oracle_card(
             self.db.lookup("Flamekin Village"),
             capability_registry=registry,

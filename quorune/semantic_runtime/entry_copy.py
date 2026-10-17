@@ -6,6 +6,7 @@ from dataclasses import dataclass, replace
 from typing import Any, Mapping
 
 from ..entry_copy import (EntryCopySpec, ENTRY_COPY_HANDLER, ENTRY_COPY_CAPABILITY,
+    ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_QUERY_CAPABILITIES,
     COPIABLE_ORACLE_FIELD, COPIABLE_FACE_FIELD, copiable_oracle_id)
 from ..object_query import object_matches_query, object_query_result
 from ..replacement_effects import ReplacementClass, ReplacementEffect, SetField
@@ -25,11 +26,15 @@ class EntryCopyHandler:
 
     def validate(self, descriptor):
         exact_fields(descriptor, {'handler_id', 'schema_version', 'event', 'copy'}, field='intrinsic entry copy')
-        if (descriptor['handler_id'] != self.handler_id or type(descriptor['schema_version']) is not int
-                or descriptor['schema_version'] != 1 or descriptor['event'] != self.event):
+        expected = {ENTRY_COPY_HANDLER: 1, ENTRY_COPY_QUERY_HANDLER: 2}.get(self.handler_id)
+        if (self.schema_version != expected or descriptor['handler_id'] != self.handler_id or type(descriptor['schema_version']) is not int
+                or descriptor['schema_version'] != self.schema_version or descriptor['event'] != self.event):
             raise SemanticNodeError('Intrinsic entry copy identity changed')
         try:
-            return EntryCopySpec.from_dict(descriptor['copy'])
+            spec = EntryCopySpec.from_dict(descriptor['copy'])
+            if spec.schema_version != self.schema_version:
+                raise ValueError('Copy selector and handler versions differ')
+            return spec
         except (ValueError, TypeError) as exc:
             raise SemanticNodeError(str(exc)) from exc
 
@@ -42,6 +47,18 @@ class EntryCopyHandler:
         # Candidate-dependent effects are captured by the canonical snapshot
         # coordinator, then resolved without mutable game-state reads.
         return ()
+
+
+def entry_copy_handler(version):
+    if type(version) is not int:
+        raise SemanticNodeError('Copy selector version must be an integer')
+    if version == 1:
+        return EntryCopyHandler()
+    if version == 2:
+        return EntryCopyHandler(handler_id=ENTRY_COPY_QUERY_HANDLER, schema_version=2,
+            capability_dependencies=ENTRY_COPY_QUERY_CAPABILITIES,
+            rule_references=(*EntryCopyHandler().rule_references, '115.10a', '201.5'))
+    raise SemanticNodeError('Copy selector version is unsupported')
 
 
 def _copiable_values(host, target, spec):
@@ -92,7 +109,7 @@ def _copied_entry_effects(host, subject, source, target, values):
     registry = default_zone_change_replacement_registry()
     for program in programs:
         for index, descriptor in enumerate(program.handlers):
-            if descriptor.get('handler_id') == ENTRY_COPY_HANDLER:
+            if descriptor.get('handler_id') in {ENTRY_COPY_HANDLER, ENTRY_COPY_QUERY_HANDLER}:
                 raise SemanticNodeError('Repeated intrinsic copy-entry replacement is outside the represented composition')
             from ..entry_reveal import ENTRY_REVEAL_HANDLER
             if descriptor.get('handler_id')==ENTRY_REVEAL_HANDLER:
@@ -117,7 +134,6 @@ def entry_copy_replacement_effects(host, subject):
     if record is None:
         return ()
     from ..card_program_faces import program_matches_face
-    handler = EntryCopyHandler()
     effects = []
     for program in host.semantics.runtime_handler_programs_for_oracle(record.oracle_id, active_zone='all', event='zone.change'):
         if not host.semantic_program_is_current_trusted(program) or not program_matches_face(record, program, source):
@@ -127,8 +143,9 @@ def entry_copy_replacement_effects(host, subject):
                 prospective_zone='battlefield', prospective_controller=subject.destination_controller):
             continue
         for index, descriptor in enumerate(program.handlers):
-            if descriptor.get('handler_id') != ENTRY_COPY_HANDLER:
+            if descriptor.get('handler_id') not in {ENTRY_COPY_HANDLER, ENTRY_COPY_QUERY_HANDLER}:
                 continue
+            handler = entry_copy_handler(descriptor.get('schema_version'))
             spec = handler.validate(descriptor)
             query = replace(spec.selection,
                 controller=subject.destination_controller if spec.selection.controller is not None else None,
@@ -137,14 +154,16 @@ def entry_copy_replacement_effects(host, subject):
                 effective = host._effective_card_data(target)
                 row = object_query_result(target, effective,
                     type_parts=host._type_parts(str(effective.get('type_line') or '')),
-                    known_to_actor=True, attached_to_ref=None)
+                    known_to_actor=True, attached_to_ref=None,
+                    entered_this_turn=(host.state.turn_sequence > 0
+                        and target.entered_battlefield_turn_sequence == host.state.turn_sequence))
                 if not object_matches_query(row, query):
                     continue
                 values = _copiable_values(host, target, spec)
                 effects.extend(_copied_entry_effects(host, subject, source, target, values))
                 types = tuple(sorted(set().union(*host._type_parts(str(values['type_line'])))))
                 effects.append(ReplacementEffect(
-                    effect_id=f'{ENTRY_COPY_HANDLER}:{subject.object_ref}:{program.key}:{index}:{target.ref}',
+                    effect_id=f'{descriptor["handler_id"]}:{subject.object_ref}:{program.key}:{index}:{target.ref}',
                     source_id=subject.object_ref, event_kind='zone.change',
                     replacement_class=ReplacementClass.ENTERS_COPY,
                     conditions={'destination': {'eq':'battlefield'}, 'object_ref': {'eq':subject.object_ref},

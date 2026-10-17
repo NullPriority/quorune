@@ -54,6 +54,19 @@ def _record(text: str, *, name: str = "Typed Entry Fixture") -> CardRecord:
 
 
 class TypedLandEntryCompilerTests(unittest.TestCase):
+    def test_prospective_face_view_selects_the_land_without_mutating_the_card(self):
+        from quorune.card_program_faces import prospective_face_view
+        record = replace(_record('This land enters tapped.'), layout='modal_dfc',
+            faces=({'name':'Front Spell'},{'name':'Back Land'}))
+        card = CardInstance(object_id='face-preview',ref='FACE-PREVIEW',oracle_id=record.oracle_id,
+            printed_name=record.name,owner='A',controller='A',zone='hand',annotations={'note':'retained'})
+        view = prospective_face_view(record,card,'Back Land')
+        self.assertEqual('Back Land',view.active_face)
+        self.assertIsNone(card.active_face)
+        self.assertEqual(card.logical_object_id,view.logical_object_id)
+        self.assertIsNot(card.annotations,view.annotations)
+        self.assertIs(card,prospective_face_view(record,card,'unknown face'))
+
     def test_reveal_entry_has_typed_private_hand_query_and_optional_replacement(self):
         from quorune.oracle_ir import compile_oracle_card
         text="As this land enters, you may reveal a Mountain or Forest card from your hand. If you don't, this land enters tapped."
@@ -688,6 +701,26 @@ class TypedLandEntryRuntimeTests(unittest.TestCase):
             passed = session.act(f"pilot:{seat}", {"action_id": "pass"})
             self.assertTrue(passed.ok, passed.summary)
         self.assertEqual(1, target.counters.get("+1/+1", 0))
+
+    def test_modal_land_face_entry_still_loses_its_printed_tap_rule_under_blood_moon(self):
+        session = self.session(61401268)
+        engine = session.engine
+        self.add_card(engine,seat='A',name='Blood Moon',ref='FACE-MOON',zone='battlefield',register_all=True)
+        land = self.add_card(engine,seat='A',name='Glasswing Grace // Age-Graced Chapel',ref='FACE-LAND',register_all=True)
+        self.stage_main(engine);self.issue_priority(engine)
+        self.assertIsNone(land.active_face)
+        session.initial_checkpoint=checkpoint_envelope(engine.state)
+        session.commands.clear();session.decisions.clear()
+        result=session.act('pilot:A',{'action_id':'play-land:'+land.ref})
+        self.assertTrue(result.ok,result.summary)
+        current=session.state.cards[land.object_id]
+        self.assertEqual('Age-Graced Chapel',current.active_face)
+        self.assertFalse(current.tapped)
+        self.assertIn('mountain',engine._type_parts(engine._effective_card_data(current)['type_line'])[1])
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'modal-land-entry-moon';session.save(path)
+            replayed=replay_record(path,self.db,verify=True)
+            self.assertTrue(replayed['ok'],replayed)
 
     def test_fell_faces_compose_target_revalidation_with_tapped_entry(self):
         session = self.session(61401265)

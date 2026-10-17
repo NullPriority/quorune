@@ -141,7 +141,7 @@ class FixedManaMorphModelTests(unittest.TestCase):
 
         for unsupported in (
             "Morph {X}{R}",
-            "Morph {W/U}",
+            "Morph {2/W}",
             "Morph—Pay 5 life.",
             "Megamorph {1}{U}",
         ):
@@ -175,13 +175,47 @@ class FixedManaMorphModelTests(unittest.TestCase):
 
         for unsupported in (
             "Megamorph {X}{G}",
-            "Disguise {W/U}",
+            "Disguise {2/W}",
             "Disguise—Pay 2 life.",
         ):
             with self.subTest(unsupported=unsupported):
                 self.assertIsNone(
                     compile_fixed_mana_face_down_method(unsupported)
                 )
+
+
+    def test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict(self):
+        from dataclasses import replace
+        for method in ('Morph','Megamorph','Disguise'):
+            with self.subTest(method=method):
+                spec=compile_fixed_mana_face_down_method(method+' {3}{W/U}{W/U}')
+                self.assertIsNotNone(spec)
+                self.assertEqual(2,spec.schema_version)
+                self.assertEqual(spec,FixedManaMorphSpec.from_dict(spec.to_dict()))
+                self.assertEqual((spec,),default_fixed_mana_morph_registry().lower(morph_handler_descriptor(spec),None))
+                self.assertEqual({(0,2),(1,1),(2,0)},
+                    {(o.requirements['W'],o.requirements['U']) for o in spec.mana_cost_options})
+                self.assertTrue(all(o.requirements['GENERIC']==3 and o.life_payment==0 and o.snow_payment==0 for o in spec.mana_cost_options))
+                for change in ({'schema_version':1},{'hybrid_symbols':()}, {'hybrid_symbols':('W/W',)},
+                        {'hybrid_symbols':('W/P',)},{'hybrid_symbols':('W/u',)}, {'hybrid_symbols':('2/W',)}):
+                    with self.subTest(change=change),self.assertRaises(MorphError):
+                        replace(spec,**change)
+        ordinary=FixedManaMorphSpec.from_cost('{2}{W}')
+        self.assertEqual({'schema_version':1,'requirements':{'GENERIC':2,'W':1,'U':0,'B':0,'R':0,'G':0,'C':0}},ordinary.to_dict())
+        from types import SimpleNamespace
+        from quorune.rules.morph_actions import build_turn_face_up_offers
+        spec=compile_fixed_mana_face_down_method('Disguise {W/U}{W/U}')
+        reads=[]
+        host=SimpleNamespace(state=SimpleNamespace(revision=4),
+            _cost_is_affordable=lambda seat,requirements,**kw:(reads.append(kw) or True))
+        card=SimpleNamespace(ref='HYBRID',printed_name='Generic hybrid diagnostic')
+        with mock.patch('quorune.rules.morph_actions._eligible_spec',return_value=spec),mock.patch('quorune.manifest.is_manifested',return_value=False):
+            offers=build_turn_face_up_offers(host,'A',card)
+        self.assertEqual(3,len(offers))
+        self.assertEqual(3,len({offer.action_id for offer in offers}))
+        self.assertEqual({(0,2),(1,1),(2,0)},
+            {(offer.to_dict()['requirements']['W'],offer.to_dict()['requirements']['U']) for offer in offers})
+        self.assertTrue(all(row=={'spend_context':None} for row in reads))
 
 
 class FixedManaMorphCompilerTests(unittest.TestCase):
@@ -382,6 +416,18 @@ class FixedManaMorphCompilerTests(unittest.TestCase):
         ):
             mutated = self.compile("Aerie Bowmasters")
         self.assertTrue(mutated.material_residuals)
+
+
+    def test_nine_actual_fixed_hybrid_disguise_originals_bind_completely(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        caps=load_default_capability_registry()
+        for name in ('Dog Walker','Granite Witness','Undercover Crocodelf','Shady Informant',
+                'Faerie Snoop','Sanguine Savior','Rakish Scoundrel','Gadget Technician','Riftburst Hellion'):
+            with self.subTest(name=name):
+                program=compile_best_available_card_program(self.db,self.db.lookup(name),
+                    semantic_registry=SemanticRegistry(),capability_registry=caps,capability_profile='commander_review')
+                self.assertTrue(bind_card_program_runtime(program,capability_registry=caps,profile='commander_review')['strict_capability_ready'],name)
 
 
 class FixedManaMorphRuntimeTests(unittest.TestCase):
@@ -1162,6 +1208,145 @@ class FixedManaMorphRuntimeTests(unittest.TestCase):
             },
             program.provenance["card_program_admission"],
         )
+
+
+    def test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        record=self.db.lookup('Riftburst Hellion')
+        program=compile_best_available_card_program(self.db,record,
+            semantic_registry=SemanticRegistry(),capability_registry=self.capabilities,
+            capability_profile='commander_review')
+        binding=bind_card_program_runtime(program,capability_registry=self.capabilities,profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'],'Actual Riftburst Hellion must be completely admitted')
+        session=self.session(528001)
+        engine=session.engine
+        card=self.add_card(session,name='Riftburst Hellion',ref='HYBRID-HELLION')
+        engine.state.players['B'].mana_pool.update({'G':2,'C':7})
+        self.prepare_priority(session)
+        session.initial_checkpoint=checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        self.cast_face_down(session,card,method=DISGUISE_CAST_METHOD)
+        import test_bound_effect_programs as bound
+        session=bound.BoundEffectProgramRuntimeTests.replay(self,session,load=True)
+        engine=session.engine
+        card=engine.state.cards[card.object_id]
+        self.assertNotIn(card.printed_name,json.dumps(session.packet('pilot:A',full=True)))
+        self.assertEqual((2,2),(engine._numeric_stat(card.object_id,'power'),engine._numeric_stat(card.object_id,'toughness')))
+        offers=engine._priority_action_hints('B')['actions']
+        offer=next(row for row in offers if row['id'].startswith('turn-face-up:'+card.ref)
+            and row['requirements'].get('G')==2)
+        before=authoritative_state_hash(engine.state)
+        self.assertFalse(session.act('pilot:A',{'action_id':offer['id']}).ok)
+        self.assertEqual(before,authoritative_state_hash(engine.state))
+        for forged in (None,'complex-999','complex-3'):
+            before=authoritative_state_hash(engine.state)
+            rejected=session.act('pilot:B',{'action_id':offer['id'],'mana_cost_option':forged,'pay':'auto'})
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before,authoritative_state_hash(engine.state))
+        card=engine.state.cards[card.object_id]
+        accepted=session.act('pilot:B',{'action_id':offer['id'],'pay':'auto','requirements':{},'cost':'{0}'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertFalse(card.face_down)
+        self.assertFalse(engine.state.stack)
+        self.assertEqual('B',engine.state.priority_player)
+        self.assertEqual((6,7),(engine._numeric_stat(card.object_id,'power'),engine._numeric_stat(card.object_id,'toughness')))
+        self.assertEqual(0,engine.state.players['B'].mana_pool.get('G',0))
+        self.assertEqual(0,engine.state.players['B'].mana_pool.get('C',0))
+        self.assertIn('reach',engine._combat_keywords(card))
+        self.assertIn(card.printed_name,json.dumps(session.packet('pilot:A',full=True)))
+        expected=authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as directory:
+            session.save(Path(directory)/'hybrid-face-down')
+            replay=replay_record(Path(directory)/'hybrid-face-down',self.db,verify=True)
+        self.assertTrue(replay['ok'],replay)
+        self.assertEqual(expected,replay['final_state_hash'])
+
+
+    def test_actual_hybrid_dog_walker_all_payments_trigger_after_turn_up_and_load(self):
+        import test_bound_effect_programs as bound
+        for index,(red,white) in enumerate(((2,0),(1,1),(0,2))):
+            with self.subTest(red=red,white=white):
+                session=self.session(528010+index)
+                engine=session.engine
+                card=self.add_card(session,name='Dog Walker',ref='HYBRID-DOG')
+                engine.state.players['B'].mana_pool.update({'C':3,'R':red,'W':white})
+                self.prepare_priority(session)
+                session.initial_checkpoint=checkpoint_envelope(engine.state)
+                session.commands.clear();session.decisions.clear()
+                cast=session.act('pilot:B',{'action_id':'cast-disguise:'+card.ref,
+                    'pay':'manual','payment':{'C':3}})
+                self.assertTrue(cast.ok,cast.summary)
+                self.resolve_spell_with_passes(session,card)
+                self.assertTrue(card.face_down)
+                rows=engine._priority_action_hints('B')['actions']
+                offered=[r for r in rows if r['id'].startswith('turn-face-up:'+card.ref)]
+                self.assertEqual(1,len(offered))
+                self.assertEqual((red,white),(offered[0]['requirements']['R'],offered[0]['requirements']['W']))
+                tokens={c.object_id for c in engine.state.cards.values() if c.object_kind=='token'}
+                self.assertTrue(session.act('pilot:B',{'action_id':offered[0]['id'],'pay':'auto'}).ok)
+                self.assertFalse(card.face_down)
+                self.assertFalse(card.tapped)
+                self.assertIn('vigilance',engine._combat_keywords(card))
+                self.assertEqual(1,len(engine.state.stack))
+                for color in ('C','R','W'):self.assertEqual(0,engine.state.players['B'].mana_pool.get(color,0))
+                session=bound.BoundEffectProgramRuntimeTests.replay(self,session,load=True)
+                engine=session.engine
+                self.pass_until(session,lambda:not engine.state.stack)
+                made=[c for c in engine.state.cards.values() if c.object_kind=='token' and c.object_id not in tokens and c.zone=='battlefield']
+                self.assertEqual(2,len(made))
+                for token in made:
+                    self.assertEqual('B',token.controller);self.assertTrue(token.tapped)
+                    self.assertIn('dog',engine._effective_card_data(token)['type_line'].casefold())
+                    self.assertEqual((1,1),(engine._numeric_stat(token.object_id,'power'),engine._numeric_stat(token.object_id,'toughness')))
+                bound.BoundEffectProgramRuntimeTests.replay(self,session,load=True)
+
+    def test_hybrid_payment_omission_mutant_is_killed_after_complete_original_admission(self):
+        from unittest.mock import PropertyMock
+        from quorune.activation_mana_cost import ActivationManaCostOption
+        from quorune.replacement.immutable import FrozenMap
+        bad=ActivationManaCostOption('complex-1',FrozenMap({'GENERIC':0,'G':2}))
+        with mock.patch.object(FixedManaMorphSpec,'mana_cost_options',new_callable=PropertyMock,return_value=(bad,)):
+            with self.assertRaises(AssertionError):
+                self.test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay()
+
+
+    def test_actual_manifested_hybrid_original_uses_its_disguise_alternative_after_load(self):
+        import test_bound_effect_programs as bound
+        session=self.session(528020)
+        engine=session.engine
+        card=self.add_card(session,name='Riftburst Hellion',ref='MANIFEST-HYBRID',zone='library')
+        spell=self.add_card(session,name='Soul Summons',ref='ACTUAL-MANIFEST')
+        library=engine.state.players['B'].zones['library']
+        library.remove(card.object_id);library.append(card.object_id)
+        engine.state.players['B'].mana_pool.update({'C':5,'W':1,'G':2})
+        self.prepare_priority(session)
+        session.initial_checkpoint=checkpoint_envelope(engine.state)
+        session.commands.clear();session.decisions.clear()
+        cast=session.act('pilot:B',{'action_id':'cast:'+spell.ref,'pay':'manual','payment':{'C':1,'W':1}})
+        self.assertTrue(cast.ok,cast.summary)
+        self.resolve_spell_with_passes(session,spell)
+        self.assertEqual('battlefield',card.zone)
+        self.assertTrue(card.face_down)
+        self.assertEqual([],engine._effective_card_data(card)['keywords'])
+        self.assertNotIn(card.printed_name,json.dumps(session.packet('pilot:A',full=True)))
+        session=bound.BoundEffectProgramRuntimeTests.replay(self,session,load=True)
+        engine=session.engine;card=engine.state.cards[card.object_id]
+        offers=[r for r in engine._priority_action_hints('B')['actions'] if r['id'].startswith('turn-face-up:'+card.ref)]
+        self.assertEqual(1,len(offers))
+        self.assertEqual('disguise',offers[0]['method'])
+        self.assertIn(':disguise:',offers[0]['id'])
+        self.assertEqual(2,offers[0]['requirements']['G'])
+        accepted=session.act('pilot:B',{'action_id':offers[0]['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertFalse(card.face_down)
+        self.assertFalse(engine.state.stack)
+        self.assertEqual((6,7),(engine._numeric_stat(card.object_id,'power'),engine._numeric_stat(card.object_id,'toughness')))
+        self.assertIn('reach',engine._combat_keywords(card))
+        self.assertEqual(0,engine.state.players['B'].mana_pool.get('C',0))
+        self.assertEqual(0,engine.state.players['B'].mana_pool.get('G',0))
+        bound.BoundEffectProgramRuntimeTests.replay(self,session,load=True)
 
 
 if __name__ == "__main__":

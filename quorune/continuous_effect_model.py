@@ -89,6 +89,7 @@ _OPERATION_LAYERS = {
     "set_controller": Layer.CONTROL,
     "replace_text": Layer.TEXT,
     "set_types": Layer.TYPE,
+    "set_basic_land_types": Layer.TYPE,
     "add_types": Layer.TYPE,
     "remove_types": Layer.TYPE,
     "remove_creature_card_type": Layer.TYPE,
@@ -297,6 +298,11 @@ def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
             raise ContinuousEffectError("replace_text requires exact from/to fields")
         if type(value["from"]) is not str or not value["from"] or type(value["to"]) is not str:
             raise ContinuousEffectError("replace_text values must be strings and from must be nonempty")
+    elif op == 'set_basic_land_types':
+        from .basic_land_types import BASIC_LAND_MANA
+        words=_nonempty_words(value,field_name=op)
+        if field is not None or any(word not in BASIC_LAND_MANA for word in words):
+            raise ContinuousEffectError('Basic land type setting requires canonical basic subtypes and no field')
     elif op in {"set_types", "add_types", "remove_types"}:
         if field not in {None, "supertypes", "card_types", "subtypes"}:
             raise ContinuousEffectError("Type operations require a represented type field")

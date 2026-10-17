@@ -383,37 +383,10 @@ def closed_special_keyword_node(
     commander_pairing = commander_pairing_keyword_node(**values)
     if commander_pairing is not None:
         return commander_pairing
-    bestow = fixed_mana_bestow_keyword_node(**values)
-    if bestow is not None:
-        return bestow
-    flashback = ordinary_fixed_mana_flashback_keyword_node(**values)
-    if flashback is not None:
-        return flashback
-    cast_lifecycle = fixed_cast_lifecycle_keyword_node(
-        record=record,
-        face_id=face_id,
-        **values,
-    )
-    if cast_lifecycle is not None:
-        return cast_lifecycle
-    ninjutsu = fixed_ninjutsu_keyword_node(**values)
-    if ninjutsu is not None:
-        return ninjutsu
-    encore = fixed_encore_keyword_node(**values)
-    if encore is not None:
-        return encore
-    myriad = fixed_myriad_keyword_node(**values)
-    if myriad is not None:
-        return myriad
-    alternative_cost = fixed_public_alternative_cost_keyword_node(**values)
-    if alternative_cost is not None:
-        return alternative_cost
-    counter_activation = fixed_counter_keyword_activation_node(
-        **values,
-        printed_power=printed_power,
-    )
-    if counter_activation is not None:
-        return counter_activation
+    from .casting_keyword_nodes import casting_keyword_node
+    casting = casting_keyword_node(record=record, face_id=face_id, printed_power=printed_power, **values)
+    if casting is not None:
+        return casting
     morph = fixed_mana_morph_keyword_node(**values)
     if morph is not None:
         return morph

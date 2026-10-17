@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Pay fixed nonmana Morph prices through current-resource queries and canonical
+  life, selected reveal, discard, and return owners, preserving private
+  face-down casts, replacement continuations, incarnation checks, and replay.
+
 - Execute typed Manifest and Manifest dread through private choices and
   face-down entry views, with controller-bound printed-mana turn-up authority.
 

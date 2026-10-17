@@ -5,11 +5,27 @@ from __future__ import annotations
 from dataclasses import replace
 import re
 
-from ..entry_copy import EntryCopySpec, ENTRY_COPY_HANDLER, ENTRY_COPY_CAPABILITY
-from ..object_predicate import ObjectQuerySpec
+from ..entry_copy import (EntryCopySpec, ENTRY_COPY_HANDLER, ENTRY_COPY_CAPABILITY,
+    ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_QUERY_CAPABILITIES)
+from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
+from ..target_numeric import TargetNumericCharacteristicSpec, TargetNumericCharacteristic, TargetNumericComparison
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
 from .public_state_queries import fixed_characteristic_battlefield_query_subject
 from .token_copy_templates import _fixed_exception
+
+
+def _qualified_copy_query(subject):
+    if subject.casefold() == 'nonland permanent':
+        return ObjectQuerySpec(zones=('battlefield',), excluded_types=('land',))
+    if subject.casefold() == 'permanent that entered this turn':
+        return ObjectQuerySpec(zones=('battlefield',), state_predicate=PermanentStatePredicateSpec(entered_this_turn=True))
+    numeric = re.fullmatch(r'creature(?P<owned> you control)? with power (?P<minimum>[0-9]+) or greater', subject, re.I)
+    if numeric is not None:
+        return ObjectQuerySpec(zones=('battlefield',), types_all=('creature',),
+            controller='$controller' if numeric['owned'] else None,
+            numeric_characteristic=TargetNumericCharacteristicSpec(
+                TargetNumericCharacteristic.POWER, TargetNumericComparison.AT_LEAST, int(numeric['minimum'])))
+    return None
 
 
 def entry_copy_spec(text: str, *, source_name: str) -> EntryCopySpec | None:
@@ -34,9 +50,12 @@ def entry_copy_spec(text: str, *, source_name: str) -> EntryCopySpec | None:
         query = ObjectQuerySpec(zones=('battlefield',), types_any=(union['first'], union['second']))
     else:
         parsed = fixed_characteristic_battlefield_query_subject(subject)
-        if parsed is None or parsed[0] != 'any' or parsed[2]:
-            return None
-        query = parsed[1]
+        if parsed is not None and parsed[0] == 'any' and not parsed[2]:
+            query = parsed[1]
+        else:
+            query = _qualified_copy_query(subject)
+            if query is None:
+                return None
     if relation == '$controller':
         query = replace(query, controller='$controller')
     elif relation == 'opponents':
@@ -47,7 +66,10 @@ def entry_copy_spec(text: str, *, source_name: str) -> EntryCopySpec | None:
     try:
         return EntryCopySpec(query, exception)
     except ValueError:
-        return None
+        try:
+            return EntryCopySpec(query, exception, schema_version=2)
+        except ValueError:
+            return None
 
 
 def entry_copy_node(*, node_id, line, material_line, span, source_name,
@@ -58,8 +80,10 @@ def entry_copy_node(*, node_id, line, material_line, span, source_name,
     if spec is None:
         return None
     return runtime_handler_node(node_id=node_id, line=line, span=span,
-        compiled=('intrinsic-entry-copy-v1', {'handler_id': ENTRY_COPY_HANDLER,
-            'schema_version': 1, 'event': 'zone.change', 'copy': spec.to_dict()}, ENTRY_COPY_CAPABILITY),
+        compiled=(f'intrinsic-entry-copy-v{spec.schema_version}',
+            {'handler_id': ENTRY_COPY_HANDLER if spec.schema_version == 1 else ENTRY_COPY_QUERY_HANDLER,
+            'schema_version': spec.schema_version, 'event': 'zone.change', 'copy': spec.to_dict()},
+            ENTRY_COPY_CAPABILITY if spec.schema_version == 1 else ENTRY_COPY_QUERY_CAPABILITIES),
         kind='replacement_effect', event='zone.change', active_zone='all',
         runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
         dependency_reason='Intrinsic copy entry requires the canonical copy/replacement owner.',

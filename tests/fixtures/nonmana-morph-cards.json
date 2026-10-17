@@ -1,0 +1,1503 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_fixed_nonmana_morph",
+  "source": "Pinned Oracle/rulings sources and exact existing shared rows; unsupported costs and siblings remain explicit controls",
+  "cards": [
+    {
+      "oracle_id": "ca588f4e-4d2f-4aae-84de-be9862e13f1c",
+      "name": "Dragon's Eye Savants",
+      "mana_cost": "{1}{U}",
+      "type_line": "Creature — Human Wizard",
+      "oracle_text": "Morph—Reveal a blue card in your hand. (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, look at target opponent's hand.",
+      "power": "0",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Morph"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-03-16",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "b3b9a87d-cb95-435c-90b6-037406cab32e",
+      "name": "Elite Vanguard",
+      "mana_cost": "{W}",
+      "type_line": "Creature — Human Soldier",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "ee042d57-dfca-4639-aa3f-7c7c9336ff57",
+      "name": "Fathom Seer",
+      "mana_cost": "{1}{U}",
+      "type_line": "Creature — Illusion",
+      "oracle_text": "Morph—Return two Islands you control to their owner's hand. (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, draw two cards.",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Morph"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-03-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "af2b36ee-2945-41d3-a186-8fd28f3cde16",
+      "name": "Fugitive Codebreaker",
+      "mana_cost": "{1}{R}",
+      "type_line": "Creature — Goblin Rogue",
+      "oracle_text": "Prowess, haste\nDisguise {5}{R}. This cost is reduced by {1} for each instant and sorcery card in your graveyard. (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)\nWhen this creature is turned face up, discard your hand, then draw three cards.",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Prowess",
+        "Haste",
+        "Disguise"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "31ea0a21-9c47-4917-9df9-3469b6e5243d",
+      "name": "Gathan Raiders",
+      "mana_cost": "{3}{R}{R}",
+      "type_line": "Creature — Human Warrior",
+      "oracle_text": "Hellbent — This creature gets +2/+2 as long as you have no cards in hand.\nMorph—Discard a card. (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Morph",
+        "Hellbent"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-03-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 5.0
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Morph",
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{B}",
+      "name": "Gift of Doom",
+      "oracle_id": "2dd1450e-902e-480a-9c42-1c47549d2eeb",
+      "oracle_text": "Enchant creature\nEnchanted creature has deathtouch and indestructible.\nMorph—Sacrifice another creature. (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nAs this Aura is turned face up, you may attach it to a creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-08-23",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
+    },
+    {
+      "oracle_id": "fb7f45eb-c134-4493-af05-e3b14d80e48c",
+      "name": "Horde Ambusher",
+      "mana_cost": "{1}{R}",
+      "type_line": "Creature — Human Berserker",
+      "oracle_text": "Whenever this creature blocks, it deals 1 damage to you.\nMorph—Reveal a red card in your hand. (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, target creature can't block this turn.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Morph"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-09-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Humble",
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "oracle_text": "Until end of turn, target creature loses all abilities and has base power and toughness 0/1.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-06-10",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    },
+    {
+      "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+      "name": "Llanowar Elves",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Creature — Elf Druid",
+      "oracle_text": "{T}: Add {G}.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Merfolk of the Pearl Trident",
+      "oracle_id": "218d9277-c179-4de3-9c7f-79b5a6d4fa38",
+      "oracle_text": "",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2012-07-13",
+      "toughness": "1",
+      "type_line": "Creature — Merfolk"
+    },
+    {
+      "oracle_id": "31b43ad8-a20b-4948-bfd2-56d7fe1a78f0",
+      "name": "Putrid Raptor",
+      "mana_cost": "{4}{B}{B}",
+      "type_line": "Creature — Zombie Dinosaur Beast",
+      "oracle_text": "Morph—Discard a Zombie card. (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Morph"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2003-05-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 6.0
+    },
+    {
+      "oracle_id": "30997b43-fc13-41d3-8064-1ccc2cb6fd2b",
+      "name": "Raging Goblin",
+      "mana_cost": "{R}",
+      "type_line": "Creature — Goblin Berserker",
+      "oracle_text": "Haste (This creature can attack and {T} as soon as it comes under your control.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2018-07-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Haste"
+      ],
+      "produced_mana": [],
+      "faces": [],
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "67a1529f-aa37-4df8-97e3-5b1d8c03a76f",
+      "name": "Raven Guild Initiate",
+      "mana_cost": "{2}{U}",
+      "type_line": "Creature — Human Wizard",
+      "oracle_text": "Morph—Return a Bird you control to its owner's hand. (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+      "power": "1",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Morph"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2003-05-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "cfbcd70b-d3a9-47e9-a8b3-b8134d00dff8",
+      "name": "Ruthless Ripper",
+      "mana_cost": "{B}",
+      "type_line": "Creature — Human Assassin",
+      "oracle_text": "Deathtouch\nMorph—Reveal a black card in your hand. (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, target player loses 2 life.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Morph",
+        "Deathtouch"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-03-16",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "cbcf6924-3e97-4940-867a-3cedd4052c9f",
+      "name": "Skirk Volcanist",
+      "mana_cost": "{3}{R}",
+      "type_line": "Creature — Goblin",
+      "oracle_text": "Morph—Sacrifice two Mountains. (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, it deals 3 damage divided as you choose among one, two, or three target creatures.",
+      "power": "3",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Morph"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2003-05-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "38d87b87-0c67-47a5-8093-b49aa11f6196",
+      "name": "Storm Crow",
+      "mana_cost": "",
+      "type_line": "Token Creature — Bird",
+      "oracle_text": "Flying",
+      "power": "1",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "token",
+      "released_at": "2024-08-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "not_legal",
+        "competitivebrawl": "not_legal",
+        "duel": "not_legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "not_legal",
+        "modern": "not_legal",
+        "oathbreaker": "not_legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "not_legal"
+      },
+      "cmc": 0.0
+    },
+    {
+      "oracle_id": "a0665c10-e652-4608-920b-66206c0e5905",
+      "name": "Temur Charger",
+      "mana_cost": "{1}{G}",
+      "type_line": "Creature — Horse",
+      "oracle_text": "Morph—Reveal a green card in your hand. (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, target creature gains trample until end of turn.",
+      "power": "3",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Morph"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-09-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "fea95888-e16a-4209-9cd4-623f7f4d2f67",
+      "name": "Walking Corpse",
+      "mana_cost": "{1}{B}",
+      "type_line": "Creature — Zombie",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "92cf18ab-dd7b-4bc8-8b85-a81b8cb5192c",
+      "name": "Watcher of the Roost",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Creature — Bird Soldier",
+      "oracle_text": "Flying\nMorph—Reveal a white card in your hand. (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, you gain 2 life.",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Morph"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-09-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a0b6aa7d-a8cd-4af7-8fb2-d2fa0861e123",
+      "name": "Zombie Cutthroat",
+      "mana_cost": "{3}{B}{B}",
+      "type_line": "Creature — Zombie",
+      "oracle_text": "Morph—Pay 5 life. (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Morph"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2003-05-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 5.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "ca588f4e-4d2f-4aae-84de-be9862e13f1c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Any time you have priority, you may turn the face-down creature face up by revealing what its morph cost is and paying that cost. This is a special action. It doesn't use the stack and can't be responded to. Only a face-down permanent can be turned face up this way; a face-down spell cannot."
+    },
+    {
+      "oracle_id": "ca588f4e-4d2f-4aae-84de-be9862e13f1c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "When the spell resolves, it enters the battlefield as a 2/2 creature with no name, mana cost, creature types, or abilities. It's colorless and has a mana value of 0. Other effects that apply to the creature can still grant it any of these characteristics."
+    },
+    {
+      "oracle_id": "ca588f4e-4d2f-4aae-84de-be9862e13f1c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "A permanent that turns face up or face down changes characteristics but is otherwise the same permanent. Spells and abilities that were targeting that permanent, as well as Auras and Equipment that were attached to the permanent, aren't affected."
+    },
+    {
+      "oracle_id": "ca588f4e-4d2f-4aae-84de-be9862e13f1c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Because the permanent is on the battlefield both before and after it's turned face up, turning a permanent face up doesn't cause any enters-the-battlefield abilities to trigger."
+    },
+    {
+      "oracle_id": "ca588f4e-4d2f-4aae-84de-be9862e13f1c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "The face-down spell has no mana cost and has a mana value of 0. When you cast a face-down spell, put it on the stack face down so no other player knows what it is, and pay {3}. This is an alternative cost."
+    },
+    {
+      "oracle_id": "ca588f4e-4d2f-4aae-84de-be9862e13f1c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "You must ensure that your face-down spells and permanents can easily be differentiated from each other. You're not allowed to mix up the cards that represent them on the battlefield in order to confuse other players. The order they entered the battlefield should remain clear. Common methods for doing this include using markers or dice, or simply placing them in order on the battlefield."
+    },
+    {
+      "oracle_id": "ca588f4e-4d2f-4aae-84de-be9862e13f1c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Morph lets you cast a card face down by paying {3}, and lets you turn the face-down permanent face up any time you have priority by paying its morph cost."
+    },
+    {
+      "oracle_id": "ca588f4e-4d2f-4aae-84de-be9862e13f1c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "If a face-down permanent leaves the battlefield, you must reveal it. You must also reveal all face-down spells and permanents you control if you leave the game or if the game ends."
+    },
+    {
+      "oracle_id": "ca588f4e-4d2f-4aae-84de-be9862e13f1c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "At any time, you can look at a face-down spell or permanent you control. You can't look at face-down spells or permanents you don't control unless an effect instructs you to do so."
+    },
+    {
+      "oracle_id": "af2b36ee-2945-41d3-a186-8fd28f3cde16",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If a face-down spell leaves the stack and goes to any zone other than the battlefield (if it was countered, for example), you must reveal it. Similarly, if a face-down permanent leaves the battlefield, you must reveal it. You must also reveal all face-down spells and permanents you control if you leave the game or the game ends."
+    },
+    {
+      "oracle_id": "af2b36ee-2945-41d3-a186-8fd28f3cde16",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "At any time, you can look at a face-down spell or permanent you control. You can't look at face-down permanents or spells you don't control unless an effect instructs or allows you to do so."
+    },
+    {
+      "oracle_id": "af2b36ee-2945-41d3-a186-8fd28f3cde16",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "The creature spell is a 2/2 creature spell with ward {2} that has no name, mana cost, or creature types. The resulting creature is a 2/2 creature with ward {2} that has no name, mana cost, or creature types. Both the spell and the resulting creature are colorless and have a mana value of 0. Other effects that apply to the spell or creature can still grant it any characteristics it doesn't have or change the characteristics it does have."
+    },
+    {
+      "oracle_id": "af2b36ee-2945-41d3-a186-8fd28f3cde16",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "You must ensure that your face-down spells and permanents can be easily differentiated from each other. You're not allowed to mix up the cards that represent them on the battlefield to confuse other players. The order in which they entered the battlefield should remain clear, as well as what ability caused them to be face down. (This includes disguise, cloak, and in games involving older cards, morph and manifest, as well as a few other effects that turn cards face down.) Common methods for doing this include using markers or dice, or simply placing them in order on the battlefield."
+    },
+    {
+      "oracle_id": "af2b36ee-2945-41d3-a186-8fd28f3cde16",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Because the permanent is on the battlefield both before and after it's turned face up, turning a permanent face up doesn't cause any enters-the-battlefield abilities to trigger."
+    },
+    {
+      "oracle_id": "af2b36ee-2945-41d3-a186-8fd28f3cde16",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "The face-down spell has no mana cost and a mana value of 0. When you cast a face-down spell, put it on the stack face down so no other player knows what it is, and pay {3} to cast it. This is an alternative cost."
+    },
+    {
+      "oracle_id": "af2b36ee-2945-41d3-a186-8fd28f3cde16",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If a face-down creature loses its abilities, it can't be turned face up with a disguise ability because it will no longer have a disguise ability (or a disguise cost) once face up."
+    },
+    {
+      "oracle_id": "af2b36ee-2945-41d3-a186-8fd28f3cde16",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "A permanent that turns face up or face down changes characteristics but is otherwise the same permanent. Spells and abilities that were targeting that permanent and Auras and Equipment that were attached to that permanent aren't affected unless the new characteristics of the object change the legality of those targets or attachments."
+    },
+    {
+      "oracle_id": "af2b36ee-2945-41d3-a186-8fd28f3cde16",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "A disguise ability lets you cast a card face down by paying {3} and announcing that you are using a disguise ability. Any time you have priority, you can turn a face-down permanent with disguise face up by paying its disguise cost."
+    },
+    {
+      "oracle_id": "af2b36ee-2945-41d3-a186-8fd28f3cde16",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Any time you have priority, you may turn the face-down creature face up by revealing what its disguise cost is and paying that cost. This is a special action. It doesn't use the stack and can't be responded to. Only a face-down permanent can be turned face up this way; a face-down spell cannot."
+    },
+    {
+      "oracle_id": "af2b36ee-2945-41d3-a186-8fd28f3cde16",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If you have no cards in hand when Fugitive Codebreaker's last ability resolves, you won't discard any cards, but you'll still draw three cards."
+    },
+    {
+      "oracle_id": "af2b36ee-2945-41d3-a186-8fd28f3cde16",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Because face-down creatures don't have a name, they can't have the same name as any other creature, even another face-down creature."
+    },
+    {
+      "oracle_id": "af2b36ee-2945-41d3-a186-8fd28f3cde16",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Turning a permanent face up or face down doesn't change whether that permanent is tapped or untapped."
+    },
+    {
+      "oracle_id": "31ea0a21-9c47-4917-9df9-3469b6e5243d",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Because damage remains marked on a creature until the damage is removed as the turn ends, nonlethal damage dealt to Gathan Raiders while your hand is empty may become lethal if a card is put into your hand during that turn."
+    },
+    {
+      "oracle_id": "2dd1450e-902e-480a-9c42-1c47549d2eeb",
+      "published_at": "2019-08-23",
+      "source": "wotc",
+      "comment": "This doesn't target the creature Gift of Doom will enchant, so an opponent's creature with hexproof or a creature with shroud may be chosen this way. The chosen recipient must be able to legally be enchanted by the Aura, so a creature with protection from black can't be chosen this way."
+    },
+    {
+      "oracle_id": "2dd1450e-902e-480a-9c42-1c47549d2eeb",
+      "published_at": "2019-08-23",
+      "source": "wotc",
+      "comment": "If there's no creature you can legally attach Gift of Doom to as you turn it face up, or if you choose not to attach it to a creature, it's put into its owner's graveyard."
+    },
+    {
+      "oracle_id": "2dd1450e-902e-480a-9c42-1c47549d2eeb",
+      "published_at": "2019-08-23",
+      "source": "wotc",
+      "comment": "You can't pay Gift of Doom's morph cost more than once."
+    },
+    {
+      "oracle_id": "2dd1450e-902e-480a-9c42-1c47549d2eeb",
+      "published_at": "2019-08-23",
+      "source": "wotc",
+      "comment": "No player may take any actions between the time you announce that you're turning Gift of Doom face up and the time it's attached to the chosen creature."
+    },
+    {
+      "oracle_id": "fb7f45eb-c134-4493-af05-e3b14d80e48c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Turning Horde Ambusher face up after blockers have been declared won't remove any creature from combat or change how any creature is blocking."
+    },
+    {
+      "oracle_id": "fb7f45eb-c134-4493-af05-e3b14d80e48c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Any time you have priority, you may turn the face-down creature face up by revealing what its morph cost is and paying that cost. This is a special action. It doesn't use the stack and can't be responded to. Only a face-down permanent can be turned face up this way; a face-down spell cannot."
+    },
+    {
+      "oracle_id": "fb7f45eb-c134-4493-af05-e3b14d80e48c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "When the spell resolves, it enters the battlefield as a 2/2 creature with no name, mana cost, creature types, or abilities. It's colorless and has a mana value of 0. Other effects that apply to the creature can still grant it any of these characteristics."
+    },
+    {
+      "oracle_id": "fb7f45eb-c134-4493-af05-e3b14d80e48c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "You must ensure that your face-down spells and permanents can easily be differentiated from each other. You're not allowed to mix up the cards that represent them on the battlefield in order to confuse other players. The order they entered the battlefield should remain clear. Common methods for doing this include using markers or dice, or simply placing them in order on the battlefield."
+    },
+    {
+      "oracle_id": "fb7f45eb-c134-4493-af05-e3b14d80e48c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "At any time, you can look at a face-down spell or permanent you control. You can't look at face-down spells or permanents you don't control unless an effect instructs you to do so."
+    },
+    {
+      "oracle_id": "fb7f45eb-c134-4493-af05-e3b14d80e48c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "The face-down spell has no mana cost and has a mana value of 0. When you cast a face-down spell, put it on the stack face down so no other player knows what it is, and pay {3}. This is an alternative cost."
+    },
+    {
+      "oracle_id": "fb7f45eb-c134-4493-af05-e3b14d80e48c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "A permanent that turns face up or face down changes characteristics but is otherwise the same permanent. Spells and abilities that were targeting that permanent, as well as Auras and Equipment that were attached to the permanent, aren't affected."
+    },
+    {
+      "oracle_id": "fb7f45eb-c134-4493-af05-e3b14d80e48c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Morph lets you cast a card face down by paying {3}, and lets you turn the face-down permanent face up any time you have priority by paying its morph cost."
+    },
+    {
+      "oracle_id": "fb7f45eb-c134-4493-af05-e3b14d80e48c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "If a face-down Horde Ambusher blocks and is then turned face up, its first ability won't trigger because it didn't have that ability when it blocked."
+    },
+    {
+      "oracle_id": "fb7f45eb-c134-4493-af05-e3b14d80e48c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "If a face-down permanent leaves the battlefield, you must reveal it. You must also reveal all face-down spells and permanents you control if you leave the game or if the game ends."
+    },
+    {
+      "oracle_id": "fb7f45eb-c134-4493-af05-e3b14d80e48c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Because the permanent is on the battlefield both before and after it's turned face up, turning a permanent face up doesn't cause any enters-the-battlefield abilities to trigger."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble doesn’t counter abilities that have already triggered or been activated. In particular, casting this spell won’t stop a creature’s ability that says “At the beginning of your upkeep,” “When this creature enters the battlefield,” or similar from triggering."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble overwrites all previous effects that set the creature’s base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Humble resolves will overwrite this effect."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Effects that modify a creature’s power and/or toughness, such as the effect of Seal of Strength, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness and effects that switch its power and toughness."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "If the affected creature gains an ability after Humble resolves, it will keep that ability."
+    },
+    {
+      "oracle_id": "31b43ad8-a20b-4948-bfd2-56d7fe1a78f0",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "You can use a text-changing effect that changes creature types on this card while is it face down to change Zombie to something else. This will change the type of card you have to discard to turn it face up."
+    },
+    {
+      "oracle_id": "cfbcd70b-d3a9-47e9-a8b3-b8134d00dff8",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "You must ensure that your face-down spells and permanents can easily be differentiated from each other. You're not allowed to mix up the cards that represent them on the battlefield in order to confuse other players. The order they entered the battlefield should remain clear. Common methods for doing this include using markers or dice, or simply placing them in order on the battlefield."
+    },
+    {
+      "oracle_id": "cfbcd70b-d3a9-47e9-a8b3-b8134d00dff8",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Any time you have priority, you may turn the face-down creature face up by revealing what its morph cost is and paying that cost. This is a special action. It doesn't use the stack and can't be responded to. Only a face-down permanent can be turned face up this way; a face-down spell cannot."
+    },
+    {
+      "oracle_id": "cfbcd70b-d3a9-47e9-a8b3-b8134d00dff8",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "When the spell resolves, it enters the battlefield as a 2/2 creature with no name, mana cost, creature types, or abilities. It's colorless and has a mana value of 0. Other effects that apply to the creature can still grant it any of these characteristics."
+    },
+    {
+      "oracle_id": "cfbcd70b-d3a9-47e9-a8b3-b8134d00dff8",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Because the permanent is on the battlefield both before and after it's turned face up, turning a permanent face up doesn't cause any enters-the-battlefield abilities to trigger."
+    },
+    {
+      "oracle_id": "cfbcd70b-d3a9-47e9-a8b3-b8134d00dff8",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "If a face-down permanent leaves the battlefield, you must reveal it. You must also reveal all face-down spells and permanents you control if you leave the game or if the game ends."
+    },
+    {
+      "oracle_id": "cfbcd70b-d3a9-47e9-a8b3-b8134d00dff8",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "A permanent that turns face up or face down changes characteristics but is otherwise the same permanent. Spells and abilities that were targeting that permanent, as well as Auras and Equipment that were attached to the permanent, aren't affected."
+    },
+    {
+      "oracle_id": "cfbcd70b-d3a9-47e9-a8b3-b8134d00dff8",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Morph lets you cast a card face down by paying {3}, and lets you turn the face-down permanent face up any time you have priority by paying its morph cost."
+    },
+    {
+      "oracle_id": "cfbcd70b-d3a9-47e9-a8b3-b8134d00dff8",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "The face-down spell has no mana cost and has a mana value of 0. When you cast a face-down spell, put it on the stack face down so no other player knows what it is, and pay {3}. This is an alternative cost."
+    },
+    {
+      "oracle_id": "cfbcd70b-d3a9-47e9-a8b3-b8134d00dff8",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "At any time, you can look at a face-down spell or permanent you control. You can't look at face-down spells or permanents you don't control unless an effect instructs you to do so."
+    },
+    {
+      "oracle_id": "a0665c10-e652-4608-920b-66206c0e5905",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "When the spell resolves, it enters the battlefield as a 2/2 creature with no name, mana cost, creature types, or abilities. It's colorless and has a mana value of 0. Other effects that apply to the creature can still grant it any of these characteristics."
+    },
+    {
+      "oracle_id": "a0665c10-e652-4608-920b-66206c0e5905",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "At any time, you can look at a face-down spell or permanent you control. You can't look at face-down spells or permanents you don't control unless an effect instructs you to do so."
+    },
+    {
+      "oracle_id": "a0665c10-e652-4608-920b-66206c0e5905",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Because the permanent is on the battlefield both before and after it's turned face up, turning a permanent face up doesn't cause any enters-the-battlefield abilities to trigger."
+    },
+    {
+      "oracle_id": "a0665c10-e652-4608-920b-66206c0e5905",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "If a face-down permanent leaves the battlefield, you must reveal it. You must also reveal all face-down spells and permanents you control if you leave the game or if the game ends."
+    },
+    {
+      "oracle_id": "a0665c10-e652-4608-920b-66206c0e5905",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "The face-down spell has no mana cost and has a mana value of 0. When you cast a face-down spell, put it on the stack face down so no other player knows what it is, and pay {3}. This is an alternative cost."
+    },
+    {
+      "oracle_id": "a0665c10-e652-4608-920b-66206c0e5905",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "A permanent that turns face up or face down changes characteristics but is otherwise the same permanent. Spells and abilities that were targeting that permanent, as well as Auras and Equipment that were attached to the permanent, aren't affected."
+    },
+    {
+      "oracle_id": "a0665c10-e652-4608-920b-66206c0e5905",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Any time you have priority, you may turn the face-down creature face up by revealing what its morph cost is and paying that cost. This is a special action. It doesn't use the stack and can't be responded to. Only a face-down permanent can be turned face up this way; a face-down spell cannot."
+    },
+    {
+      "oracle_id": "a0665c10-e652-4608-920b-66206c0e5905",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Morph lets you cast a card face down by paying {3}, and lets you turn the face-down permanent face up any time you have priority by paying its morph cost."
+    },
+    {
+      "oracle_id": "a0665c10-e652-4608-920b-66206c0e5905",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "You must ensure that your face-down spells and permanents can easily be differentiated from each other. You're not allowed to mix up the cards that represent them on the battlefield in order to confuse other players. The order they entered the battlefield should remain clear. Common methods for doing this include using markers or dice, or simply placing them in order on the battlefield."
+    },
+    {
+      "oracle_id": "92cf18ab-dd7b-4bc8-8b85-a81b8cb5192c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "You must ensure that your face-down spells and permanents can easily be differentiated from each other. You're not allowed to mix up the cards that represent them on the battlefield in order to confuse other players. The order they entered the battlefield should remain clear. Common methods for doing this include using markers or dice, or simply placing them in order on the battlefield."
+    },
+    {
+      "oracle_id": "92cf18ab-dd7b-4bc8-8b85-a81b8cb5192c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Because the permanent is on the battlefield both before and after it's turned face up, turning a permanent face up doesn't cause any enters-the-battlefield abilities to trigger."
+    },
+    {
+      "oracle_id": "92cf18ab-dd7b-4bc8-8b85-a81b8cb5192c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "When the spell resolves, it enters the battlefield as a 2/2 creature with no name, mana cost, creature types, or abilities. It's colorless and has a mana value of 0. Other effects that apply to the creature can still grant it any of these characteristics."
+    },
+    {
+      "oracle_id": "92cf18ab-dd7b-4bc8-8b85-a81b8cb5192c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Any time you have priority, you may turn the face-down creature face up by revealing what its morph cost is and paying that cost. This is a special action. It doesn't use the stack and can't be responded to. Only a face-down permanent can be turned face up this way; a face-down spell cannot."
+    },
+    {
+      "oracle_id": "92cf18ab-dd7b-4bc8-8b85-a81b8cb5192c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "A permanent that turns face up or face down changes characteristics but is otherwise the same permanent. Spells and abilities that were targeting that permanent, as well as Auras and Equipment that were attached to the permanent, aren't affected."
+    },
+    {
+      "oracle_id": "92cf18ab-dd7b-4bc8-8b85-a81b8cb5192c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "The face-down spell has no mana cost and has a mana value of 0. When you cast a face-down spell, put it on the stack face down so no other player knows what it is, and pay {3}. This is an alternative cost."
+    },
+    {
+      "oracle_id": "92cf18ab-dd7b-4bc8-8b85-a81b8cb5192c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "At any time, you can look at a face-down spell or permanent you control. You can't look at face-down spells or permanents you don't control unless an effect instructs you to do so."
+    },
+    {
+      "oracle_id": "92cf18ab-dd7b-4bc8-8b85-a81b8cb5192c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Morph lets you cast a card face down by paying {3}, and lets you turn the face-down permanent face up any time you have priority by paying its morph cost."
+    },
+    {
+      "oracle_id": "92cf18ab-dd7b-4bc8-8b85-a81b8cb5192c",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "If a face-down permanent leaves the battlefield, you must reveal it. You must also reveal all face-down spells and permanents you control if you leave the game or if the game ends."
+    }
+  ]
+}

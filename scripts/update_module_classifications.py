@@ -54,6 +54,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/ability_fragment_primitives.py",
         "quorune/ability_fragments.py",
         "quorune/basic_land_types.py",
+        "quorune/basic_type_addition_model.py",
+        "quorune/basic_type_setting_model.py",
         "quorune/bloodthirst.py",
         "quorune/cast_cost_modifiers.py",
         "quorune/characteristic_fragments.py",
@@ -76,12 +78,25 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/toughness_assignment_rule.py",
         "quorune/defender_permission.py",
         "quorune/block_capacity_model.py",
+        "quorune/landwalk_permission_model.py",
+        "quorune/external_entry_state_model.py",
+        "quorune/landwalk_vocabulary.py",
+        "quorune/block_capacity_rule_model.py",
         "quorune/prototype_model.py",
         "quorune/enlist_model.py",
         "quorune/reflexive_trigger_model.py",
         "quorune/city_blessing_model.py",
         "quorune/commander_learn_model.py",
         "quorune/paid_entry_copy_model.py",
+        "quorune/multikicker_model.py",
+        "quorune/repeated_mana_costs.py",
+        "quorune/replicate_model.py",
+        "quorune/conspire_model.py",
+        "quorune/overload_model.py",
+        "quorune/spell_text_variants.py",
+        "quorune/cleave_model.py",
+        "quorune/nonmana_morph_model.py",
+        "quorune/stack_spell_copy_model.py",
         "quorune/fractional_quantity_model.py",
         "quorune/event_player_result_values.py",
         "quorune/exert_model.py",
@@ -231,6 +246,12 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/cast_timing.py",
         "quorune/cast_lifecycles.py",
         "quorune/spree_model.py",
+        "quorune/entwine_model.py",
+        "quorune/emerge_model.py",
+        "quorune/disturb_model.py",
+        "quorune/replicate.py",
+        "quorune/conspire.py",
+        "quorune/self_graveyard_exile_model.py",
         "quorune/continuous_effects.py",
         "quorune/zone_object_keyword_model.py",
         "quorune/zone_object_keyword_grants.py",
@@ -383,7 +404,7 @@ def _owner(relative: str, layer: str) -> str:
         return "semantic_choices"
     if relative.startswith("quorune/selection/"):
         return "search_target_and_choice"
-    if relative == "quorune/library_search_model.py":
+    if relative in {"quorune/library_search_model.py", "quorune/stack_spell_copy_model.py"}:
         return "search_target_and_choice"
     if relative.startswith("quorune/effect_runtime/"):
         return "effect_runtime"
@@ -410,6 +431,18 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/cast_cost_modifiers.py",
         "quorune/cast_lifecycles.py",
         "quorune/spree_model.py",
+        "quorune/entwine_model.py",
+        "quorune/emerge_model.py",
+        "quorune/disturb_model.py",
+        "quorune/replicate.py",
+        "quorune/conspire.py",
+        "quorune/repeated_mana_costs.py",
+        "quorune/replicate_model.py",
+        "quorune/conspire_model.py",
+        "quorune/overload_model.py",
+        "quorune/spell_text_variants.py",
+        "quorune/cleave_model.py",
+        "quorune/self_graveyard_exile_model.py",
         "quorune/combat_entry_activations.py",
         "quorune/compiled_cast_lifecycles.py",
         "quorune/self_cast_reductions.py",
@@ -419,6 +452,8 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/compiled_morph.py",
         "quorune/morph.py",
         "quorune/rules/morph_actions.py",
+        "quorune/nonmana_morph_model.py",
+        "quorune/rules/nonmana_morph_costs.py",
     }:
         return "face_down_cards"
     if relative in {

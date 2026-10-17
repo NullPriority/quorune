@@ -1,0 +1,998 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Multikicker"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Apex Hawks",
+      "oracle_id": "c025d558-aae8-4146-923b-a98035025a42",
+      "oracle_text": "Multikicker {1}{W} (You may pay an additional {1}{W} any number of times as you cast this spell.)\nFlying\nThis creature enters with a +1/+1 counter on it for each time it was kicked.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2014-06-06",
+      "toughness": "2",
+      "type_line": "Creature — Bird"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Battlegrowth",
+      "oracle_id": "650bf82e-7f83-470c-bf4a-34281bfe9341",
+      "oracle_text": "Put a +1/+1 counter on target creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2003-10-02",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Branching Evolution",
+      "oracle_id": "28fe909b-06e0-424c-9f75-c824a25f5865",
+      "oracle_text": "If one or more +1/+1 counters would be put on a creature you control, twice that many +1/+1 counters are put on that creature instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-06-14",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Trample"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{G}{G}",
+      "name": "Colossal Dreadmaw",
+      "oracle_id": "08c7db90-c0cf-4482-b7ee-bb033e5996d2",
+      "oracle_text": "Trample (This creature can deal excess combat damage to the player or planeswalker it's attacking.)",
+      "power": "6",
+      "produced_mana": [],
+      "released_at": "2020-07-03",
+      "toughness": "6",
+      "type_line": "Creature — Dinosaur"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Landwalk",
+        "Multikicker",
+        "Islandwalk"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Enclave Elite",
+      "oracle_id": "27c84b2e-fc66-45a6-a5ad-d3ef204d5077",
+      "oracle_text": "Multikicker {1}{U} (You may pay an additional {1}{U} any number of times as you cast this spell.)\nIslandwalk (This creature can't be blocked as long as defending player controls an Island.)\nThis creature enters with a +1/+1 counter on it for each time it was kicked.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2014-06-06",
+      "toughness": "2",
+      "type_line": "Creature — Merfolk Soldier"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Multikicker"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{0}",
+      "name": "Everflowing Chalice",
+      "oracle_id": "0a79237e-0811-4a8a-bd4d-db3ca91bff22",
+      "oracle_text": "Multikicker {2} (You may pay an additional {2} any number of times as you cast this spell.)\nThis artifact enters with a charge counter on it for each time it was kicked.\n{T}: Add {C} for each charge counter on this artifact.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2025-08-01",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Multikicker"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}{R}",
+      "name": "Flametongue Yearling",
+      "oracle_id": "8181f131-626b-4f9a-812c-9fddaae58025",
+      "oracle_text": "Multikicker {2} (You may pay an additional {2} any number of times as you cast this spell.)\nThis creature enters with a +1/+1 counter on it for each time it was kicked.\nWhen this creature enters, it deals damage equal to its power to target creature.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2021-06-18",
+      "toughness": "1",
+      "type_line": "Creature — Kavu"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Multikicker"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Gnarlid Pack",
+      "oracle_id": "be6e835c-822e-45ff-a992-249d4d9781dc",
+      "oracle_text": "Multikicker {1}{G} (You may pay an additional {1}{G} any number of times as you cast this spell.)\nThis creature enters with a +1/+1 counter on it for each time it was kicked.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2015-05-22",
+      "toughness": "2",
+      "type_line": "Creature — Beast"
+    },
+    {
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "name": "Hardened Scales",
+      "mana_cost": "{G}",
+      "type_line": "Enchantment",
+      "oracle_text": "If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "card_faces": []
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Multikicker"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Joraga Warcaller",
+      "oracle_id": "8959a147-75b1-4f4a-a699-cb354ff55e59",
+      "oracle_text": "Multikicker {1}{G} (You may pay an additional {1}{G} any number of times as you cast this spell.)\nThis creature enters with a +1/+1 counter on it for each time it was kicked.\nOther Elf creatures you control get +1/+1 for each +1/+1 counter on this creature.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2017-06-09",
+      "toughness": "1",
+      "type_line": "Creature — Elf Warrior"
+    },
+    {
+      "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+      "name": "Llanowar Elves",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Creature — Elf Druid",
+      "oracle_text": "{T}: Add {G}.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Landwalk",
+        "Swampwalk",
+        "Multikicker"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Quag Vampires",
+      "oracle_id": "1d28ed9a-cc4e-48d9-a1a6-7504fc6cc56d",
+      "oracle_text": "Multikicker {1}{B} (You may pay an additional {1}{B} any number of times as you cast this spell.)\nSwampwalk (This creature can't be blocked as long as defending player controls a Swamp.)\nThis creature enters with a +1/+1 counter on it for each time it was kicked.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2014-06-06",
+      "toughness": "1",
+      "type_line": "Creature — Vampire Rogue"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Haste",
+        "Multikicker"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}",
+      "name": "Skitter of Lizards",
+      "oracle_id": "14646c85-12ad-4b99-a2af-e4a790e034ef",
+      "oracle_text": "Multikicker {1}{R} (You may pay an additional {1}{R} any number of times as you cast this spell.)\nHaste\nThis creature enters with a +1/+1 counter on it for each time it was kicked.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2014-06-06",
+      "toughness": "1",
+      "type_line": "Creature — Lizard"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "You can cast Everflowing Chalice without kicking it at all if you wish. However, if Everflowing Chalice has no charge counters on it, activating its last ability won't produce any mana.",
+      "oracle_id": "0a79237e-0811-4a8a-bd4d-db3ca91bff22",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card or token enters as a copy of a permanent, the new permanent isn't kicked, even if the original was.",
+      "oracle_id": "14646c85-12ad-4b99-a2af-e4a790e034ef",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell's kicker cost was paid, the spell is \"kicked.\"",
+      "oracle_id": "14646c85-12ad-4b99-a2af-e4a790e034ef",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you copy a kicked spell on the stack, the copy is also kicked. If the copied spell is a permanent spell, the token the copy of that spell becomes when it enters is also kicked.",
+      "oracle_id": "14646c85-12ad-4b99-a2af-e4a790e034ef",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you put a permanent with a kicker ability onto the battlefield without casting it, you can't kick it.",
+      "oracle_id": "14646c85-12ad-4b99-a2af-e4a790e034ef",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The kicker ability doesn't let you pay a kicker cost more than once.",
+      "oracle_id": "14646c85-12ad-4b99-a2af-e4a790e034ef",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine a spell's total cost, start with the mana cost (or an alternative cost if another card's effect allows you to pay one instead), add any cost increases (such as kicker), then apply any cost reductions. The spell's mana value remains unchanged, no matter what the total cost to cast it was.",
+      "oracle_id": "14646c85-12ad-4b99-a2af-e4a790e034ef",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card or token enters as a copy of a permanent, the new permanent isn't kicked, even if the original was.",
+      "oracle_id": "1d28ed9a-cc4e-48d9-a1a6-7504fc6cc56d",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell's kicker cost was paid, the spell is \"kicked.\"",
+      "oracle_id": "1d28ed9a-cc4e-48d9-a1a6-7504fc6cc56d",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you copy a kicked spell on the stack, the copy is also kicked. If the copied spell is a permanent spell, the token the copy of that spell becomes when it enters is also kicked.",
+      "oracle_id": "1d28ed9a-cc4e-48d9-a1a6-7504fc6cc56d",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you put a permanent with a kicker ability onto the battlefield without casting it, you can't kick it.",
+      "oracle_id": "1d28ed9a-cc4e-48d9-a1a6-7504fc6cc56d",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The kicker ability doesn't let you pay a kicker cost more than once.",
+      "oracle_id": "1d28ed9a-cc4e-48d9-a1a6-7504fc6cc56d",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine a spell's total cost, start with the mana cost (or an alternative cost if another card's effect allows you to pay one instead), add any cost increases (such as kicker), then apply any cost reductions. The spell's mana value remains unchanged, no matter what the total cost to cast it was.",
+      "oracle_id": "1d28ed9a-cc4e-48d9-a1a6-7504fc6cc56d",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card or token enters as a copy of a permanent, the new permanent isn't kicked, even if the original was.",
+      "oracle_id": "27c84b2e-fc66-45a6-a5ad-d3ef204d5077",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell's kicker cost was paid, the spell is \"kicked.\"",
+      "oracle_id": "27c84b2e-fc66-45a6-a5ad-d3ef204d5077",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you copy a kicked spell on the stack, the copy is also kicked. If the copied spell is a permanent spell, the token the copy of that spell becomes when it enters is also kicked.",
+      "oracle_id": "27c84b2e-fc66-45a6-a5ad-d3ef204d5077",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you put a permanent with a kicker ability onto the battlefield without casting it, you can't kick it.",
+      "oracle_id": "27c84b2e-fc66-45a6-a5ad-d3ef204d5077",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The kicker ability doesn't let you pay a kicker cost more than once.",
+      "oracle_id": "27c84b2e-fc66-45a6-a5ad-d3ef204d5077",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine a spell's total cost, start with the mana cost (or an alternative cost if another card's effect allows you to pay one instead), add any cost increases (such as kicker), then apply any cost reductions. The spell's mana value remains unchanged, no matter what the total cost to cast it was.",
+      "oracle_id": "27c84b2e-fc66-45a6-a5ad-d3ef204d5077",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature you control would enter the battlefield with a number of +1/+1 counters on it, it enters with twice that many instead.",
+      "oracle_id": "28fe909b-06e0-424c-9f75-c824a25f5865",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "If two or more effects attempt to modify how many counters would be put onto a creature you control, you choose the order to apply those effects, no matter who controls the sources of those effects.",
+      "oracle_id": "28fe909b-06e0-424c-9f75-c824a25f5865",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control two Branching Evolutions, the number of +1/+1 counters put on a creature is four times the original number. Three Branching Evolutions multiplies the original number by eight, and so on.",
+      "oracle_id": "28fe909b-06e0-424c-9f75-c824a25f5865",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Flametongue Yearling's last triggered ability checks its power when it resolves. If it isn't on the battlefield when it resolves, its last known information will be used. This may result in no damage being dealt if it had 0 or less power when it left the battlefield.",
+      "oracle_id": "8181f131-626b-4f9a-812c-9fddaae58025",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card or token enters as a copy of a permanent, the new permanent isn't kicked, even if the original was.",
+      "oracle_id": "8181f131-626b-4f9a-812c-9fddaae58025",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell's kicker cost was paid, the spell is \"kicked.\"",
+      "oracle_id": "8181f131-626b-4f9a-812c-9fddaae58025",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you copy a kicked spell on the stack, the copy is also kicked. If the copied spell is a permanent spell, the token the copy of that spell becomes when it enters is also kicked.",
+      "oracle_id": "8181f131-626b-4f9a-812c-9fddaae58025",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you put a permanent with a kicker ability onto the battlefield without casting it, you can't kick it.",
+      "oracle_id": "8181f131-626b-4f9a-812c-9fddaae58025",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The kicker ability doesn't let you pay a kicker cost more than once.",
+      "oracle_id": "8181f131-626b-4f9a-812c-9fddaae58025",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine a spell's total cost, start with the mana cost (or an alternative cost if another card's effect allows you to pay one instead), add any cost increases (such as kicker), then apply any cost reductions. The spell's mana value remains unchanged, no matter what the total cost to cast it was.",
+      "oracle_id": "8181f131-626b-4f9a-812c-9fddaae58025",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The last ability counts the total number of +1/+1 counters on Joraga Warcaller, not just the ones placed on it as a result of its \"enters\" ability.",
+      "oracle_id": "8959a147-75b1-4f4a-a699-cb354ff55e59",
+      "published_at": "2010-03-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card or token enters as a copy of a permanent, the new permanent isn't kicked, even if the original was.",
+      "oracle_id": "8959a147-75b1-4f4a-a699-cb354ff55e59",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell's kicker cost was paid, the spell is \"kicked.\"",
+      "oracle_id": "8959a147-75b1-4f4a-a699-cb354ff55e59",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you copy a kicked spell on the stack, the copy is also kicked. If the copied spell is a permanent spell, the token the copy of that spell becomes when it enters is also kicked.",
+      "oracle_id": "8959a147-75b1-4f4a-a699-cb354ff55e59",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you put a permanent with a kicker ability onto the battlefield without casting it, you can't kick it.",
+      "oracle_id": "8959a147-75b1-4f4a-a699-cb354ff55e59",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The kicker ability doesn't let you pay a kicker cost more than once.",
+      "oracle_id": "8959a147-75b1-4f4a-a699-cb354ff55e59",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine a spell's total cost, start with the mana cost (or an alternative cost if another card's effect allows you to pay one instead), add any cost increases (such as kicker), then apply any cost reductions. The spell's mana value remains unchanged, no matter what the total cost to cast it was.",
+      "oracle_id": "8959a147-75b1-4f4a-a699-cb354ff55e59",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each additional Hardened Scales you control will increase the number of +1/+1 counters placed on a creature you control by one.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature you control would enter the battlefield with a number of +1/+1 counters on it, it enters with that many plus one instead.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If two or more effects attempt to modify how many counters would be put on a creature you control, you choose the order to apply those effects, no matter who controls the sources of those effects.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card or token enters as a copy of a permanent, the new permanent isn't kicked, even if the original was.",
+      "oracle_id": "be6e835c-822e-45ff-a992-249d4d9781dc",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell's kicker cost was paid, the spell is \"kicked.\"",
+      "oracle_id": "be6e835c-822e-45ff-a992-249d4d9781dc",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you copy a kicked spell on the stack, the copy is also kicked. If the copied spell is a permanent spell, the token the copy of that spell becomes when it enters is also kicked.",
+      "oracle_id": "be6e835c-822e-45ff-a992-249d4d9781dc",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you put a permanent with a kicker ability onto the battlefield without casting it, you can't kick it.",
+      "oracle_id": "be6e835c-822e-45ff-a992-249d4d9781dc",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The kicker ability doesn't let you pay a kicker cost more than once.",
+      "oracle_id": "be6e835c-822e-45ff-a992-249d4d9781dc",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine a spell's total cost, start with the mana cost (or an alternative cost if another card's effect allows you to pay one instead), add any cost increases (such as kicker), then apply any cost reductions. The spell's mana value remains unchanged, no matter what the total cost to cast it was.",
+      "oracle_id": "be6e835c-822e-45ff-a992-249d4d9781dc",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card or token enters as a copy of a permanent, the new permanent isn't kicked, even if the original was.",
+      "oracle_id": "c025d558-aae8-4146-923b-a98035025a42",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell's kicker cost was paid, the spell is \"kicked.\"",
+      "oracle_id": "c025d558-aae8-4146-923b-a98035025a42",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you copy a kicked spell on the stack, the copy is also kicked. If the copied spell is a permanent spell, the token the copy of that spell becomes when it enters is also kicked.",
+      "oracle_id": "c025d558-aae8-4146-923b-a98035025a42",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you put a permanent with a kicker ability onto the battlefield without casting it, you can't kick it.",
+      "oracle_id": "c025d558-aae8-4146-923b-a98035025a42",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The kicker ability doesn't let you pay a kicker cost more than once.",
+      "oracle_id": "c025d558-aae8-4146-923b-a98035025a42",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine a spell's total cost, start with the mana cost (or an alternative cost if another card's effect allows you to pay one instead), add any cost increases (such as kicker), then apply any cost reductions. The spell's mana value remains unchanged, no matter what the total cost to cast it was.",
+      "oracle_id": "c025d558-aae8-4146-923b-a98035025a42",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

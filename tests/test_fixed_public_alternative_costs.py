@@ -264,7 +264,7 @@ class FixedPublicAlternativeCostCompilerTests(unittest.TestCase):
         )
         self.assertEqual("exact", result.status)
         with patch(
-            "quorune.compiler.keyword_nodes."
+            "quorune.compiler.casting_keyword_nodes."
             "fixed_public_alternative_cost_keyword_node",
             return_value=None,
         ):

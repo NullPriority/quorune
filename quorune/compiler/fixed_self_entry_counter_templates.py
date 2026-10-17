@@ -37,6 +37,12 @@ _DYNAMIC_ENTRY = re.compile(
     r"^(?P<subject>.+?) enters with (?P<body>.+)\.?$",
     re.IGNORECASE,
 )
+_ESCAPED_ENTRY = re.compile(
+    rf"^(?P<subject>.+?) escapes with (?P<count>a|an|{FIXED_COUNT_PATTERN}) "
+    rf"(?P<counter>{FIXED_COUNTER_NAME_PATTERN}) "
+    r"(?P<plural>counter|counters) on it\.?$",
+    re.IGNORECASE,
+)
 _ABILITY_WORD = re.compile(
     r"^[A-Z][A-Za-z0-9' ]{0,80}\s+(?:—|�)\s+(?P<body>.+)$"
 )
@@ -143,10 +149,19 @@ def _dynamic_compiled(
             "event": "zone.change",
             "counter_name": counter_name,
             "amount_spec": amount_spec.to_dict(),
-            "rule_id": "614.1c",
+            "rule_id": (
+                "702.138c"
+                if amount_spec.value_source is DynamicEntryCounterValueSource.ESCAPED
+                else "614.1c"
+            ),
         },
         (
             DYNAMIC_SELF_ENTRY_COUNTER_CAPABILITY,
+            *(
+                ("casting.lifecycle.fixed_zone_cast",)
+                if amount_spec.value_source is DynamicEntryCounterValueSource.ESCAPED
+                else ()
+            ),
             *(
                 ("counter.characteristic.keyword",)
                 if keyword_counter_mechanic(counter_name) is not None
@@ -415,6 +430,26 @@ def dynamic_self_entry_counter_handler(
     ability_word = _ABILITY_WORD.fullmatch(material)
     if ability_word is not None:
         material = ability_word.group("body")
+    escaped = _ESCAPED_ENTRY.fullmatch(material)
+    if escaped is not None:
+        subject = escaped.group("subject")
+        if (
+            source_self_permanent_type(subject) is None
+            and not SourceReferenceSpec(source_name).matches(subject)
+        ):
+            return None
+        amount = _coefficient(escaped.group("count"), escaped.group("plural"))
+        if amount is None:
+            return None
+        return _dynamic_compiled(
+            counter_name=escaped.group("counter"),
+            amount_spec=DynamicEntryCounterAmountSpec(
+                value_source=DynamicEntryCounterValueSource.ESCAPED,
+                calculation=DynamicEntryCounterCalculation.FIXED_IF_AT_LEAST,
+                coefficient=amount,
+                minimum=1,
+            ),
+        )
     match = _DYNAMIC_ENTRY.fullmatch(material)
     if match is None:
         return None

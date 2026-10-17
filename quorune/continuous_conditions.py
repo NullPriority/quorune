@@ -85,6 +85,7 @@ class FixedPublicStateConditionKind(StrEnum):
 
 
 class FixedPublicStateFact(StrEnum):
+    PERMANENT_COLOR_IS_MOST_COMMON = 'permanent_color_is_most_common'
     CONTROLLER_GRAVEYARD_DISTINCT_CARD_TYPES = (
         "controller_graveyard_distinct_card_types"
     )
@@ -277,9 +278,12 @@ def _validate_public_fact_fields(
             "Public-fact conditions require a closed fact and positive threshold"
         )
     if schema_version not in {3, 4}:
-        raise FixedPublicStateConditionError(
-            "Public-fact conditions require schema version 3 or 4"
-        )
+        if (schema_version != 7 or fact is not FixedPublicStateFact.PERMANENT_COLOR_IS_MOST_COMMON
+                or amount != 1 or type(parameter) is not str or parameter not in 'WUBRG' or len(parameter) != 1):
+            raise FixedPublicStateConditionError('Most-common color requires schema 7, one canonical color and a boolean threshold')
+        return
+    if fact is FixedPublicStateFact.PERMANENT_COLOR_IS_MOST_COMMON:
+        raise FixedPublicStateConditionError('Most-common color requires current schema 7')
     if schema_version == 3 and fact in {
         FixedPublicStateFact.ANY_CREATURE_DIED_THIS_TURN,
         FixedPublicStateFact.CONTROLLER_ATTACKED_THIS_TURN,
@@ -353,6 +357,7 @@ class FixedPublicStateConditionSpec:
             3,
             4,
             5,
+            7,
         }:
             raise FixedPublicStateConditionError(
                 "Unsupported fixed public-state condition schema version"
@@ -496,7 +501,7 @@ class FixedPublicStateConditionSpec:
                     ),
                 }
             )
-        elif self.schema_version in {3, 4}:
+        elif self.schema_version in {3, 4, 7}:
             value.update(
                 {
                     "predicate": None,

@@ -1,44 +1,202 @@
 {
   "schema_version": 1,
-  "contract_version": 1,
+  "contract_version": 2,
   "mechanic_id": "morph",
   "official_name": "Morph",
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
-  "rule_references": ["116.2b", "601.2b", "601.2f", "601.2h", "702.37", "702.37a", "702.37c", "702.37d", "702.37e", "702.37g", "708", "708.1", "708.2", "708.3", "708.4", "708.5", "708.6", "708.7", "708.8", "708.9"],
-  "glossary_references": ["face down", "face up", "morph", "morph cost", "special action"],
-  "dependencies": ["casting-spells", "continuous-effects", "continuous-layers", "cost-payment", "hidden-information", "priority", "special-actions", "zones"],
+  "rule_references": [
+    "116.2b",
+    "118.3",
+    "118.6",
+    "400.7",
+    "601.2b",
+    "601.2f",
+    "601.2g",
+    "601.2h",
+    "702.37",
+    "702.37a",
+    "702.37c",
+    "702.37d",
+    "702.37e",
+    "702.37g",
+    "708",
+    "708.1",
+    "708.2",
+    "708.3",
+    "708.4",
+    "708.5",
+    "708.6",
+    "708.7",
+    "708.8",
+    "708.9"
+  ],
+  "glossary_references": [
+    "face down",
+    "face up",
+    "morph",
+    "morph cost",
+    "special action"
+  ],
+  "dependencies": [
+    "casting-spells",
+    "continuous-effects",
+    "continuous-layers",
+    "cost-payment",
+    "hidden-information",
+    "priority",
+    "special-actions",
+    "zones"
+  ],
   "coverage_status": "tested",
   "trust_level": "untrusted",
   "behavior": {
-    "zones": ["hand", "stack", "battlefield", "graveyard"],
-    "objects": ["one physical normal-layout permanent card with one ordinary printed fixed-mana Morph descriptor", "one face-down creature spell and the same resulting permanent"],
-    "events": ["cast a card face down using Morph", "resolve the face-down permanent spell", "turn the permanent face up as a special action", "reveal a departing face-down object"],
-    "state_reads": ["complete current CardProgram trust", "source zone and physical/logical identity", "current controller, phasing, and priority", "would-be-face-up effective Morph presence", "current mana affordability"],
-    "state_writes": ["canonical casting and mana commitment", "typed object-local face-down method state", "canonical zone transition", "object-local turn-face-up reveal state", "turn and priority progression"],
-    "costs": ["{3} face-down alternative casting cost", "one fixed ordinary mana Morph cost"],
-    "timing": ["face-down creature-spell timing for casting", "turn face up any time its controller has priority", "turn face up does not use the stack"],
+    "zones": [
+      "hand",
+      "stack",
+      "battlefield",
+      "graveyard"
+    ],
+    "objects": [
+      "one physical normal-layout permanent card with one printed fixed mana or closed fixed nonmana Morph descriptor",
+      "one face-down creature spell and the same resulting permanent"
+    ],
+    "events": [
+      "cast a card face down using Morph",
+      "resolve the face-down permanent spell",
+      "turn the permanent face up as a special action",
+      "reveal a departing face-down object"
+    ],
+    "state_reads": [
+      "complete current CardProgram trust",
+      "source zone and physical/logical identity",
+      "current controller, phasing, and priority",
+      "would-be-face-up effective Morph presence",
+      "current mana affordability",
+      "current life and eligible colored hand cards or controlled subtype resources"
+    ],
+    "state_writes": [
+      "canonical casting and mana commitment",
+      "typed object-local face-down method state",
+      "canonical zone transition",
+      "object-local turn-face-up reveal state",
+      "turn and priority progression",
+      "canonical life payment, one selected hand-card reveal, or simultaneous discard/return cost"
+    ],
+    "costs": [
+      "{3} face-down alternative casting cost",
+      "one fixed ordinary or two-color hybrid mana Morph cost",
+      "fixed positive life, one fixed-color hand reveal, one card or named creature-subtype discard, or one/two named subtype permanent returns"
+    ],
+    "timing": [
+      "face-down creature-spell timing for casting",
+      "turn face up any time its controller has priority",
+      "turn face up does not use the stack"
+    ],
     "targets": [],
-    "choices": ["select the normal or face-down cast offer", "select automatic or explicit canonical mana payment"],
-    "hidden_information": ["only the controller's authorized view sees the face-down identity", "other seats see one stable face-down stack or battlefield object", "turning face up and battlefield or stack departure reveal the identity to every seat"],
-    "apnap": ["ordinary multiplayer priority passing governs face-down spell resolution; the special action itself creates no APNAP ordering or response window"],
-    "layers": ["the Morph face-down effect applies in copy layer 1b after copy values", "would-be-face-up eligibility removes only that layer-1b effect and still applies represented later layers", "face-down static sources do not participate"],
-    "replacement_effects": ["represented cast cost and zone-transition replacements remain in their canonical owners", "the turn-face-up action itself is not a zone change or replacement event"],
-    "copy": ["card copies, spell copies, copied values, and granted Morph are excluded"],
-    "control_change": ["only the current controller receives the turn-face-up action and controller knowledge", "a former controller retains already known identity without retaining action authority"],
-    "zone_change": ["the face-down marker survives only stack to battlefield", "any other zone transition creates a face-up destination incarnation and reveals a departing battlefield or stack object"],
-    "source_leaves": ["a countered or otherwise departing face-down spell is revealed and loses the method marker", "a departing face-down permanent is revealed and the returned object cannot use the old action"]
+    "choices": [
+      "select the normal or face-down cast offer",
+      "select automatic or explicit canonical mana payment",
+      "select the exact distinct currently eligible nonmana cost resources"
+    ],
+    "hidden_information": [
+      "only the controller's authorized view sees the face-down identity",
+      "other seats see one stable face-down stack or battlefield object",
+      "turning face up and battlefield or stack departure reveal the identity to every seat",
+      "a reveal cost publishes only its selected eligible hand card"
+    ],
+    "apnap": [
+      "ordinary multiplayer priority passing governs face-down spell resolution; the special action itself creates no APNAP ordering or response window"
+    ],
+    "layers": [
+      "the Morph face-down effect applies in copy layer 1b after copy values",
+      "would-be-face-up eligibility removes only that layer-1b effect and still applies represented later layers",
+      "face-down static sources do not participate"
+    ],
+    "replacement_effects": [
+      "represented cast cost and zone-transition replacements remain in their canonical owners",
+      "the turn-face-up action itself is not a zone change or replacement event",
+      "a discard-cost destination choice rolls back payment and revelation until the existing priority-action continuation resumes"
+    ],
+    "copy": [
+      "card copies, spell copies, copied values, and granted Morph are excluded"
+    ],
+    "control_change": [
+      "only the current controller receives the turn-face-up action and controller knowledge",
+      "a former controller retains already known identity without retaining action authority"
+    ],
+    "zone_change": [
+      "the face-down marker survives only stack to battlefield",
+      "any other zone transition creates a face-up destination incarnation and reveals a departing battlefield or stack object"
+    ],
+    "source_leaves": [
+      "a countered or otherwise departing face-down spell is revealed and loses the method marker",
+      "a departing face-down permanent is revealed and the returned object cannot use the old action",
+      "returning the Morph source as its own eligible cost does not produce a face-up occurrence for the departed incarnation"
+    ]
   },
-  "variants": ["ordinary fixed colored and generic Morph costs", "noncreature permanent cards cast as face-down creatures", "layer-6 Morph removal", "face-down static source suppression", "four-player privacy and reveal", "zone departure", "save/load and exact replay"],
-  "witness_cards": [{"name": "Lumithread Field", "oracle_id": "4f7fdae1-43a8-460a-8944-54c433ac83fa"}, {"name": "Zoetic Cavern", "oracle_id": "3763de30-28e1-4689-a71c-07d2fea3a466"}],
+  "variants": [
+    "ordinary fixed colored and generic Morph costs",
+    "noncreature permanent cards cast as face-down creatures",
+    "layer-6 Morph removal",
+    "face-down static source suppression",
+    "four-player privacy and reveal",
+    "zone departure",
+    "save/load and exact replay",
+    "fixed two-color hybrid prices",
+    "fixed life and selected resource costs",
+    "discard replacement/load",
+    "source-return incarnation boundary"
+  ],
+  "witness_cards": [
+    {
+      "name": "Lumithread Field",
+      "oracle_id": "4f7fdae1-43a8-460a-8944-54c433ac83fa"
+    },
+    {
+      "name": "Zoetic Cavern",
+      "oracle_id": "3763de30-28e1-4689-a71c-07d2fea3a466"
+    }
+  ],
   "rulings": [],
-  "test_ids": ["test_fixed_mana_morph_descriptor_is_strict_and_registered", "test_fixed_mana_morph_compiles_source_spanned_typed_program", "test_nonordinary_morph_costs_remain_residual", "test_morph_dependency_fails_closed", "test_morph_compiler_mutation_is_killed", "test_morph_cast_turn_up_privacy_and_replay", "test_face_down_static_source_is_inert_until_turned_face_up", "test_stale_or_ability_removed_turn_up_rolls_back", "test_stale_morph_cast_contract_rolls_back_before_payment", "test_face_down_departure_reveals_identity_and_resets_method", "test_land_card_has_only_the_trusted_morph_cast_offer"],
+  "test_ids": [
+    "test_fixed_mana_morph_descriptor_is_strict_and_registered",
+    "test_fixed_mana_morph_compiles_source_spanned_typed_program",
+    "test_nonordinary_morph_costs_remain_residual",
+    "test_morph_dependency_fails_closed",
+    "test_morph_compiler_mutation_is_killed",
+    "test_morph_cast_turn_up_privacy_and_replay",
+    "test_face_down_static_source_is_inert_until_turned_face_up",
+    "test_stale_or_ability_removed_turn_up_rolls_back",
+    "test_stale_morph_cast_contract_rolls_back_before_payment",
+    "test_face_down_departure_reveals_identity_and_resets_method",
+    "test_land_card_has_only_the_trusted_morph_cast_offer",
+    "test_nonmana_cost_codec_is_closed_and_historical_mana_handler_rejects_it",
+    "test_compiler_nonmana_grammar_and_dependency_removal_fail_closed",
+    "test_all_ten_originals_admit_normally_and_unknown_siblings_remain_residual",
+    "test_actual_zombie_cutthroat_pays_life_to_turn_face_up_without_a_stack_item",
+    "test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load",
+    "test_current_type_can_return_source_without_a_spurious_turn_face_up_occurrence",
+    "test_actual_reveal_prices_publish_only_one_eligible_card_and_execute_face_up_triggers"
+  ],
   "implementation": {
-    "component": "FixedManaMorphSpec, fixed_mana_morph_keyword_node, FixedManaMorphHandler, compiled_fixed_mana_morph_spec, casting proposal/commit, face-down characteristic evaluation, morph special-action owner, zone-object state, priority, projection, and replay",
-    "version": "typed-fixed-mana-morph-v1",
-    "capability_ids": ["casting.morph.fixed_mana"],
-    "supported_slice": "One printed normal-layout permanent card with exactly one fixed ordinary-mana Morph ability, complete current CardProgram trust, no copied values, and no unsupported turn-face-up behavior."
+    "component": "FixedManaMorphSpec, fixed_mana_morph_keyword_node, FixedManaMorphHandler, compiled_fixed_mana_morph_spec, casting proposal/commit, face-down characteristic evaluation, morph special-action owner, zone-object state, priority, projection, and replay, FixedNonmanaMorphSpec, FixedNonmanaMorphHandler, and canonical nonmana Morph cost queries/payment",
+    "version": "typed-fixed-morph-costs-v2",
+    "capability_ids": [
+      "casting.morph.fixed_mana",
+      "casting.morph.fixed_nonmana"
+    ],
+    "supported_slice": "One printed fixed ordinary or two-color hybrid mana Morph cost, or one closed fixed life/reveal/discard/subtype-return price, on a complete current normal-layout CardProgram without copied values or unknown siblings."
   },
-  "known_blockers": ["Megamorph, Disguise, Manifest, Cloak, and other face-down methods", "variable, hybrid, Phyrexian, snow, and nonmana Morph costs", "copied, granted, text-changed, and dynamically added Morph", "card copies, spell copies, tokens, multiface cards, and merged permanents", "turn-face-up triggers or replacement abilities on residual CardPrograms", "arbitrary static component ability addition and removal until one shared applicability query exists", "dynamic characteristic counts and affected copy or type-changing interactions", "aggregate Morph and CR 708 coverage remain incomplete"],
+  "known_blockers": [
+    "Megamorph, Disguise, Manifest, Cloak, and other face-down methods",
+    "copied, granted, text-changed, and dynamically added Morph",
+    "card copies, spell copies, tokens, multiface cards, and merged permanents",
+    "turn-face-up triggers or replacement abilities on residual CardPrograms",
+    "arbitrary static component ability addition and removal until one shared applicability query exists",
+    "dynamic characteristic counts and affected copy or type-changing interactions",
+    "aggregate Morph and CR 708 coverage remain incomplete",
+    "variable, conditionally reduced, monocolored hybrid, Phyrexian, snow, sacrifice, compound and other unrepresented Morph costs"
+  ],
   "review_status": "reviewed"
 }

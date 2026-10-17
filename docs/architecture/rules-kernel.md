@@ -15,6 +15,23 @@ offer payload. Manifested permanents expose distinct suffixed method choices.
 Both paths retain the same expiry and proposal-fingerprint validation before
 payment, including special actions taken while Split Second is on the stack.
 
+Printed fixed nonmana Morph prices share that same action and whole-source
+admission. Typed costs query current hand colors or controlled subtypes and
+pay through the life, selected-hand-reveal, or simultaneous zone-cost owners.
+Resource offers use the shared reference-array choice descriptors with exact
+cardinality and principal-scoped candidates, including their ordinary UI forms.
+Revealing publishes only the selected eligible card. Discards and returns use
+their canonical response fields and retain replacement continuations across
+save/load. Returning the source itself ends the action without inventing a
+turn-face-up event for a departed incarnation. Compound, sacrifice, variable,
+copied, and granted nonmana Morph costs remain outside this family.
+
+Intrinsic entry applicability uses an isolated view of the selected face before
+the zone change commits. The ordinary layer engine still removes abilities
+when a type-setting effect applies. Current registries require their indexed
+entry component; the narrow historical v3 entry adapter retains its earlier
+unindexed execution contract during replay.
+
 Normalized event discovery orders both live and explicitly captured source
 lists by zone timestamp and stable object identity. Checkpoint hydration cannot
 change pending trigger identities through dictionary insertion order. APNAP
@@ -54,6 +71,17 @@ inspection mutation owner records only that selected card as public knowledge
 and publishes its reveal; unchosen candidates remain private. The replacement
 journal preserves the decision through save/load and replay. Decline sets tapped
 entry, while acceptance leaves other tap-state replacements in force.
+
+Fixed external entry-tapped replacements use the same immutable zone-entry
+snapshot and commit owner. A current battlefield source selects a fixed union
+of permanent card types and a global, controller, or opponent scope. The
+prospective entrant's types and destination controller determine applicability;
+the source's current effective ability determines whether the rule exists.
+General sources affect later entries, including tokens, and do not affect their
+own entry or other permanents entering alongside them. Competing tapped and
+untapped replacements use the affected controller's private ordering choice.
+Qualified unions, source-state conditions, and cast-specific or copy-entry tap
+instructions remain separate contracts.
 
 Exert adds a separately selected optional attack cost. Current typed abilities
 and trusted linked result identities govern both the offer and accepted
@@ -207,6 +235,15 @@ enters-copy replacement captures layer-one values and activates the selected
 source's typed intrinsic entry producers. Commit retains the physical card's
 Oracle identity and carries separate copied program provenance into effective
 characteristics, static owners, activation catalogs and event discovery.
+Fixed additive copy exceptions retain other types while adding represented
+card types or creature subtypes. These exceptions are copiable values and
+survive later ability removal; unknown words and unrepresented grants reject.
+Creature-copy entry exceptions can also add one quoted activated or triggered
+ability when its independently compiled child closes over trusted capabilities.
+The shared promotion owner recognizes the exact source-return shape through its
+existing capability matcher. Added fragments remain copiable, and repeated
+grants retain their multiplicity. Static, recursive, and unbound-value grants
+remain outside this entry-copy grammar.
 Departure LKI retains that provenance for already-triggered abilities; the
 new zone incarnation discards the old copy. Copied Aura attachment uses the
 existing affected-controller choice before entry. Its retained replacement
@@ -315,6 +352,20 @@ Reusing a characteristic state rebuilds only intrinsic descriptors previously
 created by that evaluator, before applying ability removal again. This private
 provenance stays out of snapshots; caller-supplied reserved intrinsic IDs still
 reject rather than masquerading as derived abilities.
+
+Fixed additive basic land types use a typed layer-4 component with global,
+controller-land, or current attached-land scope. One basic type or every basic
+type adds its subtypes while preserving printed abilities, other types,
+supertypes, and names. A source's later ability removal does not undo an already
+applied type effect; removing that source or its attachment ends the effect.
+Type setting and its printed-ability loss use a separate contract.
+Fixed basic-land-type setting replaces land subtypes and removes printed and
+copiable abilities in layer 4. Other card types, nonland subtypes, supertypes,
+names, colors, and stats remain unless another instruction changes them. Later
+ability grants stay separate, and intrinsic mana derives from the new types
+before layer-6 removal. Negative supertype queries distinguish nonbasic lands
+from lands with a basic subtype. Prospective entry applies this same ability
+presence boundary before printed entry replacements and triggers are collected.
 The catalog unifies discovery for ordinary Crew, Cycling, fixed Typecycling,
 fixed counter-keyword activations, and represented mana abilities without
 replacing those families' specialized execution owners or capability closure.
@@ -635,7 +686,12 @@ The public battlefield compiler uses that same query for live layer-6 and
 layer-7c applicability, public-state-gated targets, resolution-time set locks,
 typed queried ability and declaration-fragment grants, and untap participation.
 One descriptor may add fixed keywords and declaration fragments over the same
-query without duplicating applicability. Positive ability presence is evaluated
+query without duplicating applicability. Landwalk as-though permissions remain
+source-owned rule fragments: the block evaluator ignores only the selected
+Landwalk variants and never removes an attacker ability. Attached-blocker
+permissions consult the reciprocal current attachment identity, and cannot
+follow a returned incarnation. Effective source ability loss ends a live
+permission; ability loss on the recipient does not erase an Aura-owned rule. Positive ability presence is evaluated
 after generic same-layer additions and removals of the required ability.
 Resolution-time characteristic selection rejects ability-qualified sets.
 Its explicit numeric creature filter reads completed effective power/toughness

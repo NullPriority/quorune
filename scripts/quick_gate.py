@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 import json
@@ -30,6 +31,14 @@ from scripts.validate_python_runtime import require_supported_python
 class QuickStep:
     name: str
     command: tuple[str, ...]
+
+
+def implicit_text_encoding_lines(source: str) -> tuple[int, ...]:
+    """Catch locale-dependent text reads before cross-platform test execution."""
+    return tuple(sorted(node.lineno for node in ast.walk(ast.parse(source))
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+        and node.func.attr == 'read_text' and not node.args
+        and not any(keyword.arg == 'encoding' for keyword in node.keywords)))
 
 
 _GENERATED_CHECK_ALIASES = frozenset(
@@ -89,6 +98,12 @@ def build_plan(
     if phase == "pre-corpus":
         steps.extend(
             (
+                QuickStep("explicit-text-encoding", (python, "scripts/quick_gate.py", "--validate-text-io",
+                    *(argument for path in paths if path.endswith('.py') for argument in ('--changed-file', path)))),
+                QuickStep(
+                    "mechanic-contract-source",
+                    (python, "-c", "from scripts.update_card_unlock_frontier import _contracts; _contracts()"),
+                ),
                 QuickStep(
                     "generated-owner-plan",
                     (
@@ -155,6 +170,42 @@ def build_plan(
                 ),
             )
         )
+        if {'quorune/compiler/target_effect_corpus_assurance.py',
+                'quorune/compiler/overload_spell_faces.py', 'quorune/compiler/cleave_spell_faces.py',
+                'quorune/compiler/paired_spell_faces.py'}.intersection(paths):
+            steps.append(QuickStep(
+                "paired-spell-target-corpus-carrier-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_fixed_target_effect_sequences.py", "-k",
+                 "test_corpus_assurance_validates_both_source_bound_paid_spell_variants"),
+            ))
+        if {'quorune/compiler/cycle_or_discard_bindings.py',
+                'quorune/compiler/fixed_public_action_event_bindings.py'}.intersection(paths):
+            steps.append(QuickStep(
+                "combined-discard-public-action-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_fixed_counter_event_triggers.py", "-k",
+                 "test_public_action_event_suffixes_remain_fail_closed"),
+            ))
+        if {'quorune/morph.py', 'scripts/work_selection_cohort_measurements.py'}.intersection(paths):
+            steps.append(QuickStep(
+                "hybrid-face-down-probe-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests", "-p", "test_rules_scheduler.py", "-k",
+                 "test_fixed_face_down_lifecycle_probe_is_closed"),
+            ))
+        if {'quorune/rules/casting/fixed_text_variant_costs.py',
+                'quorune/rules/casting/overload_costs.py'}.intersection(paths):
+            steps.append(QuickStep(
+                "reviewed-legacy-text-alternative-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests", "-p", "test_fixed_overload.py", "-k",
+                 "test_current_reviewed_legacy_alternative_keeps_its_declared_cost_owner"),
+            ))
+        if 'quorune/compiler/casting_keyword_nodes.py' in paths:
+            steps.append(QuickStep(
+                "casting-dispatch-omission-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests", "-p", "test_fixed_public_alternative_costs.py", "-k",
+                 "test_fixed_public_alternative_cost_dependency_and_compiler_mutations_fail_closed"),
+            ))
         if "quorune/compiler/library_search_templates.py" in paths:
             steps.append(QuickStep(
                 "search-saga-residual-carrier-contract",
@@ -432,12 +483,25 @@ def main() -> int:
         default="normal",
     )
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--validate-text-io", action="store_true")
     args = parser.parse_args()
     paths = (
         tuple(args.changed_file)
         if args.changed_file
         else changed_files(args.base, include_worktree=True)
     )
+    if args.validate_text_io:
+        violations = []
+        checked = 0
+        for relative in paths:
+            path = ROOT / relative
+            if path.suffix != '.py' or not path.is_file():
+                continue
+            checked += 1
+            violations.extend({'path': relative, 'line': line, 'reason': 'read_text requires an explicit encoding'}
+                for line in implicit_text_encoding_lines(path.read_text(encoding='utf-8')))
+        print(json.dumps({'ok': not violations, 'checked_python_files': checked, 'violations': violations}, sort_keys=True))
+        return int(bool(violations))
     plan = build_plan(
         paths,
         phase=args.phase,
