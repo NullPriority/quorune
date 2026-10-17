@@ -14474,6 +14474,98 @@
       ],
       "interaction_order": 4,
       "assertion": "Actual Clone copies Ur-Drago through a pending entry-copy choice. Unsummon returns the original, while the copied source still permits blocking another Swampwalker. Humble on the copied source removes its own permission, so the block becomes prohibited; Landwalk remains present. Pending load and pre-action replay preserve independent source incarnations."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_typhon_escape_pays_costs_and_enters_with_three_counters",
+      "piece_ids": [
+        "capability.casting.lifecycle.fixed_zone_cast",
+        "capability.counter.producer.dynamic_self_entry"
+      ],
+      "capability_ids": [
+        "casting.lifecycle.fixed_zone_cast",
+        "counter.producer.dynamic_self_entry"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Woe Strider pays Escape mana and four other-card exiles. Its fixed entry amount remains sealed across private Hardened Scales/Branching Evolution ordering and pending load; counters commit before its Goat trigger. Actual Clone and Flicker of Fate receive no inherited Escape casting fact or counters; each action segment replays from its pre-action checkpoint."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_typhon_escape_pays_costs_and_enters_with_three_counters",
+      "piece_ids": [
+        "capability.casting.additional_cost.zone_change.fixed_exile",
+        "capability.counter.producer.dynamic_self_entry"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.zone_change.fixed_exile",
+        "counter.producer.dynamic_self_entry"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Woe Strider pays Escape mana and four other-card exiles. Its fixed entry amount remains sealed across private Hardened Scales/Branching Evolution ordering and pending load; counters commit before its Goat trigger. Actual Clone and Flicker of Fate receive no inherited Escape casting fact or counters; each action segment replays from its pre-action checkpoint."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_escape_counter_order_precedes_entry_trigger_and_copy_blink_reset",
+      "piece_ids": [
+        "capability.counter.producer.dynamic_self_entry",
+        "capability.zone.entry.fixed_copy"
+      ],
+      "capability_ids": [
+        "counter.producer.dynamic_self_entry",
+        "zone.entry.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Woe Strider pays Escape mana and four other-card exiles. Its fixed entry amount remains sealed across private Hardened Scales/Branching Evolution ordering and pending load; counters commit before its Goat trigger. Actual Clone and Flicker of Fate receive no inherited Escape casting fact or counters; each action segment replays from its pre-action checkpoint."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_escape_counter_order_precedes_entry_trigger_and_copy_blink_reset",
+      "piece_ids": [
+        "capability.counter.producer.dynamic_self_entry",
+        "capability.zone.linked_exile_return.fixed"
+      ],
+      "capability_ids": [
+        "counter.producer.dynamic_self_entry",
+        "zone.linked_exile_return.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Woe Strider pays Escape mana and four other-card exiles. Its fixed entry amount remains sealed across private Hardened Scales/Branching Evolution ordering and pending load; counters commit before its Goat trigger. Actual Clone and Flicker of Fate receive no inherited Escape casting fact or counters; each action segment replays from its pre-action checkpoint."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_escape_counter_order_precedes_entry_trigger_and_copy_blink_reset",
+      "piece_ids": [
+        "capability.counter.producer.dynamic_self_entry",
+        "capability.trigger.event.normalized_zone_change"
+      ],
+      "capability_ids": [
+        "counter.producer.dynamic_self_entry",
+        "trigger.event.normalized_zone_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Woe Strider pays Escape mana and four other-card exiles. Its fixed entry amount remains sealed across private Hardened Scales/Branching Evolution ordering and pending load; counters commit before its Goat trigger. Actual Clone and Flicker of Fate receive no inherited Escape casting fact or counters; each action segment replays from its pre-action checkpoint."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_actual_escape_counter_order_precedes_entry_trigger_and_copy_blink_reset",
+      "piece_ids": [
+        "capability.casting.lifecycle.fixed_zone_cast",
+        "capability.counter.placement.quantity_replacement",
+        "capability.counter.producer.dynamic_self_entry"
+      ],
+      "capability_ids": [
+        "casting.lifecycle.fixed_zone_cast",
+        "counter.placement.quantity_replacement",
+        "counter.producer.dynamic_self_entry"
+      ],
+      "interaction_order": 3,
+      "assertion": "Actual Woe Strider pays Escape mana and four other-card exiles. Its fixed entry amount remains sealed across private Hardened Scales/Branching Evolution ordering and pending load; counters commit before its Goat trigger. Actual Clone and Flicker of Fate receive no inherited Escape casting fact or counters; each action segment replays from its pre-action checkpoint."
     }
   ]
 }

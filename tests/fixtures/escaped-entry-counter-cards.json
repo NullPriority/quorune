@@ -1,0 +1,1321 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_escape_entry_counter_card_data",
+  "source": "Pinned Scryfall Oracle and rulings subset for fixed escaped-entry counters, plus one explicitly constructed casting-method control",
+  "cards": [
+    {
+      "oracle_id": "0ad557fc-6b7e-4f7e-b060-e3c8ec8acf6d",
+      "name": "Phoenix of Ash",
+      "mana_cost": "{1}{R}{R}",
+      "type_line": "Creature — Phoenix",
+      "oracle_text": "Flying, haste\n{2}{R}: This creature gets +2/+0 until end of turn.\nEscape—{2}{R}{R}, Exile three other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with a +1/+1 counter on it.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flying",
+        "Haste",
+        "Escape"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "22113051-c971-4108-953b-95356d21323a",
+      "name": "Ox of Agonas",
+      "mana_cost": "{3}{R}{R}",
+      "type_line": "Creature — Ox",
+      "oracle_text": "When this creature enters, discard your hand, then draw three cards.\nEscape—{R}{R}, Exile eight other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with a +1/+1 counter on it.",
+      "power": "4",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Escape"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 5.0
+    },
+    {
+      "oracle_id": "39694a3f-536e-41e0-adf6-d49de721aabd",
+      "name": "Underworld Charger",
+      "mana_cost": "{2}{B}",
+      "type_line": "Creature — Nightmare Horse",
+      "oracle_text": "This creature can't block.\nEscape—{4}{B}, Exile three other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with two +1/+1 counters on it.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Escape"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "3adbd963-e85d-4569-963a-4472594f06f9",
+      "name": "Woe Strider",
+      "mana_cost": "{2}{B}",
+      "type_line": "Creature — Horror",
+      "oracle_text": "When this creature enters, create a 0/1 white Goat creature token.\nSacrifice another creature: Scry 1.\nEscape—{3}{B}{B}, Exile four other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with two +1/+1 counters on it.",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Escape",
+        "Scry"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "58aac732-3f03-4551-a684-6cb0e3b31c09",
+      "name": "Skyway Robber",
+      "mana_cost": "{3}{U}",
+      "type_line": "Creature — Bird Rogue",
+      "oracle_text": "Flying\nEscape—{3}{U}, Exile five other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with \"Whenever this creature deals combat damage to a player, you may cast an artifact, instant, or sorcery spell from among cards exiled with this creature without paying its mana cost.\"",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying",
+        "Escape"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-04-29",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "649e7237-b38b-43e9-83f4-763751fb1bea",
+      "name": "Polukranos, Unchained",
+      "mana_cost": "{2}{B}{G}",
+      "type_line": "Legendary Creature — Zombie Hydra",
+      "oracle_text": "Polukranos enters with six +1/+1 counters on it. It escapes with twelve +1/+1 counters on it instead.\nIf damage would be dealt to Polukranos while it has a +1/+1 counter on it, prevent that damage and remove that many +1/+1 counters from it.\n{1}{B}{G}: Polukranos fights another target creature.\nEscape—{4}{B}{G}, Exile six other cards from your graveyard.",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G"
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "keywords": [
+        "Fight",
+        "Escape"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "8f94754d-fb2a-4634-a1de-049c82fa6f30",
+      "name": "Tizerus Charger",
+      "mana_cost": "{2}{B}",
+      "type_line": "Creature — Pegasus",
+      "oracle_text": "Escape—{4}{B}, Exile five other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with your choice of a +1/+1 counter or a flying counter on it.",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Escape"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-06-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "960cff3b-678c-404e-a643-ac5e91e6b50c",
+      "name": "Charred Graverobber",
+      "mana_cost": "{2}{B}",
+      "type_line": "Creature — Skeleton Mercenary",
+      "oracle_text": "When this creature enters, return target outlaw card from your graveyard to your hand.\nEscape—{3}{B}{B}, Exile four other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with a +1/+1 counter on it.",
+      "power": "3",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Escape"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "a1418e8d-dea5-43e1-b041-3f6a88f9a6d7",
+      "name": "Underworld Rage-Hound",
+      "mana_cost": "{1}{R}",
+      "type_line": "Creature — Elemental Dog",
+      "oracle_text": "This creature attacks each combat if able.\nEscape—{3}{R}, Exile three other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with a +1/+1 counter on it.",
+      "power": "3",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Escape"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "a44955e7-f1ad-41b9-b93d-0a980ac341d8",
+      "name": "Pharika's Spawn",
+      "mana_cost": "{3}{B}",
+      "type_line": "Creature — Gorgon",
+      "oracle_text": "Escape—{5}{B}, Exile three other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with two +1/+1 counters on it. When it enters this way, each opponent sacrifices a non-Gorgon creature of their choice.",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Escape"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "c45423ad-1920-46f7-bcc1-ecade5880821",
+      "name": "Chainweb Aracnir",
+      "mana_cost": "{G}",
+      "type_line": "Creature — Spider",
+      "oracle_text": "Reach\nWhen this creature enters, it deals damage equal to its power to target creature with flying an opponent controls.\nEscape—{3}{G}{G}, Exile four other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with three +1/+1 counters on it.",
+      "power": "1",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Reach",
+        "Escape"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "f62784c0-9c67-4a05-a09b-aabf03a9390f",
+      "name": "Voracious Typhon",
+      "mana_cost": "{2}{G}{G}",
+      "type_line": "Creature — Snake Beast",
+      "oracle_text": "Escape—{5}{G}{G}, Exile four other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with three +1/+1 counters on it.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Escape"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "fe983088-6e0d-4544-90bd-f5ebb95c3418",
+      "name": "Loathsome Chimera",
+      "mana_cost": "{2}{G}",
+      "type_line": "Creature — Chimera",
+      "oracle_text": "Escape—{4}{G}, Exile three other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with a +1/+1 counter on it.",
+      "power": "4",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Escape"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "fixture:escaped-method-control",
+      "name": "Generic Escape Method Control",
+      "mana_cost": "{G}",
+      "type_line": "Creature — Snake Beast",
+      "oracle_text": "You may cast this card from your graveyard.\nEscape—{5}{G}{G}, Exile four other cards from your graveyard.\nThis creature escapes with three +1/+1 counters on it.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Escape"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 1
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "0ad557fc-6b7e-4f7e-b060-e3c8ec8acf6d",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "After an escaped spell resolves, it returns to its owner's graveyard if it's not a permanent spell. If it is a permanent spell, it enters the battlefield and will return to its owner's graveyard if it dies later. Perhaps it will escape again—good underworld security is so hard to come by these days."
+    },
+    {
+      "oracle_id": "0ad557fc-6b7e-4f7e-b060-e3c8ec8acf6d",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Escape's permission doesn't change when you may cast the spell from your graveyard."
+    },
+    {
+      "oracle_id": "0ad557fc-6b7e-4f7e-b060-e3c8ec8acf6d",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card with escape is put into your graveyard during your turn, you'll be able to cast it right away if it's legal to do so, before an opponent can take any actions."
+    },
+    {
+      "oracle_id": "0ad557fc-6b7e-4f7e-b060-e3c8ec8acf6d",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Once you begin casting a spell with escape, it immediately moves to the stack. Players can't take any other actions until you're done casting the spell."
+    },
+    {
+      "oracle_id": "0ad557fc-6b7e-4f7e-b060-e3c8ec8acf6d",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If you cast a spell with its escape permission, you can't choose to apply any other alternative costs or to cast it without paying its mana cost. If it has any additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "0ad557fc-6b7e-4f7e-b060-e3c8ec8acf6d",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card has multiple abilities giving you permission to cast it, such as two escape abilities or an escape ability and a flashback ability, you choose which one to apply. The others have no effect."
+    },
+    {
+      "oracle_id": "0ad557fc-6b7e-4f7e-b060-e3c8ec8acf6d",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an escape cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was and no matter whether an alternative cost was paid."
+    },
+    {
+      "oracle_id": "22113051-c971-4108-953b-95356d21323a",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Escape's permission doesn't change when you may cast the spell from your graveyard."
+    },
+    {
+      "oracle_id": "22113051-c971-4108-953b-95356d21323a",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an escape cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was and no matter whether an alternative cost was paid."
+    },
+    {
+      "oracle_id": "22113051-c971-4108-953b-95356d21323a",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Once you begin casting a spell with escape, it immediately moves to the stack. Players can't take any other actions until you're done casting the spell."
+    },
+    {
+      "oracle_id": "22113051-c971-4108-953b-95356d21323a",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "After an escaped spell resolves, it returns to its owner's graveyard if it's not a permanent spell. If it is a permanent spell, it enters the battlefield and will return to its owner's graveyard if it dies later. Perhaps it will escape again—good underworld security is so hard to come by these days."
+    },
+    {
+      "oracle_id": "22113051-c971-4108-953b-95356d21323a",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card has multiple abilities giving you permission to cast it, such as two escape abilities or an escape ability and a flashback ability, you choose which one to apply. The others have no effect."
+    },
+    {
+      "oracle_id": "22113051-c971-4108-953b-95356d21323a",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card with escape is put into your graveyard during your turn, you'll be able to cast it right away if it's legal to do so, before an opponent can take any actions."
+    },
+    {
+      "oracle_id": "22113051-c971-4108-953b-95356d21323a",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "You draw three cards, even if you discard no cards."
+    },
+    {
+      "oracle_id": "22113051-c971-4108-953b-95356d21323a",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If you cast a spell with its escape permission, you can't choose to apply any other alternative costs or to cast it without paying its mana cost. If it has any additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "39694a3f-536e-41e0-adf6-d49de721aabd",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Once you begin casting a spell with escape, it immediately moves to the stack. Players can't take any other actions until you're done casting the spell."
+    },
+    {
+      "oracle_id": "39694a3f-536e-41e0-adf6-d49de721aabd",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card with escape is put into your graveyard during your turn, you'll be able to cast it right away if it's legal to do so, before an opponent can take any actions."
+    },
+    {
+      "oracle_id": "39694a3f-536e-41e0-adf6-d49de721aabd",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Escape's permission doesn't change when you may cast the spell from your graveyard."
+    },
+    {
+      "oracle_id": "39694a3f-536e-41e0-adf6-d49de721aabd",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "After an escaped spell resolves, it returns to its owner's graveyard if it's not a permanent spell. If it is a permanent spell, it enters the battlefield and will return to its owner's graveyard if it dies later. Perhaps it will escape again—good underworld security is so hard to come by these days."
+    },
+    {
+      "oracle_id": "39694a3f-536e-41e0-adf6-d49de721aabd",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card has multiple abilities giving you permission to cast it, such as two escape abilities or an escape ability and a flashback ability, you choose which one to apply. The others have no effect."
+    },
+    {
+      "oracle_id": "39694a3f-536e-41e0-adf6-d49de721aabd",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an escape cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was and no matter whether an alternative cost was paid."
+    },
+    {
+      "oracle_id": "39694a3f-536e-41e0-adf6-d49de721aabd",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If you cast a spell with its escape permission, you can't choose to apply any other alternative costs or to cast it without paying its mana cost. If it has any additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "3adbd963-e85d-4569-963a-4472594f06f9",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If you cast a spell with its escape permission, you can't choose to apply any other alternative costs or to cast it without paying its mana cost. If it has any additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "3adbd963-e85d-4569-963a-4472594f06f9",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Once you begin casting a spell with escape, it immediately moves to the stack. Players can't take any other actions until you're done casting the spell."
+    },
+    {
+      "oracle_id": "3adbd963-e85d-4569-963a-4472594f06f9",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card with escape is put into your graveyard during your turn, you'll be able to cast it right away if it's legal to do so, before an opponent can take any actions."
+    },
+    {
+      "oracle_id": "3adbd963-e85d-4569-963a-4472594f06f9",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card has multiple abilities giving you permission to cast it, such as two escape abilities or an escape ability and a flashback ability, you choose which one to apply. The others have no effect."
+    },
+    {
+      "oracle_id": "3adbd963-e85d-4569-963a-4472594f06f9",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an escape cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was and no matter whether an alternative cost was paid."
+    },
+    {
+      "oracle_id": "3adbd963-e85d-4569-963a-4472594f06f9",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "After an escaped spell resolves, it returns to its owner's graveyard if it's not a permanent spell. If it is a permanent spell, it enters the battlefield and will return to its owner's graveyard if it dies later. Perhaps it will escape again—good underworld security is so hard to come by these days."
+    },
+    {
+      "oracle_id": "3adbd963-e85d-4569-963a-4472594f06f9",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Escape's permission doesn't change when you may cast the spell from your graveyard."
+    },
+    {
+      "oracle_id": "58aac732-3f03-4551-a684-6cb0e3b31c09",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "If a card has multiple abilities giving you permission to cast it, such as two escape abilities or an escape ability and a flashback ability, you choose which one to apply. The others have no effect."
+    },
+    {
+      "oracle_id": "58aac732-3f03-4551-a684-6cb0e3b31c09",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "Once you begin casting a spell with escape, it immediately moves to the stack. Players can't take any other actions until you're done casting the spell."
+    },
+    {
+      "oracle_id": "58aac732-3f03-4551-a684-6cb0e3b31c09",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "The ability Skyway Robber escapes with only allows you to cast cards exiled with its escape ability the last time it escaped. If it dies and escapes again later, or if it moves to another zone and returns to the battlefield, you won't be able to cast any of the cards exiled with it before."
+    },
+    {
+      "oracle_id": "58aac732-3f03-4551-a684-6cb0e3b31c09",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "If a card with escape is put into your graveyard during your turn, you'll be able to cast it right away if it's legal to do so, before an opponent can take any actions."
+    },
+    {
+      "oracle_id": "58aac732-3f03-4551-a684-6cb0e3b31c09",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "If you cast a spell with its escape permission, you can't choose to apply any other alternative costs or to cast it without paying its mana cost. If it has any additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "58aac732-3f03-4551-a684-6cb0e3b31c09",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an escape cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was and no matter whether an alternative cost was paid."
+    },
+    {
+      "oracle_id": "58aac732-3f03-4551-a684-6cb0e3b31c09",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "After an escaped spell resolves, it returns to its owner's graveyard if it's not a permanent spell. If it is a permanent spell, it enters the battlefield and will return to its owner's graveyard if it dies later."
+    },
+    {
+      "oracle_id": "58aac732-3f03-4551-a684-6cb0e3b31c09",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "Escape's permission doesn't change when you may cast the spell from your graveyard."
+    },
+    {
+      "oracle_id": "649e7237-b38b-43e9-83f4-763751fb1bea",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an escape cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was and no matter whether an alternative cost was paid."
+    },
+    {
+      "oracle_id": "649e7237-b38b-43e9-83f4-763751fb1bea",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If you cast a spell with its escape permission, you can't choose to apply any other alternative costs or to cast it without paying its mana cost. If it has any additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "649e7237-b38b-43e9-83f4-763751fb1bea",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card with escape is put into your graveyard during your turn, you'll be able to cast it right away if it's legal to do so, before an opponent can take any actions."
+    },
+    {
+      "oracle_id": "649e7237-b38b-43e9-83f4-763751fb1bea",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Once you begin casting a spell with escape, it immediately moves to the stack. Players can't take any other actions until you're done casting the spell."
+    },
+    {
+      "oracle_id": "649e7237-b38b-43e9-83f4-763751fb1bea",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Escape's permission doesn't change when you may cast the spell from your graveyard."
+    },
+    {
+      "oracle_id": "649e7237-b38b-43e9-83f4-763751fb1bea",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If the target creature is an illegal target when Polukranos's activated ability tries to resolve, the ability doesn't resolve. If Polukranos is no longer on the battlefield, the target creature won't deal or be dealt damage."
+    },
+    {
+      "oracle_id": "649e7237-b38b-43e9-83f4-763751fb1bea",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If an amount of damage would be dealt to Polukranos greater than the number of +1/+1 counters on it, all of that damage is prevented, and all of those counters are removed. In most cases, this will result in Polukranos having 0 toughness, so it will be put into its owner's graveyard."
+    },
+    {
+      "oracle_id": "649e7237-b38b-43e9-83f4-763751fb1bea",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "After an escaped spell resolves, it returns to its owner's graveyard if it's not a permanent spell. If it is a permanent spell, it enters the battlefield and will return to its owner's graveyard if it dies later. Perhaps it will escape again—good underworld security is so hard to come by these days."
+    },
+    {
+      "oracle_id": "649e7237-b38b-43e9-83f4-763751fb1bea",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card has multiple abilities giving you permission to cast it, such as two escape abilities or an escape ability and a flashback ability, you choose which one to apply. The others have no effect."
+    },
+    {
+      "oracle_id": "649e7237-b38b-43e9-83f4-763751fb1bea",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If damage that can't be prevented is dealt to Polukranos, the damage is dealt and you'll simultaneously remove that many +1/+1 counters from it, all before the game checks for lethal damage."
+    },
+    {
+      "oracle_id": "8f94754d-fb2a-4634-a1de-049c82fa6f30",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an escape cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was and no matter whether an alternative cost was paid."
+    },
+    {
+      "oracle_id": "8f94754d-fb2a-4634-a1de-049c82fa6f30",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "When Tizerus Charger escapes, it enters the battlefield and will return to its owner's graveyard if it dies later. From there, it can escape again."
+    },
+    {
+      "oracle_id": "8f94754d-fb2a-4634-a1de-049c82fa6f30",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If a card has multiple abilities giving you permission to cast it, such as two escape abilities or an escape ability and a flashback ability, you choose which one to apply. The others have no effect."
+    },
+    {
+      "oracle_id": "8f94754d-fb2a-4634-a1de-049c82fa6f30",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "You make the choice between a +1/+1 counter and a flying counter as Tizerus Charger enters the battlefield, not as you cast it with escape."
+    },
+    {
+      "oracle_id": "8f94754d-fb2a-4634-a1de-049c82fa6f30",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Once you begin casting a spell with escape, it immediately moves to the stack. Players can't take any other actions until you're done casting the spell."
+    },
+    {
+      "oracle_id": "8f94754d-fb2a-4634-a1de-049c82fa6f30",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If a card with escape is put into your graveyard during your turn, you'll be able to cast it right away if it's legal to do so, before an opponent can take any actions."
+    },
+    {
+      "oracle_id": "8f94754d-fb2a-4634-a1de-049c82fa6f30",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If you cast a spell with its escape permission, you can't choose to apply any other alternative costs or to cast it without paying its mana cost. If it has any additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "8f94754d-fb2a-4634-a1de-049c82fa6f30",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Escape's permission doesn't change when you may cast the spell from your graveyard."
+    },
+    {
+      "oracle_id": "960cff3b-678c-404e-a643-ac5e91e6b50c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "A card, spell, or permanent is an outlaw if it has the Assassin, Mercenary, Pirate, Rogue, or Warlock creature type. It doesn't matter if it has more than one of those creature types; as long as it has at least one, it's an outlaw."
+    },
+    {
+      "oracle_id": "960cff3b-678c-404e-a643-ac5e91e6b50c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Escape's permission doesn't change when you may cast the spell from your graveyard."
+    },
+    {
+      "oracle_id": "960cff3b-678c-404e-a643-ac5e91e6b50c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a card has multiple abilities giving you permission to cast it, such as two escape abilities or an escape ability and a flashback ability, you choose which one to apply. The others have no effect."
+    },
+    {
+      "oracle_id": "960cff3b-678c-404e-a643-ac5e91e6b50c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an escape cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was and no matter whether an alternative cost was paid."
+    },
+    {
+      "oracle_id": "960cff3b-678c-404e-a643-ac5e91e6b50c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a card with escape is put into your graveyard during your turn, you'll be able to cast it right away if it's legal to do so, before an opponent can take any actions."
+    },
+    {
+      "oracle_id": "960cff3b-678c-404e-a643-ac5e91e6b50c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Once you begin casting a spell with escape, it immediately moves to the stack. Players can't take any other actions until you're done casting the spell."
+    },
+    {
+      "oracle_id": "960cff3b-678c-404e-a643-ac5e91e6b50c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "After an escaped spell resolves, it returns to its owner's graveyard if it's not a permanent spell. If it is a permanent spell, it enters the battlefield and will return to its owner's graveyard if it dies later. Perhaps it will escape again—good underworld security is so hard to come by these days."
+    },
+    {
+      "oracle_id": "960cff3b-678c-404e-a643-ac5e91e6b50c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Outlaw is not a creature type. If an effect asks you to choose a creature type, you can't choose outlaw."
+    },
+    {
+      "oracle_id": "960cff3b-678c-404e-a643-ac5e91e6b50c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If you cast a spell with its escape permission, you can't choose to apply any other alternative costs or to cast it without paying its mana cost. If it has any additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "960cff3b-678c-404e-a643-ac5e91e6b50c",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an ability refers to an outlaw or whether a player controls an outlaw, it's referring only to permanents with one or more of the creature types specified above. Notably, it's not referring to any spell or card not on the battlefield. However, other abilities may refer to an \"outlaw spell\" or \"outlaw card\" in a zone other than the battlefield. Those abilities refer to spells and cards with one or more of the specified creature types."
+    },
+    {
+      "oracle_id": "a1418e8d-dea5-43e1-b041-3f6a88f9a6d7",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Once you begin casting a spell with escape, it immediately moves to the stack. Players can't take any other actions until you're done casting the spell."
+    },
+    {
+      "oracle_id": "a1418e8d-dea5-43e1-b041-3f6a88f9a6d7",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card with escape is put into your graveyard during your turn, you'll be able to cast it right away if it's legal to do so, before an opponent can take any actions."
+    },
+    {
+      "oracle_id": "a1418e8d-dea5-43e1-b041-3f6a88f9a6d7",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card has multiple abilities giving you permission to cast it, such as two escape abilities or an escape ability and a flashback ability, you choose which one to apply. The others have no effect."
+    },
+    {
+      "oracle_id": "a1418e8d-dea5-43e1-b041-3f6a88f9a6d7",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an escape cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was and no matter whether an alternative cost was paid."
+    },
+    {
+      "oracle_id": "a1418e8d-dea5-43e1-b041-3f6a88f9a6d7",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If Underworld Rage-Hound can't attack for any reason (such as being tapped or having come under that player's control that turn), then it doesn't attack. If there's a cost associated with having it attack, the player isn't forced to pay that cost, so it doesn't have to attack in that case either."
+    },
+    {
+      "oracle_id": "a1418e8d-dea5-43e1-b041-3f6a88f9a6d7",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "After an escaped spell resolves, it returns to its owner's graveyard if it's not a permanent spell. If it is a permanent spell, it enters the battlefield and will return to its owner's graveyard if it dies later. Perhaps it will escape again—good underworld security is so hard to come by these days."
+    },
+    {
+      "oracle_id": "a1418e8d-dea5-43e1-b041-3f6a88f9a6d7",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If you cast a spell with its escape permission, you can't choose to apply any other alternative costs or to cast it without paying its mana cost. If it has any additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "a1418e8d-dea5-43e1-b041-3f6a88f9a6d7",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Escape's permission doesn't change when you may cast the spell from your graveyard."
+    },
+    {
+      "oracle_id": "a44955e7-f1ad-41b9-b93d-0a980ac341d8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If you cast a spell with its escape permission, you can't choose to apply any other alternative costs or to cast it without paying its mana cost. If it has any additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "a44955e7-f1ad-41b9-b93d-0a980ac341d8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card has multiple abilities giving you permission to cast it, such as two escape abilities or an escape ability and a flashback ability, you choose which one to apply. The others have no effect."
+    },
+    {
+      "oracle_id": "a44955e7-f1ad-41b9-b93d-0a980ac341d8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an escape cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was and no matter whether an alternative cost was paid."
+    },
+    {
+      "oracle_id": "a44955e7-f1ad-41b9-b93d-0a980ac341d8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Escape's permission doesn't change when you may cast the spell from your graveyard."
+    },
+    {
+      "oracle_id": "a44955e7-f1ad-41b9-b93d-0a980ac341d8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "As the triggered ability resolves, first the next opponent in turn order (or, if it's an opponent's turn, the opponent whose turn it is) chooses a creature they control, then each other opponent in turn order does the same, knowing the choices made before them. Then all the chosen creatures are sacrificed at the same time."
+    },
+    {
+      "oracle_id": "a44955e7-f1ad-41b9-b93d-0a980ac341d8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Once you begin casting a spell with escape, it immediately moves to the stack. Players can't take any other actions until you're done casting the spell."
+    },
+    {
+      "oracle_id": "a44955e7-f1ad-41b9-b93d-0a980ac341d8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "After an escaped spell resolves, it returns to its owner's graveyard if it's not a permanent spell. If it is a permanent spell, it enters the battlefield and will return to its owner's graveyard if it dies later. Perhaps it will escape again—good underworld security is so hard to come by these days."
+    },
+    {
+      "oracle_id": "a44955e7-f1ad-41b9-b93d-0a980ac341d8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card with escape is put into your graveyard during your turn, you'll be able to cast it right away if it's legal to do so, before an opponent can take any actions."
+    },
+    {
+      "oracle_id": "c45423ad-1920-46f7-bcc1-ecade5880821",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Escape's permission doesn't change when you may cast the spell from your graveyard."
+    },
+    {
+      "oracle_id": "c45423ad-1920-46f7-bcc1-ecade5880821",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If you cast a spell with its escape permission, you can't choose to apply any other alternative costs or to cast it without paying its mana cost. If it has any additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "c45423ad-1920-46f7-bcc1-ecade5880821",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card has multiple abilities giving you permission to cast it, such as two escape abilities or an escape ability and a flashback ability, you choose which one to apply. The others have no effect."
+    },
+    {
+      "oracle_id": "c45423ad-1920-46f7-bcc1-ecade5880821",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card with escape is put into your graveyard during your turn, you'll be able to cast it right away if it's legal to do so, before an opponent can take any actions."
+    },
+    {
+      "oracle_id": "c45423ad-1920-46f7-bcc1-ecade5880821",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Once you begin casting a spell with escape, it immediately moves to the stack. Players can't take any other actions until you're done casting the spell."
+    },
+    {
+      "oracle_id": "c45423ad-1920-46f7-bcc1-ecade5880821",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If Chainweb Aracnir leaves the battlefield before its triggered ability resolves, use its power as it last existed on the battlefield to determine how much damage it deals."
+    },
+    {
+      "oracle_id": "c45423ad-1920-46f7-bcc1-ecade5880821",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "After an escaped spell resolves, it returns to its owner's graveyard if it's not a permanent spell. If it is a permanent spell, it enters the battlefield and will return to its owner's graveyard if it dies later. Perhaps it will escape again—good underworld security is so hard to come by these days."
+    },
+    {
+      "oracle_id": "c45423ad-1920-46f7-bcc1-ecade5880821",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an escape cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was and no matter whether an alternative cost was paid."
+    },
+    {
+      "oracle_id": "f62784c0-9c67-4a05-a09b-aabf03a9390f",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "After an escaped spell resolves, it returns to its owner's graveyard if it's not a permanent spell. If it is a permanent spell, it enters the battlefield and will return to its owner's graveyard if it dies later. Perhaps it will escape again—good underworld security is so hard to come by these days."
+    },
+    {
+      "oracle_id": "f62784c0-9c67-4a05-a09b-aabf03a9390f",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If you cast a spell with its escape permission, you can't choose to apply any other alternative costs or to cast it without paying its mana cost. If it has any additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "f62784c0-9c67-4a05-a09b-aabf03a9390f",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an escape cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was and no matter whether an alternative cost was paid."
+    },
+    {
+      "oracle_id": "f62784c0-9c67-4a05-a09b-aabf03a9390f",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Once you begin casting a spell with escape, it immediately moves to the stack. Players can't take any other actions until you're done casting the spell."
+    },
+    {
+      "oracle_id": "f62784c0-9c67-4a05-a09b-aabf03a9390f",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card with escape is put into your graveyard during your turn, you'll be able to cast it right away if it's legal to do so, before an opponent can take any actions."
+    },
+    {
+      "oracle_id": "f62784c0-9c67-4a05-a09b-aabf03a9390f",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card has multiple abilities giving you permission to cast it, such as two escape abilities or an escape ability and a flashback ability, you choose which one to apply. The others have no effect."
+    },
+    {
+      "oracle_id": "f62784c0-9c67-4a05-a09b-aabf03a9390f",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Escape's permission doesn't change when you may cast the spell from your graveyard."
+    },
+    {
+      "oracle_id": "fe983088-6e0d-4544-90bd-f5ebb95c3418",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "After an escaped spell resolves, it returns to its owner's graveyard if it's not a permanent spell. If it is a permanent spell, it enters the battlefield and will return to its owner's graveyard if it dies later. Perhaps it will escape again—good underworld security is so hard to come by these days."
+    },
+    {
+      "oracle_id": "fe983088-6e0d-4544-90bd-f5ebb95c3418",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If you cast a spell with its escape permission, you can't choose to apply any other alternative costs or to cast it without paying its mana cost. If it has any additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "fe983088-6e0d-4544-90bd-f5ebb95c3418",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Once you begin casting a spell with escape, it immediately moves to the stack. Players can't take any other actions until you're done casting the spell."
+    },
+    {
+      "oracle_id": "fe983088-6e0d-4544-90bd-f5ebb95c3418",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card has multiple abilities giving you permission to cast it, such as two escape abilities or an escape ability and a flashback ability, you choose which one to apply. The others have no effect."
+    },
+    {
+      "oracle_id": "fe983088-6e0d-4544-90bd-f5ebb95c3418",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Escape's permission doesn't change when you may cast the spell from your graveyard."
+    },
+    {
+      "oracle_id": "fe983088-6e0d-4544-90bd-f5ebb95c3418",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card with escape is put into your graveyard during your turn, you'll be able to cast it right away if it's legal to do so, before an opponent can take any actions."
+    },
+    {
+      "oracle_id": "fe983088-6e0d-4544-90bd-f5ebb95c3418",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an escape cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was and no matter whether an alternative cost was paid."
+    }
+  ]
+}

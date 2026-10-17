@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "a33a131a837c7b85cee0c1f048d6a56457b4d927bb601372801d9a1642edef43",
-  "declaration_source_fingerprint": "1af27c1c8e8d49bd5cfa5a401a63184fd888daf378c95fd0f111429b88c20639",
+  "registry_fingerprint": "067fc6ebd2d571f48d98f4ed57a16a58c97b9ff9c56b0e36ccda2e7b2dafdea3",
+  "declaration_source_fingerprint": "2daa5f15fbca0d4bcdbca3e8bb85bc8b0b6ed3c96f3488d7026dc33205192768",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -65333,19 +65333,105 @@
     {
       "capability_id": "counter.producer.dynamic_self_entry",
       "evidence_class": "interaction",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterRuntimeTests.test_actual_escape_counter_order_precedes_entry_trigger_and_copy_blink_reset",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Woe Strider Escape freezes its two-counter amount before Hardened Scales/Branching Evolution ordering; affected-principal pending load and replay preserve counter placement before the Goat trigger. Actual Clone and Flicker of Fate do not inherit the Escape casting fact or counters."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterRuntimeTests.test_actual_non_escape_graveyard_cast_offers_both_methods_without_free_counters",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "A constructed reusable control has both self graveyard permission and Escape. Actual offers include both normal and Escape costs; choosing normal preserves the other graveyard cards and receives zero Escape counters, with pending load and pre-action replay."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterRuntimeTests.test_actual_normal_cast_and_blink_do_not_receive_escape_counters",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Escape entry counters use actual method plus graveyard origin; original casts, costs, counter placement, principal rollback, four-seat privacy, pending load and replay are distinguished from normal casts and fresh blink entries."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterRuntimeTests.test_actual_typhon_escape_pays_costs_and_enters_with_three_counters",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Escape entry counters use actual method plus graveyard origin; original casts, costs, counter placement, principal rollback, four-seat privacy, pending load and replay are distinguished from normal casts and fresh blink entries."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_amount_model_covers_each_closed_public_fact",
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Resolve every closed stack, cast-provenance, turn-history, and threshold source through the same immutable typed amount model."
     },
@@ -65356,15 +65442,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Evaluate the shared component at the prospective battlefield boundary and stop applying a graveyard-only ability removal when the card becomes a new object."
     },
@@ -65375,15 +65463,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Suppress the entry replacement when the same typed ability removal applies to the permanent on the prospective battlefield."
     },
@@ -65394,15 +65484,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Freeze a cast-X entry amount before ordering two competing quantity replacements, then commit only the selected replacement path."
     },
@@ -65413,15 +65505,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Resolve one permanent spell copy through the canonical copy-object entry path with copied X while cast origin, mana payment, and mana-color provenance remain absent."
     },
@@ -65432,15 +65526,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Carry committed cast X, hand origin, and mana payment provenance into the canonical resolving-entry replacement snapshot."
     },
@@ -65451,15 +65547,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Evaluate current layer-4 types through the shared layer-5 query, freeze the pre-entry count, and preserve it when battlefield state changes during replacement suspension."
     },
@@ -65470,17 +65568,61 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterRuntimeTests.test_actual_escape_counter_order_precedes_entry_trigger_and_copy_blink_reset",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Woe Strider Escape freezes its two-counter amount before Hardened Scales/Branching Evolution ordering; affected-principal pending load and replay preserve counter placement before the Goat trigger. Actual Clone and Flicker of Fate do not inherit the Escape casting fact or counters."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterRuntimeTests.test_actual_typhon_escape_pays_costs_and_enters_with_three_counters",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Escape entry counters use actual method plus graveyard origin; original casts, costs, counter placement, principal rollback, four-seat privacy, pending load and replay are distinguished from normal casts and fresh blink entries."
     },
     {
       "capability_id": "counter.producer.dynamic_self_entry",
@@ -65489,15 +65631,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Route competing entry-counter replacement choices to the prospective controller in four-player state."
     },
@@ -65508,17 +65652,40 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterRuntimeTests.test_escape_provenance_omission_is_killed_by_native_witness",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Escape method/origin/copy boundary, malformed provenance, atomic payment and native omission mutation."
     },
     {
       "capability_id": "counter.producer.dynamic_self_entry",
@@ -65527,15 +65694,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Remove the dynamic entry lowering and require the source-spanned X entry ability to lose its exact typed node."
     },
@@ -65546,15 +65715,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Corrupt the frozen X amount before replacement preparation and require the committed counter total to reject the survivor."
     },
@@ -65565,17 +65736,103 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "negative",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterCompilerTests.test_escaped_counter_grammar_and_boundaries_are_source_spanned",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Escape entry counters use actual method plus graveyard origin; original casts, costs, counter placement, principal rollback, four-seat privacy, pending load and replay are distinguished from normal casts and fresh blink entries."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "negative",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterCompilerTests.test_escaped_fact_distinguishes_actual_method_origin_and_spell_copies",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Escape entry counters use actual method plus graveyard origin; original casts, costs, counter placement, principal rollback, four-seat privacy, pending load and replay are distinguished from normal casts and fresh blink entries."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "negative",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterRuntimeTests.test_actual_non_escape_graveyard_cast_offers_both_methods_without_free_counters",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "A constructed reusable control has both self graveyard permission and Escape. Actual offers include both normal and Escape costs; choosing normal preserves the other graveyard cards and receives zero Escape counters, with pending load and pre-action replay."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "negative",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterRuntimeTests.test_actual_normal_cast_and_blink_do_not_receive_escape_counters",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Escape entry counters use actual method plus graveyard origin; original casts, costs, counter placement, principal rollback, four-seat privacy, pending load and replay are distinguished from normal casts and fresh blink entries."
     },
     {
       "capability_id": "counter.producer.dynamic_self_entry",
@@ -65584,15 +65841,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Reject power, repeated kicker, unavailable history, life gain, choice, external-object, and multiple-counter forms before runtime admission."
     },
@@ -65603,15 +65862,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Do not authorize a source-pinned entry replacement when the prospective battlefield object will lack that component."
     },
@@ -65622,15 +65883,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Use the shared layer-6 static-component query to suppress a source-pinned entry replacement after a relevant off-battlefield remove-all-abilities effect."
     },
@@ -65641,15 +65904,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Produce no child counter event for zero or noncast X and preserve an already-departed source without counter mutation."
     },
@@ -65660,17 +65925,103 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterCompilerTests.test_escaped_counter_grammar_and_boundaries_are_source_spanned",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Escape entry counters use actual method plus graveyard origin; original casts, costs, counter placement, principal rollback, four-seat privacy, pending load and replay are distinguished from normal casts and fresh blink entries."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterRuntimeTests.test_actual_escape_counter_order_precedes_entry_trigger_and_copy_blink_reset",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Woe Strider Escape freezes its two-counter amount before Hardened Scales/Branching Evolution ordering; affected-principal pending load and replay preserve counter placement before the Goat trigger. Actual Clone and Flicker of Fate do not inherit the Escape casting fact or counters."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterRuntimeTests.test_actual_originals_close_only_when_all_siblings_are_supported",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Escape entry counters use actual method plus graveyard origin; original casts, costs, counter placement, principal rollback, four-seat privacy, pending load and replay are distinguished from normal casts and fresh blink entries."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterRuntimeTests.test_actual_typhon_escape_pays_costs_and_enters_with_three_counters",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Escape entry counters use actual method plus graveyard origin; original casts, costs, counter placement, principal rollback, four-seat privacy, pending load and replay are distinguished from normal casts and fresh blink entries."
     },
     {
       "capability_id": "counter.producer.dynamic_self_entry",
@@ -65679,15 +66030,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Lower X, mana-color, attack, graveyard-query, death-count, and hand-cast forms to one typed entry amount descriptor."
     },
@@ -65698,15 +66051,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Compute exact results for X, mana colors, attack, controller and all-player spell histories, deaths, opponent life loss, cast origin, and mana payment."
     },
@@ -65717,15 +66072,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Retain the printed entry component when an ability removal is confined to the origin-zone incarnation and cannot affect the entering permanent."
     },
@@ -65736,15 +66093,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Preserve copied X on a permanent spell copy that becomes a token while preventing copied stack context from impersonating cast provenance."
     },
@@ -65755,15 +66114,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Cast an X permanent from hand through the ordinary proposal, total-cost, payment, stack, and resolution owners and enter with the committed X counters."
     },
@@ -65774,15 +66135,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Use current attack and death history plus cast origin to produce or suppress the exact entry amount."
     },
@@ -65793,15 +66156,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Resolve cast X, distinct mana colors, and a cycle-safe public object count into exact positive entry counters."
     },
@@ -65812,15 +66177,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Preserve a typed characteristic change and the dynamic entry component across the permanent spell's stack-to-battlefield identity."
     },
@@ -65831,17 +66198,61 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterRuntimeTests.test_actual_escape_counter_order_precedes_entry_trigger_and_copy_blink_reset",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Woe Strider Escape freezes its two-counter amount before Hardened Scales/Branching Evolution ordering; affected-principal pending load and replay preserve counter placement before the Goat trigger. Actual Clone and Flicker of Fate do not inherit the Escape casting fact or counters."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterRuntimeTests.test_actual_typhon_escape_pays_costs_and_enters_with_three_counters",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Escape entry counters use actual method plus graveyard origin; original casts, costs, counter placement, principal rollback, four-seat privacy, pending load and replay are distinguished from normal casts and fresh blink entries."
     },
     {
       "capability_id": "counter.producer.dynamic_self_entry",
@@ -65850,17 +66261,124 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Expose replacement labels only to the prospective controller and omit physical object identity from every projected choice."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "property",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterCompilerTests.test_escaped_fact_distinguishes_actual_method_origin_and_spell_copies",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Escape method/origin/copy boundary, malformed provenance, atomic payment and native omission mutation."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterRuntimeTests.test_actual_escape_counter_order_precedes_entry_trigger_and_copy_blink_reset",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Woe Strider Escape freezes its two-counter amount before Hardened Scales/Branching Evolution ordering; affected-principal pending load and replay preserve counter placement before the Goat trigger. Actual Clone and Flicker of Fate do not inherit the Escape casting fact or counters."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterRuntimeTests.test_actual_non_escape_graveyard_cast_offers_both_methods_without_free_counters",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "A constructed reusable control has both self graveyard permission and Escape. Actual offers include both normal and Escape costs; choosing normal preserves the other graveyard cards and receives zero Escape counters, with pending load and pre-action replay."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterRuntimeTests.test_actual_normal_cast_and_blink_do_not_receive_escape_counters",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Escape entry counters use actual method plus graveyard origin; original casts, costs, counter placement, principal rollback, four-seat privacy, pending load and replay are distinguished from normal casts and fresh blink entries."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterRuntimeTests.test_actual_typhon_escape_pays_costs_and_enters_with_three_counters",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Escape entry counters use actual method plus graveyard origin; original casts, costs, counter placement, principal rollback, four-seat privacy, pending load and replay are distinguished from normal casts and fresh blink entries."
     },
     {
       "capability_id": "counter.producer.dynamic_self_entry",
@@ -65869,15 +66387,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Persist the frozen component amount and pending replacement journal, then replay the selected ordering to the same authoritative hash."
     },
@@ -65888,17 +66408,61 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Shared fixed battlefield syntax remains constrained by the existing static quantity schema; native current counters, controller-relative Aura modification, subtype exclusion and type-change consequences with replay."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterRuntimeTests.test_actual_escape_counter_order_precedes_entry_trigger_and_copy_blink_reset",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Woe Strider Escape freezes its two-counter amount before Hardened Scales/Branching Evolution ordering; affected-principal pending load and replay preserve counter placement before the Goat trigger. Actual Clone and Flicker of Fate do not inherit the Escape casting fact or counters."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_escaped_entry_counters.EscapedEntryCounterRuntimeTests.test_actual_typhon_escape_pays_costs_and_enters_with_three_counters",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.12",
+        "614.16",
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Escape method/origin/copy boundary, malformed provenance, atomic payment and native omission mutation."
     },
     {
       "capability_id": "counter.producer.dynamic_self_entry",
@@ -65907,15 +66471,17 @@
       "official_rule_ids": [
         "107.3m",
         "122.6",
-        "614.1c",
         "614.12",
         "614.16",
-        "616.1"
+        "614.1c",
+        "616.1",
+        "702.138b",
+        "702.138c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
       "applicability_note": "Abort the replacement continuation after the source leaves the stack without reentering or placing counters on the stale incarnation."
     },
@@ -160778,5 +161344,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "ebc7d6a6d463e9790a8735d89ce50b6f53b5a239b02ed527504315698f46b929"
+  "fingerprint": "a85222e725237b29805db7667ad8f48270170d4214773c48c7f179f30bd475c7"
 }

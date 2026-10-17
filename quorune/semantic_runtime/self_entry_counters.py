@@ -198,6 +198,8 @@ class DynamicSelfEntryCounterHandler:
         "614.12",
         "614.16",
         "616.1",
+        "702.138b",
+        "702.138c",
     )
     capability_dependencies: tuple[str, ...] = (
         "counter.producer.dynamic_self_entry",

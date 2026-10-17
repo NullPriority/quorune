@@ -62,6 +62,7 @@
     "tests/fixtures/entry-color-composition-cards.json",
     "tests/fixtures/entry-copy-cards.json",
     "tests/fixtures/entry-designation-cards.json",
+    "tests/fixtures/escaped-entry-counter-cards.json",
     "tests/fixtures/event-card-return.json",
     "tests/fixtures/event-player-subject-cards.json",
     "tests/fixtures/exert-cards.json",

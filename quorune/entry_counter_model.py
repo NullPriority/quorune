@@ -32,6 +32,7 @@ class DynamicEntryCounterValueSource(str, Enum):
     OPPONENTS_LIFE_LOST = "opponents_life_lost"
     PUBLIC_QUERY = "public_query"
     CAST_FROM_HAND = "cast_from_hand"
+    ESCAPED = "escaped"
     MANA_WAS_SPENT = "mana_was_spent"
     CONTROLLER_PERMANENTS_LEFT = "controller_permanents_left"
     CONTROLLER_LIFE_GAINED = "controller_life_gained"
@@ -121,6 +122,11 @@ class DynamicEntryCounterAmountSpec:
             raise EntryCounterError(
                 "Only public-query entry counter amounts accept a quantity"
             )
+        if self.value_source is DynamicEntryCounterValueSource.ESCAPED and (
+            self.calculation is not DynamicEntryCounterCalculation.FIXED_IF_AT_LEAST
+            or self.minimum != 1
+        ):
+            raise EntryCounterError("Escaped entry counters require one fixed existence threshold")
         if self.value_source is DynamicEntryCounterValueSource.CONTROLLER_PERMANENTS_LEFT and (
             self.calculation is not DynamicEntryCounterCalculation.FIXED_IF_AT_LEAST or self.minimum != 1
         ):

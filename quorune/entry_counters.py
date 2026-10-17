@@ -81,6 +81,18 @@ def dynamic_entry_counter_amount(
         value = int(
             was_cast and item.context.get("cast_origin") == "hand"
         )
+    elif source is DynamicEntryCounterValueSource.ESCAPED:
+        from .cast_lifecycles import FixedCastLifecycleKind, FixedCastLifecycleSpec
+
+        raw = item.context.get("fixed_cast_lifecycle") if was_cast else None
+        lifecycle = FixedCastLifecycleSpec.from_dict(raw) if raw is not None else None
+        value = int(
+            card.zone == "stack"
+            and was_cast
+            and item.context.get("cast_origin") == "graveyard"
+            and lifecycle is not None
+            and lifecycle.kind is FixedCastLifecycleKind.ESCAPE
+        )
     elif source is DynamicEntryCounterValueSource.MANA_WAS_SPENT:
         raw = item.context.get("mana_spent_total", 0) if was_cast else 0
         if type(raw) is not int or raw < 0:

@@ -590,6 +590,14 @@ public object count evaluated through the cycle-safe layer-5 quantity boundary.
 The resolving-entry coordinator freezes the resulting nonnegative amount by
 component identity before replacement ordering; a private replacement choice,
 save/load, or exact replay cannot recompute it. Zero creates no counter child.
+Fixed “escapes with” counters use this same amount owner. The typed predicate
+requires an actual spell cast from the graveyard with the Escape alternative
+cost; graveyard origin alone does not qualify. The amount is placed through
+the normal entry and counter replacement transaction before enter triggers.
+Ordinary casts, copied spells, copied permanents, and later blink entries do
+not inherit that casting fact. Counter choices, linked “enters this way”
+triggers, granted abilities, and “instead” overrides of ordinary entry counters
+remain outside this grammar.
 Permanent spell copies reuse the canonical copy object's copied X but never
 inherit cast-origin, mana-payment, or mana-color facts. Programs carrying the
 current-component marker consult the shared layer-6 applicability owner at the
