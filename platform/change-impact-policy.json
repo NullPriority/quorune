@@ -62,7 +62,10 @@
         "quorune/state.py",
         "quorune/*transaction*.py",
         "schemas/**",
-        "server/**"
+        "server/**",
+        "quorune/selection/target_query.py",
+        "quorune/semantic_runtime/direct_target_fields.py",
+        "quorune/semantic_runtime/values.py"
       ],
       "risk_class": "high_risk_source"
     },

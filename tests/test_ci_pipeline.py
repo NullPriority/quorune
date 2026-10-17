@@ -235,6 +235,14 @@ class CiPipelineTests(unittest.TestCase):
             "test_card_program_trust", ordinary["selected_test_modules"]
         )
         self.assertEqual(all_modules, set(high["selected_test_modules"]))
+        for path in (
+            "quorune/semantic_runtime/values.py",
+            "quorune/semantic_runtime/direct_target_fields.py",
+            "quorune/selection/target_query.py",
+        ):
+            with self.subTest(resolution_authority=path):
+                plan = selected_test_plan(classify_changes([path]))
+                self.assertEqual(all_modules, set(plan["selected_test_modules"]))
         self.assertEqual([], governance["python_matrix"]["include"])
         self.assertEqual(
             ("test_documentation_policy", "test_worktree_bootstrap"),
