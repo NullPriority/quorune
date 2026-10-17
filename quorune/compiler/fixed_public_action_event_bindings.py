@@ -237,6 +237,10 @@ def _public_sacrifice_spec(
 def _public_discard_spec(
     material_line: str,
 ) -> FixedPublicEventBindingSpec | None:
+    from .cycle_or_discard_bindings import cycle_or_discard_binding_spec
+    combined = cycle_or_discard_binding_spec(material_line)
+    if combined is not None:
+        return combined
     match = _PUBLIC_DISCARD_TRIGGER.fullmatch(material_line)
     if match is None:
         return None

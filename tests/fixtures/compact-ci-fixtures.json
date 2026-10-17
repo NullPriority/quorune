@@ -51,6 +51,7 @@
     "tests/fixtures/counter-qualified-zone-cards.json",
     "tests/fixtures/counter-replacement-cards.json",
     "tests/fixtures/creature-power-departure-cards.json",
+    "tests/fixtures/cycle-or-discard-event-cards.json",
     "tests/fixtures/damage-result-cards.json",
     "tests/fixtures/defender-permission-cards.json",
     "tests/fixtures/devoid-characteristics-cards.json",

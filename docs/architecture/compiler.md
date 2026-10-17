@@ -15,6 +15,15 @@ source counters on admitted sacrifice and discard subscriptions keep the
 ordinary put-or-decline choice; that composition does not admit optional bodies
 for independently unclosed public-event families.
 
+Closed “Whenever you cycle or discard a card” wording lowers to the existing
+discard occurrence. Cycling pays a discard cost, so this subscription triggers
+once for that card rather than independently subscribing to both events. The
+“another card” form also excludes the observer. Existing controller predicates,
+current battlefield ability presence, APNAP placement and independently closed
+result bodies retain their ordinary owners. Source-directed results bind the
+triggering source's incarnation, so departure cannot retarget a returned object.
+Other event unions remain residual.
+
 Fixed positive Rampage values lower to typed combat-trigger fragments, preserving
 each printed instance. The existing block-transition and continuous-effect
 owners execute the trigger; variable values and unrepresented sibling abilities

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "aa059efb0d388ef250cf4c938b48a09e8b22d94cfbd5ce801fafc99e87e541ef",
-  "declaration_source_fingerprint": "0cf8f860515992cfd6cb070930940ecf256075e31fdd38a8e041ae3a0ee7fa89",
+  "registry_fingerprint": "12f233db8d416bb2e9ff3f272c03b1e439ecf6bb7e56a8133a975753e044220d",
+  "declaration_source_fingerprint": "962b1ebc074953f52da32c196a5118462fb31b3f7f1c5bf8545a94f3c4155d04",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -136504,6 +136504,657 @@
       "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
     },
     {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_ability_removal_and_departure_keep_discovery_and_locked_trigger_distinct",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current Humble removal prevents discovery; an already placed trigger survives actual Unsummon departure; a replacement-adjusted cycling discard to exile still fires once. Pending save/load and pre-action replay are checked."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_archfiend_cycles_one_discard_into_one_counter_for_each_opponent_creature",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Archfiend places exactly one -1/-1 counter on each opposing creature for one actual cycling discard. Original Faith preserves one optional payment, paid and declined four-seat life consequences, principal-private pending choice, unauthorized rollback and resumed save/load replay."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_cycling_grows_only_the_controller_observer_once_before_private_draw",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed combined cycling/discard wording shares one canonical discard subscription. Native source-controller growth, one versus duplicate trigger, simultaneous whole-hand discard cardinality, private draw, rollback, pending load/replay and an admission-preserving inverted-controller mutant."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_faith_payment_resolves_once_and_retains_private_pending_choice",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Archfiend places exactly one -1/-1 counter on each opposing creature for one actual cycling discard. Original Faith preserves one optional payment, paid and declined four-seat life consequences, principal-private pending choice, unauthorized rollback and resumed save/load replay."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_replaced_cycling_discard_still_triggers_once",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current Humble removal prevents discovery; an already placed trigger survives actual Unsummon departure; a replacement-adjusted cycling discard to exile still fires once. Pending save/load and pre-action replay are checked."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_whole_hand_discard_triggers_per_card_and_keeps_other_seats_separate",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed combined cycling/discard wording shares one canonical discard subscription. Native source-controller growth, one versus duplicate trigger, simultaneous whole-hand discard cardinality, private draw, rollback, pending load/replay and an admission-preserving inverted-controller mutant."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_archfiend_cycles_one_discard_into_one_counter_for_each_opponent_creature",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Archfiend places exactly one -1/-1 counter on each opposing creature for one actual cycling discard. Original Faith preserves one optional payment, paid and declined four-seat life consequences, principal-private pending choice, unauthorized rollback and resumed save/load replay."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_cycling_grows_only_the_controller_observer_once_before_private_draw",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed combined cycling/discard wording shares one canonical discard subscription. Native source-controller growth, one versus duplicate trigger, simultaneous whole-hand discard cardinality, private draw, rollback, pending load/replay and an admission-preserving inverted-controller mutant."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_faith_payment_resolves_once_and_retains_private_pending_choice",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Archfiend places exactly one -1/-1 counter on each opposing creature for one actual cycling discard. Original Faith preserves one optional payment, paid and declined four-seat life consequences, principal-private pending choice, unauthorized rollback and resumed save/load replay."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_whole_hand_discard_triggers_per_card_and_keeps_other_seats_separate",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed combined cycling/discard wording shares one canonical discard subscription. Native source-controller growth, one versus duplicate trigger, simultaneous whole-hand discard cardinality, private draw, rollback, pending load/replay and an admission-preserving inverted-controller mutant."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_controller_predicate_mutation_keeps_admission_but_changes_native_consequences",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed combined cycling/discard wording shares one canonical discard subscription. Native source-controller growth, one versus duplicate trigger, simultaneous whole-hand discard cardinality, private draw, rollback, pending load/replay and an admission-preserving inverted-controller mutant."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardCompilerTests.test_unknown_unions_results_and_missing_dependencies_remain_residual",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed combined cycling/discard wording shares one canonical discard subscription. Native source-controller growth, one versus duplicate trigger, simultaneous whole-hand discard cardinality, private draw, rollback, pending load/replay and an admission-preserving inverted-controller mutant."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_original_cards_require_complete_results_and_normal_registration",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed combined cycling/discard wording shares one canonical discard subscription. Native source-controller growth, one versus duplicate trigger, simultaneous whole-hand discard cardinality, private draw, rollback, pending load/replay and an admission-preserving inverted-controller mutant."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardCompilerTests.test_combined_binding_uses_one_discard_occurrence_and_preserves_another",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed combined cycling/discard wording shares one canonical discard subscription. Native source-controller growth, one versus duplicate trigger, simultaneous whole-hand discard cardinality, private draw, rollback, pending load/replay and an admission-preserving inverted-controller mutant."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_cycling_grows_only_the_controller_observer_once_before_private_draw",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed combined cycling/discard wording shares one canonical discard subscription. Native source-controller growth, one versus duplicate trigger, simultaneous whole-hand discard cardinality, private draw, rollback, pending load/replay and an admission-preserving inverted-controller mutant."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_whole_hand_discard_triggers_per_card_and_keeps_other_seats_separate",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed combined cycling/discard wording shares one canonical discard subscription. Native source-controller growth, one versus duplicate trigger, simultaneous whole-hand discard cardinality, private draw, rollback, pending load/replay and an admission-preserving inverted-controller mutant."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_original_cards_require_complete_results_and_normal_registration",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed combined cycling/discard wording shares one canonical discard subscription. Native source-controller growth, one versus duplicate trigger, simultaneous whole-hand discard cardinality, private draw, rollback, pending load/replay and an admission-preserving inverted-controller mutant."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_cycling_grows_only_the_controller_observer_once_before_private_draw",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed combined cycling/discard wording shares one canonical discard subscription. Native source-controller growth, one versus duplicate trigger, simultaneous whole-hand discard cardinality, private draw, rollback, pending load/replay and an admission-preserving inverted-controller mutant."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_faith_payment_resolves_once_and_retains_private_pending_choice",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Archfiend places exactly one -1/-1 counter on each opposing creature for one actual cycling discard. Original Faith preserves one optional payment, paid and declined four-seat life consequences, principal-private pending choice, unauthorized rollback and resumed save/load replay."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "property",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardCompilerTests.test_combined_binding_uses_one_discard_occurrence_and_preserves_another",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed combined cycling/discard wording shares one canonical discard subscription. Native source-controller growth, one versus duplicate trigger, simultaneous whole-hand discard cardinality, private draw, rollback, pending load/replay and an admission-preserving inverted-controller mutant."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "property",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardCompilerTests.test_unknown_unions_results_and_missing_dependencies_remain_residual",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed combined cycling/discard wording shares one canonical discard subscription. Native source-controller growth, one versus duplicate trigger, simultaneous whole-hand discard cardinality, private draw, rollback, pending load/replay and an admission-preserving inverted-controller mutant."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_ability_removal_and_departure_keep_discovery_and_locked_trigger_distinct",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current Humble removal prevents discovery; an already placed trigger survives actual Unsummon departure; a replacement-adjusted cycling discard to exile still fires once. Pending save/load and pre-action replay are checked."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_archfiend_cycles_one_discard_into_one_counter_for_each_opponent_creature",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Archfiend places exactly one -1/-1 counter on each opposing creature for one actual cycling discard. Original Faith preserves one optional payment, paid and declined four-seat life consequences, principal-private pending choice, unauthorized rollback and resumed save/load replay."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_cycling_grows_only_the_controller_observer_once_before_private_draw",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed combined cycling/discard wording shares one canonical discard subscription. Native source-controller growth, one versus duplicate trigger, simultaneous whole-hand discard cardinality, private draw, rollback, pending load/replay and an admission-preserving inverted-controller mutant."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_faith_payment_resolves_once_and_retains_private_pending_choice",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Archfiend places exactly one -1/-1 counter on each opposing creature for one actual cycling discard. Original Faith preserves one optional payment, paid and declined four-seat life consequences, principal-private pending choice, unauthorized rollback and resumed save/load replay."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_replaced_cycling_discard_still_triggers_once",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current Humble removal prevents discovery; an already placed trigger survives actual Unsummon departure; a replacement-adjusted cycling discard to exile still fires once. Pending save/load and pre-action replay are checked."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_whole_hand_discard_triggers_per_card_and_keeps_other_seats_separate",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed combined cycling/discard wording shares one canonical discard subscription. Native source-controller growth, one versus duplicate trigger, simultaneous whole-hand discard cardinality, private draw, rollback, pending load/replay and an admission-preserving inverted-controller mutant."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_archfiend_cycles_one_discard_into_one_counter_for_each_opponent_creature",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Archfiend places exactly one -1/-1 counter on each opposing creature for one actual cycling discard. Original Faith preserves one optional payment, paid and declined four-seat life consequences, principal-private pending choice, unauthorized rollback and resumed save/load replay."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_cycling_grows_only_the_controller_observer_once_before_private_draw",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed combined cycling/discard wording shares one canonical discard subscription. Native source-controller growth, one versus duplicate trigger, simultaneous whole-hand discard cardinality, private draw, rollback, pending load/replay and an admission-preserving inverted-controller mutant."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_faith_payment_resolves_once_and_retains_private_pending_choice",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Archfiend places exactly one -1/-1 counter on each opposing creature for one actual cycling discard. Original Faith preserves one optional payment, paid and declined four-seat life consequences, principal-private pending choice, unauthorized rollback and resumed save/load replay."
+    },
+    {
+      "capability_id": "trigger.event.cycle_or_discard",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_cycle_or_discard_events.CycleOrDiscardRuntimeTests.test_actual_whole_hand_discard_triggers_per_card_and_keeps_other_seats_separate",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed combined cycling/discard wording shares one canonical discard subscription. Native source-controller growth, one versus duplicate trigger, simultaneous whole-hand discard cardinality, private draw, rollback, pending load/replay and an admission-preserving inverted-controller mutant."
+    },
+    {
       "capability_id": "trigger.event.normalized_anywhere_graveyard",
       "evidence_class": "interaction",
       "test_id": "tests.test_public_state_graveyard_arrival_actions.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
@@ -165449,5 +166100,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "18ba24b8bec6516d6cbfa98982444f368330d8b3fc94cb74ead0307dbdfdb36d"
+  "fingerprint": "4419cb3d8418af4f20decbdaf0636d16ed08c3b2037fdd7262cb6eb17361bb8f"
 }

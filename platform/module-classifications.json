@@ -2507,6 +2507,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/cycle_or_discard_bindings.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/cycling_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -14861,5 +14876,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "6ee8f1e79e12dab0898d7dc252c8fe6816df3af1e50620e6ac58d60ba788484c"
+  "fingerprint": "0516a06414b9eac0cec380d8979455443bdc254f332fc0b4f8d320a02f77c91c"
 }

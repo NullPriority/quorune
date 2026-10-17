@@ -154,7 +154,7 @@ class OrdinaryCyclingCompilerTests(unittest.TestCase):
         residual_cases = (
             ("Forestcycling {2}", ("Forestcycling",)),
             (
-                "Whenever you cycle or discard a card, draw a card.",
+                "Whenever you cycle or exile a card, draw a card.",
                 ("Cycling",),
             ),
             (

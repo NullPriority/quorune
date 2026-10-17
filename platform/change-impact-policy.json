@@ -4919,6 +4919,24 @@
         "test_modal_token_programs",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "combined-cycle-or-discard-contract",
+      "patterns": [
+        "quorune/compiler/cycle_or_discard_bindings.py",
+        "quorune/compiler/fixed_public_action_event_bindings.py",
+        "tests/test_cycle_or_discard_events.py",
+        "tests/fixtures/cycle-or-discard-event-cards.json",
+        "quorune/compiler/fixed_counter_trigger_nodes.py"
+      ],
+      "test_modules": [
+        "test_cycle_or_discard_events",
+        "test_ordinary_cycling",
+        "test_public_state_event_counter_actions",
+        "test_public_state_event_actions",
+        "test_whole_hand_discard",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

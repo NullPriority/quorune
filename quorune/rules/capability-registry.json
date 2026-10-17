@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 344,
+  "registry_version": 345,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -26753,6 +26753,108 @@
       "dependency_fail_closed_rationale": "Every mode and the complete fixed price must close over the exact source schema. Missing child/Entwine/modal owners, malformed prices and illegal mode cardinalities fail before casting.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Removing only the all-mode additional price preserves source admission and target correlation but makes actual Dream's Grip accept an underpaid all-mode cast; the native witness detects this mutation.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.event.cycle_or_discard",
+      "version": 1,
+      "official_rules": [
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "702.29a",
+        "702.29c",
+        "702.29d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Bind closed cycle-or-discard wording to one canonical discard occurrence. Cycling is already a discard cost, so the combined trigger fires once per discarded card. Preserve controller and another-source exclusion with existing battlefield ability presence.",
+        "inputs": [
+          "one complete source-spanned cycle-or-discard trigger",
+          "one independently closed typed result",
+          "authoritative discard cause and previous controller"
+        ],
+        "outputs": [
+          "one card.discarded subscription",
+          "one trigger per qualifying discarded card",
+          "source exclusion for another",
+          "existing APNAP placement and typed result execution",
+          "source-directed mutations bound to the triggering incarnation"
+        ],
+        "exclusions": [
+          "other event unions and subject qualifications",
+          "unrepresented result bodies",
+          "new cycling activation or discard producers",
+          "hidden-zone observer scope"
+        ]
+      },
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.compiler.cycle_or_discard_bindings.cycle_or_discard_binding_spec",
+        "quorune.compiler.fixed_public_action_event_bindings._public_discard_spec",
+        "quorune.zone_trigger_events.normalized_zone_trigger_events",
+        "quorune.trigger_discovery.semantic_event_condition_matches",
+        "quorune.compiler.fixed_counter_trigger_nodes._binding_effect_template",
+        "quorune.compiler.source_self_effect_templates.pin_source_result_incarnation"
+      ],
+      "positive_tests": [
+        "test_combined_binding_uses_one_discard_occurrence_and_preserves_another",
+        "test_original_cards_require_complete_results_and_normal_registration",
+        "test_actual_cycling_grows_only_the_controller_observer_once_before_private_draw",
+        "test_actual_whole_hand_discard_triggers_per_card_and_keeps_other_seats_separate"
+      ],
+      "negative_tests": [
+        "test_unknown_unions_results_and_missing_dependencies_remain_residual",
+        "test_original_cards_require_complete_results_and_normal_registration"
+      ],
+      "interaction_tests": [
+        "test_actual_ability_removal_and_departure_keep_discovery_and_locked_trigger_distinct",
+        "test_actual_archfiend_cycles_one_discard_into_one_counter_for_each_opponent_creature",
+        "test_actual_cycling_grows_only_the_controller_observer_once_before_private_draw",
+        "test_actual_faith_payment_resolves_once_and_retains_private_pending_choice",
+        "test_actual_replaced_cycling_discard_still_triggers_once",
+        "test_actual_whole_hand_discard_triggers_per_card_and_keeps_other_seats_separate"
+      ],
+      "multiplayer_tests": [
+        "test_actual_archfiend_cycles_one_discard_into_one_counter_for_each_opponent_creature",
+        "test_actual_cycling_grows_only_the_controller_observer_once_before_private_draw",
+        "test_actual_faith_payment_resolves_once_and_retains_private_pending_choice",
+        "test_actual_whole_hand_discard_triggers_per_card_and_keeps_other_seats_separate"
+      ],
+      "privacy_tests": [
+        "test_actual_cycling_grows_only_the_controller_observer_once_before_private_draw",
+        "test_actual_faith_payment_resolves_once_and_retains_private_pending_choice"
+      ],
+      "replay_tests": [
+        "test_actual_ability_removal_and_departure_keep_discovery_and_locked_trigger_distinct",
+        "test_actual_archfiend_cycles_one_discard_into_one_counter_for_each_opponent_creature",
+        "test_actual_cycling_grows_only_the_controller_observer_once_before_private_draw",
+        "test_actual_faith_payment_resolves_once_and_retains_private_pending_choice",
+        "test_actual_replaced_cycling_discard_still_triggers_once",
+        "test_actual_whole_hand_discard_triggers_per_card_and_keeps_other_seats_separate"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawing the combined binding capability, normalized discard producer or APNAP placement leaves the original trigger residual before trust promotion.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Inverting only the controller predicate retains normal admission but makes the real cycling command grow the opposing observer instead of the acting player observer; the native consequence witness rejects it.",
       "blockers": [],
       "status": "trusted"
     }
