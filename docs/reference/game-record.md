@@ -141,6 +141,14 @@ declines every optional untap; a stale or malformed continuation fails before
 the step commits. Completing the choice preserves held triggers and commits
 the selected physical untap set once before advancing to upkeep.
 
+Fixed selection limits use an `untap_selection` version-one continuation in the
+same decision kind. It retains the scoped plan, effective public battlefield
+snapshot, physical step, and held triggers. Strict canonical comparison rejects
+stale identities, control, counters, types, ability presence, or source state
+before committing any untap attempt. Reference-array forms expose cumulative
+`subset_maxima`, mandatory `maximal_refs`, and distinctness. Historical optional
+continuations retain their original shape without an empty limit field.
+
 Control-instruction execution is also bound to the existing runtime-trust
 identity. Correcting a same-controller instruction does not rename its readable
 descriptor or reset the control-history marker. Records pinned to the prior

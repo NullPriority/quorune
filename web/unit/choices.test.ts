@@ -15,6 +15,20 @@ function form(fields: ChoiceForm["fields"]): ChoiceForm {
   return { v: 1, fields, submit_label: "Submit" };
 }
 
+test("Overlapping untap limits preserve all maximal choices and optional exclusions", () => {
+  const limit = form([{ name: "refs", control: "refs", required: true, distinct: true,
+    options: ["ANIMATED", "LAND", "CREATURE", "OPTIONAL"].map((value) => ({ value })),
+    minimum: 0, maximum: 4, maximal_refs: ["ANIMATED", "LAND", "CREATURE"],
+    subset_maxima: [{ refs: ["ANIMATED", "LAND"], maximum: 1 },
+      { refs: ["ANIMATED", "CREATURE"], maximum: 1 }] }]);
+  assert.deepEqual(validateChoices(limit, { refs: ["ANIMATED"] }), []);
+  assert.deepEqual(validateChoices(limit, { refs: ["LAND", "CREATURE"] }), []);
+  assert.deepEqual(validateChoices(limit, { refs: ["ANIMATED", "OPTIONAL"] }), []);
+  for (const refs of [[], ["LAND"], ["ANIMATED", "LAND"], ["ANIMATED", "ANIMATED"], ["UNKNOWN"]]) {
+    assert.ok(validateChoices(limit, { refs }).length > 0);
+  }
+});
+
 test("Exert costs require declared attackers and keep linked instances independent", () => {
   const exert = form([
     { name: "attackers", control: "assignment_map", required: true, allow_none: true,

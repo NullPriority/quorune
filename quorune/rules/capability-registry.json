@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 358,
+  "registry_version": 359,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -28513,6 +28513,134 @@
       "dependency_fail_closed_rationale": "Unknown keyword bodies and omitted prohibition lowering remain material; each keyword gameplay owner is independently required.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the compiler leaves the sentence residual. Omitting only prohibition lowering preserves the original grant but violates independent native opposing-counter/static keyword consequences.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "untap.step.fixed_selection_limit",
+      "version": 1,
+      "official_rules": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Choose one current controller-owned maximal mandatory untap set under cumulative fixed scoped limits, composing ordinary optional sources without priority.",
+        "inputs": [
+          "current untap participation plan",
+          "eligible tapped permanent identities",
+          "fixed overlapping scope maxima",
+          "current optional untap subjects and prohibition facts"
+        ],
+        "outputs": [
+          "one no-priority authenticated selection",
+          "shared subset-maxima and mandatory-maximality schema",
+          "simultaneous canonical untap/stun results",
+          "held triggers and deterministic pending replay"
+        ],
+        "exclusions": [
+          "unrepresented phasing",
+          "unbounded or variable limits",
+          "other-player-step selection limits",
+          "independent unsupported Oracle clauses"
+        ]
+      },
+      "dependencies": [
+        "untap.step.static_participation"
+      ],
+      "implementation_components": [
+        "quorune.compiler.untap_selection_templates.fixed_untap_selection_limit_handler",
+        "quorune.semantic_runtime.untap_steps.FixedUntapSelectionLimitHandler",
+        "quorune.untap_step.plan_untap_step",
+        "quorune.untap_selection.validate_selection",
+        "quorune.untap_selection.begin_limited_untap_choice",
+        "quorune.untap_selection.complete_limited_untap_choice",
+        "quorune.untap_step_coordination.commit_untap_step"
+      ],
+      "positive_tests": [
+        "test_actual_artifact_creature_and_nonbasic_scopes_exclude_other_permanents",
+        "test_actual_smoke_and_winter_orb_allow_both_maximal_overlapping_sets",
+        "test_actual_static_orb_choice_is_private_atomic_loaded_and_replayed",
+        "test_current_source_control_ability_removal_and_duplicate_limits",
+        "test_current_type_changes_recompute_scopes_and_manual_mode_retains_tapped_state",
+        "test_fine_limit_descriptor_is_closed_and_zero_prohibits_only_current_matches",
+        "test_historical_optional_continuation_omits_new_empty_limits_and_round_trips",
+        "test_optional_sources_share_the_limit_without_forcing_optional_untaps",
+        "test_overlapping_limits_preserve_different_maximal_sizes_and_optional_choices",
+        "test_pre_turn_boundary_replay_holds_untap_triggers_until_upkeep",
+        "test_prohibited_and_exerted_subjects_do_not_use_slots_and_expire_once",
+        "test_selected_stun_uses_a_slot_and_unselected_stun_is_preserved",
+        "test_source_spanned_fixed_scopes_and_unsupported_neighbors",
+        "test_stale_source_or_subject_and_malformed_retained_fields_reject_atomically",
+        "test_tapped_winter_orb_is_checked_before_any_permanent_untaps"
+      ],
+      "negative_tests": [
+        "test_actual_smoke_and_winter_orb_allow_both_maximal_overlapping_sets",
+        "test_actual_static_orb_choice_is_private_atomic_loaded_and_replayed",
+        "test_fine_limit_descriptor_is_closed_and_zero_prohibits_only_current_matches",
+        "test_historical_optional_continuation_omits_new_empty_limits_and_round_trips",
+        "test_optional_sources_share_the_limit_without_forcing_optional_untaps",
+        "test_overlapping_limits_preserve_different_maximal_sizes_and_optional_choices",
+        "test_source_spanned_fixed_scopes_and_unsupported_neighbors",
+        "test_stale_source_or_subject_and_malformed_retained_fields_reject_atomically"
+      ],
+      "interaction_tests": [
+        "test_actual_artifact_creature_and_nonbasic_scopes_exclude_other_permanents",
+        "test_actual_smoke_and_winter_orb_allow_both_maximal_overlapping_sets",
+        "test_actual_static_orb_choice_is_private_atomic_loaded_and_replayed",
+        "test_current_source_control_ability_removal_and_duplicate_limits",
+        "test_current_type_changes_recompute_scopes_and_manual_mode_retains_tapped_state",
+        "test_optional_sources_share_the_limit_without_forcing_optional_untaps",
+        "test_pre_turn_boundary_replay_holds_untap_triggers_until_upkeep",
+        "test_prohibited_and_exerted_subjects_do_not_use_slots_and_expire_once",
+        "test_selected_stun_uses_a_slot_and_unselected_stun_is_preserved",
+        "test_stale_source_or_subject_and_malformed_retained_fields_reject_atomically",
+        "test_tapped_winter_orb_is_checked_before_any_permanent_untaps"
+      ],
+      "multiplayer_tests": [
+        "test_actual_artifact_creature_and_nonbasic_scopes_exclude_other_permanents",
+        "test_actual_smoke_and_winter_orb_allow_both_maximal_overlapping_sets",
+        "test_actual_static_orb_choice_is_private_atomic_loaded_and_replayed",
+        "test_current_source_control_ability_removal_and_duplicate_limits",
+        "test_current_type_changes_recompute_scopes_and_manual_mode_retains_tapped_state",
+        "test_optional_sources_share_the_limit_without_forcing_optional_untaps",
+        "test_pre_turn_boundary_replay_holds_untap_triggers_until_upkeep",
+        "test_prohibited_and_exerted_subjects_do_not_use_slots_and_expire_once",
+        "test_selected_stun_uses_a_slot_and_unselected_stun_is_preserved",
+        "test_stale_source_or_subject_and_malformed_retained_fields_reject_atomically",
+        "test_tapped_winter_orb_is_checked_before_any_permanent_untaps"
+      ],
+      "privacy_tests": [
+        "test_actual_static_orb_choice_is_private_atomic_loaded_and_replayed"
+      ],
+      "replay_tests": [
+        "test_actual_smoke_and_winter_orb_allow_both_maximal_overlapping_sets",
+        "test_actual_static_orb_choice_is_private_atomic_loaded_and_replayed",
+        "test_optional_sources_share_the_limit_without_forcing_optional_untaps",
+        "test_pre_turn_boundary_replay_holds_untap_triggers_until_upkeep",
+        "test_selected_stun_uses_a_slot_and_unselected_stun_is_preserved"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Variable limits remain residual; historical unsupported LIMIT descriptors retain their fail-closed planner path.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the compiler leaves the whole sentence residual; omitting only registered fine limit lowering incorrectly advances the actual Static Orb native untap boundary and is detected.",
       "blockers": [],
       "status": "trusted"
     }

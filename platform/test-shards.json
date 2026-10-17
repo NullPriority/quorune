@@ -246,6 +246,7 @@
       "test_trample_assignment_integration",
       "test_trigger_processing_owner",
       "test_typed_ability_fragments",
+      "test_untap_selection_limits",
       "test_zone_general_rules"
     ],
     "functional-07": [

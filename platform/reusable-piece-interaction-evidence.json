@@ -15645,6 +15645,96 @@
       ],
       "interaction_order": 2,
       "assertion": "A normally admitted fixed-copy spell copies the actual Archetype prohibition component; it continues suppressing the opponent keyword after actual Doom Blade removes the original, with replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_optional_sources_share_the_limit_without_forcing_optional_untaps",
+      "piece_ids": [
+        "capability.untap.step.fixed_selection_limit",
+        "capability.untap.step.optional_source"
+      ],
+      "capability_ids": [
+        "untap.step.fixed_selection_limit",
+        "untap.step.optional_source"
+      ],
+      "interaction_order": 2,
+      "assertion": "Optional and mandatory artifacts share one allowance; either maximal choice is accepted and replayed, while an empty set that omits the mandatory artifact is rejected."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_current_source_control_ability_removal_and_duplicate_limits",
+      "piece_ids": [
+        "capability.untap.step.fixed_selection_limit",
+        "capability.untap.step.static_participation"
+      ],
+      "capability_ids": [
+        "untap.step.fixed_selection_limit",
+        "untap.step.static_participation"
+      ],
+      "interaction_order": 2,
+      "assertion": "Current controller and effective source ability govern own-step limits; identical limits collapse to the tightest constraint, and the authenticated current controller chooses."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_prohibited_and_exerted_subjects_do_not_use_slots_and_expire_once",
+      "piece_ids": [
+        "capability.untap.step.exert_player",
+        "capability.untap.step.fixed_selection_limit"
+      ],
+      "capability_ids": [
+        "untap.step.exert_player",
+        "untap.step.fixed_selection_limit"
+      ],
+      "interaction_order": 2,
+      "assertion": "Exert and next-step prohibitions exclude tapped subjects before limits consume slots, expire once at the physical step, and preserve stun counters."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_selected_stun_uses_a_slot_and_unselected_stun_is_preserved",
+      "piece_ids": [
+        "capability.counter.removal.rule_generated",
+        "capability.untap.step.fixed_selection_limit"
+      ],
+      "capability_ids": [
+        "counter.removal.rule_generated",
+        "untap.step.fixed_selection_limit"
+      ],
+      "interaction_order": 2,
+      "assertion": "A selected stunned land consumes its Winter Orb slot and loses exactly one stun counter; unselected stunned lands retain all counters and replay matches."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_current_type_changes_recompute_scopes_and_manual_mode_retains_tapped_state",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.untap.step.fixed_selection_limit"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "untap.step.fixed_selection_limit"
+      ],
+      "interaction_order": 2,
+      "assertion": "A canonical layer-four animation moves a land into the current creature untap scope, while manual untap mode preserves all tapped states."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_pre_turn_boundary_replay_holds_untap_triggers_until_upkeep",
+      "piece_ids": [
+        "capability.trigger.event.normalized_public_action",
+        "capability.untap.step.fixed_selection_limit"
+      ],
+      "capability_ids": [
+        "trigger.event.normalized_public_action",
+        "untap.step.fixed_selection_limit"
+      ],
+      "interaction_order": 2,
+      "assertion": "Accepted end-step passes enter a pending untap choice without priority, load and replay it, then place and resolve exactly one actual Wake Thrasher trigger at upkeep."
     }
   ]
 }

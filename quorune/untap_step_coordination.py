@@ -129,7 +129,7 @@ def coordinate_untap_step(
 
 def commit_untap_step(
     host: UntapStepCoordinationHost, plan: Any, waiting_triggers: Sequence[StackItem],
-    *, selected_optional_ids: Sequence[str],
+    *, selected_optional_ids: Sequence[str], selected_limit_ids: Sequence[str] = (),
 ) -> None:
     """Commit one retained CR 502.3 selection without replaying earlier work."""
     active_player = plan.active_player
@@ -137,6 +137,7 @@ def commit_untap_step(
     waiting_triggers = list(waiting_triggers)
     optional = set(plan.optional_object_ids)
     selected = set(selected_optional_ids)
+    limited = {v for limit in plan.selection_limits for v in limit.object_ids}
     untapped_object_ids: list[str] = []
     exert_prohibited = expire_exert_untap_restrictions(host, active_player)
     if host.state.config.auto_untap:
@@ -156,6 +157,8 @@ def commit_untap_step(
             if object_id in prohibited:
                 continue
             if object_id in optional and object_id not in selected:
+                continue
+            if object_id in limited and object_id not in selected_limit_ids:
                 continue
             if untap_permanent(
                 host,

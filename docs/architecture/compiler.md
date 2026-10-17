@@ -1577,7 +1577,16 @@ existing static untap participation family. `untap.step.optional_source`
 authorizes the active controller's retained zero-or-more choice. The planner
 and physical untap coordinator own participation and simultaneous untapping;
 optional additional untaps on other players' turns, wider optional queries,
-selection limits, and phasing execution remain outside this contract.
+and phasing execution remain outside this optional-source contract.
+
+`compiler/untap_selection_templates.py` lowers fixed zero-through-ten limits
+over permanents, artifacts, creatures, lands, or nonbasic lands to
+`untap.step.fixed_selection_limit`. Global limits and limits during the source
+controller's own step share the existing participation registry and planner.
+The optional untapped-source condition reads the source before any untapping.
+Current ability fragments govern component presence. Variable bounds and
+other-player-step limits remain residual; historical generic limit descriptors
+retain their fail-closed execution path.
 
 `compiler/public_state_queries.py` owns the shared fixed battlefield-query and
 public-state condition grammar consumed by continuous characteristics, typed

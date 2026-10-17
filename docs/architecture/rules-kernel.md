@@ -96,6 +96,16 @@ permanent. Departure removes the old duration through the canonical zone reset.
 Unsupported conditional permissions, standalone activated Exert costs, and
 unrepresented phasing or skipped-step compositions remain outside this family.
 
+Fixed untap selection limits compose as cumulative bounds on current scoped
+sets. The active controller chooses one inclusion-maximal mandatory set before
+simultaneous untapping; overlapping scopes can permit maximal sets of different
+sizes. Optional sources may be omitted. Unaffected mandatory permanents untap
+automatically. Static prohibitions, next-step prohibitions, and exert exclude
+subjects before selection, while selected stun replacements consume a slot
+and remove one counter. The existing tap-state owner commits each attempt.
+No priority is granted during the choice, and held triggers wait for upkeep.
+Server and browser forms share subset bounds and mandatory completion metadata.
+
 Self-transform activations pin the original source incarnation and its
 transform count when placed on the stack. The existing transform owner keeps
 the same permanent, counters, damage, attachments and acquisition history.

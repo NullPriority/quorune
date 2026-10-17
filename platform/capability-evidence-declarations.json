@@ -125141,6 +125141,1306 @@
       "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
     },
     {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_actual_artifact_creature_and_nonbasic_scopes_exclude_other_permanents",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_actual_smoke_and_winter_orb_allow_both_maximal_overlapping_sets",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_actual_static_orb_choice_is_private_atomic_loaded_and_replayed",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_current_source_control_ability_removal_and_duplicate_limits",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_current_type_changes_recompute_scopes_and_manual_mode_retains_tapped_state",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_optional_sources_share_the_limit_without_forcing_optional_untaps",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_pre_turn_boundary_replay_holds_untap_triggers_until_upkeep",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_prohibited_and_exerted_subjects_do_not_use_slots_and_expire_once",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_selected_stun_uses_a_slot_and_unselected_stun_is_preserved",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_stale_source_or_subject_and_malformed_retained_fields_reject_atomically",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_tapped_winter_orb_is_checked_before_any_permanent_untaps",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_actual_artifact_creature_and_nonbasic_scopes_exclude_other_permanents",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_actual_smoke_and_winter_orb_allow_both_maximal_overlapping_sets",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_actual_static_orb_choice_is_private_atomic_loaded_and_replayed",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_current_source_control_ability_removal_and_duplicate_limits",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_current_type_changes_recompute_scopes_and_manual_mode_retains_tapped_state",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_optional_sources_share_the_limit_without_forcing_optional_untaps",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_pre_turn_boundary_replay_holds_untap_triggers_until_upkeep",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_prohibited_and_exerted_subjects_do_not_use_slots_and_expire_once",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_selected_stun_uses_a_slot_and_unselected_stun_is_preserved",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_stale_source_or_subject_and_malformed_retained_fields_reject_atomically",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_tapped_winter_orb_is_checked_before_any_permanent_untaps",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitCompilerTests.test_source_spanned_fixed_scopes_and_unsupported_neighbors",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_runtime_limit_omission_is_killed_by_the_actual_native_untap_boundary",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "negative",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitCompilerTests.test_fine_limit_descriptor_is_closed_and_zero_prohibits_only_current_matches",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "negative",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitCompilerTests.test_historical_optional_continuation_omits_new_empty_limits_and_round_trips",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "negative",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitCompilerTests.test_overlapping_limits_preserve_different_maximal_sizes_and_optional_choices",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "negative",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitCompilerTests.test_source_spanned_fixed_scopes_and_unsupported_neighbors",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "negative",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_actual_smoke_and_winter_orb_allow_both_maximal_overlapping_sets",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "negative",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_actual_static_orb_choice_is_private_atomic_loaded_and_replayed",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "negative",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_optional_sources_share_the_limit_without_forcing_optional_untaps",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "negative",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_stale_source_or_subject_and_malformed_retained_fields_reject_atomically",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "positive",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitCompilerTests.test_fine_limit_descriptor_is_closed_and_zero_prohibits_only_current_matches",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "positive",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitCompilerTests.test_historical_optional_continuation_omits_new_empty_limits_and_round_trips",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "positive",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitCompilerTests.test_overlapping_limits_preserve_different_maximal_sizes_and_optional_choices",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "positive",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitCompilerTests.test_source_spanned_fixed_scopes_and_unsupported_neighbors",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "positive",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_actual_artifact_creature_and_nonbasic_scopes_exclude_other_permanents",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "positive",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_actual_smoke_and_winter_orb_allow_both_maximal_overlapping_sets",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "positive",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_actual_static_orb_choice_is_private_atomic_loaded_and_replayed",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "positive",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_current_source_control_ability_removal_and_duplicate_limits",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "positive",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_current_type_changes_recompute_scopes_and_manual_mode_retains_tapped_state",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "positive",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_optional_sources_share_the_limit_without_forcing_optional_untaps",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "positive",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_pre_turn_boundary_replay_holds_untap_triggers_until_upkeep",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "positive",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_prohibited_and_exerted_subjects_do_not_use_slots_and_expire_once",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "positive",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_selected_stun_uses_a_slot_and_unselected_stun_is_preserved",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "positive",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_stale_source_or_subject_and_malformed_retained_fields_reject_atomically",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "positive",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_tapped_winter_orb_is_checked_before_any_permanent_untaps",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_actual_static_orb_choice_is_private_atomic_loaded_and_replayed",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "property",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitCompilerTests.test_fine_limit_descriptor_is_closed_and_zero_prohibits_only_current_matches",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "property",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitCompilerTests.test_historical_optional_continuation_omits_new_empty_limits_and_round_trips",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "property",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitCompilerTests.test_overlapping_limits_preserve_different_maximal_sizes_and_optional_choices",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "property",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitCompilerTests.test_source_spanned_fixed_scopes_and_unsupported_neighbors",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "replay",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_actual_smoke_and_winter_orb_allow_both_maximal_overlapping_sets",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "replay",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_actual_static_orb_choice_is_private_atomic_loaded_and_replayed",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "replay",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_optional_sources_share_the_limit_without_forcing_optional_untaps",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "replay",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_pre_turn_boundary_replay_holds_untap_triggers_until_upkeep",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "replay",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_selected_stun_uses_a_slot_and_unselected_stun_is_preserved",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitCompilerTests.test_fine_limit_descriptor_is_closed_and_zero_prohibits_only_current_matches",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitCompilerTests.test_historical_optional_continuation_omits_new_empty_limits_and_round_trips",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitCompilerTests.test_overlapping_limits_preserve_different_maximal_sizes_and_optional_choices",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitCompilerTests.test_source_spanned_fixed_scopes_and_unsupported_neighbors",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_actual_smoke_and_winter_orb_allow_both_maximal_overlapping_sets",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_actual_static_orb_choice_is_private_atomic_loaded_and_replayed",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_optional_sources_share_the_limit_without_forcing_optional_untaps",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
+      "capability_id": "untap.step.fixed_selection_limit",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_untap_selection_limits.UntapSelectionLimitRuntimeTests.test_stale_source_or_subject_and_malformed_retained_fields_reject_atomically",
+      "official_rule_ids": [
+        "101.2",
+        "101.3",
+        "122.1d",
+        "502.3",
+        "502.4",
+        "609.3",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed cumulative scoped selection in the current no-priority untap step, principal-correct mandatory and optional sets, canonical stun/untap mutation, strict pending identity validation and replay."
+    },
+    {
       "capability_id": "untap.step.optional_source",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_control_effects.FixedControlGameplayTests.test_manual_untap_mode_preserves_tapped_sources_without_optional_choice",

@@ -356,6 +356,17 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
     if (selected.some((ref) => !legal.has(ref))) {
       errors.push(`${label} contains a selection that is no longer available.`);
     }
+    const subsetMaxima = list(field.subset_maxima).map(record);
+    const fitsSubsets = (values: string[]) => subsetMaxima.every((group) => {
+      const refs = new Set(list(group.refs).map(String));
+      return values.filter((ref) => refs.has(ref)).length <= Number(group.maximum);
+    });
+    if (!fitsSubsets(selected)) {
+      errors.push(`${label} exceeds an applicable selection limit.`);
+    }
+    if (list(field.maximal_refs).map(String).some((ref) => !selected.includes(ref) && fitsSubsets([...selected, ref]))) {
+      errors.push(`${label} must include another eligible permanent while a selection slot remains.`);
+    }
   } else if (control === "ordered_partition") {
     const partition = record(value);
     const groups = orderedPartitionNames(field);

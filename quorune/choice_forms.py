@@ -235,6 +235,9 @@ def _field(
             field["minimum"] = int(minimum)
         if maximum is not None:
             field["maximum"] = int(maximum)
+        for constraint in ('subset_maxima','maximal_refs','distinct'):
+            if constraint in value:
+                field[constraint] = copy.deepcopy(value[constraint])
         if value.get("allowed_cardinalities") is not None:
             field["allowed_cardinalities"] = list(value["allowed_cardinalities"])
             if value.get("distinct") is not None:

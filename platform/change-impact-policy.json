@@ -5236,6 +5236,28 @@
         "test_card_program_trust",
         "test_entry_keyword_counter_choices"
       ]
+    },
+    {
+      "id": "fixed-untap-selection-limit-contract",
+      "patterns": [
+        "quorune/untap_step.py",
+        "quorune/untap_selection.py",
+        "quorune/optional_untap.py",
+        "quorune/untap_step_coordination.py",
+        "quorune/semantic_runtime/untap_steps.py",
+        "quorune/compiler/untap_selection_templates.py",
+        "quorune/choice_forms.py",
+        "web/src/choices.ts",
+        "tests/test_untap_selection_limits.py",
+        "tests/fixtures/untap-selection-limit-cards.json"
+      ],
+      "test_modules": [
+        "test_untap_selection_limits",
+        "test_typed_untap_step_participation",
+        "test_untap_step_rules",
+        "test_choice_forms",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [
