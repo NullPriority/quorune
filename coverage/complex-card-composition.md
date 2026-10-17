@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "786289048771362897f4224091d169ed3aeca3d9843f35814f125e2d43120e7c"
+verified: "0a750c0e81c6e028136ab2fd782ed880dd269f8246fcd3bdb20fbf357474b511"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -51,7 +51,6 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Garruk Relentless // Garruk, the Veil-Cursed | 195 | 25 | 6 | 6 | 15 | 6 | `blocked` |
 | Invasion of Innistrad // Deluge of the Dead | 194 | 23 | 6 | 5 | 9 | 16 | `blocked` |
 | Hunter's Talent | 193 | 30 | 7 | 8 | 2 | 8 | `blocked` |
-| Devoted Grafkeeper // Departed Soulkeeper | 192 | 31 | 7 | 6 | 4 | 7 | `blocked` |
 | Kytheon, Hero of Akros // Gideon, Battle-Forged | 192 | 21 | 5 | 5 | 11 | 18 | `blocked` |
 | Sorin of House Markov // Sorin, Ravenous Neonate | 191 | 24 | 4 | 7 | 9 | 19 | `blocked` |
 | The Modern Age // Vector Glider | 191 | 26 | 7 | 5 | 6 | 6 | `blocked` |
@@ -63,4 +62,5 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Ob Nixilis, the Adversary | 186 | 36 | 5 | 5 | 5 | 7 | `blocked` |
 | Arlinn, the Pack's Hope // Arlinn, the Moon's Fury | 185 | 31 | 5 | 6 | 5 | 12 | `blocked` |
 | Artist's Talent | 185 | 28 | 5 | 8 | 3 | 10 | `blocked` |
+| Invasion of Ixalan // Belligerent Regisaur | 185 | 24 | 6 | 4 | 5 | 16 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |
