@@ -8406,6 +8406,1072 @@
       "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
     },
     {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_actual_rally_spell_and_copy_create_two_untapped_independent_creature_tokens",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_actual_sabotage_taps_newly_cast_creatures_and_retargets_one_copy",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One complete source-spanned Conspire cost/trigger, closed distinct paid incarnations, current controlled untapped color eligibility, independent affordable mana and one retargetable copy. Actual newly cast creatures pay despite sickness; four-seat rollback/privacy/pending replay agree."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_conspirators_cannot_also_produce_cast_mana_and_manual_double_use_rolls_back",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_countered_original_keeps_one_paid_conspire_copy_and_no_extra_cast",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_departed_and_returned_conspirator_invalidates_old_pair_option",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_free_base_keeps_conspire_tap_cost_and_independent_mill_targets",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_multicolored_source_accepts_different_shared_colors_and_rejects_ineligible_pairs",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_actual_rally_spell_and_copy_create_two_untapped_independent_creature_tokens",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_actual_sabotage_taps_newly_cast_creatures_and_retargets_one_copy",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One complete source-spanned Conspire cost/trigger, closed distinct paid incarnations, current controlled untapped color eligibility, independent affordable mana and one retargetable copy. Actual newly cast creatures pay despite sickness; four-seat rollback/privacy/pending replay agree."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_conspirators_cannot_also_produce_cast_mana_and_manual_double_use_rolls_back",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_countered_original_keeps_one_paid_conspire_copy_and_no_extra_cast",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_departed_and_returned_conspirator_invalidates_old_pair_option",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_free_base_keeps_conspire_tap_cost_and_independent_mill_targets",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_multicolored_source_accepts_different_shared_colors_and_rejects_ineligible_pairs",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_conspire.FixedConspireModelCompilerTests.test_conspire_producer_omission_fails_the_independent_positive_contract",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One complete source-spanned Conspire cost/trigger, closed distinct paid incarnations, current controlled untapped color eligibility, independent affordable mana and one retargetable copy. Actual newly cast creatures pay despite sickness; four-seat rollback/privacy/pending replay agree."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_omitted_tap_commit_keeps_admission_but_fails_actual_cost_consequence",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_conspire.FixedConspireModelCompilerTests.test_conspire_source_span_handler_and_unsupported_payment_combinations",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One complete source-spanned Conspire cost/trigger, closed distinct paid incarnations, current controlled untapped color eligibility, independent affordable mana and one retargetable copy. Actual newly cast creatures pay despite sickness; four-seat rollback/privacy/pending replay agree."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_conspire.FixedConspireModelCompilerTests.test_conspire_spec_and_paid_pair_have_closed_distinct_incarnations",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One complete source-spanned Conspire cost/trigger, closed distinct paid incarnations, current controlled untapped color eligibility, independent affordable mana and one retargetable copy. Actual newly cast creatures pay despite sickness; four-seat rollback/privacy/pending replay agree."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_conspirators_cannot_also_produce_cast_mana_and_manual_double_use_rolls_back",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_countered_original_keeps_one_paid_conspire_copy_and_no_extra_cast",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_departed_and_returned_conspirator_invalidates_old_pair_option",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_multicolored_source_accepts_different_shared_colors_and_rejects_ineligible_pairs",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_original_conspire_cards_require_complete_normal_registration",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_conspire.FixedConspireModelCompilerTests.test_conspire_source_span_handler_and_unsupported_payment_combinations",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One complete source-spanned Conspire cost/trigger, closed distinct paid incarnations, current controlled untapped color eligibility, independent affordable mana and one retargetable copy. Actual newly cast creatures pay despite sickness; four-seat rollback/privacy/pending replay agree."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_conspire.FixedConspireModelCompilerTests.test_conspire_spec_and_paid_pair_have_closed_distinct_incarnations",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One complete source-spanned Conspire cost/trigger, closed distinct paid incarnations, current controlled untapped color eligibility, independent affordable mana and one retargetable copy. Actual newly cast creatures pay despite sickness; four-seat rollback/privacy/pending replay agree."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_actual_rally_spell_and_copy_create_two_untapped_independent_creature_tokens",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_actual_sabotage_taps_newly_cast_creatures_and_retargets_one_copy",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One complete source-spanned Conspire cost/trigger, closed distinct paid incarnations, current controlled untapped color eligibility, independent affordable mana and one retargetable copy. Actual newly cast creatures pay despite sickness; four-seat rollback/privacy/pending replay agree."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_conspirators_cannot_also_produce_cast_mana_and_manual_double_use_rolls_back",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_countered_original_keeps_one_paid_conspire_copy_and_no_extra_cast",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_departed_and_returned_conspirator_invalidates_old_pair_option",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_free_base_keeps_conspire_tap_cost_and_independent_mill_targets",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_multicolored_source_accepts_different_shared_colors_and_rejects_ineligible_pairs",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_original_conspire_cards_require_complete_normal_registration",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_actual_sabotage_taps_newly_cast_creatures_and_retargets_one_copy",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One complete source-spanned Conspire cost/trigger, closed distinct paid incarnations, current controlled untapped color eligibility, independent affordable mana and one retargetable copy. Actual newly cast creatures pay despite sickness; four-seat rollback/privacy/pending replay agree."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_actual_rally_spell_and_copy_create_two_untapped_independent_creature_tokens",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_actual_sabotage_taps_newly_cast_creatures_and_retargets_one_copy",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One complete source-spanned Conspire cost/trigger, closed distinct paid incarnations, current controlled untapped color eligibility, independent affordable mana and one retargetable copy. Actual newly cast creatures pay despite sickness; four-seat rollback/privacy/pending replay agree."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_conspirators_cannot_also_produce_cast_mana_and_manual_double_use_rolls_back",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_countered_original_keeps_one_paid_conspire_copy_and_no_extra_cast",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_departed_and_returned_conspirator_invalidates_old_pair_option",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_free_base_keeps_conspire_tap_cost_and_independent_mill_targets",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
+      "capability_id": "casting.additional_cost.conspire_fixed_tap",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_multicolored_source_accepts_different_shared_colors_and_rejects_ineligible_pairs",
+      "official_rule_ids": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original Conspire casts bind current color-compatible creature incarnations to independent mana and tap costs. Native tests distinguish mixed source colors, ownership/control, tapped/phased/noncreature alternatives, manual mana double-use rollback, departure and return, free bases, countered originals, copied token creation, normal eleven-original admission, pending load and full replay. Omitting tap commitment preserves admission but fails actual tapped-state consequences."
+    },
+    {
       "capability_id": "casting.additional_cost.entwine_fixed_modes",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_actual_entwine_additional_cost_is_reduced_after_adding_and_survives_free_base",

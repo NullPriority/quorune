@@ -14956,6 +14956,96 @@
       ],
       "interaction_order": 2,
       "assertion": "A typed free base removes Train of Thought base mana while optional Replicate still charges its two repeated prices. Zero payments draw once with no trigger; two payments draw three private cards with no extra cast. Malformed counts/options reject; all three opponents remain unable to inspect the draws; pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_sabotage_taps_newly_cast_creatures_and_retargets_one_copy",
+      "piece_ids": [
+        "capability.casting.additional_cost.conspire_fixed_tap",
+        "capability.permanent.destroy.effect"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.conspire_fixed_tap",
+        "permanent.destroy.effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Sabotage taps two newly cast Elves despite sickness, pays the independent Sphere-increased mana price, and its retargeted copy and original destroy two different artifacts. Wrong-principal rollback, private projection, pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_countered_original_keeps_one_paid_conspire_copy_and_no_extra_cast",
+      "piece_ids": [
+        "capability.casting.additional_cost.conspire_fixed_tap",
+        "capability.damage.result.player_life"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.conspire_fixed_tap",
+        "damage.result.player_life"
+      ],
+      "interaction_order": 2,
+      "assertion": "Countering the original Burn Trail leaves its one paid trigger. One copy deals three to the new target while the original target takes none; the tapped creatures remain tapped and cast history counts only original and Counterspell. Pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_conspirators_cannot_also_produce_cast_mana_and_manual_double_use_rolls_back",
+      "piece_ids": [
+        "capability.casting.additional_cost.conspire_fixed_tap",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.conspire_fixed_tap",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Unpooled Elves can pay an ordinary Barkshell cast but cannot also be offered as a complete Conspire pair. With separate mana, manual double use rejects atomically, then a legal pair produces two independently selected stat increases. Pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_multicolored_source_accepts_different_shared_colors_and_rejects_ineligible_pairs",
+      "piece_ids": [
+        "capability.casting.additional_cost.conspire_fixed_tap",
+        "capability.state_query.permanent.public_state_predicate"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.conspire_fixed_tap",
+        "state_query.permanent.public_state_predicate"
+      ],
+      "interaction_order": 2,
+      "assertion": "A blue creature and a black creature pay for blue-black Memory Sluice; a foreign-owned controlled black creature is valid. Wrong-color, foreign-controlled, tapped, phased and actual blue noncreature Curiosity remain ineligible. Original and retained-target copy mill eight total with replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_free_base_keeps_conspire_tap_cost_and_independent_mill_targets",
+      "piece_ids": [
+        "capability.casting.additional_cost.conspire_fixed_tap",
+        "capability.zone.mill.fixed"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.conspire_fixed_tap",
+        "zone.mill.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "A typed free-base Memory Sluice still taps its two eligible creatures for Conspire. Original and independent copy mill four each for different opponents, with no extra cast; pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_rally_spell_and_copy_create_two_untapped_independent_creature_tokens",
+      "piece_ids": [
+        "capability.casting.additional_cost.conspire_fixed_tap",
+        "capability.token.creation.fixed_copy"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.conspire_fixed_tap",
+        "token.creation.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Rally taps one blue and one green creature. Its retargeted copy and original create exactly two distinct creature tokens through the existing token-copy owner. The tokens enter untapped despite tapped source creatures and history records one cast. Pending load and replay agree."
     }
   ]
 }

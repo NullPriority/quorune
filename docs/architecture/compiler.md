@@ -9,6 +9,13 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+`compiler/casting_keyword_nodes.py` owns the ordered dispatch of closed
+casting-cost keyword productions. It retains the existing lowering order and
+passes source-record context only to productions that require it. Ordinary
+Conspire uses this path to bind one complete printed tap-cost and copy-trigger
+declaration. The existing keyword entry points remain available; mutation
+witnesses patch the dispatch owner's actual lowerers.
+
 Public-quantity mana keeps its existing typed source-excluding count producer
 before consulting the newer live resolution count fallback. Existing optional
 source counters on admitted sacrifice and discard subscriptions keep the

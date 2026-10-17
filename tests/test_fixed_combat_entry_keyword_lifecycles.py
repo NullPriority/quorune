@@ -195,7 +195,7 @@ class FixedCombatEntryKeywordLifecycleCompilerTests(unittest.TestCase):
     def test_combat_entry_compiler_mutation_is_killed(self):
         record = self.db.lookup("Generic Myriad Adept")
         with patch(
-            "quorune.compiler.keyword_nodes.fixed_myriad_keyword_node",
+            "quorune.compiler.casting_keyword_nodes.fixed_myriad_keyword_node",
             return_value=None,
         ):
             mutated = compile_oracle_card(

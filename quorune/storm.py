@@ -17,7 +17,8 @@ from .errors import StateInvariantError
 
 STORM_SEMANTIC_KEY = "builtin:storm"
 from .replicate_model import REPLICATE_SEMANTIC_KEY
-SPELL_COPY_TRIGGER_KEYS = frozenset({STORM_SEMANTIC_KEY, REPLICATE_SEMANTIC_KEY})
+from .conspire_model import CONSPIRE_SEMANTIC_KEY
+SPELL_COPY_TRIGGER_KEYS = frozenset({STORM_SEMANTIC_KEY, REPLICATE_SEMANTIC_KEY, CONSPIRE_SEMANTIC_KEY})
 
 
 class StormHost(Protocol):
@@ -190,6 +191,9 @@ def validated_storm_trigger(
 
 
 def validated_spell_copy_trigger(item):
+    if item.semantic_key == CONSPIRE_SEMANTIC_KEY:
+        from .conspire import validated_conspire_trigger
+        return validated_conspire_trigger(item)
     if item.semantic_key == REPLICATE_SEMANTIC_KEY:
         from .replicate import validated_replicate_trigger
         return validated_replicate_trigger(item)

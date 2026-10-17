@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 349,
+  "registry_version": 350,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -27425,6 +27425,133 @@
       "dependency_fail_closed_rationale": "Missing current cost/trigger dependencies, malformed prices, multiple instances, permanent spells and unknown sibling bodies remain residual.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the paired producer fails the independent complete source-spanned positive contract before promotion. Native price omission preserves complete admission but leaves unspent mana, so the actual paid-cast consequence witness kills it.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.additional_cost.conspire_fixed_tap",
+      "version": 1,
+      "official_rules": [
+        "115.7d",
+        "118.8",
+        "302.6",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "702.78a",
+        "702.78b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One printed ordinary Conspire on a complete normal instant or sorcery. Two distinct current eligible controlled creature incarnations pay through existing tap-cost commitment.",
+        "inputs": [
+          "current source spell colors",
+          "source-pinned static/cast-trigger declaration",
+          "two eligible creature incarnations and separately available mana"
+        ],
+        "outputs": [
+          "affordable optional pair-bound cost options",
+          "one immutable paid-copy trigger with independent targets"
+        ],
+        "exclusions": [
+          "multiple/granted instances",
+          "permanent sources and variable printed bases",
+          "mixed consuming payment mechanics and unresolved sibling bodies"
+        ]
+      },
+      "dependencies": [
+        "activation.selected_tap.fixed",
+        "target.revalidate_resolution",
+        "trigger.event.normalized_spell_cast",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.conspire_model.FixedConspireSpec",
+        "quorune.conspire_model.validate_conspire_fact",
+        "quorune.compiler.conspire_nodes.conspire_static_node",
+        "quorune.semantic_runtime.conspire.FixedConspireHandler",
+        "quorune.rules.casting.conspire_costs.compiled_conspire_spec",
+        "quorune.rules.casting.conspire_costs.expand_conspire_options",
+        "quorune.rules.casting.conspire_costs.conspire_tap_cards",
+        "quorune.rules.activation_costs.fixed_tap_cost_candidates",
+        "quorune.conspire.conspire_trigger_items",
+        "quorune.conspire.validated_conspire_trigger",
+        "quorune.selection.storm.StormTargetChoiceOwnerMixin",
+        "quorune.compiler.casting_keyword_nodes.casting_keyword_node",
+        "quorune.rules.casting.conspire_costs.conspire_payment_cards"
+      ],
+      "positive_tests": [
+        "test_actual_rally_spell_and_copy_create_two_untapped_independent_creature_tokens",
+        "test_actual_sabotage_taps_newly_cast_creatures_and_retargets_one_copy",
+        "test_conspirators_cannot_also_produce_cast_mana_and_manual_double_use_rolls_back",
+        "test_conspire_source_span_handler_and_unsupported_payment_combinations",
+        "test_conspire_spec_and_paid_pair_have_closed_distinct_incarnations",
+        "test_countered_original_keeps_one_paid_conspire_copy_and_no_extra_cast",
+        "test_departed_and_returned_conspirator_invalidates_old_pair_option",
+        "test_free_base_keeps_conspire_tap_cost_and_independent_mill_targets",
+        "test_multicolored_source_accepts_different_shared_colors_and_rejects_ineligible_pairs",
+        "test_original_conspire_cards_require_complete_normal_registration"
+      ],
+      "negative_tests": [
+        "test_conspirators_cannot_also_produce_cast_mana_and_manual_double_use_rolls_back",
+        "test_conspire_source_span_handler_and_unsupported_payment_combinations",
+        "test_conspire_spec_and_paid_pair_have_closed_distinct_incarnations",
+        "test_countered_original_keeps_one_paid_conspire_copy_and_no_extra_cast",
+        "test_departed_and_returned_conspirator_invalidates_old_pair_option",
+        "test_multicolored_source_accepts_different_shared_colors_and_rejects_ineligible_pairs",
+        "test_original_conspire_cards_require_complete_normal_registration"
+      ],
+      "interaction_tests": [
+        "test_actual_rally_spell_and_copy_create_two_untapped_independent_creature_tokens",
+        "test_actual_sabotage_taps_newly_cast_creatures_and_retargets_one_copy",
+        "test_conspirators_cannot_also_produce_cast_mana_and_manual_double_use_rolls_back",
+        "test_countered_original_keeps_one_paid_conspire_copy_and_no_extra_cast",
+        "test_departed_and_returned_conspirator_invalidates_old_pair_option",
+        "test_free_base_keeps_conspire_tap_cost_and_independent_mill_targets",
+        "test_multicolored_source_accepts_different_shared_colors_and_rejects_ineligible_pairs"
+      ],
+      "multiplayer_tests": [
+        "test_actual_rally_spell_and_copy_create_two_untapped_independent_creature_tokens",
+        "test_actual_sabotage_taps_newly_cast_creatures_and_retargets_one_copy",
+        "test_conspirators_cannot_also_produce_cast_mana_and_manual_double_use_rolls_back",
+        "test_countered_original_keeps_one_paid_conspire_copy_and_no_extra_cast",
+        "test_departed_and_returned_conspirator_invalidates_old_pair_option",
+        "test_free_base_keeps_conspire_tap_cost_and_independent_mill_targets",
+        "test_multicolored_source_accepts_different_shared_colors_and_rejects_ineligible_pairs"
+      ],
+      "privacy_tests": [
+        "test_actual_sabotage_taps_newly_cast_creatures_and_retargets_one_copy"
+      ],
+      "replay_tests": [
+        "test_actual_rally_spell_and_copy_create_two_untapped_independent_creature_tokens",
+        "test_actual_sabotage_taps_newly_cast_creatures_and_retargets_one_copy",
+        "test_conspirators_cannot_also_produce_cast_mana_and_manual_double_use_rolls_back",
+        "test_countered_original_keeps_one_paid_conspire_copy_and_no_extra_cast",
+        "test_departed_and_returned_conspirator_invalidates_old_pair_option",
+        "test_free_base_keeps_conspire_tap_cost_and_independent_mill_targets",
+        "test_multicolored_source_accepts_different_shared_colors_and_rejects_ineligible_pairs"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Missing tap/copy dependencies and unsupported mixed consuming costs remain residual. Invalid pairs, changed incarnations and unavailable mana reject before commitment.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the paired compiler producer fails the independent source-spanned positive contract before promotion. Native omission of canonical tap commitment preserves whole admission but fails the actual two-creature tapped-state consequence.",
       "blockers": [],
       "status": "trusted"
     }

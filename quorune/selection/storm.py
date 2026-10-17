@@ -116,7 +116,7 @@ class StormTargetChoiceOwnerMixin:
                 item.controller: {
                     "stack": item.ref,
                     "prompt": (
-                        "Choose targets for each spell copy, or keep the "
+                        f"Choose targets for each {str(item.semantic_key).removeprefix('builtin:')} copy, or keep the "
                         "copied targets."
                     ),
                     "copies": copies,
@@ -329,8 +329,8 @@ class StormTargetChoiceOwnerMixin:
                 )
         self._log(
             seat,
-            "stack.replicate.copy" if trigger.semantic_key != STORM_SEMANTIC_KEY else "stack.storm.copy",
-            f"{seat} created {len(copies)} spell copy/copies.",
+            "stack." + str(trigger.semantic_key).removeprefix("builtin:") + ".copy",
+            f"{seat} created {len(copies)} {str(trigger.semantic_key).removeprefix('builtin:')} copy/copies.",
             {
                 "source_trigger": trigger.ref,
                 "copies": [copy_item.ref for copy_item in copies],

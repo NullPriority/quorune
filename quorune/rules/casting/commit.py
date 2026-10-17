@@ -12,6 +12,7 @@ from ...casting_payment_keywords import CastingPaymentKeywordError
 from ...compiled_cast_costs import compiled_evoke_specs
 from ...storm import prior_storm_spell_count, storm_trigger_items
 from ...replicate import replicate_trigger_items
+from ...conspire import conspire_trigger_items
 from ...convoke import ConvokeError
 from ...counter_placement import (
     CounterPlacementError,
@@ -35,6 +36,7 @@ from ...compiled_kicker import compiled_fixed_mana_kicker_spec
 from .paid_entry_copy_costs import paid_entry_copy_cast_context
 from .multikicker_costs import multikicker_cast_context, validate_multikicker_commit
 from .replicate_costs import replicate_cast_context, validate_replicate_commit
+from .conspire_costs import conspire_cast_context, conspire_tap_cards
 from ...flashback import FLASHBACK_CAST_OPTION_ID
 from ...evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
 from ...kicker import KICKER_ANNOTATION, KICKER_MECHANIC_ID
@@ -953,6 +955,7 @@ def _create_spell_item(
             **paid_entry_copy_cast_context(selected_option),
             **multikicker_cast_context(selected_option),
             **replicate_cast_context(selected_option),
+            **conspire_cast_context(selected_option),
             "target_groups": thaw_json(proposal.target_groups),
             "target_snapshots": thaw_json(proposal.target_snapshots),
             "targets_revalidated": False,
@@ -1115,6 +1118,7 @@ def _dispatch_cast_events(
         cascade_trigger_items(host, spell=item, card=card)
     )
     trigger_batch.extend(replicate_trigger_items(host, spell=item, card=card, program=program))
+    trigger_batch.extend(conspire_trigger_items(host, spell=item, card=card, program=program))
     trigger_batch.extend(
         storm_trigger_items(
             host,
@@ -1296,6 +1300,12 @@ def _revalidate_cast_contracts(
             )
     selected_option = dict(details["selected_cost_option"])
     try:
+        conspirators = conspire_tap_cards(host, proposal.seat, card, selected_option)
+    except ValueError as exc:
+        raise CastProposalError(str(exc), reason='stale_conspire_contract') from exc
+    if conspirators and tuple(c.ref for c in conspirators) != proposal.tap_cost_refs:
+        raise CastProposalError('Conspire tap plan changed', reason='stale_conspire_contract')
+    try:
         validate_multikicker_commit(host, card, selected_option)
     except ValueError as exc:
         raise CastProposalError(str(exc), reason='stale_multikicker_contract') from exc
@@ -1430,6 +1440,10 @@ def _commit_cast_costs_and_stack(
         validate_emerge_after_mana_payment(host, proposal.seat, card, selected_option)
     except ValueError as exc:
         raise CastProposalError(str(exc), reason='stale_emerge_sacrifice') from exc
+    try:
+        conspire_tap_cards(host, proposal.seat, card, selected_option)
+    except ValueError as exc:
+        raise CastProposalError(str(exc), reason='stale_conspire_after_mana') from exc
     _commit_tap_costs(host, proposal, card)
     costs = _commit_additional_costs(
         host, proposal, response, card, selected_option

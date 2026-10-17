@@ -983,6 +983,29 @@ descriptors, copy choices and historical continuations retain their format.
 Variable, nonmana, zero-priced, repeated or granted instances, permanent spells
 and unrepresented sibling bodies remain residual.
 
+### Ordinary Conspire tap payments and copy triggers
+
+`FixedConspireSpec` binds one printed Conspire instance to an optional pair of
+creature tap costs. The current object query supplies untapped controlled
+creatures; each must share a color with the current spell. The two creatures
+may match different colors of a multicolored spell, and their summoning
+sickness does not prevent this nonsymbol tap cost.
+
+Each represented pair has an ordinary cost option bound to its current logical
+incarnations. Existing affordability and mana-payment owners exclude those
+creatures as mana sources. The casting owner revalidates the pair after mana
+payment, then commits it through the existing tap-cost owner. A departed and
+returned creature invalidates the prior option. A free base retains the
+optional tap payment.
+
+The paid fact creates one separately validated Conspire trigger using the
+existing spell-copy template and target-choice owner. Countering the original
+does not remove the trigger. Copies can retain or change targets and are not
+casts; their effects use the ordinary runtime owners, including token copying.
+Existing Storm prompts, logs and saved continuation shapes retain their format.
+Multiple or granted instances, permanent spells, variable printed bases, mixed
+consuming payment mechanics and unresolved sibling bodies remain residual.
+
 ### Fixed mana Disturb and source-local graveyard exile
 
 `FixedManaDisturbSpec` binds one front-face declaration to its transforming

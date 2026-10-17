@@ -74,6 +74,7 @@
     "tests/fixtures/fading-cards.json",
     "tests/fixtures/fixed-basic-type-setting-cards.json",
     "tests/fixtures/fixed-battlefield-query-characteristics-cards.json",
+    "tests/fixtures/fixed-conspire-cards.json",
     "tests/fixtures/fixed-context-discard-cards.json",
     "tests/fixtures/fixed-control-effects.json",
     "tests/fixtures/fixed-copy-type-exception-cards.json",

@@ -582,6 +582,9 @@ def _initial_options(
     expanded = with_spree_mode_cost_options(program, schema, expanded, response, hint=hint)
     from .entwine_costs import with_entwine_mode_cost_options
     expanded = with_entwine_mode_cost_options(program,schema,expanded,response,hint=hint)
+    from .conspire_costs import expand_conspire_options
+    expanded = expand_conspire_options(host, seat, card, expanded, suppress_source_costs=suppress_source_costs,
+        mechanics=mechanics, mandatory=mandatory)
     from .aftermath import with_aftermath_stack_context
     return with_aftermath_stack_context(host,card,expanded), mandatory, mechanics, has_x
 
@@ -1445,6 +1448,10 @@ def _finalize_option(
     if payment is None:
         return None
     choice_schema, selected_cards = payment
+    from .conspire_costs import conspire_payment_cards
+    selected_cards = conspire_payment_cards(host, seat, card, option, selected_cards)
+    if selected_cards is None:
+        return None
     if not host._cost_is_affordable(
         seat,
         option["requirements"],

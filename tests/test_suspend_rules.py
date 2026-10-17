@@ -274,7 +274,7 @@ class SuspendCompilerTests(unittest.TestCase):
                 self.assertTrue(compiled.material_residuals)
 
         with patch(
-            "quorune.compiler.keyword_nodes.fixed_cast_lifecycle_keyword_node",
+            "quorune.compiler.casting_keyword_nodes.fixed_cast_lifecycle_keyword_node",
             return_value=None,
         ):
             mutant = self.compile(fixture)

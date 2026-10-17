@@ -5016,6 +5016,31 @@
         "test_storm_rules",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "ordinary-conspire-pair-cost-and-copy-trigger",
+      "patterns": [
+        "quorune/conspire_model.py",
+        "quorune/conspire.py",
+        "quorune/compiler/conspire_nodes.py",
+        "quorune/semantic_runtime/conspire.py",
+        "quorune/rules/casting/conspire_costs.py",
+        "tests/test_fixed_conspire.py",
+        "tests/fixtures/fixed-conspire-cards.json",
+        "quorune/compiler/casting_keyword_nodes.py"
+      ],
+      "test_modules": [
+        "test_bestow_rules",
+        "test_card_program_trust",
+        "test_cast_creature_targets",
+        "test_fixed_combat_entry_keyword_lifecycles",
+        "test_fixed_conspire",
+        "test_fixed_replicate",
+        "test_fixed_zone_cast_lifecycles",
+        "test_public_state_mana_actions",
+        "test_storm_rules",
+        "test_suspend_rules"
+      ]
     }
   ],
   "symbol_rules": [
