@@ -5186,6 +5186,31 @@
         "test_morph_rules",
         "test_nonmana_morph"
       ]
+    },
+    {
+      "id": "fixed-self-counter-prevention-contract",
+      "patterns": [
+        "quorune/compiler/counter_prevention_templates.py",
+        "quorune/counter_prevention.py",
+        "quorune/counter_removal.py",
+        "quorune/damage.py",
+        "quorune/damage_aftermath_preparation.py",
+        "quorune/damage_prevention_aftermath.py",
+        "quorune/damage_transaction.py",
+        "quorune/semantic_runtime/counter_prevention.py",
+        "quorune/semantic_runtime/damage_replacements.py",
+        "tests/fixtures/fixed-counter-prevention-cards.json",
+        "tests/test_fixed_counter_prevention.py"
+      ],
+      "test_modules": [
+        "test_fixed_counter_prevention",
+        "test_damage_prevention_aftermath",
+        "test_damage_replacement_model",
+        "test_damage_replacement_integration",
+        "test_damage_prevention_shields",
+        "test_fixed_counter_removal_effects",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

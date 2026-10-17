@@ -225,6 +225,7 @@
       "test_explore_compiler",
       "test_fixed_affected_player_discards",
       "test_fixed_cleave",
+      "test_fixed_counter_prevention",
       "test_fixed_hand_inspection",
       "test_fixture_ruling_merge",
       "test_graveyard_rules",

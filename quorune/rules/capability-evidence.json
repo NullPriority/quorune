@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "c628a903b17efad1dd00dd143c733bf543c8d8067ca104ab40efa196ea2c08de",
-  "declaration_source_fingerprint": "1d69cc807dbc4ee4afc29f09ba6478e5854e0931305cd46d624f26b091ef2047",
+  "registry_fingerprint": "f6bda64081ed304003f9a035d9676afe52b7d12d14e07adf163df34882e7acd5",
+  "declaration_source_fingerprint": "ac9424964c6018769f79f28f8b18c70fbef354de673d0a853ee200e76abfc593",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -91361,6 +91361,2052 @@
       "applicability_note": "Serialize the pinned source and nested damage result through an exact Game Record v3 command replay."
     },
     {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_actual_multiple_blockers_share_one_counter_removal_and_precombat_replay",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_actual_pending_choice_is_controller_private_atomic_loaded_and_replayed",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_actual_shocks_remove_one_counter_per_occurrence_and_replay",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_additional_counter_placement_observes_the_prevention_counter_removal",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_additional_removal_precedes_companion_damage_result_mutation",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_conditional_source_at_zero_counters_does_not_prevent_damage",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_copied_original_uses_its_own_counters_and_current_prevention",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_current_ability_removal_allows_damage_without_spending_a_counter",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_first_and_regular_strike_are_distinct_counter_removal_occurrences",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_manifested_original_has_no_front_prevention_or_counter_removal",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_missing_nested_counter_result_rejects_before_companion_player_damage",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_missing_prepared_counter_result_cannot_commit_companion_player_damage",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_nested_prevention_damage_observes_the_counter_already_removed",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_protection_can_prevent_first_without_spending_a_counter",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_sequential_nested_occurrences_update_the_conditional_counter_predicate",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_simultaneous_sources_prevent_all_damage_and_remove_only_one_counter",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_stale_nested_counter_plan_rejects_before_companion_player_damage",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_stale_prepared_counter_result_rejects_before_damage_or_life_mutation",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_unconditional_zero_counter_source_with_actual_toughness_boost_still_prevents",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_unpreventable_damage_is_dealt_and_still_removes_one_counter",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_unpreventable_damage_keeps_an_existing_finite_shield_unchanged",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_unpreventable_infect_and_additional_counter_removal_share_the_damage_boundary",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_actual_multiple_blockers_share_one_counter_removal_and_precombat_replay",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_actual_pending_choice_is_controller_private_atomic_loaded_and_replayed",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_actual_shocks_remove_one_counter_per_occurrence_and_replay",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_additional_counter_placement_observes_the_prevention_counter_removal",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_additional_removal_precedes_companion_damage_result_mutation",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_conditional_source_at_zero_counters_does_not_prevent_damage",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_copied_original_uses_its_own_counters_and_current_prevention",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_current_ability_removal_allows_damage_without_spending_a_counter",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_first_and_regular_strike_are_distinct_counter_removal_occurrences",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_manifested_original_has_no_front_prevention_or_counter_removal",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_missing_nested_counter_result_rejects_before_companion_player_damage",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_missing_prepared_counter_result_cannot_commit_companion_player_damage",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_nested_prevention_damage_observes_the_counter_already_removed",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_protection_can_prevent_first_without_spending_a_counter",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_sequential_nested_occurrences_update_the_conditional_counter_predicate",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_simultaneous_sources_prevent_all_damage_and_remove_only_one_counter",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_stale_nested_counter_plan_rejects_before_companion_player_damage",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_stale_prepared_counter_result_rejects_before_damage_or_life_mutation",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_unconditional_zero_counter_source_with_actual_toughness_boost_still_prevents",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_unpreventable_damage_is_dealt_and_still_removes_one_counter",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_unpreventable_damage_keeps_an_existing_finite_shield_unchanged",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_unpreventable_infect_and_additional_counter_removal_share_the_damage_boundary",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionCompilerTests.test_model_closes_malformed_unknown_and_amount_based_counter_variants",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_omitting_counter_removal_is_killed_by_the_native_consequence",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionCompilerTests.test_closed_source_conditions_and_counter_result_require_the_existing_removal_owner",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionCompilerTests.test_model_closes_malformed_unknown_and_amount_based_counter_variants",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_actual_pending_choice_is_controller_private_atomic_loaded_and_replayed",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_conditional_source_at_zero_counters_does_not_prevent_damage",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_manifested_original_has_no_front_prevention_or_counter_removal",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_missing_nested_counter_result_rejects_before_companion_player_damage",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_missing_prepared_counter_result_cannot_commit_companion_player_damage",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_stale_nested_counter_plan_rejects_before_companion_player_damage",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_stale_prepared_counter_result_rejects_before_damage_or_life_mutation",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionCompilerTests.test_closed_source_conditions_and_counter_result_require_the_existing_removal_owner",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionCompilerTests.test_model_closes_malformed_unknown_and_amount_based_counter_variants",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_actual_multiple_blockers_share_one_counter_removal_and_precombat_replay",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_actual_pending_choice_is_controller_private_atomic_loaded_and_replayed",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_actual_shocks_remove_one_counter_per_occurrence_and_replay",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_additional_counter_placement_observes_the_prevention_counter_removal",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_additional_removal_precedes_companion_damage_result_mutation",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_conditional_source_at_zero_counters_does_not_prevent_damage",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_copied_original_uses_its_own_counters_and_current_prevention",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_current_ability_removal_allows_damage_without_spending_a_counter",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_first_and_regular_strike_are_distinct_counter_removal_occurrences",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_manifested_original_has_no_front_prevention_or_counter_removal",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_missing_nested_counter_result_rejects_before_companion_player_damage",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_missing_prepared_counter_result_cannot_commit_companion_player_damage",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_nested_prevention_damage_observes_the_counter_already_removed",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_protection_can_prevent_first_without_spending_a_counter",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_sequential_nested_occurrences_update_the_conditional_counter_predicate",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_simultaneous_sources_prevent_all_damage_and_remove_only_one_counter",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_stale_nested_counter_plan_rejects_before_companion_player_damage",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_stale_prepared_counter_result_rejects_before_damage_or_life_mutation",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_unconditional_zero_counter_source_with_actual_toughness_boost_still_prevents",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_unpreventable_damage_is_dealt_and_still_removes_one_counter",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_unpreventable_damage_keeps_an_existing_finite_shield_unchanged",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_unpreventable_infect_and_additional_counter_removal_share_the_damage_boundary",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_actual_pending_choice_is_controller_private_atomic_loaded_and_replayed",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionCompilerTests.test_closed_source_conditions_and_counter_result_require_the_existing_removal_owner",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionCompilerTests.test_model_closes_malformed_unknown_and_amount_based_counter_variants",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_actual_multiple_blockers_share_one_counter_removal_and_precombat_replay",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_actual_pending_choice_is_controller_private_atomic_loaded_and_replayed",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_actual_shocks_remove_one_counter_per_occurrence_and_replay",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_copied_original_uses_its_own_counters_and_current_prevention",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_current_ability_removal_allows_damage_without_spending_a_counter",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_manifested_original_has_no_front_prevention_or_counter_removal",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_actual_pending_choice_is_controller_private_atomic_loaded_and_replayed",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_missing_nested_counter_result_rejects_before_companion_player_damage",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_missing_prepared_counter_result_cannot_commit_companion_player_damage",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_stale_nested_counter_plan_rejects_before_companion_player_damage",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
+      "capability_id": "damage.prevention.fixed_self_counter_removal",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_counter_prevention.FixedCounterPreventionRuntimeTests.test_stale_prepared_counter_result_rejects_before_damage_or_life_mutation",
+      "official_rule_ids": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed counter-removal prevention across simultaneous versus sequential damage, current ability/identity, protection order, unpreventable damage, canonical counter results, projected nested preparation and atomic source-bound commit."
+    },
+    {
       "capability_id": "damage.prevention.order",
       "evidence_class": "interaction",
       "test_id": "tests.test_rules_primitives.PreventionEffectTests.test_unpreventable_damage_applies_effect_once_without_preventing",
@@ -179168,5 +181214,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "07f01f3ef66611d13cab042059a5582bfa60f1d6e720eb8b411106a034ff62d8"
+  "fingerprint": "a8675eb1045a7fbb03de0355559024e0c054a26f8a05384ad35f5eac97e855a4"
 }

@@ -15450,6 +15450,81 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Soul Summons manifests a strict original entry-choice creature without its front-face replacement or keyword counter. Private load and native printed-mana turn-up preserve zero counters and do not create a new entry choice."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_shocks_remove_one_counter_per_occurrence_and_replay",
+      "piece_ids": [
+        "capability.counter.removal.fixed_effect",
+        "capability.damage.prevention.fixed_self_counter_removal"
+      ],
+      "capability_ids": [
+        "counter.removal.fixed_effect",
+        "damage.prevention.fixed_self_counter_removal"
+      ],
+      "interaction_order": 2,
+      "assertion": "Strict original Phantom Tiger prevents separate actual Shock resolutions and removes exactly one counter for each occurrence through canonical partial removal; pre-action replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_copied_original_uses_its_own_counters_and_current_prevention",
+      "piece_ids": [
+        "capability.counter.producer.fixed_self_entry",
+        "capability.damage.prevention.fixed_self_counter_removal"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_self_entry",
+        "damage.prevention.fixed_self_counter_removal"
+      ],
+      "interaction_order": 2,
+      "assertion": "A copied strict original gets its own initial counters and prevents actual Shock while removing one of its own counters; the original counters remain unchanged and replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_copied_original_uses_its_own_counters_and_current_prevention",
+      "piece_ids": [
+        "capability.damage.prevention.fixed_self_counter_removal",
+        "capability.token.creation.fixed_copy"
+      ],
+      "capability_ids": [
+        "damage.prevention.fixed_self_counter_removal",
+        "token.creation.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real admitted token-copy spell creates a current counter-prevention component; its fresh counters support native prevention and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_manifested_original_has_no_front_prevention_or_counter_removal",
+      "piece_ids": [
+        "capability.damage.prevention.fixed_self_counter_removal",
+        "capability.keyword_action.manifest.card"
+      ],
+      "capability_ids": [
+        "damage.prevention.fixed_self_counter_removal",
+        "keyword_action.manifest.card"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Soul Summons manifests the original without its front entry/prevention components; actual Shock deals damage and the face-down body dies, with pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_first_and_regular_strike_are_distinct_counter_removal_occurrences",
+      "piece_ids": [
+        "capability.combat.damage.participation.strike_steps",
+        "capability.damage.prevention.fixed_self_counter_removal"
+      ],
+      "capability_ids": [
+        "combat.damage.participation.strike_steps",
+        "damage.prevention.fixed_self_counter_removal"
+      ],
+      "interaction_order": 2,
+      "assertion": "Accepted block and priority commands resolve first and regular strike separately, removing one counter in each damage occurrence and preventing both; replay agrees."
     }
   ]
 }

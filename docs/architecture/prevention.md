@@ -69,9 +69,23 @@ mutation.
 
 ## Aftermath and ordering
 
-Only wording explicitly dependent on damage "prevented this way" enters the
-aftermath transaction. Independent later instructions remain ordinary ordered
-siblings. Typed aftermath can route represented life, counter, or nested
+Wording dependent on damage "prevented this way" uses the prevented-amount
+aftermath transaction. Fixed static self-prevention has a separate closed
+additional-result component: it removes one +1/+1 counter for the whole
+simultaneous damage occurrence, regardless of the number of sources. Its
+unconditional form still prevents at zero counters; the represented
+while-has-counter form requires a current counter. Unpreventable damage is
+dealt and still produces this independent removal, while finite shields retain
+their remainder. The existing partial counter-removal owner does as much as
+possible; this result is not a removal cost.
+
+Additional counter results retain their applying source incarnation through
+redirection and use current layer-6 component presence. Nested damage prepares
+against detached counter overlays, including earlier nested removals, and
+validates the complete removal tree before any live damage commits. Copying,
+face-down entry, protection ordering, private suspension, and replay retain the
+same canonical boundaries. Independent later instructions remain ordinary
+ordered siblings. Typed aftermath can route represented life, counter, or nested
 damage results through those subsystems' canonical replacement-aware
 transactions. Triggered prevention aftermath requiring a stack object remains
 a trigger concern, not an implicit immediate effect.

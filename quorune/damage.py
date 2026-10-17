@@ -376,6 +376,10 @@ class DamageBatchResult:
 class _CanonicalDamageTransactionPort(DamageTransactionPort):
     host: DamageHost
 
+    def with_counter_prevention(self, prepared):
+        from .counter_prevention import projected_counter_prevention_host
+        return _CanonicalDamageTransactionPort(projected_counter_prevention_host(self.host, prepared))
+
     def recipient(
         self,
         ref: str,
@@ -399,7 +403,8 @@ class _CanonicalDamageTransactionPort(DamageTransactionPort):
             self.host,
             proposals,
             selections=selections,
-            sources=sources,
+            sources=(None if sources is None else tuple(
+                self.host.state.cards.get(source.object_id, source) for source in sources)),
             source_zones=source_zones,
             modifier_snapshot=modifier_snapshot,
             aftermath_depth=aftermath_depth,
@@ -749,31 +754,14 @@ def prepare_damage_batch(
             effects=result_effects,
             pending=result_progress.pending,
         )
-    try:
-        modifier_plan = plan_damage_modifier_commit(
-            host, events, snapshot=current_modifiers
-        )
-    except DamageModifierError as exc:
-        raise DamageError(str(exc)) from exc
     aftermath_selection_offset = (
         consumed + result_progress.consumed_selections
     )
-    try:
-        aftermath = prepare_prevention_aftermath(
-            host,
-            events,
-            damage_port=_CanonicalDamageTransactionPort(host),
-            selections=tuple(selections[aftermath_selection_offset:]),
-            sources=sources,
-            source_zones=source_zones,
-            modifier_snapshot=project_damage_modifier_snapshot(
-                current_modifiers, modifier_plan
-            ),
-            depth=aftermath_depth,
-            effect_chain=aftermath_effect_chain,
-        )
-    except PreventionAftermathError as exc:
-        raise DamageError(str(exc)) from exc
+    from .damage_aftermath_preparation import prepare_damage_aftermath
+    modifier_plan, aftermath = prepare_damage_aftermath(host, events, effects, current_modifiers,
+        damage_port=_CanonicalDamageTransactionPort(host),
+        selections=tuple(selections[aftermath_selection_offset:]), sources=sources, source_zones=source_zones,
+        depth=aftermath_depth, effect_chain=aftermath_effect_chain)
     return PreparedDamageBatch(
         events=events,
         effects=tuple(effects),
@@ -1214,9 +1202,10 @@ def commit_prepared_damage_batch(
     )
     if has_results and not prepared.result_events:
         raise DamageError("Prepared damage is missing its result event batch")
+    from .counter_prevention import projected_counter_prevention_host, commit_immediate_counter_prevention
     try:
         result_plan = plan_damage_result_commit(
-            host,
+            projected_counter_prevention_host(host, prepared.aftermath.counter_removals),
             PreparedDamageResults(
                 events=prepared.result_events,
                 effects=prepared.result_effects,
@@ -1228,6 +1217,8 @@ def commit_prepared_damage_batch(
 
     _validate_damage_replacement_journal(prepared)
     _validate_result_replacement_journal(prepared)
+    from .counter_prevention import validate_counter_prevention_snapshot
+    validate_counter_prevention_snapshot(host, prepared)
     try:
         validate_damage_modifier_plan(host, prepared.modifier_plan)
     except DamageModifierError as exc:
@@ -1267,6 +1258,7 @@ def commit_prepared_damage_batch(
             (final.target, commander_key, final.dealt_amount)
         )
 
+    aftermath_prepared, counter_changed = commit_immediate_counter_prevention(host, prepared.aftermath)
     committed = commit_damage_result_plan(host, result_plan)
     try:
         commit_damage_modifier_plan(host, prepared.modifier_plan)
@@ -1275,13 +1267,13 @@ def commit_prepared_damage_batch(
     try:
         aftermath = commit_prevention_aftermath(
             host,
-            prepared.aftermath,
+            aftermath_prepared,
             damage_port=_CanonicalDamageTransactionPort(host),
         )
     except PreventionAftermathError as exc:
         raise DamageError(str(exc)) from exc
     changed_players = list(committed.changed_players)
-    changed_objects = list(committed.changed_objects)
+    changed_objects = list((*committed.changed_objects, *counter_changed))
     changed_players.extend(aftermath.changed_players)
     changed_objects.extend(aftermath.changed_objects)
     for target, commander_key, amount in commander_updates:

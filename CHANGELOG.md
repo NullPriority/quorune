@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Prevent fixed self damage with one additional counter removal per simultaneous
+  occurrence, preserving unpreventable damage, protection choice, current
+  ability presence, counter ownership, nested preparation, and replay.
+
 - Choose between two fixed entry keyword counters through named, controller-owned
   replacement choices, preserving counter quantities, copy and face-down
   boundaries, historical replacement defaults, and exact replay.

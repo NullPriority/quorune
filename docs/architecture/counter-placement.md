@@ -187,6 +187,12 @@ an empty no-op result. These effect plans implement the represented CR
 plan pins the permanent's current logical identity and expected zone and
 validates again at commit.
 
+Fixed static counter-prevention results also use the partial-effect removal
+plan. One source instance removes one +1/+1 counter for a simultaneous damage
+occurrence, including when its damage cannot be prevented. Multiple sources
+in that occurrence do not multiply the removal, and zero available counters
+do not turn the unconditional prevention into a failed cost.
+
 Oracle IR lowers mandatory fixed named-counter removal and mandatory removal of
 all counters from one direct battlefield permanent target through spell,
 triggered, and activated CardProgram contexts. Both share the closed target

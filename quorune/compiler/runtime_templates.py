@@ -684,7 +684,10 @@ def static_runtime_template(
                 "rules capability"
             ),
         )
-    static_damage = static_damage_handler(text, card_name=source_name)
+    from .counter_prevention_templates import fixed_counter_prevention_handler
+    static_damage = (fixed_counter_prevention_handler(text, source_name=source_name or '')
+                     if source_permanent and not source_is_class else None)
+    static_damage = static_damage or static_damage_handler(text, card_name=source_name)
     if static_damage is None:
         return None
     if (
@@ -718,7 +721,7 @@ def static_runtime_template(
         runtime_coverage=(
             (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
             if static_damage[1]["handler_id"]
-            == "prevention.damage.all.v1"
+            in {"prevention.damage.all.v1", "prevention.damage.fixed-self-counter.v1"}
             else ()
         ),
     )

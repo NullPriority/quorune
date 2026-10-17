@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 356,
+  "registry_version": 357,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -28192,6 +28192,165 @@
       "dependency_fail_closed_rationale": "Withdrawing the nonmana owner or compiler production leaves a source-spanned residual. Complete original admission rejects unknown siblings and unsupported costs; the historical mana handler rejects schema three.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting only canonical life payment preserves complete original admission but violates the independently specified five-life native consequence. Removing nonmana production restores material residuals.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "damage.prevention.fixed_self_counter_removal",
+      "version": 1,
+      "official_rules": [
+        "120.4b",
+        "122.6",
+        "400.7",
+        "609.3",
+        "615.1",
+        "615.5",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Prevent one simultaneous occurrence of damage to the current source and remove one +1/+1 counter as an independent additional result, optionally requiring an existing counter.",
+        "inputs": [
+          "current source ability component and sealed logical identity",
+          "positive damage batch with interleaved prevention order",
+          "fixed unconditional or while-has-counter predicate"
+        ],
+        "outputs": [
+          "preventable damage prevented",
+          "one partial-effect counter removal per simultaneous source instance",
+          "additional removal even for unpreventable damage",
+          "canonical removal events and replay"
+        ],
+        "exclusions": [
+          "damage-amount counter removal",
+          "other counter kinds",
+          "reflexive damage, token, mill, rad or linked result instructions"
+        ]
+      },
+      "dependencies": [
+        "counter.removal.fixed_effect"
+      ],
+      "implementation_components": [
+        "quorune.compiler.counter_prevention_templates.fixed_counter_prevention_handler",
+        "quorune.semantic_runtime.counter_prevention.FixedCounterPreventionHandler",
+        "quorune.counter_prevention.prepare_counter_prevention_results",
+        "quorune.damage_aftermath_preparation.prepare_damage_aftermath",
+        "quorune.counter_removal.commit_counter_removal_effect"
+      ],
+      "positive_tests": [
+        "test_actual_multiple_blockers_share_one_counter_removal_and_precombat_replay",
+        "test_actual_pending_choice_is_controller_private_atomic_loaded_and_replayed",
+        "test_actual_shocks_remove_one_counter_per_occurrence_and_replay",
+        "test_additional_counter_placement_observes_the_prevention_counter_removal",
+        "test_additional_removal_precedes_companion_damage_result_mutation",
+        "test_closed_source_conditions_and_counter_result_require_the_existing_removal_owner",
+        "test_conditional_source_at_zero_counters_does_not_prevent_damage",
+        "test_copied_original_uses_its_own_counters_and_current_prevention",
+        "test_current_ability_removal_allows_damage_without_spending_a_counter",
+        "test_first_and_regular_strike_are_distinct_counter_removal_occurrences",
+        "test_manifested_original_has_no_front_prevention_or_counter_removal",
+        "test_missing_nested_counter_result_rejects_before_companion_player_damage",
+        "test_missing_prepared_counter_result_cannot_commit_companion_player_damage",
+        "test_model_closes_malformed_unknown_and_amount_based_counter_variants",
+        "test_nested_prevention_damage_observes_the_counter_already_removed",
+        "test_protection_can_prevent_first_without_spending_a_counter",
+        "test_sequential_nested_occurrences_update_the_conditional_counter_predicate",
+        "test_simultaneous_sources_prevent_all_damage_and_remove_only_one_counter",
+        "test_stale_nested_counter_plan_rejects_before_companion_player_damage",
+        "test_stale_prepared_counter_result_rejects_before_damage_or_life_mutation",
+        "test_unconditional_zero_counter_source_with_actual_toughness_boost_still_prevents",
+        "test_unpreventable_damage_is_dealt_and_still_removes_one_counter",
+        "test_unpreventable_damage_keeps_an_existing_finite_shield_unchanged",
+        "test_unpreventable_infect_and_additional_counter_removal_share_the_damage_boundary"
+      ],
+      "negative_tests": [
+        "test_actual_pending_choice_is_controller_private_atomic_loaded_and_replayed",
+        "test_closed_source_conditions_and_counter_result_require_the_existing_removal_owner",
+        "test_conditional_source_at_zero_counters_does_not_prevent_damage",
+        "test_manifested_original_has_no_front_prevention_or_counter_removal",
+        "test_missing_nested_counter_result_rejects_before_companion_player_damage",
+        "test_missing_prepared_counter_result_cannot_commit_companion_player_damage",
+        "test_model_closes_malformed_unknown_and_amount_based_counter_variants",
+        "test_stale_nested_counter_plan_rejects_before_companion_player_damage",
+        "test_stale_prepared_counter_result_rejects_before_damage_or_life_mutation"
+      ],
+      "interaction_tests": [
+        "test_actual_multiple_blockers_share_one_counter_removal_and_precombat_replay",
+        "test_actual_pending_choice_is_controller_private_atomic_loaded_and_replayed",
+        "test_actual_shocks_remove_one_counter_per_occurrence_and_replay",
+        "test_additional_counter_placement_observes_the_prevention_counter_removal",
+        "test_additional_removal_precedes_companion_damage_result_mutation",
+        "test_conditional_source_at_zero_counters_does_not_prevent_damage",
+        "test_copied_original_uses_its_own_counters_and_current_prevention",
+        "test_current_ability_removal_allows_damage_without_spending_a_counter",
+        "test_first_and_regular_strike_are_distinct_counter_removal_occurrences",
+        "test_manifested_original_has_no_front_prevention_or_counter_removal",
+        "test_missing_nested_counter_result_rejects_before_companion_player_damage",
+        "test_missing_prepared_counter_result_cannot_commit_companion_player_damage",
+        "test_nested_prevention_damage_observes_the_counter_already_removed",
+        "test_protection_can_prevent_first_without_spending_a_counter",
+        "test_sequential_nested_occurrences_update_the_conditional_counter_predicate",
+        "test_simultaneous_sources_prevent_all_damage_and_remove_only_one_counter",
+        "test_stale_nested_counter_plan_rejects_before_companion_player_damage",
+        "test_stale_prepared_counter_result_rejects_before_damage_or_life_mutation",
+        "test_unconditional_zero_counter_source_with_actual_toughness_boost_still_prevents",
+        "test_unpreventable_damage_is_dealt_and_still_removes_one_counter",
+        "test_unpreventable_damage_keeps_an_existing_finite_shield_unchanged",
+        "test_unpreventable_infect_and_additional_counter_removal_share_the_damage_boundary"
+      ],
+      "multiplayer_tests": [
+        "test_actual_multiple_blockers_share_one_counter_removal_and_precombat_replay",
+        "test_actual_pending_choice_is_controller_private_atomic_loaded_and_replayed",
+        "test_actual_shocks_remove_one_counter_per_occurrence_and_replay",
+        "test_additional_counter_placement_observes_the_prevention_counter_removal",
+        "test_additional_removal_precedes_companion_damage_result_mutation",
+        "test_conditional_source_at_zero_counters_does_not_prevent_damage",
+        "test_copied_original_uses_its_own_counters_and_current_prevention",
+        "test_current_ability_removal_allows_damage_without_spending_a_counter",
+        "test_first_and_regular_strike_are_distinct_counter_removal_occurrences",
+        "test_manifested_original_has_no_front_prevention_or_counter_removal",
+        "test_missing_nested_counter_result_rejects_before_companion_player_damage",
+        "test_missing_prepared_counter_result_cannot_commit_companion_player_damage",
+        "test_nested_prevention_damage_observes_the_counter_already_removed",
+        "test_protection_can_prevent_first_without_spending_a_counter",
+        "test_sequential_nested_occurrences_update_the_conditional_counter_predicate",
+        "test_simultaneous_sources_prevent_all_damage_and_remove_only_one_counter",
+        "test_stale_nested_counter_plan_rejects_before_companion_player_damage",
+        "test_stale_prepared_counter_result_rejects_before_damage_or_life_mutation",
+        "test_unconditional_zero_counter_source_with_actual_toughness_boost_still_prevents",
+        "test_unpreventable_damage_is_dealt_and_still_removes_one_counter",
+        "test_unpreventable_damage_keeps_an_existing_finite_shield_unchanged",
+        "test_unpreventable_infect_and_additional_counter_removal_share_the_damage_boundary"
+      ],
+      "privacy_tests": [
+        "test_actual_pending_choice_is_controller_private_atomic_loaded_and_replayed"
+      ],
+      "replay_tests": [
+        "test_actual_multiple_blockers_share_one_counter_removal_and_precombat_replay",
+        "test_actual_pending_choice_is_controller_private_atomic_loaded_and_replayed",
+        "test_actual_shocks_remove_one_counter_per_occurrence_and_replay",
+        "test_copied_original_uses_its_own_counters_and_current_prevention",
+        "test_current_ability_removal_allows_damage_without_spending_a_counter",
+        "test_manifested_original_has_no_front_prevention_or_counter_removal"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The fixed producer and existing partial counter-removal owner are required; unrepresented amounts and siblings remain material.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting only canonical counter removal preserves damage prevention but violates the independent native counter consequence. Omitting the compiler producer restores a material residual.",
       "blockers": [],
       "status": "trusted"
     }

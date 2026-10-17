@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Mapping, Protocol, Sequence
+from typing import Any, Mapping, Protocol, Sequence
 
 from .damage_prevention import DamageModifierCommitPlan, DamageModifierSnapshot
 from .damage_values import DamageProposal, DamageRecipientSnapshot
@@ -25,6 +25,8 @@ class DamageTransactionResult(Protocol):
 
 class DamageTransactionPort(Protocol):
     """Acyclic adapter to the one canonical damage transaction."""
+
+    def with_counter_prevention(self, prepared: Sequence[Any]) -> "DamageTransactionPort": ...
 
     def recipient(
         self,

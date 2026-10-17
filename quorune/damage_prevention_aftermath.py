@@ -27,6 +27,10 @@ from .damage_transaction import (
     DamageTransactionResult,
     PreparedDamageTransaction,
 )
+from .counter_prevention import (
+    PreparedCounterPrevention, validate_nested_counter_prevention, commit_counter_prevention_results,
+    projected_counter_prevention_host,
+)
 from .damage_values import DamageProposal
 from .life_change import (
     commit_life_change_batch,
@@ -98,6 +102,7 @@ class PreparedPreventionAftermath:
     life_batch: PreparedLifeChangeBatch | None = None
     counter_plan: CounterPlacementCommitPlan | None = None
     consumed_selections: int = 0
+    counter_removals: tuple[PreparedCounterPrevention, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -385,6 +390,9 @@ def _prepare_damage_aftermath(
         projected = project_damage_modifier_snapshot(
             projected, nested.modifier_plan
         )
+        nested_removals = getattr(nested.aftermath, 'counter_removals', ())
+        if nested_removals:
+            damage_port = damage_port.with_counter_prevention(nested_removals)
     if remaining:
         raise PreventionAftermathError(
             "Replacement selections were supplied without aftermath damage"
@@ -498,14 +506,16 @@ def validate_prevention_aftermath(
         raise PreventionAftermathError(
             "Prevention aftermath requires a typed prepared value"
         )
+    validate_nested_counter_prevention(host, prepared)
+    projected_host = projected_counter_prevention_host(host, prepared.counter_removals)
     if prepared.life_batch is not None:
         try:
-            validate_life_change_batch(host, prepared.life_batch)
+            validate_life_change_batch(projected_host, prepared.life_batch)
         except LifeChangeError as exc:
             raise PreventionAftermathError(str(exc)) from exc
     if prepared.counter_plan is not None:
         try:
-            validate_counter_placement_commit(host, prepared.counter_plan)
+            validate_counter_placement_commit(projected_host, prepared.counter_plan)
         except CounterPlacementError as exc:
             raise PreventionAftermathError(str(exc)) from exc
     for instruction in prepared.instructions:
@@ -534,6 +544,7 @@ def commit_prevention_aftermath(
         except LifeChangeError as exc:
             raise PreventionAftermathError(str(exc)) from exc
     validate_prevention_aftermath(host, prepared)
+    removed_counters = commit_counter_prevention_results(host, prepared.counter_removals)
     counter_results = ()
     if prepared.counter_plan is not None:
         try:
@@ -611,6 +622,8 @@ def commit_prevention_aftermath(
             sorted(
                 {result.object_id for result in counter_results}.union(
                     nested_changed_objects
+                ).union(
+                    result.object_id for result in removed_counters if result.removed
                 )
             )
         ),

@@ -333,6 +333,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "modification.activation.loyalty-cost",
                 "prevention.damage.all",
                 "prevention.damage.fixed",
+                "prevention.damage.fixed_self_counter",
                 "prohibition.combat.goad",
                 "participation.untap_step.static",
                 "permission.action.static",
