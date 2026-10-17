@@ -159,11 +159,12 @@ def complete_stack_resolution(
     )
     if evoked:
         card.annotations["evoked"] = True
+    final_destination = fixed_cast_lifecycle_resolution_destination(item, destination) or "graveyard"
     host.move_card(
         card.object_id,
-        fixed_cast_lifecycle_resolution_destination(item, destination)
-        or "graveyard",
+        final_destination,
         controller=item.controller,
+        enter_face=item.chosen_face if final_destination == 'battlefield' else None,
         tapped=(
             True
             if isinstance(

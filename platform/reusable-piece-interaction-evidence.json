@@ -14821,6 +14821,66 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Humble removes original Magus abilities in layer6 but its layer4 type setting still makes an opposing Citadel a Mountain. Actual Unsummon returns Magus and restores the Citadel printed abilities and colorless activation; each command segment replays."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_disturb_aura_target_departure_exiles_on_stack_and_after_attachment",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.zone.change.self_graveyard_exile"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "zone.change.self_graveyard_exile"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Lanterns Lift targets a creature and resolves as an attached Aura or remains a spell when native Unsummon removes that target. Target revalidation or unattached-Aura stabilization sends the current back to exile. Illegal principals roll back, four-seat private projection, pending load and full pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_disturb_aura_target_departure_exiles_on_stack_and_after_attachment",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.zone.change.self_graveyard_exile"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "zone.change.self_graveyard_exile"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Lanterns Lift targets a creature and resolves as an attached Aura or remains a spell when native Unsummon removes that target. Target revalidation or unattached-Aura stabilization sends the current back to exile. Illegal principals roll back, four-seat private projection, pending load and full pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_disturb_aura_target_departure_exiles_on_stack_and_after_attachment",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.change.self_graveyard_exile"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.change.self_graveyard_exile"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Lanterns Lift targets a creature and resolves as an attached Aura or remains a spell when native Unsummon removes that target. Target revalidation or unattached-Aura stabilization sends the current back to exile. Illegal principals roll back, four-seat private projection, pending load and full pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_cutpurse_damage_history_target_then_disturb_and_back_exile",
+      "piece_ids": [
+        "capability.target.permanent.damage_history_predicate",
+        "capability.zone.change.self_graveyard_exile"
+      ],
+      "capability_ids": [
+        "target.permanent.damage_history_predicate",
+        "zone.change.self_graveyard_exile"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Shock damages an opposing creature; original Cutpurse admits only that damaged target and rejects the undamaged opposing control. Its front dies normally, is cast using Disturb, and its back exiles on native Murder. Private projection, unauthorized rollback, pending save/load and pre-action replay agree."
     }
   ]
 }

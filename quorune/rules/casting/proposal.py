@@ -5,6 +5,7 @@ from collections.abc import Mapping
 from dataclasses import replace
 from .face_queries import prospective_cast_card,cast_resolution_is_trusted,cast_offer_id,selected_cast_program,selected_cast_card_view
 from .aftermath import aftermath_cast_prohibition_reason
+from .disturb_costs import cast_view_zone_permission,disturb_back_cast_permission
 from ..prototype import prototype_cast_view,compiled_prototype_spec
 from typing import Any, Protocol
 
@@ -148,7 +149,7 @@ def _resolve_cast_source(host: CastProposalHost, request: CastProposalRequest) -
     if (
         card.zone not in {"hand", "command"}
         and not internally_authorized
-        and not host._compiled_zone_cast_permission(request.actor, selected_cast_card_view(host,card,request.required_face or request.face,request.cast_method))
+        and not cast_view_zone_permission(host,request.actor,selected_cast_card_view(host,card,request.required_face or request.face,request.cast_method))
     ):
         raise CastProposalError(
             f"Casting {card.printed_name} from {card.zone} is not authorized by a compiled zone permission.",
@@ -161,6 +162,7 @@ def _cast_face(
     host: CastProposalHost,
     request: CastProposalRequest,
     record: Any,
+    card: Any,
 ) -> Mapping[str, Any] | None:
     requested_face = request.required_face or request.face
     face = host._select_cast_face(record, requested_face)
@@ -171,6 +173,7 @@ def _cast_face(
         and record.faces
         and str(face.get("name") or "").casefold()
         != str(record.faces[0].get("name") or "").casefold()
+        and not disturb_back_cast_permission(host,request.actor,card,str(face.get('name') or ''))
     ):
         raise CastProposalError(
             "A transforming double-faced card's back face cannot be cast without a rules effect that specifically allows it",
@@ -705,7 +708,7 @@ def build_cast_proposal(
     face = (
         None
         if request.cast_method in FACE_DOWN_CAST_METHODS
-        else _cast_face(host, request, record)
+        else _cast_face(host, request, record, card)
     )
     _validate_offer_fingerprint(host, request, card)
     (
@@ -881,7 +884,7 @@ def build_cast_offer(
         return CastProposalResult("unavailable", method_error)
     front = host._select_cast_face(record,face_name) if record.faces else None
     card=prospective_cast_card(host,card,face_name)
-    if card.zone not in {'hand','command'} and not host._compiled_zone_cast_permission(seat,card):
+    if card.zone not in {'hand','command'} and not cast_view_zone_permission(host,seat,card):
         return CastProposalResult('unavailable','zone_permission')
     type_line = (
         "Creature"

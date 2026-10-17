@@ -33,6 +33,18 @@ def closed_static_card_node(*, record, node_id, line, material_line, span,
     Synthetic token abilities use the record-free dispatcher below and cannot
     acquire a printed additional-cost instance from their creating card.
     """
+    from .disturb_nodes import disturb_static_node
+    disturb = disturb_static_node(record=record, face_name=face_name, node_id=node_id, line=line,
+        material_line=material_line, span=span, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals)
+    if disturb is not None:
+        return disturb
+    from .self_graveyard_exile_nodes import self_graveyard_exile_node
+    source_exile = self_graveyard_exile_node(source_name=face_name or record.name,
+        node_id=node_id, line=line, material_line=material_line, span=span,
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
+    if source_exile is not None:
+        return source_exile
     from .multikicker_nodes import multikicker_static_node
     multikicker = multikicker_static_node(record=record, node_id=node_id, line=line,
         material_line=material_line, span=span, capability_registry=capability_registry,

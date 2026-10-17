@@ -67,6 +67,8 @@ from .entry_reveal import EntryRevealHandler,entry_reveal_replacement_effects
 from .kicker import FixedKickedEntryHandler
 from .multikicker import MultikickerEntryHandler, prospective_multikicker_fields
 from .madness import MadnessDiscardReplacementHandler
+from .self_graveyard_exile import SelfGraveyardExileHandler
+from ..self_graveyard_exile_model import SELF_GRAVEYARD_EXILE_HANDLER
 from ..read_ahead import READ_AHEAD_ENTRY_HANDLER_ID
 from .entry_state import (
     ENTRY_STATE_HANDLER_ID,
@@ -449,6 +451,7 @@ def default_zone_change_replacement_registry(
             FixedKickedEntryHandler(),
             MultikickerEntryHandler(),
             MadnessDiscardReplacementHandler(),
+            SelfGraveyardExileHandler(),
             DynamicSelfEntryCounterHandler(),
             SelfEntryCounterHandler(),
             SelfTappedCounterEntryHandler(),
@@ -569,6 +572,8 @@ def collect_zone_change_replacement_effects(
                     or not program_static_component_is_applicable(host,program,source)):
                 continue
             for descriptor_index, descriptor in enumerate(program.handlers):
+                if descriptor.get('handler_id') == SELF_GRAVEYARD_EXILE_HANDLER:
+                    continue
                 effects.append(
                     registry.source_replacement_effect(
                         descriptor,
@@ -935,7 +940,7 @@ def _zone_change_snapshot_effects(
             for descriptor_index, descriptor in enumerate(program.handlers):
                 if (
                     descriptor.get("handler_id")
-                    != MADNESS_REPLACEMENT_HANDLER_ID
+                    not in {MADNESS_REPLACEMENT_HANDLER_ID, SELF_GRAVEYARD_EXILE_HANDLER}
                 ):
                     continue
                 subject_effects.extend(

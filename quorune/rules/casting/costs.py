@@ -26,6 +26,7 @@ from ...compiled_kicker import compiled_fixed_mana_kicker_spec
 from .paid_entry_copy_costs import with_paid_entry_copy_cost_schema
 from .multikicker_costs import with_multikicker_cost_schema
 from .emerge_costs import emerge_base_options, reduce_emerge_total, finalize_emerge_selection
+from .disturb_costs import disturb_back_cast_permission,disturb_base_options
 from ...compiled_bestow import compiled_fixed_mana_bestow_spec
 from ...convoke import (
     CONVOKE_PAYMENT_SYMBOLS,
@@ -480,8 +481,10 @@ def _initial_options(
 ] | None:
     x_value = response.get("x")
     temporary_permission = host._temporary_play_permission(seat, card)
+    intrinsic_disturb = (disturb_back_cast_permission(host,seat,card)
+        and not (force_without_mana_cost or suppress_source_costs or alternative_base is not None))
     cast_without_mana = force_without_mana_cost or bool(
-        temporary_permission and temporary_permission.get("without_mana_cost")
+        temporary_permission and temporary_permission.get("without_mana_cost") and not intrinsic_disturb
     )
     if alternative_base is not None:
         if cast_without_mana or (x_value is not None and int(x_value) != 0):
@@ -560,6 +563,8 @@ def _initial_options(
                 "requirements": requirements,
             }
         )
+    if intrinsic_disturb:
+        base=disturb_base_options(host,seat,card,commander_tax=commander_tax)
     from .option_expansion import expand_optional_mana_costs
     expanded = expand_optional_mana_costs(host, card, base, schema, response=response, hint=hint)
     mandatory = [dict(value) for value in schema.get("additional_costs", [])]

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 347,
+  "registry_version": 348,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -7222,7 +7222,7 @@
     },
     {
       "id": "token.creation.fixed_copy",
-      "version": 7,
+      "version": 8,
       "official_rules": [
         "111.12",
         "111.2",
@@ -7256,8 +7256,9 @@
           "resolving controller"
         ],
         "outputs": [
-          "copied token group and ordinary replacement ordering and entry events",
           "copiable typed exceptions and granted child abilities",
+          "copied source and face provenance across token and copy-of-copy programs",
+          "copied token group and ordinary replacement ordering and entry events",
           "independent incarnation-pinned keyword grants and grouped delayed sacrifice or exile",
           "target and choice revalidation, exact replay"
         ],
@@ -7314,9 +7315,14 @@
         "test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values"
       ],
       "interaction_tests": [
+        "test_actual_back_copy_inherits_exile_without_disturb_payment_and_humble_removes_it",
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
         "test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays",
+        "test_actual_eliminate_rejects_transformed_five_mana_creature",
         "test_actual_source_only_ability_removal_is_not_copied",
         "test_actual_synth_exception_is_copiable_and_survives_ability_removal",
+        "test_actual_token_back_copy_exiles_instead_of_dying",
+        "test_actual_token_copy_of_back_face_has_zero_mana_value",
         "test_copy_and_delayed_tokens_revalidate_and_replay",
         "test_copy_does_not_inherit_the_original_cast_x_or_existing_counters",
         "test_creation_and_entry_counter_choices_resume_once_and_replay",
@@ -7325,10 +7331,7 @@
         "test_one_copy_and_sequential_creation_history_controls",
         "test_replacement_adjusted_history_characteristic_quantity",
         "test_simultaneous_copies_see_the_complete_entry_history",
-        "test_token_replacement_order_rollback_and_privacy",
-        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
-        "test_actual_eliminate_rejects_transformed_five_mana_creature",
-        "test_actual_token_copy_of_back_face_has_zero_mana_value"
+        "test_token_replacement_order_rollback_and_privacy"
       ],
       "multiplayer_tests": [
         "test_actual_synth_exception_is_copiable_and_survives_ability_removal",
@@ -7344,7 +7347,13 @@
         "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value"
       ],
       "replay_tests": [
+        "test_actual_back_copy_inherits_exile_without_disturb_payment_and_humble_removes_it",
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
+        "test_actual_eliminate_rejects_transformed_five_mana_creature",
+        "test_actual_kessig_transform_keeps_one_mana_value",
         "test_actual_synth_exception_is_copiable_and_survives_ability_removal",
+        "test_actual_token_back_copy_exiles_instead_of_dying",
+        "test_actual_token_copy_of_back_face_has_zero_mana_value",
         "test_actual_trusted_copy_gets_its_own_entry_counters_and_replays",
         "test_copy_and_delayed_tokens_revalidate_and_replay",
         "test_creation_and_entry_counter_choices_resume_once_and_replay",
@@ -7353,11 +7362,7 @@
         "test_simultaneous_copies_see_the_complete_entry_history",
         "test_subsequent_haste_does_not_rewrite_entry_facts",
         "test_two_simultaneous_copies_use_post_event_history_characteristics",
-        "test_unavailable_prospective_component_query_rejects_resolution_atomically",
-        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
-        "test_actual_eliminate_rejects_transformed_five_mana_creature",
-        "test_actual_kessig_transform_keeps_one_mana_value",
-        "test_actual_token_copy_of_back_face_has_zero_mana_value"
+        "test_unavailable_prospective_component_query_rejects_resolution_atomically"
       ],
       "required_evidence": [
         "positive",
@@ -7370,7 +7375,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking target revalidation prevents a fixed copy-token node from receiving trusted closure.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Existing copy-shape and copiable-value mutations remain killed; focused owner contracts additionally kill incomplete simultaneous history and separately instructed aftercare occurring before entry discovery. The native Synth copy-type omission mutation removes only added types and is detected without changing source admission. The original-face and copied-derived-value omission witnesses distinguish front-derived original mana value from a zero-value actual Clone of a transforming back face.",
+      "implementation_mutation_rationale": "Existing copy-shape and copiable-value mutations remain killed; focused owner contracts additionally kill incomplete simultaneous history and separately instructed aftercare occurring before entry discovery. The native Synth copy-type omission mutation removes only added types and is detected without changing source admission. The original-face and copied-derived-value omission witnesses distinguish front-derived original mana value from a zero-value actual Clone of a transforming back face. Omitting copied face provenance retains source admission and copied characteristics but makes the actual back-face token die; the native departure-history witness detects it.",
       "blockers": [],
       "status": "trusted"
     },
@@ -27023,6 +27028,206 @@
       "dependency_fail_closed_rationale": "Missing Emerge or existing fixed sacrifice ownership leaves the source declaration residual; malformed prices and selectors fail before mutation.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting only the total generic reduction retains source admission but removes the actual legal Wretched Gryff cast with the chosen high-mana-value creature under Sphere of Resistance.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.lifecycle.disturb_fixed_mana",
+      "version": 1,
+      "official_rules": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One closed fixed-mana front-face Disturb authority permits the back face from the owner graveyard at that alternative price, with ordinary face/cost/target/total modifiers.",
+        "inputs": [
+          "complete source-spanned admitted declaration",
+          "current source faces, controller and logical incarnation",
+          "existing casting or zone-replacement authority"
+        ],
+        "outputs": [
+          "correlated back-face Disturb cast"
+        ],
+        "exclusions": [
+          "variable, hybrid, nonmana, repeated and other card-form Disturb declarations"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.disturb_model.FixedManaDisturbSpec",
+        "quorune.compiler.disturb_nodes.disturb_static_node",
+        "quorune.semantic_runtime.disturb.FixedManaDisturbHandler",
+        "quorune.rules.casting.disturb_costs.compiled_disturb_spec",
+        "quorune.rules.casting.disturb_costs.disturb_back_cast_permission",
+        "quorune.rules.casting.disturb_costs.disturb_base_options"
+      ],
+      "positive_tests": [
+        "test_actual_cutpurse_damage_history_target_then_disturb_and_back_exile",
+        "test_actual_disturb_aura_target_departure_exiles_on_stack_and_after_attachment",
+        "test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+        "test_disturb_cost_and_back_replacement_keep_separate_source_spans_and_capabilities",
+        "test_disturb_declaration_is_immutable_and_has_closed_faces_prices_and_codec",
+        "test_original_disturb_cards_need_both_complete_faces_and_normal_registration",
+        "test_source_local_exile_is_not_a_self_replacement_priority_and_binds_one_incarnation"
+      ],
+      "negative_tests": [
+        "test_actual_bounced_back_returns_front_and_does_not_cast_back_from_hand",
+        "test_generic_free_permission_does_not_waive_intrinsic_disturb_alternative",
+        "test_original_disturb_cards_need_both_complete_faces_and_normal_registration",
+        "test_source_local_exile_is_not_a_self_replacement_priority_and_binds_one_incarnation",
+        "test_unknown_disturb_variants_bodies_and_missing_owners_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_actual_back_copy_inherits_exile_without_disturb_payment_and_humble_removes_it",
+        "test_actual_bounced_back_returns_front_and_does_not_cast_back_from_hand",
+        "test_actual_countered_disturb_back_spell_goes_to_exile",
+        "test_actual_cutpurse_damage_history_target_then_disturb_and_back_exile",
+        "test_actual_disturb_aura_target_departure_exiles_on_stack_and_after_attachment",
+        "test_actual_disturb_aura_uses_back_targets_and_cost_modifier_type",
+        "test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+        "test_actual_source_and_dauthi_replacements_remain_an_affected_player_choice",
+        "test_actual_token_back_copy_exiles_instead_of_dying",
+        "test_generic_free_permission_does_not_waive_intrinsic_disturb_alternative"
+      ],
+      "multiplayer_tests": [
+        "test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+        "test_actual_source_and_dauthi_replacements_remain_an_affected_player_choice"
+      ],
+      "privacy_tests": [
+        "test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+        "test_actual_source_and_dauthi_replacements_remain_an_affected_player_choice"
+      ],
+      "replay_tests": [
+        "test_actual_back_copy_inherits_exile_without_disturb_payment_and_humble_removes_it",
+        "test_actual_bounced_back_returns_front_and_does_not_cast_back_from_hand",
+        "test_actual_countered_disturb_back_spell_goes_to_exile",
+        "test_actual_disturb_aura_uses_back_targets_and_cost_modifier_type",
+        "test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+        "test_actual_source_and_dauthi_replacements_remain_an_affected_player_choice",
+        "test_actual_token_back_copy_exiles_instead_of_dying",
+        "test_generic_free_permission_does_not_waive_intrinsic_disturb_alternative"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "Missing precise declaration/zone owners, incomplete source faces, malformed data and unknown sibling bodies remain residual before execution.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the distinct cost or source-exile compiler producer makes the independently specified positive front/back contract fail before promotion. Native admission-preserving price omission changes actual payment; removing only source replacement routing changes countering, and removing copied face provenance changes actual token death history.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "zone.change.self_graveyard_exile",
+      "version": 1,
+      "official_rules": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A current printed source-local graveyard-to-exile clause applies independently of casting history, on the stack and battlefield and on copied/token sources. Current ability removal suppresses it; it is not a self-replacement priority class.",
+        "inputs": [
+          "complete source-spanned admitted declaration",
+          "current source faces, controller and logical incarnation",
+          "existing casting or zone-replacement authority"
+        ],
+        "outputs": [
+          "one current subject-bound graveyard redirection"
+        ],
+        "exclusions": [
+          "other destinations and unrepresented conditional clauses"
+        ]
+      },
+      "dependencies": [
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.self_graveyard_exile_model.self_graveyard_exile_descriptor",
+        "quorune.compiler.self_graveyard_exile_nodes.self_graveyard_exile_node",
+        "quorune.semantic_runtime.self_graveyard_exile.SelfGraveyardExileHandler"
+      ],
+      "positive_tests": [
+        "test_actual_cutpurse_damage_history_target_then_disturb_and_back_exile",
+        "test_actual_disturb_aura_target_departure_exiles_on_stack_and_after_attachment",
+        "test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+        "test_disturb_cost_and_back_replacement_keep_separate_source_spans_and_capabilities",
+        "test_disturb_declaration_is_immutable_and_has_closed_faces_prices_and_codec",
+        "test_original_disturb_cards_need_both_complete_faces_and_normal_registration",
+        "test_source_local_exile_is_not_a_self_replacement_priority_and_binds_one_incarnation"
+      ],
+      "negative_tests": [
+        "test_actual_bounced_back_returns_front_and_does_not_cast_back_from_hand",
+        "test_generic_free_permission_does_not_waive_intrinsic_disturb_alternative",
+        "test_original_disturb_cards_need_both_complete_faces_and_normal_registration",
+        "test_source_local_exile_is_not_a_self_replacement_priority_and_binds_one_incarnation",
+        "test_unknown_disturb_variants_bodies_and_missing_owners_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_actual_back_copy_inherits_exile_without_disturb_payment_and_humble_removes_it",
+        "test_actual_bounced_back_returns_front_and_does_not_cast_back_from_hand",
+        "test_actual_countered_disturb_back_spell_goes_to_exile",
+        "test_actual_cutpurse_damage_history_target_then_disturb_and_back_exile",
+        "test_actual_disturb_aura_target_departure_exiles_on_stack_and_after_attachment",
+        "test_actual_disturb_aura_uses_back_targets_and_cost_modifier_type",
+        "test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+        "test_actual_source_and_dauthi_replacements_remain_an_affected_player_choice",
+        "test_actual_token_back_copy_exiles_instead_of_dying",
+        "test_generic_free_permission_does_not_waive_intrinsic_disturb_alternative"
+      ],
+      "multiplayer_tests": [
+        "test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+        "test_actual_source_and_dauthi_replacements_remain_an_affected_player_choice"
+      ],
+      "privacy_tests": [
+        "test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+        "test_actual_source_and_dauthi_replacements_remain_an_affected_player_choice"
+      ],
+      "replay_tests": [
+        "test_actual_back_copy_inherits_exile_without_disturb_payment_and_humble_removes_it",
+        "test_actual_bounced_back_returns_front_and_does_not_cast_back_from_hand",
+        "test_actual_countered_disturb_back_spell_goes_to_exile",
+        "test_actual_disturb_aura_uses_back_targets_and_cost_modifier_type",
+        "test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+        "test_actual_source_and_dauthi_replacements_remain_an_affected_player_choice",
+        "test_actual_token_back_copy_exiles_instead_of_dying",
+        "test_generic_free_permission_does_not_waive_intrinsic_disturb_alternative"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Missing precise declaration/zone owners, incomplete source faces, malformed data and unknown sibling bodies remain residual before execution.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the distinct cost or source-exile compiler producer makes the independently specified positive front/back contract fail before promotion. Native admission-preserving price omission changes actual payment; removing only source replacement routing changes countering, and removing copied face provenance changes actual token death history.",
       "blockers": [],
       "status": "trusted"
     }

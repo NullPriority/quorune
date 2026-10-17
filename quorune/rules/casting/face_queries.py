@@ -42,14 +42,18 @@ def offered_cast_methods(host,card):
     from ...morph import FACE_DOWN_CAST_METHODS
     record=host.card_record(card)
     faces=tuple(str(f['name']) for f in record.faces) if record is not None and record.layout in {'split','modal_dfc'} else (None,)
+    from .disturb_costs import compiled_disturb_spec
+    disturb=compiled_disturb_spec(host,card) if card.zone=='graveyard' else None
+    if disturb is not None:faces=(*faces,disturb.back_face)
     from ..prototype import compiled_prototype_spec
     prototype=(('prototype',None),) if compiled_prototype_spec(host,card) is not None else ()
     return tuple((None,name) for name in faces)+prototype+tuple((method,None) for method in FACE_DOWN_CAST_METHODS)
 
 
 def candidate_zone_cast_permission(host,seat,card):
-    if host._compiled_zone_cast_permission(seat,card):return True
-    return any(host._compiled_zone_cast_permission(seat,selected_cast_card_view(host,card,name,method)) for method,name in offered_cast_methods(host,card) if method=='prototype' or method is None and name is not None)
+    from .disturb_costs import cast_view_zone_permission
+    if cast_view_zone_permission(host,seat,card):return True
+    return any(cast_view_zone_permission(host,seat,selected_cast_card_view(host,card,name,method)) for method,name in offered_cast_methods(host,card) if method=='prototype' or method is None and name is not None)
 
 
 def selected_cast_card_view(host,card,face_name=None,cast_method=None):

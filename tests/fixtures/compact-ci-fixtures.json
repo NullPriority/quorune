@@ -79,6 +79,7 @@
     "tests/fixtures/fixed-copy-type-exception-cards.json",
     "tests/fixtures/fixed-counter-keyword-activations.json",
     "tests/fixtures/fixed-damage-source-lki-cards.json",
+    "tests/fixtures/fixed-disturb-cards.json",
     "tests/fixtures/fixed-effect-clause-sequence-cards.json",
     "tests/fixtures/fixed-emerge-cards.json",
     "tests/fixtures/fixed-energy-payment-cards.json",

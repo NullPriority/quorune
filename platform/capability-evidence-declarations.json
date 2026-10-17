@@ -13368,6 +13368,1077 @@
       "applicability_note": "Replay the total-cost selection, mana payment, paid-kicker stack fact, and final authoritative battlefield hash."
     },
     {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_back_copy_inherits_exile_without_disturb_payment_and_humble_removes_it",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_bounced_back_returns_front_and_does_not_cast_back_from_hand",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_countered_disturb_back_spell_goes_to_exile",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_cutpurse_damage_history_target_then_disturb_and_back_exile",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Shock damages an opposing creature; original Cutpurse admits only that damaged target and rejects the undamaged opposing control. Its front dies normally, is cast using Disturb, and its back exiles on native Murder. Private projection, unauthorized rollback, pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_aura_target_departure_exiles_on_stack_and_after_attachment",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Lanterns Lift targets a creature and resolves as an attached Aura or remains a spell when native Unsummon removes that target. Target revalidation or unattached-Aura stabilization sends the current back to exile. Illegal principals roll back, four-seat private projection, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_aura_uses_back_targets_and_cost_modifier_type",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_source_and_dauthi_replacements_remain_an_affected_player_choice",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_token_back_copy_exiles_instead_of_dying",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_generic_free_permission_does_not_waive_intrinsic_disturb_alternative",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_cutpurse_damage_history_target_then_disturb_and_back_exile",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Shock damages an opposing creature; original Cutpurse admits only that damaged target and rejects the undamaged opposing control. Its front dies normally, is cast using Disturb, and its back exiles on native Murder. Private projection, unauthorized rollback, pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_aura_target_departure_exiles_on_stack_and_after_attachment",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Lanterns Lift targets a creature and resolves as an attached Aura or remains a spell when native Unsummon removes that target. Target revalidation or unattached-Aura stabilization sends the current back to exile. Illegal principals roll back, four-seat private projection, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_source_and_dauthi_replacements_remain_an_affected_player_choice",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbModelCompilerTests.test_disturb_producer_omission_is_detected_by_the_positive_contract",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_disturb_price_omission_keeps_admission_but_fails_native_payment_consequences",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_omitted_copied_face_provenance_is_detected_by_actual_token_departure",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_omitted_current_source_replacement_keeps_admission_but_changes_counter_result",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbModelCompilerTests.test_source_local_exile_is_not_a_self_replacement_priority_and_binds_one_incarnation",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbModelCompilerTests.test_unknown_disturb_variants_bodies_and_missing_owners_fail_closed",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_bounced_back_returns_front_and_does_not_cast_back_from_hand",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_generic_free_permission_does_not_waive_intrinsic_disturb_alternative",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_original_disturb_cards_need_both_complete_faces_and_normal_registration",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbModelCompilerTests.test_disturb_cost_and_back_replacement_keep_separate_source_spans_and_capabilities",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbModelCompilerTests.test_disturb_declaration_is_immutable_and_has_closed_faces_prices_and_codec",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbModelCompilerTests.test_source_local_exile_is_not_a_self_replacement_priority_and_binds_one_incarnation",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_cutpurse_damage_history_target_then_disturb_and_back_exile",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Shock damages an opposing creature; original Cutpurse admits only that damaged target and rejects the undamaged opposing control. Its front dies normally, is cast using Disturb, and its back exiles on native Murder. Private projection, unauthorized rollback, pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_aura_target_departure_exiles_on_stack_and_after_attachment",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Lanterns Lift targets a creature and resolves as an attached Aura or remains a spell when native Unsummon removes that target. Target revalidation or unattached-Aura stabilization sends the current back to exile. Illegal principals roll back, four-seat private projection, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_original_disturb_cards_need_both_complete_faces_and_normal_registration",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_cutpurse_damage_history_target_then_disturb_and_back_exile",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Shock damages an opposing creature; original Cutpurse admits only that damaged target and rejects the undamaged opposing control. Its front dies normally, is cast using Disturb, and its back exiles on native Murder. Private projection, unauthorized rollback, pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_aura_target_departure_exiles_on_stack_and_after_attachment",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Lanterns Lift targets a creature and resolves as an attached Aura or remains a spell when native Unsummon removes that target. Target revalidation or unattached-Aura stabilization sends the current back to exile. Illegal principals roll back, four-seat private projection, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_source_and_dauthi_replacements_remain_an_affected_player_choice",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbModelCompilerTests.test_disturb_declaration_is_immutable_and_has_closed_faces_prices_and_codec",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbModelCompilerTests.test_source_local_exile_is_not_a_self_replacement_priority_and_binds_one_incarnation",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbModelCompilerTests.test_unknown_disturb_variants_bodies_and_missing_owners_fail_closed",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_back_copy_inherits_exile_without_disturb_payment_and_humble_removes_it",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_bounced_back_returns_front_and_does_not_cast_back_from_hand",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_countered_disturb_back_spell_goes_to_exile",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_cutpurse_damage_history_target_then_disturb_and_back_exile",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Shock damages an opposing creature; original Cutpurse admits only that damaged target and rejects the undamaged opposing control. Its front dies normally, is cast using Disturb, and its back exiles on native Murder. Private projection, unauthorized rollback, pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_aura_target_departure_exiles_on_stack_and_after_attachment",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Lanterns Lift targets a creature and resolves as an attached Aura or remains a spell when native Unsummon removes that target. Target revalidation or unattached-Aura stabilization sends the current back to exile. Illegal principals roll back, four-seat private projection, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_aura_uses_back_targets_and_cost_modifier_type",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_source_and_dauthi_replacements_remain_an_affected_player_choice",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_token_back_copy_exiles_instead_of_dying",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_generic_free_permission_does_not_waive_intrinsic_disturb_alternative",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_bounced_back_returns_front_and_does_not_cast_back_from_hand",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_aura_uses_back_targets_and_cost_modifier_type",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "casting.lifecycle.disturb_fixed_mana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_source_and_dauthi_replacements_remain_an_affected_player_choice",
+      "official_rule_ids": [
+        "202.3b",
+        "601.2b",
+        "601.2f",
+        "702.146a",
+        "702.146b",
+        "712.8c",
+        "712.11c",
+        "712.11d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
       "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_and_warp_are_identity_pinned_through_delayed_resolution",
@@ -94062,6 +95133,66 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_back_copy_inherits_exile_without_disturb_payment_and_humble_removes_it",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_token_back_copy_exiles_instead_of_dying",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_does_not_inherit_temporary_artifact_replacement_and_replays",
       "official_rule_ids": [
         "111.12",
@@ -94658,6 +95789,36 @@
         "traditional"
       ],
       "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_omitted_copied_face_provenance_is_detected_by_actual_token_departure",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
     },
     {
       "capability_id": "token.creation.fixed_copy",
@@ -95978,6 +97139,66 @@
         "traditional"
       ],
       "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_back_copy_inherits_exile_without_disturb_payment_and_humble_removes_it",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_token_back_copy_exiles_instead_of_dying",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
     },
     {
       "capability_id": "token.creation.fixed_copy",
@@ -113659,6 +114880,924 @@
         "commander_review"
       ],
       "applicability_note": "Replace a represented card's proposed zone destination through the affected-object ordering boundary before committing the move."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_back_copy_inherits_exile_without_disturb_payment_and_humble_removes_it",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_bounced_back_returns_front_and_does_not_cast_back_from_hand",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_countered_disturb_back_spell_goes_to_exile",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_cutpurse_damage_history_target_then_disturb_and_back_exile",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Shock damages an opposing creature; original Cutpurse admits only that damaged target and rejects the undamaged opposing control. Its front dies normally, is cast using Disturb, and its back exiles on native Murder. Private projection, unauthorized rollback, pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_aura_target_departure_exiles_on_stack_and_after_attachment",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Lanterns Lift targets a creature and resolves as an attached Aura or remains a spell when native Unsummon removes that target. Target revalidation or unattached-Aura stabilization sends the current back to exile. Illegal principals roll back, four-seat private projection, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_aura_uses_back_targets_and_cost_modifier_type",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_source_and_dauthi_replacements_remain_an_affected_player_choice",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_token_back_copy_exiles_instead_of_dying",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_generic_free_permission_does_not_waive_intrinsic_disturb_alternative",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_cutpurse_damage_history_target_then_disturb_and_back_exile",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Shock damages an opposing creature; original Cutpurse admits only that damaged target and rejects the undamaged opposing control. Its front dies normally, is cast using Disturb, and its back exiles on native Murder. Private projection, unauthorized rollback, pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_aura_target_departure_exiles_on_stack_and_after_attachment",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Lanterns Lift targets a creature and resolves as an attached Aura or remains a spell when native Unsummon removes that target. Target revalidation or unattached-Aura stabilization sends the current back to exile. Illegal principals roll back, four-seat private projection, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_source_and_dauthi_replacements_remain_an_affected_player_choice",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbModelCompilerTests.test_source_exile_producer_omission_is_detected_by_the_positive_contract",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_disturb_price_omission_keeps_admission_but_fails_native_payment_consequences",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_omitted_copied_face_provenance_is_detected_by_actual_token_departure",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_omitted_current_source_replacement_keeps_admission_but_changes_counter_result",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbModelCompilerTests.test_source_local_exile_is_not_a_self_replacement_priority_and_binds_one_incarnation",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbModelCompilerTests.test_unknown_disturb_variants_bodies_and_missing_owners_fail_closed",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_bounced_back_returns_front_and_does_not_cast_back_from_hand",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_generic_free_permission_does_not_waive_intrinsic_disturb_alternative",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_original_disturb_cards_need_both_complete_faces_and_normal_registration",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbModelCompilerTests.test_disturb_cost_and_back_replacement_keep_separate_source_spans_and_capabilities",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbModelCompilerTests.test_disturb_declaration_is_immutable_and_has_closed_faces_prices_and_codec",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbModelCompilerTests.test_source_local_exile_is_not_a_self_replacement_priority_and_binds_one_incarnation",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_cutpurse_damage_history_target_then_disturb_and_back_exile",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Shock damages an opposing creature; original Cutpurse admits only that damaged target and rejects the undamaged opposing control. Its front dies normally, is cast using Disturb, and its back exiles on native Murder. Private projection, unauthorized rollback, pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_aura_target_departure_exiles_on_stack_and_after_attachment",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Lanterns Lift targets a creature and resolves as an attached Aura or remains a spell when native Unsummon removes that target. Target revalidation or unattached-Aura stabilization sends the current back to exile. Illegal principals roll back, four-seat private projection, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_original_disturb_cards_need_both_complete_faces_and_normal_registration",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_cutpurse_damage_history_target_then_disturb_and_back_exile",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Shock damages an opposing creature; original Cutpurse admits only that damaged target and rejects the undamaged opposing control. Its front dies normally, is cast using Disturb, and its back exiles on native Murder. Private projection, unauthorized rollback, pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_aura_target_departure_exiles_on_stack_and_after_attachment",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Lanterns Lift targets a creature and resolves as an attached Aura or remains a spell when native Unsummon removes that target. Target revalidation or unattached-Aura stabilization sends the current back to exile. Illegal principals roll back, four-seat private projection, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_source_and_dauthi_replacements_remain_an_affected_player_choice",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbModelCompilerTests.test_disturb_declaration_is_immutable_and_has_closed_faces_prices_and_codec",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbModelCompilerTests.test_source_local_exile_is_not_a_self_replacement_priority_and_binds_one_incarnation",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbModelCompilerTests.test_unknown_disturb_variants_bodies_and_missing_owners_fail_closed",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_back_copy_inherits_exile_without_disturb_payment_and_humble_removes_it",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_bounced_back_returns_front_and_does_not_cast_back_from_hand",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_countered_disturb_back_spell_goes_to_exile",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_cutpurse_damage_history_target_then_disturb_and_back_exile",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Shock damages an opposing creature; original Cutpurse admits only that damaged target and rejects the undamaged opposing control. Its front dies normally, is cast using Disturb, and its back exiles on native Murder. Private projection, unauthorized rollback, pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_aura_target_departure_exiles_on_stack_and_after_attachment",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Lanterns Lift targets a creature and resolves as an attached Aura or remains a spell when native Unsummon removes that target. Target revalidation or unattached-Aura stabilization sends the current back to exile. Illegal principals roll back, four-seat private projection, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_aura_uses_back_targets_and_cost_modifier_type",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_source_and_dauthi_replacements_remain_an_affected_player_choice",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_token_back_copy_exiles_instead_of_dying",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_generic_free_permission_does_not_waive_intrinsic_disturb_alternative",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_bounced_back_returns_front_and_does_not_cast_back_from_hand",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_aura_uses_back_targets_and_cost_modifier_type",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_disturb_cast_uses_back_face_and_its_alternative_cost",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed Disturb authority and a separate current source-local graveyard redirection retain source faces, prices, incarnation, and ordinary replacement priority. Native original casts use actual advertised actions, private projection, principal rollback and pending save/load replay. Unknown forms and missing precise owners fail closed."
+    },
+    {
+      "capability_id": "zone.change.self_graveyard_exile",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_disturb.FixedDisturbRuntimeTests.test_actual_source_and_dauthi_replacements_remain_an_affected_player_choice",
+      "official_rule_ids": [
+        "113.6",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Disturb back casts, counter-to-exile, bounce/front reset, Aura targets and spell-type cost modifiers, fixed alternative despite generic free permission, actual physical and token copies, Humble/current ability presence, competing Dauthi replacement choice, normal 25-original admission table, source-correlated provenance, principal rollback/privacy/pending replay, and admission-preserving native omission mutants."
     },
     {
       "capability_id": "zone.discard.fixed_random",

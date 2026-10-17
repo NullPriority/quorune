@@ -292,6 +292,8 @@ class CardProgramTrustTests(unittest.TestCase):
                 "casting.kicker.fixed_mana",
                 "casting.multikicker.fixed_mana",
                 "casting.alternative_cost.emerge_fixed_mana",
+                "casting.lifecycle.disturb_fixed_mana",
+                "zone.change.self_graveyard_exile",
                 "casting.lifecycle.fixed_public",
                 "casting.madness.trigger",
                 "casting.megamorph.fixed_mana",

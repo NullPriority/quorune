@@ -2702,6 +2702,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/disturb_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/draw_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -4832,6 +4847,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/self_graveyard_exile_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/self_return_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -6334,6 +6364,20 @@
       "file": "quorune/devotion.py",
       "layer": "rules",
       "owning_subsystem": "continuous_effects",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/disturb_model.py",
+      "layer": "rules",
+      "owning_subsystem": "casting_activation_and_costs",
       "allowed_dependency_layers": [
         "domain",
         "rules",
@@ -9198,6 +9242,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/casting/disturb_costs.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/casting/emerge_costs.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -11271,6 +11329,20 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/self_graveyard_exile_model.py",
+      "layer": "rules",
+      "owning_subsystem": "casting_activation_and_costs",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/self_zone_move.py",
       "layer": "rules",
       "owning_subsystem": "zones_and_object_identity",
@@ -12710,6 +12782,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/disturb.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/domain_intent.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -13551,6 +13638,21 @@
     },
     {
       "file": "quorune/semantic_runtime/self_entry_counters.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/semantic_runtime/self_graveyard_exile.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
       "allowed_dependency_layers": [
@@ -14934,5 +15036,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "85bb3d3c4702667ef6a1a4a30171f66e84fb62c120295ad1e4d408fbb574aae9"
+  "fingerprint": "c1bc79350ef61e4141f88fdbc7687b6c691ab133a01dd0b627e142a6190d2b8b"
 }

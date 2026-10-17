@@ -4975,6 +4975,27 @@
         "test_object_query",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "fixed-disturb-and-source-graveyard-exile",
+      "patterns": [
+        "quorune/disturb_model.py",
+        "quorune/compiler/disturb_nodes.py",
+        "quorune/self_graveyard_exile_model.py",
+        "quorune/compiler/self_graveyard_exile_nodes.py",
+        "quorune/semantic_runtime/disturb.py",
+        "quorune/semantic_runtime/self_graveyard_exile.py",
+        "quorune/rules/casting/disturb_costs.py",
+        "tests/test_fixed_disturb.py",
+        "tests/fixtures/fixed-disturb-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_disturb",
+        "test_fixed_zone_cast_lifecycles",
+        "test_copy_objects",
+        "test_card_program_trust",
+        "test_activated_self_transform"
+      ]
     }
   ],
   "symbol_rules": [

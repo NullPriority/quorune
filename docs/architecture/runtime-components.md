@@ -963,6 +963,31 @@ printed cost, mana value and cast triggers without an Emerge sacrifice.
 Complex prices, qualified sacrifices, other card forms and unresolved
 Emerge-paid result bodies remain outside this family.
 
+### Fixed mana Disturb and source-local graveyard exile
+
+`FixedManaDisturbSpec` binds one front-face declaration to its transforming
+back face and fixed alternative price. Existing face and cost-option fields
+carry the cast. Graveyard authorization, back-face selection, target offers
+and submission validation share that authority. Total-cost modifiers observe
+the back face's spell type. A generic free-cast permission cannot waive the
+intrinsic Disturb price; independently authorized transformed-cast effects
+retain their existing authority.
+
+The resolving spell passes its chosen face to the ordinary permanent-entry
+owner. Original mana value still derives from the front cost. Copiable
+snapshots retain source Oracle and face provenance so ordinary physical and
+token copies execute the copied face's programs while retaining their own
+identity and mana value.
+
+The separately printed graveyard-to-exile clause uses a source-local zone
+replacement component, with the same current ability and face checks for
+stack and battlefield subjects. It applies to copied and token subjects
+without requiring a Disturb payment marker. Ability removal can suppress it;
+bounce and other zone resets remove copied/current back-face state normally.
+It participates in the ordinary replacement class, preserving affected-player
+choice among competing replacements. Complex prices, repeated declarations,
+other card forms and unrepresented sibling bodies remain residual.
+
 ### Typed token children in modal branches
 
 `compiler/modal_token_branches.py` adapts the existing typed token-node compiler
