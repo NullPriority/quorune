@@ -90,6 +90,10 @@ def build_plan(
         steps.extend(
             (
                 QuickStep(
+                    "mechanic-contract-source",
+                    (python, "-c", "from scripts.update_card_unlock_frontier import _contracts; _contracts()"),
+                ),
+                QuickStep(
                     "generated-owner-plan",
                     (
                         python,
@@ -155,6 +159,15 @@ def build_plan(
                 ),
             )
         )
+        if {'quorune/compiler/target_effect_corpus_assurance.py',
+                'quorune/compiler/overload_spell_faces.py', 'quorune/compiler/cleave_spell_faces.py',
+                'quorune/compiler/paired_spell_faces.py'}.intersection(paths):
+            steps.append(QuickStep(
+                "paired-spell-target-corpus-carrier-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_fixed_target_effect_sequences.py", "-k",
+                 "test_corpus_assurance_validates_both_source_bound_paid_spell_variants"),
+            ))
         if "quorune/compiler/library_search_templates.py" in paths:
             steps.append(QuickStep(
                 "search-saga-residual-carrier-contract",

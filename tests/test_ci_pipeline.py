@@ -57,6 +57,34 @@ from scripts.verify_main_broad_ci import (
 
 
 class CiPipelineTests(unittest.TestCase):
+    def test_pre_corpus_validates_pinned_contracts_without_opening_the_database(self):
+        from unittest import mock
+        from scripts.quick_gate import build_plan
+        from scripts import update_card_unlock_frontier as frontier
+        from quorune.mechanic_contracts import MechanicContractError
+        plan = build_plan(('mechanics/contracts/morph.json','quorune/compiler/paired_spell_faces.py'), phase='pre-corpus')
+        step = next(row for row in plan['steps'] if row.name=='mechanic-contract-source')
+        paired = next(row for row in plan['steps'] if row.name=='paired-spell-target-corpus-carrier-contract')
+        self.assertIn('test_corpus_assurance_validates_both_source_bound_paid_spell_variants', paired.command)
+        contract = json.loads((ROOT/'mechanics/contracts/morph.json').read_text(encoding='utf-8'))
+        with TemporaryDirectory() as directory:
+            temporary = Path(directory)
+            for relative in ('rules','mechanics/contracts'):
+                (temporary/relative).mkdir(parents=True,exist_ok=True)
+            (temporary/'rules/manifest.json').write_text(json.dumps({'effective_date':contract['effective_date'],
+                'source_sha256':contract['source_sha256']}),encoding='utf-8')
+            (temporary/'rules/rule-index.json').write_text(json.dumps({'rules':[{'rule_id':rule}
+                for rule in contract['rule_references']]}),encoding='utf-8')
+            path = temporary/'mechanics/contracts/morph.json'
+            path.write_text(json.dumps(contract),encoding='utf-8')
+            with mock.patch.object(frontier,'ROOT',temporary), mock.patch.object(frontier,'CardDatabase',
+                    side_effect=AssertionError('Source preflight opened the database')):
+                exec(compile(step.command[-1], '<mechanic-source-preflight>', 'exec'), {})
+                contract['effective_date']='1900-01-01'
+                path.write_text(json.dumps(contract),encoding='utf-8')
+                with self.assertRaisesRegex(MechanicContractError, 'effective_date'):
+                    exec(compile(step.command[-1], '<mechanic-source-preflight>', 'exec'), {})
+
     def test_pre_corpus_checks_exploit_target_carrier_before_census(self):
         from scripts.quick_gate import build_plan
         for source in ('quorune/compiler/keyword_event_effect_nodes.py',
