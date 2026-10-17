@@ -717,6 +717,15 @@ Its explicit numeric creature filter reads completed effective power/toughness
 before creating the new effect and locks the selected incarnations. Live
 static quantities retain the separate layer-5 boundary.
 
+One conditional self-color and typed-ability compound begins at layer 5. Its
+fixed color replaces the previous colors; its ability and additive portions
+apply in layers 6 and 7c. Source participation is checked before layer 5, so
+later ability removal preserves already-started portions under CR 613.6.
+Layer-6 timestamps still determine whether a separately removed grant remains.
+Current controller facts govern the live condition. Losing that condition
+ends new activation and trigger availability while stack abilities retain their
+original controller and ordinary target revalidation.
+
 Schema-five public conditions have a separate numeric creature-existence
 predicate. Intervening triggers and resolution instructions read complete
 current effective power or toughness under their locked controller. They

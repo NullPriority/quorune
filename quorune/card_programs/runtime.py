@@ -646,7 +646,8 @@ def _component_public_state_snapshot(
             return True, None
         return False, setting_state_resolver.snapshot(source,
             FixedPublicStateConditionSpec.from_dict(descriptor['source_condition']))
-    is_setting = handler_id == 'continuous.characteristics.fixed-public-setting.v2'
+    is_setting = handler_id in ('continuous.characteristics.fixed-public-setting.v2',
+        'continuous.ability.public-state-color-grant.v1')
     if is_setting:
         raw_condition = descriptor.get('source_condition')
         return (False, None if raw_condition is None else setting_state_resolver.snapshot(

@@ -15735,6 +15735,96 @@
       ],
       "interaction_order": 2,
       "assertion": "Accepted end-step passes enter a pending untap choice without priority, load and replay it, then place and resolve exactly one actual Wake Thrasher trigger at upkeep."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_all_actual_color_qualified_activations_use_current_legal_targets",
+      "piece_ids": [
+        "capability.continuous.ability.public_state_color_grant",
+        "capability.permanent.destroy.effect"
+      ],
+      "capability_ids": [
+        "continuous.ability.public_state_color_grant",
+        "permanent.destroy.effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "All five original color-qualified destroy grants advertise the matching actual creature, reject a current wrong-color target and wrong actor atomically, then resolve the accepted destruction and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_started_layer_five_effect_survives_humility_and_layer_six_uses_timestamps",
+      "piece_ids": [
+        "capability.continuous.ability.public_state_color_grant",
+        "capability.continuous.characteristics.fixed_public_setting"
+      ],
+      "capability_ids": [
+        "continuous.ability.public_state_color_grant",
+        "continuous.characteristics.fixed_public_setting"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Humility removes the generating ability at layer six; the layer-five-started color and layer-seven bonus persist, while timestamps determine the granted ability and counters still add."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_copy_inherits_the_conditional_component_after_original_departure",
+      "piece_ids": [
+        "capability.continuous.ability.public_state_color_grant",
+        "capability.token.creation.fixed_copy"
+      ],
+      "capability_ids": [
+        "continuous.ability.public_state_color_grant",
+        "token.creation.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "An accepted ordinary copy spell copies actual Possessed Aven; accepted Unsummon returns the original while the copied component retains its color, stats and typed child, with replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_cremate_ends_threshold_after_activation_without_removing_the_stack_ability",
+      "piece_ids": [
+        "capability.continuous.ability.public_state_color_grant",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "continuous.ability.public_state_color_grant",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "B responds to Aven activation with actual Cremate, privately draws the identified new card, and ends A threshold without canceling its existing stack ability; all four projections and pendingload/replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_cremate_ends_threshold_after_activation_without_removing_the_stack_ability",
+      "piece_ids": [
+        "capability.card.exile.public_graveyard",
+        "capability.continuous.ability.public_state_color_grant"
+      ],
+      "capability_ids": [
+        "card.exile.public_graveyard",
+        "continuous.ability.public_state_color_grant"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Cremate exiles one A graveyard card, ending the live grant before the original native activation resolves. B spell subsequently enters B graveyard, so A stays below threshold."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_wayward_angel_upkeep_trigger_retains_controller_after_threshold_ends",
+      "piece_ids": [
+        "capability.choice.affected_player.fixed_sacrifice",
+        "capability.continuous.ability.public_state_color_grant"
+      ],
+      "capability_ids": [
+        "choice.affected_player.fixed_sacrifice",
+        "continuous.ability.public_state_color_grant"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Wayward Angel grants one upkeep trigger. After threshold ends, its original controller still chooses the mandatory sacrifice through the authenticated canonical owner and replay."
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 359,
+  "registry_version": 360,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -28641,6 +28641,123 @@
       "dependency_fail_closed_rationale": "Variable limits remain residual; historical unsupported LIMIT descriptors retain their fail-closed planner path.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the compiler leaves the whole sentence residual; omitting only registered fine limit lowering incorrectly advances the actual Static Orb native untap boundary and is detected.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.ability.public_state_color_grant",
+      "version": 1,
+      "official_rules": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One fixed self-color replacement with an independently compiled quoted ability and fixed keyword/additive modifiers under current non-characteristic public state.",
+        "inputs": [
+          "closed public state condition",
+          "original source incarnation",
+          "independently compiled granted child",
+          "fixed color, keyword and additive modifiers"
+        ],
+        "outputs": [
+          "one source-bound layer5/6/7c effect",
+          "current granted action or trigger",
+          "canonical target/cost and stack semantics"
+        ],
+        "exclusions": [
+          "characteristic-dependent condition feedback",
+          "variable or additive colors",
+          "independently unsupported child",
+          "unrepresented recipients or modifier clauses"
+        ]
+      },
+      "dependencies": [
+        "continuous.ability.fixed_public_state_grant"
+      ],
+      "implementation_components": [
+        "quorune.compiler.conditional_color_grants.conditional_color_grant_shell",
+        "quorune.semantic_runtime.conditional_color_grants.ConditionalColorGrantHandler",
+        "quorune.card_programs.runtime.collect_card_program_continuous_effects"
+      ],
+      "positive_tests": [
+        "test_actual_copy_inherits_the_conditional_component_after_original_departure",
+        "test_actual_cremate_ends_threshold_after_activation_without_removing_the_stack_ability",
+        "test_actual_possessed_aven_keeps_flying_and_replaces_color_at_seven",
+        "test_actual_wayward_angel_upkeep_trigger_retains_controller_after_threshold_ends",
+        "test_all_actual_color_qualified_activations_use_current_legal_targets",
+        "test_color_grant_and_child_capability_omissions_each_block_complete_admission",
+        "test_complete_source_span_and_independent_child_capabilities",
+        "test_current_control_uses_new_controllers_graveyard_and_removal_restores_printed_values",
+        "test_descriptor_rejects_unknown_colors_versions_and_recipients",
+        "test_losing_threshold_revalidates_an_already_offered_activation_before_payment",
+        "test_started_layer_five_effect_survives_humility_and_layer_six_uses_timestamps",
+        "test_unrepresented_compounds_and_missing_color_producer_remain_residual"
+      ],
+      "negative_tests": [
+        "test_actual_cremate_ends_threshold_after_activation_without_removing_the_stack_ability",
+        "test_all_actual_color_qualified_activations_use_current_legal_targets",
+        "test_color_grant_and_child_capability_omissions_each_block_complete_admission",
+        "test_complete_source_span_and_independent_child_capabilities",
+        "test_descriptor_rejects_unknown_colors_versions_and_recipients",
+        "test_losing_threshold_revalidates_an_already_offered_activation_before_payment",
+        "test_unrepresented_compounds_and_missing_color_producer_remain_residual"
+      ],
+      "interaction_tests": [
+        "test_actual_copy_inherits_the_conditional_component_after_original_departure",
+        "test_actual_cremate_ends_threshold_after_activation_without_removing_the_stack_ability",
+        "test_actual_possessed_aven_keeps_flying_and_replaces_color_at_seven",
+        "test_actual_wayward_angel_upkeep_trigger_retains_controller_after_threshold_ends",
+        "test_all_actual_color_qualified_activations_use_current_legal_targets",
+        "test_current_control_uses_new_controllers_graveyard_and_removal_restores_printed_values",
+        "test_losing_threshold_revalidates_an_already_offered_activation_before_payment",
+        "test_started_layer_five_effect_survives_humility_and_layer_six_uses_timestamps"
+      ],
+      "multiplayer_tests": [
+        "test_actual_copy_inherits_the_conditional_component_after_original_departure",
+        "test_actual_cremate_ends_threshold_after_activation_without_removing_the_stack_ability",
+        "test_actual_possessed_aven_keeps_flying_and_replaces_color_at_seven",
+        "test_actual_wayward_angel_upkeep_trigger_retains_controller_after_threshold_ends",
+        "test_all_actual_color_qualified_activations_use_current_legal_targets",
+        "test_current_control_uses_new_controllers_graveyard_and_removal_restores_printed_values",
+        "test_losing_threshold_revalidates_an_already_offered_activation_before_payment",
+        "test_started_layer_five_effect_survives_humility_and_layer_six_uses_timestamps"
+      ],
+      "privacy_tests": [
+        "test_actual_cremate_ends_threshold_after_activation_without_removing_the_stack_ability"
+      ],
+      "replay_tests": [
+        "test_actual_copy_inherits_the_conditional_component_after_original_departure",
+        "test_actual_cremate_ends_threshold_after_activation_without_removing_the_stack_ability",
+        "test_actual_wayward_angel_upkeep_trigger_retains_controller_after_threshold_ends",
+        "test_all_actual_color_qualified_activations_use_current_legal_targets"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Requires the existing conditional typed grant and every independent child capability. Unsupported color/condition/modifier siblings keep the whole source residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Compiler or parent/child capability omission blocks the full source. Runtime lowering omission and omission of layer-five source participation independently violate the actual Possessed Aven/Humility color and P/T contract.",
       "blockers": [],
       "status": "trusted"
     }

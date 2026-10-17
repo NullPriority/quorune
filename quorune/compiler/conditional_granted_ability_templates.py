@@ -119,6 +119,9 @@ def _conditional_quoted_ability_shell(
         compiled = fixed_public_state_characteristics_handler(
             synthetic, source_name=source_name,
         )
+        if compiled is None:
+            from .conditional_color_grants import conditional_color_grant_shell
+            compiled = conditional_color_grant_shell(synthetic, source_name=source_name)
         if compiled is not None and compiled[1]["modifier"]["add_abilities"].count(sentinel) == 1:
             return quoted, compiled, sentinel
     return None
@@ -141,11 +144,15 @@ def conditional_quoted_ability_handler(
     modifier = dict(descriptor["modifier"])
     modifier["add_abilities"] = [a for a in modifier["add_abilities"] if a != sentinel]
     modifier["add_ability_fragments"] = [dict(fragment)]
-    descriptor.update(
-        handler_id=FIXED_PUBLIC_STATE_GRANTED_ABILITY_HANDLER_ID,
-        schema_version=2, modifier=modifier,
-    )
+    if 'set_colors' in descriptor:
+        from ..semantic_runtime.conditional_color_grants import CONDITIONAL_COLOR_GRANT_CAPABILITY
+        descriptor['modifier'] = modifier
+        grant_capability = CONDITIONAL_COLOR_GRANT_CAPABILITY
+    else:
+        descriptor.update(handler_id=FIXED_PUBLIC_STATE_GRANTED_ABILITY_HANDLER_ID,
+            schema_version=2, modifier=modifier)
+        grant_capability = FIXED_PUBLIC_STATE_GRANTED_ABILITY_CAPABILITY_ID
     capabilities = (
         set(compiled[2]) - set(_attached_ability_capabilities((sentinel,)))
-    ) | set(fragment_capabilities) | {FIXED_PUBLIC_STATE_GRANTED_ABILITY_CAPABILITY_ID}
+    ) | set(fragment_capabilities) | {grant_capability, FIXED_PUBLIC_STATE_GRANTED_ABILITY_CAPABILITY_ID}
     return "continuous-public-conditional-typed-grant-v1", descriptor, tuple(sorted(capabilities))

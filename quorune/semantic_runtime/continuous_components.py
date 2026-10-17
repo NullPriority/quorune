@@ -1374,6 +1374,7 @@ class ContinuousEffectComponentRegistry(
 @lru_cache(maxsize=1)
 def default_continuous_effect_component_registry(
 ) -> ContinuousEffectComponentRegistry:
+    from .conditional_color_grants import ConditionalColorGrantHandler
     from .keyword_prohibitions import OpponentKeywordProhibitionHandler
     from .basic_type_addition import ScopedBasicTypeAdditionHandler
     from .basic_type_setting import FixedBasicTypeSettingHandler
@@ -1414,6 +1415,7 @@ def default_continuous_effect_component_registry(
             LevelerBandsHandler(),
             FixedPublicStateCharacteristicsHandler(),
             FixedPublicStateGrantedAbilityHandler(),
+            ConditionalColorGrantHandler(),
             ConditionalDefenderPermissionHandler(),
             ConditionalAsUnblockedAssignmentHandler(),
             ConditionalBlockCapacityHandler(),

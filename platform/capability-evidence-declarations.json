@@ -38455,6 +38455,1356 @@
       "applicability_note": "Current opponent keyword prohibition, ordinary removal timestamp distinction, immutable denied resolution grants, lower-layer/source-presence proposal semantics, current control, legacy defaults and native combat/targeting/replay."
     },
     {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_actual_copy_inherits_the_conditional_component_after_original_departure",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_actual_cremate_ends_threshold_after_activation_without_removing_the_stack_ability",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_actual_possessed_aven_keeps_flying_and_replaces_color_at_seven",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_actual_wayward_angel_upkeep_trigger_retains_controller_after_threshold_ends",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_all_actual_color_qualified_activations_use_current_legal_targets",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_current_control_uses_new_controllers_graveyard_and_removal_restores_printed_values",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_losing_threshold_revalidates_an_already_offered_activation_before_payment",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_started_layer_five_effect_survives_humility_and_layer_six_uses_timestamps",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_actual_copy_inherits_the_conditional_component_after_original_departure",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_actual_cremate_ends_threshold_after_activation_without_removing_the_stack_ability",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_actual_possessed_aven_keeps_flying_and_replaces_color_at_seven",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_actual_wayward_angel_upkeep_trigger_retains_controller_after_threshold_ends",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_all_actual_color_qualified_activations_use_current_legal_targets",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_current_control_uses_new_controllers_graveyard_and_removal_restores_printed_values",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_losing_threshold_revalidates_an_already_offered_activation_before_payment",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_started_layer_five_effect_survives_humility_and_layer_six_uses_timestamps",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantCompilerTests.test_color_grant_and_child_capability_omissions_each_block_complete_admission",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantCompilerTests.test_unrepresented_compounds_and_missing_color_producer_remain_residual",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_runtime_color_and_early_source_participation_omissions_are_killed",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantCompilerTests.test_color_grant_and_child_capability_omissions_each_block_complete_admission",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantCompilerTests.test_complete_source_span_and_independent_child_capabilities",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantCompilerTests.test_descriptor_rejects_unknown_colors_versions_and_recipients",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantCompilerTests.test_unrepresented_compounds_and_missing_color_producer_remain_residual",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_actual_cremate_ends_threshold_after_activation_without_removing_the_stack_ability",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_all_actual_color_qualified_activations_use_current_legal_targets",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_losing_threshold_revalidates_an_already_offered_activation_before_payment",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantCompilerTests.test_color_grant_and_child_capability_omissions_each_block_complete_admission",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantCompilerTests.test_complete_source_span_and_independent_child_capabilities",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantCompilerTests.test_descriptor_rejects_unknown_colors_versions_and_recipients",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantCompilerTests.test_unrepresented_compounds_and_missing_color_producer_remain_residual",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_actual_copy_inherits_the_conditional_component_after_original_departure",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_actual_cremate_ends_threshold_after_activation_without_removing_the_stack_ability",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_actual_possessed_aven_keeps_flying_and_replaces_color_at_seven",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_actual_wayward_angel_upkeep_trigger_retains_controller_after_threshold_ends",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_all_actual_color_qualified_activations_use_current_legal_targets",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_current_control_uses_new_controllers_graveyard_and_removal_restores_printed_values",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_losing_threshold_revalidates_an_already_offered_activation_before_payment",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_started_layer_five_effect_survives_humility_and_layer_six_uses_timestamps",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_actual_cremate_ends_threshold_after_activation_without_removing_the_stack_ability",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "property",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantCompilerTests.test_color_grant_and_child_capability_omissions_each_block_complete_admission",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "property",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantCompilerTests.test_complete_source_span_and_independent_child_capabilities",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "property",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantCompilerTests.test_descriptor_rejects_unknown_colors_versions_and_recipients",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "property",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantCompilerTests.test_unrepresented_compounds_and_missing_color_producer_remain_residual",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_actual_copy_inherits_the_conditional_component_after_original_departure",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_actual_cremate_ends_threshold_after_activation_without_removing_the_stack_ability",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_actual_wayward_angel_upkeep_trigger_retains_controller_after_threshold_ends",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_all_actual_color_qualified_activations_use_current_legal_targets",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantCompilerTests.test_color_grant_and_child_capability_omissions_each_block_complete_admission",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantCompilerTests.test_complete_source_span_and_independent_child_capabilities",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantCompilerTests.test_descriptor_rejects_unknown_colors_versions_and_recipients",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantCompilerTests.test_unrepresented_compounds_and_missing_color_producer_remain_residual",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_actual_cremate_ends_threshold_after_activation_without_removing_the_stack_ability",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_all_actual_color_qualified_activations_use_current_legal_targets",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
+      "capability_id": "continuous.ability.public_state_color_grant",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_conditional_color_grants.ConditionalColorGrantRuntimeTests.test_losing_threshold_revalidates_an_already_offered_activation_before_payment",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current independent public-state conditional self-color and complete typed child; layer-five source participation, layer-six timestamps, locked stack controller, target legality, native copy/response and principal-correct draw replay."
+    },
+    {
       "capability_id": "continuous.ability.temporary_quoted_grant",
       "evidence_class": "interaction",
       "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay",

@@ -5258,6 +5258,26 @@
         "test_choice_forms",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "conditional-color-quoted-grant-contract",
+      "patterns": [
+        "quorune/card_programs/runtime.py",
+        "quorune/compiler/conditional_color_grants.py",
+        "quorune/compiler/conditional_granted_ability_templates.py",
+        "quorune/semantic_runtime/conditional_color_grants.py",
+        "quorune/semantic_runtime/continuous_components.py",
+        "tests/fixtures/conditional-color-grant-cards.json",
+        "tests/test_conditional_color_grants.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_conditional_color_grants",
+        "test_fixed_public_state_characteristics",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_static_characteristic_settings"
+      ]
     }
   ],
   "symbol_rules": [

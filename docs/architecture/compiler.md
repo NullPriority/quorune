@@ -730,6 +730,15 @@ fragment through the shared layer-6 owner; the earlier characteristic-only
 schema remains strict. An unsupported condition, quoted child, nested static
 grant, multiple quotation, or material sibling prevents complete-card closure.
 
+`compiler/conditional_color_grants.py` extends that shell with one fixed
+self-color replacement and the same independently compiled child. Its fine
+capability retains coupled ordinary keywords and signed additive modifiers.
+The registered component begins in layer 5 and shares the existing source
+incarnation, condition snapshot, layer-6 grant, and layer-7c modifier owners.
+Characteristic-dependent conditions that can feed back into the color change,
+additional or variable colors, wider recipients, and unsupported children stay
+residual. Earlier characteristic-only descriptors retain their strict shape.
+
 The same compiler also combines a closed public-state predicate with an
 independently compiled keyword grant. Fixed generic ward, protection, and
 represented combat or spell-cast trigger keywords retain their complete typed
