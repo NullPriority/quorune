@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "c394e0914053faa4897691b7549b81d74db280b812e90da912b5d4880a03216a",
-  "declaration_source_fingerprint": "c629b551f45f336bbde7cd3acc7af0a8abcf86ebf7eacc26b8a1d7deb84374d2",
+  "registry_fingerprint": "08df7b1968d504f494bc8ec2188072f4e904c5cb83ee70a18c9e76bc42ccbf45",
+  "declaration_source_fingerprint": "9c807d794b42cfbb4caf7e59fe8f84775d675a331e189c5c5efe20fa3df3ec92",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -124714,6 +124714,1302 @@
       "applicability_note": "An actual control spell moves the observer to a third seat while its damage trigger is pending; the old trigger still draws for its original controller, with private projection, pending reload and complete pre-action replay."
     },
     {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One closed instant/sorcery copy shape and current-controller scope use existing target and staged copy owners. Native Reverberate copies an actual Giant Growth with independent chosen targets, exact original target preservation, wrong-principal/cardinality rollback, four-seat private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_copy_source_buyback_pays_extra_and_returns_only_its_own_physical_card",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_flare_copy_alternative_sacrifices_current_red_creature_instead_of_mana",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_dual_casting_uses_recipient_controller_instead_of_aura_controller",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_dualcaster_copies_opponents_spell_under_trigger_controllers_authority",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_geistblast_exiles_itself_from_graveyard_and_retains_copy_choice",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_naru_entry_copy_target_is_restricted_to_current_controller",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_sigil_tracer_taps_two_current_wizards_including_itself",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_uyo_can_use_land_mana_before_returning_two_lands_to_owners_hands",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native Uyo pays its two generic mana from two controlled lands before returning those same physical cards to their different owners hands. Duplicate selection rejects atomically. The resulting copy changes target while the original remains independent; pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_original_countered_before_copy_producer_resolves_creates_no_copy",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_permanent_spell_and_activated_ability_are_not_eligible_spell_copy_targets",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_retain_old_target_incarnation_or_choose_returned_creature_as_new_target",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_unsupported_source_siblings_have_no_independent_executable_copy_fallback",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One closed instant/sorcery copy shape and current-controller scope use existing target and staged copy owners. Native Reverberate copies an actual Giant Growth with independent chosen targets, exact original target preservation, wrong-principal/cardinality rollback, four-seat private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_copy_source_buyback_pays_extra_and_returns_only_its_own_physical_card",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_flare_copy_alternative_sacrifices_current_red_creature_instead_of_mana",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_dual_casting_uses_recipient_controller_instead_of_aura_controller",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_dualcaster_copies_opponents_spell_under_trigger_controllers_authority",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_geistblast_exiles_itself_from_graveyard_and_retains_copy_choice",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_naru_entry_copy_target_is_restricted_to_current_controller",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_sigil_tracer_taps_two_current_wizards_including_itself",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_uyo_can_use_land_mana_before_returning_two_lands_to_owners_hands",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native Uyo pays its two generic mana from two controlled lands before returning those same physical cards to their different owners hands. Duplicate selection rejects atomically. The resulting copy changes target while the original remains independent; pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_original_countered_before_copy_producer_resolves_creates_no_copy",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_permanent_spell_and_activated_ability_are_not_eligible_spell_copy_targets",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_retain_old_target_incarnation_or_choose_returned_creature_as_new_target",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_unsupported_source_siblings_have_no_independent_executable_copy_fallback",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyModelCompilerTests.test_fixed_stack_copy_producer_omission_fails_independent_positive_contract",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One closed instant/sorcery copy shape and current-controller scope use existing target and staged copy owners. Native Reverberate copies an actual Giant Growth with independent chosen targets, exact original target preservation, wrong-principal/cardinality rollback, four-seat private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_stack_copy_commit_omission_preserves_admission_but_fails_native_copy_consequence",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyModelCompilerTests.test_fixed_stack_copy_source_span_and_exact_shape_reject_unknown_variants",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One closed instant/sorcery copy shape and current-controller scope use existing target and staged copy owners. Native Reverberate copies an actual Giant Growth with independent chosen targets, exact original target preservation, wrong-principal/cardinality rollback, four-seat private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyModelCompilerTests.test_fixed_stack_copy_spec_is_closed_and_current_controller_scoped",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One closed instant/sorcery copy shape and current-controller scope use existing target and staged copy owners. Native Reverberate copies an actual Giant Growth with independent chosen targets, exact original target preservation, wrong-principal/cardinality rollback, four-seat private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_flare_copy_alternative_sacrifices_current_red_creature_instead_of_mana",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_dual_casting_uses_recipient_controller_instead_of_aura_controller",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_dualcaster_copies_opponents_spell_under_trigger_controllers_authority",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_geistblast_exiles_itself_from_graveyard_and_retains_copy_choice",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_naru_entry_copy_target_is_restricted_to_current_controller",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_sigil_tracer_taps_two_current_wizards_including_itself",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_uyo_can_use_land_mana_before_returning_two_lands_to_owners_hands",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native Uyo pays its two generic mana from two controlled lands before returning those same physical cards to their different owners hands. Duplicate selection rejects atomically. The resulting copy changes target while the original remains independent; pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_original_copy_candidates_need_complete_siblings_and_current_generated_registration",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_original_countered_before_copy_producer_resolves_creates_no_copy",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_permanent_spell_and_activated_ability_are_not_eligible_spell_copy_targets",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_retain_old_target_incarnation_or_choose_returned_creature_as_new_target",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_unsupported_source_siblings_have_no_independent_executable_copy_fallback",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_whole_source_certificate_is_enforced_without_forcing_trust",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyModelCompilerTests.test_fixed_stack_copy_source_span_and_exact_shape_reject_unknown_variants",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One closed instant/sorcery copy shape and current-controller scope use existing target and staged copy owners. Native Reverberate copies an actual Giant Growth with independent chosen targets, exact original target preservation, wrong-principal/cardinality rollback, four-seat private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyModelCompilerTests.test_fixed_stack_copy_spec_is_closed_and_current_controller_scoped",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One closed instant/sorcery copy shape and current-controller scope use existing target and staged copy owners. Native Reverberate copies an actual Giant Growth with independent chosen targets, exact original target preservation, wrong-principal/cardinality rollback, four-seat private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One closed instant/sorcery copy shape and current-controller scope use existing target and staged copy owners. Native Reverberate copies an actual Giant Growth with independent chosen targets, exact original target preservation, wrong-principal/cardinality rollback, four-seat private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_copy_source_buyback_pays_extra_and_returns_only_its_own_physical_card",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_flare_copy_alternative_sacrifices_current_red_creature_instead_of_mana",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_dual_casting_uses_recipient_controller_instead_of_aura_controller",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_dualcaster_copies_opponents_spell_under_trigger_controllers_authority",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_geistblast_exiles_itself_from_graveyard_and_retains_copy_choice",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_naru_entry_copy_target_is_restricted_to_current_controller",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_sigil_tracer_taps_two_current_wizards_including_itself",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_uyo_can_use_land_mana_before_returning_two_lands_to_owners_hands",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native Uyo pays its two generic mana from two controlled lands before returning those same physical cards to their different owners hands. Duplicate selection rejects atomically. The resulting copy changes target while the original remains independent; pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_original_copy_candidates_need_complete_siblings_and_current_generated_registration",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_original_countered_before_copy_producer_resolves_creates_no_copy",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_retain_old_target_incarnation_or_choose_returned_creature_as_new_target",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_whole_source_certificate_is_enforced_without_forcing_trust",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One closed instant/sorcery copy shape and current-controller scope use existing target and staged copy owners. Native Reverberate copies an actual Giant Growth with independent chosen targets, exact original target preservation, wrong-principal/cardinality rollback, four-seat private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One closed instant/sorcery copy shape and current-controller scope use existing target and staged copy owners. Native Reverberate copies an actual Giant Growth with independent chosen targets, exact original target preservation, wrong-principal/cardinality rollback, four-seat private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_copy_source_buyback_pays_extra_and_returns_only_its_own_physical_card",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_flare_copy_alternative_sacrifices_current_red_creature_instead_of_mana",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_dual_casting_uses_recipient_controller_instead_of_aura_controller",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_dualcaster_copies_opponents_spell_under_trigger_controllers_authority",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_geistblast_exiles_itself_from_graveyard_and_retains_copy_choice",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_naru_entry_copy_target_is_restricted_to_current_controller",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_sigil_tracer_taps_two_current_wizards_including_itself",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_native_uyo_can_use_land_mana_before_returning_two_lands_to_owners_hands",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native Uyo pays its two generic mana from two controlled lands before returning those same physical cards to their different owners hands. Duplicate selection rejects atomically. The resulting copy changes target while the original remains independent; pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_original_countered_before_copy_producer_resolves_creates_no_copy",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_permanent_spell_and_activated_ability_are_not_eligible_spell_copy_targets",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_retain_old_target_incarnation_or_choose_returned_creature_as_new_target",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_unsupported_source_siblings_have_no_independent_executable_copy_fallback",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
       "capability_id": "stack.counter.controller_payment",
       "evidence_class": "interaction",
       "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentActionTests.test_stack_payment_canonical_spell_copy_preserves_announced_x",
@@ -173082,5 +174378,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "dc75316c071325d80fe5f0af6a53c9b94b1cada55fdfa4ba4ef2f3d3654c398a"
+  "fingerprint": "beff6cc365c1939f6116b91fe94c7d0f6cbcaacf827679737b47ce193e17f8a2"
 }

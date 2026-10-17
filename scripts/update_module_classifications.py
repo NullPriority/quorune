@@ -92,6 +92,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/repeated_mana_costs.py",
         "quorune/replicate_model.py",
         "quorune/conspire_model.py",
+        "quorune/stack_spell_copy_model.py",
         "quorune/fractional_quantity_model.py",
         "quorune/event_player_result_values.py",
         "quorune/exert_model.py",
@@ -399,7 +400,7 @@ def _owner(relative: str, layer: str) -> str:
         return "semantic_choices"
     if relative.startswith("quorune/selection/"):
         return "search_target_and_choice"
-    if relative == "quorune/library_search_model.py":
+    if relative in {"quorune/library_search_model.py", "quorune/stack_spell_copy_model.py"}:
         return "search_target_and_choice"
     if relative.startswith("quorune/effect_runtime/"):
         return "effect_runtime"

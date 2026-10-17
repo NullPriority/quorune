@@ -15046,6 +15046,156 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Rally taps one blue and one green creature. Its retargeted copy and original create exactly two distinct creature tokens through the existing token-copy owner. The tokens enter untapped despite tapped source creatures and history records one cast. Pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_countered_before_copy_producer_resolves_creates_no_copy",
+      "piece_ids": [
+        "capability.stack.copy.fixed_instant_or_sorcery",
+        "capability.target.revalidate_resolution"
+      ],
+      "capability_ids": [
+        "stack.copy.fixed_instant_or_sorcery",
+        "target.revalidate_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Counterspell removes the actual targeted Giant Growth before original Reverberate resolves. The producer creates no copy and no buff; private pending state and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_retain_old_target_incarnation_or_choose_returned_creature_as_new_target",
+      "piece_ids": [
+        "capability.stack.copy.fixed_instant_or_sorcery",
+        "capability.zone.single_owner_move.fixed_destination"
+      ],
+      "capability_ids": [
+        "stack.copy.fixed_instant_or_sorcery",
+        "zone.single_owner_move.fixed_destination"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Unsummon and a flash recast give Ashcoat Bear a new incarnation while its targeted Giant Growth and Reverberate remain on the stack. Keeping defaults retains the old snapshot and no buff; explicit ref selection gives only the copy a new legal snapshot and the returned Bear gets the copied buff. Pending load and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_native_naru_entry_copy_target_is_restricted_to_current_controller",
+      "piece_ids": [
+        "capability.stack.copy.fixed_instant_or_sorcery",
+        "capability.trigger.event.normalized_zone_change"
+      ],
+      "capability_ids": [
+        "stack.copy.fixed_instant_or_sorcery",
+        "trigger.event.normalized_zone_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native Naru flash entry creates a targeted copy trigger that admits the controller own Growth and excludes the opponent Shock. New target selection buffs a second creature while original effects and cast history remain independent and replayable."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_copy_source_buyback_pays_extra_and_returns_only_its_own_physical_card",
+      "piece_ids": [
+        "capability.casting.lifecycle.fixed_public",
+        "capability.stack.copy.fixed_instant_or_sorcery"
+      ],
+      "capability_ids": [
+        "casting.lifecycle.fixed_public",
+        "stack.copy.fixed_instant_or_sorcery"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native Reiterate pays printed plus Buyback mana, copies actual Growth through its pending target choice and returns only the producer physical card to hand. Original Growth resolves normally; its copy ceases outside the stack. Full pre-cast replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_native_sigil_tracer_taps_two_current_wizards_including_itself",
+      "piece_ids": [
+        "capability.activation.selected_tap.fixed",
+        "capability.stack.copy.fixed_instant_or_sorcery"
+      ],
+      "capability_ids": [
+        "activation.selected_tap.fixed",
+        "stack.copy.fixed_instant_or_sorcery"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native Sigil Tracer activation selects itself and another current Wizard. Too few, duplicate and non-Wizard choices reject; both correct resources tap before the pending copy choice, and original plus copied Growth apply independently with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_native_uyo_can_use_land_mana_before_returning_two_lands_to_owners_hands",
+      "piece_ids": [
+        "capability.activation.selected_zone_change.fixed",
+        "capability.stack.copy.fixed_instant_or_sorcery"
+      ],
+      "capability_ids": [
+        "activation.selected_zone_change.fixed",
+        "stack.copy.fixed_instant_or_sorcery"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native Uyo pays its two generic mana from two controlled lands before returning those same physical cards to their different owners hands. Duplicate selection rejects atomically. The resulting copy changes target while the original remains independent; pending load and full pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_native_geistblast_exiles_itself_from_graveyard_and_retains_copy_choice",
+      "piece_ids": [
+        "capability.activation.source_zone_change.fixed",
+        "capability.stack.copy.fixed_instant_or_sorcery"
+      ],
+      "capability_ids": [
+        "activation.source_zone_change.fixed",
+        "stack.copy.fixed_instant_or_sorcery"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native Geistblast pays its fixed graveyard activation and exiles itself as a source cost. Its already-created stack ability retains the selected controlled spell and permits an independent new copy target; the source remains exiled, cast count remains one, pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_native_dual_casting_uses_recipient_controller_instead_of_aura_controller",
+      "piece_ids": [
+        "capability.continuous.attached.fixed_characteristics",
+        "capability.stack.copy.fixed_instant_or_sorcery"
+      ],
+      "capability_ids": [
+        "continuous.attached.fixed_characteristics",
+        "stack.copy.fixed_instant_or_sorcery"
+      ],
+      "interaction_order": 2,
+      "assertion": "A native Dual Casting Aura controlled by A grants B controlled Elves a copy ability. B authority and current-controller spell restriction govern activation and copy choices; A cannot answer those decisions. The copy and original damage different players, and the A controlled unrelated spell remains independent. Pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_native_dual_casting_uses_recipient_controller_instead_of_aura_controller",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.stack.copy.fixed_instant_or_sorcery"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "stack.copy.fixed_instant_or_sorcery"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native Dual Casting attaches to a B controlled creature and its granted copy ability uses that recipients controller while the Aura stays controlled by A. Wrong Aura-controller activation/choice and wrong controlled-spell targets reject atomically; exact pending replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_flare_copy_alternative_sacrifices_current_red_creature_instead_of_mana",
+      "piece_ids": [
+        "capability.casting.alternative_cost.fixed_public",
+        "capability.stack.copy.fixed_instant_or_sorcery"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.fixed_public",
+        "stack.copy.fixed_instant_or_sorcery"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native Flare of Duplication is cast with no remaining mana by sacrificing an actual nontoken red creature. A wrong green creature rejects. The canonical copy targets a second creature while original Growth retains its first target, and full pre-cast replay agrees."
     }
   ]
 }

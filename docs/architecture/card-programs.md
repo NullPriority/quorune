@@ -37,6 +37,13 @@ source data, unknown dependencies, material residuals, or fingerprint drift
 fail closed. Historical semantic-pack records remain compatibility inputs, not
 a second current runtime authority.
 
+Compiler-declared complete-source boundaries can also belong to ordinary
+effect programs. Their provenance explicitly requires the generated whole-card
+admission certificate. Source validation rejects missing, malformed or partial
+certificates before execution. This complements the existing handler-declared
+complete-card boundary without changing historical programs that lack the new
+provenance declaration.
+
 A current capability-bound counted search supersedes a reviewed search at the
 same key only when source hashes, event, costs, targets and result semantics
 match. The adapter records the superseded key. Persisted reviewed programs

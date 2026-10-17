@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 350,
+  "registry_version": 352,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -27552,6 +27552,151 @@
       "dependency_fail_closed_rationale": "Missing tap/copy dependencies and unsupported mixed consuming costs remain residual. Invalid pairs, changed incarnations and unavailable mana reject before commitment.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the paired compiler producer fails the independent source-spanned positive contract before promotion. Native omission of canonical tap commitment preserves whole admission but fails the actual two-creature tapped-state consequence.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "stack.copy.fixed_instant_or_sorcery",
+      "version": 1,
+      "official_rules": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One current instant/sorcery stack spell is copied through the existing staged choice and typed copy owner; optional current-controller restriction and explicitly permitted new targets are closed. New programs require the explicit compiler whole-source certificate before strict execution.",
+        "inputs": [
+          "one source-spanned fixed copy instruction",
+          "one current legal instant/sorcery spell target",
+          "original target snapshots and authenticated choice controller"
+        ],
+        "outputs": [
+          "one independent stack copy retaining original casting choices",
+          "optional legal new targets or retained original incarnations",
+          "pending choice and deterministic replay"
+        ],
+        "exclusions": [
+          "multiple copies and type/color exceptions",
+          "unrepresented source qualifications and unknown siblings",
+          "new nonspell/permanent spell-copy productions"
+        ]
+      },
+      "dependencies": [
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.stack_spell_copy_model.FixedStackSpellCopySpec",
+        "quorune.compiler.fixed_stack_spell_copy.fixed_stack_spell_copy_template",
+        "quorune.rules.stack_spell_copy_shapes.fixed_stack_spell_copy_node_capabilities",
+        "quorune.rules.stack_spell_copy_shapes.fixed_stack_spell_copy_program_is_closed",
+        "quorune.semantic_choices.stack_targets.StackTargetChoiceHandler",
+        "quorune.selection.copy_targets.prepare_copy_targets",
+        "quorune.engine.CommanderEngine._copy_stack_item",
+        "quorune.card_programs.admission.program_has_declared_complete_source_admission",
+        "quorune.card_programs.validation.program_source_is_current",
+        "quorune.compiler.activated_mana_nodes._activated_effect_dependency_gate"
+      ],
+      "positive_tests": [
+        "test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay",
+        "test_copy_source_buyback_pays_extra_and_returns_only_its_own_physical_card",
+        "test_fixed_stack_copy_source_span_and_exact_shape_reject_unknown_variants",
+        "test_fixed_stack_copy_spec_is_closed_and_current_controller_scoped",
+        "test_flare_copy_alternative_sacrifices_current_red_creature_instead_of_mana",
+        "test_native_dual_casting_uses_recipient_controller_instead_of_aura_controller",
+        "test_native_dualcaster_copies_opponents_spell_under_trigger_controllers_authority",
+        "test_native_geistblast_exiles_itself_from_graveyard_and_retains_copy_choice",
+        "test_native_naru_entry_copy_target_is_restricted_to_current_controller",
+        "test_native_sigil_tracer_taps_two_current_wizards_including_itself",
+        "test_native_uyo_can_use_land_mana_before_returning_two_lands_to_owners_hands",
+        "test_original_copy_candidates_need_complete_siblings_and_current_generated_registration",
+        "test_original_countered_before_copy_producer_resolves_creates_no_copy",
+        "test_retain_old_target_incarnation_or_choose_returned_creature_as_new_target",
+        "test_whole_source_certificate_is_enforced_without_forcing_trust"
+      ],
+      "negative_tests": [
+        "test_fixed_stack_copy_source_span_and_exact_shape_reject_unknown_variants",
+        "test_fixed_stack_copy_spec_is_closed_and_current_controller_scoped",
+        "test_flare_copy_alternative_sacrifices_current_red_creature_instead_of_mana",
+        "test_native_dual_casting_uses_recipient_controller_instead_of_aura_controller",
+        "test_native_dualcaster_copies_opponents_spell_under_trigger_controllers_authority",
+        "test_native_geistblast_exiles_itself_from_graveyard_and_retains_copy_choice",
+        "test_native_naru_entry_copy_target_is_restricted_to_current_controller",
+        "test_native_sigil_tracer_taps_two_current_wizards_including_itself",
+        "test_native_uyo_can_use_land_mana_before_returning_two_lands_to_owners_hands",
+        "test_original_copy_candidates_need_complete_siblings_and_current_generated_registration",
+        "test_original_countered_before_copy_producer_resolves_creates_no_copy",
+        "test_permanent_spell_and_activated_ability_are_not_eligible_spell_copy_targets",
+        "test_retain_old_target_incarnation_or_choose_returned_creature_as_new_target",
+        "test_unsupported_source_siblings_have_no_independent_executable_copy_fallback",
+        "test_whole_source_certificate_is_enforced_without_forcing_trust"
+      ],
+      "interaction_tests": [
+        "test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay",
+        "test_copy_source_buyback_pays_extra_and_returns_only_its_own_physical_card",
+        "test_flare_copy_alternative_sacrifices_current_red_creature_instead_of_mana",
+        "test_native_dual_casting_uses_recipient_controller_instead_of_aura_controller",
+        "test_native_dualcaster_copies_opponents_spell_under_trigger_controllers_authority",
+        "test_native_geistblast_exiles_itself_from_graveyard_and_retains_copy_choice",
+        "test_native_naru_entry_copy_target_is_restricted_to_current_controller",
+        "test_native_sigil_tracer_taps_two_current_wizards_including_itself",
+        "test_native_uyo_can_use_land_mana_before_returning_two_lands_to_owners_hands",
+        "test_original_countered_before_copy_producer_resolves_creates_no_copy",
+        "test_permanent_spell_and_activated_ability_are_not_eligible_spell_copy_targets",
+        "test_retain_old_target_incarnation_or_choose_returned_creature_as_new_target",
+        "test_unsupported_source_siblings_have_no_independent_executable_copy_fallback"
+      ],
+      "multiplayer_tests": [
+        "test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay",
+        "test_copy_source_buyback_pays_extra_and_returns_only_its_own_physical_card",
+        "test_flare_copy_alternative_sacrifices_current_red_creature_instead_of_mana",
+        "test_native_dual_casting_uses_recipient_controller_instead_of_aura_controller",
+        "test_native_dualcaster_copies_opponents_spell_under_trigger_controllers_authority",
+        "test_native_geistblast_exiles_itself_from_graveyard_and_retains_copy_choice",
+        "test_native_naru_entry_copy_target_is_restricted_to_current_controller",
+        "test_native_sigil_tracer_taps_two_current_wizards_including_itself",
+        "test_native_uyo_can_use_land_mana_before_returning_two_lands_to_owners_hands",
+        "test_original_countered_before_copy_producer_resolves_creates_no_copy",
+        "test_permanent_spell_and_activated_ability_are_not_eligible_spell_copy_targets",
+        "test_retain_old_target_incarnation_or_choose_returned_creature_as_new_target",
+        "test_unsupported_source_siblings_have_no_independent_executable_copy_fallback"
+      ],
+      "privacy_tests": [
+        "test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay"
+      ],
+      "replay_tests": [
+        "test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay",
+        "test_copy_source_buyback_pays_extra_and_returns_only_its_own_physical_card",
+        "test_flare_copy_alternative_sacrifices_current_red_creature_instead_of_mana",
+        "test_native_dual_casting_uses_recipient_controller_instead_of_aura_controller",
+        "test_native_dualcaster_copies_opponents_spell_under_trigger_controllers_authority",
+        "test_native_geistblast_exiles_itself_from_graveyard_and_retains_copy_choice",
+        "test_native_naru_entry_copy_target_is_restricted_to_current_controller",
+        "test_native_sigil_tracer_taps_two_current_wizards_including_itself",
+        "test_native_uyo_can_use_land_mana_before_returning_two_lands_to_owners_hands",
+        "test_original_countered_before_copy_producer_resolves_creates_no_copy",
+        "test_permanent_spell_and_activated_ability_are_not_eligible_spell_copy_targets",
+        "test_retain_old_target_incarnation_or_choose_returned_creature_as_new_target",
+        "test_unsupported_source_siblings_have_no_independent_executable_copy_fallback"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Missing precise copy/target dependencies, malformed shapes and unknown siblings remain residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the closed compiler production fails the independently specified source-spanned positive contract. Native omission of the canonical copy commit preserves full admission but fails the asserted independent stack copy.",
       "blockers": [],
       "status": "trusted"
     }

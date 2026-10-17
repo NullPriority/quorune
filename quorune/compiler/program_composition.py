@@ -372,13 +372,16 @@ def _node_group_provenance(
         for node in nodes
     ]
     from .permanent_additional_cost_nodes import PERMANENT_ADDITIONAL_COST_COVERAGE
-    requires_complete_card_program = any(PERMANENT_ADDITIONAL_COST_COVERAGE in node.runtime_coverage for node in nodes) or any(
+    from ..stack_spell_copy_model import STACK_SPELL_COPY_MECHANIC
+    copy_requires_complete_source = any(STACK_SPELL_COPY_MECHANIC in node.mechanics for node in nodes)
+    requires_complete_card_program = copy_requires_complete_source or any(PERMANENT_ADDITIONAL_COST_COVERAGE in node.runtime_coverage for node in nodes) or any(
         descriptor_requires_complete_card_program(handler)
         for node in nodes
         for handler in node.handlers
     )
     return {
         "source_oracle_hash": ir.oracle_hash,
+        **({'requires_complete_card_program': True} if copy_requires_complete_source else {}),
         "source_rulings_hash": rulings_hash,
         "authored_by": authored_by,
         "review_status": (

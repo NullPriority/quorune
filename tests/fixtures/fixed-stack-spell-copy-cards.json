@@ -1,0 +1,2815 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_fixed_stack_spell_copy",
+  "source": "Pinned source candidates/rulings and exact existing shared fixture rows; incomplete siblings remain explicit controls",
+  "cards": [
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "name": "Choreographed Sparks",
+      "mana_cost": "{R}{R}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "This spell can't be copied.\nChoose one or both —\n• Copy target instant or sorcery spell you control. You may choose new targets for the copy.\n• Copy target creature spell you control. The copy gains haste and \"At the beginning of the end step, sacrifice this token.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "4d22b01b-63dd-4698-a221-0acaefb2000b",
+      "name": "Dual Casting",
+      "mana_cost": "{1}{R}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature\nEnchanted creature has \"{R}, {T}: Copy target instant or sorcery spell you control. You may choose new targets for the copy.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-05-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "8eb7c0a5-6190-40de-b473-2d1daa3bbe28",
+      "name": "Dualcaster Mage",
+      "mana_cost": "{1}{R}{R}",
+      "type_line": "Creature — Human Wizard",
+      "oracle_text": "Flash\nWhen this creature enters, copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "fb98f6b7-5986-4c5d-98fc-e5c4106f48bf",
+      "name": "Echo Mage",
+      "mana_cost": "{1}{U}{U}",
+      "type_line": "Creature — Human Wizard",
+      "oracle_text": "Level up {1}{U} ({1}{U}: Put a level counter on this. Level up only as a sorcery.)\nLEVEL 2-3\n2/4\n{U}{U}, {T}: Copy target instant or sorcery spell. You may choose new targets for the copy.\nLEVEL 4+\n2/5\n{U}{U}, {T}: Copy target instant or sorcery spell twice. You may choose new targets for the copies.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Level Up"
+      ],
+      "produced_mana": [],
+      "layout": "leveler",
+      "released_at": "2013-11-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "f586ecb8-310c-4f40-a766-6a7ca46a254d",
+      "name": "Flare of Duplication",
+      "mana_cost": "{1}{R}{R}",
+      "type_line": "Instant",
+      "oracle_text": "You may sacrifice a nontoken red creature rather than pay this spell's mana cost.\nCopy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "banned",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "371fa9e3-5432-4f2f-89d4-55061b0b4e57",
+      "name": "Fury Storm",
+      "mana_cost": "{2}{R}{R}",
+      "type_line": "Instant",
+      "oracle_text": "When you cast this spell, copy it for each time you've cast your commander from the command zone this game. You may choose new targets for the copies.\nCopy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-08-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "dfd12e3c-2b2a-4461-a08d-09d4e6c4626e",
+      "name": "Gandalf the Grey",
+      "mana_cost": "{3}{U}{R}",
+      "type_line": "Legendary Creature — Avatar Wizard",
+      "oracle_text": "Whenever you cast an instant or sorcery spell, choose one that hasn't been chosen —\n• You may tap or untap target permanent.\n• Gandalf deals 3 damage to each opponent.\n• Copy target instant or sorcery spell you control. You may choose new targets for the copy.\n• Put Gandalf on top of its owner's library.",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-06-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 5.0
+    },
+    {
+      "oracle_id": "10891656-070f-49f4-80e0-78061b773f17",
+      "name": "Geistblast",
+      "mana_cost": "{2}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Geistblast deals 2 damage to any target.\n{2}{U}, Exile this card from your graveyard: Copy target instant or sorcery spell you control. You may choose new targets for the copy.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-04-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "5748ebf1-24e3-499d-ab7c-c2cebd462a24",
+      "name": "Giant Growth",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "8088d110-2314-45c3-b6ee-3f55d1f388e4",
+      "name": "Insidious Will",
+      "mana_cost": "{2}{U}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Choose one —\n• Counter target spell.\n• You may choose new targets for target spell.\n• Copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-09-30",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "16414460-11ce-481d-ab54-6f0e0ea7d83d",
+      "name": "Kitsa, Otterball Elite",
+      "mana_cost": "{1}{U}",
+      "type_line": "Legendary Creature — Otter Wizard",
+      "oracle_text": "Vigilance\nProwess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\n{T}: Draw a card, then discard a card.\n{2}, {T}: Copy target instant or sorcery spell you control. You may choose new targets for the copy. Activate only if Kitsa's power is 3 or greater.",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Prowess",
+        "Vigilance"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-08-02",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}",
+      "name": "Lithoform Engine",
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "oracle_text": "{2}, {T}: Copy target activated or triggered ability you control. You may choose new targets for the copy.\n{3}, {T}: Copy target instant or sorcery spell you control. You may choose new targets for the copy.\n{4}, {T}: Copy target permanent spell you control. (The copy becomes a token.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-09-25",
+      "toughness": null,
+      "type_line": "Legendary Artifact"
+    },
+    {
+      "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+      "name": "Llanowar Elves",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Creature — Elf Druid",
+      "oracle_text": "{T}: Add {G}.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "name": "Lutri, the Spellchaser",
+      "mana_cost": "{1}{U/R}{U/R}",
+      "type_line": "Legendary Creature — Elemental Otter",
+      "oracle_text": "Companion — Each nonland card in your starting deck has a different name. (If this card is your chosen companion, you may put it into your hand from outside the game for {3} as a sorcery.)\nFlash\nWhen Lutri enters, if you cast it, copy target instant or sorcery spell you control. You may choose new targets for the copy.",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Companion",
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "banned",
+        "commander": "legal",
+        "competitivebrawl": "banned",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "57b86d5c-3269-44bc-a838-3c5439d820d9",
+      "name": "Mirrorpool",
+      "mana_cost": "",
+      "type_line": "Land",
+      "oracle_text": "This land enters tapped.\n{T}: Add {C}.\n{2}{C}, {T}, Sacrifice this land: Copy target instant or sorcery spell you control. You may choose new targets for the copy.\n{4}{C}, {T}, Sacrifice this land: Create a token that's a copy of target creature you control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 0.0
+    },
+    {
+      "oracle_id": "562c9c68-e5a7-45ab-b098-5b649d165ff5",
+      "name": "Naru Meha, Master Wizard",
+      "mana_cost": "{2}{U}{U}",
+      "type_line": "Legendary Creature — Human Wizard",
+      "oracle_text": "Flash\nWhen Naru Meha enters, copy target instant or sorcery spell you control. You may choose new targets for the copy.\nOther Wizards you control get +1/+1.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "d04356f1-0e1a-4689-8e54-f88c4c6dd936",
+      "name": "Nivix Guildmage",
+      "mana_cost": "{U}{R}",
+      "type_line": "Creature — Human Wizard",
+      "oracle_text": "{1}{U}{R}: Draw a card, then discard a card.\n{2}{U}{R}: Copy target instant or sorcery spell you control. You may choose new targets for the copy.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-08-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+      "name": "Refuse // Cooperate",
+      "mana_cost": "{3}{R} // {2}{U}",
+      "type_line": "Instant // Instant",
+      "oracle_text": "Refuse: Refuse deals damage to target spell's controller equal to that spell's mana value.\n//\nCooperate: Aftermath (Cast this spell only from your graveyard. Then exile it.)\nCopy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Aftermath"
+      ],
+      "produced_mana": [],
+      "layout": "split",
+      "released_at": "2019-08-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 7.0,
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{3}{R}",
+          "name": "Refuse",
+          "oracle_text": "Refuse deals damage to target spell's controller equal to that spell's mana value.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{U}",
+          "name": "Cooperate",
+          "oracle_text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nCopy target instant or sorcery spell. You may choose new targets for the copy.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        }
+      ]
+    },
+    {
+      "oracle_id": "38394ee3-6726-4f91-bc25-36bce0c6aab9",
+      "name": "Reiterate",
+      "mana_cost": "{1}{R}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Buyback {3} (You may pay an additional {3} as you cast this spell. If you do, put this card into your hand as it resolves.)\nCopy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Buyback"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-03-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "name": "Reverberate",
+      "mana_cost": "{R}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "3735559f-efe5-43ad-9b3e-3ef127c0ceda",
+      "name": "Rootha, Mercurial Artist",
+      "mana_cost": "{1}{U}{R}",
+      "type_line": "Legendary Creature — Orc Shaman",
+      "oracle_text": "{2}, Return Rootha to its owner's hand: Copy target instant or sorcery spell you control. You may choose new targets for the copy.",
+      "power": "1",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "a9d288b8-cdc1-4e55-a0c9-d6edfc95e65d",
+      "name": "Shock",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Shock deals 2 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "532ff38d-bf52-4e99-bf1c-254074e4d625",
+      "name": "Sigil Tracer",
+      "mana_cost": "{1}{U}{U}",
+      "type_line": "Creature — Merfolk Wizard",
+      "oracle_text": "{1}{U}, Tap two untapped Wizards you control: Copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-02-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "8d0da2f9-0e05-4a94-8d42-fd57d06b09ba",
+      "name": "Stella Lee, Wild Card",
+      "mana_cost": "{1}{U}{R}",
+      "type_line": "Legendary Creature — Human Rogue",
+      "oracle_text": "Whenever you cast your second spell each turn, exile the top card of your library. Until the end of your next turn, you may play that card.\n{T}: Copy target instant or sorcery spell you control. You may choose new targets for the copy. Activate only if you've cast three or more spells this turn.",
+      "power": "2",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "name": "Twincast",
+      "mana_cost": "{U}{U}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2009-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3ca8113b-f5b8-41a7-aae6-ebb32554dfe3",
+      "name": "Twinning Staff",
+      "mana_cost": "{3}",
+      "type_line": "Artifact",
+      "oracle_text": "If you would copy a spell one or more times, instead copy it that many times plus an additional time. You may choose new targets for the additional copy.\n{7}, {T}: Copy target instant or sorcery spell you control. You may choose new targets for the copy.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-04-29",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "93da1e63-54d6-4b05-af91-f13e7e111176",
+      "name": "Uyo, Silent Prophet",
+      "mana_cost": "{4}{U}{U}",
+      "type_line": "Legendary Creature — Moonfolk Wizard",
+      "oracle_text": "Flying\n{2}, Return two lands you control to their owner's hand: Copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-11-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 6.0
+    },
+    {
+      "oracle_id": "e6d13c0d-23ed-41f5-a726-f18d4bb44c9a",
+      "name": "Ashcoat Bear",
+      "mana_cost": "{1}{G}",
+      "type_line": "Creature — Bear",
+      "oracle_text": "Flash (You may cast this spell any time you could cast an instant.)",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2006-10-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "29b3cb3e-aeb1-43eb-8095-9f7881aa34bd",
+      "name": "Prodigal Pyromancer",
+      "mana_cost": "{2}{R}",
+      "type_line": "Creature — Human Wizard",
+      "oracle_text": "{T}: This creature deals 1 damage to any target.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-03-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "30997b43-fc13-41d3-8064-1ccc2cb6fd2b",
+      "name": "Raging Goblin",
+      "mana_cost": "{R}",
+      "type_line": "Creature — Goblin Berserker",
+      "oracle_text": "Haste (This creature can attack and {T} as soon as it comes under your control.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2018-07-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Haste"
+      ],
+      "produced_mana": [],
+      "faces": [],
+      "cmc": 1.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "Choreographed Sparks has received a minor update to remove the erroneous word \"next\" from its second mode. Its updated Oracle text appears above."
+    },
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "If the copied spell divides damage or distributes counters among a number of targets, the division and number of targets can't be changed. If you choose new targets, you must choose the same number of targets."
+    },
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "If the spell that's copied has an X whose value was determined as it was cast, the copy has the same value of X."
+    },
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "If a spell with a converge ability is copied, no mana was spent to cast the copy, so the number of colors of mana spent to cast the spell will be zero. The number of colors spent to cast the original spell is not copied."
+    },
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "You can't choose to pay any additional costs for a copied spell. However, effects based on any additional costs that were paid for the original spell are copied as though those same costs were paid for the copy too."
+    },
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "The copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger."
+    },
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "If the spell that's copied is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode or modes. You can't choose different ones."
+    },
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "Any choices made when the spell resolves won't have been made yet when it's copied. Any such choices will be made separately when the copy resolves."
+    },
+    {
+      "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "A resolving copy of a permanent spell becomes a token. That token isn't \"created\" and won't interact with abilities that care about tokens being created."
+    },
+    {
+      "oracle_id": "4d22b01b-63dd-4698-a221-0acaefb2000b",
+      "published_at": "2012-05-01",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it’s copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can’t choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "4d22b01b-63dd-4698-a221-0acaefb2000b",
+      "published_at": "2012-05-01",
+      "source": "wotc",
+      "comment": "The ability granted by Dual Casting can target (and copy) any instant or sorcery spell you control, not just one with targets."
+    },
+    {
+      "oracle_id": "4d22b01b-63dd-4698-a221-0acaefb2000b",
+      "published_at": "2012-05-01",
+      "source": "wotc",
+      "comment": "You can’t choose to pay any additional costs for the copy. However, effects based on any additional costs that were paid for the original spell are copied as though those same costs were paid for the copy too. For example, if you sacrifice a 3/3 creature to cast Fling and then copy it with the ability granted by Dual Casting, the copy of Fling will also deal 3 damage to its target."
+    },
+    {
+      "oracle_id": "4d22b01b-63dd-4698-a221-0acaefb2000b",
+      "published_at": "2012-05-01",
+      "source": "wotc",
+      "comment": "If the spell being copied has an X whose value was determined as it was cast (like Earthquake does), the copy has the same value of X."
+    },
+    {
+      "oracle_id": "4d22b01b-63dd-4698-a221-0acaefb2000b",
+      "published_at": "2012-05-01",
+      "source": "wotc",
+      "comment": "If the spell being copied is modal (that is, it says “Choose one —” or the like), the copy will have the same mode(s). You can’t choose different ones."
+    },
+    {
+      "oracle_id": "4d22b01b-63dd-4698-a221-0acaefb2000b",
+      "published_at": "2012-05-01",
+      "source": "wotc",
+      "comment": "The copy is created on the stack, so it’s not “cast.” Abilities that trigger when a player casts a spell won’t trigger. The copy will then resolve like a normal spell, after players get a chance to cast spells and activate abilities."
+    },
+    {
+      "oracle_id": "8eb7c0a5-6190-40de-b473-2d1daa3bbe28",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Dualcaster Mage's triggered ability can target (and copy) any instant or sorcery spell, not just one with targets. It doesn't matter who controls it."
+    },
+    {
+      "oracle_id": "8eb7c0a5-6190-40de-b473-2d1daa3bbe28",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "If the copy says that it affects \"you,\" it affects the controller of the copy, not the controller of the original spell. Similarly, if the copy says that it affects an \"opponent,\" it affects an opponent of the copy's controller, not an opponent of the original spell's controller."
+    },
+    {
+      "oracle_id": "8eb7c0a5-6190-40de-b473-2d1daa3bbe28",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "If the spell is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode. You can't choose a different one."
+    },
+    {
+      "oracle_id": "8eb7c0a5-6190-40de-b473-2d1daa3bbe28",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "As Dualcaster Mage's triggered ability resolves, it creates a copy of a spell on the stack. The copy isn't cast, so abilities that trigger when a player casts a spell won't trigger."
+    },
+    {
+      "oracle_id": "8eb7c0a5-6190-40de-b473-2d1daa3bbe28",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "8eb7c0a5-6190-40de-b473-2d1daa3bbe28",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "You can't choose to pay any additional costs for the copy. However, effects based on any additional or alternative costs paid for the targeted spell are copied as though those same costs were paid for the copy."
+    },
+    {
+      "oracle_id": "8eb7c0a5-6190-40de-b473-2d1daa3bbe28",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "If the spell has an X whose value was determined as it was cast (like Earthquake does), the copy has the same value of X."
+    },
+    {
+      "oracle_id": "fb98f6b7-5986-4c5d-98fc-e5c4106f48bf",
+      "published_at": "2010-06-15",
+      "source": "wotc",
+      "comment": "Effects that set a leveler’s power or toughness to a specific value, including the effects from a level symbol’s ability, apply in timestamp order. The timestamp of each level symbol’s ability is the same as the timestamp of the leveler itself, regardless of when the most recent level counter was put on it."
+    },
+    {
+      "oracle_id": "fb98f6b7-5986-4c5d-98fc-e5c4106f48bf",
+      "published_at": "2010-06-15",
+      "source": "wotc",
+      "comment": "Echo Mage’s last two activated abilities can target (and copy) any instant or sorcery spell, not just one with targets. It doesn’t matter who controls it."
+    },
+    {
+      "oracle_id": "fb98f6b7-5986-4c5d-98fc-e5c4106f48bf",
+      "published_at": "2010-06-15",
+      "source": "wotc",
+      "comment": "If the spell the ability copies has an X whose value was determined as it was cast (like Earthquake does), each copy has the same value of X as the original spell."
+    },
+    {
+      "oracle_id": "fb98f6b7-5986-4c5d-98fc-e5c4106f48bf",
+      "published_at": "2010-06-15",
+      "source": "wotc",
+      "comment": "A creature’s level is based on how many level counters it has on it, not how many times its level up ability has been activated or has resolved. If a leveler gets level counters due to some other effect (such as Clockspinning) or loses level counters for some reason (such as Vampire Hexmage), its level is changed accordingly."
+    },
+    {
+      "oracle_id": "fb98f6b7-5986-4c5d-98fc-e5c4106f48bf",
+      "published_at": "2010-06-15",
+      "source": "wotc",
+      "comment": "The abilities a leveler grants to itself don’t overwrite any other abilities it may have. In particular, they don’t overwrite the creature’s level up ability; it always has that."
+    },
+    {
+      "oracle_id": "fb98f6b7-5986-4c5d-98fc-e5c4106f48bf",
+      "published_at": "2010-06-15",
+      "source": "wotc",
+      "comment": "Each copy will have the same targets as the spell it’s copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can’t choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "fb98f6b7-5986-4c5d-98fc-e5c4106f48bf",
+      "published_at": "2010-06-15",
+      "source": "wotc",
+      "comment": "If another creature becomes a copy of a leveler, all of the leveler’s printed abilities — including those represented by level symbols — are copied. The current characteristics of the leveler, and the number of level counters on it, are not. The abilities, power, and toughness of the copy will be determined based on how many level counters are on the copy."
+    },
+    {
+      "oracle_id": "fb98f6b7-5986-4c5d-98fc-e5c4106f48bf",
+      "published_at": "2010-06-15",
+      "source": "wotc",
+      "comment": "If the spell the ability copies is modal (that is, it says “Choose one —” or the like), each copy will have the same mode as the original spell. You can’t choose a different one."
+    },
+    {
+      "oracle_id": "fb98f6b7-5986-4c5d-98fc-e5c4106f48bf",
+      "published_at": "2010-06-15",
+      "source": "wotc",
+      "comment": "Effects that modify a leveler’s power or toughness, such as the effects of Giant Growth or Glorious Anthem, will apply to it no matter when they started to take effect. The same is true for counters that change the creature’s power or toughness (such as +1/+1 counters) and effects that switch its power and toughness."
+    },
+    {
+      "oracle_id": "fb98f6b7-5986-4c5d-98fc-e5c4106f48bf",
+      "published_at": "2010-06-15",
+      "source": "wotc",
+      "comment": "When either ability resolves, it creates a copy (or two) of a spell. The copies are created on the stack, so they’re not “cast.” Abilities that trigger when a player casts a spell won’t trigger. Each copy will then resolve like a normal spell, after players get a chance to cast spells and activate abilities. Each copy resolves before the original spell does."
+    },
+    {
+      "oracle_id": "fb98f6b7-5986-4c5d-98fc-e5c4106f48bf",
+      "published_at": "2010-06-15",
+      "source": "wotc",
+      "comment": "If a copy says that it affects “you,” it affects the controller of that copy, not the controller of the original spell. Similarly, if a copy says that it affects an “opponent,” it affects an opponent of that copy’s controller, not an opponent of the original spell’s controller."
+    },
+    {
+      "oracle_id": "fb98f6b7-5986-4c5d-98fc-e5c4106f48bf",
+      "published_at": "2010-06-15",
+      "source": "wotc",
+      "comment": "You can’t choose to pay any additional costs for a copy. However, effects based on any additional costs that were paid for the original spell are copied as though those same costs were paid for each copy too."
+    },
+    {
+      "oracle_id": "fb98f6b7-5986-4c5d-98fc-e5c4106f48bf",
+      "published_at": "2010-06-15",
+      "source": "wotc",
+      "comment": "If you activate Echo Mage’s last ability to copy a spell twice, you may choose new targets for each copy independently. They don’t have to have the same targets as one another. Be sure to specify which of the copies will resolve first."
+    },
+    {
+      "oracle_id": "f586ecb8-310c-4f40-a766-6a7ca46a254d",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If the spell has damage divided as it was cast, the division can't be changed (although the targets receiving that damage still can). The same is true of spells that distribute counters."
+    },
+    {
+      "oracle_id": "f586ecb8-310c-4f40-a766-6a7ca46a254d",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "f586ecb8-310c-4f40-a766-6a7ca46a254d",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If you copy a spell, you control the copy. It will resolve before the original spell does."
+    },
+    {
+      "oracle_id": "f586ecb8-310c-4f40-a766-6a7ca46a254d",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If the spell that's copied is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode. A different mode can't be chosen."
+    },
+    {
+      "oracle_id": "f586ecb8-310c-4f40-a766-6a7ca46a254d",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "The copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger."
+    },
+    {
+      "oracle_id": "f586ecb8-310c-4f40-a766-6a7ca46a254d",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "The controller of a copy can't choose to pay any alternative or additional costs for the copy. However, effects based on any alternative or additional costs that were paid for the original spell are copied as though those same costs were paid for the copy."
+    },
+    {
+      "oracle_id": "f586ecb8-310c-4f40-a766-6a7ca46a254d",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If the spell that's copied has an X whose value was determined as it was cast (like Kozilek's Command does), the copy will have the same value of X."
+    },
+    {
+      "oracle_id": "371fa9e3-5432-4f2f-89d4-55061b0b4e57",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "If you copy a spell, you control the copy. It will resolve before the original spell does."
+    },
+    {
+      "oracle_id": "371fa9e3-5432-4f2f-89d4-55061b0b4e57",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "Each Storm’s triggered ability can copy the Storm spell even if that spell is countered before that ability resolves."
+    },
+    {
+      "oracle_id": "371fa9e3-5432-4f2f-89d4-55061b0b4e57",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "If the spell that’s copied has an X whose value was determined as it was cast (like Lavalanche does), the copy will have the same value of X."
+    },
+    {
+      "oracle_id": "371fa9e3-5432-4f2f-89d4-55061b0b4e57",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "If the spell that’s copied is modal (that is, it says “Choose one —” or the like), the copy will have the same mode. A different mode can’t be chosen."
+    },
+    {
+      "oracle_id": "371fa9e3-5432-4f2f-89d4-55061b0b4e57",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "If your commander was countered, that time you cast it still counts."
+    },
+    {
+      "oracle_id": "371fa9e3-5432-4f2f-89d4-55061b0b4e57",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "If the spell has damage divided as it was cast (like Chandra’s Pyrohelix), the division can’t be changed (although the targets receiving that damage still can)."
+    },
+    {
+      "oracle_id": "371fa9e3-5432-4f2f-89d4-55061b0b4e57",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "Fury Storm can copy any instant or sorcery spell, not just one with targets."
+    },
+    {
+      "oracle_id": "371fa9e3-5432-4f2f-89d4-55061b0b4e57",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "Each Storm’s triggered ability counts only how many times you’ve cast your commander from the command zone before that triggered ability resolves. If you cast your commander again later, you won’t get another copy."
+    },
+    {
+      "oracle_id": "371fa9e3-5432-4f2f-89d4-55061b0b4e57",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "The copy is created on the stack, so it’s not “cast.” Abilities that trigger when a player casts a spell won’t trigger. This means, for example, that Fury Storm’s copies may target Fury Storm itself, but this won’t trigger the copy’s “when you cast this spell” ability, and it won’t increase the number of copies of other spells you end up with."
+    },
+    {
+      "oracle_id": "371fa9e3-5432-4f2f-89d4-55061b0b4e57",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it’s copying unless you choose new ones. You may change any number of the targets, including all of them or none of them, but not how many targets there are. If, for one of the targets, you can’t choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "371fa9e3-5432-4f2f-89d4-55061b0b4e57",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "The controller of a copy can’t choose to pay any alternative or additional costs for the copy. However, effects based on any alternative or additional costs that were paid for the original spell are copied as though those same costs were paid for the copy."
+    },
+    {
+      "oracle_id": "371fa9e3-5432-4f2f-89d4-55061b0b4e57",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "The copies are created on the stack, so they’re not “cast.” Abilities that trigger when a player casts a spell (such as the Storm’s ability itself) won’t trigger."
+    },
+    {
+      "oracle_id": "371fa9e3-5432-4f2f-89d4-55061b0b4e57",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "If you have multiple commanders, you’ll copy this spell for each time you’ve cast either of them. For example, if you’ve cast one commander once and one twice, you’ll copy this spell three times."
+    },
+    {
+      "oracle_id": "dfd12e3c-2b2a-4461-a08d-09d4e6c4626e",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "You choose the mode as the triggered ability goes on the stack. You can choose a mode that requires targets only if there are legal targets available."
+    },
+    {
+      "oracle_id": "dfd12e3c-2b2a-4461-a08d-09d4e6c4626e",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "It doesn't matter who has chosen any particular mode. For example, say you control Gandalf the Grey and have chosen the first two modes. If an opponent gains control of Gandalf the Grey, that player can choose only the third or fourth mode."
+    },
+    {
+      "oracle_id": "dfd12e3c-2b2a-4461-a08d-09d4e6c4626e",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "If the ability doesn't resolve (either for having its target become illegal or because a spell or ability counters it), the mode chosen for that instance of the ability still counts as being chosen."
+    },
+    {
+      "oracle_id": "dfd12e3c-2b2a-4461-a08d-09d4e6c4626e",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "The phrase \"that hasn't been chosen\" refers only to that specific Gandalf the Grey. If Gandalf the Grey leaves the battlefield (possibly because of the fourth mode of its ability) and then returns to the battlefield later, it will be a new object with no memory of the modes chosen when it was last on the battlefield."
+    },
+    {
+      "oracle_id": "10891656-070f-49f4-80e0-78061b773f17",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "If the spell has damage divided as it was cast (also like Avacyn's Judgment), the division can't be changed (although the targets receiving that damage still can)."
+    },
+    {
+      "oracle_id": "10891656-070f-49f4-80e0-78061b773f17",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "Geistblast's ability can copy any instant or sorcery spell, not just one with targets."
+    },
+    {
+      "oracle_id": "10891656-070f-49f4-80e0-78061b773f17",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "10891656-070f-49f4-80e0-78061b773f17",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "If the spell being copied is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode. You can't choose a different one."
+    },
+    {
+      "oracle_id": "10891656-070f-49f4-80e0-78061b773f17",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "When Geistblast's ability resolves, it creates a copy of the instant or sorcery spell. The copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger. The copy will then resolve like a normal spell, before the original spell resolves but after players get a chance to cast spells and activate abilities."
+    },
+    {
+      "oracle_id": "10891656-070f-49f4-80e0-78061b773f17",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "If the spell being copied has an X whose value was determined as it was cast (like Avacyn's Judgment's madness cost has), the copy will have the same value of X."
+    },
+    {
+      "oracle_id": "10891656-070f-49f4-80e0-78061b773f17",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "If an alternative cost was paid for the spell, such as its madness cost or surge cost, the same alternative cost is considered to have been paid for the copy."
+    },
+    {
+      "oracle_id": "8088d110-2314-45c3-b6ee-3f55d1f388e4",
+      "published_at": "2016-09-20",
+      "source": "wotc",
+      "comment": "If you choose new targets for the target spell or for the copy, the new targets must be legal."
+    },
+    {
+      "oracle_id": "8088d110-2314-45c3-b6ee-3f55d1f388e4",
+      "published_at": "2016-09-20",
+      "source": "wotc",
+      "comment": "If the spell has damage divided as it was cast (like Chandra's Pyrohelix), the division can't be changed (although the targets receiving that damage still can)."
+    },
+    {
+      "oracle_id": "8088d110-2314-45c3-b6ee-3f55d1f388e4",
+      "published_at": "2016-09-20",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "8088d110-2314-45c3-b6ee-3f55d1f388e4",
+      "published_at": "2016-09-20",
+      "source": "wotc",
+      "comment": "The controller of a copy can't choose to pay any alternative or additional costs for the copy. However, effects based on any alternative or additional costs that were paid for the original spell are copied as though those same costs were paid for the copy."
+    },
+    {
+      "oracle_id": "8088d110-2314-45c3-b6ee-3f55d1f388e4",
+      "published_at": "2016-09-20",
+      "source": "wotc",
+      "comment": "The copy is created on the stack, so it's not “cast.” Abilities that trigger when a player casts a spell won't trigger."
+    },
+    {
+      "oracle_id": "8088d110-2314-45c3-b6ee-3f55d1f388e4",
+      "published_at": "2016-09-20",
+      "source": "wotc",
+      "comment": "If the spell that's copied has an X whose value was determined as it was cast (like Eliminate the Competition does), the copy will have the same value of X."
+    },
+    {
+      "oracle_id": "8088d110-2314-45c3-b6ee-3f55d1f388e4",
+      "published_at": "2016-09-20",
+      "source": "wotc",
+      "comment": "The third mode can copy any instant or sorcery spell, not just one with targets."
+    },
+    {
+      "oracle_id": "8088d110-2314-45c3-b6ee-3f55d1f388e4",
+      "published_at": "2016-09-20",
+      "source": "wotc",
+      "comment": "If the spell that's copied is modal (that is, it says “Choose one —” or the like), the copy will have the same mode. A different mode cannot be chosen."
+    },
+    {
+      "oracle_id": "8088d110-2314-45c3-b6ee-3f55d1f388e4",
+      "published_at": "2016-09-20",
+      "source": "wotc",
+      "comment": "If you copy a spell, you control the copy."
+    },
+    {
+      "oracle_id": "16414460-11ce-481d-ab54-6f0e0ea7d83d",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If the spell that’s copied has an X whose value was determined as it was cast, the copy will have the same value of X."
+    },
+    {
+      "oracle_id": "16414460-11ce-481d-ab54-6f0e0ea7d83d",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If the spell has damage divided as it was cast, the division can’t be changed (although the targets receiving that damage still can). The same is true of spells that distribute counters."
+    },
+    {
+      "oracle_id": "16414460-11ce-481d-ab54-6f0e0ea7d83d",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it’s copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can’t choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "16414460-11ce-481d-ab54-6f0e0ea7d83d",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If the spell that’s copied is modal (that is, it says “Choose one —” or the like), the copy will have the same mode. A different mode can’t be chosen."
+    },
+    {
+      "oracle_id": "16414460-11ce-481d-ab54-6f0e0ea7d83d",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "The copy created by Kitsa’s last ability is created on the stack, so it’s not “cast.” Abilities that trigger when a player casts a spell won’t trigger."
+    },
+    {
+      "oracle_id": "16414460-11ce-481d-ab54-6f0e0ea7d83d",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Once you’ve activated Kitsa’s last ability, any changes to Kitsa’s power won’t stop the ability from resolving."
+    },
+    {
+      "oracle_id": "16414460-11ce-481d-ab54-6f0e0ea7d83d",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "The controller of a copy can’t choose to pay any alternative or additional costs for the copy. However, effects based on any alternative or additional costs that were paid for the original spell are copied as though those same costs were paid for the copy."
+    },
+    {
+      "oracle_id": "16414460-11ce-481d-ab54-6f0e0ea7d83d",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If you copy a spell, you control the copy. It will resolve before the original spell does."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If a permanent spell is copied, it's put onto the battlefield as a token as the spell resolves rather than putting the copy of the spell onto the battlefield. The rules that apply to a permanent spell becoming a permanent apply to a copy of a spell becoming a token."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "Any choices made when the spell or ability resolves won't have been made yet when it's copied. Any such choices will be made separately when the copy resolves. Most notably, if a triggered ability asks you to pay a cost (such as that of Leyline Tyrant), you pay that cost for the copy if you wish to have it paid."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If an ability is linked to a second ability, copies of that first ability are also linked to that second ability. If the second ability refers to “the exiled card,” it refers to all cards exiled by the first ability and the copy. For example, if Fiend Hunter's enters-the-battlefield ability is copied and two creatures are exiled, they both return when Fiend Hunter leaves the battlefield."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "You can't choose to pay any alternative or additional costs for the copy. However, effects based on any alternative or additional costs that were paid for the original spell are copied as though those same costs were paid for the copy. Most notably, if the original spell was kicked, the copy is kicked."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "The source of the copy from Lithoform Engine's first ability is the same as the source of the original ability."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "Lithoform Engine can copy any spell or ability on the stack, not just one with targets. If a permanent spell is copied, new targets can't be chosen for it, if it has any (perhaps because it's an Aura or a mutating creature spell)."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "The token that a resolving copy of a spell becomes isn't said to have been “created.”"
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "Activated abilities contain a colon. They're generally written “[Cost]: [Effect].” Some keyword abilities (such as equip) are activated abilities and will have a colon in their reminder text."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "The copy is created on the stack, so it's not “cast” or “activated.” Creating the copy won't cause abilities that trigger when a player casts a spell or activates an ability to trigger. Abilities that say that a triggered ability triggers additional times won't apply to copying a triggered ability."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "The copy will resolve before the original spell or ability does."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell or ability it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "Triggered abilities use the word “when,” “whenever,” or “at.” They're often written as “[Trigger condition], [effect].” Some keywords (such as prowess) are triggered abilities and will use “when,” “whenever,” or “at” in their reminder text."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If the spell or ability has damage divided as it was put onto the stack, the division can't be changed, although the targets receiving that damage still can. The same is true of spells and abilities that distribute counters."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "Lithoform Engine's first ability targets an activated or triggered ability that is on the stack and creates another instance of that ability on the stack. It doesn't cause any object to gain an ability."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If the spell or ability that's copied has an X whose value was determined as it was cast or activated, the copy will have the same value of X."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If the spell or ability that's copied is modal (that is, it says “Choose one —” or the like), the copy will have the same mode. A different mode can't be chosen. This doesn't apply to copying a permanent spell with a modal enters-the-battlefield triggered ability, but it does apply to copying that ability."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "The companion ability has no effect if the card is in your starting deck and creates no restriction on putting a card with a companion ability into your starting deck. For example, Zirda may be in your starting deck even if your other permanent cards don't all have activated abilities."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "The companion's other abilities apply only if the creature is on the battlefield. They have no effect while the companion is outside the game."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If the spell that's copied is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode. A different mode can't be chosen."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Before shuffling your deck to become your library, you may reveal one card from outside the game to be your companion if your starting deck meets the requirements of the companion ability. You can't reveal more than one. It remains revealed outside the game as the game begins."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If you reveal a companion outside the game, for as long as it remains there, you may pay {3} any time you could cast a sorcery (that is, you have priority during your main phase and the stack is empty). Once you do, you put it into your hand and behaves like any other card you've brought into the game. For example, if it's discard, countered, or destroyed, it's put into your graveyard, remaining in the game. This is a change from previous rules."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Paying {3} to put your companion into your hand is a special action. It doesn't use the stack and players can't respond to it. Once you take this action, you may cast that card if it's legal to do so before any other player can take actions."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "The requirements of the companion ability apply only to your starting deck. They do not apply to your sideboard."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "The controller of a copy can't choose to pay any alternative or additional costs for the copy. However, effects based on any alternative or additional costs that were paid for the original spell are copied as though those same costs were paid for the copy."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Lutri's ability can copy any instant or sorcery spell you control, not just one with targets."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "The copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger. It will resolve before the original spell does."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Your companion begins the game outside the game. In tournament play, this means your sideboard. In casual play, it's simply a card you own that's not in your starting deck."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If the spell that's copied has an X whose value was determined as it was cast, the copy will have the same value of X."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "You may have one companion in the Commander variant. Your deck, including your commander, must meet its companion requirement. Your companion is not one of your one hundred cards."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If more than one player wishes to reveal a companion, the starting player does so first, and players proceed in turn order. Once a player has chosen not to reveal a companion, that player can't change their mind."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If the spell has damage divided as it was cast (like Mythos of Vadrok), the division can't be changed, although the targets receiving that damage still can. The same is true of spells that distribute counters."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-06-01",
+      "source": "wotc",
+      "comment": "Paying {3} to put your companion into your hand is a special action. It doesn't use the stack and players can't respond to it. Once you take this action, you may cast that card if it's legal to do so before any other player can take actions."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-06-01",
+      "source": "wotc",
+      "comment": "If you reveal a companion outside the game, for as long as it remains there, you may pay {3} any time you could cast a sorcery (that is, you have priority during your main phase and the stack is empty). Once you do, you put it into your hand and behaves like any other card you've brought into the game. For example, if it's discarded, countered, or destroyed, it's put into your graveyard, remaining in the game. This is a change from previous rules."
+    },
+    {
+      "oracle_id": "57b86d5c-3269-44bc-a838-3c5439d820d9",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied creature will trigger when the token enters the battlefield. Any “as [this permanent] enters the battlefield” or “[this permanent] enters the battlefield with” abilities of the copied creature will also work."
+    },
+    {
+      "oracle_id": "57b86d5c-3269-44bc-a838-3c5439d820d9",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "Mirrorpool’s third ability can target (and copy) any instant or sorcery spell, not just one with targets."
+    },
+    {
+      "oracle_id": "57b86d5c-3269-44bc-a838-3c5439d820d9",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "If the copied creature is copying something else when the ability resolves, then the token enters the battlefield as a copy of whatever that creature is copying."
+    },
+    {
+      "oracle_id": "57b86d5c-3269-44bc-a838-3c5439d820d9",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "If the copied spell has an X whose value was determined as it was cast (like Fall of the Titans does), the copy has the same value of X."
+    },
+    {
+      "oracle_id": "57b86d5c-3269-44bc-a838-3c5439d820d9",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "For Mirrorpool’s last ability, the token copies exactly what’s printed on the original creature and nothing else (unless that creature is copying something else; see below). It doesn’t copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, and so on."
+    },
+    {
+      "oracle_id": "57b86d5c-3269-44bc-a838-3c5439d820d9",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "For example, if a token copies a Plains that’s been affected by a spell with awaken, the token will be just a land, even though the object being copied is currently a land creature. The same is true if the land has an ability that animates it."
+    },
+    {
+      "oracle_id": "57b86d5c-3269-44bc-a838-3c5439d820d9",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "If the copied creature has {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "57b86d5c-3269-44bc-a838-3c5439d820d9",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "You can’t choose to pay any additional costs for the copy. However, effects based on any additional costs that were paid for the original spell are copied as though those same costs were paid for the copy, too. For example, if a player sacrifices a 3/3 creature to cast Fling, and you copy it, the copy of Fling will also deal 3 damage to its target."
+    },
+    {
+      "oracle_id": "57b86d5c-3269-44bc-a838-3c5439d820d9",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it’s copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can’t choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "57b86d5c-3269-44bc-a838-3c5439d820d9",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "The copy is created on the stack, so it’s not cast. Abilities that trigger when a player casts a spell won’t trigger. The copy will then resolve like a normal spell, after players get a chance to cast spells and activate abilities."
+    },
+    {
+      "oracle_id": "57b86d5c-3269-44bc-a838-3c5439d820d9",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "If the copied spell is modal (that is, it says “Choose one —” or the like), the copy will have the same modes. You can’t choose different ones."
+    },
+    {
+      "oracle_id": "562c9c68-e5a7-45ab-b098-5b649d165ff5",
+      "published_at": "2018-04-27",
+      "source": "wotc",
+      "comment": "If the spell that's copied has an X whose value was determined as it was cast (like Jaya's Immolating Inferno does), the copy will have the same value of X."
+    },
+    {
+      "oracle_id": "562c9c68-e5a7-45ab-b098-5b649d165ff5",
+      "published_at": "2018-04-27",
+      "source": "wotc",
+      "comment": "Naru's triggered ability can copy any instant or sorcery spell, not just one with targets."
+    },
+    {
+      "oracle_id": "562c9c68-e5a7-45ab-b098-5b649d165ff5",
+      "published_at": "2018-04-27",
+      "source": "wotc",
+      "comment": "If the spell that's copied is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode. A different mode can't be chosen."
+    },
+    {
+      "oracle_id": "562c9c68-e5a7-45ab-b098-5b649d165ff5",
+      "published_at": "2018-04-27",
+      "source": "wotc",
+      "comment": "If the spell has damage divided as it was cast (like Fight with Fire does when kicked), the division can't be changed (although the targets receiving that damage still can)."
+    },
+    {
+      "oracle_id": "562c9c68-e5a7-45ab-b098-5b649d165ff5",
+      "published_at": "2018-04-27",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "562c9c68-e5a7-45ab-b098-5b649d165ff5",
+      "published_at": "2018-04-27",
+      "source": "wotc",
+      "comment": "The controller of a copy can't choose to pay any alternative or additional costs for the copy. However, effects based on any alternative or additional costs that were paid for the original spell are copied as though those same costs were paid for the copy."
+    },
+    {
+      "oracle_id": "562c9c68-e5a7-45ab-b098-5b649d165ff5",
+      "published_at": "2018-04-27",
+      "source": "wotc",
+      "comment": "Because damage remains marked on a creature until it's removed as the turn ends, nonlethal damage dealt to a Wizard you control may become lethal if Naru leaves the battlefield during that turn."
+    },
+    {
+      "oracle_id": "562c9c68-e5a7-45ab-b098-5b649d165ff5",
+      "published_at": "2018-04-27",
+      "source": "wotc",
+      "comment": "The copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger."
+    },
+    {
+      "oracle_id": "d04356f1-0e1a-4689-8e54-f88c4c6dd936",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "When the second ability resolves, it creates a copy of a spell. That copy is created on the stack, so it’s not “cast.” Abilities that trigger when a player casts a spell won’t trigger. The copy will then resolve like a normal spell, after players get a chance to cast spells and activate abilities."
+    },
+    {
+      "oracle_id": "d04356f1-0e1a-4689-8e54-f88c4c6dd936",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "Nivix Guildmage’s second ability can target (and copy) any instant or sorcery spell you control, not just one with targets."
+    },
+    {
+      "oracle_id": "d04356f1-0e1a-4689-8e54-f88c4c6dd936",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "If the copied spell is modal (that is, it says “Choose one —” or the like), the copy will have the same mode. You can’t choose a different one."
+    },
+    {
+      "oracle_id": "d04356f1-0e1a-4689-8e54-f88c4c6dd936",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "If the copied spell has an X whose value was determined as it was cast (like Sphinx’s Revelation does), the copy has the same value of X."
+    },
+    {
+      "oracle_id": "d04356f1-0e1a-4689-8e54-f88c4c6dd936",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "You can’t choose to pay any additional costs for the copy. However, effects based on any additional or alternative costs that were paid for the original spell are copied as though those same costs were paid for the copy too. For example, if you copy a spell that you cast by paying its overload cost, the copy will resolve as though its overload cost had been paid as well."
+    },
+    {
+      "oracle_id": "d04356f1-0e1a-4689-8e54-f88c4c6dd936",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it’s copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can’t choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "Split cards with aftermath have a new frame treatment—the half you can cast from your hand is oriented the same as other cards you'd cast from your hand, while the half you can cast from your graveyard is a traditional split card half. This frame treatment is for your convenience and has no rules significance."
+    },
+    {
+      "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "All split cards have two card faces on a single card, and you put a split card onto the stack with only the half you're casting. The characteristics of the half of the card you didn't cast are ignored while the spell is on the stack. For example, if an effect prevents you from casting green spells, you can cast Destined of Destined // Lead, but not Lead."
+    },
+    {
+      "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "Each split card has two names. If an effect instructs you to choose a card name, you may choose one, but not both."
+    },
+    {
+      "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "Each split card is a single card. For example, if you discard one, you've discarded one card, not two. If an effect counts the number of instant and sorcery cards in your graveyard, Destined // Lead counts once, not twice."
+    },
+    {
+      "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "If another effect allows you to cast a split card with aftermath from any zone other than a graveyard, you can't cast the half with aftermath."
+    },
+    {
+      "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "While not on the stack, the characteristics of a split card are the combination of its two halves. For example, Destined // Lead is a green and black card, it is both an instant card and a sorcery card, and its mana value is 6. This means that if an effect allows you to cast a card with mana value 2 from your hand, you can't cast Destined. This is a change from the previous rules for split cards."
+    },
+    {
+      "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "If you cast the first half of a split card with aftermath during your turn, you'll have priority immediately after it resolves. You can cast the half with aftermath from your graveyard before any player can take any other action if it's legal for you to do so."
+    },
+    {
+      "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "A spell with aftermath cast from a graveyard will always be exiled afterward, whether it resolves, it's countered, or it leaves the stack in some other way."
+    },
+    {
+      "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "If another effect allows you to cast a split card with aftermath from a graveyard, you may cast either half. If you cast the half that has aftermath, you'll exile the card if it would leave the stack."
+    },
+    {
+      "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "If the spell that's copied has an X whose value was determined as it was cast (like Torment of Hailfire does), the copy will have the same value of X."
+    },
+    {
+      "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "The controller of a copy can't choose to pay any alternative or additional costs for the copy. However, effects based on any alternative or additional costs that were paid for the original spell are copied as though those same costs were paid for the copy."
+    },
+    {
+      "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "The copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger."
+    },
+    {
+      "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "If the spell has damage divided as it was cast (like Chandra's Pyrohelix), the division can't be changed (although the targets receiving that damage still can)."
+    },
+    {
+      "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "If the spell that's copied is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode. A different mode can't be chosen."
+    },
+    {
+      "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "If you copy a spell, you control the copy. It will resolve before the original spell does."
+    },
+    {
+      "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "If a spell has {X} in its mana cost, include the value chosen for that X when determining the mana value of that spell."
+    },
+    {
+      "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "Cooperate can copy any instant or sorcery spell, not just one with targets."
+    },
+    {
+      "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "Once you've started to cast a spell with aftermath from your graveyard, the card is immediately moved to the stack. Opponents can't try to stop the ability by exiling the card with an effect such as that of Crook of Condemnation."
+    },
+    {
+      "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "38394ee3-6726-4f91-bc25-36bce0c6aab9",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If the spell that's copied has an X whose value was determined as it was cast, the copy will have the same value of X."
+    },
+    {
+      "oracle_id": "38394ee3-6726-4f91-bc25-36bce0c6aab9",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "38394ee3-6726-4f91-bc25-36bce0c6aab9",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If the spell that's copied is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode. A different mode can't be chosen."
+    },
+    {
+      "oracle_id": "38394ee3-6726-4f91-bc25-36bce0c6aab9",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If the spell has damage divided as it was cast, the division can't be changed, although the targets receiving that damage still can. The same is true of spells that distribute counters."
+    },
+    {
+      "oracle_id": "38394ee3-6726-4f91-bc25-36bce0c6aab9",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "You can't choose to pay any alternative or additional costs for the copy. However, effects based on any alternative or additional costs that were paid for the original spell are copied as though those same costs were paid for the copy."
+    },
+    {
+      "oracle_id": "38394ee3-6726-4f91-bc25-36bce0c6aab9",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "The copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger. The copy will resolve before the original spell does."
+    },
+    {
+      "oracle_id": "38394ee3-6726-4f91-bc25-36bce0c6aab9",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Reiterate can copy any instant or sorcery spell, not just one with targets."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If the spell Reverberate copies has an X whose value was determined as it was cast (like Earthquake does), the copy has the same value of X."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "Reverberate can target (and copy) any instant or sorcery spell, not just one with targets. It doesn't matter who controls it."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "When Reverberate resolves, it creates a copy of a spell. You control the copy. That copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger. The copy will then resolve like a normal spell, after players get a chance to cast spells and activate abilities."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If the copy says that it affects \"you,\" it affects the controller of the copy, not the controller of the original spell. Similarly, if the copy says that it affects an \"opponent,\" it affects an opponent of the copy's controller, not an opponent of the original spell's controller."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If the spell Reverberate copies is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode. You can't choose a different one."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "You can't choose to pay any additional costs for the copy. However, effects based on any additional costs that were paid for the original spell are copied as though those same costs were paid for the copy too. For example, if a player sacrifices a 3/3 creature to cast Fling, and you copy it with Reverberate, the copy of Fling will also deal 3 damage to its target."
+    },
+    {
+      "oracle_id": "3735559f-efe5-43ad-9b3e-3ef127c0ceda",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "Rootha, Mercurial Artist's ability must have a target to be activated. You can't activate it without a target in order to return Rootha to your hand."
+    },
+    {
+      "oracle_id": "532ff38d-bf52-4e99-bf1c-254074e4d625",
+      "published_at": "2008-04-01",
+      "source": "wotc",
+      "comment": "If the spell is modal (that is, it says “choose one —” or “choose two —”), the choice of mode(s) can’t be changed."
+    },
+    {
+      "oracle_id": "532ff38d-bf52-4e99-bf1c-254074e4d625",
+      "published_at": "2008-04-01",
+      "source": "wotc",
+      "comment": "Sigil Tracer’s ability can copy an instant or sorcery spell that isn’t targeted."
+    },
+    {
+      "oracle_id": "532ff38d-bf52-4e99-bf1c-254074e4d625",
+      "published_at": "2008-04-01",
+      "source": "wotc",
+      "comment": "Since the activated ability doesn’t have a tap symbol in its cost, you can tap creatures (including Sigil Tracer itself) that haven’t been under your control since your most recent turn began to pay the cost."
+    },
+    {
+      "oracle_id": "532ff38d-bf52-4e99-bf1c-254074e4d625",
+      "published_at": "2008-04-01",
+      "source": "wotc",
+      "comment": "If the controller of the original spell chose to pay an alternative cost (such as prowl) or an additional cost, that choice is also copied."
+    },
+    {
+      "oracle_id": "8d0da2f9-0e05-4a94-8d42-fd57d06b09ba",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The copy created by Stella Lee’s last ability will have the same targets as the spell it’s copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. The new targets must be legal."
+    },
+    {
+      "oracle_id": "8d0da2f9-0e05-4a94-8d42-fd57d06b09ba",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The copy made by Stella Lee’s last ability is created on the stack, so it’s not “cast.”"
+    },
+    {
+      "oracle_id": "8d0da2f9-0e05-4a94-8d42-fd57d06b09ba",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You pay all costs and follow all normal timing rules for cards played from exile with Stella Lee’s first ability. For example, if the exiled card is a land card, you may play it only during your main phase while the stack is empty."
+    },
+    {
+      "oracle_id": "8d0da2f9-0e05-4a94-8d42-fd57d06b09ba",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If the copied spell is modal (that is, it says “Choose one —” or the like), the copy will have the same mode or modes. You can’t choose different ones."
+    },
+    {
+      "oracle_id": "8d0da2f9-0e05-4a94-8d42-fd57d06b09ba",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell that’s copied has an X whose value was determined as it was cast, the copy will have the same value of X."
+    },
+    {
+      "oracle_id": "8d0da2f9-0e05-4a94-8d42-fd57d06b09ba",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If the copied spell divides damage or distributes counters among a number of targets, the division and number of targets can’t be changed. If you choose new targets, you must choose the same number of targets."
+    },
+    {
+      "oracle_id": "8d0da2f9-0e05-4a94-8d42-fd57d06b09ba",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can’t choose to pay any additional costs for the copy. However, effects based on any additional costs that were paid for the original spell are copied as though those same costs were paid for the copy too."
+    },
+    {
+      "oracle_id": "8d0da2f9-0e05-4a94-8d42-fd57d06b09ba",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells that were cast before Stella Lee entered the battlefield count. If Stella Lee was the first spell you cast this turn, the next spell you cast this turn is your second spell."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Twincast can copy any instant or sorcery spell, not just one with targets."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If the spell has damage divided as it was cast, the division can't be changed, although the targets receiving that damage still can. The same is true of spells that distribute counters."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If the spell that's copied is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode. A different mode can't be chosen."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If the spell that's copied has an X whose value was determined as it was cast, the copy will have the same value of X."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "The copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger. The copy will resolve before the original spell does."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "You can't choose to pay any alternative or additional costs for the copy. However, effects based on any alternative or additional costs that were paid for the original spell are copied as though those same costs were paid for the copy."
+    },
+    {
+      "oracle_id": "3ca8113b-f5b8-41a7-aae6-ebb32554dfe3",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "You may choose new targets for the additional copy, even if you can't choose new targets for the original copy or copies."
+    },
+    {
+      "oracle_id": "3ca8113b-f5b8-41a7-aae6-ebb32554dfe3",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "You choose whether the additional copy is put onto the stack before or after the original copy. If a spell is being copied more than once, you can even have the additional copy put onto the stack in between the original copies."
+    },
+    {
+      "oracle_id": "3ca8113b-f5b8-41a7-aae6-ebb32554dfe3",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Twinning Staff's last ability can copy any instant or sorcery spell you control, not just one with targets."
+    },
+    {
+      "oracle_id": "3ca8113b-f5b8-41a7-aae6-ebb32554dfe3",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "The copy is created on the stack, so it's not “cast.” Abilities that trigger when a player casts a spell won't trigger. It will resolve before the original spell does."
+    },
+    {
+      "oracle_id": "3ca8113b-f5b8-41a7-aae6-ebb32554dfe3",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If you have a second Twinning Staff, copying a spell results in two additional copies. If you have a third, you get three additional copies, and so on."
+    },
+    {
+      "oracle_id": "3ca8113b-f5b8-41a7-aae6-ebb32554dfe3",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If the spell that's copied is modal (that is, it says “Choose one —” or the like), the copy will have the same mode. A different mode can't be chosen."
+    },
+    {
+      "oracle_id": "3ca8113b-f5b8-41a7-aae6-ebb32554dfe3",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "3ca8113b-f5b8-41a7-aae6-ebb32554dfe3",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If an effect copies a card rather than a spell (such as that of God-Eternal Kefnet), this doesn't cause an additional copy to be created."
+    },
+    {
+      "oracle_id": "3ca8113b-f5b8-41a7-aae6-ebb32554dfe3",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If the spell that's copied has an X whose value was determined as it was cast, the copy will have the same value of X."
+    },
+    {
+      "oracle_id": "3ca8113b-f5b8-41a7-aae6-ebb32554dfe3",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "The controller of a copy can't choose to pay any alternative or additional costs for the copy. However, effects based on any alternative or additional costs that were paid for the original spell are copied as though those same costs were paid for the copy."
+    },
+    {
+      "oracle_id": "3ca8113b-f5b8-41a7-aae6-ebb32554dfe3",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If the spell has damage divided as it was cast (like Mythos of Vadrok), the division can't be changed, although the targets receiving that damage still can. The same is true of spells that distribute counters."
+    },
+    {
+      "oracle_id": "93da1e63-54d6-4b05-af91-f13e7e111176",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "If you copy an Arcane spell that has cards spliced onto it, you’ll copy the spliced text as well as the original spell text."
+    }
+  ]
+}

@@ -108,11 +108,26 @@ def program_has_complete_card_program_admission(program: Any) -> bool:
         return False
 
 
+def program_has_declared_complete_source_admission(program: Any) -> bool:
+    """Validate a compiler-declared whole-source boundary without a handler."""
+    provenance = getattr(program, 'provenance', {})
+    if provenance.get(REQUIRES_COMPLETE_CARD_PROGRAM_FIELD) is not True:
+        return False
+    raw = provenance.get(CARD_PROGRAM_ADMISSION_FIELD)
+    if not isinstance(raw, Mapping):
+        return False
+    try:
+        return CompleteCardProgramAdmission.from_dict(raw).admitted
+    except CardProgramAdmissionError:
+        return False
+
+
 __all__ = [
     "CARD_PROGRAM_ADMISSION_FIELD",
     "CardProgramAdmissionError",
     "CompleteCardProgramAdmission",
     "descriptor_requires_complete_card_program",
     "program_has_complete_card_program_admission",
+    "program_has_declared_complete_source_admission",
     "REQUIRES_COMPLETE_CARD_PROGRAM_FIELD",
 ]

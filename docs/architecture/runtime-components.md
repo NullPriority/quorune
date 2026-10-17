@@ -983,6 +983,27 @@ descriptors, copy choices and historical continuations retain their format.
 Variable, nonmana, zero-priced, repeated or granted instances, permanent spells
 and unrepresented sibling bodies remain residual.
 
+### Fixed instant and sorcery stack copies
+
+`FixedStackSpellCopySpec` represents one copy of a current instant or sorcery
+spell, with an optional current-controller restriction and explicit permission
+to choose new targets. The compiler retains the original source span and
+routes the same closed shape through spell, triggered, activated and granted
+ability lowering. Existing target validation and the staged stack-copy choice
+owner create the independent copy through `CopyStackItemIntent`.
+
+The copy retains modes, X, casting choices and original target incarnations.
+Unchanged targets can be retained after becoming illegal; newly selected
+targets must be legal. A departed and returned object is a new target only
+when explicitly selected as one. The copy producer still needs its own target
+spell to remain legal at resolution. Copies are not casts and pay no new costs.
+
+These programs declare a complete-source boundary. Current-source validation
+checks the compiler's exact whole-card certificate, preventing an independently
+recognized copy clause from executing beside an unclosed printed sibling.
+The existing handler-based admission contract remains unchanged. Multiple
+copies, extra qualifications, and type or color exceptions remain residual.
+
 ### Ordinary Conspire tap payments and copy triggers
 
 `FixedConspireSpec` binds one printed Conspire instance to an optional pair of

@@ -5041,6 +5041,24 @@
         "test_storm_rules",
         "test_suspend_rules"
       ]
+    },
+    {
+      "id": "fixed-stack-spell-copy-and-complete-source-admission",
+      "patterns": [
+        "quorune/stack_spell_copy_model.py",
+        "quorune/compiler/fixed_stack_spell_copy.py",
+        "quorune/rules/stack_spell_copy_shapes.py",
+        "tests/test_fixed_stack_spell_copy.py",
+        "tests/fixtures/fixed-stack-spell-copy-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_stack_spell_copy",
+        "test_storm_rules",
+        "test_copy_objects",
+        "test_card_program_trust",
+        "test_fixed_affected_player_discards",
+        "test_fixed_public_alternative_costs"
+      ]
     }
   ],
   "symbol_rules": [

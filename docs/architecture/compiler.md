@@ -9,6 +9,12 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+`compiler/fixed_stack_spell_copy.py` lowers the closed instant/sorcery copy
+clause, including its optional current-controller restriction. The activated
+effect gate delegates this same shape to capability validation. Parent cards
+with unclosed siblings retain their residuals and cannot execute the new copy
+program through strict source validation.
+
 `compiler/casting_keyword_nodes.py` owns the ordered dispatch of closed
 casting-cost keyword productions. It retains the existing lowering order and
 passes source-record context only to productions that require it. Ordinary

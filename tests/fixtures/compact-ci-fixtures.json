@@ -97,6 +97,7 @@
     "tests/fixtures/fixed-source-counter-payment-cards.json",
     "tests/fixtures/fixed-spell-cost-reduction-cards.json",
     "tests/fixtures/fixed-stack-mana-value-cards.json",
+    "tests/fixtures/fixed-stack-spell-copy-cards.json",
     "tests/fixtures/fixed-tap-payment-cards.json",
     "tests/fixtures/fixed-token-creation-cards.json",
     "tests/fixtures/fixed-token-production-cards.json",

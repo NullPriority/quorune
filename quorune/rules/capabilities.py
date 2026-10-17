@@ -300,6 +300,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'fixed-token-typed-ability-definition': ('token.creation.typed_ability_definition',),
     'fixed-spree-mode-costs': ('casting.additional_cost.spree_fixed_modes',),
     'fixed-entwine-mode-costs': ('casting.additional_cost.entwine_fixed_modes',),
+    'fixed-stack-spell-copy': ('stack.copy.fixed_instant_or_sorcery', 'target.revalidate_resolution'),
     'fixed-public-event-set-counter':('counter.producer.fixed_public_set_event',),
     'ascend':('player.designation.citys_blessing',),
     **{name: ('keyword_action.manifest.card',) for name in ('manifest', 'cr-701-manifest')}, 'manifest dread': ('keyword_action.manifest_dread',), 'predefined-role-token': ('token.creation.predefined_role',),
@@ -1092,8 +1093,10 @@ def _targeted_effect_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanics: set[str],
 ) -> set[str]:
+    from .stack_spell_copy_shapes import fixed_stack_spell_copy_node_capabilities
     dependencies: set[str] = set()
     for resolver in (
+        fixed_stack_spell_copy_node_capabilities,
         fixed_extra_turn_node_capabilities,
         ascend_spell_node_capabilities,
         public_event_counter_set_node_capabilities,
