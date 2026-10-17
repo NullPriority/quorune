@@ -10,6 +10,15 @@ from ..continuous_conditions import FixedPublicStateConditionKind,FixedPublicSta
 def compose_public_conditions(text: str, *, compile_atomic, source_pattern: str):
     pattern=rf'\s+(and|or)\s+(?=(?:you\b|your\b|an opponent\b|a player\b|there\b|enchanted\b|equipped\b|{source_pattern}\b))'
     parts=re.split(pattern,text.strip().rstrip('.'),flags=re.I)
+    if len(parts)==1:
+        controlled=re.fullmatch(r'you control (?P<subjects>.+)',parts[0],re.I)
+        if controlled is not None:
+            subjects=re.split(r'\s+(and|or)\s+(?=(?:a|an|another)\b)',
+                controlled['subjects'],flags=re.I)
+            if len(subjects)>1 and all(re.match(r'^(?:a|an|another)\b',value,re.I)
+                    for value in subjects[::2]):
+                parts=[('you control '+value) if index%2==0 else value
+                    for index,value in enumerate(subjects)]
     operators=parts[1::2];texts=parts[::2]
     if not 2<=len(texts)<=4 or len(set(op.casefold() for op in operators))!=1:return None
     leaves=tuple(compile_atomic(term) for term in texts)

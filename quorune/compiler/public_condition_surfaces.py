@@ -6,6 +6,7 @@ import re
 from typing import Any, Collection, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype
+from ..basic_land_types import LAND_SUBTYPES
 from ..object_predicate import ObjectQuerySpec
 from ..rules.source_references import source_self_permanent_type
 
@@ -23,7 +24,15 @@ def normalize_public_condition_surface(text: str) -> str:
 
 
 def fixed_condition_subject_extension(text: str) -> tuple[ObjectQuerySpec, bool] | None:
-    match = re.fullmatch(r'(?P<other>other )?(?P<quality>colorless|nonbasic|nontoken '
+    land = re.fullmatch(r'(?P<other>other )?(?P<subtype>.+)', text, re.I)
+    if land is not None:
+        subtype = land['subtype'].casefold()
+        if subtype not in LAND_SUBTYPES and subtype.endswith('s'):
+            subtype = subtype[:-1]
+        if subtype in LAND_SUBTYPES:
+            return ObjectQuerySpec(zones=('battlefield',),types_all=('land',),
+                subtypes_all=(subtype,)),bool(land['other'])
+    match = re.fullmatch(r'(?P<other>other )?(?P<quality>colorless|nonbasic|snow|nontoken '
         r'(?:white|blue|black|red|green)) (?P<kind>artifact|battle|creature|enchantment|land|permanent|planeswalker)s?',
         text, re.I)
     if match is None:
@@ -32,10 +41,11 @@ def fixed_condition_subject_extension(text: str) -> tuple[ObjectQuerySpec, bool]
     fields: dict[str, Any] = {'zones': ('battlefield',), 'types_all': () if kind == 'permanent' else (kind,)}
     if quality == 'colorless':
         fields['colorless'] = True
-    elif quality == 'nonbasic':
+    elif quality in {'nonbasic','snow'}:
         if kind != 'land':
             return None
-        fields['excluded_supertypes'] = ('basic',)
+        fields['excluded_supertypes' if quality=='nonbasic' else 'supertypes_all'] = (
+            'basic' if quality=='nonbasic' else 'snow',)
     else:
         fields.update(token=False, colors_all=({'white':'W','blue':'U','black':'B','red':'R','green':'G'}[
             quality.removeprefix('nontoken ')],))

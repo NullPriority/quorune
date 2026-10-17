@@ -63,7 +63,8 @@ def _query_condition(
             else FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST
         ),
         amount=amount,
-        quantity=CharacteristicQuantitySpec(scope=scope, query=query),
+        quantity=CharacteristicQuantitySpec(scope=scope, query=query,
+            schema_version=2 if query.zones==('graveyard',) and query.token is False else 1),
         schema_version=2,
     )
 
@@ -94,7 +95,7 @@ def fixed_graveyard_condition_query(
         return _query_condition(
             amount=0,
             scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
-            query=ObjectQuerySpec(zones=("graveyard",)),
+            query=ObjectQuerySpec(zones=("graveyard",),token=False),
             at_most=True,
         )
     presence = re.fullmatch(
@@ -106,7 +107,7 @@ def fixed_graveyard_condition_query(
     if presence is None:
         return None
     quality = presence.group("quality").casefold()
-    fields: dict[str, object] = {"zones": ("graveyard",)}
+    fields: dict[str, object] = {"zones": ("graveyard",), "token": False}
     if quality in {
         "artifact",
         "battle",

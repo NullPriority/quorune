@@ -232,6 +232,7 @@
       "test_graveyard_rules",
       "test_keyword_counter_composition",
       "test_kicker_rules",
+      "test_land_condition_quantities",
       "test_library_rules",
       "test_mulligan_and_turns",
       "test_multiplayer_rules",

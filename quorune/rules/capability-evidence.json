@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "a11d8cf2433d7766f38e4bf7ee0a5638528297cd0e0bb9e1f1502b297d343627",
-  "declaration_source_fingerprint": "84ed3b176b7b8d5b85900c2a09da015cad8edaea8b74b9cfed5f5637058df513",
+  "registry_fingerprint": "93cedd946e192d63a0321d5c99e904e85989932428326adba258f17265a206bb",
+  "declaration_source_fingerprint": "aaba595ce03b94add7b65e3ca9b12c5169613aaa6a5a69c5bcc34be1c50cfc51",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -59573,7 +59573,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -59608,7 +59611,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -59643,7 +59649,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -59678,7 +59687,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -59713,7 +59725,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -59748,7 +59763,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -59783,7 +59801,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -59818,7 +59839,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -59853,7 +59877,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -59888,7 +59915,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -59923,7 +59953,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -59958,7 +59991,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -59993,7 +60029,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60028,7 +60067,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60063,7 +60105,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60098,7 +60143,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60133,7 +60181,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60168,7 +60219,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60203,7 +60257,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60211,6 +60268,272 @@
         "commander_review"
       ],
       "applicability_note": "Isolated owner model for history-dependent power/keyword sealing, not additional printed observer grammar or card-action admission."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_camel_and_naga_graveyard_desert_grant_fixed_keywords_once",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_snow_devil_reads_aura_controller_land_and_enchanted_blocker_first_strike",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_speaker_loses_island_bonus_and_dies_to_already_marked_native_damage",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_desert_token_can_satisfy_battlefield_branch_but_is_not_a_graveyard_card",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_land_conditions_follow_current_controller_and_ignore_foreign_or_hand_deserts",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -60238,7 +60561,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60273,7 +60599,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60308,7 +60637,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60343,7 +60675,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60378,7 +60713,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60413,7 +60751,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60448,7 +60789,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60483,7 +60827,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60518,7 +60865,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60553,7 +60903,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60588,7 +60941,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60623,7 +60979,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60658,7 +61017,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60693,7 +61055,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60728,7 +61093,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60763,7 +61131,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60798,7 +61169,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60833,7 +61207,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60868,7 +61245,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60903,7 +61283,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60938,7 +61321,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -60946,6 +61332,272 @@
         "commander_review"
       ],
       "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_camel_and_naga_graveyard_desert_grant_fixed_keywords_once",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_snow_devil_reads_aura_controller_land_and_enchanted_blocker_first_strike",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_speaker_loses_island_bonus_and_dies_to_already_marked_native_damage",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_desert_token_can_satisfy_battlefield_branch_but_is_not_a_graveyard_card",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_land_conditions_follow_current_controller_and_ignore_foreign_or_hand_deserts",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -60973,7 +61625,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61008,7 +61663,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61043,7 +61701,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61078,7 +61739,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61113,7 +61777,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61148,7 +61815,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61183,7 +61853,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61218,7 +61891,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61253,7 +61929,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61288,7 +61967,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61323,7 +62005,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61358,7 +62043,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61393,7 +62081,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61428,7 +62119,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61436,6 +62130,82 @@
         "commander_review"
       ],
       "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityCompilerTests.test_whole_source_span_nearest_unsupported_terms_and_producer_omissions",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_card_only_and_branch_specific_exclusion_mutants_are_killed_by_native_controls",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -61463,7 +62233,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61498,7 +62271,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61533,7 +62309,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61568,7 +62347,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61603,7 +62385,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61638,7 +62423,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61673,7 +62461,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61708,7 +62499,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61743,7 +62537,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61778,7 +62575,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61813,7 +62613,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61848,7 +62651,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61883,7 +62689,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61918,7 +62727,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61953,7 +62765,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -61988,7 +62803,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62023,7 +62841,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62058,7 +62879,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62066,6 +62890,386 @@
         "commander_review"
       ],
       "applicability_note": "A mutation moves final characteristic sealing before complete history; the exact owner timing contract kills it."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityCompilerTests.test_current_graveyard_card_queries_are_card_only_and_legacy_decoding_stays_exact",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityCompilerTests.test_land_subtypes_snow_and_boolean_branches_use_existing_closed_values",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityCompilerTests.test_whole_source_span_nearest_unsupported_terms_and_producer_omissions",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_camel_and_naga_graveyard_desert_grant_fixed_keywords_once",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_snow_devil_reads_aura_controller_land_and_enchanted_blocker_first_strike",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_speaker_loses_island_bonus_and_dies_to_already_marked_native_damage",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_desert_token_can_satisfy_battlefield_branch_but_is_not_a_graveyard_card",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_land_conditions_follow_current_controller_and_ignore_foreign_or_hand_deserts",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -62093,7 +63297,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62128,7 +63335,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62163,7 +63373,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62198,7 +63411,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62233,7 +63449,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62268,7 +63487,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62303,7 +63525,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62338,7 +63563,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62373,7 +63601,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62408,7 +63639,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62443,7 +63677,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62478,7 +63715,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62513,7 +63753,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62548,7 +63791,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62583,7 +63829,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62618,7 +63867,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62653,7 +63905,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62688,7 +63943,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62723,7 +63981,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62758,7 +64019,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62793,7 +64057,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62828,7 +64095,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62863,7 +64133,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62898,7 +64171,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62933,7 +64209,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -62968,7 +64247,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63003,7 +64285,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63038,7 +64323,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63073,7 +64361,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63108,7 +64399,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63143,7 +64437,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63178,7 +64475,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63213,7 +64513,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63248,7 +64551,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63283,7 +64589,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63318,7 +64627,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63353,7 +64665,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63361,6 +64676,386 @@
         "commander_review"
       ],
       "applicability_note": "Real current-trusted cast/payment/copy entry seals post-history power and resolves two observer draws, with checkpoint/load and exact replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityCompilerTests.test_current_graveyard_card_queries_are_card_only_and_legacy_decoding_stays_exact",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityCompilerTests.test_land_subtypes_snow_and_boolean_branches_use_existing_closed_values",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityCompilerTests.test_whole_source_span_nearest_unsupported_terms_and_producer_omissions",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_camel_and_naga_graveyard_desert_grant_fixed_keywords_once",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_snow_devil_reads_aura_controller_land_and_enchanted_blocker_first_strike",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_speaker_loses_island_bonus_and_dies_to_already_marked_native_damage",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_desert_token_can_satisfy_battlefield_branch_but_is_not_a_graveyard_card",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_land_conditions_follow_current_controller_and_ignore_foreign_or_hand_deserts",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -63388,7 +65083,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63423,7 +65121,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63458,7 +65159,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63493,7 +65197,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63528,7 +65235,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63563,7 +65273,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63598,7 +65311,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63633,7 +65349,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63668,7 +65387,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63703,7 +65425,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63738,7 +65463,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63773,7 +65501,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63808,7 +65539,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63843,7 +65577,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63878,7 +65615,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63913,7 +65653,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63948,7 +65691,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -63983,7 +65729,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64018,7 +65767,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64053,7 +65805,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64088,7 +65843,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64123,7 +65881,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64158,7 +65919,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64193,7 +65957,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64228,7 +65995,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64263,7 +66033,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64298,7 +66071,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64306,6 +66082,44 @@
         "commander_review"
       ],
       "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -64333,7 +66147,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64368,7 +66185,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64403,7 +66223,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64438,7 +66261,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64473,7 +66299,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64508,7 +66337,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64543,7 +66375,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64551,6 +66386,120 @@
         "commander_review"
       ],
       "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "property",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityCompilerTests.test_current_graveyard_card_queries_are_card_only_and_legacy_decoding_stays_exact",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "property",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityCompilerTests.test_land_subtypes_snow_and_boolean_branches_use_existing_closed_values",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "property",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityCompilerTests.test_whole_source_span_nearest_unsupported_terms_and_producer_omissions",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -64578,7 +66527,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64613,7 +66565,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64648,7 +66603,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64683,7 +66641,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64718,7 +66679,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64753,7 +66717,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64788,7 +66755,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64823,7 +66793,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64858,7 +66831,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64893,7 +66869,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64928,7 +66907,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64963,7 +66945,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -64998,7 +66983,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65033,7 +67021,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65068,7 +67059,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65103,7 +67097,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65138,7 +67135,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65173,7 +67173,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65181,6 +67184,158 @@
         "commander_review"
       ],
       "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_snow_devil_reads_aura_controller_land_and_enchanted_blocker_first_strike",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_speaker_loses_island_bonus_and_dies_to_already_marked_native_damage",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_land_conditions_follow_current_controller_and_ignore_foreign_or_hand_deserts",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -65208,7 +67363,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65243,7 +67401,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65278,7 +67439,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65313,7 +67477,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65348,7 +67515,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65383,7 +67553,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65418,7 +67591,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65453,7 +67629,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65488,7 +67667,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65523,7 +67705,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65558,7 +67743,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65593,7 +67781,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65628,7 +67819,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65663,7 +67857,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65671,6 +67868,44 @@
         "commander_review"
       ],
       "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -65698,7 +67933,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65733,7 +67971,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65768,7 +68009,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -65803,7 +68047,10 @@
         "201.5",
         "205.4c",
         "400.7",
-        "603.6a"
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141219,7 +143466,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141248,7 +143498,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141277,7 +143530,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141306,7 +143562,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141335,7 +143594,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141364,7 +143626,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141372,6 +143637,230 @@
         "commander_review"
       ],
       "applicability_note": "Match a public subtype union from current layer-4 characteristics while preserving source-reference exclusion."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_camel_and_naga_graveyard_desert_grant_fixed_keywords_once",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_snow_devil_reads_aura_controller_land_and_enchanted_blocker_first_strike",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_speaker_loses_island_bonus_and_dies_to_already_marked_native_damage",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_desert_token_can_satisfy_battlefield_branch_but_is_not_a_graveyard_card",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_land_conditions_follow_current_controller_and_ignore_foreign_or_hand_deserts",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
@@ -141393,7 +143882,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141422,7 +143914,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141451,7 +143946,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141480,7 +143978,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141509,7 +144010,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141538,7 +144042,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141567,7 +144074,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141596,7 +144106,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141604,6 +144117,230 @@
         "commander_review"
       ],
       "applicability_note": "Derive combat-state targets from public current relationships in a four-player game without a seat-specific target grammar."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_camel_and_naga_graveyard_desert_grant_fixed_keywords_once",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_snow_devil_reads_aura_controller_land_and_enchanted_blocker_first_strike",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_speaker_loses_island_bonus_and_dies_to_already_marked_native_damage",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_desert_token_can_satisfy_battlefield_branch_but_is_not_a_graveyard_card",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_land_conditions_follow_current_controller_and_ignore_foreign_or_hand_deserts",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
@@ -141625,7 +144362,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141654,7 +144394,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141683,7 +144426,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141712,7 +144458,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141720,6 +144469,70 @@
         "commander_review"
       ],
       "applicability_note": "Kill a runtime mutation that admits a previous-turn permanent by bypassing the shared public-state evaluator."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityCompilerTests.test_whole_source_span_nearest_unsupported_terms_and_producer_omissions",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_card_only_and_branch_specific_exclusion_mutants_are_killed_by_native_controls",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
@@ -141741,7 +144554,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141770,7 +144586,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141799,7 +144618,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141828,7 +144650,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141836,6 +144661,326 @@
         "commander_review"
       ],
       "applicability_note": "Block the shared query capability and prevent every affected typed consumer from becoming exact."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityCompilerTests.test_current_graveyard_card_queries_are_card_only_and_legacy_decoding_stays_exact",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityCompilerTests.test_land_subtypes_snow_and_boolean_branches_use_existing_closed_values",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityCompilerTests.test_whole_source_span_nearest_unsupported_terms_and_producer_omissions",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_camel_and_naga_graveyard_desert_grant_fixed_keywords_once",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_snow_devil_reads_aura_controller_land_and_enchanted_blocker_first_strike",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_speaker_loses_island_bonus_and_dies_to_already_marked_native_damage",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_desert_token_can_satisfy_battlefield_branch_but_is_not_a_graveyard_card",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_land_conditions_follow_current_controller_and_ignore_foreign_or_hand_deserts",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
@@ -141857,7 +145002,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141886,7 +145034,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141915,7 +145066,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141944,7 +145098,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -141973,7 +145130,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142002,7 +145162,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142031,7 +145194,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142060,7 +145226,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -142089,7 +145258,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142118,7 +145290,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142147,7 +145322,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142155,6 +145333,326 @@
         "commander_review"
       ],
       "applicability_note": "Canonicalize fixed type, subtype, Outlaw, token, state, and positive ability set grammar into one ObjectQuerySpec."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityCompilerTests.test_current_graveyard_card_queries_are_card_only_and_legacy_decoding_stays_exact",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityCompilerTests.test_land_subtypes_snow_and_boolean_branches_use_existing_closed_values",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityCompilerTests.test_whole_source_span_nearest_unsupported_terms_and_producer_omissions",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_camel_and_naga_graveyard_desert_grant_fixed_keywords_once",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_snow_devil_reads_aura_controller_land_and_enchanted_blocker_first_strike",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_speaker_loses_island_bonus_and_dies_to_already_marked_native_damage",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_desert_token_can_satisfy_battlefield_branch_but_is_not_a_graveyard_card",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_land_conditions_follow_current_controller_and_ignore_foreign_or_hand_deserts",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
@@ -142176,7 +145674,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142205,7 +145706,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142234,7 +145738,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142263,7 +145770,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142292,7 +145802,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142321,7 +145834,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142350,7 +145866,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142379,7 +145898,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142408,7 +145930,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142416,6 +145941,134 @@
         "commander_review"
       ],
       "applicability_note": "Advertise only public combatant references and never inspect or project hidden-zone identities while computing legal targets."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "property",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityCompilerTests.test_current_graveyard_card_queries_are_card_only_and_legacy_decoding_stays_exact",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "property",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityCompilerTests.test_land_subtypes_snow_and_boolean_branches_use_existing_closed_values",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "property",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityCompilerTests.test_whole_source_span_nearest_unsupported_terms_and_producer_omissions",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
@@ -142437,7 +146090,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142466,7 +146122,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142495,7 +146154,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142503,6 +146165,134 @@
         "commander_review"
       ],
       "applicability_note": "Replay the accepted named-counter-qualified target and resulting fixed counter placement to the same authoritative hash."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_snow_devil_reads_aura_controller_land_and_enchanted_blocker_first_strike",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_speaker_loses_island_bonus_and_dies_to_already_marked_native_damage",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_land_conditions_follow_current_controller_and_ignore_foreign_or_hand_deserts",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
@@ -142524,7 +146314,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142553,7 +146346,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142582,7 +146378,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -142590,6 +146389,38 @@
         "commander_review"
       ],
       "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_land_condition_quantities.LandConditionQuantityRuntimeTests.test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical land subtypes and snow supertype, current source controller, branch-specific other exclusion, card-only graveyard quantities and preserved legacy codecs; actual combat/target/mana/zone commands, pending reload, private draw and full replay."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
@@ -142611,7 +146442,10 @@
         "608.2h",
         "105.2c",
         "111.1",
-        "205.4c"
+        "205.4c",
+        "111.6",
+        "205.3i",
+        "205.4g"
       ],
       "supported_profiles": [
         "traditional",
@@ -189235,5 +193069,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "f36b9eea93334c6dbb6cc376c43264190c9873a50f1d1544c0c12f44e6a36ce5"
+  "fingerprint": "90169f87369697ecb0ddef1785d730c2815a9ab0e8ff495b0f9d716c989117e8"
 }

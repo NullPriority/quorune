@@ -5294,6 +5294,25 @@
         "test_fixed_public_state_characteristics",
         "test_conditional_color_grants"
       ]
+    },
+    {
+      "id": "land-condition-quantity-contract",
+      "patterns": [
+        "quorune/compiler/boolean_public_conditions.py",
+        "quorune/compiler/public_condition_surfaces.py",
+        "quorune/compiler/public_state_fact_queries.py",
+        "quorune/compiler/public_state_queries.py",
+        "tests/fixtures/land-condition-quantity-cards.json",
+        "tests/test_land_condition_quantities.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_conditional_color_grants",
+        "test_land_condition_quantities",
+        "test_public_condition_surfaces",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime"
+      ]
     }
   ],
   "symbol_rules": [

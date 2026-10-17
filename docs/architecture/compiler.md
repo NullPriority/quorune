@@ -1611,6 +1611,15 @@ nontoken color qualifiers, and nonbasic lands retain every query restriction;
 basic land subtypes do not substitute for the basic supertype. Runtime owners
 receive only the compiled descriptors.
 
+Land-condition quantities reuse the canonical land-subtype vocabulary and
+the snow supertype. Explicit repeated articles in a controller disjunction
+form separate closed predicates, preserving source exclusion in each branch.
+Desert battlefield/graveyard alternatives and snow-qualified attachment
+conditions use the existing flat Boolean codec. Current graveyard-card
+conditions emit the existing version-two card-only quantity, excluding tokens
+and noncard copies; historical quantity and condition decoders retain their
+earlier shapes.
+
 Live query and attachment keyword grants may carry fixed typed combat and
 spell-cast trigger fragments for already-represented keywords. The shared
 keyword codec binds each label to its exact fragment and consumer capability;

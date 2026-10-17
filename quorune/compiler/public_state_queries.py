@@ -844,6 +844,7 @@ def _query_count_condition(
             scope=scope,
             query=query,
             exclude_source=exclude_source,
+            schema_version=2 if query.zones==('graveyard',) and query.token is False else 1,
         ),
         schema_version=2,
     )
@@ -1015,7 +1016,7 @@ def _graveyard_query_count_condition(
     )
     assert amount is not None and amount > 0
     quality = ((presence or typed_count).group("quality") or "").casefold()
-    fields: dict[str, Any] = {"zones": ("graveyard",)}
+    fields: dict[str, Any] = {"zones": ("graveyard",), "token": False}
     if quality == "instant and/or sorcery ":
         fields["types_any"] = ("instant", "sorcery")
     elif quality in _CARD_TYPE_WORDS:
@@ -1112,7 +1113,7 @@ def _fixed_public_query_count_condition(
             kind=FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
             amount=amount,
             scope=CharacteristicQuantityScope.OPPONENT_ZONES,
-            query=ObjectQuerySpec(zones=("graveyard",)),
+            query=ObjectQuerySpec(zones=("graveyard",),token=False),
         )
     for compiler in (
         _controller_query_count_condition,
@@ -1200,10 +1201,7 @@ def _legacy_public_state_condition(
     if player_status is not None:
         return player_status
     if lower == "there are seven or more cards in your graveyard":
-        return FixedPublicStateConditionSpec(
-            FixedPublicStateConditionKind.CONTROLLER_GRAVEYARD_CARD_COUNT_AT_LEAST,
-            amount=7,
-        )
+        return _graveyard_query_count_condition(normalized)
     any_empty_hand = re.fullmatch(
         r"a player has (?P<count>no|[0-9]+) cards? in hand",
         lower,

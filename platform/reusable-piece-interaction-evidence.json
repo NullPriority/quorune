@@ -15900,6 +15900,81 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Devoid source retains no colors despite its red mana cost, but excludes itself from its other-colorless-creature Haste condition; native attack and response replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_state",
+        "capability.damage.result.lifelink"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_state",
+        "damage.result.lifelink"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Camel attacks and deals3combatdamage, gaining3life from its own graveyard Desert condition. Accepted Cremate then ends the current keyword without undoing prior life gain, with full replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_snow_devil_reads_aura_controller_land_and_enchanted_blocker_first_strike",
+      "piece_ids": [
+        "capability.combat.damage.participation.strike_steps",
+        "capability.continuous.characteristics.fixed_public_state"
+      ],
+      "capability_ids": [
+        "combat.damage.participation.strike_steps",
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Snow Devil grants First Strike only while its foreign recipient blocks and the Aura controller owns the snow-land condition; accepted block/damage commands kill the attacker before regular damage. Recipient-controller-only snow is a negative control."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+      "piece_ids": [
+        "capability.card.exile.public_graveyard",
+        "capability.continuous.characteristics.fixed_public_state"
+      ],
+      "capability_ids": [
+        "card.exile.public_graveyard",
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "Accepted opponent Cremate exiles the only own Desert card, removing Camel lifelink and Naga trample/bonus while preserving the caster private draw and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_speaker_loses_island_bonus_and_dies_to_already_marked_native_damage",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_state",
+        "capability.zone.single_owner_move.fixed_destination"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_state",
+        "zone.single_owner_move.fixed_destination"
+      ],
+      "interaction_order": 2,
+      "assertion": "Accepted Prodigal Sorcerer activation marks1damage on boosted Speaker. Accepted Boomerang returns the only own Island; the bonus ends and the state-based owner destroys the now-lethally-marked source, with pendingload and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_state",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_state",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "A current Kindred Merfolk qualifies without a creature gate. After it leaves, a canonical layer-four land/Island addition to Speaker qualifies only the Island branch, proving source exclusion remains local to the Merfolk branch."
     }
   ]
 }

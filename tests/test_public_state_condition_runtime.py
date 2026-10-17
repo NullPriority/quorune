@@ -1240,11 +1240,11 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
         )[1]
         self.assertEqual(
             (),
-            registry.lower(threshold, source_context(graveyard_count=6)),
+            registry.lower(threshold, source_context(graveyard_count=6, condition_quantity=6)),
         )
         self.assertEqual(
             1,
-            len(registry.lower(threshold, source_context(graveyard_count=7))),
+            len(registry.lower(threshold, source_context(graveyard_count=7, condition_quantity=7))),
         )
 
         counter = fixed_public_state_characteristics_handler(
@@ -1290,7 +1290,7 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
         )[1]
         opponent_effects = registry.lower(
             opponent_anthem,
-            source_context(graveyard_count=7),
+            source_context(graveyard_count=7, condition_quantity=7),
         )
 
         def opponent_power(controller: str) -> int:
