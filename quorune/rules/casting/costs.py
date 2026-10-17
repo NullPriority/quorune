@@ -26,6 +26,7 @@ from ...compiled_kicker import compiled_fixed_mana_kicker_spec
 from .paid_entry_copy_costs import with_paid_entry_copy_cost_schema
 from .multikicker_costs import with_multikicker_cost_schema
 from .replicate_costs import with_replicate_cost_schema
+from .base_cost_options import _flashback_base_options, _zone_cast_base_options
 from .emerge_costs import emerge_base_options, reduce_emerge_total, finalize_emerge_selection
 from .disturb_costs import disturb_back_cast_permission,disturb_base_options
 from ...compiled_bestow import compiled_fixed_mana_bestow_spec
@@ -332,35 +333,6 @@ def _with_evoke_cost(
     return result
 
 
-def _flashback_base_options(
-    host: CastCostHost,
-    seat: str,
-    card: Any,
-    printed: Sequence[Mapping[str, Any]],
-    *,
-    cast_without_mana: bool,
-    force_without_mana_cost: bool,
-    suppress_source_costs: bool,
-) -> list[dict[str, Any]]:
-    """Add only the currently authorized Flashback casting-cost branch."""
-
-    result = [copy.deepcopy(dict(value)) for value in printed]
-    flashback = (
-        compiled_fixed_mana_flashback_spec(host, card)
-        if not suppress_source_costs and card.zone == "graveyard"
-        else None
-    )
-    if (
-        card.zone == "graveyard"
-        and not cast_without_mana
-        and not compiled_ordinary_zone_cast_permission(host, seat, card)
-    ):
-        result.clear()
-    if flashback is not None and not force_without_mana_cost:
-        result.append(flashback.cast_cost_option())
-    return result
-
-
 def _cast_schema_and_mechanics(
     host: CastCostHost,
     seat: str,
@@ -423,45 +395,6 @@ def _cast_schema_and_mechanics(
     if mechanics is None:
         return None
     return schema, mechanics
-
-
-def _zone_cast_base_options(
-    host: CastCostHost,
-    seat: str,
-    card: Any,
-    printed: Sequence[Mapping[str, Any]],
-    *,
-    cast_without_mana: bool,
-    force_without_mana_cost: bool,
-    alternative_base: Mapping[str, Any] | None,
-    suppress_source_costs: bool,
-) -> list[dict[str, Any]]:
-    base = _flashback_base_options(
-        host,
-        seat,
-        card,
-        printed,
-        cast_without_mana=cast_without_mana,
-        force_without_mana_cost=force_without_mana_cost,
-        suppress_source_costs=suppress_source_costs,
-    )
-    if (
-        card.zone == "exile"
-        and not compiled_ordinary_zone_cast_permission(host, seat, card)
-        and not force_without_mana_cost
-        and alternative_base is None
-    ):
-        base.clear()
-    common = {
-        "cast_without_mana": cast_without_mana,
-        "force_without_mana_cost": force_without_mana_cost,
-        "suppress_source_costs": suppress_source_costs,
-    }
-    base.extend(retrace_base_options(host, card, printed, **common))
-    base.extend(
-        zone_lifecycle_base_options(host, seat, card, printed, **common)
-    )
-    return base
 
 
 def _initial_options(
@@ -567,6 +500,13 @@ def _initial_options(
         )
     if intrinsic_disturb:
         base=disturb_base_options(host,seat,card,commander_tax=commander_tax)
+    from .overload_costs import overload_cost_options
+    overload_options = overload_cost_options(host, seat, card, program, commander_tax=commander_tax,
+        force_without_mana_cost=force_without_mana_cost, alternative_base=alternative_base,
+        suppress_source_costs=suppress_source_costs)
+    if overload_options is None:
+        return None
+    base.extend(overload_options)
     from .option_expansion import expand_optional_mana_costs
     expanded = expand_optional_mana_costs(host, card, base, schema, response=response, hint=hint)
     mandatory = [dict(value) for value in schema.get("additional_costs", [])]

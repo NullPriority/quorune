@@ -983,6 +983,30 @@ descriptors, copy choices and historical continuations retain their format.
 Variable, nonmana, zero-priced, repeated or granted instances, permanent spells
 and unrepresented sibling bodies remain residual.
 
+### Fixed Overload text variants
+
+`FixedManaOverloadSpec` binds one fixed alternative price to fingerprints of
+the normal and overloaded spell bodies. The compiler derives the target-to-each
+body and requires both forms to close through existing effect owners. It emits
+a separate `spell_variant` program with no target schema. Both programs retain
+the original Oracle identity, source spans and complete-source certificate.
+Missing derived lowering keeps the whole card residual.
+
+The existing `cost_option` selects Overload. The casting owner correlates the
+price and complete generated program before validating targets, then checks
+the same choice at commit. The overloaded program has no modes or targets;
+live object sets are sampled by ordinary query/effect owners at resolution.
+Hexproof does not stop the effect, while applicable damage protection remains
+effective. Printed mana value is independent of the alternative price.
+
+The canonical copy owner retains the selected semantic program without new
+target or mode choices. Ordinary casting remains targeted. A separate free
+normal base cannot waive the chosen Overload price. Base-zone alternatives
+retain their existing order through `rules/casting/base_cost_options.py`;
+additional costs and total-cost modifiers keep their existing owners.
+Variable or complex prices, variable printed bases, unclosed bodies, repeated
+instances and other source forms remain residual.
+
 ### Fixed instant and sorcery stack copies
 
 `FixedStackSpellCopySpec` represents one copy of a current instant or sorcery

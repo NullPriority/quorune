@@ -5059,6 +5059,27 @@
         "test_fixed_affected_player_discards",
         "test_fixed_public_alternative_costs"
       ]
+    },
+    {
+      "id": "fixed-overload-paired-spell-programs-and-base-cost-owner",
+      "patterns": [
+        "quorune/overload_model.py",
+        "quorune/compiler/overload_spell_faces.py",
+        "quorune/rules/overload_shapes.py",
+        "quorune/rules/casting/overload_costs.py",
+        "quorune/rules/casting/base_cost_options.py",
+        "tests/test_fixed_overload.py",
+        "tests/fixtures/fixed-overload-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_overload",
+        "test_fixed_stack_spell_copy",
+        "test_flashback_rules",
+        "test_fixed_zone_cast_lifecycles",
+        "test_fixed_casting_surface",
+        "test_card_program_v2",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

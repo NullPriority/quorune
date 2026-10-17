@@ -582,6 +582,9 @@ def _cast_program_and_cost(
                 f"Pilot-declared casting cost {supplied} does not match authoritative cost {requirements}.",
                 reason="declared_cost_mismatch",
             )
+    from .overload_costs import select_overload_proposal_program
+    program = select_overload_proposal_program(host, card, program, selected.to_dict())
+    semantic_key = program.key if program is not None else semantic_key
     return type_line, mana_cost, commander_tax, semantic_key, program, selected
 
 

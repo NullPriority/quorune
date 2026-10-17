@@ -1299,6 +1299,11 @@ def _revalidate_cast_contracts(
                 ),
             )
     selected_option = dict(details["selected_cost_option"])
+    from .overload_costs import validate_overload_commit
+    try:
+        validate_overload_commit(host, card, program, selected_option)
+    except ValueError as exc:
+        raise CastProposalError(str(exc), reason='stale_overload_variant') from exc
     try:
         conspirators = conspire_tap_cards(host, proposal.seat, card, selected_option)
     except ValueError as exc:

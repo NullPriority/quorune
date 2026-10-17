@@ -341,6 +341,8 @@ def _compile_card_program_from_ir(
             'reason': 'Recognized physical spell clauses have no executable lowering group',
             'blockers': ['complete physical spell program lowering'],
         })
+    from ..compiler.overload_spell_faces import missing_overload_variant_residuals
+    residuals.extend(missing_overload_variant_residuals(ir, programs.values()))
     residuals.extend(card_form_compilation.residuals)
     return CardProgram.create(
         compiler_version=ORACLE_COMPILER_VERSION,

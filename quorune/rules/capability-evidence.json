@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "08df7b1968d504f494bc8ec2188072f4e904c5cb83ee70a18c9e76bc42ccbf45",
-  "declaration_source_fingerprint": "9c807d794b42cfbb4caf7e59fe8f84775d675a331e189c5c5efe20fa3df3ec92",
+  "registry_fingerprint": "e591eb7429f4601d1eb7a1508923bf28852af7ad7d46938d9d66f59c74cbb3ac",
+  "declaration_source_fingerprint": "22d7f425f3b76a7c84c813a3bd284270d605b20c555f3bf036493ae7cd6c856e",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -18579,6 +18579,1064 @@
         "commander_review"
       ],
       "applicability_note": "Replay the selected alternative option, private object payment, mana total, stack placement, and resulting authoritative hash exactly."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete paired normal and target-free Overload programs, fixed correlated price, closed immutable body fingerprints and fail-closed sibling/dependency boundaries. Actual Electrickery distinguishes target legality from live query resolution and damage protection, with four-seat rollback/privacy/pending replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_actual_normal_electrickery_remains_targeted_and_pays_only_printed_price",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_actual_reverberate_keeps_overloaded_program_without_target_or_mode_choice",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_cheaper_mind_rake_alternative_keeps_private_apnap_discard_for_each_player",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_counterspell_counters_target_free_overloaded_spell_without_applying_each_body",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_free_base_cannot_make_overloaded_body_free_or_change_normal_targeted_body",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_only_overloaded_option_is_offered_when_all_opposing_creatures_are_untargetable",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete paired normal and target-free Overload programs, fixed correlated price, closed immutable body fingerprints and fail-closed sibling/dependency boundaries. Actual Electrickery distinguishes target legality from live query resolution and damage protection, with four-seat rollback/privacy/pending replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_actual_normal_electrickery_remains_targeted_and_pays_only_printed_price",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_actual_reverberate_keeps_overloaded_program_without_target_or_mode_choice",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_cheaper_mind_rake_alternative_keeps_private_apnap_discard_for_each_player",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_counterspell_counters_target_free_overloaded_spell_without_applying_each_body",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_free_base_cannot_make_overloaded_body_free_or_change_normal_targeted_body",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_only_overloaded_option_is_offered_when_all_opposing_creatures_are_untargetable",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_overload.FixedOverloadModelCompilerTests.test_overload_whole_pair_omission_fails_the_independent_positive_contract",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete paired normal and target-free Overload programs, fixed correlated price, closed immutable body fingerprints and fail-closed sibling/dependency boundaries. Actual Electrickery distinguishes target legality from live query resolution and damage protection, with four-seat rollback/privacy/pending replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_missing_derived_program_keeps_card_residual_and_has_no_ordinary_cast_fallback",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_overload_price_omission_preserves_admission_but_fails_native_underpayment_contract",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_overload_program_selection_omission_is_killed_before_wrong_body_can_execute",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_overload.FixedOverloadModelCompilerTests.test_overload_binds_distinct_nonmodal_programs_and_rejects_unclosed_variants",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete paired normal and target-free Overload programs, fixed correlated price, closed immutable body fingerprints and fail-closed sibling/dependency boundaries. Actual Electrickery distinguishes target legality from live query resolution and damage protection, with four-seat rollback/privacy/pending replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_overload.FixedOverloadModelCompilerTests.test_overload_spec_is_immutable_and_has_two_distinct_closed_body_fingerprints",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete paired normal and target-free Overload programs, fixed correlated price, closed immutable body fingerprints and fail-closed sibling/dependency boundaries. Actual Electrickery distinguishes target legality from live query resolution and damage protection, with four-seat rollback/privacy/pending replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_actual_normal_electrickery_remains_targeted_and_pays_only_printed_price",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_cheaper_mind_rake_alternative_keeps_private_apnap_discard_for_each_player",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_counterspell_counters_target_free_overloaded_spell_without_applying_each_body",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_free_base_cannot_make_overloaded_body_free_or_change_normal_targeted_body",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_missing_derived_program_keeps_card_residual_and_has_no_ordinary_cast_fallback",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_only_overloaded_option_is_offered_when_all_opposing_creatures_are_untargetable",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_original_overload_cards_require_both_complete_bodies_and_paired_normal_registration",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_overload.FixedOverloadModelCompilerTests.test_overload_binds_distinct_nonmodal_programs_and_rejects_unclosed_variants",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete paired normal and target-free Overload programs, fixed correlated price, closed immutable body fingerprints and fail-closed sibling/dependency boundaries. Actual Electrickery distinguishes target legality from live query resolution and damage protection, with four-seat rollback/privacy/pending replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_overload.FixedOverloadModelCompilerTests.test_overload_spec_is_immutable_and_has_two_distinct_closed_body_fingerprints",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete paired normal and target-free Overload programs, fixed correlated price, closed immutable body fingerprints and fail-closed sibling/dependency boundaries. Actual Electrickery distinguishes target legality from live query resolution and damage protection, with four-seat rollback/privacy/pending replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete paired normal and target-free Overload programs, fixed correlated price, closed immutable body fingerprints and fail-closed sibling/dependency boundaries. Actual Electrickery distinguishes target legality from live query resolution and damage protection, with four-seat rollback/privacy/pending replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_actual_normal_electrickery_remains_targeted_and_pays_only_printed_price",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_actual_reverberate_keeps_overloaded_program_without_target_or_mode_choice",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_cheaper_mind_rake_alternative_keeps_private_apnap_discard_for_each_player",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_counterspell_counters_target_free_overloaded_spell_without_applying_each_body",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_free_base_cannot_make_overloaded_body_free_or_change_normal_targeted_body",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_only_overloaded_option_is_offered_when_all_opposing_creatures_are_untargetable",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_original_overload_cards_require_both_complete_bodies_and_paired_normal_registration",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete paired normal and target-free Overload programs, fixed correlated price, closed immutable body fingerprints and fail-closed sibling/dependency boundaries. Actual Electrickery distinguishes target legality from live query resolution and damage protection, with four-seat rollback/privacy/pending replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_cheaper_mind_rake_alternative_keeps_private_apnap_discard_for_each_player",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete paired normal and target-free Overload programs, fixed correlated price, closed immutable body fingerprints and fail-closed sibling/dependency boundaries. Actual Electrickery distinguishes target legality from live query resolution and damage protection, with four-seat rollback/privacy/pending replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_actual_normal_electrickery_remains_targeted_and_pays_only_printed_price",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_actual_reverberate_keeps_overloaded_program_without_target_or_mode_choice",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_cheaper_mind_rake_alternative_keeps_private_apnap_discard_for_each_player",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_counterspell_counters_target_free_overloaded_spell_without_applying_each_body",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_free_base_cannot_make_overloaded_body_free_or_change_normal_targeted_body",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
+    },
+    {
+      "capability_id": "casting.alternative_cost.overload_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_overload.FixedOverloadRuntimeTests.test_only_overloaded_option_is_offered_when_all_opposing_creatures_are_untargetable",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal and overloaded casts preserve correlated prices and distinct nonmodal programs. Evidence includes target-free legal action with only hexproof opponents, live later entry and red protection, printed mana value, cheaper Mind Rake alternative with four-seat private APNAP discard, free-base contrast, native admitted Reverberate copies, Counterspell, paired normal registration of seven originals, malformed/missing derived lowering and native price/program omission mutants."
     },
     {
       "capability_id": "casting.bestow.fixed_mana",
@@ -174378,5 +175436,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "beff6cc365c1939f6116b91fe94c7d0f6cbcaacf827679737b47ce193e17f8a2"
+  "fingerprint": "7ba8b06eb8945eed613ba84f747ed3e73383f2229cc799a9fe5d07067b47e75e"
 }

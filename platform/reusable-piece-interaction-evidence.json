@@ -15196,6 +15196,96 @@
       ],
       "interaction_order": 2,
       "assertion": "Native Flare of Duplication is cast with no remaining mana by sacrificing an actual nontoken red creature. A wrong green creature rejects. The canonical copy targets a second creature while original Growth retains its first target, and full pre-cast replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_reverberate_keeps_overloaded_program_without_target_or_mode_choice",
+      "piece_ids": [
+        "capability.casting.alternative_cost.overload_fixed_mana",
+        "capability.stack.copy.fixed_instant_or_sorcery"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.overload_fixed_mana",
+        "stack.copy.fixed_instant_or_sorcery"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Dynacharge pays Overload and is copied by an admitted actual Reverberate. Both executions keep the same target-free semantic program with no mode or target choice, buff both controlled creatures twice, exclude the opponent and record only two casts. Pending load and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature",
+      "piece_ids": [
+        "capability.casting.alternative_cost.overload_fixed_mana",
+        "capability.damage.batch.fixed_set"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.overload_fixed_mana",
+        "damage.batch.fixed_set"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Electrickery Overload chooses no targets or modes and affects the current opposing set, including a hexproof creature and a flash creature entering after the cast. Red protection prevents damage independently, a friendly creature is excluded, printed mana value stays one, with rollback/privacy/pending replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_cheaper_mind_rake_alternative_keeps_private_apnap_discard_for_each_player",
+      "piece_ids": [
+        "capability.casting.alternative_cost.overload_fixed_mana",
+        "capability.choice.affected_player.fixed_discard"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.overload_fixed_mana",
+        "choice.affected_player.fixed_discard"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Mind Rake is cast for its cheaper alternative with only that price affordable. Each of four authenticated players privately chooses two discards in APNAP order. Foreign choices reject, partial collection resumes after save/load, mana value remains printed three and full replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_only_overloaded_option_is_offered_when_all_opposing_creatures_are_untargetable",
+      "piece_ids": [
+        "capability.casting.alternative_cost.overload_fixed_mana",
+        "capability.casting.cost.modifier.fixed_query"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.overload_fixed_mana",
+        "casting.cost.modifier.fixed_query"
+      ],
+      "interaction_order": 2,
+      "assertion": "With only an opposing hexproof creature, the normal option is absent and Overload is offered. Sphere increases the alternative to two generic plus red; paying only the unmodified price rejects, the full payment succeeds, and the untargeted effect destroys the scout. Pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_free_base_cannot_make_overloaded_body_free_or_change_normal_targeted_body",
+      "piece_ids": [
+        "capability.casting.alternative_cost.overload_fixed_mana",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.overload_fixed_mana",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "A typed free normal base affects only the selected Dynacharge target. The each body requires paying its own fixed Overload price and buffs both controlled creatures. Both source choices preserve empty mode lists, pending load and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature",
+      "piece_ids": [
+        "capability.casting.alternative_cost.overload_fixed_mana",
+        "capability.protection.typed.debt"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.overload_fixed_mana",
+        "protection.typed.debt"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual target-free overloaded Electrickery affects opposing Gladecover Scout despite hexproof, but Silver Knight protection still prevents its red damage. The friendly creature is excluded and a later flash creature is included through the ordinary live-set damage owner; rollback, private projection, pending load and full replay agree."
     }
   ]
 }

@@ -155,6 +155,7 @@
       "test_fixed_direct_target_predicates",
       "test_fixed_impulse_access",
       "test_fixed_nonrepeating_modal_programs",
+      "test_fixed_overload",
       "test_fixed_query_quoted_ability_grants",
       "test_fixed_token_production",
       "test_hand_entry_expansion",

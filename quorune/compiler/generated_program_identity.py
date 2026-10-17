@@ -44,6 +44,8 @@ def generated_ability_id(
     )
     if granted is not None:
         return granted
+    if kind == 'spell_variant':
+        return f'spell:{face_id}:overload' if str(node_id or '').endswith(':overload') else None
     if kind == "spell_ability":
         return f"spell:{face_id}"
     if kind in {"activated_ability", "mana_ability"}:
@@ -139,7 +141,7 @@ def generated_ability_id(
 
 
 def generated_coverage(*, kind: str, runtime_handler: bool) -> str:
-    if kind == "spell_ability":
+    if kind in {"spell_ability", "spell_variant"}:
         return "spell_resolution"
     if kind in {"triggered_ability", GRANTED_TRIGGERED_ABILITY_KIND}:
         return (

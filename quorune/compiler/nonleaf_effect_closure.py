@@ -6,6 +6,8 @@ from ..rules.self_return_capability_shapes import fixed_self_return_node_capabil
 
 
 def nonleaf_effect_program_is_closed(program):
+    from ..rules.overload_shapes import fixed_overload_program_is_closed
+    if fixed_overload_program_is_closed(program):return True
     from ..rules.stack_spell_copy_shapes import fixed_stack_spell_copy_program_is_closed
     if fixed_stack_spell_copy_program_is_closed(program):return True
     from ..rules.paid_entry_copy_shapes import is_closed_paid_entry_copy_program

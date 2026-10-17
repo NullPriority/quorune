@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 352,
+  "registry_version": 353,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -27697,6 +27697,129 @@
       "dependency_fail_closed_rationale": "Missing precise copy/target dependencies, malformed shapes and unknown siblings remain residual.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the closed compiler production fails the independently specified source-spanned positive contract. Native omission of the canonical copy commit preserves full admission but fails the asserted independent stack copy.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.alternative_cost.overload_fixed_mana",
+      "version": 1,
+      "official_rules": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.96a",
+        "702.96b",
+        "702.96c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One complete normal instant/sorcery has a fixed ordinary-mana Overload alternative bound to two independently closed nonmodal spell programs.",
+        "inputs": [
+          "source-spanned normal and target-to-each body pair",
+          "fixed alternative price",
+          "current complete generated source and typed capability closure"
+        ],
+        "outputs": [
+          "ordinary targeted or paid target-free spell",
+          "paid variant retained by semantic program identity through copies and replay"
+        ],
+        "exclusions": [
+          "unknown each bodies and siblings",
+          "variable/complex prices and printed variable bases",
+          "repeated instances and other source forms"
+        ]
+      },
+      "dependencies": [
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.overload_model.FixedManaOverloadSpec",
+        "quorune.overload_model.overload_body_fingerprint",
+        "quorune.compiler.overload_spell_faces.compile_fixed_overload_face",
+        "quorune.compiler.overload_spell_faces.residual_overload_keyword_node",
+        "quorune.rules.overload_shapes.fixed_overload_program_is_closed",
+        "quorune.rules.casting.overload_costs.overload_cost_options",
+        "quorune.rules.casting.overload_costs.select_overload_cast_program",
+        "quorune.rules.casting.overload_costs.validate_overload_commit",
+        "quorune.compiler.overload_spell_faces.missing_overload_variant_residuals",
+        "quorune.rules.overload_shapes.overload_program_has_complete_admission",
+        "quorune.rules.casting.base_cost_options._zone_cast_base_options",
+        "quorune.rules.casting.overload_costs.select_overload_proposal_program"
+      ],
+      "positive_tests": [
+        "test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature",
+        "test_actual_normal_electrickery_remains_targeted_and_pays_only_printed_price",
+        "test_actual_reverberate_keeps_overloaded_program_without_target_or_mode_choice",
+        "test_cheaper_mind_rake_alternative_keeps_private_apnap_discard_for_each_player",
+        "test_counterspell_counters_target_free_overloaded_spell_without_applying_each_body",
+        "test_free_base_cannot_make_overloaded_body_free_or_change_normal_targeted_body",
+        "test_only_overloaded_option_is_offered_when_all_opposing_creatures_are_untargetable",
+        "test_original_overload_cards_require_both_complete_bodies_and_paired_normal_registration",
+        "test_overload_binds_distinct_nonmodal_programs_and_rejects_unclosed_variants",
+        "test_overload_spec_is_immutable_and_has_two_distinct_closed_body_fingerprints"
+      ],
+      "negative_tests": [
+        "test_actual_normal_electrickery_remains_targeted_and_pays_only_printed_price",
+        "test_cheaper_mind_rake_alternative_keeps_private_apnap_discard_for_each_player",
+        "test_counterspell_counters_target_free_overloaded_spell_without_applying_each_body",
+        "test_free_base_cannot_make_overloaded_body_free_or_change_normal_targeted_body",
+        "test_missing_derived_program_keeps_card_residual_and_has_no_ordinary_cast_fallback",
+        "test_only_overloaded_option_is_offered_when_all_opposing_creatures_are_untargetable",
+        "test_original_overload_cards_require_both_complete_bodies_and_paired_normal_registration",
+        "test_overload_binds_distinct_nonmodal_programs_and_rejects_unclosed_variants",
+        "test_overload_spec_is_immutable_and_has_two_distinct_closed_body_fingerprints"
+      ],
+      "interaction_tests": [
+        "test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature",
+        "test_actual_normal_electrickery_remains_targeted_and_pays_only_printed_price",
+        "test_actual_reverberate_keeps_overloaded_program_without_target_or_mode_choice",
+        "test_cheaper_mind_rake_alternative_keeps_private_apnap_discard_for_each_player",
+        "test_counterspell_counters_target_free_overloaded_spell_without_applying_each_body",
+        "test_free_base_cannot_make_overloaded_body_free_or_change_normal_targeted_body",
+        "test_only_overloaded_option_is_offered_when_all_opposing_creatures_are_untargetable"
+      ],
+      "multiplayer_tests": [
+        "test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature",
+        "test_actual_normal_electrickery_remains_targeted_and_pays_only_printed_price",
+        "test_actual_reverberate_keeps_overloaded_program_without_target_or_mode_choice",
+        "test_cheaper_mind_rake_alternative_keeps_private_apnap_discard_for_each_player",
+        "test_counterspell_counters_target_free_overloaded_spell_without_applying_each_body",
+        "test_free_base_cannot_make_overloaded_body_free_or_change_normal_targeted_body",
+        "test_only_overloaded_option_is_offered_when_all_opposing_creatures_are_untargetable"
+      ],
+      "privacy_tests": [
+        "test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature",
+        "test_cheaper_mind_rake_alternative_keeps_private_apnap_discard_for_each_player"
+      ],
+      "replay_tests": [
+        "test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature",
+        "test_actual_normal_electrickery_remains_targeted_and_pays_only_printed_price",
+        "test_actual_reverberate_keeps_overloaded_program_without_target_or_mode_choice",
+        "test_cheaper_mind_rake_alternative_keeps_private_apnap_discard_for_each_player",
+        "test_counterspell_counters_target_free_overloaded_spell_without_applying_each_body",
+        "test_free_base_cannot_make_overloaded_body_free_or_change_normal_targeted_body",
+        "test_only_overloaded_option_is_offered_when_all_opposing_creatures_are_untargetable"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Missing body/cost ownership, mismatched paired fingerprints and unclosed variants remain residual before either source is admitted.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting whole-pair compilation fails the independently specified paired-program admission and source-span witness. Omitting derived-program lowering keeps the source residual and unavailable. Native price omission changes an actual underpayment rejection; omission of paid-program selection is rejected before the wrong body executes.",
       "blockers": [],
       "status": "trusted"
     }

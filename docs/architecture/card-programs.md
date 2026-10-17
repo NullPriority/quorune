@@ -44,6 +44,13 @@ certificates before execution. This complements the existing handler-declared
 complete-card boundary without changing historical programs that lack the new
 provenance declaration.
 
+Source-derived spell variants retain separate semantic identities within the
+same CardProgram. A fixed Overload alternative binds the normal and derived
+body fingerprints to its price. Both executable programs must be present and
+current. The cast selects the derived program through its validated cost
+option, preserving ordinary spell characteristics and an empty mode list.
+Copies retain that selected program through the existing stack-copy owner.
+
 A current capability-bound counted search supersedes a reviewed search at the
 same key only when source hashes, event, costs, targets and result semantics
 match. The adapter records the superseded key. Persisted reviewed programs

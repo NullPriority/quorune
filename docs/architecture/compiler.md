@@ -9,6 +9,13 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+`compiler/overload_spell_faces.py` derives and validates both fixed Overload
+bodies at the whole-spell boundary. The normal physical spell and its separate
+target-free derived program retain the original source identity and spans.
+Generated-program lowering preserves their distinct identities; the adapter
+requires the derived program instead of silently admitting only the normal
+body. A declined pair keeps the keyword residual.
+
 `compiler/fixed_stack_spell_copy.py` lowers the closed instant/sorcery copy
 clause, including its optional current-controller restriction. The activated
 effect gate delegates this same shape to capability validation. Parent cards
