@@ -14324,6 +14324,57 @@
       ],
       "interaction_order": 2,
       "assertion": "Soul Summons actually manifests Riftburst Hellion; its plain face-down characteristics remain distinct from Disguise. After pending load, the Disguise-specific hybrid payment offer pays the complete fee and turns the same incarnation face up, with private projection and pre-action replay preserved."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkRuntimeTests.test_actual_qualified_equipment_retargets_its_live_landwalk_and_stats",
+      "piece_ids": [
+        "capability.attachment.equip.fixed_mana",
+        "capability.combat.block.landwalk.qualified_type",
+        "capability.continuous.attached.fixed_characteristics"
+      ],
+      "capability_ids": [
+        "attachment.equip.fixed_mana",
+        "combat.block.landwalk.qualified_type",
+        "continuous.attached.fixed_characteristics"
+      ],
+      "interaction_order": 3,
+      "assertion": "Actual Trailblazer Boots and Vectis Gloves equip through offered and accepted activations; their qualified Landwalk and fixed power bonus move to the new recipient and stop affecting the former recipient. The defender current nonbasic or artifact land controls the same canonical evasion verdict; pending load/replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkRuntimeTests.test_actual_humbled_landwalker_copies_printed_keyword_and_keeps_it_after_bounce",
+      "piece_ids": [
+        "capability.combat.block.landwalk.qualified_type",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.permanent.return.owner_hand",
+        "capability.zone.entry.fixed_copy"
+      ],
+      "capability_ids": [
+        "combat.block.landwalk.qualified_type",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "permanent.return.owner_hand",
+        "zone.entry.fixed_copy"
+      ],
+      "interaction_order": 4,
+      "assertion": "Humble removes actual Rime Dryad current abilities and changes its stats, while actual Clone copies its printed 1/2 values and Snow Forestwalk through a pending copy choice. Actual Unsummon then returns the original; the copy retains its keyword. The current defender Snow Forest prevents blocking, and pending load/replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkRuntimeTests.test_actual_yavimaya_changes_one_snow_lands_current_subtypes",
+      "piece_ids": [
+        "capability.combat.block.landwalk.qualified_type",
+        "capability.continuous.basic_land_type.add_all_lands"
+      ],
+      "capability_ids": [
+        "combat.block.landwalk.qualified_type",
+        "continuous.basic_land_type.add_all_lands"
+      ],
+      "interaction_order": 2,
+      "assertion": "Before actual Yavimaya is played, the defender Snow Island and separate ordinary Forest cannot satisfy Snow Forestwalk. Its real land-play action adds Forest to the same Snow Island, preserving Snow and Island, so the current canonical block verdict changes. The trusted original and pending save/load/replay retain those facts."
     }
   ]
 }

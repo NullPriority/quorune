@@ -122,7 +122,7 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
         blocked = compile_oracle_card(record(text), capability_registry=CapabilityRegistry(raw), capability_profile="commander_review")
         self.assertNotEqual("exact", blocked.status)
         self.assertTrue(blocked.material_residuals)
-        for keyword in ("nonbasic landwalk", "snow forestwalk", "landwalk of the chosen type"):
+        for keyword in ("snow nonbasic landwalk", "legendary desertwalk", "landwalk of the chosen type"):
             with self.subTest(keyword=keyword):
                 compiled = self.compile("Whenever you cast a green spell, this creature gains " + keyword + " until end of turn.")
                 self.assertNotEqual("exact", compiled.status)

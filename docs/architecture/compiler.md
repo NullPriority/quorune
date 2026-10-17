@@ -594,12 +594,16 @@ check. Layer-4 animation feeds the existing cycle-safe dynamic-characteristic
 boundary before layer-7a counts, and the state-based owner detaches Equipment
 that becomes a creature. Dynamic or
 chosen values, copies, text or control changes, declaration riders,
-Protection, qualified landwalk, Banding, unsupported keywords, and non-until-end-of-turn
+Protection, unrepresented landwalk predicates, Banding, unsupported keywords, and non-until-end-of-turn
 durations remain source-spanned residuals.
-The shared map includes Plainswalk, Islandwalk, Swampwalk, Mountainwalk, and
-Forestwalk. Each grant requires the basic-land-type evasion consumer; actual
-blocking follows the defending player's current land subtypes, including
-nonbasic lands with a matching subtype.
+The shared map retains the five basic landwalk variants and adds Desertwalk,
+artifact, Legendary, nonbasic, Snow, and Snow/basic-land-type predicates.
+Ordinary grants retain the basic-land-type consumer; qualified grants declare
+the qualified Landwalk consumer. Blocking reads each defending phased-in
+land's current effective types, subtypes and supertypes. One land must satisfy
+every part of a compound predicate. Nonbasic means the absence of the Basic
+supertype, independently of basic land subtypes. Other evasion restrictions
+still apply.
 
 The same resolution-characteristic owner accepts a closed version-2 fixed
 animation or base-setting instruction. `compiler/fixed_resolution_characteristics.py`
@@ -1882,11 +1886,14 @@ source-spanned residuals or explicit unsupported-interaction boundaries.
 
 ## Invariants
 
-Fixed keyword producers admit the five basic landwalk variants and ordinary
-Horsemanship through their existing block-legality capability owners. Live
-queried and attached grants use current recipient relationships, while exact
-resolution-locked grants retain their existing incarnation and duration rules.
-Chosen or qualified landwalk and as-though evasion overrides remain residual.
+Fixed keyword producers use the ordinary and qualified Landwalk consumers and
+the existing Horsemanship owner. Live queried and attached grants use current
+recipient relationships, while resolution-locked grants retain their existing
+incarnation and duration rules. Missing provider keyword indexes do not erase
+an exact trusted printed qualified-Landwalk declaration. That fact enters the
+ordinary base-characteristic pipeline before ability removal, face-down
+changes and copiable-value capture. Chosen or varying landwalk types,
+unrepresented compound predicates and as-though overrides remain residual.
 
 Fading, Graft and Vanishing lower their separate entry and lifecycle abilities to
 the current counter and trigger owners. Graft emits a non-targeted optional

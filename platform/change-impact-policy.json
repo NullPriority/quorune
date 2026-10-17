@@ -4685,6 +4685,27 @@
         "test_card_program_trust",
         "test_fixed_counter_keyword_activations"
       ]
+    },
+    {
+      "id": "qualified-landwalk-current-land-and-printed-keyword-contract",
+      "patterns": [
+        "quorune/landwalk.py",
+        "quorune/combat_evasion.py",
+        "quorune/combat_evasion_engine_adapter.py",
+        "quorune/keyword_abilities.py",
+        "quorune/compiler/keyword_templates.py",
+        "quorune/rules/current_face_keywords.py",
+        "quorune/rules/capabilities.py",
+        "tests/fixtures/qualified-landwalk-cards.json"
+      ],
+      "test_modules": [
+        "test_landwalk",
+        "test_combat_evasion_restrictions",
+        "test_fixed_evasion_grants",
+        "test_fixed_source_characteristic_effects",
+        "test_copy_objects",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

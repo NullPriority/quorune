@@ -4,6 +4,7 @@ import re
 from typing import Sequence
 
 from ..commander_pairing import partner_with_spec_for_material_line
+from ..landwalk import QUALIFIED_LANDWALK_KEYWORDS
 
 
 _BLOODTHIRST_MECHANIC = "bloodthirst"
@@ -21,7 +22,7 @@ _KNOWN_BARE_KEYWORDS = frozenset(
     "deathtouch|defender|double strike|first strike|flash|flying|haste|"
     "flanking|hexproof|indestructible|infect|lifelink|menace|reach|shadow|shroud|"
     "trample|vigilance|wither|umbra armor|split second|extort|aftermath|start your engines!".split("|")
-)
+) | frozenset(QUALIFIED_LANDWALK_KEYWORDS)
 _TYPECYCLING = re.compile(
     r"^(?:basic land|plains|island|swamp|mountain|forest|artifact land|"
     r"wizard|sliver)cycling\s+(?:\{[^{}]+\})+$",

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..landwalk import QUALIFIED_LANDWALK_KEYWORDS
 from .counter_placement_capability_shapes import counter_placement_covered_mechanics
 from .control_capability_shapes import fixed_control_node_capabilities
 from .city_blessing_shapes import ascend_spell_node_capabilities
@@ -342,6 +343,10 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     **{
         mechanic: ("combat.block.landwalk.basic_type",)
         for mechanic in _BASIC_LANDWALK_MECHANICS
+    },
+    **{
+        mechanic: ("combat.block.landwalk.qualified_type",)
+        for mechanic in QUALIFIED_LANDWALK_KEYWORDS
     },
     _DEFENDER_MECHANIC: ("combat.attack.defender",),
     _MENACE_MECHANIC: ("combat.block.menace",),

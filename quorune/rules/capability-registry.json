@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 333,
+  "registry_version": 334,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -12597,27 +12597,196 @@
     {
       "id": "combat.block.landwalk.basic_type",
       "version": 2,
-      "official_rules": ["509.1b", "702.14", "702.14a", "702.14b", "702.14c", "702.14d", "702.14e"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Prohibit a block when a current represented attacker has Plainswalk, Islandwalk, Swampwalk, Mountainwalk, or Forestwalk and the defending player controls a current land with the matching effective land subtype.",
-        "inputs": ["fully validated proposed blocker-attacker pair", "attacker current represented effective keywords", "defending player identity", "defender current phased-in battlefield lands", "lands' current represented effective types and subtypes"],
-        "outputs": ["matching basic-land-type landwalk block prohibited", "nonmatching block left to remaining restrictions", "multiple different landwalk abilities applied cumulatively", "multiple instances of one represented variant treated as redundant", "unsupported landwalk variant rejected before mutation"],
-        "exclusions": ["nonbasic landwalk", "legendary landwalk", "Desertwalk and other non-basic-land-type variants", "compound or quality-qualified landwalk predicates", "continuous-effect and ability-changing producers outside the represented fixed grants, copy, and face-down producers", "block declaration costs and unrelated restrictions or requirements"]
+        "inputs": [
+          "fully validated proposed blocker-attacker pair",
+          "attacker current represented effective keywords",
+          "defending player identity",
+          "defender current phased-in battlefield lands",
+          "lands' current represented effective types and subtypes"
+        ],
+        "outputs": [
+          "matching basic-land-type landwalk block prohibited",
+          "nonmatching block left to remaining restrictions",
+          "multiple different landwalk abilities applied cumulatively",
+          "multiple instances of one represented variant treated as redundant",
+          "unsupported landwalk variant rejected before mutation"
+        ],
+        "exclusions": [
+          "nonbasic landwalk",
+          "legendary landwalk",
+          "Desertwalk and other non-basic-land-type variants",
+          "compound or quality-qualified landwalk predicates",
+          "continuous-effect and ability-changing producers outside the represented fixed grants, copy, and face-down producers",
+          "block declaration costs and unrelated restrictions or requirements"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.landwalk.basic_landwalk_block_verdict", "quorune.combat_evasion.combat_evasion_verdict", "quorune.combat_evasion_engine_adapter.defending_basic_land_types", "CommanderEngine._can_block"],
-      "positive_tests": ["test_each_basic_variant_uses_current_matching_land_subtype", "test_offer_and_command_share_current_landwalk_legality_and_rollback", "test_fixed_basic_landwalk_and_horsemanship_grants_declare_exact_consumers"],
-      "negative_tests": ["test_malformed_and_unsupported_variants_fail_closed", "test_legal_nonmatching_block_is_seat_scoped_and_replays", "test_grant_boundaries_and_missing_evasion_consumer_fail_closed", "test_missing_granted_landwalk_consumer_mapping_mutant_is_killed"],
-      "interaction_tests": ["test_landwalk_remains_cumulative_with_shadow_and_flying", "test_urborg_generated_swamp_activates_opposing_swampwalk", "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks", "test_actual_islandwalk_aura_cast_tracks_recipient_and_ends_on_source_departure", "test_actual_temporary_swampwalk_activation_preserves_fixed_penalty_and_expires"],
-      "multiplayer_tests": ["test_offer_and_command_share_current_landwalk_legality_and_rollback", "test_legal_nonmatching_block_is_seat_scoped_and_replays", "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks"],
-      "privacy_tests": ["test_offer_and_command_share_current_landwalk_legality_and_rollback", "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks"],
-      "replay_tests": ["test_legal_nonmatching_block_is_seat_scoped_and_replays", "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks", "test_actual_islandwalk_aura_cast_tracks_recipient_and_ends_on_source_departure", "test_actual_temporary_swampwalk_activation_preserves_fixed_penalty_and_expires"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.landwalk.basic_landwalk_block_verdict",
+        "quorune.combat_evasion.combat_evasion_verdict",
+        "quorune.combat_evasion_engine_adapter.defending_basic_land_types",
+        "CommanderEngine._can_block",
+        "quorune.landwalk.landwalk_block_verdict",
+        "quorune.combat_evasion_engine_adapter.defending_land_characteristics"
+      ],
+      "positive_tests": [
+        "test_each_basic_variant_uses_current_matching_land_subtype",
+        "test_offer_and_command_share_current_landwalk_legality_and_rollback",
+        "test_fixed_basic_landwalk_and_horsemanship_grants_declare_exact_consumers"
+      ],
+      "negative_tests": [
+        "test_malformed_and_unsupported_variants_fail_closed",
+        "test_legal_nonmatching_block_is_seat_scoped_and_replays",
+        "test_grant_boundaries_and_missing_evasion_consumer_fail_closed",
+        "test_missing_granted_landwalk_consumer_mapping_mutant_is_killed"
+      ],
+      "interaction_tests": [
+        "test_landwalk_remains_cumulative_with_shadow_and_flying",
+        "test_urborg_generated_swamp_activates_opposing_swampwalk",
+        "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks",
+        "test_actual_islandwalk_aura_cast_tracks_recipient_and_ends_on_source_departure",
+        "test_actual_temporary_swampwalk_activation_preserves_fixed_penalty_and_expires"
+      ],
+      "multiplayer_tests": [
+        "test_offer_and_command_share_current_landwalk_legality_and_rollback",
+        "test_legal_nonmatching_block_is_seat_scoped_and_replays",
+        "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks"
+      ],
+      "privacy_tests": [
+        "test_offer_and_command_share_current_landwalk_legality_and_rollback",
+        "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks"
+      ],
+      "replay_tests": [
+        "test_legal_nonmatching_block_is_seat_scoped_and_replays",
+        "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks",
+        "test_actual_islandwalk_aura_cast_tracks_recipient_and_ends_on_source_departure",
+        "test_actual_temporary_swampwalk_activation_preserves_fixed_penalty_and_expires"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "The bounded basic-type query consumes canonical current keyword and land characteristic snapshots and has no capability dependency; unsupported landwalk variants fail closed.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "test_basic_landwalk_keyword_mapping_mutant_is_killed removes the Swampwalk mapping and the canonical matching-land rejection assertion rejects the survivor.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "combat.block.landwalk.qualified_type",
+      "version": 1,
+      "official_rules": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Prohibit a block for a represented Desert, artifact-land, Legendary-land, nonbasic-land or Snow/basic-land-type Landwalk predicate only when one current defending land meets every required trait. Preserve ordinary Landwalk, cumulative evasion, actual defending controller and same-permanent conjunction. An exact trusted printed-keyword declaration supplies a missing provider keyword label before ordinary characteristic layers.",
+        "inputs": [
+          "exact trusted printed or fixed granted qualified Landwalk label",
+          "actual defending player",
+          "individual current phased-in public battlefield lands with effective card types, subtypes and supertypes"
+        ],
+        "outputs": [
+          "matching qualified Landwalk prevents blocking",
+          "separate lands never combine traits",
+          "lack of Basic supertype defines nonbasic",
+          "Snow and other supertypes remain independent of land subtypes",
+          "other evasion restrictions remain cumulative",
+          "unknown variants fail closed"
+        ],
+        "exclusions": [
+          "chosen or variable landwalk types",
+          "unrepresented compound qualifiers such as Snow nonbasic Landwalk",
+          "landwalk suppression and as-though exceptions",
+          "unrepresented type-changing or ability-changing producers"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.landwalk.LandwalkLandCharacteristics",
+        "quorune.landwalk.LandwalkBlockVerdict",
+        "quorune.landwalk.landwalk_block_verdict",
+        "quorune.combat_evasion.combat_evasion_verdict",
+        "quorune.combat_evasion_engine_adapter.defending_land_characteristics",
+        "quorune.rules.current_face_keywords.current_printed_face_keywords",
+        "quorune.compiler.keyword_templates.keyword_mechanics",
+        "CommanderEngine._can_block"
+      ],
+      "positive_tests": [
+        "test_actual_snow_forestwalker_is_completely_admitted",
+        "test_nine_qualified_landwalk_originals_bind_completely",
+        "test_actual_snow_forestwalk_requires_one_current_defender_land",
+        "test_actual_qualified_equipment_retargets_its_live_landwalk_and_stats",
+        "test_actual_humbled_landwalker_copies_printed_keyword_and_keeps_it_after_bounce",
+        "test_actual_yavimaya_changes_one_snow_lands_current_subtypes"
+      ],
+      "negative_tests": [
+        "test_qualified_landwalk_snapshots_and_legacy_boundaries",
+        "test_actual_snow_forestwalk_requires_one_current_defender_land",
+        "test_missing_keyword_index_uses_only_current_printed_declarations"
+      ],
+      "interaction_tests": [
+        "test_actual_snow_forestwalk_requires_one_current_defender_land",
+        "test_actual_qualified_equipment_retargets_its_live_landwalk_and_stats",
+        "test_actual_humbled_landwalker_copies_printed_keyword_and_keeps_it_after_bounce",
+        "test_actual_yavimaya_changes_one_snow_lands_current_subtypes"
+      ],
+      "multiplayer_tests": [
+        "test_actual_snow_forestwalk_requires_one_current_defender_land"
+      ],
+      "privacy_tests": [
+        "test_actual_snow_forestwalk_requires_one_current_defender_land"
+      ],
+      "replay_tests": [
+        "test_actual_snow_forestwalk_requires_one_current_defender_land",
+        "test_actual_qualified_equipment_retargets_its_live_landwalk_and_stats",
+        "test_actual_humbled_landwalker_copies_printed_keyword_and_keeps_it_after_bounce",
+        "test_actual_yavimaya_changes_one_snow_lands_current_subtypes"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The bounded basic-type query consumes canonical current keyword and land characteristic snapshots and has no capability dependency; unsupported landwalk variants fail closed.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The admission-preserving aggregate-land-traits mutant joins Snow on one land to Forest on another. The native legal-block witness rejects this suppression of a legal action.",
       "blockers": [],
       "status": "trusted"
     },

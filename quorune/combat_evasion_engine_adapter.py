@@ -10,7 +10,7 @@ from .combat_evasion import (
     combat_evasion_verdict,
 )
 from .keyword_abilities import normalized_characteristic_keywords
-from .landwalk import BASIC_LAND_TYPES, LandwalkRuleError
+from .landwalk import BASIC_LAND_TYPES, LandwalkLandCharacteristics, LandwalkRuleError
 from .semantic_runtime.block_restrictions import current_self_block_prohibitions
 
 if TYPE_CHECKING:
@@ -22,6 +22,14 @@ def defending_basic_land_types(
     engine: CommanderEngine,
     defending_player: str,
 ) -> frozenset[str]:
+    return frozenset(subtype for land in defending_land_characteristics(engine, defending_player)
+        for subtype in land.subtypes if subtype in BASIC_LAND_TYPES)
+
+
+def defending_land_characteristics(
+    engine: CommanderEngine,
+    defending_player: str,
+) -> tuple[LandwalkLandCharacteristics, ...]:
     """Read the defender's current effective public battlefield land types."""
 
     if (
@@ -30,7 +38,7 @@ def defending_basic_land_types(
         or defending_player not in engine.state.players
     ):
         raise LandwalkRuleError("Landwalk requires a current defending player")
-    result: set[str] = set()
+    result = []
     for card in sorted(engine.state.cards.values(), key=lambda value: value.ref):
         if (
             card.zone != "battlefield"
@@ -42,10 +50,11 @@ def defending_basic_land_types(
         type_line = data.get("type_line", "")
         if not isinstance(type_line, str):
             raise LandwalkRuleError("Effective type line must be a string")
-        card_types, subtypes, _ = type_parts(type_line)
+        card_types, subtypes, supertypes = type_parts(type_line)
         if "land" in card_types:
-            result.update(subtypes.intersection(BASIC_LAND_TYPES))
-    return frozenset(result)
+            result.append(LandwalkLandCharacteristics(
+                frozenset(card_types), frozenset(subtypes), frozenset(supertypes)))
+    return tuple(result)
 
 
 def engine_combat_evasion_verdict(
@@ -64,7 +73,7 @@ def engine_combat_evasion_verdict(
     return combat_evasion_verdict(
         combatant_evasion_characteristics(engine, attacker),
         combatant_evasion_characteristics(engine, blocker),
-        defending_basic_land_types(engine, defending_player),
+        defending_land_characteristics(engine, defending_player),
     )
 
 
@@ -102,5 +111,6 @@ def combatant_evasion_characteristics(
 __all__ = [
     "combatant_evasion_characteristics",
     "defending_basic_land_types",
+    "defending_land_characteristics",
     "engine_combat_evasion_verdict",
 ]

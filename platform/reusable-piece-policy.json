@@ -129,6 +129,10 @@
     ["stack_resolution", "triggers"]
   ],
   "ambient_high_risk_piece_pairs": [
+    [
+      "capability.attachment.equip.fixed_mana",
+      "capability.combat.block.landwalk.qualified_type"
+    ],
     ["capability.attachment.equip.fixed_mana", "capability.zone.entry.fixed_copy"],
     ["capability.casting.additional_cost.fixed_counter_placement", "capability.counter.placement.quantity_replacement"],
     ["capability.casting.additional_cost.fixed_sacrifice", "capability.trigger.event.normalized_zone_change"],
@@ -149,6 +153,26 @@
     ["capability.combat.block.capacity.temporary", "capability.target.revalidate_resolution"],
     ["capability.combat.block.capacity.temporary", "capability.zone.linked_exile_return.fixed"],
     ["capability.combat.block.flying", "capability.counter.characteristic.keyword"],
+    [
+      "capability.combat.block.landwalk.qualified_type",
+      "capability.continuous.attached.fixed_characteristics"
+    ],
+    [
+      "capability.combat.block.landwalk.qualified_type",
+      "capability.continuous.basic_land_type.add_all_lands"
+    ],
+    [
+      "capability.combat.block.landwalk.qualified_type",
+      "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+    ],
+    [
+      "capability.combat.block.landwalk.qualified_type",
+      "capability.permanent.return.owner_hand"
+    ],
+    [
+      "capability.combat.block.landwalk.qualified_type",
+      "capability.zone.entry.fixed_copy"
+    ],
     ["capability.combat.block.menace", "capability.counter.characteristic.keyword"],
     ["capability.combat.damage.assignment.deathtouch", "capability.counter.characteristic.keyword"],
     ["capability.combat.damage.assignment.trample", "capability.counter.characteristic.keyword"],

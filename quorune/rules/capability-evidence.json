@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "e213a66ae69d1680daff4e1902edace24d7ff260593e4f27ef95c759a022679f",
-  "declaration_source_fingerprint": "c99e91f95d7cb9daa08cbf72a15331870d75afaab4bf3d9f56b837c9e3262653",
+  "registry_fingerprint": "a79624339031583216a127b805173ce0329b14eb7eb11bcaaf48041087b134c9",
+  "declaration_source_fingerprint": "eadc863ef26ea0290088e77129905db04a5169cc2c578bc919a417e519388db9",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -30930,6 +30930,426 @@
         "commander_review"
       ],
       "applicability_note": "Reject an injected block through matching Swampwalk without changing the authoritative state hash."
+    },
+    {
+      "capability_id": "combat.block.landwalk.qualified_type",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkRuntimeTests.test_actual_humbled_landwalker_copies_printed_keyword_and_keeps_it_after_bounce",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual qualified Equipment grants move with re-equip; a copy retains the printed Landwalk of a humbled original and keeps it after original departure; actual Yavimaya changes one Snow land current subtype set. Exact trusted printed declarations exclude stale, wrong-face and conditional metadata. Pending load and pre-action replay preserve the represented facts."
+    },
+    {
+      "capability_id": "combat.block.landwalk.qualified_type",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkRuntimeTests.test_actual_qualified_equipment_retargets_its_live_landwalk_and_stats",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual qualified Equipment grants move with re-equip; a copy retains the printed Landwalk of a humbled original and keeps it after original departure; actual Yavimaya changes one Snow land current subtype set. Exact trusted printed declarations exclude stale, wrong-face and conditional metadata. Pending load and pre-action replay preserve the represented facts."
+    },
+    {
+      "capability_id": "combat.block.landwalk.qualified_type",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkRuntimeTests.test_actual_snow_forestwalk_requires_one_current_defender_land",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed individual defending-land traits implement the pinned rule with same-permanent conjunction, nonbasic-supertype and cumulative-evasion boundaries. Native original-card block offers and commands, wrong-principal rollback, four-player private projection, pending load and pre-action replay test the represented scope."
+    },
+    {
+      "capability_id": "combat.block.landwalk.qualified_type",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkRuntimeTests.test_actual_yavimaya_changes_one_snow_lands_current_subtypes",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual qualified Equipment grants move with re-equip; a copy retains the printed Landwalk of a humbled original and keeps it after original departure; actual Yavimaya changes one Snow land current subtype set. Exact trusted printed declarations exclude stale, wrong-face and conditional metadata. Pending load and pre-action replay preserve the represented facts."
+    },
+    {
+      "capability_id": "combat.block.landwalk.qualified_type",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkRuntimeTests.test_actual_snow_forestwalk_requires_one_current_defender_land",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed individual defending-land traits implement the pinned rule with same-permanent conjunction, nonbasic-supertype and cumulative-evasion boundaries. Native original-card block offers and commands, wrong-principal rollback, four-player private projection, pending load and pre-action replay test the represented scope."
+    },
+    {
+      "capability_id": "combat.block.landwalk.qualified_type",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkRuntimeTests.test_snow_land_conjunction_omission_is_killed_after_original_admission",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed individual defending-land traits implement the pinned rule with same-permanent conjunction, nonbasic-supertype and cumulative-evasion boundaries. Native original-card block offers and commands, wrong-principal rollback, four-player private projection, pending load and pre-action replay test the represented scope."
+    },
+    {
+      "capability_id": "combat.block.landwalk.qualified_type",
+      "evidence_class": "negative",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkValueTests.test_missing_keyword_index_uses_only_current_printed_declarations",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual qualified Equipment grants move with re-equip; a copy retains the printed Landwalk of a humbled original and keeps it after original departure; actual Yavimaya changes one Snow land current subtype set. Exact trusted printed declarations exclude stale, wrong-face and conditional metadata. Pending load and pre-action replay preserve the represented facts."
+    },
+    {
+      "capability_id": "combat.block.landwalk.qualified_type",
+      "evidence_class": "negative",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkValueTests.test_qualified_landwalk_snapshots_and_legacy_boundaries",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed individual defending-land traits implement the pinned rule with same-permanent conjunction, nonbasic-supertype and cumulative-evasion boundaries. Native original-card block offers and commands, wrong-principal rollback, four-player private projection, pending load and pre-action replay test the represented scope."
+    },
+    {
+      "capability_id": "combat.block.landwalk.qualified_type",
+      "evidence_class": "positive",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkRuntimeTests.test_actual_humbled_landwalker_copies_printed_keyword_and_keeps_it_after_bounce",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual qualified Equipment grants move with re-equip; a copy retains the printed Landwalk of a humbled original and keeps it after original departure; actual Yavimaya changes one Snow land current subtype set. Exact trusted printed declarations exclude stale, wrong-face and conditional metadata. Pending load and pre-action replay preserve the represented facts."
+    },
+    {
+      "capability_id": "combat.block.landwalk.qualified_type",
+      "evidence_class": "positive",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkRuntimeTests.test_actual_qualified_equipment_retargets_its_live_landwalk_and_stats",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual qualified Equipment grants move with re-equip; a copy retains the printed Landwalk of a humbled original and keeps it after original departure; actual Yavimaya changes one Snow land current subtype set. Exact trusted printed declarations exclude stale, wrong-face and conditional metadata. Pending load and pre-action replay preserve the represented facts."
+    },
+    {
+      "capability_id": "combat.block.landwalk.qualified_type",
+      "evidence_class": "positive",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkRuntimeTests.test_actual_snow_forestwalk_requires_one_current_defender_land",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed individual defending-land traits implement the pinned rule with same-permanent conjunction, nonbasic-supertype and cumulative-evasion boundaries. Native original-card block offers and commands, wrong-principal rollback, four-player private projection, pending load and pre-action replay test the represented scope."
+    },
+    {
+      "capability_id": "combat.block.landwalk.qualified_type",
+      "evidence_class": "positive",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkRuntimeTests.test_actual_snow_forestwalker_is_completely_admitted",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed individual defending-land traits implement the pinned rule with same-permanent conjunction, nonbasic-supertype and cumulative-evasion boundaries. Native original-card block offers and commands, wrong-principal rollback, four-player private projection, pending load and pre-action replay test the represented scope."
+    },
+    {
+      "capability_id": "combat.block.landwalk.qualified_type",
+      "evidence_class": "positive",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkRuntimeTests.test_actual_yavimaya_changes_one_snow_lands_current_subtypes",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual qualified Equipment grants move with re-equip; a copy retains the printed Landwalk of a humbled original and keeps it after original departure; actual Yavimaya changes one Snow land current subtype set. Exact trusted printed declarations exclude stale, wrong-face and conditional metadata. Pending load and pre-action replay preserve the represented facts."
+    },
+    {
+      "capability_id": "combat.block.landwalk.qualified_type",
+      "evidence_class": "positive",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkRuntimeTests.test_nine_qualified_landwalk_originals_bind_completely",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed individual defending-land traits implement the pinned rule with same-permanent conjunction, nonbasic-supertype and cumulative-evasion boundaries. Native original-card block offers and commands, wrong-principal rollback, four-player private projection, pending load and pre-action replay test the represented scope."
+    },
+    {
+      "capability_id": "combat.block.landwalk.qualified_type",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkRuntimeTests.test_actual_snow_forestwalk_requires_one_current_defender_land",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed individual defending-land traits implement the pinned rule with same-permanent conjunction, nonbasic-supertype and cumulative-evasion boundaries. Native original-card block offers and commands, wrong-principal rollback, four-player private projection, pending load and pre-action replay test the represented scope."
+    },
+    {
+      "capability_id": "combat.block.landwalk.qualified_type",
+      "evidence_class": "property",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkValueTests.test_qualified_landwalk_snapshots_and_legacy_boundaries",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed individual defending-land traits implement the pinned rule with same-permanent conjunction, nonbasic-supertype and cumulative-evasion boundaries. Native original-card block offers and commands, wrong-principal rollback, four-player private projection, pending load and pre-action replay test the represented scope."
+    },
+    {
+      "capability_id": "combat.block.landwalk.qualified_type",
+      "evidence_class": "replay",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkRuntimeTests.test_actual_humbled_landwalker_copies_printed_keyword_and_keeps_it_after_bounce",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual qualified Equipment grants move with re-equip; a copy retains the printed Landwalk of a humbled original and keeps it after original departure; actual Yavimaya changes one Snow land current subtype set. Exact trusted printed declarations exclude stale, wrong-face and conditional metadata. Pending load and pre-action replay preserve the represented facts."
+    },
+    {
+      "capability_id": "combat.block.landwalk.qualified_type",
+      "evidence_class": "replay",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkRuntimeTests.test_actual_qualified_equipment_retargets_its_live_landwalk_and_stats",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual qualified Equipment grants move with re-equip; a copy retains the printed Landwalk of a humbled original and keeps it after original departure; actual Yavimaya changes one Snow land current subtype set. Exact trusted printed declarations exclude stale, wrong-face and conditional metadata. Pending load and pre-action replay preserve the represented facts."
+    },
+    {
+      "capability_id": "combat.block.landwalk.qualified_type",
+      "evidence_class": "replay",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkRuntimeTests.test_actual_snow_forestwalk_requires_one_current_defender_land",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed individual defending-land traits implement the pinned rule with same-permanent conjunction, nonbasic-supertype and cumulative-evasion boundaries. Native original-card block offers and commands, wrong-principal rollback, four-player private projection, pending load and pre-action replay test the represented scope."
+    },
+    {
+      "capability_id": "combat.block.landwalk.qualified_type",
+      "evidence_class": "replay",
+      "test_id": "tests.test_landwalk.QualifiedLandwalkRuntimeTests.test_actual_yavimaya_changes_one_snow_lands_current_subtypes",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e",
+        "305.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual qualified Equipment grants move with re-equip; a copy retains the printed Landwalk of a humbled original and keeps it after original departure; actual Yavimaya changes one Snow land current subtype set. Exact trusted printed declarations exclude stale, wrong-face and conditional metadata. Pending load and pre-action replay preserve the represented facts."
     },
     {
       "capability_id": "combat.block.menace",
@@ -159698,5 +160118,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "8f6ef6be24c8d6678bbcb5c4fc5d1fe592d0c3741702f5b3c23c8c7c8c93c082"
+  "fingerprint": "2ffad68919584cb3e582b022f2c885f014235db885dbeae72bcc2beada4dcd75"
 }

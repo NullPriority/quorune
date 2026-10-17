@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any, Protocol
 import re
+from .landwalk import QUALIFIED_LANDWALK_KEYWORDS
 
 from .ability_fragments import (
     CombatKeywordTriggerKind, CombatKeywordTriggerSpec,
@@ -78,6 +79,11 @@ FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES: Mapping[
     "Trample": ("combat.damage.assignment.trample",),
     "Vigilance": ("combat.attack.vigilance",),
     "Wither": ("damage.result.wither",),
+}
+FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES = {
+    **FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES,
+    **{keyword.title(): ("combat.block.landwalk.qualified_type",)
+        for keyword in QUALIFIED_LANDWALK_KEYWORDS},
 }
 FIXED_CHARACTERISTIC_KEYWORDS = frozenset(
     FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES

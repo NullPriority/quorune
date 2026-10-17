@@ -37,8 +37,8 @@ class FixedEvasionGrantCompilerTests(unittest.TestCase):
                 self.assertEqual('exact',ir.status,ir.material_residuals)
 
     def test_grant_boundaries_and_missing_evasion_consumer_fail_closed(self):
-        for text in ('Creatures you control have nonbasic landwalk.','Creatures you control have desertwalk.',
-                     'Creatures you control have landwalk of the chosen type.','Enchanted creature has snow forestwalk.'):
+        for text in ('Creatures you control have snow nonbasic landwalk.','Creatures you control have legendary desertwalk.',
+                     'Creatures you control have landwalk of the chosen type.','Enchanted creature has snow nonbasic landwalk.'):
             self.assertIsNone(fixed_query_keyword_grant_handler(text) if text.startswith('Creatures')
                               else attached_fixed_characteristics_handler(text))
         raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
