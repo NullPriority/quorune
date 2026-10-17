@@ -1,5 +1,6 @@
 from __future__ import annotations
 from .entry_copy import copiable_oracle_id
+from .carddb_characteristics import copiable_card_characteristics
 from .rules.enlist import enlist_offer_rows,prepare_enlist_costs,commit_enlist_costs,enlist_trigger_items
 from .rules.exert import exert_offer_rows,prepare_exert_costs,commit_exert_costs
 
@@ -947,10 +948,7 @@ class CommanderEngine(
             record,
             error_type=GameRuleError,
         )
-        base.update(
-            copy.deepcopy(dict(card.annotations.get("copy_overrides") or {}))
-        )
-        return base
+        return copiable_card_characteristics(card, record, base)
 
     def _resolve_object(
         self,

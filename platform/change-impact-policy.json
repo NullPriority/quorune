@@ -4661,6 +4661,24 @@
         "test_targeted_return_to_hand_effect_clauses",
         "test_transmute"
       ]
+    },
+    {
+      "id": "nonmodal-face-mana-value-and-copiable-snapshot",
+      "patterns": [
+        "quorune/carddb_characteristics.py",
+        "quorune/rules/face_characteristic_values.py",
+        "tests/test_nonmodal_face_mana_value.py",
+        "tests/fixtures/nonmodal-face-mana-value-cards.json"
+      ],
+      "test_modules": [
+        "test_nonmodal_face_mana_value",
+        "test_activated_self_transform",
+        "test_copy_objects",
+        "test_fixed_token_creation_effects",
+        "test_fixed_mana_value_target_predicates",
+        "test_object_query",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

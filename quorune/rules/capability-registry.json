@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 331,
+  "registry_version": 332,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -3331,8 +3331,10 @@
     },
     {
       "id": "zone.entry.fixed_copy",
-      "version": 1,
+      "version": 5,
       "official_rules": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -3340,7 +3342,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -3372,52 +3375,72 @@
         "zone.change.destination_replacement"
       ],
       "implementation_components": [
+        "quorune.carddb_characteristics.base_card_characteristics",
+        "quorune.carddb_characteristics.copiable_card_characteristics",
         "quorune.compiler.entry_copy_templates.entry_copy_node",
-        "quorune.semantic_runtime.entry_copy.EntryCopyHandler",
-        "quorune.semantic_runtime.entry_copy.entry_copy_replacement_effects",
-        "quorune.entry_results.commit_prepared_entry_results",
-        "quorune.entry_copy.copiable_oracle_id",
         "quorune.copied_aura_entry.prepare_copied_aura_entry_choice",
-        "quorune.entry_copy.restore_prepared_copy_entry"
+        "quorune.entry_copy.copiable_oracle_id",
+        "quorune.entry_copy.restore_prepared_copy_entry",
+        "quorune.entry_results.commit_prepared_entry_results",
+        "quorune.rules.face_characteristic_values.current_face_mana_value",
+        "quorune.semantic_runtime.entry_copy.EntryCopyHandler",
+        "quorune.semantic_runtime.entry_copy.entry_copy_replacement_effects"
       ],
       "positive_tests": [
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
+        "test_actual_kessig_transform_keeps_one_mana_value",
+        "test_actual_token_copy_of_back_face_has_zero_mana_value",
+        "test_copiable_back_face_value_is_derived_from_its_cost_and_keeps_copy_exceptions",
         "test_intrinsic_copy_entry_has_an_independent_source_spanned_replacement_owner",
+        "test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values",
+        "test_original_back_face_retains_front_value_without_front_cost_or_color",
         "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
         "test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
+        "test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation",
         "test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
-        "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
-        "test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation"
+        "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry"
       ],
       "negative_tests": [
+        "test_actual_eliminate_rejects_transformed_five_mana_creature",
         "test_entry_copy_contract_rejects_hidden_targets_open_tails_and_malformed_values",
-        "test_registered_entry_copy_handler_rejects_open_fields_and_has_no_mutation_context",
-        "test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
-        "test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values"
-      ],
-      "interaction_tests": [
-        "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
-        "test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
-        "test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
+        "test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values",
         "test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
         "test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
-        "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
-        "test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation"
+        "test_registered_entry_copy_handler_rejects_open_fields_and_has_no_mutation_context"
+      ],
+      "interaction_tests": [
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
+        "test_actual_eliminate_rejects_transformed_five_mana_creature",
+        "test_actual_token_copy_of_back_face_has_zero_mana_value",
+        "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+        "test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
+        "test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation",
+        "test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
+        "test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
+        "test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
+        "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry"
       ],
       "multiplayer_tests": [
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
         "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
         "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry"
       ],
       "privacy_tests": [
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
         "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay"
       ],
       "replay_tests": [
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
+        "test_actual_eliminate_rejects_transformed_five_mana_creature",
+        "test_actual_kessig_transform_keeps_one_mana_value",
+        "test_actual_token_copy_of_back_face_has_zero_mana_value",
         "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
         "test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
-        "test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
+        "test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation",
         "test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
+        "test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
         "test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
-        "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
-        "test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation"
+        "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry"
       ],
       "required_evidence": [
         "positive",
@@ -3430,7 +3453,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The current registry mutation keeps the exact copy-entry descriptor residual when its precise capability is unavailable.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "The producer omission removes the actual original Clone replacement and is detected by the pre-cast real action witness.",
+      "implementation_mutation_rationale": "The producer omission removes the actual original Clone replacement and is detected by the pre-cast real action witness. The original-face and copied-derived-value omission witnesses distinguish front-derived original mana value from a zero-value actual Clone of a transforming back face.",
       "blockers": [],
       "status": "trusted"
     },
@@ -7144,22 +7167,25 @@
     },
     {
       "id": "token.creation.fixed_copy",
-      "version": 4,
+      "version": 6,
       "official_rules": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -7192,63 +7218,83 @@
         "target.revalidate_resolution"
       ],
       "implementation_components": [
-        "quorune.compiler.token_templates.fixed_token_creation_effect_template",
+        "quorune.carddb_characteristics.base_card_characteristics",
+        "quorune.carddb_characteristics.copiable_card_characteristics",
         "quorune.compiler.token_copy_templates.token_copy_recipe_template",
+        "quorune.compiler.token_templates.fixed_token_creation_effect_template",
+        "quorune.effect_runtime.objects_stack_and_tokens._apply_create_token",
+        "quorune.rules.face_characteristic_values.current_face_mana_value",
+        "quorune.rules.token_creation_capability_shapes.fixed_token_creation_node_capabilities",
+        "quorune.semantic_choices.token_and_copy.TokenCopyChoiceHandler",
         "quorune.token_copy_recipes.TokenCopyRecipeSpec",
         "quorune.token_copy_references.pin_copy_characteristic_departures",
         "quorune.token_copy_runtime.apply_copy_recipe",
         "quorune.token_copy_runtime.finish_copy_aftercare",
-        "quorune.semantic_choices.token_and_copy.TokenCopyChoiceHandler",
-        "quorune.rules.token_creation_capability_shapes.fixed_token_creation_node_capabilities",
-        "quorune.effect_runtime.objects_stack_and_tokens._apply_create_token",
         "quorune.token_creation.create_tokens"
       ],
       "positive_tests": [
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
+        "test_actual_kessig_transform_keeps_one_mana_value",
+        "test_actual_token_copy_of_back_face_has_zero_mana_value",
+        "test_actual_trusted_copy_gets_its_own_entry_counters_and_replays",
         "test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
+        "test_copiable_back_face_value_is_derived_from_its_cost_and_keeps_copy_exceptions",
         "test_copy_and_delayed_tokens_revalidate_and_replay",
+        "test_intrinsic_exception_and_static_haste_are_entry_facts",
+        "test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values",
+        "test_original_back_face_retains_front_value_without_front_cost_or_color",
         "test_simultaneous_copies_see_the_complete_entry_history",
         "test_subsequent_haste_does_not_rewrite_entry_facts",
-        "test_intrinsic_exception_and_static_haste_are_entry_facts",
-        "test_actual_trusted_copy_gets_its_own_entry_counters_and_replays",
         "test_two_simultaneous_copies_use_post_event_history_characteristics"
       ],
       "negative_tests": [
+        "test_actual_eliminate_rejects_transformed_five_mana_creature",
+        "test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values",
+        "test_pre_history_characteristic_sealing_mutant_is_killed",
         "test_token_production_grammar_and_capability_mutants_fail_closed",
-        "test_unavailable_prospective_component_query_rejects_resolution_atomically",
-        "test_pre_history_characteristic_sealing_mutant_is_killed"
+        "test_unavailable_prospective_component_query_rejects_resolution_atomically"
       ],
       "interaction_tests": [
-        "test_copy_and_delayed_tokens_revalidate_and_replay",
-        "test_token_replacement_order_rollback_and_privacy",
-        "test_simultaneous_copies_see_the_complete_entry_history",
-        "test_one_copy_and_sequential_creation_history_controls",
-        "test_creation_and_entry_counter_choices_resume_once_and_replay",
-        "test_actual_source_only_ability_removal_is_not_copied",
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
         "test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays",
+        "test_actual_eliminate_rejects_transformed_five_mana_creature",
+        "test_actual_source_only_ability_removal_is_not_copied",
+        "test_actual_token_copy_of_back_face_has_zero_mana_value",
+        "test_copy_and_delayed_tokens_revalidate_and_replay",
         "test_copy_does_not_inherit_the_original_cast_x_or_existing_counters",
+        "test_creation_and_entry_counter_choices_resume_once_and_replay",
         "test_history_characteristic_distinguishing_controls",
+        "test_history_precedes_final_power_and_keyword_sealing",
+        "test_one_copy_and_sequential_creation_history_controls",
         "test_replacement_adjusted_history_characteristic_quantity",
-        "test_history_precedes_final_power_and_keyword_sealing"
+        "test_simultaneous_copies_see_the_complete_entry_history",
+        "test_token_replacement_order_rollback_and_privacy"
       ],
       "multiplayer_tests": [
-        "test_token_replacement_order_rollback_and_privacy",
-        "test_creation_and_entry_counter_choices_resume_once_and_replay"
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
+        "test_creation_and_entry_counter_choices_resume_once_and_replay",
+        "test_token_replacement_order_rollback_and_privacy"
       ],
       "privacy_tests": [
-        "test_token_replacement_order_rollback_and_privacy",
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
+        "test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays",
         "test_creation_and_entry_counter_choices_resume_once_and_replay",
-        "test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays"
+        "test_token_replacement_order_rollback_and_privacy"
       ],
       "replay_tests": [
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
+        "test_actual_eliminate_rejects_transformed_five_mana_creature",
+        "test_actual_kessig_transform_keeps_one_mana_value",
+        "test_actual_token_copy_of_back_face_has_zero_mana_value",
+        "test_actual_trusted_copy_gets_its_own_entry_counters_and_replays",
         "test_copy_and_delayed_tokens_revalidate_and_replay",
+        "test_creation_and_entry_counter_choices_resume_once_and_replay",
+        "test_history_characteristic_distinguishing_controls",
+        "test_replacement_adjusted_history_characteristic_quantity",
         "test_simultaneous_copies_see_the_complete_entry_history",
         "test_subsequent_haste_does_not_rewrite_entry_facts",
-        "test_creation_and_entry_counter_choices_resume_once_and_replay",
-        "test_actual_trusted_copy_gets_its_own_entry_counters_and_replays",
-        "test_unavailable_prospective_component_query_rejects_resolution_atomically",
         "test_two_simultaneous_copies_use_post_event_history_characteristics",
-        "test_history_characteristic_distinguishing_controls",
-        "test_replacement_adjusted_history_characteristic_quantity"
+        "test_unavailable_prospective_component_query_rejects_resolution_atomically"
       ],
       "required_evidence": [
         "positive",
@@ -7261,7 +7307,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking target revalidation prevents a fixed copy-token node from receiving trusted closure.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Existing copy-shape and copiable-value mutations remain killed; focused owner contracts additionally kill incomplete simultaneous history and separately instructed aftercare occurring before entry discovery.",
+      "implementation_mutation_rationale": "Existing copy-shape and copiable-value mutations remain killed; focused owner contracts additionally kill incomplete simultaneous history and separately instructed aftercare occurring before entry discovery. The original-face and copied-derived-value omission witnesses distinguish front-derived original mana value from a zero-value actual Clone of a transforming back face.",
       "blockers": [],
       "status": "trusted"
     },
@@ -20076,16 +20122,20 @@
     },
     {
       "id": "permanent.transform.face_change",
-      "version": 1,
+      "version": 2,
       "official_rules": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -20120,55 +20170,75 @@
         "trigger.placement.apnap"
       ],
       "implementation_components": [
-        "quorune.permanent_transform.transform_permanent",
-        "quorune.permanent_transform.commit_transform_batch",
-        "quorune.effect_runtime.objects_stack_and_tokens._apply_transform",
-        "quorune.trigger_discovery._semantic_trigger_context",
-        "quorune.semantic_runtime.values.resolve_semantic_value",
+        "quorune.carddb_characteristics.base_card_characteristics",
+        "quorune.carddb_characteristics.copiable_card_characteristics",
         "quorune.compiler.self_transform_templates.fixed_self_transform_effect_template",
+        "quorune.compiler.source_transform_program_closure.is_closed_source_transform_program",
+        "quorune.effect_runtime.objects_stack_and_tokens._apply_transform",
+        "quorune.permanent_transform.commit_transform_batch",
+        "quorune.permanent_transform.transform_permanent",
         "quorune.rules.activation.transform_snapshot.activation_transform_context",
         "quorune.rules.current_face_keywords.current_printed_face_keywords",
-        "quorune.compiler.source_transform_program_closure.is_closed_source_transform_program"
+        "quorune.rules.face_characteristic_values.current_face_mana_value",
+        "quorune.semantic_runtime.values.resolve_semantic_value",
+        "quorune.trigger_discovery._semantic_trigger_context"
       ],
       "positive_tests": [
-        "test_day_night_entry_untap_and_shared_component_applicability",
-        "test_legacy_transform_intervening_identity_and_transform_count",
-        "test_fixed_self_transform_has_same_generic_owner_and_count_snapshot",
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
+        "test_actual_kessig_transform_keeps_one_mana_value",
+        "test_actual_token_copy_of_back_face_has_zero_mana_value",
         "test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
+        "test_copiable_back_face_value_is_derived_from_its_cost_and_keeps_copy_exceptions",
+        "test_day_night_entry_untap_and_shared_component_applicability",
+        "test_fixed_self_transform_has_same_generic_owner_and_count_snapshot",
+        "test_legacy_transform_intervening_identity_and_transform_count",
+        "test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values",
+        "test_original_back_face_retains_front_value_without_front_cost_or_color",
         "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement"
       ],
       "negative_tests": [
+        "test_actual_eliminate_rejects_transformed_five_mana_creature",
         "test_day_night_and_transform_grammar_exclusions_fail_closed",
-        "test_transform_capability_and_compiler_mutations_fail_closed",
-        "test_targeted_and_unrepresented_transform_variants_stay_residual"
+        "test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values",
+        "test_targeted_and_unrepresented_transform_variants_stay_residual",
+        "test_transform_capability_and_compiler_mutations_fail_closed"
       ],
       "interaction_tests": [
-        "test_simultaneous_transform_apnap_state_and_replay",
-        "test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
-        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
+        "test_actual_control_change_keeps_original_activation_controller_and_source_binding",
+        "test_actual_eliminate_rejects_transformed_five_mana_creature",
+        "test_actual_gargoyle_cast_then_transform_uses_offered_front_and_new_flying_face",
         "test_actual_gossipmonger_source_and_selected_tap_costs_transform_same_object",
         "test_actual_source_blink_before_activation_resolution_does_not_transform_new_object",
-        "test_actual_control_change_keeps_original_activation_controller_and_source_binding",
-        "test_actual_gargoyle_cast_then_transform_uses_offered_front_and_new_flying_face"
+        "test_actual_token_copy_of_back_face_has_zero_mana_value",
+        "test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
+        "test_simultaneous_transform_apnap_state_and_replay",
+        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement"
       ],
       "multiplayer_tests": [
-        "test_simultaneous_transform_apnap_state_and_replay",
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
         "test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
+        "test_simultaneous_transform_apnap_state_and_replay",
         "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement"
       ],
       "privacy_tests": [
-        "test_simultaneous_transform_apnap_state_and_replay",
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
         "test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
+        "test_simultaneous_transform_apnap_state_and_replay",
         "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement"
       ],
       "replay_tests": [
-        "test_simultaneous_transform_apnap_state_and_replay",
-        "test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
-        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
-        "test_actual_gossipmonger_source_and_selected_tap_costs_transform_same_object",
-        "test_actual_source_blink_before_activation_resolution_does_not_transform_new_object",
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
         "test_actual_control_change_keeps_original_activation_controller_and_source_binding",
-        "test_actual_gargoyle_cast_then_transform_uses_offered_front_and_new_flying_face"
+        "test_actual_eliminate_rejects_transformed_five_mana_creature",
+        "test_actual_gargoyle_cast_then_transform_uses_offered_front_and_new_flying_face",
+        "test_actual_gossipmonger_source_and_selected_tap_costs_transform_same_object",
+        "test_actual_kessig_transform_keeps_one_mana_value",
+        "test_actual_source_blink_before_activation_resolution_does_not_transform_new_object",
+        "test_actual_token_copy_of_back_face_has_zero_mana_value",
+        "test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
+        "test_simultaneous_transform_apnap_state_and_replay",
+        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement"
       ],
       "required_evidence": [
         "positive",
@@ -20181,7 +20251,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking normalized public events or APNAP trigger placement prevents the transform capability and each dependent card-form or upkeep trigger from receiving trusted closure.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "The focused mutation test removes transform lowering or changes its source snapshot and proves the compiler withholds trusted admission.",
+      "implementation_mutation_rationale": "The focused mutation test removes transform lowering or changes its source snapshot and proves the compiler withholds trusted admission. The original-face and copied-derived-value omission witnesses distinguish front-derived original mana value from a zero-value actual Clone of a transforming back face.",
       "blockers": [],
       "status": "trusted"
     },
