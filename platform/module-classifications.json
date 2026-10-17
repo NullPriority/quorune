@@ -4214,6 +4214,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/nonmana_morph_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/optional_effect_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -7909,6 +7924,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/nonmana_morph_model.py",
+      "layer": "domain",
+      "owning_subsystem": "face_down_cards",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/object_predicate.py",
       "layer": "domain",
       "owning_subsystem": "object_query",
@@ -10670,6 +10697,20 @@
       "file": "quorune/rules/node_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/nonmana_morph_costs.py",
+      "layer": "rules",
+      "owning_subsystem": "face_down_cards",
       "allowed_dependency_layers": [
         "domain",
         "rules",
@@ -13789,6 +13830,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/nonmana_morph.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/paid_entry_copy.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -15437,5 +15493,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "5f5743645adce411e9aa76cba3e5e4531778e3a180604edb2fe5696def009215"
+  "fingerprint": "737ed35bf084d3b855c1bdbae9cfc11802397c35e50b27a12a8fbbf07a93de45"
 }

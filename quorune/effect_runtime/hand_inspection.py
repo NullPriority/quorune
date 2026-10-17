@@ -26,11 +26,17 @@ def validate_entry_hand_reveal(host: Any,selection: Any) -> Any:
 
 def commit_entry_hand_reveal(host: Any,selection: Any,*,source_ref: str) -> None:
     """Publish the preflighted snapshot even when its card entered simultaneously."""
+    commit_selected_hand_reveal(host, selection, source_ref=source_ref,
+        summary='A card was revealed for battlefield entry.')
+
+
+def commit_selected_hand_reveal(host: Any, selection: Any, *, source_ref: str, summary: str) -> None:
+    """Publish only one selected card, retaining knowledge without a lasting reveal."""
     if selection is None or selection=='declined':return
     actor=selection['player'];card=host.state.cards.get(selection['object_id'])
     if card is not None and card.logical_object_id==selection['logical_object_id']:
         card.known_to=sorted(set(card.known_to).union(host.seats))
-    host._log(actor,'card.reveal','A card was revealed for battlefield entry.',
+    host._log(actor,'card.reveal',summary,
         {'player':actor,'object':selection['ref'],'card':selection['name'],'source':source_ref},
         changed_objects=[selection['object_id']],changed_players=[actor])
 

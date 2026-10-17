@@ -95,7 +95,7 @@ class FixedManaMorphHandler:
             spec = FixedManaMorphSpec.from_dict(value)
         except MorphError as exc:
             raise SemanticNodeError(str(exc)) from exc
-        if spec.method != self.method:
+        if not isinstance(spec, FixedManaMorphSpec) or spec.method != self.method:
             raise SemanticNodeError("Face-down method descriptor mismatch")
         return spec
 
@@ -114,6 +114,7 @@ class FixedManaMorphRegistry(RuntimeComponentRegistry[object, FixedManaMorphSpec
 
 @lru_cache(maxsize=1)
 def default_fixed_mana_morph_registry() -> FixedManaMorphRegistry:
+    from .nonmana_morph import FixedNonmanaMorphHandler
     handlers = [FixedManaMorphHandler()]
     for method, rule_references in (
         (
@@ -137,7 +138,7 @@ def default_fixed_mana_morph_registry() -> FixedManaMorphRegistry:
                 ),
             )
         )
-    registry = FixedManaMorphRegistry(tuple(handlers))
+    registry = FixedManaMorphRegistry((*handlers, FixedNonmanaMorphHandler()))
     registry.require_registered_capabilities(load_default_capability_registry())
     return registry.freeze()
 

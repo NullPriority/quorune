@@ -33,6 +33,7 @@
       "test_indestructible_rules",
       "test_loyalty_abilities",
       "test_multikicker_entry_counters",
+      "test_nonmana_morph",
       "test_power_up",
       "test_public_activation_conditions",
       "test_replacement_event_ordering",

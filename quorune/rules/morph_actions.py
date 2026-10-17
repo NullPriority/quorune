@@ -133,6 +133,11 @@ def build_turn_face_up_offer(
 
 def _build_turn_face_up_offer(host, seat, card, spec, *, method, mana_cost_option):
     from ..manifest import is_manifested
+    from .nonmana_morph_costs import nonmana_morph_offer_fields
+
+    nonmana_fields = nonmana_morph_offer_fields(host, seat, spec)
+    if nonmana_fields is None:
+        return None
 
     options = getattr(spec, 'mana_cost_options', ())
     requirements = spec.requirements_dict
@@ -169,6 +174,7 @@ def _build_turn_face_up_offer(host, seat, card, spec, *, method, mana_cost_optio
                 "auto_pay": True,
                 "method": spec.method,
                 **({'mana_cost_option': mana_cost_option} if options else {}),
+                **nonmana_fields,
             }
         ),
     )
@@ -233,6 +239,12 @@ def commit_turn_face_up(
         response,
         spend_context=None,
     )
+    from .nonmana_morph_costs import pay_nonmana_morph_cost, morph_zone_cost
+    incarnation = card.logical_object_id
+    pay_nonmana_morph_cost(host, seat, card, spec, response)
+    if card.zone != 'battlefield' or card.logical_object_id != incarnation:
+        host.turn_priority.complete_special_action(seat)
+        return
     try:
         turn_card_face_up(card, viewers=tuple(host.seats))
     except ZoneObjectStateError as exc:
@@ -280,7 +292,7 @@ def commit_turn_face_up(
             )
         except CounterPlacementError as exc:
             raise GameRuleError(str(exc)) from exc
-    elif response.get("_mana_replacement_selections"):
+    elif response.get("_mana_replacement_selections") and morph_zone_cost(spec) is None:
         raise GameRuleError(
             "Turn-face-up replacement selections require Megamorph"
         )

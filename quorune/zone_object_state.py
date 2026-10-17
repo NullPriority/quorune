@@ -24,6 +24,7 @@ from .morph import (
     MORPH_METHOD_ANNOTATION,
     morph_face_down_annotation,
 )
+from .nonmana_morph_model import FixedNonmanaMorphSpec
 
 
 class ZoneObjectStateError(ValueError):
@@ -173,7 +174,7 @@ def mark_card_face_down_for_morph(
         or card.object_kind != "card"
         or type(controller) is not str
         or not controller
-        or not isinstance(spec, FixedManaMorphSpec)
+        or not isinstance(spec, (FixedManaMorphSpec, FixedNonmanaMorphSpec))
     ):
         raise ZoneObjectStateError("Face-down casting state is malformed")
     card.face_down = True

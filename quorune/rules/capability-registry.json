@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 354,
+  "registry_version": 355,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -27934,6 +27934,143 @@
       "dependency_fail_closed_rationale": "Missing either body/cost/target owner, malformed brackets, repeated/complex prices and unknown sibling semantics remain residual.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting paired compilation fails the independently specified source-span and two-target-schema positive contract. Missing derived program lowering leaves material residuals; native price omission preserves whole admission but leaves incorrect unspent mana.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.morph.fixed_nonmana",
+      "version": 1,
+      "official_rules": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Fixed nonmana Morph costs use current resource queries and canonical payment through the existing face-down special action.",
+        "inputs": [
+          "complete printed normal-layout Morph source",
+          "fixed life, colored reveal, discard or subtype return cost"
+        ],
+        "outputs": [
+          "private face-down cast for three generic",
+          "controller priority turn-face-up with exact nonmana payment"
+        ],
+        "exclusions": [
+          "sacrifice and compound costs",
+          "variable or reduced costs",
+          "copied or granted Morph",
+          "unknown sibling semantics"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.nonmana_morph_model.FixedNonmanaMorphSpec",
+        "quorune.compiler.nonmana_morph_nodes.fixed_nonmana_morph_keyword_node",
+        "quorune.semantic_runtime.nonmana_morph.FixedNonmanaMorphHandler",
+        "quorune.rules.nonmana_morph_costs.nonmana_morph_offer_fields",
+        "quorune.rules.nonmana_morph_costs.pay_nonmana_morph_cost",
+        "quorune.rules.morph_actions.commit_turn_face_up"
+      ],
+      "positive_tests": [
+        "test_actual_bird_return_uses_controller_and_returns_to_physical_owner",
+        "test_actual_discard_cost_uses_current_subtype_and_discards_before_turn_up",
+        "test_actual_fathom_seer_returns_two_distinct_islands_then_draws_privately",
+        "test_actual_reveal_prices_publish_only_one_eligible_card_and_execute_face_up_triggers",
+        "test_actual_zombie_cutthroat_pays_life_to_turn_face_up_without_a_stack_item",
+        "test_all_ten_originals_admit_normally_and_unknown_siblings_remain_residual",
+        "test_compiler_nonmana_grammar_and_dependency_removal_fail_closed",
+        "test_current_type_can_return_source_without_a_spurious_turn_face_up_occurrence",
+        "test_life_payment_omission_is_killed_by_actual_native_consequence",
+        "test_life_shortfall_and_prospective_ability_removal_suppress_turn_up",
+        "test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load",
+        "test_native_horde_ambusher_face_up_trigger_prohibits_the_chosen_blocker",
+        "test_native_island_mana_can_be_floated_before_paying_the_return_cost",
+        "test_nonmana_cost_codec_is_closed_and_historical_mana_handler_rejects_it",
+        "test_stale_selected_return_resource_and_internal_journal_attempts_roll_back"
+      ],
+      "negative_tests": [
+        "test_actual_bird_return_uses_controller_and_returns_to_physical_owner",
+        "test_actual_discard_cost_uses_current_subtype_and_discards_before_turn_up",
+        "test_actual_fathom_seer_returns_two_distinct_islands_then_draws_privately",
+        "test_actual_reveal_prices_publish_only_one_eligible_card_and_execute_face_up_triggers",
+        "test_actual_zombie_cutthroat_pays_life_to_turn_face_up_without_a_stack_item",
+        "test_all_ten_originals_admit_normally_and_unknown_siblings_remain_residual",
+        "test_compiler_nonmana_grammar_and_dependency_removal_fail_closed",
+        "test_current_type_can_return_source_without_a_spurious_turn_face_up_occurrence",
+        "test_life_shortfall_and_prospective_ability_removal_suppress_turn_up",
+        "test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load",
+        "test_native_horde_ambusher_face_up_trigger_prohibits_the_chosen_blocker",
+        "test_native_island_mana_can_be_floated_before_paying_the_return_cost",
+        "test_nonmana_cost_codec_is_closed_and_historical_mana_handler_rejects_it",
+        "test_stale_selected_return_resource_and_internal_journal_attempts_roll_back"
+      ],
+      "interaction_tests": [
+        "test_actual_bird_return_uses_controller_and_returns_to_physical_owner",
+        "test_actual_discard_cost_uses_current_subtype_and_discards_before_turn_up",
+        "test_actual_fathom_seer_returns_two_distinct_islands_then_draws_privately",
+        "test_actual_reveal_prices_publish_only_one_eligible_card_and_execute_face_up_triggers",
+        "test_actual_zombie_cutthroat_pays_life_to_turn_face_up_without_a_stack_item",
+        "test_current_type_can_return_source_without_a_spurious_turn_face_up_occurrence",
+        "test_life_shortfall_and_prospective_ability_removal_suppress_turn_up",
+        "test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load",
+        "test_native_horde_ambusher_face_up_trigger_prohibits_the_chosen_blocker",
+        "test_native_island_mana_can_be_floated_before_paying_the_return_cost"
+      ],
+      "multiplayer_tests": [
+        "test_actual_bird_return_uses_controller_and_returns_to_physical_owner",
+        "test_actual_discard_cost_uses_current_subtype_and_discards_before_turn_up",
+        "test_actual_fathom_seer_returns_two_distinct_islands_then_draws_privately",
+        "test_actual_reveal_prices_publish_only_one_eligible_card_and_execute_face_up_triggers",
+        "test_actual_zombie_cutthroat_pays_life_to_turn_face_up_without_a_stack_item",
+        "test_current_type_can_return_source_without_a_spurious_turn_face_up_occurrence",
+        "test_life_shortfall_and_prospective_ability_removal_suppress_turn_up",
+        "test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load",
+        "test_native_horde_ambusher_face_up_trigger_prohibits_the_chosen_blocker",
+        "test_native_island_mana_can_be_floated_before_paying_the_return_cost"
+      ],
+      "privacy_tests": [
+        "test_actual_fathom_seer_returns_two_distinct_islands_then_draws_privately",
+        "test_actual_reveal_prices_publish_only_one_eligible_card_and_execute_face_up_triggers",
+        "test_actual_zombie_cutthroat_pays_life_to_turn_face_up_without_a_stack_item",
+        "test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load"
+      ],
+      "replay_tests": [
+        "test_actual_bird_return_uses_controller_and_returns_to_physical_owner",
+        "test_actual_discard_cost_uses_current_subtype_and_discards_before_turn_up",
+        "test_actual_fathom_seer_returns_two_distinct_islands_then_draws_privately",
+        "test_actual_reveal_prices_publish_only_one_eligible_card_and_execute_face_up_triggers",
+        "test_actual_zombie_cutthroat_pays_life_to_turn_face_up_without_a_stack_item",
+        "test_current_type_can_return_source_without_a_spurious_turn_face_up_occurrence",
+        "test_life_shortfall_and_prospective_ability_removal_suppress_turn_up",
+        "test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load",
+        "test_native_horde_ambusher_face_up_trigger_prohibits_the_chosen_blocker",
+        "test_native_island_mana_can_be_floated_before_paying_the_return_cost"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawing the nonmana owner or compiler production leaves a source-spanned residual. Complete original admission rejects unknown siblings and unsupported costs; the historical mana handler rejects schema three.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting only canonical life payment preserves complete original admission but violates the independently specified five-life native consequence. Removing nonmana production restores material residuals.",
       "blockers": [],
       "status": "trusted"
     }

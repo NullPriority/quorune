@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "f84719ec7dd8e702d9a487e5203592514f3f9d9a50508a4b9e18891533cac348",
-  "declaration_source_fingerprint": "ccf5a3c099461168a111effcf44517bedb24672ae5e54295f560f9385118555b",
+  "registry_fingerprint": "194ab00284a1ae54ce35a97618b475f4b72251fa8e4d9bdafec01771ba018c64",
+  "declaration_source_fingerprint": "5d562864f9b4fd36ef252ac50edc4897d25e72ff486084f65b7581c0491c41b7",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -26702,6 +26702,1878 @@
         "commander_review"
       ],
       "applicability_note": "Replay the exact cast, multiplayer passes, face-down persistence, turn-up payment, public reveal, and final authoritative state hash."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_bird_return_uses_controller_and_returns_to_physical_owner",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_discard_cost_uses_current_subtype_and_discards_before_turn_up",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_fathom_seer_returns_two_distinct_islands_then_draws_privately",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_reveal_prices_publish_only_one_eligible_card_and_execute_face_up_triggers",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_zombie_cutthroat_pays_life_to_turn_face_up_without_a_stack_item",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_current_type_can_return_source_without_a_spurious_turn_face_up_occurrence",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_life_shortfall_and_prospective_ability_removal_suppress_turn_up",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_native_horde_ambusher_face_up_trigger_prohibits_the_chosen_blocker",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_native_island_mana_can_be_floated_before_paying_the_return_cost",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_bird_return_uses_controller_and_returns_to_physical_owner",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_discard_cost_uses_current_subtype_and_discards_before_turn_up",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_fathom_seer_returns_two_distinct_islands_then_draws_privately",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_reveal_prices_publish_only_one_eligible_card_and_execute_face_up_triggers",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_zombie_cutthroat_pays_life_to_turn_face_up_without_a_stack_item",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_current_type_can_return_source_without_a_spurious_turn_face_up_occurrence",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_life_shortfall_and_prospective_ability_removal_suppress_turn_up",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_native_horde_ambusher_face_up_trigger_prohibits_the_chosen_blocker",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_native_island_mana_can_be_floated_before_paying_the_return_cost",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphModelTests.test_compiler_nonmana_grammar_and_dependency_removal_fail_closed",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_life_payment_omission_is_killed_by_actual_native_consequence",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphModelTests.test_compiler_nonmana_grammar_and_dependency_removal_fail_closed",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphModelTests.test_nonmana_cost_codec_is_closed_and_historical_mana_handler_rejects_it",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_bird_return_uses_controller_and_returns_to_physical_owner",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_discard_cost_uses_current_subtype_and_discards_before_turn_up",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_fathom_seer_returns_two_distinct_islands_then_draws_privately",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_reveal_prices_publish_only_one_eligible_card_and_execute_face_up_triggers",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_zombie_cutthroat_pays_life_to_turn_face_up_without_a_stack_item",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_all_ten_originals_admit_normally_and_unknown_siblings_remain_residual",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_current_type_can_return_source_without_a_spurious_turn_face_up_occurrence",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_life_shortfall_and_prospective_ability_removal_suppress_turn_up",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_native_horde_ambusher_face_up_trigger_prohibits_the_chosen_blocker",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_native_island_mana_can_be_floated_before_paying_the_return_cost",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_stale_selected_return_resource_and_internal_journal_attempts_roll_back",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphModelTests.test_compiler_nonmana_grammar_and_dependency_removal_fail_closed",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphModelTests.test_nonmana_cost_codec_is_closed_and_historical_mana_handler_rejects_it",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_bird_return_uses_controller_and_returns_to_physical_owner",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_discard_cost_uses_current_subtype_and_discards_before_turn_up",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_fathom_seer_returns_two_distinct_islands_then_draws_privately",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_reveal_prices_publish_only_one_eligible_card_and_execute_face_up_triggers",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_zombie_cutthroat_pays_life_to_turn_face_up_without_a_stack_item",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_all_ten_originals_admit_normally_and_unknown_siblings_remain_residual",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_current_type_can_return_source_without_a_spurious_turn_face_up_occurrence",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_life_payment_omission_is_killed_by_actual_native_consequence",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_life_shortfall_and_prospective_ability_removal_suppress_turn_up",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_native_horde_ambusher_face_up_trigger_prohibits_the_chosen_blocker",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_native_island_mana_can_be_floated_before_paying_the_return_cost",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_stale_selected_return_resource_and_internal_journal_attempts_roll_back",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_fathom_seer_returns_two_distinct_islands_then_draws_privately",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_reveal_prices_publish_only_one_eligible_card_and_execute_face_up_triggers",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_zombie_cutthroat_pays_life_to_turn_face_up_without_a_stack_item",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "property",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphModelTests.test_compiler_nonmana_grammar_and_dependency_removal_fail_closed",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "property",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphModelTests.test_nonmana_cost_codec_is_closed_and_historical_mana_handler_rejects_it",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_bird_return_uses_controller_and_returns_to_physical_owner",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_discard_cost_uses_current_subtype_and_discards_before_turn_up",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_fathom_seer_returns_two_distinct_islands_then_draws_privately",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_reveal_prices_publish_only_one_eligible_card_and_execute_face_up_triggers",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_zombie_cutthroat_pays_life_to_turn_face_up_without_a_stack_item",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_current_type_can_return_source_without_a_spurious_turn_face_up_occurrence",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_life_shortfall_and_prospective_ability_removal_suppress_turn_up",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_native_horde_ambusher_face_up_trigger_prohibits_the_chosen_blocker",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_native_island_mana_can_be_floated_before_paying_the_return_cost",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_bird_return_uses_controller_and_returns_to_physical_owner",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_discard_cost_uses_current_subtype_and_discards_before_turn_up",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_fathom_seer_returns_two_distinct_islands_then_draws_privately",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_reveal_prices_publish_only_one_eligible_card_and_execute_face_up_triggers",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_actual_zombie_cutthroat_pays_life_to_turn_face_up_without_a_stack_item",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_current_type_can_return_source_without_a_spurious_turn_face_up_occurrence",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_life_shortfall_and_prospective_ability_removal_suppress_turn_up",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_native_horde_ambusher_face_up_trigger_prohibits_the_chosen_blocker",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_native_island_mana_can_be_floated_before_paying_the_return_cost",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
+    },
+    {
+      "capability_id": "casting.morph.fixed_nonmana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_nonmana_morph.FixedNonmanaMorphRuntimeTests.test_stale_selected_return_resource_and_internal_journal_attempts_roll_back",
+      "official_rule_ids": [
+        "702.37a",
+        "702.37d",
+        "702.37e",
+        "116.2b",
+        "118.3",
+        "118.6",
+        "601.2g",
+        "601.2h",
+        "708.2a",
+        "708.9",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed nonmana Morph current-resource authority: strict source admission, exact life/subtype/color/count payment, physical owners, reveal privacy, prospective ability removal, replacement/load, incarnation and replay boundaries."
     },
     {
       "capability_id": "casting.multikicker.fixed_mana",
@@ -176356,5 +178228,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "40c2fe5a88d224cd4fa645d5d21d529b62e3013efd3998882dea0997fac1f692"
+  "fingerprint": "2de03c692ff9fd4a46f270f363224a5abf9b4e28e1456dea9e86cd4070d776bb"
 }

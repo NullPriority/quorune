@@ -300,6 +300,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "casting.madness.trigger",
                 "casting.megamorph.fixed_mana",
                 "casting.morph.fixed_mana",
+                "casting.morph.fixed_nonmana",
                 "casting.payment.affinity",
                 "casting.payment.affinity_artifacts",
                 "casting.payment.convoke",

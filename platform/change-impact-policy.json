@@ -5103,6 +5103,23 @@
         "test_card_program_trust",
         "test_fixed_affected_player_discards"
       ]
+    },
+    {
+      "id": "fixed-nonmana-morph-special-action",
+      "patterns": [
+        "quorune/nonmana_morph_model.py",
+        "quorune/compiler/nonmana_morph_nodes.py",
+        "quorune/semantic_runtime/nonmana_morph.py",
+        "quorune/rules/nonmana_morph_costs.py",
+        "tests/test_nonmana_morph.py",
+        "tests/fixtures/nonmana-morph-cards.json"
+      ],
+      "test_modules": [
+        "test_nonmana_morph",
+        "test_morph_rules",
+        "test_card_program_trust",
+        "test_counted_activation_costs"
+      ]
     }
   ],
   "symbol_rules": [

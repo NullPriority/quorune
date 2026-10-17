@@ -15,6 +15,15 @@ offer payload. Manifested permanents expose distinct suffixed method choices.
 Both paths retain the same expiry and proposal-fingerprint validation before
 payment, including special actions taken while Split Second is on the stack.
 
+Printed fixed nonmana Morph prices share that same action and whole-source
+admission. Typed costs query current hand colors or controlled subtypes and
+pay through the life, selected-hand-reveal, or simultaneous zone-cost owners.
+Revealing publishes only the selected eligible card. Discards and returns use
+their canonical response fields and retain replacement continuations across
+save/load. Returning the source itself ends the action without inventing a
+turn-face-up event for a departed incarnation. Compound, sacrifice, variable,
+copied, and granted nonmana Morph costs remain outside this family.
+
 Normalized event discovery orders both live and explicitly captured source
 lists by zone timestamp and stable object identity. Checkpoint hydration cannot
 change pending trigger identities through dictionary insertion order. APNAP

@@ -38,6 +38,8 @@ def keyword_mechanics(
 
     known = {keyword.casefold() for keyword in card_keywords}
     material = text.rstrip(".").strip()
+    if 'morph' in known and re.match(r'Morph[—-]', material, re.I):
+        return ('morph',)
     if "typecycling" in known and _TYPECYCLING.fullmatch(material):
         return ("cycling",)
     cycling_parts = [part.strip() for part in material.split(",")]

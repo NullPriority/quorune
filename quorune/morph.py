@@ -131,6 +131,12 @@ class FixedManaFaceDownMethodSpec:
         cls,
         value: Mapping[str, Any],
     ) -> "FixedManaFaceDownMethodSpec":
+        if isinstance(value, Mapping) and value.get('schema_version') == 3:
+            from .nonmana_morph_model import FixedNonmanaMorphSpec
+            try:
+                return FixedNonmanaMorphSpec.from_dict(value)
+            except (KeyError, TypeError, ValueError) as exc:
+                raise MorphError(str(exc)) from exc
         if not isinstance(value, Mapping) or frozenset(value) not in {
             frozenset({"schema_version", "requirements"}),
             frozenset({"schema_version", "method", "requirements"}),
@@ -225,13 +231,15 @@ def compile_fixed_mana_morph(
 def face_down_method_handler_descriptor(
     spec: FixedManaFaceDownMethodSpec,
 ) -> dict[str, Any]:
+    from .nonmana_morph_model import FixedNonmanaMorphSpec, NONMANA_MORPH_HANDLER
     payload_field = (
         "morph"
         if spec.method == MORPH_CAST_METHOD
         else "face_down_method"
     )
     return {
-        "handler_id": FACE_DOWN_METHOD_HANDLER_IDS[spec.method],
+        "handler_id": NONMANA_MORPH_HANDLER if isinstance(spec, FixedNonmanaMorphSpec)
+            else FACE_DOWN_METHOD_HANDLER_IDS[spec.method],
         "schema_version": 1,
         "event": FACE_DOWN_METHOD_RUNTIME_EVENTS[spec.method],
         REQUIRES_COMPLETE_CARD_PROGRAM_FIELD: True,

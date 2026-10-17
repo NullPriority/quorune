@@ -95,6 +95,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/overload_model.py",
         "quorune/spell_text_variants.py",
         "quorune/cleave_model.py",
+        "quorune/nonmana_morph_model.py",
         "quorune/stack_spell_copy_model.py",
         "quorune/fractional_quantity_model.py",
         "quorune/event_player_result_values.py",
@@ -451,6 +452,8 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/compiled_morph.py",
         "quorune/morph.py",
         "quorune/rules/morph_actions.py",
+        "quorune/nonmana_morph_model.py",
+        "quorune/rules/nonmana_morph_costs.py",
     }:
         return "face_down_cards"
     if relative in {

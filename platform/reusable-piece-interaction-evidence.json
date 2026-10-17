@@ -15361,6 +15361,21 @@
       ],
       "interaction_order": 2,
       "assertion": "The generic free normal option keeps Alchemist Retrieval controller restriction and still pays Sphere increase. The Cleave alternative pays its distinct base plus Sphere and admits the opponent creature. A normal free price cannot select the paid body; rollback, pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load",
+      "piece_ids": [
+        "capability.casting.morph.fixed_nonmana",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "casting.morph.fixed_nonmana",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual strict Putrid Raptor discards a Zombie as its turn-up price. Competing destination replacements pause atomically with source face down and card still private; wrong principal rejects, pending load resumes one exile with one counter before the source turns up, and full replay agrees."
     }
   ]
 }
