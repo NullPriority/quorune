@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "92f44eb245a313054ff90638689911248465df2e20513154cd0b0d97fa924d6d",
-  "declaration_source_fingerprint": "d991157d7dde17d7ad6738b01100da8a57e7ccdff93bd2417a8ee18ea6c4faa8",
+  "registry_fingerprint": "a5045437d5f2ceff82a7c9d70d6c34211dd1402d912b80cd6b3ec2dfd9ab9be0",
+  "declaration_source_fingerprint": "7628533be305cdf8ce561e187feb60a32240cfd41c7e50f9af2be66a4e1a2c00",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -100727,14 +100727,18 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_control_change_keeps_original_activation_controller_and_source_binding",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -100748,14 +100752,18 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_gargoyle_cast_then_transform_uses_offered_front_and_new_flying_face",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -100769,14 +100777,18 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_gossipmonger_source_and_selected_tap_costs_transform_same_object",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -100790,14 +100802,18 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_source_blink_before_activation_resolution_does_not_transform_new_object",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -100811,14 +100827,18 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -100832,14 +100852,18 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -100851,16 +100875,95 @@
     {
       "capability_id": "permanent.transform.face_change",
       "evidence_class": "interaction",
-      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_eliminate_rejects_transformed_five_mana_creature",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_token_copy_of_back_face_has_zero_mana_value",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -100874,14 +100977,18 @@
       "evidence_class": "multiplayer",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -100895,14 +101002,18 @@
       "evidence_class": "multiplayer",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -100914,16 +101025,45 @@
     {
       "capability_id": "permanent.transform.face_change",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -100937,14 +101077,18 @@
       "evidence_class": "mutation",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_omitting_activation_transform_count_mutant_is_killed",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -100958,14 +101102,18 @@
       "evidence_class": "mutation",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_omitting_selected_face_keyword_filter_mutant_is_killed",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -100977,16 +101125,70 @@
     {
       "capability_id": "permanent.transform.face_change",
       "evidence_class": "mutation",
-      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_transform_capability_and_compiler_mutations_fail_closed",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_copying_original_derived_value_is_detected_by_actual_clone",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_original_face_value_mutation_is_detected_by_actual_transform",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_transform_capability_and_compiler_mutations_fail_closed",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -101000,14 +101202,18 @@
       "evidence_class": "negative",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformCompilerTests.test_targeted_and_unrepresented_transform_variants_stay_residual",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -101019,16 +101225,70 @@
     {
       "capability_id": "permanent.transform.face_change",
       "evidence_class": "negative",
-      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_and_transform_grammar_exclusions_fail_closed",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_eliminate_rejects_transformed_five_mana_creature",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "negative",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_and_transform_grammar_exclusions_fail_closed",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -101042,14 +101302,18 @@
       "evidence_class": "positive",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformCompilerTests.test_fixed_self_transform_has_same_generic_owner_and_count_snapshot",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -101063,14 +101327,18 @@
       "evidence_class": "positive",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -101084,14 +101352,18 @@
       "evidence_class": "positive",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -101103,16 +101375,170 @@
     {
       "capability_id": "permanent.transform.face_change",
       "evidence_class": "positive",
-      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_legacy_transform_intervening_identity_and_transform_count",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_kessig_transform_keeps_one_mana_value",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_token_copy_of_back_face_has_zero_mana_value",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_copiable_back_face_value_is_derived_from_its_cost_and_keeps_copy_exceptions",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_original_back_face_retains_front_value_without_front_cost_or_color",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_legacy_transform_intervening_identity_and_transform_count",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -101126,14 +101552,18 @@
       "evidence_class": "privacy",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -101147,14 +101577,18 @@
       "evidence_class": "privacy",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -101166,16 +101600,45 @@
     {
       "capability_id": "permanent.transform.face_change",
       "evidence_class": "privacy",
-      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -101186,17 +101649,96 @@
     },
     {
       "capability_id": "permanent.transform.face_change",
-      "evidence_class": "replay",
-      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_control_change_keeps_original_activation_controller_and_source_binding",
+      "evidence_class": "property",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_copiable_back_face_value_is_derived_from_its_cost_and_keeps_copy_exceptions",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "property",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "property",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_original_back_face_retains_front_value_without_front_cost_or_color",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_control_change_keeps_original_activation_controller_and_source_binding",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -101210,14 +101752,18 @@
       "evidence_class": "replay",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_gargoyle_cast_then_transform_uses_offered_front_and_new_flying_face",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -101231,14 +101777,18 @@
       "evidence_class": "replay",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_gossipmonger_source_and_selected_tap_costs_transform_same_object",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -101252,14 +101802,18 @@
       "evidence_class": "replay",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_source_blink_before_activation_resolution_does_not_transform_new_object",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -101273,14 +101827,18 @@
       "evidence_class": "replay",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -101294,14 +101852,18 @@
       "evidence_class": "replay",
       "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -101313,16 +101875,120 @@
     {
       "capability_id": "permanent.transform.face_change",
       "evidence_class": "replay",
-      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "701.27",
         "701.27a",
         "701.27c",
         "701.27d",
         "701.27f",
-        "712.9",
+        "707.2",
         "712.10",
-        "712.18"
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_eliminate_rejects_transformed_five_mana_creature",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_kessig_transform_keeps_one_mana_value",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_token_copy_of_back_face_has_zero_mana_value",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -101330,6 +101996,56 @@
         "commander_review"
       ],
       "applicability_note": "Save, load, and exactly replay the active faces, transform counters, public designation, and resulting trigger order."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_eliminate_rejects_transformed_five_mana_creature",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "707.2",
+        "712.10",
+        "712.18",
+        "712.8c",
+        "712.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
     },
     {
       "capability_id": "permanent.untap.all_creatures",
@@ -121105,20 +121821,23 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_source_only_ability_removal_is_not_copied",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121132,20 +121851,23 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_copy_does_not_inherit_the_original_cast_x_or_existing_counters",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121159,20 +121881,23 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_does_not_inherit_temporary_artifact_replacement_and_replays",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121186,20 +121911,23 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_of_nonartifact_animation_retains_artifact_replacement_and_replays",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121213,20 +121941,23 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_recipe_copied_cleanup_ability_triggers_and_replays",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121240,20 +121971,23 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_recipe_self_sacrifice_uses_immediate_copy_lki_and_replays",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121267,20 +122001,23 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_copy_and_delayed_tokens_revalidate_and_replay",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121294,20 +122031,23 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_history_characteristic_distinguishing_controls",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121321,20 +122061,23 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_replacement_adjusted_history_characteristic_quantity",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121348,20 +122091,23 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_history_entry_characteristics.HistoryEntrySealingOwnerTests.test_history_precedes_final_power_and_keyword_sealing",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121373,22 +122119,115 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "interaction",
-      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_eliminate_rejects_transformed_five_mana_creature",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
         "603.6b",
-        "603.10"
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_token_copy_of_back_face_has_zero_mana_value",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121402,20 +122241,23 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_intrinsic_exception_and_static_haste_are_entry_facts",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121429,20 +122271,23 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_one_copy_and_sequential_creation_history_controls",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121456,20 +122301,23 @@
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121483,20 +122331,23 @@
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_replacement_order_rollback_and_privacy",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121508,22 +122359,55 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
         "603.6b",
-        "603.10"
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121537,20 +122421,23 @@
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableSubjectOwnerTests.test_copiable_subject_and_explicit_snapshot_kill_effective_type_mutation",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121564,20 +122451,23 @@
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyRecipeModelTests.test_copy_exception_mutation_cannot_discard_fixed_stats",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121591,20 +122481,23 @@
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121616,22 +122509,85 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "mutation",
-      "test_id": "tests.test_token_entry_boundaries.TokenEntryHistoryOwnerTests.test_incomplete_history_ordering_mutant_is_killed",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_copying_original_derived_value_is_detected_by_actual_clone",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_original_face_value_mutation_is_detected_by_actual_transform",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
         "603.6b",
-        "603.10"
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryHistoryOwnerTests.test_incomplete_history_ordering_mutant_is_killed",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121645,20 +122601,23 @@
       "evidence_class": "mutation",
       "test_id": "tests.test_token_entry_boundaries.TokenEntryHistoryOwnerTests.test_subsequent_aftercare_ordering_mutant_is_killed",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121672,20 +122631,23 @@
       "evidence_class": "negative",
       "test_id": "tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_unavailable_prospective_component_query_rejects_resolution_atomically",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121699,20 +122661,23 @@
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_does_not_inherit_temporary_artifact_replacement_and_replays",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121726,20 +122691,23 @@
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyRecipeModelTests.test_copy_recipe_codec_rejects_unknown_fields_booleans_and_open_values",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121753,20 +122721,23 @@
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121780,20 +122751,23 @@
       "evidence_class": "negative",
       "test_id": "tests.test_history_entry_characteristics.HistoryEntrySealingOwnerTests.test_pre_history_characteristic_sealing_mutant_is_killed",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121805,22 +122779,85 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "negative",
-      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_eliminate_rejects_transformed_five_mana_creature",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
         "603.6b",
-        "603.10"
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121834,20 +122871,23 @@
       "evidence_class": "positive",
       "test_id": "tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_trusted_copy_gets_its_own_entry_counters_and_replays",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121861,20 +122901,23 @@
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_of_nonartifact_animation_retains_artifact_replacement_and_replays",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121888,20 +122931,23 @@
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_recipe_fixed_characteristics_exclusion_rollback_and_replay",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121915,20 +122961,23 @@
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121942,20 +122991,23 @@
       "evidence_class": "positive",
       "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_two_simultaneous_copies_use_post_event_history_characteristics",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121967,22 +123019,205 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "positive",
-      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_simultaneous_copies_see_the_complete_entry_history",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_kessig_transform_keeps_one_mana_value",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
         "603.6b",
-        "603.10"
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_token_copy_of_back_face_has_zero_mana_value",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_copiable_back_face_value_is_derived_from_its_cost_and_keeps_copy_exceptions",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_original_back_face_retains_front_value_without_front_cost_or_color",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_simultaneous_copies_see_the_complete_entry_history",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -121996,20 +123231,23 @@
       "evidence_class": "positive",
       "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_subsequent_haste_does_not_rewrite_entry_facts",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -122023,20 +123261,23 @@
       "evidence_class": "privacy",
       "test_id": "tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -122050,20 +123291,23 @@
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -122077,20 +123321,23 @@
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_populate_selects_controlled_creature_token_and_replays_choice",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -122104,20 +123351,23 @@
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_replacement_order_rollback_and_privacy",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -122129,22 +123379,55 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "privacy",
-      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
         "603.6b",
-        "603.10"
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -122155,23 +123438,116 @@
     },
     {
       "capability_id": "token.creation.fixed_copy",
-      "evidence_class": "replay",
-      "test_id": "tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays",
+      "evidence_class": "property",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_copiable_back_face_value_is_derived_from_its_cost_and_keeps_copy_exceptions",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "property",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
         "603.6b",
-        "603.10"
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "property",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_original_back_face_retains_front_value_without_front_cost_or_color",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -122185,20 +123561,23 @@
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -122212,20 +123591,23 @@
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_recipe_entry_event_copies_new_incarnation_and_replays",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -122239,20 +123621,23 @@
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_copy_and_delayed_tokens_revalidate_and_replay",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -122264,22 +123649,145 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "replay",
-      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_eliminate_rejects_transformed_five_mana_creature",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
         "603.6b",
-        "603.10"
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_kessig_transform_keeps_one_mana_value",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_token_copy_of_back_face_has_zero_mana_value",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -122293,20 +123801,23 @@
       "evidence_class": "replay",
       "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_simultaneous_copies_see_the_complete_entry_history",
       "official_rule_ids": [
-        "111.2",
         "111.12",
+        "111.2",
         "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
         "603.4",
         "603.6a",
+        "603.6b",
         "603.6d",
         "608.2b",
         "608.2c",
-        "707.2",
-        "707.9",
         "614.16",
         "616.1",
-        "603.6b",
-        "603.10"
+        "707.2",
+        "707.9",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -122314,6 +123825,66 @@
         "commander_review"
       ],
       "applicability_note": "Exact commands from before the cast preserve all trigger identities, normal trigger ordering and full consequences."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_eliminate_rejects_transformed_five_mana_creature",
+      "official_rule_ids": [
+        "111.12",
+        "111.2",
+        "115.1a",
+        "202.3b",
+        "202.3d",
+        "603.10",
+        "603.4",
+        "603.6a",
+        "603.6b",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "707.2",
+        "707.9",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
     },
     {
       "capability_id": "token.creation.fixed_definition",
@@ -148732,6 +150303,8 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -148739,7 +150312,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -148753,6 +150327,8 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -148760,7 +150336,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -148774,6 +150351,8 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -148781,7 +150360,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -148795,6 +150375,8 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -148802,7 +150384,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -148816,6 +150399,8 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -148823,7 +150408,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -148837,6 +150423,8 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -148844,7 +150432,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -148858,6 +150447,8 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -148865,7 +150456,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -148876,9 +150468,11 @@
     },
     {
       "capability_id": "zone.entry.fixed_copy",
-      "evidence_class": "multiplayer",
-      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -148886,7 +150480,80 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_eliminate_rejects_transformed_five_mana_creature",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_token_copy_of_back_face_has_zero_mana_value",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -148900,6 +150567,8 @@
       "evidence_class": "multiplayer",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -148907,7 +150576,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -148918,9 +150588,11 @@
     },
     {
       "capability_id": "zone.entry.fixed_copy",
-      "evidence_class": "mutation",
-      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_intrinsic_copy_producer_omission_mutant_is_killed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -148928,7 +150600,32 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_intrinsic_copy_producer_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -148939,9 +150636,11 @@
     },
     {
       "capability_id": "zone.entry.fixed_copy",
-      "evidence_class": "negative",
-      "test_id": "tests.test_copy_objects.EntryCopyContractTests.test_entry_copy_contract_rejects_hidden_targets_open_tails_and_malformed_values",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_copying_original_derived_value_is_detected_by_actual_clone",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -148949,7 +150648,56 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_original_face_value_mutation_is_detected_by_actual_transform",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_copy_objects.EntryCopyContractTests.test_entry_copy_contract_rejects_hidden_targets_open_tails_and_malformed_values",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -148963,6 +150711,8 @@
       "evidence_class": "negative",
       "test_id": "tests.test_copy_objects.EntryCopyContractTests.test_registered_entry_copy_handler_rejects_open_fields_and_has_no_mutation_context",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -148970,7 +150720,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -148984,6 +150735,8 @@
       "evidence_class": "negative",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -148991,7 +150744,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -149005,6 +150759,8 @@
       "evidence_class": "negative",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -149012,7 +150768,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -149020,12 +150777,62 @@
         "commander_review"
       ],
       "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_eliminate_rejects_transformed_five_mana_creature",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
     },
     {
       "capability_id": "zone.entry.fixed_copy",
       "evidence_class": "positive",
       "test_id": "tests.test_copy_objects.EntryCopyContractTests.test_intrinsic_copy_entry_has_an_independent_source_spanned_replacement_owner",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -149033,7 +150840,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -149047,6 +150855,8 @@
       "evidence_class": "positive",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -149054,7 +150864,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -149068,6 +150879,8 @@
       "evidence_class": "positive",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -149075,7 +150888,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -149089,6 +150903,8 @@
       "evidence_class": "positive",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -149096,7 +150912,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -149110,6 +150927,8 @@
       "evidence_class": "positive",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -149117,7 +150936,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -149131,6 +150951,8 @@
       "evidence_class": "positive",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -149138,7 +150960,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -149149,9 +150972,11 @@
     },
     {
       "capability_id": "zone.entry.fixed_copy",
-      "evidence_class": "privacy",
-      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -149159,7 +150984,152 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_kessig_transform_keeps_one_mana_value",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_token_copy_of_back_face_has_zero_mana_value",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_copiable_back_face_value_is_derived_from_its_cost_and_keeps_copy_exceptions",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_original_back_face_retains_front_value_without_front_cost_or_color",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -149170,9 +151140,11 @@
     },
     {
       "capability_id": "zone.entry.fixed_copy",
-      "evidence_class": "replay",
-      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -149180,7 +151152,104 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "property",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_copiable_back_face_value_is_derived_from_its_cost_and_keeps_copy_exceptions",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "property",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "property",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueTests.test_original_back_face_retains_front_value_without_front_cost_or_color",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -149194,6 +151263,8 @@
       "evidence_class": "replay",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -149201,7 +151272,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -149215,6 +151287,8 @@
       "evidence_class": "replay",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -149222,7 +151296,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -149236,6 +151311,8 @@
       "evidence_class": "replay",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -149243,7 +151320,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -149257,6 +151335,8 @@
       "evidence_class": "replay",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -149264,7 +151344,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -149278,6 +151359,8 @@
       "evidence_class": "replay",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -149285,7 +151368,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -149299,6 +151383,8 @@
       "evidence_class": "replay",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
       "official_rule_ids": [
+        "202.3b",
+        "202.3d",
         "614.12",
         "614.12a",
         "616.1c",
@@ -149306,7 +151392,8 @@
         "707.2a",
         "707.2b",
         "707.5",
-        "707.9b"
+        "707.9b",
+        "712.8c"
       ],
       "supported_profiles": [
         "traditional",
@@ -149314,6 +151401,150 @@
         "commander_review"
       ],
       "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_eliminate_rejects_transformed_five_mana_creature",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_kessig_transform_keeps_one_mana_value",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_token_copy_of_back_face_has_zero_mana_value",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_nonmodal_face_mana_value.NonmodalFaceManaValueRuntimeTests.test_actual_eliminate_rejects_transformed_five_mana_creature",
+      "official_rule_ids": [
+        "202.3b",
+        "202.3d",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "712.8c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original transforming backs retain front-derived mana value with their own empty mana cost and current colors. Actual Kessig and Herdbeast transforms, Eliminate exclusion, actual Clone and token copy value0, modal/split controls, multiplayer rollback/privacy/pending replay, and separate original/copy omission mutants. Correctness only; no new grammar or support harvest."
     },
     {
       "capability_id": "zone.entry.public_designation",
@@ -155608,5 +157839,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "8e339e7f9d056e5f2722cfc40062a033aa910364d29d33e0c869d7f9c414f5ab"
+  "fingerprint": "6b683133bc86319b508adadaae514da1816a994873c89fc593766ee9a5ebfe35"
 }
