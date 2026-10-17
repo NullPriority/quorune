@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 345,
+  "registry_version": 346,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -26855,6 +26855,104 @@
       "dependency_fail_closed_rationale": "Withdrawing the combined binding capability, normalized discard producer or APNAP placement leaves the original trigger residual before trust promotion.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Inverting only the controller predicate retains normal admission but makes the real cycling command grow the opposing observer instead of the acting player observer; the native consequence witness rejects it.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.alternative_cost.emerge_fixed_mana",
+      "version": 1,
+      "official_rules": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One fixed ordinary mana Emerge alternative binds a selected controlled creature incarnation, pays its sacrifice through the existing cost owner, and reduces generic mana in the total cost after increases. Printed mana value and ordinary casting remain independent.",
+        "inputs": [
+          "one complete admitted fixed-mana Emerge instance on a normal creature card",
+          "a selected current controlled creature and its exact mana value",
+          "existing total cost increases, reductions, mana payment and sacrifice ownership"
+        ],
+        "outputs": [
+          "ordinary or per-selected-creature Emerge cost options",
+          "source-bound sacrifice selection with controller and incarnation validation",
+          "generic total reduction preserving colored and colorless obligations",
+          "post-mana verification before the selected sacrifice is paid"
+        ],
+        "exclusions": [
+          "qualified Emerge from qualities",
+          "multiple Emerge declarations",
+          "complex, variable, hybrid and nonmana prices",
+          "unrepresented Emerge-paid result riders",
+          "other card forms and copied or granted cost declarations"
+        ]
+      },
+      "dependencies": [
+        "casting.additional_cost.fixed_sacrifice"
+      ],
+      "implementation_components": [
+        "quorune.emerge_model.FixedManaEmergeSpec",
+        "quorune.compiler.emerge_nodes.emerge_static_node",
+        "quorune.semantic_runtime.emerge.FixedManaEmergeHandler",
+        "quorune.rules.casting.emerge_costs.compiled_emerge_spec",
+        "quorune.rules.casting.emerge_costs.emerge_base_options",
+        "quorune.rules.casting.emerge_costs.reduce_emerge_total",
+        "quorune.rules.casting.emerge_costs.finalize_emerge_selection",
+        "quorune.rules.casting.emerge_costs.validate_emerge_after_mana_payment"
+      ],
+      "positive_tests": [
+        "test_actual_emerge_uses_sacrificed_mana_value_after_cost_increases_and_casts_normally",
+        "test_actual_ordinary_cast_pays_printed_cost_and_keeps_the_creature",
+        "test_closed_emerge_cost_reduces_the_total_generic_amount_and_preserves_other_obligations",
+        "test_emerge_cost_node_has_original_span_closed_handler_and_complete_card_boundary",
+        "test_original_emerge_cards_need_complete_result_bodies_and_normal_registration"
+      ],
+      "negative_tests": [
+        "test_emerge_unknown_costs_forms_siblings_and_withdrawn_owners_fail_closed",
+        "test_original_emerge_cards_need_complete_result_bodies_and_normal_registration"
+      ],
+      "interaction_tests": [
+        "test_actual_chosen_creature_can_tap_for_mana_then_be_sacrificed_to_its_owner",
+        "test_actual_copied_creature_uses_current_mana_value_and_binds_the_chosen_incarnation",
+        "test_actual_emerge_uses_sacrificed_mana_value_after_cost_increases_and_casts_normally",
+        "test_actual_ordinary_cast_pays_printed_cost_and_keeps_the_creature"
+      ],
+      "multiplayer_tests": [
+        "test_actual_chosen_creature_can_tap_for_mana_then_be_sacrificed_to_its_owner",
+        "test_actual_emerge_uses_sacrificed_mana_value_after_cost_increases_and_casts_normally"
+      ],
+      "privacy_tests": [
+        "test_actual_emerge_uses_sacrificed_mana_value_after_cost_increases_and_casts_normally"
+      ],
+      "replay_tests": [
+        "test_actual_chosen_creature_can_tap_for_mana_then_be_sacrificed_to_its_owner",
+        "test_actual_copied_creature_uses_current_mana_value_and_binds_the_chosen_incarnation",
+        "test_actual_emerge_uses_sacrificed_mana_value_after_cost_increases_and_casts_normally",
+        "test_actual_ordinary_cast_pays_printed_cost_and_keeps_the_creature"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Missing Emerge or existing fixed sacrifice ownership leaves the source declaration residual; malformed prices and selectors fail before mutation.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting only the total generic reduction retains source admission but removes the actual legal Wretched Gryff cast with the chosen high-mana-value creature under Sphere of Resistance.",
       "blockers": [],
       "status": "trusted"
     }

@@ -946,6 +946,23 @@ including when a typed permission waives the base mana cost. Resolution uses
 printed order, so later modes observe the results of earlier ones. The same
 public mode and cost-option fields serve offers and accepted commands.
 
+### Fixed mana Emerge alternatives
+
+`FixedManaEmergeSpec` declares one ordinary mana alternative for a normal
+creature card. The cost owner binds each option to a selected controlled
+creature's current incarnation and mana value. The existing sacrifice-cost
+owner retains selection, payment, owner-zone routing and committed events.
+
+Emerge reduces generic mana in the total after cost increases; excess reduction
+cannot pay colored or colorless obligations. A selected creature may tap for
+mana before being sacrificed. Validation after mana payment requires that same
+incarnation to remain available. Offers and submissions share the selected
+option and existing sacrifice-card fields, including their ordinary aliases.
+Copied characteristics supply current mana value. An ordinary cast retains its
+printed cost, mana value and cast triggers without an Emerge sacrifice.
+Complex prices, qualified sacrifices, other card forms and unresolved
+Emerge-paid result bodies remain outside this family.
+
 ### Typed token children in modal branches
 
 `compiler/modal_token_branches.py` adapts the existing typed token-node compiler

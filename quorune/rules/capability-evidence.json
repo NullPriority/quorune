@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "12f233db8d416bb2e9ff3f272c03b1e439ecf6bb7e56a8133a975753e044220d",
-  "declaration_source_fingerprint": "962b1ebc074953f52da32c196a5118462fb31b3f7f1c5bf8545a94f3c4155d04",
+  "registry_fingerprint": "c6ddc55d0d544ae1aed9ba037d15862e97ed26afdaeeba43d8581bd5211bc538",
+  "declaration_source_fingerprint": "e487c8fb35d565a5288d5702e7916e35f96eef440dc41ba6669a40b68b35af4d",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -16007,6 +16007,512 @@
         "commander_review"
       ],
       "applicability_note": "Generic modal face witnesses prove selected cost, selected permanent destination and named-face implicit replay provenance. A trusted-only unsupported sorcery half is hidden and rejected before mutation while its ordinary permanent half remains available."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeRuntimeTests.test_actual_chosen_creature_can_tap_for_mana_then_be_sacrificed_to_its_owner",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual ordinary and Emerge casts remain distinct. A foreign-owned controlled Llanowar Elves legally taps for mana before sacrifice to its owner. Actual Clone copies Glass Golem mana value rather than its physical printed value; the selected sacrifice remains correlated, including cost_cards compatibility. Original fifteen-card normal-registration table excludes all unresolved siblings."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeRuntimeTests.test_actual_copied_creature_uses_current_mana_value_and_binds_the_chosen_incarnation",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual ordinary and Emerge casts remain distinct. A foreign-owned controlled Llanowar Elves legally taps for mana before sacrifice to its owner. Actual Clone copies Glass Golem mana value rather than its physical printed value; the selected sacrifice remains correlated, including cost_cards compatibility. Original fifteen-card normal-registration table excludes all unresolved siblings."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeRuntimeTests.test_actual_emerge_uses_sacrificed_mana_value_after_cost_increases_and_casts_normally",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Emerge uses the selected current creature mana value to reduce the total after Sphere cost increases; Autochthon Wurm and Glass Golem prices remain distinct, source registration is normal, invalid principal and sacrifice choices roll back, and pending casts retain save/load and replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeRuntimeTests.test_actual_ordinary_cast_pays_printed_cost_and_keeps_the_creature",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual ordinary and Emerge casts remain distinct. A foreign-owned controlled Llanowar Elves legally taps for mana before sacrifice to its owner. Actual Clone copies Glass Golem mana value rather than its physical printed value; the selected sacrifice remains correlated, including cost_cards compatibility. Original fifteen-card normal-registration table excludes all unresolved siblings."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeRuntimeTests.test_actual_chosen_creature_can_tap_for_mana_then_be_sacrificed_to_its_owner",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual ordinary and Emerge casts remain distinct. A foreign-owned controlled Llanowar Elves legally taps for mana before sacrifice to its owner. Actual Clone copies Glass Golem mana value rather than its physical printed value; the selected sacrifice remains correlated, including cost_cards compatibility. Original fifteen-card normal-registration table excludes all unresolved siblings."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeRuntimeTests.test_actual_emerge_uses_sacrificed_mana_value_after_cost_increases_and_casts_normally",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Emerge uses the selected current creature mana value to reduce the total after Sphere cost increases; Autochthon Wurm and Glass Golem prices remain distinct, source registration is normal, invalid principal and sacrifice choices roll back, and pending casts retain save/load and replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeRuntimeTests.test_omitted_emerge_reduction_is_detected_without_changing_source_admission",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Emerge uses the selected current creature mana value to reduce the total after Sphere cost increases; Autochthon Wurm and Glass Golem prices remain distinct, source registration is normal, invalid principal and sacrifice choices roll back, and pending casts retain save/load and replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeCompilerTests.test_emerge_unknown_costs_forms_siblings_and_withdrawn_owners_fail_closed",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Emerge uses the selected current creature mana value to reduce the total after Sphere cost increases; Autochthon Wurm and Glass Golem prices remain distinct, source registration is normal, invalid principal and sacrifice choices roll back, and pending casts retain save/load and replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeRuntimeTests.test_original_emerge_cards_need_complete_result_bodies_and_normal_registration",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual ordinary and Emerge casts remain distinct. A foreign-owned controlled Llanowar Elves legally taps for mana before sacrifice to its owner. Actual Clone copies Glass Golem mana value rather than its physical printed value; the selected sacrifice remains correlated, including cost_cards compatibility. Original fifteen-card normal-registration table excludes all unresolved siblings."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeCompilerTests.test_emerge_cost_node_has_original_span_closed_handler_and_complete_card_boundary",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Emerge uses the selected current creature mana value to reduce the total after Sphere cost increases; Autochthon Wurm and Glass Golem prices remain distinct, source registration is normal, invalid principal and sacrifice choices roll back, and pending casts retain save/load and replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeModelTests.test_closed_emerge_cost_reduces_the_total_generic_amount_and_preserves_other_obligations",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Emerge uses the selected current creature mana value to reduce the total after Sphere cost increases; Autochthon Wurm and Glass Golem prices remain distinct, source registration is normal, invalid principal and sacrifice choices roll back, and pending casts retain save/load and replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeRuntimeTests.test_actual_emerge_uses_sacrificed_mana_value_after_cost_increases_and_casts_normally",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Emerge uses the selected current creature mana value to reduce the total after Sphere cost increases; Autochthon Wurm and Glass Golem prices remain distinct, source registration is normal, invalid principal and sacrifice choices roll back, and pending casts retain save/load and replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeRuntimeTests.test_actual_ordinary_cast_pays_printed_cost_and_keeps_the_creature",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual ordinary and Emerge casts remain distinct. A foreign-owned controlled Llanowar Elves legally taps for mana before sacrifice to its owner. Actual Clone copies Glass Golem mana value rather than its physical printed value; the selected sacrifice remains correlated, including cost_cards compatibility. Original fifteen-card normal-registration table excludes all unresolved siblings."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeRuntimeTests.test_original_emerge_cards_need_complete_result_bodies_and_normal_registration",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual ordinary and Emerge casts remain distinct. A foreign-owned controlled Llanowar Elves legally taps for mana before sacrifice to its owner. Actual Clone copies Glass Golem mana value rather than its physical printed value; the selected sacrifice remains correlated, including cost_cards compatibility. Original fifteen-card normal-registration table excludes all unresolved siblings."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeRuntimeTests.test_actual_emerge_uses_sacrificed_mana_value_after_cost_increases_and_casts_normally",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Emerge uses the selected current creature mana value to reduce the total after Sphere cost increases; Autochthon Wurm and Glass Golem prices remain distinct, source registration is normal, invalid principal and sacrifice choices roll back, and pending casts retain save/load and replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeCompilerTests.test_emerge_unknown_costs_forms_siblings_and_withdrawn_owners_fail_closed",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Emerge uses the selected current creature mana value to reduce the total after Sphere cost increases; Autochthon Wurm and Glass Golem prices remain distinct, source registration is normal, invalid principal and sacrifice choices roll back, and pending casts retain save/load and replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeModelTests.test_closed_emerge_cost_reduces_the_total_generic_amount_and_preserves_other_obligations",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Emerge uses the selected current creature mana value to reduce the total after Sphere cost increases; Autochthon Wurm and Glass Golem prices remain distinct, source registration is normal, invalid principal and sacrifice choices roll back, and pending casts retain save/load and replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeRuntimeTests.test_actual_chosen_creature_can_tap_for_mana_then_be_sacrificed_to_its_owner",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual ordinary and Emerge casts remain distinct. A foreign-owned controlled Llanowar Elves legally taps for mana before sacrifice to its owner. Actual Clone copies Glass Golem mana value rather than its physical printed value; the selected sacrifice remains correlated, including cost_cards compatibility. Original fifteen-card normal-registration table excludes all unresolved siblings."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeRuntimeTests.test_actual_copied_creature_uses_current_mana_value_and_binds_the_chosen_incarnation",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual ordinary and Emerge casts remain distinct. A foreign-owned controlled Llanowar Elves legally taps for mana before sacrifice to its owner. Actual Clone copies Glass Golem mana value rather than its physical printed value; the selected sacrifice remains correlated, including cost_cards compatibility. Original fifteen-card normal-registration table excludes all unresolved siblings."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeRuntimeTests.test_actual_emerge_uses_sacrificed_mana_value_after_cost_increases_and_casts_normally",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Emerge uses the selected current creature mana value to reduce the total after Sphere cost increases; Autochthon Wurm and Glass Golem prices remain distinct, source registration is normal, invalid principal and sacrifice choices roll back, and pending casts retain save/load and replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeRuntimeTests.test_actual_ordinary_cast_pays_printed_cost_and_keeps_the_creature",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual ordinary and Emerge casts remain distinct. A foreign-owned controlled Llanowar Elves legally taps for mana before sacrifice to its owner. Actual Clone copies Glass Golem mana value rather than its physical printed value; the selected sacrifice remains correlated, including cost_cards compatibility. Original fifteen-card normal-registration table excludes all unresolved siblings."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeRuntimeTests.test_actual_copied_creature_uses_current_mana_value_and_binds_the_chosen_incarnation",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual ordinary and Emerge casts remain distinct. A foreign-owned controlled Llanowar Elves legally taps for mana before sacrifice to its owner. Actual Clone copies Glass Golem mana value rather than its physical printed value; the selected sacrifice remains correlated, including cost_cards compatibility. Original fifteen-card normal-registration table excludes all unresolved siblings."
+    },
+    {
+      "capability_id": "casting.alternative_cost.emerge_fixed_mana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_emerge.FixedEmergeRuntimeTests.test_actual_emerge_uses_sacrificed_mana_value_after_cost_increases_and_casts_normally",
+      "official_rule_ids": [
+        "118.9",
+        "202.3",
+        "400.7",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.119a",
+        "702.119c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Emerge uses the selected current creature mana value to reduce the total after Sphere cost increases; Autochthon Wurm and Glass Golem prices remain distinct, source registration is normal, invalid principal and sacrifice choices roll back, and pending casts retain save/load and replay."
     },
     {
       "capability_id": "casting.alternative_cost.fixed_public",
@@ -166100,5 +166606,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "4419cb3d8418af4f20decbdaf0636d16ed08c3b2037fdd7262cb6eb17361bb8f"
+  "fingerprint": "6ccea423fd140d0c57a0e23b8abf548867542852cac1eef59ccd48f99694173d"
 }

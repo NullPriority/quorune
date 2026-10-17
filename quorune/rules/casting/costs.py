@@ -25,6 +25,7 @@ from ...compiled_flashback import (
 from ...compiled_kicker import compiled_fixed_mana_kicker_spec
 from .paid_entry_copy_costs import with_paid_entry_copy_cost_schema
 from .multikicker_costs import with_multikicker_cost_schema
+from .emerge_costs import emerge_base_options, reduce_emerge_total, finalize_emerge_selection
 from ...compiled_bestow import compiled_fixed_mana_bestow_spec
 from ...convoke import (
     CONVOKE_PAYMENT_SYMBOLS,
@@ -536,6 +537,8 @@ def _initial_options(
         alternative_base=alternative_base,
         suppress_source_costs=suppress_source_costs,
     )
+    base.extend(emerge_base_options(host, seat, card, commander_tax=commander_tax,
+        enabled=not (cast_without_mana or suppress_source_costs or alternative_base is not None)))
     for raw in [] if cast_without_mana else schema.get("alternate_costs", []):
         alternative = dict(raw)
         if (
@@ -1416,6 +1419,7 @@ def _finalize_option(
         program=program,
         cast_type_line=cast_type_line,
     )
+    reduce_emerge_total(host, seat, card, option)
     exile_spec = option.get("exile_from_hand")
     if isinstance(exile_spec, Mapping):
         candidates = host._exile_cost_candidates(seat, card, exile_spec)
@@ -1471,6 +1475,8 @@ def _finalize_option(
         hint=hint,
         choice_schema=choice_schema,
     ):
+        return None
+    if not finalize_emerge_selection(host, seat, card, option, response, choice_schema, hint=hint):
         return None
     if isinstance(exile_spec, Mapping):
         choice_schema["exile_card"] = {

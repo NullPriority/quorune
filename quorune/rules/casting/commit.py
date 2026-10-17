@@ -1417,6 +1417,11 @@ def _commit_cast_costs_and_stack(
         exclude_sources={card.object_id for card in tap_cards},
         spend_context=host._spell_mana_spend_context(proposal.type_line),
     )
+    from .emerge_costs import validate_emerge_after_mana_payment
+    try:
+        validate_emerge_after_mana_payment(host, proposal.seat, card, selected_option)
+    except ValueError as exc:
+        raise CastProposalError(str(exc), reason='stale_emerge_sacrifice') from exc
     _commit_tap_costs(host, proposal, card)
     costs = _commit_additional_costs(
         host, proposal, response, card, selected_option

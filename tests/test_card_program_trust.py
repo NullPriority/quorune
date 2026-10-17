@@ -291,6 +291,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "casting.flashback.fixed_mana",
                 "casting.kicker.fixed_mana",
                 "casting.multikicker.fixed_mana",
+                "casting.alternative_cost.emerge_fixed_mana",
                 "casting.lifecycle.fixed_public",
                 "casting.madness.trigger",
                 "casting.megamorph.fixed_mana",

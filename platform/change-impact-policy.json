@@ -4937,6 +4937,26 @@
         "test_whole_hand_discard",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "fixed-mana-emerge-cost-contract",
+      "patterns": [
+        "quorune/emerge_model.py",
+        "quorune/compiler/emerge_nodes.py",
+        "quorune/compiler/closed_static_nodes.py",
+        "quorune/semantic_runtime/emerge.py",
+        "quorune/rules/casting/emerge_costs.py",
+        "tests/test_fixed_emerge.py",
+        "tests/fixtures/fixed-emerge-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_emerge",
+        "test_fixed_spell_cost_reductions",
+        "test_casting_activation_proposal_equivalence",
+        "test_casting_payment_keywords",
+        "test_counted_spell_additional_costs",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [
