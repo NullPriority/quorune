@@ -1,0 +1,351 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_intrinsic_mana_layer_correction",
+  "source": "Pinned original Oracle/rulings with exact shared compact-fixture rows reused",
+  "cards": [
+    {
+      "oracle_id": "e996cd67-739c-40f4-b276-0042acf26c71",
+      "name": "Dryad Arbor",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land Creature — Forest Dryad",
+      "oracle_text": "(This land isn't a spell, it's affected by summoning sickness, and it has \"{T}: Add {G}.\")",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "name": "Humble",
+      "mana_cost": "{1}{W}",
+      "type_line": "Instant",
+      "oracle_text": "Until end of turn, target creature loses all abilities and has base power and toughness 0/1.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Yavimaya, Cradle of Growth",
+      "oracle_id": "8dd5f5af-d2d8-4356-8617-8381081b930c",
+      "oracle_text": "Each land is a Forest in addition to its other land types.",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2021-06-18",
+      "toughness": null,
+      "type_line": "Legendary Land"
+    },
+    {
+      "oracle_id": "db6174d7-211d-4817-b8e4-8384594c83f9",
+      "name": "Urborg, Tomb of Yawgmoth",
+      "mana_cost": "",
+      "type_line": "Legendary Land",
+      "oracle_text": "Each land is a Swamp in addition to its other land types.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "B"
+      ],
+      "layout": "normal",
+      "released_at": "2021-03-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 0.0
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "name": "Clone",
+      "mana_cost": "{3}{U}",
+      "type_line": "Creature — Shapeshifter",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield.",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-07-19",
+      "faces": [],
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "e996cd67-739c-40f4-b276-0042acf26c71",
+      "published_at": "2011-09-22",
+      "source": "wotc",
+      "comment": "If Dryad Arbor is changed into another basic land type (such as by Sea's Claim), it continues to be a creature and a Dryad."
+    },
+    {
+      "oracle_id": "e996cd67-739c-40f4-b276-0042acf26c71",
+      "published_at": "2013-06-07",
+      "source": "wotc",
+      "comment": "Although originally printed with a characteristic-defining ability that defined its color, this card now has a color indicator. This color indicator can't be affected by text-changing effects (such as the one created by Crystal Spray), although color-changing effects can still overwrite it."
+    },
+    {
+      "oracle_id": "e996cd67-739c-40f4-b276-0042acf26c71",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If Dryad Arbor is changed into another basic land type, it continues to be a green Dryad creature."
+    },
+    {
+      "oracle_id": "e996cd67-739c-40f4-b276-0042acf26c71",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Due to its color indicator (appearing to the left of its type line), Dryad Arbor is green. Color indicators apply in all zones, not just the battlefield."
+    },
+    {
+      "oracle_id": "e996cd67-739c-40f4-b276-0042acf26c71",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Dryad Arbor is played as a land. It doesn't use the stack, it's not a spell, it can't be responded to, it has no mana cost, and it counts as your land play for the turn."
+    },
+    {
+      "oracle_id": "e996cd67-739c-40f4-b276-0042acf26c71",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Forest is a land type and Dryad is a creature type."
+    },
+    {
+      "oracle_id": "e996cd67-739c-40f4-b276-0042acf26c71",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If a Dryad Arbor gains flash, or you have the ability to play Dryad Arbor as though it had flash (due to Teferi, Mage of Zhalfir or Scout's Warning, for example), you can ignore the normal timing rules for when during your turn you can play a land, but not any other restrictions. You can't play Dryad Arbor during another player's turn, and you can't play Dryad Arbor if you don't have any land plays remaining."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble doesn’t counter abilities that have already triggered or been activated. In particular, casting this spell won’t stop a creature’s ability that says “At the beginning of your upkeep,” “When this creature enters the battlefield,” or similar from triggering."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble overwrites all previous effects that set the creature’s base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Humble resolves will overwrite this effect."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Effects that modify a creature’s power and/or toughness, such as the effect of Seal of Strength, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness and effects that switch its power and toughness."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "If the affected creature gains an ability after Humble resolves, it will keep that ability."
+    },
+    {
+      "oracle_id": "8dd5f5af-d2d8-4356-8617-8381081b930c",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Land cards not on the battlefield aren't Forests while Yavimaya is on the battlefield."
+    },
+    {
+      "oracle_id": "8dd5f5af-d2d8-4356-8617-8381081b930c",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Yavimaya, Cradle of Growth isn't a Forest while it's not on the battlefield."
+    },
+    {
+      "oracle_id": "8dd5f5af-d2d8-4356-8617-8381081b930c",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Yavimaya's ability causes each land on the battlefield to have the land type Forest. Any land that's a Forest has the ability \"{T}: Add {G}.\" Nothing else changes about those lands, including their names, other subtypes, and whether they're legendary, basic, or snow."
+    },
+    {
+      "oracle_id": "db6174d7-211d-4817-b8e4-8384594c83f9",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Urborg's ability causes each land on the battlefield to have the land type Swamp. Any land that's a Swamp has the ability \"{T}: Add {B}.\" Nothing else changes about those lands, including their names, other subtypes, other abilities, and whether they're legendary, basic, or snow."
+    },
+    {
+      "oracle_id": "db6174d7-211d-4817-b8e4-8384594c83f9",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If an effect such as that of Magus of the Moon causes Urborg to lose its abilities by setting it to a basic land type not in addition to its other types, it won't turn lands into Swamps, no matter in what order those effects started to apply."
+    },
+    {
+      "oracle_id": "db6174d7-211d-4817-b8e4-8384594c83f9",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Urborg, Tomb of Yawgmoth isn't a Swamp while it's not on the battlefield."
+    },
+    {
+      "oracle_id": "db6174d7-211d-4817-b8e4-8384594c83f9",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Land cards not on the battlefield aren't Swamps while Urborg is on the battlefield."
+    }
+  ]
+}

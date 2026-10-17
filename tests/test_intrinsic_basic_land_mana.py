@@ -75,9 +75,15 @@ class _IntrinsicQueryHost:
         )
 
     def _effective_card_data(self, _card):
+        from quorune.characteristic_evaluation import type_parts
+        from quorune.continuous_effects import CharacteristicState,evaluate_continuous_effects
+        kinds,subtypes,supertypes=type_parts(self.type_line)
+        effective=evaluate_continuous_effects(CharacteristicState(name='Intrinsic query',
+            card_types=kinds,subtypes=subtypes,supertypes=supertypes,
+            activated_abilities=list(self.abilities)),()).characteristics
         return {
             "type_line": self.type_line,
-            "activated_abilities": self.abilities,
+            "activated_abilities": effective['activated_abilities'],
         }
 
 
@@ -287,11 +293,12 @@ class IntrinsicBasicLandManaTests(unittest.TestCase):
             )
 
         assert_runtime_binding()
-        specs = intrinsic_basic_land_mana_specs(card.type_line)
+        import quorune.continuous_effects as continuous_owner
+        original=continuous_owner.intrinsic_land_mana_abilities
         with patch.object(
-            activation_query,
-            "intrinsic_basic_land_mana_specs",
-            return_value=specs[:-1],
+            continuous_owner,
+            "intrinsic_land_mana_abilities",
+            side_effect=lambda *args,**kwargs: original(*args,**kwargs)[:-1],
         ):
             with self.assertRaises(AssertionError):
                 assert_runtime_binding()
