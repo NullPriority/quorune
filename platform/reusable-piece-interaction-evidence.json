@@ -15286,6 +15286,81 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual target-free overloaded Electrickery affects opposing Gladecover Scout despite hexproof, but Silver Knight protection still prevents its red damage. The friendly creature is excluded and a later flash creature is included through the ordinary live-set damage owner; rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_native_reverberate_keeps_cleaved_target_scope_and_other_remaining_restrictions",
+      "piece_ids": [
+        "capability.casting.alternative_cost.cleave_fixed_mana",
+        "capability.stack.copy.fixed_instant_or_sorcery"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.cleave_fixed_mana",
+        "stack.copy.fixed_instant_or_sorcery"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native Reverberate copies actual cleaved Alchemist Retrieval. Both use the paid broader controller scope, the copy can choose a different opponent creature, and nonland/cardinality/principal restrictions remain enforced. Both objects return to their own owners hands with no extra cast; pending load and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_target_free_winged_portent_variants_count_live_creatures_and_keep_draws_private",
+      "piece_ids": [
+        "capability.casting.alternative_cost.cleave_fixed_mana",
+        "capability.quantity_expression.public_query_effect_amount"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.cleave_fixed_mana",
+        "quantity_expression.public_query_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normal and paid target-free Winged Portent sample live controlled creatures after an actual flash creature enters. The normal body draws for the sole flyer and Cleave draws for all three creatures; all three opponents remain unable to see the drawn refs, with pending load and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_target_free_winged_portent_variants_count_live_creatures_and_keep_draws_private",
+      "piece_ids": [
+        "capability.casting.alternative_cost.cleave_fixed_mana",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.cleave_fixed_mana",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Both nontargeted Winged Portent variants pay their own source price, keep no modes and draw the correctly queried private quantity. Actual flash entry precedes resolution, all nonowner projections exclude drawn cards, and full replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_cleaved_lunar_rejection_revalidates_departed_target_and_does_not_draw",
+      "piece_ids": [
+        "capability.casting.alternative_cost.cleave_fixed_mana",
+        "capability.target.revalidate_resolution"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.cleave_fixed_mana",
+        "target.revalidate_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual cleaved Lunar Rejection targets a non-Wolf creature. Native Unsummon removes that target before resolution; the entire spell does not resolve and the following private draw does not occur. Pending load and complete replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_free_base_cannot_select_cleaved_body_and_cost_increase_applies_to_cleave",
+      "piece_ids": [
+        "capability.casting.alternative_cost.cleave_fixed_mana",
+        "capability.casting.cost.modifier.fixed_query"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.cleave_fixed_mana",
+        "casting.cost.modifier.fixed_query"
+      ],
+      "interaction_order": 2,
+      "assertion": "The generic free normal option keeps Alchemist Retrieval controller restriction and still pays Sphere increase. The Cleave alternative pays its distinct base plus Sphere and admits the opponent creature. A normal free price cannot select the paid body; rollback, pending load and replay agree."
     }
   ]
 }

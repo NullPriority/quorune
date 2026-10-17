@@ -12765,6 +12765,926 @@
       "applicability_note": "Generic modal face witnesses prove selected cost, selected permanent destination and named-face implicit replay provenance. A trusted-only unsupported sorcery half is hidden and rejected before mutation while its ordinary permanent half remains available."
     },
     {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_actual_fierce_retribution_cleave_targets_nonattacker_with_empty_mode_list",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed bracket-derived normal/paid execution, independent target schemas, source spans and fingerprints. Actual Fierce Retribution admits nonattacker only for the paid alternative, keeps no modes and printed mana value, and preserves four-seat principal/privacy/underpayment rollback plus pending load/full replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_cleaved_lunar_rejection_revalidates_departed_target_and_does_not_draw",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_free_base_cannot_select_cleaved_body_and_cost_increase_applies_to_cleave",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_native_reverberate_keeps_cleaved_target_scope_and_other_remaining_restrictions",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_normal_retrieval_keeps_controller_restriction_and_printed_price",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_target_free_winged_portent_variants_count_live_creatures_and_keep_draws_private",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_actual_fierce_retribution_cleave_targets_nonattacker_with_empty_mode_list",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed bracket-derived normal/paid execution, independent target schemas, source spans and fingerprints. Actual Fierce Retribution admits nonattacker only for the paid alternative, keeps no modes and printed mana value, and preserves four-seat principal/privacy/underpayment rollback plus pending load/full replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_cleaved_lunar_rejection_revalidates_departed_target_and_does_not_draw",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_free_base_cannot_select_cleaved_body_and_cost_increase_applies_to_cleave",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_native_reverberate_keeps_cleaved_target_scope_and_other_remaining_restrictions",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_normal_retrieval_keeps_controller_restriction_and_printed_price",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_target_free_winged_portent_variants_count_live_creatures_and_keep_draws_private",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveModelCompilerTests.test_cleave_pair_producer_omission_fails_independent_positive_contract",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed bracket-derived normal/paid execution, independent target schemas, source spans and fingerprints. Actual Fierce Retribution admits nonattacker only for the paid alternative, keeps no modes and printed mana value, and preserves four-seat principal/privacy/underpayment rollback plus pending load/full replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_cleave_price_omission_preserves_admission_but_changes_native_payment",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_missing_cleaved_lowering_prevents_false_whole_source_admission",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveModelCompilerTests.test_cleave_keeps_two_independent_target_schemas_and_complete_source_spans",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed bracket-derived normal/paid execution, independent target schemas, source spans and fingerprints. Actual Fierce Retribution admits nonattacker only for the paid alternative, keeps no modes and printed mana value, and preserves four-seat principal/privacy/underpayment rollback plus pending load/full replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveModelCompilerTests.test_cleave_spec_has_closed_price_and_distinct_body_fingerprints",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed bracket-derived normal/paid execution, independent target schemas, source spans and fingerprints. Actual Fierce Retribution admits nonattacker only for the paid alternative, keeps no modes and printed mana value, and preserves four-seat principal/privacy/underpayment rollback plus pending load/full replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_all_original_cleave_sources_require_both_programs_and_normal_registration",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_cleaved_lunar_rejection_revalidates_departed_target_and_does_not_draw",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_free_base_cannot_select_cleaved_body_and_cost_increase_applies_to_cleave",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_missing_cleaved_lowering_prevents_false_whole_source_admission",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_native_reverberate_keeps_cleaved_target_scope_and_other_remaining_restrictions",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_normal_retrieval_keeps_controller_restriction_and_printed_price",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveModelCompilerTests.test_cleave_keeps_two_independent_target_schemas_and_complete_source_spans",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed bracket-derived normal/paid execution, independent target schemas, source spans and fingerprints. Actual Fierce Retribution admits nonattacker only for the paid alternative, keeps no modes and printed mana value, and preserves four-seat principal/privacy/underpayment rollback plus pending load/full replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveModelCompilerTests.test_cleave_spec_has_closed_price_and_distinct_body_fingerprints",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed bracket-derived normal/paid execution, independent target schemas, source spans and fingerprints. Actual Fierce Retribution admits nonattacker only for the paid alternative, keeps no modes and printed mana value, and preserves four-seat principal/privacy/underpayment rollback plus pending load/full replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_actual_fierce_retribution_cleave_targets_nonattacker_with_empty_mode_list",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed bracket-derived normal/paid execution, independent target schemas, source spans and fingerprints. Actual Fierce Retribution admits nonattacker only for the paid alternative, keeps no modes and printed mana value, and preserves four-seat principal/privacy/underpayment rollback plus pending load/full replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_all_original_cleave_sources_require_both_programs_and_normal_registration",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_cleaved_lunar_rejection_revalidates_departed_target_and_does_not_draw",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_free_base_cannot_select_cleaved_body_and_cost_increase_applies_to_cleave",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_native_reverberate_keeps_cleaved_target_scope_and_other_remaining_restrictions",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_normal_retrieval_keeps_controller_restriction_and_printed_price",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_target_free_winged_portent_variants_count_live_creatures_and_keep_draws_private",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_actual_fierce_retribution_cleave_targets_nonattacker_with_empty_mode_list",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed bracket-derived normal/paid execution, independent target schemas, source spans and fingerprints. Actual Fierce Retribution admits nonattacker only for the paid alternative, keeps no modes and printed mana value, and preserves four-seat principal/privacy/underpayment rollback plus pending load/full replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_target_free_winged_portent_variants_count_live_creatures_and_keep_draws_private",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_actual_fierce_retribution_cleave_targets_nonattacker_with_empty_mode_list",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed bracket-derived normal/paid execution, independent target schemas, source spans and fingerprints. Actual Fierce Retribution admits nonattacker only for the paid alternative, keeps no modes and printed mana value, and preserves four-seat principal/privacy/underpayment rollback plus pending load/full replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_cleaved_lunar_rejection_revalidates_departed_target_and_does_not_draw",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_free_base_cannot_select_cleaved_body_and_cost_increase_applies_to_cleave",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_native_reverberate_keeps_cleaved_target_scope_and_other_remaining_restrictions",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_normal_retrieval_keeps_controller_restriction_and_printed_price",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.alternative_cost.cleave_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_target_free_winged_portent_variants_count_live_creatures_and_keep_draws_private",
+      "official_rule_ids": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual strict-only normal/paid Cleave choices preserve both schemas and empty mode lists. Evidence includes normal controller restrictions, native Reverberate copy retargeting within retained nonland restrictions, live target-free Winged Portent counts with private draws, Lunar Rejection target loss suppressing subsequent draw, free-base/Sphere payment contrast, twelve-original seven-complete paired registration, missing-derived lowering and admission-preserving price omission."
+    },
+    {
       "capability_id": "casting.alternative_cost.emerge_fixed_mana",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_emerge.FixedEmergeRuntimeTests.test_actual_chosen_creature_can_tap_for_mana_then_be_sacrificed_to_its_owner",

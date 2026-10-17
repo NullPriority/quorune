@@ -5080,6 +5080,29 @@
         "test_card_program_v2",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "fixed-cleave-and-shared-paid-text-spell-programs",
+      "patterns": [
+        "quorune/cleave_model.py",
+        "quorune/spell_text_variants.py",
+        "quorune/compiler/cleave_spell_faces.py",
+        "quorune/compiler/paired_spell_faces.py",
+        "quorune/rules/cleave_shapes.py",
+        "quorune/rules/spell_text_variant_shapes.py",
+        "quorune/rules/casting/cleave_costs.py",
+        "quorune/rules/casting/fixed_text_variant_costs.py",
+        "tests/test_fixed_cleave.py",
+        "tests/fixtures/fixed-cleave-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_cleave",
+        "test_fixed_overload",
+        "test_fixed_stack_spell_copy",
+        "test_card_program_v2",
+        "test_card_program_trust",
+        "test_fixed_affected_player_discards"
+      ]
     }
   ],
   "symbol_rules": [

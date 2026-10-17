@@ -407,7 +407,7 @@ class FixedOverloadRuntimeTests(unittest.TestCase):
         import inspect
         from quorune.rules.casting import proposal as owner
         source = inspect.getsource(owner._cast_program_and_cost)
-        line = 'program = select_overload_proposal_program(host, card, program, selected.to_dict())'
+        line = 'program = select_text_variant_proposal_program(host, card, program, selected.to_dict())'
         self.assertEqual(1, source.count(line))
         namespace = dict(vars(owner))
         exec(source.replace(line, 'program = program'), namespace)

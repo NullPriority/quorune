@@ -983,6 +983,28 @@ descriptors, copy choices and historical continuations retain their format.
 Variable, nonmana, zero-priced, repeated or granted instances, permanent spells
 and unrepresented sibling bodies remain residual.
 
+### Fixed Cleave text variants
+
+`FixedManaCleaveSpec` binds one fixed alternative price to independently closed
+normal and bracket-removed bodies. Bracket derivation is compiler-only and
+rejects malformed, nested or empty brackets. All body paragraphs participate;
+an unknown sibling prevents the pair from closing.
+
+Overload and Cleave share immutable body fingerprints, paired-program assembly,
+leaf closure and price/program correlation through the closed
+`SpellTextVariantKind` values. Their source productions and serialized spell
+choices remain distinct. Cleave keeps each body's actual target schema, so
+both can be targeted or both can have no targets. The selected program has an
+empty mode list and its complete-source certificate remains mandatory.
+
+The normal price retains bracketed restrictions. Paying Cleave selects the
+derived program before target validation and rechecks it at commit. Copies
+retain that program and its remaining restrictions. Existing target
+revalidation, live quantity queries, private draws, total-cost modifiers and
+zone owners execute the typed effects. A free normal base cannot select the
+broader Cleave body. Unclosed bodies, complex or variable costs, repeated
+instances and unsupported source forms remain residual.
+
 ### Fixed Overload text variants
 
 `FixedManaOverloadSpec` binds one fixed alternative price to fingerprints of

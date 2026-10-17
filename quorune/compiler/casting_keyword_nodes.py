@@ -13,6 +13,9 @@ from .conspire_nodes import conspire_static_node
 
 
 def casting_keyword_node(*, record, face_id, printed_power, **values):
+    if values['mechanics'] == ('cleave',):
+        from .cleave_spell_faces import residual_cleave_keyword_node
+        return residual_cleave_keyword_node(**values)
     if values['mechanics'] == ('overload',):
         from .overload_spell_faces import residual_overload_keyword_node
         return residual_overload_keyword_node(**values)

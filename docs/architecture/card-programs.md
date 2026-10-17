@@ -51,6 +51,12 @@ current. The cast selects the derived program through its validated cost
 option, preserving ordinary spell characteristics and an empty mode list.
 Copies retain that selected program through the existing stack-copy owner.
 
+Fixed Cleave uses the same source-correlated program boundary with its own
+bracket-derived body, price and semantic identity. Each form retains its actual
+target schema; this includes variants where both forms are targeted or both are
+target-free. Neither paid-text choice creates a printed modal choice. Shared
+validation retains the existing Overload keys and payload shape.
+
 A current capability-bound counted search supersedes a reviewed search at the
 same key only when source hashes, event, costs, targets and result semantics
 match. The adapter records the superseded key. Persisted reviewed programs

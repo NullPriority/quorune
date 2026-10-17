@@ -9,6 +9,13 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+`compiler/cleave_spell_faces.py` derives normal and bracket-removed forms,
+including ordinary ordered body paragraphs. It shares paired-program assembly
+with Overload while preserving each form's target schema. Balanced source
+brackets, both complete leaf closures and distinct body fingerprints are
+required before either program is admitted. An unrepresented source or sibling
+keeps the whole spell residual.
+
 `compiler/overload_spell_faces.py` derives and validates both fixed Overload
 bodies at the whole-spell boundary. The normal physical spell and its separate
 target-free derived program retain the original source identity and spans.

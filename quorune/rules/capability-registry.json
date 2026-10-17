@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 353,
+  "registry_version": 354,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -27820,6 +27820,120 @@
       "dependency_fail_closed_rationale": "Missing body/cost ownership, mismatched paired fingerprints and unclosed variants remain residual before either source is admitted.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting whole-pair compilation fails the independently specified paired-program admission and source-span witness. Omitting derived-program lowering keeps the source residual and unavailable. Native price omission changes an actual underpayment rejection; omission of paid-program selection is rejected before the wrong body executes.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.alternative_cost.cleave_fixed_mana",
+      "version": 1,
+      "official_rules": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "612.1",
+        "702.148a",
+        "702.148b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One fixed ordinary-mana Cleave price selects a complete source-correlated bracket-removed spell program without a modal choice. Both schemas close independently.",
+        "inputs": [
+          "balanced source brackets and one fixed alternative",
+          "normal and bracket-removed independently typed bodies",
+          "current whole-source certificates and paired fingerprints"
+        ],
+        "outputs": [
+          "ordinary or paid derived execution with its own targets",
+          "existing semantic key retained by canonical copies"
+        ],
+        "exclusions": [
+          "malformed/nested/empty brackets",
+          "unknown siblings or either unclosed body",
+          "variable/complex/repeated costs and other source forms"
+        ]
+      },
+      "dependencies": [
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.cleave_model.FixedManaCleaveSpec",
+        "quorune.spell_text_variants.validated_variant_mana",
+        "quorune.compiler.cleave_spell_faces.compile_fixed_cleave_face",
+        "quorune.compiler.paired_spell_faces.paired_spell_face",
+        "quorune.rules.cleave_shapes.fixed_cleave_program_is_closed",
+        "quorune.rules.casting.cleave_costs.cleave_cost_options",
+        "quorune.rules.casting.fixed_text_variant_costs.select_text_variant_proposal_program",
+        "quorune.rules.casting.cleave_costs.validate_cleave_commit"
+      ],
+      "positive_tests": [
+        "test_actual_fierce_retribution_cleave_targets_nonattacker_with_empty_mode_list",
+        "test_all_original_cleave_sources_require_both_programs_and_normal_registration",
+        "test_cleave_keeps_two_independent_target_schemas_and_complete_source_spans",
+        "test_cleave_spec_has_closed_price_and_distinct_body_fingerprints",
+        "test_cleaved_lunar_rejection_revalidates_departed_target_and_does_not_draw",
+        "test_free_base_cannot_select_cleaved_body_and_cost_increase_applies_to_cleave",
+        "test_native_reverberate_keeps_cleaved_target_scope_and_other_remaining_restrictions",
+        "test_normal_retrieval_keeps_controller_restriction_and_printed_price",
+        "test_target_free_winged_portent_variants_count_live_creatures_and_keep_draws_private"
+      ],
+      "negative_tests": [
+        "test_all_original_cleave_sources_require_both_programs_and_normal_registration",
+        "test_cleave_keeps_two_independent_target_schemas_and_complete_source_spans",
+        "test_cleave_spec_has_closed_price_and_distinct_body_fingerprints",
+        "test_cleaved_lunar_rejection_revalidates_departed_target_and_does_not_draw",
+        "test_free_base_cannot_select_cleaved_body_and_cost_increase_applies_to_cleave",
+        "test_missing_cleaved_lowering_prevents_false_whole_source_admission",
+        "test_native_reverberate_keeps_cleaved_target_scope_and_other_remaining_restrictions",
+        "test_normal_retrieval_keeps_controller_restriction_and_printed_price"
+      ],
+      "interaction_tests": [
+        "test_actual_fierce_retribution_cleave_targets_nonattacker_with_empty_mode_list",
+        "test_cleaved_lunar_rejection_revalidates_departed_target_and_does_not_draw",
+        "test_free_base_cannot_select_cleaved_body_and_cost_increase_applies_to_cleave",
+        "test_native_reverberate_keeps_cleaved_target_scope_and_other_remaining_restrictions",
+        "test_normal_retrieval_keeps_controller_restriction_and_printed_price",
+        "test_target_free_winged_portent_variants_count_live_creatures_and_keep_draws_private"
+      ],
+      "multiplayer_tests": [
+        "test_actual_fierce_retribution_cleave_targets_nonattacker_with_empty_mode_list",
+        "test_cleaved_lunar_rejection_revalidates_departed_target_and_does_not_draw",
+        "test_free_base_cannot_select_cleaved_body_and_cost_increase_applies_to_cleave",
+        "test_native_reverberate_keeps_cleaved_target_scope_and_other_remaining_restrictions",
+        "test_normal_retrieval_keeps_controller_restriction_and_printed_price",
+        "test_target_free_winged_portent_variants_count_live_creatures_and_keep_draws_private"
+      ],
+      "privacy_tests": [
+        "test_actual_fierce_retribution_cleave_targets_nonattacker_with_empty_mode_list",
+        "test_target_free_winged_portent_variants_count_live_creatures_and_keep_draws_private"
+      ],
+      "replay_tests": [
+        "test_actual_fierce_retribution_cleave_targets_nonattacker_with_empty_mode_list",
+        "test_cleaved_lunar_rejection_revalidates_departed_target_and_does_not_draw",
+        "test_free_base_cannot_select_cleaved_body_and_cost_increase_applies_to_cleave",
+        "test_native_reverberate_keeps_cleaved_target_scope_and_other_remaining_restrictions",
+        "test_normal_retrieval_keeps_controller_restriction_and_printed_price",
+        "test_target_free_winged_portent_variants_count_live_creatures_and_keep_draws_private"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Missing either body/cost/target owner, malformed brackets, repeated/complex prices and unknown sibling semantics remain residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting paired compilation fails the independently specified source-span and two-target-schema positive contract. Missing derived program lowering leaves material residuals; native price omission preserves whole admission but leaves incorrect unspent mana.",
       "blockers": [],
       "status": "trusted"
     }

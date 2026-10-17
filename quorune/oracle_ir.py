@@ -171,7 +171,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v428"
+ORACLE_COMPILER_VERSION = "oracle-ir-v429"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1088,6 +1088,13 @@ def _typed_whole_spell_face(
     capability_profile: str,
     residuals: list[OracleResidual],
 ) -> OracleFaceIR | None:
+    from .compiler.cleave_spell_faces import compile_fixed_cleave_face
+    cleave = compile_fixed_cleave_face(record=record, face_id=face_id, face_name=face_name,
+        oracle_text=oracle_text, material_rows=material_rows, effect_template=effect_template,
+        trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals)
+    if cleave is not None:
+        return cleave
     from .compiler.overload_spell_faces import compile_fixed_overload_face
     overload = compile_fixed_overload_face(record=record, face_id=face_id, face_name=face_name,
         oracle_text=oracle_text, material_rows=material_rows, effect_template=effect_template,

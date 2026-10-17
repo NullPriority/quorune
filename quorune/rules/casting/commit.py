@@ -1304,6 +1304,11 @@ def _revalidate_cast_contracts(
         validate_overload_commit(host, card, program, selected_option)
     except ValueError as exc:
         raise CastProposalError(str(exc), reason='stale_overload_variant') from exc
+    from .cleave_costs import validate_cleave_commit
+    try:
+        validate_cleave_commit(host, card, program, selected_option)
+    except ValueError as exc:
+        raise CastProposalError(str(exc), reason='stale_cleave_variant') from exc
     try:
         conspirators = conspire_tap_cards(host, proposal.seat, card, selected_option)
     except ValueError as exc:
