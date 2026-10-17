@@ -154,6 +154,24 @@ class ExternalEntryTappedRuntimeTests(unittest.TestCase):
                 binding=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
                 self.assertEqual(row['name'] in CLOSED,binding['strict_capability_ready'],binding['blockers'])
 
+    def test_dauntless_dismantler_unrepresented_target_domain_blocks_complete_admission(self):
+        from high_risk_interaction_support import _observed_piece_ids
+        from quorune.compiler.unlock_frontier import analyze_card_unlocks
+        original = self.db.lookup('Dauntless Dismantler')
+        ir = compile_oracle_card(original, capability_registry=self.registry, capability_profile='commander_review')
+        program = compile_best_available_card_program(self.db, original, semantic_registry=SemanticRegistry(),
+            capability_registry=self.registry, capability_profile='commander_review')
+        row = analyze_card_unlocks(ir, program=program, program_error=None,
+            capabilities=self.registry, profile='commander_review')
+        self.assertLessEqual({'capability.zone.entry.tapped_state.external_source',
+            'residual.target_or_choice.target-predicate'}, _observed_piece_ids(row))
+        self.assertTrue(ir.material_residuals)
+        self.assertEqual('residual', row['card_program_status'])
+        self.assertIsNone(row['hard_construction_failure'])
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+        self.assertFalse(binding['strict_capability_ready'])
+        self.assertEqual('unresolved', binding['trust_basis'])
+
     def test_actual_orb_does_not_tap_itself_but_taps_later_creature_and_token(self):
         session=self.session(61400402);engine=session.engine
         source=self.add(engine,'Orb of Dreams',zone='hand')
