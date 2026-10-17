@@ -1603,6 +1603,14 @@ queried ability grants, resolution-locked characteristic sets, and untap-step
 participation. It accepts only battlefield sets representable by one immutable
 `ObjectQuerySpec` over a source-controller, source-opponent, or global relation.
 
+`compiler/public_condition_surfaces.py` owns closed source-language aliases and
+fixed condition-subject predicates. Contracted graveyard presence, canonical
+permanent self-descriptions, and equivalent other-creature entry wording reuse
+the existing condition codecs and history facts. Colorless creatures, fixed
+nontoken color qualifiers, and nonbasic lands retain every query restriction;
+basic land subtypes do not substitute for the basic supertype. Runtime owners
+receive only the compiled descriptors.
+
 Live query and attachment keyword grants may carry fixed typed combat and
 spell-cast trigger fragments for already-represented keywords. The shared
 keyword codec binds each label to its exact fragment and consumer capability;

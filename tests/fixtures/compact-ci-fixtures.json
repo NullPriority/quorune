@@ -158,6 +158,7 @@
     "tests/fixtures/prowess-cards.json",
     "tests/fixtures/public-activation-condition-cards.json",
     "tests/fixtures/public-collection-quantity-cards.json",
+    "tests/fixtures/public-condition-surface-cards.json",
     "tests/fixtures/public-cost-subject-cards.json",
     "tests/fixtures/public-library-action-permission-cards.json",
     "tests/fixtures/public-quantity-mana-cards.json",

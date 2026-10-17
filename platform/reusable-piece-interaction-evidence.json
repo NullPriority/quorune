@@ -15825,6 +15825,81 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Wayward Angel grants one upkeep trigger. After threshold ends, its original controller still chooses the mandatory sacrifice through the authenticated canonical owner and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
+      "piece_ids": [
+        "capability.combat.attack.haste",
+        "capability.continuous.characteristics.fixed_public_state"
+      ],
+      "capability_ids": [
+        "combat.attack.haste",
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Aggressor cannot use its own Devoid colorlessness or a foreign creature for Haste. An accepted Ornithopter cast enables the native attack; accepted Unsummon removes Haste after declaration without removing the attacker; replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_rescue_reads_aura_entry_turn_and_expires_before_native_shock",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_state",
+        "capability.target.protection.hexproof_permanent"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_state",
+        "target.protection.hexproof_permanent"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Shardmage Rescue grants the old recipient Hexproof during the Aura entry turn, blocks the opponent Shock command, then loses that clause in the next turn before accepted lethal Shock; full replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_lesson_conditions_use_own_public_graveyard_and_native_exile_with_private_draw",
+      "piece_ids": [
+        "capability.card.exile.public_graveyard",
+        "capability.continuous.characteristics.fixed_public_state"
+      ],
+      "capability_ids": [
+        "card.exile.public_graveyard",
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Cremate exiles the only own Lesson; Aang loses Vigilance and First-Time Flyer loses its bonus while the foreign Lesson remains. The caster draw stays private and replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_other_entry_conditions_ignore_self_and_retain_departed_entry_through_reload",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_state",
+        "capability.zone.single_owner_move.fixed_destination"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_state",
+        "zone.single_owner_move.fixed_destination"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual casts create sealed other-creature entry history. Accepted Unsummon returns the earlier creature, but Bellowing Elk retains its current-turn keywords, with pending-load and full replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
+      "piece_ids": [
+        "capability.continuous.characteristics.devoid",
+        "capability.continuous.characteristics.fixed_public_state"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.devoid",
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Devoid source retains no colors despite its red mana cost, but excludes itself from its other-colorless-creature Haste condition; native attack and response replay."
     }
   ]
 }

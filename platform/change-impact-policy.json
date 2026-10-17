@@ -5278,6 +5278,22 @@
         "test_public_state_condition_runtime",
         "test_static_characteristic_settings"
       ]
+    },
+    {
+      "id": "public-condition-surface-contract",
+      "patterns": [
+        "quorune/compiler/public_condition_surfaces.py",
+        "quorune/compiler/public_state_queries.py",
+        "tests/test_public_condition_surfaces.py",
+        "tests/fixtures/public-condition-surface-cards.json"
+      ],
+      "test_modules": [
+        "test_public_condition_surfaces",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_fixed_public_state_characteristics",
+        "test_conditional_color_grants"
+      ]
     }
   ],
   "symbol_rules": [

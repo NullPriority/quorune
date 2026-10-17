@@ -4574,6 +4574,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/public_condition_surfaces.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/public_event_closure_variants.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "95243eb98a3d9a9ea02eada1150ef3aff7b5df443c31e2788455c2f549f4f5e7",
-  "declaration_source_fingerprint": "a5dfb36b2411c681e353f87943483b5b63ebf44b1233964c5d7e62eb6ee4b1b4",
+  "registry_fingerprint": "a11d8cf2433d7766f38e4bf7ee0a5638528297cd0e0bb9e1f1502b297d343627",
+  "declaration_source_fingerprint": "84ed3b176b7b8d5b85900c2a09da015cad8edaea8b74b9cfed5f5637058df513",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -59568,7 +59568,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -59598,7 +59603,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -59628,7 +59638,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -59658,7 +59673,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -59688,7 +59708,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -59718,7 +59743,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -59748,7 +59778,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -59778,7 +59813,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -59808,7 +59848,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -59838,7 +59883,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -59868,7 +59918,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -59898,7 +59953,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -59928,7 +59988,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -59958,7 +60023,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -59988,7 +60058,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60018,7 +60093,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60048,7 +60128,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60078,7 +60163,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60108,7 +60198,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60116,6 +60211,251 @@
         "commander_review"
       ],
       "applicability_note": "Isolated owner model for history-dependent power/keyword sealing, not additional printed observer grammar or card-action admission."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_beasts_excludes_white_tokens_and_own_permanents_after_native_bounce",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_lesson_conditions_use_own_public_graveyard_and_native_exile_with_private_draw",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_other_entry_conditions_ignore_self_and_retain_departed_entry_through_reload",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_rescue_reads_aura_entry_turn_and_expires_before_native_shock",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_skyshroud_elite_distinguishes_basic_supertype_from_basic_land_types",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_old_source_incarnation_counts_as_another_after_native_return_and_recast",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -60138,7 +60478,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60168,7 +60513,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60198,7 +60548,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60228,7 +60583,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60258,7 +60618,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60288,7 +60653,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60318,7 +60688,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60348,7 +60723,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60378,7 +60758,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60408,7 +60793,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60438,7 +60828,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60468,7 +60863,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60498,7 +60898,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60528,7 +60933,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60536,6 +60946,251 @@
         "commander_review"
       ],
       "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_beasts_excludes_white_tokens_and_own_permanents_after_native_bounce",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_lesson_conditions_use_own_public_graveyard_and_native_exile_with_private_draw",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_other_entry_conditions_ignore_self_and_retain_departed_entry_through_reload",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_rescue_reads_aura_entry_turn_and_expires_before_native_shock",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_skyshroud_elite_distinguishes_basic_supertype_from_basic_land_types",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_old_source_incarnation_counts_as_another_after_native_return_and_recast",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -60558,7 +61213,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60588,7 +61248,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60618,7 +61283,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60648,7 +61318,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60678,7 +61353,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60708,7 +61388,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60738,7 +61423,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60746,6 +61436,76 @@
         "commander_review"
       ],
       "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceCompilerTests.test_source_spans_unsupported_neighbors_and_surface_omissions",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_dropping_basic_supertype_exclusion_is_killed_by_the_actual_native_control",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -60768,7 +61528,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60798,7 +61563,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60828,7 +61598,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60858,7 +61633,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60888,7 +61668,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60918,7 +61703,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60948,7 +61738,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -60978,7 +61773,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61008,7 +61808,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61038,7 +61843,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61068,7 +61878,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61098,7 +61913,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61128,7 +61948,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61158,7 +61983,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61188,7 +62018,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61218,7 +62053,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61226,6 +62066,356 @@
         "commander_review"
       ],
       "applicability_note": "A mutation moves final characteristic sealing before complete history; the exact owner timing contract kills it."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceCompilerTests.test_aliases_reuse_exact_existing_typed_conditions_and_legacy_codecs",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceCompilerTests.test_colorless_nontoken_and_nonbasic_queries_preserve_every_qualifier",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceCompilerTests.test_source_spans_unsupported_neighbors_and_surface_omissions",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_beasts_excludes_white_tokens_and_own_permanents_after_native_bounce",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_lesson_conditions_use_own_public_graveyard_and_native_exile_with_private_draw",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_other_entry_conditions_ignore_self_and_retain_departed_entry_through_reload",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_rescue_reads_aura_entry_turn_and_expires_before_native_shock",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_skyshroud_elite_distinguishes_basic_supertype_from_basic_land_types",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_old_source_incarnation_counts_as_another_after_native_return_and_recast",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -61248,7 +62438,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61278,7 +62473,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61308,7 +62508,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61338,7 +62543,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61368,7 +62578,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61398,7 +62613,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61428,7 +62648,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61458,7 +62683,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61488,7 +62718,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61518,7 +62753,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61548,7 +62788,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61578,7 +62823,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61608,7 +62858,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61638,7 +62893,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61668,7 +62928,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61698,7 +62963,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61728,7 +62998,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61758,7 +63033,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61788,7 +63068,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61818,7 +63103,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61848,7 +63138,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61878,7 +63173,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61908,7 +63208,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61938,7 +63243,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61968,7 +63278,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -61998,7 +63313,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62028,7 +63348,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62036,6 +63361,356 @@
         "commander_review"
       ],
       "applicability_note": "Real current-trusted cast/payment/copy entry seals post-history power and resolves two observer draws, with checkpoint/load and exact replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceCompilerTests.test_aliases_reuse_exact_existing_typed_conditions_and_legacy_codecs",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceCompilerTests.test_colorless_nontoken_and_nonbasic_queries_preserve_every_qualifier",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceCompilerTests.test_source_spans_unsupported_neighbors_and_surface_omissions",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_beasts_excludes_white_tokens_and_own_permanents_after_native_bounce",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_lesson_conditions_use_own_public_graveyard_and_native_exile_with_private_draw",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_other_entry_conditions_ignore_self_and_retain_departed_entry_through_reload",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_rescue_reads_aura_entry_turn_and_expires_before_native_shock",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_skyshroud_elite_distinguishes_basic_supertype_from_basic_land_types",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_old_source_incarnation_counts_as_another_after_native_return_and_recast",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -62058,7 +63733,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62088,7 +63768,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62118,7 +63803,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62148,7 +63838,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62178,7 +63873,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62208,7 +63908,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62238,7 +63943,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62268,7 +63978,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62298,7 +64013,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62328,7 +64048,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62358,7 +64083,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62388,7 +64118,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62418,7 +64153,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62448,7 +64188,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62478,7 +64223,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62508,7 +64258,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62538,7 +64293,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62546,6 +64306,41 @@
         "commander_review"
       ],
       "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_lesson_conditions_use_own_public_graveyard_and_native_exile_with_private_draw",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -62568,7 +64363,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62598,7 +64398,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62628,7 +64433,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62658,7 +64468,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62688,7 +64503,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62718,7 +64538,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62726,6 +64551,111 @@
         "commander_review"
       ],
       "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "property",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceCompilerTests.test_aliases_reuse_exact_existing_typed_conditions_and_legacy_codecs",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "property",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceCompilerTests.test_colorless_nontoken_and_nonbasic_queries_preserve_every_qualifier",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "property",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceCompilerTests.test_source_spans_unsupported_neighbors_and_surface_omissions",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -62748,7 +64678,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62778,7 +64713,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62808,7 +64748,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62838,7 +64783,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62868,7 +64818,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62898,7 +64853,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62928,7 +64888,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62958,7 +64923,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -62988,7 +64958,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -63018,7 +64993,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -63048,7 +65028,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -63078,7 +65063,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -63108,7 +65098,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -63138,7 +65133,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -63168,7 +65168,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -63176,6 +65181,251 @@
         "commander_review"
       ],
       "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_beasts_excludes_white_tokens_and_own_permanents_after_native_bounce",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_lesson_conditions_use_own_public_graveyard_and_native_exile_with_private_draw",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_other_entry_conditions_ignore_self_and_retain_departed_entry_through_reload",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_rescue_reads_aura_entry_turn_and_expires_before_native_shock",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_skyshroud_elite_distinguishes_basic_supertype_from_basic_land_types",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_old_source_incarnation_counts_as_another_after_native_return_and_recast",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -63198,7 +65448,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -63228,7 +65483,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -63258,7 +65518,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -63288,7 +65553,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -63318,7 +65588,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -63348,7 +65623,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -63378,7 +65658,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -63386,6 +65671,111 @@
         "commander_review"
       ],
       "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_lesson_conditions_use_own_public_graveyard_and_native_exile_with_private_draw",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_rescue_reads_aura_entry_turn_and_expires_before_native_shock",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -63408,7 +65798,12 @@
         "105.2b",
         "105.2c",
         "109.2",
-        "613.1e"
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -138821,7 +141216,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -138847,7 +141245,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -138873,7 +141274,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -138899,7 +141303,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -138925,7 +141332,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -138951,7 +141361,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -138977,7 +141390,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -138985,6 +141401,93 @@
         "commander_review"
       ],
       "applicability_note": "Use one shared tapped-state predicate for exile target offers, submitted-command validation, and resolution revalidation."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_beasts_excludes_white_tokens_and_own_permanents_after_native_bounce",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_skyshroud_elite_distinguishes_basic_supertype_from_basic_land_types",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
@@ -139003,7 +141506,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -139029,7 +141535,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -139055,7 +141564,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -139081,7 +141593,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -139089,6 +141604,93 @@
         "commander_review"
       ],
       "applicability_note": "Derive combat-state targets from public current relationships in a four-player game without a seat-specific target grammar."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_beasts_excludes_white_tokens_and_own_permanents_after_native_bounce",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_skyshroud_elite_distinguishes_basic_supertype_from_basic_land_types",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
@@ -139107,7 +141709,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -139115,6 +141720,64 @@
         "commander_review"
       ],
       "applicability_note": "Kill a runtime mutation that admits a previous-turn permanent by bypassing the shared public-state evaluator."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceCompilerTests.test_source_spans_unsupported_neighbors_and_surface_omissions",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_dropping_basic_supertype_exclusion_is_killed_by_the_actual_native_control",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
@@ -139133,7 +141796,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -139159,7 +141825,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -139167,6 +141836,151 @@
         "commander_review"
       ],
       "applicability_note": "Block the shared query capability and prevent every affected typed consumer from becoming exact."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceCompilerTests.test_colorless_nontoken_and_nonbasic_queries_preserve_every_qualifier",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceCompilerTests.test_source_spans_unsupported_neighbors_and_surface_omissions",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_beasts_excludes_white_tokens_and_own_permanents_after_native_bounce",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_skyshroud_elite_distinguishes_basic_supertype_from_basic_land_types",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
@@ -139185,7 +141999,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -139211,7 +142028,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -139237,7 +142057,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -139263,7 +142086,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -139289,7 +142115,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -139315,7 +142144,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -139323,6 +142155,151 @@
         "commander_review"
       ],
       "applicability_note": "Canonicalize fixed type, subtype, Outlaw, token, state, and positive ability set grammar into one ObjectQuerySpec."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceCompilerTests.test_colorless_nontoken_and_nonbasic_queries_preserve_every_qualifier",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceCompilerTests.test_source_spans_unsupported_neighbors_and_surface_omissions",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_beasts_excludes_white_tokens_and_own_permanents_after_native_bounce",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_skyshroud_elite_distinguishes_basic_supertype_from_basic_land_types",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
@@ -139341,7 +142318,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -139367,7 +142347,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -139393,7 +142376,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -139419,7 +142405,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -139427,6 +142416,64 @@
         "commander_review"
       ],
       "applicability_note": "Advertise only public combatant references and never inspect or project hidden-zone identities while computing legal targets."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "property",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceCompilerTests.test_colorless_nontoken_and_nonbasic_queries_preserve_every_qualifier",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "property",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceCompilerTests.test_source_spans_unsupported_neighbors_and_surface_omissions",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
@@ -139445,7 +142492,10 @@
         "508.1",
         "509.1",
         "608.2b",
-        "608.2h"
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -139453,6 +142503,122 @@
         "commander_review"
       ],
       "applicability_note": "Replay the accepted named-counter-qualified target and resulting fixed counter placement to the same authoritative hash."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_beasts_excludes_white_tokens_and_own_permanents_after_native_bounce",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_skyshroud_elite_distinguishes_basic_supertype_from_basic_land_types",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_public_condition_surfaces.PublicConditionSurfaceRuntimeTests.test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h",
+        "105.2c",
+        "111.1",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
@@ -186069,5 +189235,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "5b83b43f1dd2f50bf7d66a8fbd84af5573690067a3d237a640469cd9d2626e1a"
+  "fingerprint": "f36b9eea93334c6dbb6cc376c43264190c9873a50f1d1544c0c12f44e6a36ce5"
 }
