@@ -132,6 +132,7 @@ def combat_evasion_verdict(
     attacker: CombatantEvasionCharacteristics,
     blocker: CombatantEvasionCharacteristics,
     defending_land_types: frozenset[str] | tuple[LandwalkLandCharacteristics, ...],
+    *, ignored_landwalk_keywords: frozenset[str] = frozenset(),
 ) -> CombatEvasionVerdict:
     """Compose represented ordinary evasion restrictions fail-closed."""
 
@@ -144,9 +145,11 @@ def combat_evasion_verdict(
 
     # Validate every represented family before returning a restriction from
     # another family, so an unsupported landwalk variant cannot be masked.
-    landwalk = (basic_landwalk_block_verdict(attacker.keywords, defending_land_types)
+    landwalk = (basic_landwalk_block_verdict(attacker.keywords, defending_land_types,
+            ignored_keywords=ignored_landwalk_keywords)
         if isinstance(defending_land_types, frozenset)
-        else landwalk_block_verdict(attacker.keywords, defending_land_types))
+        else landwalk_block_verdict(attacker.keywords, defending_land_types,
+            ignored_keywords=ignored_landwalk_keywords))
     aerial = aerial_blocking.aerial_block_verdict(
         attacker.keywords,
         blocker.keywords,

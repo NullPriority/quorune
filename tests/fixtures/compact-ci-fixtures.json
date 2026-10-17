@@ -106,6 +106,7 @@
     "tests/fixtures/kicked-entry-triggers.json",
     "tests/fixtures/kicked-spell-conditions.json",
     "tests/fixtures/kindred-subtype-quantities.json",
+    "tests/fixtures/landwalk-as-though-cards.json",
     "tests/fixtures/leveler-bands-cards.json",
     "tests/fixtures/library-other-remainder-cards.json",
     "tests/fixtures/library-search-qualifier-cards.json",

@@ -618,7 +618,12 @@ The public battlefield compiler uses that same query for live layer-6 and
 layer-7c applicability, public-state-gated targets, resolution-time set locks,
 typed queried ability and declaration-fragment grants, and untap participation.
 One descriptor may add fixed keywords and declaration fragments over the same
-query without duplicating applicability. Positive ability presence is evaluated
+query without duplicating applicability. Landwalk as-though permissions remain
+source-owned rule fragments: the block evaluator ignores only the selected
+Landwalk variants and never removes an attacker ability. Attached-blocker
+permissions consult the reciprocal current attachment identity, and cannot
+follow a returned incarnation. Effective source ability loss ends a live
+permission; ability loss on the recipient does not erase an Aura-owned rule. Positive ability presence is evaluated
 after generic same-layer additions and removals of the required ability.
 Resolution-time characteristic selection rejects ability-qualified sets.
 Its explicit numeric creature filter reads completed effective power/toughness

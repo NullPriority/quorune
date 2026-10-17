@@ -3,34 +3,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 
-BASIC_LANDWALK_TYPES = (
-    ("plainswalk", "plains"),
-    ("islandwalk", "island"),
-    ("swampwalk", "swamp"),
-    ("mountainwalk", "mountain"),
-    ("forestwalk", "forest"),
+from .landwalk_vocabulary import (
+    BASIC_LANDWALK_TYPES, BASIC_LAND_TYPES, QUALIFIED_LANDWALK_REQUIREMENTS,
+    QUALIFIED_LANDWALK_KEYWORDS, LANDWALK_KEYWORDS,
+    LANDWALK_REQUIREMENTS as _LANDWALK_REQUIREMENTS,
 )
-BASIC_LAND_TYPES = frozenset(
-    land_type for _, land_type in BASIC_LANDWALK_TYPES
-)
-_SUPPORTED_KEYWORDS = frozenset(
-    keyword for keyword, _ in BASIC_LANDWALK_TYPES
-)
-QUALIFIED_LANDWALK_REQUIREMENTS = (
-    ("desertwalk", "desert", None, None, None),
-    ("artifact landwalk", None, "artifact", None, None),
-    ("legendary landwalk", None, None, "legendary", None),
-    ("nonbasic landwalk", None, None, None, "basic"),
-    ("snow landwalk", None, None, "snow", None),
-    *(("snow " + keyword, land_type, None, "snow", None)
-        for keyword, land_type in BASIC_LANDWALK_TYPES),
-)
-QUALIFIED_LANDWALK_KEYWORDS = tuple(row[0] for row in QUALIFIED_LANDWALK_REQUIREMENTS)
-_LANDWALK_REQUIREMENTS = tuple(
-    (keyword, land_type, None, None, None)
-    for keyword, land_type in BASIC_LANDWALK_TYPES
-) + QUALIFIED_LANDWALK_REQUIREMENTS
-LANDWALK_KEYWORDS = tuple(row[0] for row in _LANDWALK_REQUIREMENTS)
+_SUPPORTED_KEYWORDS = frozenset(keyword for keyword, _ in BASIC_LANDWALK_TYPES)
 
 
 class LandwalkRuleError(ValueError):
@@ -88,6 +66,13 @@ def _matching_keywords(represented, lands):
             for land in lands))
 
 
+def _ignored_keywords(value):
+    ignored = _canonical_terms(value, "ignored Landwalk keyword")
+    if not ignored.issubset(LANDWALK_KEYWORDS):
+        raise LandwalkRuleError("Ignored Landwalk keywords exceed the represented vocabulary")
+    return ignored
+
+
 @dataclass(frozen=True, slots=True)
 class LandwalkBlockVerdict:
     matching_keywords: tuple[str, ...] = ()
@@ -111,13 +96,15 @@ class LandwalkBlockVerdict:
 def landwalk_block_verdict(
     attacker_keywords: frozenset[str],
     defending_lands: tuple[LandwalkLandCharacteristics, ...],
+    *, ignored_keywords: frozenset[str] = frozenset(),
 ) -> LandwalkBlockVerdict:
     represented = _represented_keywords(attacker_keywords, frozenset(LANDWALK_KEYWORDS))
+    ignored = _ignored_keywords(ignored_keywords)
     if type(defending_lands) is not tuple or any(
         not isinstance(land, LandwalkLandCharacteristics) for land in defending_lands
     ):
         raise LandwalkRuleError("Landwalk requires typed individual defending lands")
-    return LandwalkBlockVerdict(_matching_keywords(represented, defending_lands))
+    return LandwalkBlockVerdict(_matching_keywords(represented - ignored, defending_lands))
 
 
 @dataclass(frozen=True, slots=True)
@@ -158,6 +145,7 @@ class BasicLandwalkBlockVerdict:
 def basic_landwalk_block_verdict(
     attacker_keywords: frozenset[str],
     defending_land_types: frozenset[str],
+    *, ignored_keywords: frozenset[str] = frozenset(),
 ) -> BasicLandwalkBlockVerdict:
     """Apply ordinary Plains/Island/Swamp/Mountain/Forestwalk.
 
@@ -175,7 +163,7 @@ def basic_landwalk_block_verdict(
 
     lands = tuple(LandwalkLandCharacteristics(frozenset({"land"}),
         frozenset({land_type}), frozenset()) for land_type in sorted(land_types))
-    matching = _matching_keywords(represented, lands)
+    matching = _matching_keywords(represented - _ignored_keywords(ignored_keywords), lands)
     matches = tuple(land_type for keyword, land_type in BASIC_LANDWALK_TYPES if keyword in matching)
     return BasicLandwalkBlockVerdict(
         allowed=not matches,

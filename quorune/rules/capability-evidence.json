@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "a79624339031583216a127b805173ce0329b14eb7eb11bcaaf48041087b134c9",
-  "declaration_source_fingerprint": "eadc863ef26ea0290088e77129905db04a5169cc2c578bc919a417e519388db9",
+  "registry_fingerprint": "a33a131a837c7b85cee0c1f048d6a56457b4d927bb601372801d9a1642edef43",
+  "declaration_source_fingerprint": "1af27c1c8e8d49bd5cfa5a401a63184fd888daf378c95fd0f111429b88c20639",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -30610,6 +30610,666 @@
         "commander_review"
       ],
       "applicability_note": "Reject an injected block prohibited by the cumulative Intimidate boundary without changing state."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_copied_source_permission_survives_original_and_obeys_copy_ability_loss",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Clone copies Ur-Drago through a pending entry-copy choice. Unsummon returns the original, while the copied source still permits blocking another Swampwalker. Humble on the copied source removes its own permission, so the block becomes prohibited; Landwalk remains present. Pending load and pre-action replay preserve independent source incarnations."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_global_creature_permission_ends_when_source_loses_ability",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Ur-Drago controlled by a third seat permits another players blocker to block a Swampwalker. Actual Humble on Ur-Drago removes that source-owned permission while leaving the attacker Swampwalk present; the block becomes prohibited. The source remains on the battlefield and pending load/replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_quagmire_names_one_variant_and_keeps_flying_independent",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Quagmire permits blocking a Swampwalker while Snow Swampwalk and Forestwalk remain effective; all keyword abilities remain present. Actual Jump then adds Flying to the ordinary Swampwalker, and the same block remains prohibited by Flying. Real casts, pending load and pre-action replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_staff_changes_only_landwalk_block_legality_before_damage",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A current source-owned Landwalk exception changes only block legality. Typed exact keyword selection, all-Landwalk selection, schema rejection and cumulative Flying guard the boundary. Actual Staff keeps Landwalk present while its block offers, commands, full combat consequences, four-player privacy, wrong-principal rollback and pending load/replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_street_permission_does_not_follow_blinked_blocker_incarnation",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Flicker of Fate blinks the Street Savvy blocker through the linked exile-return owner. Its physical object returns in a new incarnation; the Aura dies and neither permission nor bonus follows that returned creature. Pending load before the blink and pre-action replay preserve this boundary."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_street_savvy_is_a_source_rule_and_ends_with_its_aura",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Street Savvy grants only its enchanted blocker the Landwalk exception and fixed toughness bonus. Humble on that blocker removes its abilities but preserves the Aura-owned rule and layer-7c bonus. Disenchant destroys the Aura, ending both effects; another blocker never receives the permission. All accepted casts and pending load/replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_staff_changes_only_landwalk_block_legality_before_damage",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A current source-owned Landwalk exception changes only block legality. Typed exact keyword selection, all-Landwalk selection, schema rejection and cumulative Flying guard the boundary. Actual Staff keeps Landwalk present while its block offers, commands, full combat consequences, four-player privacy, wrong-principal rollback and pending load/replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_ignored_permission_omission_is_killed_after_original_admission",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A current source-owned Landwalk exception changes only block legality. Typed exact keyword selection, all-Landwalk selection, schema rejection and cumulative Flying guard the boundary. Actual Staff keeps Landwalk present while its block offers, commands, full combat consequences, four-player privacy, wrong-principal rollback and pending load/replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "negative",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_copied_source_permission_survives_original_and_obeys_copy_ability_loss",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Clone copies Ur-Drago through a pending entry-copy choice. Unsummon returns the original, while the copied source still permits blocking another Swampwalker. Humble on the copied source removes its own permission, so the block becomes prohibited; Landwalk remains present. Pending load and pre-action replay preserve independent source incarnations."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "negative",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_global_creature_permission_ends_when_source_loses_ability",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Ur-Drago controlled by a third seat permits another players blocker to block a Swampwalker. Actual Humble on Ur-Drago removes that source-owned permission while leaving the attacker Swampwalk present; the block becomes prohibited. The source remains on the battlefield and pending load/replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "negative",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_quagmire_names_one_variant_and_keeps_flying_independent",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Quagmire permits blocking a Swampwalker while Snow Swampwalk and Forestwalk remain effective; all keyword abilities remain present. Actual Jump then adds Flying to the ordinary Swampwalker, and the same block remains prohibited by Flying. Real casts, pending load and pre-action replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "negative",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_street_permission_does_not_follow_blinked_blocker_incarnation",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Flicker of Fate blinks the Street Savvy blocker through the linked exile-return owner. Its physical object returns in a new incarnation; the Aura dies and neither permission nor bonus follows that returned creature. Pending load before the blink and pre-action replay preserve this boundary."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "negative",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_street_savvy_is_a_source_rule_and_ends_with_its_aura",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Street Savvy grants only its enchanted blocker the Landwalk exception and fixed toughness bonus. Humble on that blocker removes its abilities but preserves the Aura-owned rule and layer-7c bonus. Disenchant destroys the Aura, ending both effects; another blocker never receives the permission. All accepted casts and pending load/replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "negative",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughValueTests.test_source_permission_schema_and_exact_keyword_matching_are_closed",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A current source-owned Landwalk exception changes only block legality. Typed exact keyword selection, all-Landwalk selection, schema rejection and cumulative Flying guard the boundary. Actual Staff keeps Landwalk present while its block offers, commands, full combat consequences, four-player privacy, wrong-principal rollback and pending load/replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "positive",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_copied_source_permission_survives_original_and_obeys_copy_ability_loss",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Clone copies Ur-Drago through a pending entry-copy choice. Unsummon returns the original, while the copied source still permits blocking another Swampwalker. Humble on the copied source removes its own permission, so the block becomes prohibited; Landwalk remains present. Pending load and pre-action replay preserve independent source incarnations."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "positive",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_global_creature_permission_ends_when_source_loses_ability",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Ur-Drago controlled by a third seat permits another players blocker to block a Swampwalker. Actual Humble on Ur-Drago removes that source-owned permission while leaving the attacker Swampwalk present; the block becomes prohibited. The source remains on the battlefield and pending load/replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "positive",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_quagmire_names_one_variant_and_keeps_flying_independent",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Quagmire permits blocking a Swampwalker while Snow Swampwalk and Forestwalk remain effective; all keyword abilities remain present. Actual Jump then adds Flying to the ordinary Swampwalker, and the same block remains prohibited by Flying. Real casts, pending load and pre-action replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "positive",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_staff_changes_only_landwalk_block_legality_before_damage",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A current source-owned Landwalk exception changes only block legality. Typed exact keyword selection, all-Landwalk selection, schema rejection and cumulative Flying guard the boundary. Actual Staff keeps Landwalk present while its block offers, commands, full combat consequences, four-player privacy, wrong-principal rollback and pending load/replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "positive",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_staff_is_fully_admitted_for_native_landwalk_permissions",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A current source-owned Landwalk exception changes only block legality. Typed exact keyword selection, all-Landwalk selection, schema rejection and cumulative Flying guard the boundary. Actual Staff keeps Landwalk present while its block offers, commands, full combat consequences, four-player privacy, wrong-principal rollback and pending load/replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "positive",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_street_permission_does_not_follow_blinked_blocker_incarnation",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Flicker of Fate blinks the Street Savvy blocker through the linked exile-return owner. Its physical object returns in a new incarnation; the Aura dies and neither permission nor bonus follows that returned creature. Pending load before the blink and pre-action replay preserve this boundary."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "positive",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_street_savvy_is_a_source_rule_and_ends_with_its_aura",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Street Savvy grants only its enchanted blocker the Landwalk exception and fixed toughness bonus. Humble on that blocker removes its abilities but preserves the Aura-owned rule and layer-7c bonus. Disenchant destroys the Aura, ending both effects; another blocker never receives the permission. All accepted casts and pending load/replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "positive",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_ten_as_though_originals_bind_as_complete_programs",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A current source-owned Landwalk exception changes only block legality. Typed exact keyword selection, all-Landwalk selection, schema rejection and cumulative Flying guard the boundary. Actual Staff keeps Landwalk present while its block offers, commands, full combat consequences, four-player privacy, wrong-principal rollback and pending load/replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_staff_changes_only_landwalk_block_legality_before_damage",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A current source-owned Landwalk exception changes only block legality. Typed exact keyword selection, all-Landwalk selection, schema rejection and cumulative Flying guard the boundary. Actual Staff keeps Landwalk present while its block offers, commands, full combat consequences, four-player privacy, wrong-principal rollback and pending load/replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "property",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughValueTests.test_source_permission_schema_and_exact_keyword_matching_are_closed",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A current source-owned Landwalk exception changes only block legality. Typed exact keyword selection, all-Landwalk selection, schema rejection and cumulative Flying guard the boundary. Actual Staff keeps Landwalk present while its block offers, commands, full combat consequences, four-player privacy, wrong-principal rollback and pending load/replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "replay",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_copied_source_permission_survives_original_and_obeys_copy_ability_loss",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Clone copies Ur-Drago through a pending entry-copy choice. Unsummon returns the original, while the copied source still permits blocking another Swampwalker. Humble on the copied source removes its own permission, so the block becomes prohibited; Landwalk remains present. Pending load and pre-action replay preserve independent source incarnations."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "replay",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_global_creature_permission_ends_when_source_loses_ability",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Ur-Drago controlled by a third seat permits another players blocker to block a Swampwalker. Actual Humble on Ur-Drago removes that source-owned permission while leaving the attacker Swampwalk present; the block becomes prohibited. The source remains on the battlefield and pending load/replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "replay",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_quagmire_names_one_variant_and_keeps_flying_independent",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Quagmire permits blocking a Swampwalker while Snow Swampwalk and Forestwalk remain effective; all keyword abilities remain present. Actual Jump then adds Flying to the ordinary Swampwalker, and the same block remains prohibited by Flying. Real casts, pending load and pre-action replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "replay",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_staff_changes_only_landwalk_block_legality_before_damage",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A current source-owned Landwalk exception changes only block legality. Typed exact keyword selection, all-Landwalk selection, schema rejection and cumulative Flying guard the boundary. Actual Staff keeps Landwalk present while its block offers, commands, full combat consequences, four-player privacy, wrong-principal rollback and pending load/replay agree."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "replay",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_street_permission_does_not_follow_blinked_blocker_incarnation",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Flicker of Fate blinks the Street Savvy blocker through the linked exile-return owner. Its physical object returns in a new incarnation; the Aura dies and neither permission nor bonus follows that returned creature. Pending load before the blink and pre-action replay preserve this boundary."
+    },
+    {
+      "capability_id": "combat.block.landwalk.as_though",
+      "evidence_class": "replay",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_street_savvy_is_a_source_rule_and_ends_with_its_aura",
+      "official_rule_ids": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Street Savvy grants only its enchanted blocker the Landwalk exception and fixed toughness bonus. Humble on that blocker removes its abilities but preserves the Aura-owned rule and layer-7c bonus. Disenchant destroys the Aura, ending both effects; another blocker never receives the permission. All accepted casts and pending load/replay agree."
     },
     {
       "capability_id": "combat.block.landwalk.basic_type",
@@ -160118,5 +160778,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "2ffad68919584cb3e582b022f2c885f014235db885dbeae72bcc2beada4dcd75"
+  "fingerprint": "ebc7d6a6d463e9790a8735d89ce50b6f53b5a239b02ed527504315698f46b929"
 }

@@ -4706,6 +4706,29 @@
         "test_copy_objects",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "landwalk-as-though-source-owned-permission-contract",
+      "patterns": [
+        "quorune/landwalk_permission_model.py",
+        "quorune/landwalk_vocabulary.py",
+        "quorune/semantic_runtime/landwalk_permissions.py",
+        "quorune/rules/landwalk_permissions.py",
+        "quorune/compiler/landwalk_permission_templates.py",
+        "quorune/landwalk.py",
+        "quorune/combat_evasion.py",
+        "quorune/combat_evasion_engine_adapter.py",
+        "quorune/compiler/closed_static_nodes.py",
+        "tests/fixtures/landwalk-as-though-cards.json"
+      ],
+      "test_modules": [
+        "test_landwalk",
+        "test_combat_evasion_restrictions",
+        "test_declare_blockers_rules",
+        "test_fixed_evasion_grants",
+        "test_card_program_trust",
+        "test_copy_objects"
+      ]
     }
   ],
   "symbol_rules": [

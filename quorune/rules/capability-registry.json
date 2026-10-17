@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 334,
+  "registry_version": 335,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -12787,6 +12787,110 @@
       "dependency_fail_closed_rationale": "The bounded basic-type query consumes canonical current keyword and land characteristic snapshots and has no capability dependency; unsupported landwalk variants fail closed.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "The admission-preserving aggregate-land-traits mutant joins Snow on one land to Forest on another. The native legal-block witness rejects this suppression of a legal action.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "combat.block.landwalk.as_though",
+      "version": 1,
+      "official_rules": [
+        "101.1",
+        "509.1b",
+        "609.4",
+        "609.4a",
+        "702.1d",
+        "702.14a",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "For one proposed block, ignore the represented Landwalk variants selected by a current source-owned global or attached-blocker permission. Preserve every ability and every unrelated evasion, restriction, requirement and cost. Named variants match exactly; all-Landwalk wording selects the represented family.",
+        "inputs": [
+          "fully trusted source-pinned permission fragment",
+          "current effective source abilities",
+          "current reciprocal same-incarnation attachment when scoped to one blocker",
+          "current blocker and attacker keywords"
+        ],
+        "outputs": [
+          "Landwalk-only blocking exception",
+          "source/global and attached-blocker scope preserved",
+          "other restrictions remain authoritative",
+          "source ability loss or departure ends its live permission"
+        ],
+        "exclusions": [
+          "ability removal or keyword grants masquerading as permissions",
+          "unrepresented as-though domains or qualifiers",
+          "unknown Landwalk semantics hidden by an all-Landwalk exception",
+          "unrepresented source control, copy or attachment producers"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.landwalk_permission_model.LandwalkBlockPermission",
+        "quorune.semantic_runtime.landwalk_permissions.LandwalkPermissionFragmentHandler",
+        "quorune.compiler.landwalk_permission_templates.static_landwalk_permission_handler",
+        "quorune.rules.landwalk_permissions.current_landwalk_block_exceptions",
+        "quorune.landwalk.landwalk_block_verdict",
+        "quorune.combat_evasion_engine_adapter.engine_combat_evasion_verdict"
+      ],
+      "positive_tests": [
+        "test_actual_staff_is_fully_admitted_for_native_landwalk_permissions",
+        "test_ten_as_though_originals_bind_as_complete_programs",
+        "test_actual_staff_changes_only_landwalk_block_legality_before_damage",
+        "test_actual_quagmire_names_one_variant_and_keeps_flying_independent",
+        "test_actual_global_creature_permission_ends_when_source_loses_ability",
+        "test_actual_street_savvy_is_a_source_rule_and_ends_with_its_aura",
+        "test_actual_street_permission_does_not_follow_blinked_blocker_incarnation",
+        "test_actual_copied_source_permission_survives_original_and_obeys_copy_ability_loss"
+      ],
+      "negative_tests": [
+        "test_source_permission_schema_and_exact_keyword_matching_are_closed",
+        "test_actual_quagmire_names_one_variant_and_keeps_flying_independent",
+        "test_actual_global_creature_permission_ends_when_source_loses_ability",
+        "test_actual_street_savvy_is_a_source_rule_and_ends_with_its_aura",
+        "test_actual_street_permission_does_not_follow_blinked_blocker_incarnation",
+        "test_actual_copied_source_permission_survives_original_and_obeys_copy_ability_loss"
+      ],
+      "interaction_tests": [
+        "test_actual_staff_changes_only_landwalk_block_legality_before_damage",
+        "test_actual_quagmire_names_one_variant_and_keeps_flying_independent",
+        "test_actual_global_creature_permission_ends_when_source_loses_ability",
+        "test_actual_street_savvy_is_a_source_rule_and_ends_with_its_aura",
+        "test_actual_street_permission_does_not_follow_blinked_blocker_incarnation",
+        "test_actual_copied_source_permission_survives_original_and_obeys_copy_ability_loss"
+      ],
+      "multiplayer_tests": [
+        "test_actual_staff_changes_only_landwalk_block_legality_before_damage"
+      ],
+      "privacy_tests": [
+        "test_actual_staff_changes_only_landwalk_block_legality_before_damage"
+      ],
+      "replay_tests": [
+        "test_actual_staff_changes_only_landwalk_block_legality_before_damage",
+        "test_actual_quagmire_names_one_variant_and_keeps_flying_independent",
+        "test_actual_global_creature_permission_ends_when_source_loses_ability",
+        "test_actual_street_savvy_is_a_source_rule_and_ends_with_its_aura",
+        "test_actual_street_permission_does_not_follow_blinked_blocker_incarnation",
+        "test_actual_copied_source_permission_survives_original_and_obeys_copy_ability_loss"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The bounded basic-type query consumes canonical current keyword and land characteristic snapshots and has no capability dependency; unsupported landwalk variants fail closed.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The admission-preserving live-permission omission makes actual Staff fail to permit the legal block; the same native command witness detects it.",
       "blockers": [],
       "status": "trusted"
     },

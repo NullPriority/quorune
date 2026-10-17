@@ -247,6 +247,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.static.declaration_requirement",
                 "ability.static.declaration_restriction",
                 "ability.static.declaration_restriction_component",
+                "ability.static.landwalk_block_permission",
                 "ability.static.defender_permission",
                 "ability.static.block_capacity",
                 "ability.static.as_unblocked_assignment",

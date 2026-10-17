@@ -130,6 +130,10 @@
   ],
   "ambient_high_risk_piece_pairs": [
     [
+      "capability.attachment.aura.simple_object",
+      "capability.combat.block.landwalk.as_though"
+    ],
+    [
       "capability.attachment.equip.fixed_mana",
       "capability.combat.block.landwalk.qualified_type"
     ],
@@ -152,7 +156,43 @@
     ["capability.combat.block.capacity.temporary", "capability.resolution.effect_program.closed_components"],
     ["capability.combat.block.capacity.temporary", "capability.target.revalidate_resolution"],
     ["capability.combat.block.capacity.temporary", "capability.zone.linked_exile_return.fixed"],
+    [
+      "capability.combat.block.flying",
+      "capability.combat.block.landwalk.as_though"
+    ],
     ["capability.combat.block.flying", "capability.counter.characteristic.keyword"],
+    [
+      "capability.combat.block.landwalk.as_though",
+      "capability.combat.block.landwalk.basic_type"
+    ],
+    [
+      "capability.combat.block.landwalk.as_though",
+      "capability.combat.block.landwalk.qualified_type"
+    ],
+    [
+      "capability.combat.block.landwalk.as_though",
+      "capability.continuous.attached.fixed_characteristics"
+    ],
+    [
+      "capability.combat.block.landwalk.as_though",
+      "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+    ],
+    [
+      "capability.combat.block.landwalk.as_though",
+      "capability.permanent.destroy.effect"
+    ],
+    [
+      "capability.combat.block.landwalk.as_though",
+      "capability.permanent.return.owner_hand"
+    ],
+    [
+      "capability.combat.block.landwalk.as_though",
+      "capability.zone.entry.fixed_copy"
+    ],
+    [
+      "capability.combat.block.landwalk.as_though",
+      "capability.zone.linked_exile_return.fixed"
+    ],
     [
       "capability.combat.block.landwalk.qualified_type",
       "capability.continuous.attached.fixed_characteristics"

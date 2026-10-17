@@ -1356,12 +1356,14 @@ class AbilityFragmentRegistry(
 @lru_cache(maxsize=1)
 def default_ability_fragment_registry() -> AbilityFragmentRegistry:
     from .rampage_fragment import RampageFragmentHandler
+    from .landwalk_permissions import LandwalkPermissionFragmentHandler
     registry = AbilityFragmentRegistry(
         (
             AllCreatureTypesCharacteristicDefinitionAbilityFragmentHandler(),
             BattleCryAbilityFragmentHandler(),
             BushidoAbilityFragmentHandler(),
             RampageFragmentHandler(),
+            LandwalkPermissionFragmentHandler(),
             CascadeAbilityFragmentHandler(),
             CounterMaximumAbilityFragmentHandler(),
             DeclarationCostAbilityFragmentHandler(),

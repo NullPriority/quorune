@@ -3656,6 +3656,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/landwalk_permission_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/leveler_context_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -7107,6 +7122,30 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/landwalk_permission_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/landwalk_vocabulary.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/leveler_bands.py",
       "layer": "domain",
       "owning_subsystem": "continuous_effects",
@@ -9813,6 +9852,20 @@
         "semantics"
       ],
       "game_state_access": "mutable_owner",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/landwalk_permissions.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "none"
@@ -12825,6 +12878,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/landwalk_permissions.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/life_batch_intent.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -14569,5 +14637,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "a2d533bf17c4d33a9d0c5ebc3875f23cc2fabf4f97b1891304413f091114716b"
+  "fingerprint": "f9ae2b79209b1dc7777261196db05ae45351d7d6c705bb491e4c0198657811b1"
 }

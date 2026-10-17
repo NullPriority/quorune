@@ -1893,7 +1893,17 @@ incarnation and duration rules. Missing provider keyword indexes do not erase
 an exact trusted printed qualified-Landwalk declaration. That fact enters the
 ordinary base-characteristic pipeline before ability removal, face-down
 changes and copiable-value capture. Chosen or varying landwalk types,
-unrepresented compound predicates and as-though overrides remain residual.
+unrepresented compound predicates and other as-though domains remain residual.
+
+Fixed Landwalk block permissions compile as source-owned rule fragments.
+Named variants select that exact keyword, while all-Landwalk wording selects
+the represented family. They leave every ability present and alter only the
+Landwalk check for a proposed block. Global sources apply to every blocker;
+attached-blocker sources require the current reciprocal attachment identity.
+A fixed attached stat modifier may share the same complete clause without
+granted ability text. Source ability loss or departure ends its rule, while
+recipient ability loss does not remove an Aura-owned rule. Other evasion,
+restrictions, requirements and costs retain their own owners.
 
 Fading, Graft and Vanishing lower their separate entry and lifecycle abilities to
 the current counter and trigger owners. Graft emits a non-targeted optional

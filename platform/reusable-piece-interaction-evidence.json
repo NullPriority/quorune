@@ -14375,6 +14375,105 @@
       ],
       "interaction_order": 2,
       "assertion": "Before actual Yavimaya is played, the defender Snow Island and separate ordinary Forest cannot satisfy Snow Forestwalk. Its real land-play action adds Forest to the same Snow Island, preserving Snow and Island, so the current canonical block verdict changes. The trusted original and pending save/load/replay retain those facts."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_quagmire_names_one_variant_and_keeps_flying_independent",
+      "piece_ids": [
+        "capability.combat.block.flying",
+        "capability.combat.block.landwalk.as_though",
+        "capability.combat.block.landwalk.basic_type",
+        "capability.combat.block.landwalk.qualified_type",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "combat.block.flying",
+        "combat.block.landwalk.as_though",
+        "combat.block.landwalk.basic_type",
+        "combat.block.landwalk.qualified_type",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 5,
+      "assertion": "Actual Quagmire permits blocking a Swampwalker while Snow Swampwalk and Forestwalk remain effective; all keyword abilities remain present. Actual Jump then adds Flying to the ordinary Swampwalker, and the same block remains prohibited by Flying. Real casts, pending load and pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_global_creature_permission_ends_when_source_loses_ability",
+      "piece_ids": [
+        "capability.combat.block.landwalk.as_though",
+        "capability.combat.block.landwalk.basic_type",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "combat.block.landwalk.as_though",
+        "combat.block.landwalk.basic_type",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 3,
+      "assertion": "Actual Ur-Drago controlled by a third seat permits another players blocker to block a Swampwalker. Actual Humble on Ur-Drago removes that source-owned permission while leaving the attacker Swampwalk present; the block becomes prohibited. The source remains on the battlefield and pending load/replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_street_savvy_is_a_source_rule_and_ends_with_its_aura",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.combat.block.landwalk.as_though",
+        "capability.combat.block.landwalk.qualified_type",
+        "capability.continuous.attached.fixed_characteristics",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.permanent.destroy.effect"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "combat.block.landwalk.as_though",
+        "combat.block.landwalk.qualified_type",
+        "continuous.attached.fixed_characteristics",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "permanent.destroy.effect"
+      ],
+      "interaction_order": 6,
+      "assertion": "Actual Street Savvy grants only its enchanted blocker the Landwalk exception and fixed toughness bonus. Humble on that blocker removes its abilities but preserves the Aura-owned rule and layer-7c bonus. Disenchant destroys the Aura, ending both effects; another blocker never receives the permission. All accepted casts and pending load/replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_street_permission_does_not_follow_blinked_blocker_incarnation",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.combat.block.landwalk.as_though",
+        "capability.combat.block.landwalk.qualified_type",
+        "capability.zone.linked_exile_return.fixed"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "combat.block.landwalk.as_though",
+        "combat.block.landwalk.qualified_type",
+        "zone.linked_exile_return.fixed"
+      ],
+      "interaction_order": 4,
+      "assertion": "Actual Flicker of Fate blinks the Street Savvy blocker through the linked exile-return owner. Its physical object returns in a new incarnation; the Aura dies and neither permission nor bonus follows that returned creature. Pending load before the blink and pre-action replay preserve this boundary."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "tests.test_landwalk.LandwalkAsThoughRuntimeTests.test_actual_copied_source_permission_survives_original_and_obeys_copy_ability_loss",
+      "piece_ids": [
+        "capability.combat.block.landwalk.as_though",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.permanent.return.owner_hand",
+        "capability.zone.entry.fixed_copy"
+      ],
+      "capability_ids": [
+        "combat.block.landwalk.as_though",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "permanent.return.owner_hand",
+        "zone.entry.fixed_copy"
+      ],
+      "interaction_order": 4,
+      "assertion": "Actual Clone copies Ur-Drago through a pending entry-copy choice. Unsummon returns the original, while the copied source still permits blocking another Swampwalker. Humble on the copied source removes its own permission, so the block becomes prohibited; Landwalk remains present. Pending load and pre-action replay preserve independent source incarnations."
     }
   ]
 }

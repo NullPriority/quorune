@@ -12,6 +12,7 @@ from .combat_evasion import (
 from .keyword_abilities import normalized_characteristic_keywords
 from .landwalk import BASIC_LAND_TYPES, LandwalkLandCharacteristics, LandwalkRuleError
 from .semantic_runtime.block_restrictions import current_self_block_prohibitions
+from .rules.landwalk_permissions import current_landwalk_block_exceptions
 
 if TYPE_CHECKING:
     from .engine import CommanderEngine
@@ -74,6 +75,7 @@ def engine_combat_evasion_verdict(
         combatant_evasion_characteristics(engine, attacker),
         combatant_evasion_characteristics(engine, blocker),
         defending_land_characteristics(engine, defending_player),
+        ignored_landwalk_keywords=current_landwalk_block_exceptions(engine, blocker),
     )
 
 
