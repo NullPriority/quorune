@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 339,
+  "registry_version": 340,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -17405,24 +17405,126 @@
     },
     {
       "id": "state_query.permanent.public_state_predicate",
-      "version": 5,
-      "official_rules": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 6,
+      "official_rules": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Evaluate one immutable shared public battlefield query for direct targets, live characteristic applicability, resolution-locked sets, untap participation, and cycle-safe fixed public condition quantities from current effective characteristics and authoritative public state.",
-        "inputs": ["one public battlefield permanent", "current effective type, subtype, supertype, color, token, and positive ability characteristics", "canonical current counter map", "positive battlefield-entry turn sequence", "current game turn sequence", "current authoritative attacking, blocking, enchanted, equipped, and modified relationships", "current attacking player and source-relative blocking relationship", "one immutable typed public query"],
-        "outputs": ["deterministic target offer and command verdict", "resolution-time target revalidation", "deterministic live or locked affected-set membership", "cycle-safe layer-5 controller or opponent quantity including public tap, attachment, counter, and modified state", "generic same-layer dependency ordering for positive ability presence", "deterministic untap participation", "exact replay"],
-        "exclusions": ["hidden-zone state", "arbitrary Oracle-text predicates", "generic counter-presence without a named counter", "negative or absent ability predicates", "counter quantities other than a fixed positive minimum", "entered-before or left-this-turn history", "combat history or aggregate combat groups", "attachment-relative identity, damage, or controller-history predicates", "dynamic numeric characteristics and counts"]
+        "summary": "Evaluate one immutable shared public battlefield query for direct targets, live characteristic applicability, resolution-locked sets, untap participation, and cycle-safe fixed public condition quantities from current effective characteristics and authoritative public state. Version-eight queries support fixed excluded supertypes without changing historical query shapes.",
+        "inputs": [
+          "one public battlefield permanent",
+          "current effective type, subtype, supertype, color, token, and positive ability characteristics",
+          "canonical current counter map",
+          "positive battlefield-entry turn sequence",
+          "current game turn sequence",
+          "current authoritative attacking, blocking, enchanted, equipped, and modified relationships",
+          "current attacking player and source-relative blocking relationship",
+          "one immutable typed public query"
+        ],
+        "outputs": [
+          "deterministic target offer and command verdict",
+          "resolution-time target revalidation",
+          "deterministic live or locked affected-set membership",
+          "cycle-safe layer-5 controller or opponent quantity including public tap, attachment, counter, and modified state",
+          "generic same-layer dependency ordering for positive ability presence",
+          "deterministic untap participation",
+          "exact replay"
+        ],
+        "exclusions": [
+          "hidden-zone state",
+          "arbitrary Oracle-text predicates",
+          "generic counter-presence without a named counter",
+          "negative or absent ability predicates",
+          "counter quantities other than a fixed positive minimum",
+          "entered-before or left-this-turn history",
+          "combat history or aggregate combat groups",
+          "attachment-relative identity, damage, or controller-history predicates",
+          "dynamic numeric characteristics and counts"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.compiler.public_state_queries.fixed_characteristic_battlefield_query_subject", "quorune.object_predicate.ObjectQuerySpec", "quorune.object_predicate.PermanentStatePredicateSpec", "quorune.object_predicate.permanent_state_predicate_matches", "quorune.object_query.ObjectQueryResult", "quorune.object_query.object_matches_query", "quorune.characteristic_fragments.CharacteristicQuantitySpec", "quorune.dynamic_characteristics.query_characteristic_count", "quorune.continuous_effects._ability_presence_dependency_ids", "quorune.targets.TargetGroup", "quorune.selection.targeting.TargetSelectionOwnerMixin._target_row_matches", "quorune.affected_permanents.select_affected_permanents"],
-      "positive_tests": ["test_public_state_direct_targets_compile_typed_predicates", "test_public_state_counter_sets_are_typed_and_deterministic", "test_shared_characteristic_grammar_covers_the_bounded_shapes", "test_shared_public_set_query_fans_into_layers_and_resolution", "test_shared_public_queries_govern_untap_participation", "test_fixed_public_condition_queries_compile_across_authoritative_facts"],
-      "negative_tests": ["test_unsupported_and_malformed_direct_target_predicates_fail_closed", "test_unsupported_counter_set_variants_remain_material_residuals", "test_shared_public_query_dependency_fails_closed_across_consumers", "test_fixed_public_condition_dependencies_fail_closed"],
-      "interaction_tests": ["test_public_state_targets_share_offer_command_and_resolution_revalidation", "test_public_state_counter_set_resolves_current_membership_once", "test_tapped_target_set_revalidates_public_state_before_placement", "test_combat_state_target_offers_and_submission_share_one_or_legality", "test_fixed_public_characteristic_sets_lock_multiplayer_membership", "test_subtype_union_recomputes_after_layer_four_and_excludes_source", "test_ability_presence_query_uses_shared_layer_six_dependency_order", "test_shared_public_queries_govern_untap_participation", "test_public_condition_queries_follow_authoritative_history_and_control"],
-      "multiplayer_tests": ["test_public_state_counter_set_resolves_current_membership_once", "test_target_player_counter_set_is_seat_scoped_and_replays_exactly", "test_combat_state_target_offers_and_submission_share_one_or_legality", "test_fixed_public_characteristic_sets_lock_multiplayer_membership"],
-      "privacy_tests": ["test_four_player_target_predicate_privacy_rollback_and_replay", "test_target_player_counter_set_is_seat_scoped_and_replays_exactly", "test_combat_state_target_offers_and_submission_share_one_or_legality", "test_fixed_public_characteristic_sets_lock_multiplayer_membership"],
-      "replay_tests": ["test_four_player_target_predicate_privacy_rollback_and_replay", "test_target_player_counter_set_is_seat_scoped_and_replays_exactly"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.compiler.public_state_queries.fixed_characteristic_battlefield_query_subject",
+        "quorune.object_predicate.ObjectQuerySpec",
+        "quorune.object_predicate.PermanentStatePredicateSpec",
+        "quorune.object_predicate.permanent_state_predicate_matches",
+        "quorune.object_query.ObjectQueryResult",
+        "quorune.object_query.object_matches_query",
+        "quorune.characteristic_fragments.CharacteristicQuantitySpec",
+        "quorune.dynamic_characteristics.query_characteristic_count",
+        "quorune.continuous_effects._ability_presence_dependency_ids",
+        "quorune.targets.TargetGroup",
+        "quorune.selection.targeting.TargetSelectionOwnerMixin._target_row_matches",
+        "quorune.affected_permanents.select_affected_permanents"
+      ],
+      "positive_tests": [
+        "test_fixed_public_condition_queries_compile_across_authoritative_facts",
+        "test_nonbasic_query_is_supertype_based_and_preserves_older_serialization",
+        "test_public_state_counter_sets_are_typed_and_deterministic",
+        "test_public_state_direct_targets_compile_typed_predicates",
+        "test_shared_characteristic_grammar_covers_the_bounded_shapes",
+        "test_shared_public_queries_govern_untap_participation",
+        "test_shared_public_set_query_fans_into_layers_and_resolution"
+      ],
+      "negative_tests": [
+        "test_fixed_public_condition_dependencies_fail_closed",
+        "test_nonbasic_query_is_supertype_based_and_preserves_older_serialization",
+        "test_shared_public_query_dependency_fails_closed_across_consumers",
+        "test_unsupported_and_malformed_direct_target_predicates_fail_closed",
+        "test_unsupported_counter_set_variants_remain_material_residuals"
+      ],
+      "interaction_tests": [
+        "test_public_state_targets_share_offer_command_and_resolution_revalidation",
+        "test_public_state_counter_set_resolves_current_membership_once",
+        "test_tapped_target_set_revalidates_public_state_before_placement",
+        "test_combat_state_target_offers_and_submission_share_one_or_legality",
+        "test_fixed_public_characteristic_sets_lock_multiplayer_membership",
+        "test_subtype_union_recomputes_after_layer_four_and_excludes_source",
+        "test_ability_presence_query_uses_shared_layer_six_dependency_order",
+        "test_shared_public_queries_govern_untap_participation",
+        "test_public_condition_queries_follow_authoritative_history_and_control"
+      ],
+      "multiplayer_tests": [
+        "test_public_state_counter_set_resolves_current_membership_once",
+        "test_target_player_counter_set_is_seat_scoped_and_replays_exactly",
+        "test_combat_state_target_offers_and_submission_share_one_or_legality",
+        "test_fixed_public_characteristic_sets_lock_multiplayer_membership"
+      ],
+      "privacy_tests": [
+        "test_four_player_target_predicate_privacy_rollback_and_replay",
+        "test_target_player_counter_set_is_seat_scoped_and_replays_exactly",
+        "test_combat_state_target_offers_and_submission_share_one_or_legality",
+        "test_fixed_public_characteristic_sets_lock_multiplayer_membership"
+      ],
+      "replay_tests": [
+        "test_four_player_target_predicate_privacy_rollback_and_replay",
+        "test_target_player_counter_set_is_seat_scoped_and_replays_exactly"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Every compiler shape using public permanent state declares this capability, so blocking it leaves the containing CardProgram partial before runtime mutation.",
       "implementation_mutation_status": "killed",
@@ -26263,6 +26365,103 @@
       "dependency_fail_closed_rationale": "The new addition capability and intrinsic-mana owner must both close before source admission.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "An admission-preserving lowerer omission is killed by actual Prismatic Omen type and mana assertions.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.basic_land_type.fixed_setting",
+      "version": 1,
+      "official_rules": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Set one or more fixed basic land subtypes in layer4 for nonbasic lands, controller lands, or one current attached land; remove old land subtypes and printed/copiable abilities before deriving intrinsic mana and later ability grants.",
+        "inputs": [
+          "full source-spanned fixed sentence",
+          "typed basic-type vector and fixed land scope",
+          "current source and reciprocal attachment identity",
+          "current Basic supertype exclusion",
+          "prospective battlefield source-component state"
+        ],
+        "outputs": [
+          "preserved nonland types, supertypes, name, color and stats",
+          "only new basic land subtypes and intrinsic mana",
+          "printed ability loss honored by current and prospective consumers"
+        ],
+        "exclusions": [
+          "conditional source effects",
+          "card-type setting or land animation",
+          "color changes and independent unsupported siblings",
+          "unrepresented dependency cycles"
+        ]
+      },
+      "dependencies": [
+        "mana.intrinsic.basic_land_type",
+        "state_query.permanent.public_state_predicate"
+      ],
+      "implementation_components": [
+        "quorune.basic_type_setting_model.BasicTypeSettingSpec",
+        "quorune.compiler.basic_type_setting_templates.fixed_basic_type_setting_handler",
+        "quorune.semantic_runtime.basic_type_setting.FixedBasicTypeSettingHandler",
+        "quorune.continuous_effects.evaluate_continuous_effects",
+        "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._prospective_static_component_keys",
+        "quorune.object_predicate.ObjectQuerySpec",
+        "quorune.object_query.object_matches_query"
+      ],
+      "positive_tests": [
+        "test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+        "test_actual_seas_removes_printed_mana_and_indestructible_and_source_loss_restores",
+        "test_all_setting_originals_require_complete_sibling_admission",
+        "test_setting_removes_only_land_subtypes_and_printed_abilities_before_intrinsic_mana"
+      ],
+      "negative_tests": [
+        "test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+        "test_actual_moon_urborg_dependency_is_independent_of_timestamp",
+        "test_all_setting_originals_require_complete_sibling_admission",
+        "test_nonbasic_query_is_supertype_based_and_preserves_older_serialization"
+      ],
+      "interaction_tests": [
+        "test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+        "test_actual_magus_type_setting_survives_later_humble_and_ends_on_departure",
+        "test_actual_moon_urborg_dependency_is_independent_of_timestamp",
+        "test_actual_seas_removes_printed_mana_and_indestructible_and_source_loss_restores"
+      ],
+      "multiplayer_tests": [
+        "test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play"
+      ],
+      "privacy_tests": [
+        "test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play"
+      ],
+      "replay_tests": [
+        "test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+        "test_actual_magus_type_setting_survives_later_humble_and_ends_on_departure",
+        "test_actual_moon_urborg_dependency_is_independent_of_timestamp",
+        "test_actual_seas_removes_printed_mana_and_indestructible_and_source_loss_restores"
+      ],
+      "required_evidence": [
+        "interaction",
+        "multiplayer",
+        "negative",
+        "positive",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The new addition capability and intrinsic-mana owner must both close before source admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "test_setting_omission_is_killed_by_actual_blood_moon_entry preserves admission while omitting the live setting, and is detected by the original Vivid Creek entry result.",
       "blockers": [],
       "status": "trusted"
     }

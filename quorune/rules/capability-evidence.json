@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "22df0c077d1cf350735e24fc843e7d81c09b1bc8266c24629cec098759336aa4",
-  "declaration_source_fingerprint": "06afe4a5ad9f43b57b98bbbecaa552442087169686e892d574f806b94e743894",
+  "registry_fingerprint": "fc4b08b4a4d5c17c4ee5a095b28419c85cb09bfb4e612a6bac9736ea210534cd",
+  "declaration_source_fingerprint": "d3b57e8d7f8557ee31c88f3662e1fa215ee4cf27aa3c91d7eb3b3d9e98c2f856",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -44925,6 +44925,447 @@
         "traditional"
       ],
       "applicability_note": "Fixed additive scopes preserve names, basic/snow/card-type and printed ability facts; actual Omen/Nylea/Stormtide, source and recipient Humble, Aura loss, typed mana, rollback, pending load and replay distinguish addition from setting. Leyline independent siblings remain residual."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "CR305.7 setting preserves other facts while removing old land types and printed abilities; actual Blood Moon and Vivid Creek land play must bypass removed self tap/counter entry replacements. Basic/snow and prospective source ability facts stay distinct."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_magus_type_setting_survives_later_humble_and_ends_on_departure",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_moon_urborg_dependency_is_independent_of_timestamp",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_seas_removes_printed_mana_and_indestructible_and_source_loss_restores",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "CR305.7 setting preserves other facts while removing old land types and printed abilities; actual Blood Moon and Vivid Creek land play must bypass removed self tap/counter entry replacements. Basic/snow and prospective source ability facts stay distinct."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_setting_omission_is_killed_by_actual_blood_moon_entry",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Admission-preserving basic-setting lowerer omission makes actual Vivid Creek retain its removed printed entry replacement under Blood Moon; the original command witness detects it."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingKernelTests.test_nonbasic_query_is_supertype_based_and_preserves_older_serialization",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "CR305.7 setting preserves other facts while removing old land types and printed abilities; actual Blood Moon and Vivid Creek land play must bypass removed self tap/counter entry replacements. Basic/snow and prospective source ability facts stay distinct."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "CR305.7 setting preserves other facts while removing old land types and printed abilities; actual Blood Moon and Vivid Creek land play must bypass removed self tap/counter entry replacements. Basic/snow and prospective source ability facts stay distinct."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_moon_urborg_dependency_is_independent_of_timestamp",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_all_setting_originals_require_complete_sibling_admission",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingKernelTests.test_setting_removes_only_land_subtypes_and_printed_abilities_before_intrinsic_mana",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "CR305.7 setting preserves other facts while removing old land types and printed abilities; actual Blood Moon and Vivid Creek land play must bypass removed self tap/counter entry replacements. Basic/snow and prospective source ability facts stay distinct."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "CR305.7 setting preserves other facts while removing old land types and printed abilities; actual Blood Moon and Vivid Creek land play must bypass removed self tap/counter entry replacements. Basic/snow and prospective source ability facts stay distinct."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_seas_removes_printed_mana_and_indestructible_and_source_loss_restores",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_all_setting_originals_require_complete_sibling_admission",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingKernelTests.test_nonbasic_query_is_supertype_based_and_preserves_older_serialization",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "CR305.7 setting preserves other facts while removing old land types and printed abilities; actual Blood Moon and Vivid Creek land play must bypass removed self tap/counter entry replacements. Basic/snow and prospective source ability facts stay distinct."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "CR305.7 setting preserves other facts while removing old land types and printed abilities; actual Blood Moon and Vivid Creek land play must bypass removed self tap/counter entry replacements. Basic/snow and prospective source ability facts stay distinct."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_magus_type_setting_survives_later_humble_and_ends_on_departure",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_moon_urborg_dependency_is_independent_of_timestamp",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_seas_removes_printed_mana_and_indestructible_and_source_loss_restores",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
     },
     {
       "capability_id": "continuous.characteristics.changeling",
@@ -121752,6 +122193,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -121777,6 +122219,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -121802,6 +122245,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -121827,6 +122271,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -121852,6 +122297,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -121877,6 +122323,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -121902,6 +122349,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -121927,6 +122375,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -121952,6 +122401,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -121977,6 +122427,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -122002,6 +122453,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -122027,6 +122479,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -122052,6 +122505,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -122077,6 +122531,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -122102,6 +122557,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -122127,6 +122583,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -122143,6 +122600,32 @@
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingKernelTests.test_nonbasic_query_is_supertype_based_and_preserves_older_serialization",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Negative Basic-supertype query matches nonbasic Mountain while excluding Basic Snow Island; new query shape roundtrips and older serialized shapes stay unchanged."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_placement_sets.FixedCounterPlacementSetCompilerTests.test_public_state_counter_sets_are_typed_and_deterministic",
       "official_rule_ids": [
         "110.5",
@@ -122152,6 +122635,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -122177,6 +122661,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -122202,6 +122687,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -122227,6 +122713,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -122252,6 +122739,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -122277,6 +122765,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -122302,6 +122791,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -122327,6 +122817,7 @@
         "122.1",
         "122.1a",
         "122.6",
+        "305.8",
         "506.4",
         "508.1",
         "509.1",
@@ -162562,5 +163053,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "4e9e306ec4013e539fe810f93da6d4cf9b43a618dbe3c4772eaf2938e477ea92"
+  "fingerprint": "6efdd94b83e07b7de17b389bc92e7551b1d839da28bc96ba7378a514d8682179"
 }

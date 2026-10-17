@@ -322,6 +322,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.fixed_power_toughness_anthem",
                 "continuous.basic_land_type.add_all_lands",
                 "continuous.basic_land_type.fixed_addition",
+                "continuous.basic_land_type.fixed_setting",
                 "action.draw.reveal_first",
                 "modification.activation.loyalty-cost",
                 "prevention.damage.all",

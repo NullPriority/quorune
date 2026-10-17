@@ -14746,6 +14746,81 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Humble removes Stormtide Islandwalk and later source abilities while its earlier layer4 Island grant remains applied. A foreign Citadel retains Island type and intrinsic blue mana; the accepted spell and pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_seas_removes_printed_mana_and_indestructible_and_source_loss_restores",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.continuous.basic_land_type.fixed_setting"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "continuous.basic_land_type.fixed_setting"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Spreading Seas sets original Darksteel Citadel to Island, removing printed indestructible and colorless activation while preserving artifact/land/name. Disenchant can destroy the stripped land; alternatively destroying the Aura restores its printed abilities. Pending load and every command segment replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_moon_urborg_dependency_is_independent_of_timestamp",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.add_all_lands",
+        "capability.continuous.basic_land_type.fixed_setting"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.add_all_lands",
+        "continuous.basic_land_type.fixed_setting"
+      ],
+      "interaction_order": 2,
+      "assertion": "Existing Blood Moon suppresses the printed Urborg source before its global Swamp grant. Both source timestamp orders yield only Mountain on nonbasic Urborg and keep a Basic Snow Island unchanged; source abilities and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.fixed_setting",
+        "capability.zone.entry.tapped_state"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.fixed_setting",
+        "zone.entry.tapped_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Blood Moon precedes an offered Vivid Creek land play. The prospective Mountain has no printed compound tap/counter entry replacement, so it enters untapped without charge counters; private projection, unauthorized-command rollback and pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.fixed_setting",
+        "capability.mana.intrinsic.basic_land_type"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.fixed_setting",
+        "mana.intrinsic.basic_land_type"
+      ],
+      "interaction_order": 2,
+      "assertion": "The original Vivid Creek loses its printed abilities and old subtypes before entry under Blood Moon. Its sole activation is intrinsic red mana; it remains nonbasic while a Basic Snow Island remains unchanged, with replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_magus_type_setting_survives_later_humble_and_ends_on_departure",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.fixed_setting",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.fixed_setting",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Humble removes original Magus abilities in layer6 but its layer4 type setting still makes an opposing Citadel a Mountain. Actual Unsummon returns Magus and restores the Citadel printed abilities and colorless activation; each command segment replays."
     }
   ]
 }

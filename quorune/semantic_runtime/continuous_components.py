@@ -1375,6 +1375,7 @@ class ContinuousEffectComponentRegistry(
 def default_continuous_effect_component_registry(
 ) -> ContinuousEffectComponentRegistry:
     from .basic_type_addition import ScopedBasicTypeAdditionHandler
+    from .basic_type_setting import FixedBasicTypeSettingHandler
     from .chosen_characteristics import ChosenCharacteristicsHandler
     from .conditional_chosen_characteristics import ConditionalChosenCharacteristicsHandler
     from .attached_continuous import AttachedFixedCharacteristicsHandler
@@ -1402,6 +1403,7 @@ def default_continuous_effect_component_registry(
             ),
             AddBasicLandTypeHandler(),
             ScopedBasicTypeAdditionHandler(),
+            FixedBasicTypeSettingHandler(),
             FixedQueryAbilityGrantHandler(),
             FixedQueryKeywordGrantHandler(),
             FixedQueryCharacteristicGrantHandler(),

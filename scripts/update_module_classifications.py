@@ -55,6 +55,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/ability_fragments.py",
         "quorune/basic_land_types.py",
         "quorune/basic_type_addition_model.py",
+        "quorune/basic_type_setting_model.py",
         "quorune/bloodthirst.py",
         "quorune/cast_cost_modifiers.py",
         "quorune/characteristic_fragments.py",

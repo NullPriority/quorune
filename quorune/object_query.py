@@ -202,6 +202,7 @@ def object_matches_query(
         and (not spec.subtypes_any or not subtypes.isdisjoint(spec.subtypes_any))
         and subtypes.isdisjoint(spec.excluded_subtypes)
         and set(spec.supertypes_all).issubset(row.supertypes)
+        and set(spec.excluded_supertypes).isdisjoint(row.supertypes)
         and set(spec.colors_all).issubset(colors)
         and (not spec.colors_any or not set(spec.colors_any).isdisjoint(colors))
         and (spec.colorless is None or (not colors) is spec.colorless)

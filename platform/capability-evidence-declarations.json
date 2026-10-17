@@ -31572,6 +31572,447 @@
       "applicability_note": "Fixed additive scopes preserve names, basic/snow/card-type and printed ability facts; actual Omen/Nylea/Stormtide, source and recipient Humble, Aura loss, typed mana, rollback, pending load and replay distinguish addition from setting. Leyline independent siblings remain residual."
     },
     {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "CR305.7 setting preserves other facts while removing old land types and printed abilities; actual Blood Moon and Vivid Creek land play must bypass removed self tap/counter entry replacements. Basic/snow and prospective source ability facts stay distinct."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_magus_type_setting_survives_later_humble_and_ends_on_departure",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_moon_urborg_dependency_is_independent_of_timestamp",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_seas_removes_printed_mana_and_indestructible_and_source_loss_restores",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "CR305.7 setting preserves other facts while removing old land types and printed abilities; actual Blood Moon and Vivid Creek land play must bypass removed self tap/counter entry replacements. Basic/snow and prospective source ability facts stay distinct."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_setting_omission_is_killed_by_actual_blood_moon_entry",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Admission-preserving basic-setting lowerer omission makes actual Vivid Creek retain its removed printed entry replacement under Blood Moon; the original command witness detects it."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingKernelTests.test_nonbasic_query_is_supertype_based_and_preserves_older_serialization",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "CR305.7 setting preserves other facts while removing old land types and printed abilities; actual Blood Moon and Vivid Creek land play must bypass removed self tap/counter entry replacements. Basic/snow and prospective source ability facts stay distinct."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "CR305.7 setting preserves other facts while removing old land types and printed abilities; actual Blood Moon and Vivid Creek land play must bypass removed self tap/counter entry replacements. Basic/snow and prospective source ability facts stay distinct."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_moon_urborg_dependency_is_independent_of_timestamp",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_all_setting_originals_require_complete_sibling_admission",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingKernelTests.test_setting_removes_only_land_subtypes_and_printed_abilities_before_intrinsic_mana",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "CR305.7 setting preserves other facts while removing old land types and printed abilities; actual Blood Moon and Vivid Creek land play must bypass removed self tap/counter entry replacements. Basic/snow and prospective source ability facts stay distinct."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "CR305.7 setting preserves other facts while removing old land types and printed abilities; actual Blood Moon and Vivid Creek land play must bypass removed self tap/counter entry replacements. Basic/snow and prospective source ability facts stay distinct."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_seas_removes_printed_mana_and_indestructible_and_source_loss_restores",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_all_setting_originals_require_complete_sibling_admission",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingKernelTests.test_nonbasic_query_is_supertype_based_and_preserves_older_serialization",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "CR305.7 setting preserves other facts while removing old land types and printed abilities; actual Blood Moon and Vivid Creek land play must bypass removed self tap/counter entry replacements. Basic/snow and prospective source ability facts stay distinct."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "CR305.7 setting preserves other facts while removing old land types and printed abilities; actual Blood Moon and Vivid Creek land play must bypass removed self tap/counter entry replacements. Basic/snow and prospective source ability facts stay distinct."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_magus_type_setting_survives_later_humble_and_ends_on_departure",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_moon_urborg_dependency_is_independent_of_timestamp",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_seas_removes_printed_mana_and_indestructible_and_source_loss_restores",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
       "capability_id": "continuous.characteristics.changeling",
       "evidence_class": "interaction",
       "test_id": "tests.test_changeling_characteristics.ChangelingRuntimeTests.test_changeling_cda_orders_before_non_cda_type_setting_and_after_copy",
@@ -86305,192 +86746,650 @@
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "interaction",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_public_characteristic_sets_lock_multiplayer_membership",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Use current authoritative attacking and blocking relationships to select a resolution-time set before locking logical-object membership."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "interaction",
       "test_id": "tests.test_counter_target_predicates.CounterTargetPredicateRuntimeTests.test_public_state_targets_share_offer_command_and_resolution_revalidation",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Use the same current-turn entry predicate for target offers, submitted-command validation, and CR 608.2b resolution revalidation."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_placement_sets.FixedCounterPlacementSetRuntimeTests.test_public_state_counter_set_resolves_current_membership_once",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Snapshot the authoritative current public-state membership of a fixed counter affected set immediately before its APNAP-canonical batch."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_direct_target_predicates.FixedDirectTargetRuntimeTests.test_combat_state_target_offers_and_submission_share_one_or_legality",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Use the same current combat relationship for public offers and submitted-command validation, including the attacking-or-blocking disjunction."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_ability_presence_query_uses_shared_layer_six_dependency_order",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Use one positive ability-presence predicate for both relevant layer-6 additions and removals without family-specific checks."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_subtype_union_recomputes_after_layer_four_and_excludes_source",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Match a public subtype union from current layer-4 characteristics while preserving source-reference exclusion."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "interaction",
       "test_id": "tests.test_permanent_exile_rules.PermanentExileRuleTests.test_compiled_tapped_exile_filters_and_revalidates_target",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Use one shared tapped-state predicate for exile target offers, submitted-command validation, and resolution revalidation."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "interaction",
       "test_id": "tests.test_public_state_condition_runtime.FixedPublicStateCharacteristicRuntimeTests.test_public_condition_queries_follow_authoritative_history_and_control",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Recompute a controller-relative multicolored-permanent quantity through current layer-5 characteristics and source exclusion."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "interaction",
       "test_id": "tests.test_untap_step_rules.UntapStepRuleTests.test_shared_public_queries_govern_untap_participation",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Use the shared query to select current Island, Snow, nonland, and controlled artifact untap participants."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_placement_sets.FixedCounterPlacementSetRuntimeTests.test_target_player_counter_set_is_seat_scoped_and_replays_exactly",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Apply the named-counter membership predicate only to the chosen player's permanents in a four-player resolution."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_direct_target_predicates.FixedDirectTargetRuntimeTests.test_combat_state_target_offers_and_submission_share_one_or_legality",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Derive combat-state targets from public current relationships in a four-player game without a seat-specific target grammar."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "mutation",
       "test_id": "tests.test_counter_target_predicates.CounterTargetPredicateRuntimeTests.test_public_state_predicate_runtime_mutation_is_killed",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Kill a runtime mutation that admits a previous-turn permanent by bypassing the shared public-state evaluator."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "negative",
       "test_id": "tests.test_counter_target_predicates.CounterTargetPredicateCompilerTests.test_unsupported_and_malformed_direct_target_predicates_fail_closed",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Reject generic counter-presence, unrepresented turn history, contradictory state descriptors, and unsupported negative subtypes."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_query_dependency_fails_closed_across_consumers",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Block the shared query capability and prevent every affected typed consumer from becoming exact."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "negative",
       "test_id": "tests.test_public_state_condition_compiler.FixedPublicStateCharacteristicCompilerTests.test_fixed_public_condition_dependencies_fail_closed",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Block the shared query capability and prevent a query-gated fixed characteristic node from becoming exact."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "positive",
       "test_id": "tests.test_counter_target_predicates.CounterTargetPredicateCompilerTests.test_public_state_direct_targets_compile_typed_predicates",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Lower tapped, named-counter, and current-turn-entry direct target wording to one immutable state descriptor."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingKernelTests.test_nonbasic_query_is_supertype_based_and_preserves_older_serialization",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Negative Basic-supertype query matches nonbasic Mountain while excluding Basic Snow Island; new query shape roundtrips and older serialized shapes stay unchanged."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_placement_sets.FixedCounterPlacementSetCompilerTests.test_public_state_counter_sets_are_typed_and_deterministic",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Lower named-counter and current-turn-entry affected sets with closed color and subtype qualifiers to deterministic typed queries."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_direct_target_predicates.FixedDirectTargetCompilerTests.test_shared_characteristic_grammar_covers_the_bounded_shapes",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Lower attacking, blocking, and attacking-or-blocking direct targets to one canonical immutable combat-state descriptor."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_set_query_fans_into_layers_and_resolution",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Canonicalize fixed type, subtype, Outlaw, token, state, and positive ability set grammar into one ObjectQuerySpec."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "positive",
       "test_id": "tests.test_public_state_condition_compiler.FixedPublicStateCharacteristicCompilerTests.test_fixed_public_condition_queries_compile_across_authoritative_facts",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile public color unions, multicolor cardinality, subtype, token, tap, and modified condition quantities into the shared query."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "positive",
       "test_id": "tests.test_untap_step_rules.UntapStepRuleTests.test_shared_public_queries_govern_untap_participation",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile public land, Snow, nonland, and artifact query shapes for the untap owner."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "privacy",
       "test_id": "tests.test_counter_target_predicates.CounterTargetPredicateRuntimeTests.test_four_player_target_predicate_privacy_rollback_and_replay",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Project only public named-counter-qualified legal refs to the acting seat without exposing another seat's decision or hidden identities."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_direct_target_predicates.FixedDirectTargetRuntimeTests.test_combat_state_target_offers_and_submission_share_one_or_legality",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Advertise only public combatant references and never inspect or project hidden-zone identities while computing legal targets."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "replay",
       "test_id": "tests.test_counter_target_predicates.CounterTargetPredicateRuntimeTests.test_four_player_target_predicate_privacy_rollback_and_replay",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "305.8",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Replay the accepted named-counter-qualified target and resulting fixed counter placement to the same authoritative hash."
     },
     {

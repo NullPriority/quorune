@@ -45,6 +45,7 @@ _NEGATIVE_KEYWORD_QUERY_FIELDS = _RELATIONAL_QUERY_FIELDS | {
 }
 _DESIGNATION_QUERY_FIELDS = _NEGATIVE_KEYWORD_QUERY_FIELDS | {"commander"}
 _NUMERIC_QUERY_FIELDS = _DESIGNATION_QUERY_FIELDS | {"numeric_characteristic"}
+_SUPERTYPE_EXCLUSION_QUERY_FIELDS = _NUMERIC_QUERY_FIELDS | {"excluded_supertypes"}
 _LEGACY_PERMANENT_STATE_FIELDS = frozenset(
     {
         "entered_this_turn",
@@ -324,6 +325,7 @@ class ObjectQuerySpec:
     exclude_ref: str | None = None
     state_predicate: PermanentStatePredicateSpec | None = None
     numeric_characteristic: TargetNumericCharacteristicSpec | None = None
+    excluded_supertypes: tuple[str, ...] = ()
     _serialization_version: int = field(
         default=2,
         repr=False,
@@ -341,6 +343,7 @@ class ObjectQuerySpec:
             "subtypes_any",
             "excluded_subtypes",
             "supertypes_all",
+            "excluded_supertypes",
             "keywords_all",
             "keywords_none",
         ):
@@ -432,20 +435,24 @@ class ObjectQuerySpec:
                 raise ObjectQueryError("Numeric characteristic predicates must be typed")
             if self.zones != ("battlefield",) or "creature" not in self.types_all:
                 raise ObjectQueryError("Numeric characteristic queries require battlefield creatures")
-            object.__setattr__(self, "_serialization_version", 7)
+            if self._serialization_version != 8:
+                object.__setattr__(self, "_serialization_version", 7)
         elif self.commander is not None:
-            object.__setattr__(self, "_serialization_version", 6)
+            if self._serialization_version != 8:
+                object.__setattr__(self, "_serialization_version", 6)
         elif self.keywords_none and self._serialization_version in {1, 2, 3, 4}:
             object.__setattr__(self, "_serialization_version", 5)
         elif relational and self._serialization_version in {1, 2, 3}:
             object.__setattr__(self, "_serialization_version", 4)
         elif extended and self._serialization_version == 2:
             object.__setattr__(self, "_serialization_version", 3)
-        if type(self._serialization_version) is not int or self._serialization_version not in {1, 2, 3, 4, 5, 6, 7}:
+        if self.excluded_supertypes:
+            object.__setattr__(self, "_serialization_version", 8)
+        if type(self._serialization_version) is not int or self._serialization_version not in {1, 2, 3, 4, 5, 6, 7, 8}:
             raise ObjectQueryError(
                 "Object query serialization version is unsupported"
             )
-        if extended and self._serialization_version not in {3, 4, 5, 6, 7}:
+        if extended and self._serialization_version not in {3, 4, 5, 6, 7, 8}:
             raise ObjectQueryError(
                 "Extended object predicates require serialization version 3"
             )
@@ -484,7 +491,7 @@ class ObjectQuerySpec:
                     ),
                 }
             )
-        elif self._serialization_version in {4, 5, 6, 7}:
+        elif self._serialization_version in {4, 5, 6, 7, 8}:
             value.update(
                 {
                     "subtypes_any": list(self.subtypes_any),
@@ -501,13 +508,15 @@ class ObjectQuerySpec:
                     "minimum_color_count": self.minimum_color_count,
                 }
             )
-            if self._serialization_version in {5, 6, 7}:
+            if self._serialization_version in {5, 6, 7, 8}:
                 value["keywords_none"] = list(self.keywords_none)
-            if self._serialization_version in {6, 7}:
+            if self._serialization_version in {6, 7, 8}:
                 value["commander"] = self.commander
-            if self._serialization_version == 7:
+            if self._serialization_version in {7, 8}:
                 value["numeric_characteristic"] = (
                     self.numeric_characteristic.to_dict() if self.numeric_characteristic is not None else None)
+            if self._serialization_version == 8:
+                value['excluded_supertypes'] = list(self.excluded_supertypes)
         return value
 
     def to_dict(self) -> dict[str, Any]:
@@ -531,6 +540,7 @@ class ObjectQuerySpec:
             _NEGATIVE_KEYWORD_QUERY_FIELDS,
             _DESIGNATION_QUERY_FIELDS,
             _NUMERIC_QUERY_FIELDS,
+            _SUPERTYPE_EXCLUSION_QUERY_FIELDS,
         }:
             expected = (
                 _DESIGNATION_QUERY_FIELDS
@@ -581,6 +591,7 @@ class ObjectQuerySpec:
             subtypes_any=value.get("subtypes_any", ()),
             excluded_subtypes=value.get("excluded_subtypes", ()),
             supertypes_all=value["supertypes_all"],
+            excluded_supertypes=value.get('excluded_supertypes',()),
             colors_all=value["colors_all"],
             colors_any=value["colors_any"],
             colorless=value.get("colorless"),
@@ -596,7 +607,9 @@ class ObjectQuerySpec:
             state_predicate=state_predicate,
             numeric_characteristic=numeric,
             _serialization_version=(
-                7
+                8
+                if actual == _SUPERTYPE_EXCLUSION_QUERY_FIELDS
+                else 7
                 if actual == _NUMERIC_QUERY_FIELDS
                 else 6
                 if actual == _DESIGNATION_QUERY_FIELDS
@@ -650,6 +663,7 @@ def validate_chosen_damage_source_predicate(
         or spec.colorless is not None
         or spec.state_predicate is not None
         or spec.keywords_none
+        or spec.excluded_supertypes
     ):
         raise ObjectQueryError(
             "Chosen damage sources do not support extended public predicates"

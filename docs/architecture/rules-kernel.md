@@ -322,6 +322,13 @@ type adds its subtypes while preserving printed abilities, other types,
 supertypes, and names. A source's later ability removal does not undo an already
 applied type effect; removing that source or its attachment ends the effect.
 Type setting and its printed-ability loss use a separate contract.
+Fixed basic-land-type setting replaces land subtypes and removes printed and
+copiable abilities in layer 4. Other card types, nonland subtypes, supertypes,
+names, colors, and stats remain unless another instruction changes them. Later
+ability grants stay separate, and intrinsic mana derives from the new types
+before layer-6 removal. Negative supertype queries distinguish nonbasic lands
+from lands with a basic subtype. Prospective entry applies this same ability
+presence boundary before printed entry replacements and triggers are collected.
 The catalog unifies discovery for ordinary Crew, Cycling, fixed Typecycling,
 fixed counter-keyword activations, and represented mana abilities without
 replacing those families' specialized execution owners or capability closure.

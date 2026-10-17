@@ -48,7 +48,6 @@ from .draw_templates import (
     static_draw_restriction_handler,
 )
 from .entry_state_templates import static_entry_state_handler
-from ..external_entry_state_model import EXTERNAL_ENTRY_STATE_HANDLER_ID
 from .fixed_self_entry_counter_templates import (
     dynamic_self_entry_counter_handler,
     fixed_self_entry_counter_handler,
@@ -282,8 +281,7 @@ def _source_permanent_participation_template(
         kind="replacement_effect",
         event="zone.change",
         active_zone="all" if relation == "affected_object" else "battlefield",
-        runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,)
-            if entry_state[1]['handler_id']==EXTERNAL_ENTRY_STATE_HANDLER_ID else (),
+        runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
         dependency_reason=(
             "generic battlefield-entry state depends on an untrusted "
             "rules capability"
@@ -339,6 +337,22 @@ def _static_declaration_runtime_template(
     return None
 
 
+def _basic_land_type_runtime_template(text):
+    from .basic_type_setting_templates import fixed_basic_type_setting_handler
+    from .basic_type_addition_templates import scoped_basic_type_addition_handler
+    compiled = fixed_basic_type_setting_handler(text) or scoped_basic_type_addition_handler(text)
+    if compiled is not None:
+        return StaticRuntimeTemplate(compiled=compiled,kind='static_ability',
+            event='characteristics.evaluate',runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason='Fixed basic type changes require their layer-four, ability and intrinsic-mana owners')
+    legacy = basic_land_type_addition_handler(text)
+    if legacy is not None:
+        return StaticRuntimeTemplate(compiled=legacy,kind='static_ability',
+            event='characteristics.evaluate',
+            dependency_reason='Basic land type addition requires its existing continuous capability')
+    return None
+
+
 def _continuous_static_runtime_template(
     text: str,
     *,
@@ -361,23 +375,9 @@ def _continuous_static_runtime_template(
     setting = _constant_static_characteristic_template(text, source_name=source_name, source_is_class=source_is_class)
     if setting is not None:
         return setting
-    from .basic_type_addition_templates import scoped_basic_type_addition_handler
-    scoped_basic_type = scoped_basic_type_addition_handler(text)
-    if scoped_basic_type is not None:
-        return StaticRuntimeTemplate(compiled=scoped_basic_type,kind='static_ability',
-            event='characteristics.evaluate',runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
-            dependency_reason='Fixed scoped basic-type addition requires its current layer-four and intrinsic-mana owners')
-    basic_land_type = basic_land_type_addition_handler(text)
+    basic_land_type = _basic_land_type_runtime_template(text)
     if basic_land_type is not None:
-        return StaticRuntimeTemplate(
-            compiled=basic_land_type,
-            kind="static_ability",
-            event="characteristics.evaluate",
-            dependency_reason=(
-                "generic basic-land-type addition depends on an untrusted "
-                "rules capability"
-            ),
-        )
+        return basic_land_type
     characteristic_grant = (
         None
         if source_is_class
