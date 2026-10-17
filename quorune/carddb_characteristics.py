@@ -5,7 +5,7 @@ from typing import Any, Mapping
 
 from .carddb import CardRecord
 from .model import CardInstance
-from .rules.face_characteristic_values import printed_face_mana_value,printed_face_colors
+from .rules.face_characteristic_values import printed_face_mana_value,printed_face_colors,current_face_mana_value
 
 
 def _custom_object_characteristics(card: CardInstance) -> Mapping[str, Any]:
@@ -61,6 +61,19 @@ def custom_copyable_characteristics(card: CardInstance) -> dict[str, Any]:
     result.setdefault("keywords", [])
     result.setdefault("colors", [])
     result.setdefault("produced_mana", [])
+    return result
+
+
+def copiable_card_characteristics(card, record, base):
+    """Capture copiable values while keeping a derived original value separate."""
+    from .card_program_faces import selected_face_id
+    result = dict(base)
+    result.update(copy.deepcopy(dict(card.annotations.get('copy_overrides') or {})))
+    if (record is not None and record.layout == 'transform' and len(record.faces) == 2
+            and selected_face_id(record, card) == record.faces[1].get('name')):
+        # Mana value is derived, rather than itself copied. The back face's
+        # own copiable mana cost remains empty under CR 202.3b and 707.2.
+        result['mana_value'] = printed_face_mana_value({'mana_cost': result.get('mana_cost') or ''})
     return result
 
 
@@ -129,7 +142,7 @@ def base_card_characteristics(
     return {
         "name": str(face.get("name")) if face else record.name,
         "mana_cost": str(face.get("mana_cost") or "") if face else record.mana_cost,
-        "mana_value": printed_face_mana_value(face) if selected else record.mana_value,
+        "mana_value": current_face_mana_value(record, face) if selected else record.mana_value,
         "type_line": str(face.get("type_line") or "") if face else record.type_line,
         "oracle_text": str(face.get("oracle_text") or "") if face else record.oracle_text,
         "executable_oracle_text": (
@@ -151,5 +164,6 @@ def base_card_characteristics(
 __all__ = [
     "base_card_characteristics",
     "custom_copyable_characteristics",
+    "copiable_card_characteristics",
     "separate_custom_display_text",
 ]

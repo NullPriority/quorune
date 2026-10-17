@@ -2,7 +2,7 @@
 title: "Rules kernel"
 status: "current"
 authoritative_source: "quorune engine and rules modules, including quorune/control_history.py, quorune/day_night.py, quorune/permanent_transform.py, quorune/turn_history.py, quorune/echo.py, quorune/saga_progression.py, quorune/mentor.py, quorune/relative_power_target.py, and quorune/target_predicates.py"
-verified: "2026-09-19"
+verified: "2026-10-17"
 audience: "rules and engine contributors"
 maintenance: "hand-maintained"
 ---
@@ -87,6 +87,13 @@ binding; a blink creates a new object and invalidates that activation. Current
 fixed keywords on a double-faced spell or permanent come from trusted printed
 programs for its selected face. The parent record's keyword union cannot keep
 front-face Defender on a transformed Flying creature.
+
+An original transforming back face retains the mana value calculated from its
+front face while retaining its own current mana cost and colors. Copiable
+snapshots derive the copy's mana value from the copied face's own mana cost;
+they do not copy the original's derived front-face value. A copy of a
+transforming back face therefore has mana value zero. Modal faces and split
+card stack and prospective views retain their separate selected-face rules.
 
 Prototype selection changes base mana cost, color, power and toughness while
 casting, on the stack and on the battlefield. It preserves the card's types

@@ -6411,14 +6411,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "bound-target-departure-during-resolution-correction",
-      "compiler_version": "oracle-ir-v417",
+      "transition_id": "nonmodal-back-face-mana-value-correction",
+      "compiler_version": "oracle-ir-v421",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Correct scalar mutations of a selected target after earlier instructions move its incarnation. Actual Requisition Raid and Kolaghan modes previously accepted and paid but failed during resolution. Reuse existing target identity authority and skipped-target continuation, preserve surviving shield targets and strict initial validation, privacy and replay. No new grammar or support harvest."
+      "non_harvest_reason": "Correct original transforming back-face mana value to the front-derived value while copied back faces remain zero from their own copiable mana cost. Actual admitted Kessig resolves to wrong0 instead1 and Eliminate accepts transformed five-mana Herdbeast illegally on unchangedmain. Preserve modal/split rules, actual Clone/token-copy semantics, authenticated rollback/privacy and replay. No grammar or support harvest."
     },
 
     "forecast_corrections": [
