@@ -466,6 +466,7 @@
       "test_fabricate_compiler",
       "test_fixed_activated_zone_change_costs",
       "test_fixed_basic_type_setting",
+      "test_fixed_copy_type_exceptions",
       "test_fixed_entry_conditions",
       "test_fixed_library_searches",
       "test_fixed_optional_effect_choices",

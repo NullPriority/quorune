@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "fc4b08b4a4d5c17c4ee5a095b28419c85cb09bfb4e612a6bac9736ea210534cd",
-  "declaration_source_fingerprint": "d3b57e8d7f8557ee31c88f3662e1fa215ee4cf27aa3c91d7eb3b3d9e98c2f856",
+  "registry_fingerprint": "247ebd4c2b565c047b1c1d6f244682e86c201dbeccc094113b03234d18d2ec9f",
+  "declaration_source_fingerprint": "0256ea423573fd81891f43691c7e9007cc5fd04c152cb103b1a5f07fe9655395",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -127370,6 +127370,33 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_actual_synth_exception_is_copiable_and_survives_ability_removal",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_does_not_inherit_temporary_artifact_replacement_and_replays",
       "official_rule_ids": [
         "111.2",
@@ -127667,6 +127694,33 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_actual_synth_exception_is_copiable_and_survives_ability_removal",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint",
       "official_rule_ids": [
         "111.2",
@@ -127744,6 +127798,33 @@
         "commander_review"
       ],
       "applicability_note": "A copied B-owned A-controlled source creates A-owned and A-controlled tokens; affected A selects both replacement stages."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_copied_type_omission_is_killed_by_actual_synth",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
     },
     {
       "capability_id": "token.creation.fixed_copy",
@@ -127910,6 +127991,60 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionCompilerTests.test_fixed_copy_type_exceptions_consume_full_type_words",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_original_type_exception_carriers_require_whole_card_admission",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_does_not_inherit_temporary_artifact_replacement_and_replays",
       "official_rule_ids": [
         "111.2",
@@ -128068,6 +128203,60 @@
         "commander_review"
       ],
       "applicability_note": "Fixed-copy owner commits canonical prepared counter leaves without rediscovery."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionCompilerTests.test_fixed_copy_type_exceptions_consume_full_type_words",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_original_type_exception_carriers_require_whole_card_admission",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
     },
     {
       "capability_id": "token.creation.fixed_copy",
@@ -128261,6 +128450,33 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_actual_synth_exception_is_copiable_and_survives_ability_removal",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint",
       "official_rule_ids": [
         "111.2",
@@ -128396,6 +128612,33 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "replay",
+      "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_actual_synth_exception_is_copiable_and_survives_ability_removal",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "replay",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint",
       "official_rule_ids": [
         "111.2",
@@ -128527,6 +128770,33 @@
         "commander_review"
       ],
       "applicability_note": "Exact commands from before the cast preserve all trigger identities, normal trigger ordering and full consequences."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_actual_synth_exception_is_copiable_and_survives_ability_removal",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
     },
     {
       "capability_id": "token.creation.fixed_definition",
@@ -155217,6 +155487,31 @@
     },
     {
       "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_actual_synth_exception_is_copiable_and_survives_ability_removal",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
       "official_rule_ids": [
@@ -155292,6 +155587,31 @@
     },
     {
       "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_actual_synth_exception_is_copiable_and_survives_ability_removal",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
       "evidence_class": "mutation",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_intrinsic_copy_producer_omission_mutant_is_killed",
       "official_rule_ids": [
@@ -155339,6 +155659,31 @@
         "commander_review"
       ],
       "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_copied_type_omission_is_killed_by_actual_synth",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
     },
     {
       "capability_id": "zone.entry.fixed_copy",
@@ -155514,6 +155859,56 @@
         "commander_review"
       ],
       "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionCompilerTests.test_fixed_copy_type_exceptions_consume_full_type_words",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_original_type_exception_carriers_require_whole_card_admission",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
     },
     {
       "capability_id": "zone.entry.fixed_copy",
@@ -155792,6 +156187,56 @@
     },
     {
       "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionCompilerTests.test_fixed_copy_type_exceptions_consume_full_type_words",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_original_type_exception_carriers_require_whole_card_admission",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
       "evidence_class": "privacy",
       "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
       "official_rule_ids": [
@@ -155839,6 +156284,31 @@
         "commander_review"
       ],
       "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_actual_synth_exception_is_copiable_and_survives_ability_removal",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
     },
     {
       "capability_id": "zone.entry.fixed_copy",
@@ -156142,6 +156612,31 @@
     },
     {
       "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_actual_synth_exception_is_copiable_and_survives_ability_removal",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
       "evidence_class": "rollback",
       "test_id": "tests.test_copy_objects.EntryCopySelectorRuntimeTests.test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death",
       "official_rule_ids": [
@@ -156189,6 +156684,31 @@
         "commander_review"
       ],
       "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_copy_type_exceptions.FixedCopyTypeExceptionRuntimeTests.test_actual_synth_exception_is_copiable_and_survives_ability_removal",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b",
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "707.9"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
     },
     {
       "capability_id": "zone.entry.public_designation",
@@ -163053,5 +163573,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "6efdd94b83e07b7de17b389bc92e7551b1d839da28bc96ba7378a514d8682179"
+  "fingerprint": "018facd6e454b3ce860239e0aa70ef4a0844079e7106f156d00f4a73457575a2"
 }

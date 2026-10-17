@@ -211,6 +211,9 @@ enters-copy replacement captures layer-one values and activates the selected
 source's typed intrinsic entry producers. Commit retains the physical card's
 Oracle identity and carries separate copied program provenance into effective
 characteristics, static owners, activation catalogs and event discovery.
+Fixed additive copy exceptions retain other types while adding represented
+card types or creature subtypes. These exceptions are copiable values and
+survive later ability removal; unknown words and unrepresented grants reject.
 Departure LKI retains that provenance for already-triggered abilities; the
 new zone incarnation discards the old copy. Copied Aura attachment uses the
 existing affected-controller choice before entry. Its retained replacement

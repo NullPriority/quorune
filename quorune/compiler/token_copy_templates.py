@@ -32,13 +32,22 @@ def _fixed_exception(text: str) -> TokenCopyExceptionSpec | None:
         if not value:
             return exception
     value = re.sub(r"^(?:it's|it is|the token is) ", "", value, flags=re.I)
-    addition = re.fullmatch(r"(?:an? )?(?P<description>.+?) in addition to (?:its|their) other types", value, re.I)
+    addition = re.fullmatch(r"(?:an? )?(?P<description>.+?) in addition to (?:its|their) other (?P<creature_only>creature )?types", value, re.I)
     if addition is not None:
         description = addition["description"].casefold()
         if description in {"artifact", "enchantment"}:
+            if addition['creature_only']:return None
             return replace(exception, add_card_types=(description,))
+        typed = re.fullmatch(r"(?:(?P<subtypes>[a-z'-]+(?: [a-z'-]+)*) )?(?P<cardtype>artifact|enchantment) creature",description)
+        if typed is not None:
+            if addition['creature_only']:return None
+            words=(typed['subtypes'] or '').split()
+            subtypes=tuple(canonical_creature_subtype(word) for word in words)
+            if any(value is None for value in subtypes) or len(set(subtypes))!=len(subtypes):return None
+            return replace(exception,add_card_types=(typed['cardtype'],'creature'),add_subtypes=subtypes)
         additive_base = re.fullmatch(r"(?P<power>\d+)/(?P<toughness>\d+) (?:(?P<color>white|blue|black|red|green) )?(?P<subtype>[a-z'-]+)(?: (?P<cardtype>artifact|enchantment))?(?: creature)?", description)
         if additive_base:
+            if addition['creature_only'] and additive_base['cardtype']:return None
             subtype = canonical_creature_subtype(additive_base["subtype"])
             if subtype is None:
                 return None

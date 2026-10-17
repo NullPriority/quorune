@@ -4822,6 +4822,21 @@
         "test_typed_land_entry_participation",
         "test_copied_self_entry_counters"
       ]
+    },
+    {
+      "id": "fixed-copy-type-exception-contract",
+      "patterns": [
+        "quorune/compiler/token_copy_templates.py",
+        "quorune/compiler/entry_copy_templates.py",
+        "tests/fixtures/fixed-copy-type-exception-cards.json",
+        "tests/test_fixed_copy_type_exceptions.py"
+      ],
+      "test_modules": [
+        "test_copy_objects",
+        "test_fixed_copy_type_exceptions",
+        "test_paid_entry_copy",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [
