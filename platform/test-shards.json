@@ -488,6 +488,7 @@
       "test_riot_rules",
       "test_scoped_basic_type_addition",
       "test_server_app",
+      "test_shared_modal_target_resolution",
       "test_source_maintenance",
       "test_stack_rules",
       "test_target_announcements",

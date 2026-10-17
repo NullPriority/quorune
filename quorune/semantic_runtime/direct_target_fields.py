@@ -7,9 +7,38 @@ from typing import Any, Mapping
 
 from ..replacement.immutable import FrozenMap, ImmutableValueError, freeze_value
 from .context import ReadOnlyHandlerContext, SemanticNodeError
+from ..selection.target_query import target_identity_matches_snapshot
 
 
 _REASON_FIELD = "reason"
+
+# Scalar recipients being mutated, rather than objects read for information.
+_MUTATING_TARGET_FIELDS = {
+    **{operation: 'card' for operation in (
+        'destroy', 'bounce', 'exile_permanent', 'tap', 'untap', 'place_counters',
+        'remove_counters', 'remove_all_counters', 'gain_control', 'regenerate',
+        'sacrifice', 'apply_source_characteristics_until_end_of_turn',
+    )},
+    'damage': 'target',
+}
+
+
+def bound_mutation_target_overrides(host, effect, item, resolve_reference):
+    """Omit mutations of a bound incarnation lost during earlier instructions."""
+    field = _MUTATING_TARGET_FIELDS.get(effect.get('op'))
+    reference = effect.get(field) if field is not None else None
+    if not isinstance(reference, str) or not reference.startswith('$target'):
+        return {}
+    ref = resolve_reference(reference)
+    if not isinstance(ref, str):
+        return {}
+    snapshot = item.context.get('target_snapshots', {}).get(ref)
+    if (not isinstance(snapshot, Mapping) or snapshot.get('object_id') is None
+            or snapshot.get('zone_change_counter') is None):
+        return {}
+    if not target_identity_matches_snapshot(host, ref, snapshot):
+        return {field: None}
+    return {}
 
 
 @dataclass(frozen=True, slots=True)

@@ -2,7 +2,7 @@
 title: "Target legality and protection"
 status: "current"
 authoritative_source: "quorune/targets.py, quorune/target_characteristics.py, quorune/target_history.py, quorune/target_numeric.py, quorune/object_query.py, quorune/target_predicates.py, quorune/protection.py, quorune/damage_source.py, quorune/target_protection.py, quorune/target_protection_engine_adapter.py, and CommanderEngine._target_row_matches"
-verified: "2026-08-24"
+verified: "2026-10-17"
 audience: "rules, compiler, replay, and architecture contributors"
 maintenance: "hand-maintained"
 ---
@@ -21,6 +21,17 @@ and outside-zone filters still apply; a rejected reference does not fall back
 to another object's name. Without a reference match, the existing printed and
 effective name query retains ambiguity checks. Reference lookup does not
 evaluate unrelated objects' continuous characteristics or keep a state cache.
+
+Target snapshots retain the selected object's identity and zone-change counter.
+During resolution, `semantic_runtime/direct_target_fields.py` checks that
+identity for scalar mutation recipients before `semantic_runtime/values.py`
+materializes their arguments. If an earlier instruction moves the target,
+the later mutation uses the existing skipped-target path and resolution
+continues. A surviving shared target remains usable by later instructions,
+including after a shield replaces the first destruction. Informational
+references retain their own snapshot, current-information, and last-known
+information rules. Casting validation still rejects missing and wrong-domain
+selections before payment.
 
 `targets.py` owns the closed schema vocabulary and public-zone boundary.
 `target_predicates.py` owns reusable characteristic and relationship tests.

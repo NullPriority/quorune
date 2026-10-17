@@ -90114,7 +90114,10 @@
       "test_id": "tests.test_activated_draw_abilities.ActivatedDrawRuntimeTests.test_target_player_draw_validates_target_resolves_privately_and_replays",
       "official_rule_ids": [
         "115.1",
-        "608.2b"
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
       ],
       "supported_profiles": [
         "traditional",
@@ -90127,8 +90130,18 @@
       "capability_id": "target.revalidate_resolution",
       "evidence_class": "interaction",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_target_player_characteristic_set_resolves_and_replays",
-      "official_rule_ids": ["115.1", "608.2b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Revalidate one public target player and substitute that seat into the locked creature-set predicate immediately before resolution."
     },
     {
@@ -90137,7 +90150,10 @@
       "test_id": "tests.test_fixed_player_counter_placement_effects.FixedPlayerCounterPlacementRuntimeTests.test_target_player_counter_choice_is_seat_scoped_and_replays_exactly",
       "official_rule_ids": [
         "115.1",
-        "608.2b"
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
       ],
       "supported_profiles": [
         "traditional",
@@ -90150,25 +90166,91 @@
       "capability_id": "target.revalidate_resolution",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_player_life_effects.FixedPlayerLifeRuntimeTests.test_target_opponent_drain_replacement_and_replay_are_exact",
-      "official_rule_ids": ["115.1", "608.2b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Revalidate one selected active opponent before committing the fixed simultaneous loss-and-gain life transaction."
     },
     {
       "capability_id": "target.revalidate_resolution",
       "evidence_class": "interaction",
       "test_id": "tests.test_keyword_counter_composition.KeywordCounterCompositionTests.test_hexproof_counter_feeds_offer_and_resolution_revalidation",
-      "official_rule_ids": ["115.1", "608.2b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Revalidate a previously legal public permanent after a canonically placed Hexproof counter changes its current effective targeting protection, then replay the resulting no-effect resolution exactly."
     },
     {
       "capability_id": "target.revalidate_resolution",
       "evidence_class": "interaction",
       "test_id": "tests.test_self_zone_move_rules.SelfZoneMoveRuntimeTests.test_target_revalidation_and_self_return_coexist_on_one_card",
-      "official_rule_ids": ["115.1", "608.2b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Use Tymaret's current complete CardProgram to reject a departed planeswalker target, then independently activate its source-self graveyard return on the next ordinary priority window."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_shared_modal_target_resolution.SharedModalTargetRuntimeTests.test_original_kolaghan_later_damage_does_not_affect_departed_artifact_creature",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_shared_modal_target_resolution.SharedModalTargetRuntimeTests.test_original_raid_reuses_surviving_target_and_ignores_departed_target",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
     },
     {
       "capability_id": "target.revalidate_resolution",
@@ -90176,7 +90258,10 @@
       "test_id": "tests.test_targeting_v070.ExactTargetingTests.test_modes_reb_and_pyroblast_use_actual_target_rules",
       "official_rule_ids": [
         "115.1",
-        "608.2b"
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
       ],
       "supported_profiles": [
         "traditional",
@@ -90191,7 +90276,10 @@
       "test_id": "tests.test_typed_land_entry_participation.TypedLandEntryRuntimeTests.test_fell_faces_compose_target_revalidation_with_tapped_entry",
       "official_rule_ids": [
         "115.1",
-        "608.2b"
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
       ],
       "supported_profiles": [
         "traditional",
@@ -90202,11 +90290,32 @@
     },
     {
       "capability_id": "target.revalidate_resolution",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_shared_modal_target_resolution.SharedModalTargetRuntimeTests.test_original_raid_reuses_surviving_target_and_ignores_departed_target",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
       "evidence_class": "mutation",
       "test_id": "tests.test_capability_implementation_mutations.CapabilityImplementationMutationTests.test_target_validation_mutant_is_killed",
       "official_rule_ids": [
         "115.1",
-        "608.2b"
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
       ],
       "supported_profiles": [
         "traditional",
@@ -90214,6 +90323,24 @@
         "commander_review"
       ],
       "applicability_note": "Revalidate a selected public target's logical object and target restrictions immediately before resolution."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_shared_modal_target_resolution.SharedModalTargetRuntimeTests.test_departed_target_guard_omission_is_killed_by_original_raid",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
     },
     {
       "capability_id": "target.revalidate_resolution",
@@ -90221,7 +90348,10 @@
       "test_id": "tests.test_object_identity.ObjectIdentityAndTokenLifecycleTests.test_target_that_leaves_and_returns_is_a_new_illegal_object",
       "official_rule_ids": [
         "115.1",
-        "608.2b"
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
       ],
       "supported_profiles": [
         "traditional",
@@ -90233,10 +90363,49 @@
     {
       "capability_id": "target.revalidate_resolution",
       "evidence_class": "negative",
+      "test_id": "tests.test_shared_modal_target_resolution.BoundTargetMutationIdentityTests.test_literal_unknown_information_and_historical_references_keep_existing_boundaries",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "negative",
+      "test_id": "tests.test_shared_modal_target_resolution.SharedModalTargetRuntimeTests.test_initial_unknown_and_wrong_domain_targets_still_reject_atomically",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "negative",
       "test_id": "tests.test_targeting_v070.ExactTargetingTests.test_all_targets_illegal_counters_by_rules",
       "official_rule_ids": [
         "115.1",
-        "608.2b"
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
       ],
       "supported_profiles": [
         "traditional",
@@ -90248,10 +90417,85 @@
     {
       "capability_id": "target.revalidate_resolution",
       "evidence_class": "positive",
+      "test_id": "tests.test_shared_modal_target_resolution.BoundTargetMutationIdentityTests.test_bound_liveness_policy_contains_only_registered_scalar_mutations",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_shared_modal_target_resolution.BoundTargetMutationIdentityTests.test_departed_bound_target_never_rebinds_but_live_repeated_target_survives",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_shared_modal_target_resolution.SharedModalTargetRuntimeTests.test_original_kolaghan_later_damage_does_not_affect_departed_artifact_creature",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_shared_modal_target_resolution.SharedModalTargetRuntimeTests.test_original_raid_reuses_surviving_target_and_ignores_departed_target",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "positive",
       "test_id": "tests.test_targeting_v070.ExactTargetingTests.test_count_distinct_and_partial_resolution",
       "official_rule_ids": [
         "115.1",
-        "608.2b"
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
       ],
       "supported_profiles": [
         "traditional",
@@ -90263,10 +90507,103 @@
     {
       "capability_id": "target.revalidate_resolution",
       "evidence_class": "privacy",
+      "test_id": "tests.test_shared_modal_target_resolution.SharedModalTargetRuntimeTests.test_original_raid_reuses_surviving_target_and_ignores_departed_target",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "privacy",
       "test_id": "tests.test_targeting_v070.ExactTargetingTests.test_hidden_zones_are_rejected_by_target_schema",
       "official_rule_ids": [
         "115.1",
-        "608.2b"
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Revalidate a selected public target's logical object and target restrictions immediately before resolution."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "property",
+      "test_id": "tests.test_shared_modal_target_resolution.BoundTargetMutationIdentityTests.test_bound_liveness_policy_contains_only_registered_scalar_mutations",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "property",
+      "test_id": "tests.test_shared_modal_target_resolution.BoundTargetMutationIdentityTests.test_departed_bound_target_never_rebinds_but_live_repeated_target_survives",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "property",
+      "test_id": "tests.test_shared_modal_target_resolution.BoundTargetMutationIdentityTests.test_literal_unknown_information_and_historical_references_keep_existing_boundaries",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_exact_mishra_closure.ExactMishraClosureTests.test_deflecting_swat_free_cost_and_exact_retarget",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
       ],
       "supported_profiles": [
         "traditional",
@@ -90278,17 +90615,74 @@
     {
       "capability_id": "target.revalidate_resolution",
       "evidence_class": "replay",
-      "test_id": "tests.test_exact_mishra_closure.ExactMishraClosureTests.test_deflecting_swat_free_cost_and_exact_retarget",
+      "test_id": "tests.test_shared_modal_target_resolution.SharedModalTargetRuntimeTests.test_original_kolaghan_later_damage_does_not_affect_departed_artifact_creature",
       "official_rule_ids": [
         "115.1",
-        "608.2b"
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
       ],
       "supported_profiles": [
-        "traditional",
         "commander_duel",
-        "commander_review"
+        "commander_review",
+        "traditional"
       ],
-      "applicability_note": "Revalidate a selected public target's logical object and target restrictions immediately before resolution."
+      "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_shared_modal_target_resolution.SharedModalTargetRuntimeTests.test_original_raid_reuses_surviving_target_and_ignores_departed_target",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_shared_modal_target_resolution.SharedModalTargetRuntimeTests.test_initial_unknown_and_wrong_domain_targets_still_reject_atomically",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_shared_modal_target_resolution.SharedModalTargetRuntimeTests.test_original_raid_reuses_surviving_target_and_ignores_departed_target",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
     },
     {
       "capability_id": "timing.cast.printed_flash",
