@@ -6411,14 +6411,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "intrinsic-mana-repeat-evaluation-correction",
-      "compiler_version": "oracle-ir-v414",
+      "transition_id": "bound-target-departure-during-resolution-correction",
+      "compiler_version": "oracle-ir-v417",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Correct repeated characteristic evaluation after intrinsic mana materialization: rebuild only evaluator-owned descriptors at the type/ability boundary, preserve ability removal, printed activations and reserved-ID rejection. No new grammar or support harvest. Exact failed-main production fix-forward."
+      "non_harvest_reason": "Correct scalar mutations of a selected target after earlier instructions move its incarnation. Actual Requisition Raid and Kolaghan modes previously accepted and paid but failed during resolution. Reuse existing target identity authority and skipped-target continuation, preserve surviving shield targets and strict initial validation, privacy and replay. No new grammar or support harvest."
     },
 
     "forecast_corrections": [
