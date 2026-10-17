@@ -4690,7 +4690,8 @@
         "test_manifest",
         "test_complex_activation_mana_costs",
         "test_card_program_trust",
-        "test_fixed_counter_keyword_activations"
+        "test_fixed_counter_keyword_activations",
+        "test_rules_scheduler"
       ]
     },
     {
@@ -4935,7 +4936,8 @@
         "test_public_state_event_counter_actions",
         "test_public_state_event_actions",
         "test_whole_hand_discard",
-        "test_card_program_trust"
+        "test_card_program_trust",
+        "test_fixed_counter_event_triggers"
       ]
     },
     {
@@ -5078,7 +5080,8 @@
         "test_fixed_zone_cast_lifecycles",
         "test_fixed_casting_surface",
         "test_card_program_v2",
-        "test_card_program_trust"
+        "test_card_program_trust",
+        "test_interactions_v070"
       ]
     },
     {
@@ -5135,6 +5138,42 @@
         "test_fixed_target_effect_sequences",
         "test_fixed_overload",
         "test_fixed_cleave"
+      ]
+    },
+    {
+      "id": "prospective-face-entry-applicability-contract",
+      "patterns": [
+        "quorune/card_program_faces.py",
+        "quorune/semantic_runtime/zone_replacements.py",
+        "quorune/semantic_runtime/self_entry_counters.py"
+      ],
+      "test_modules": [
+        "test_typed_land_entry_participation",
+        "test_main_phase_rules",
+        "test_fixed_basic_type_setting",
+        "test_multikicker_entry_counters",
+        "test_fixed_disturb",
+        "test_copy_objects",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "casting-keyword-dispatch-owner-contract",
+      "patterns": [
+        "quorune/compiler/casting_keyword_nodes.py"
+      ],
+      "test_modules": [
+        "test_bestow_rules",
+        "test_flashback_rules",
+        "test_fixed_zone_cast_lifecycles",
+        "test_fixed_combat_entry_keyword_lifecycles",
+        "test_fixed_public_alternative_costs",
+        "test_fixed_counter_keyword_activations",
+        "test_suspend_rules",
+        "test_fixed_overload",
+        "test_fixed_cleave",
+        "test_morph_rules",
+        "test_nonmana_morph"
       ]
     }
   ],

@@ -45,6 +45,35 @@ class FixedOverloadModelCompilerTests(unittest.TestCase):
         return compile_oracle_card(record or self.record(), capability_registry=registry or self.registry,
             capability_profile='commander_review')
 
+    def test_current_reviewed_legacy_alternative_keeps_its_declared_cost_owner(self):
+        from types import SimpleNamespace
+        from quorune.rules.casting.fixed_text_variant_costs import fixed_variant_cost_options
+        from quorune.spell_text_variants import SpellTextVariantKind
+        record = self.record()
+        alternative = {'id':'overload','kind':'overload','requirements':{'GENERIC':1,'R':1},
+            'target_schema':{'groups':[]},'effects':[{'op':'destroy_all'}]}
+        program = SimpleNamespace(oracle_id=record.oracle_id,ability_id='spell:front',active_zone='stack',
+            event='resolve',trust_level='trusted',requires_arbiter=False,coverage=['overload'],
+            provenance={'review_status':'reviewed'},cost_schema={'alternate_costs':[alternative]})
+        def options(candidate, *, current=True):
+            host = SimpleNamespace(card_record=lambda card:record,
+                semantic_program_is_current_trusted=lambda value:current,
+                semantics=SimpleNamespace(get=lambda key:None))
+            return fixed_variant_cost_options(host,'A',object(),candidate,kind=SpellTextVariantKind.OVERLOAD,
+                commander_tax=0,force_without_mana_cost=False,alternative_base=None,suppress_source_costs=False)
+        self.assertEqual([], options(program))
+        self.assertIsNone(options(program,current=False))
+        for field,value in (('trust_level','provisional'),('requires_arbiter',True),
+                ('oracle_id','unrelated-source'),('provenance',{'review_status':'unreviewed'}),
+                ('coverage',['overload','fixed_overload_cast_variant']),
+                ('cost_schema',{'alternate_costs':[]})):
+            changed = deepcopy(program);setattr(changed,field,value)
+            with self.subTest(field=field):self.assertIsNone(options(changed))
+        for mutation in ({'id':'unknown'}, {'kind':'alternate'}, {'effects':[]}, {'target_schema':{'groups':[{}]}}):
+            changed = deepcopy(program)
+            changed.cost_schema={'alternate_costs':[{**alternative,**mutation}]}
+            with self.subTest(mutation=mutation):self.assertIsNone(options(changed))
+
     def test_overload_spec_is_immutable_and_has_two_distinct_closed_body_fingerprints(self):
         vector = mana_cost_to_vector('{1}{R}')[0]
         spec = FixedManaOverloadSpec('front:overload:line:2', vector, '0' * 64, '1' * 64)

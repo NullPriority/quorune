@@ -3,6 +3,15 @@ from __future__ import annotations
 """Canonical face binding for compiler-pinned runtime programs."""
 
 from typing import Any
+from dataclasses import replace
+
+
+def prospective_face_view(record: Any, card: Any, prospective_name: str | None) -> Any:
+    """Select an existing face on an isolated view for prospective rules queries."""
+    if not prospective_name or not any(str(face.get('name') or '') == prospective_name
+            for face in getattr(record, 'faces', ())):
+        return card
+    return replace(card, active_face=prospective_name, annotations={**card.annotations})
 
 
 def selected_face_id(
@@ -62,4 +71,5 @@ __all__ = [
     "normalized_program_face_id",
     "program_matches_face",
     "selected_face_id",
+    "prospective_face_view",
 ]

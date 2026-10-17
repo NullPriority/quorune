@@ -59,13 +59,27 @@ from scripts.verify_main_broad_ci import (
 class CiPipelineTests(unittest.TestCase):
     def test_pre_corpus_validates_pinned_contracts_without_opening_the_database(self):
         from unittest import mock
-        from scripts.quick_gate import build_plan
+        from scripts.quick_gate import build_plan, implicit_text_encoding_lines
         from scripts import update_card_unlock_frontier as frontier
         from quorune.mechanic_contracts import MechanicContractError
-        plan = build_plan(('mechanics/contracts/morph.json','quorune/compiler/paired_spell_faces.py'), phase='pre-corpus')
+        plan = build_plan(('mechanics/contracts/morph.json','quorune/compiler/paired_spell_faces.py',
+            'quorune/compiler/cycle_or_discard_bindings.py','quorune/morph.py',
+            'quorune/rules/casting/fixed_text_variant_costs.py','quorune/compiler/casting_keyword_nodes.py'), phase='pre-corpus')
         step = next(row for row in plan['steps'] if row.name=='mechanic-contract-source')
         paired = next(row for row in plan['steps'] if row.name=='paired-spell-target-corpus-carrier-contract')
         self.assertIn('test_corpus_assurance_validates_both_source_bound_paid_spell_variants', paired.command)
+        combined = next(row for row in plan['steps'] if row.name=='combined-discard-public-action-contract')
+        self.assertIn('test_public_action_event_suffixes_remain_fail_closed', combined.command)
+        for step_name, method in (
+                ('hybrid-face-down-probe-contract','test_fixed_face_down_lifecycle_probe_is_closed'),
+                ('reviewed-legacy-text-alternative-contract','test_current_reviewed_legacy_alternative_keeps_its_declared_cost_owner'),
+                ('casting-dispatch-omission-contract','test_fixed_public_alternative_cost_dependency_and_compiler_mutations_fail_closed')):
+            self.assertIn(method, next(row.command for row in plan['steps'] if row.name==step_name))
+        self.assertEqual((1,), implicit_text_encoding_lines("Path('data.json').read_text()"))
+        self.assertEqual((), implicit_text_encoding_lines("Path('data.json').read_text(encoding='utf-8')"))
+        self.assertEqual((), implicit_text_encoding_lines("Path('data.json').read_text('utf-8')"))
+        self.assertEqual((), implicit_text_encoding_lines("example = 'path.read_text()' # not a data read"))
+        self.assertIn('--validate-text-io', next(row.command for row in plan['steps'] if row.name=='explicit-text-encoding'))
         contract = json.loads((ROOT/'mechanics/contracts/morph.json').read_text(encoding='utf-8'))
         with TemporaryDirectory() as directory:
             temporary = Path(directory)

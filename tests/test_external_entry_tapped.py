@@ -55,7 +55,7 @@ class ExternalEntryTappedCompilerTests(unittest.TestCase):
                 self.assertEqual(relation,node.handlers[0]['source_relation'])
                 self.assertEqual(types,tuple(node.handlers[0]['types_any']))
                 self.assertIn('current_ability_fragment_required',node.runtime_coverage)
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         for dependency in (EXTERNAL_ENTRY_STATE_CAPABILITY,'zone.entry.tapped_state'):
             changed=deepcopy(raw)
             next(r for r in changed['capabilities'] if r['id']==dependency).update(status='blocked',blockers=['entry owner omitted'])

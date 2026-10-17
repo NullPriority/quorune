@@ -86,7 +86,7 @@ class FixedEntwineCompilerTests(unittest.TestCase):
             self.assertFalse(capability_dependencies_for_node(effects=node.effects,target_schema=node.target_schema,
                 mechanic_ids=node.mechanics,cost_schema=cost))
         for capability in (ENTWINE_FIXED_CAPABILITY,'choice.modal.fixed_nonrepeating'):
-            raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+            raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
             next(row for row in raw['capabilities'] if row['id']==capability).update(status='blocked',blockers=['Entwine owner omitted'])
             self.assertNotEqual('exact',self.compile(registry=CapabilityRegistry(raw)).status)
 
@@ -239,7 +239,7 @@ class FixedEntwineRuntimeTests(unittest.TestCase):
     def test_entwine_originals_require_complete_modes_and_normal_registration(self):
         expected={"Rain of Rust","Mirage Mockery","Abuna's Chant","Dream's Grip","Flourishing Strike",
             "Roar of the Kha","One Dozen Eyes","Unbounded Potential","Reap and Sow","Barbed Lightning","Goblin War Party"}
-        for raw in json.loads(FIXTURE.read_text())['cards']:
+        for raw in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards']:
             if 'Entwine' not in raw.get('keywords',[]):continue
             with self.subTest(name=raw['name']):
                 card=self.db.lookup(raw['name']);registry=SemanticRegistry()

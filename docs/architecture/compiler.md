@@ -21,7 +21,12 @@ bodies at the whole-spell boundary. The normal physical spell and its separate
 target-free derived program retain the original source identity and spans.
 Generated-program lowering preserves their distinct identities; the adapter
 requires the derived program instead of silently admitting only the normal
-  body. A declined pair keeps the keyword residual.
+body. A declined pair keeps the keyword residual.
+
+Current source-pinned, trusted historical Overload programs retain their
+reviewed declared alternatives through the existing cost owner. This
+compatibility path requires the original reviewed program and target-free
+alternative; it does not admit incomplete generated pairs or add typed support.
 
 `compiler/fixed_stack_spell_copy.py` lowers the closed instant/sorcery copy
 clause, including its optional current-controller restriction. The activated

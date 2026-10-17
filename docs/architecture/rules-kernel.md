@@ -26,6 +26,12 @@ save/load. Returning the source itself ends the action without inventing a
 turn-face-up event for a departed incarnation. Compound, sacrifice, variable,
 copied, and granted nonmana Morph costs remain outside this family.
 
+Intrinsic entry applicability uses an isolated view of the selected face before
+the zone change commits. The ordinary layer engine still removes abilities
+when a type-setting effect applies. Current registries require their indexed
+entry component; the narrow historical v3 entry adapter retains its earlier
+unindexed execution contract during replay.
+
 Normalized event discovery orders both live and explicitly captured source
 lists by zone timestamp and stable object identity. Checkpoint hydration cannot
 change pending trigger identities through dictionary insertion order. APNAP

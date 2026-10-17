@@ -50,7 +50,7 @@ class ScopedBasicTypeAdditionCompilerTests(unittest.TestCase):
             'Lands you control are Swamps.','Lands you control are Islands in addition to their other types if it is your turn.',
             'All lands is Islands in addition to their other types.'):
             self.assertIsNone(scoped_basic_type_addition_handler(text))
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         for dependency in (BASIC_TYPE_ADDITION_CAPABILITY,'mana.intrinsic.basic_land_type'):
             changed=deepcopy(raw);next(r for r in changed['capabilities'] if r['id']==dependency).update(status='blocked',blockers=['addition owner omitted'])
             self.assertNotEqual('exact',compile_oracle_card(record('Lands you control are Swamps in addition to their other types.','Enchantment'),capability_registry=CapabilityRegistry(changed)).status)

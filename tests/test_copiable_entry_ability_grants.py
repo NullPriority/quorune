@@ -217,7 +217,7 @@ class CopiableEntryAbilityRuntimeTests(unittest.TestCase):
     def test_original_copiable_grant_carriers_require_normal_registration_and_child_closure(self):
         expected={'Mercurial Pretender','Phantasmal Image','Copycrook'}
         controls={'Clone','Humble','Unsummon','Fervor'}
-        for raw in json.loads(FIXTURE.read_text())['cards']:
+        for raw in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards']:
             if raw['name'] in controls:continue
             with self.subTest(name=raw['name']):
                 card=self.db.lookup(raw['name']);semantics=SemanticRegistry()
@@ -230,7 +230,7 @@ class CopiableEntryAbilityRuntimeTests(unittest.TestCase):
                 binding=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
                 self.assertEqual(raw['name'] in expected,binding['strict_capability_ready'],binding['blockers'])
         for capability in ('zone.entry.fixed_copy','permanent.return.owner_hand'):
-            raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+            raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
             next(row for row in raw['capabilities'] if row['id']==capability).update(status='blocked',blockers=['required copied ability owner omitted'])
             registry=CapabilityRegistry(raw)
             program=compile_best_available_card_program(self.db,self.db.lookup('Mercurial Pretender'),

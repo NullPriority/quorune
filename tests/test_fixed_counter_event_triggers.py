@@ -3111,9 +3111,13 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
 
     def test_public_action_event_suffixes_remain_fail_closed(self):
         self.assertEqual("exact", self.compile("Whenever this creature becomes tapped, draw a card.", type_line="Creature — Advisor").status)
+        combined = self.compile("Whenever you cycle or discard a card, draw a card.", type_line="Creature — Advisor")
+        self.assertEqual("exact", combined.status, combined.material_residuals)
+        self.assertEqual("card.discarded", combined.faces[0].nodes[0].event)
+        self.assertIn("trigger.event.cycle_or_discard", combined.faces[0].nodes[0].capability_dependencies)
         cases = (
             "Whenever this creature becomes tapped for the first time each turn, draw a card.",
-            "Whenever you cycle or discard a card, draw a card.",
+            "Whenever you cycle or discard a card for the first time each turn, draw a card.",
             "Whenever you discard a card for the first time each turn, draw a card.",
             "Whenever you sacrifice one or more Foods, draw a card.",
             "Whenever one or more creature tokens you control deal combat "

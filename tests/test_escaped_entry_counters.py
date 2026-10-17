@@ -56,7 +56,7 @@ class EscapedEntryCounterCompilerTests(unittest.TestCase):
         ):
             with self.subTest(excluded=excluded):
                 self.assertIsNone(dynamic_self_entry_counter_handler(excluded,source_name=source.name))
-        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         for dependency in ('counter.producer.dynamic_self_entry','casting.lifecycle.fixed_zone_cast'):
             changed = deepcopy(raw)
             next(row for row in changed['capabilities'] if row['id']==dependency).update(status='blocked',blockers=['escape owner omitted'])

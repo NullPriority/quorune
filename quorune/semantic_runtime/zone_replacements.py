@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import lru_cache
 import re
 from typing import Any, Mapping, Protocol, Sequence
 
-from ..card_program_faces import program_matches_face, selected_face_id
+from ..card_program_faces import program_matches_face, selected_face_id, prospective_face_view
+from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..commander_zones import (
     commander_hand_library_replacement_effect,
     CommanderZoneError,
@@ -512,7 +513,8 @@ def _zone_change_programs_for_record(
     except ValueError:
         return programs
     entry_programs = tuple(
-        program
+        replace(program, coverage=[value for value in program.coverage
+            if value != CURRENT_ABILITY_FRAGMENT_COVERAGE])
         for program in generated
         if program.active_zone == active_zone
         and program.event == "zone.change"
@@ -521,6 +523,8 @@ def _zone_change_programs_for_record(
             for descriptor in program.handlers
         )
     )
+    # Historical v3 registries have no indexed current-component fragment for
+    # this replay-only adapter. Preserve their pre-fragment entry contract.
     return (*programs, *entry_programs)
 
 
@@ -671,7 +675,7 @@ def _read_ahead_entry_is_supported(
         ) or not program_static_component_is_applicable(
             host,
             program,
-            card,
+            prospective_face_view(record, card, prospective_name),
             prospective_zone="battlefield",
             prospective_controller=destination_controller,
         ):
@@ -970,7 +974,7 @@ def _zone_change_snapshot_effects(
             ) or not program_static_component_is_applicable(
                 host,
                 program,
-                card,
+                prospective_face_view(record, card, subject.entry_face_id),
                 prospective_zone="battlefield",
                 prospective_controller=subject.destination_controller,
             ):

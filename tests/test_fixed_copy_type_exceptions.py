@@ -108,7 +108,7 @@ class FixedCopyTypeExceptionRuntimeTests(unittest.TestCase):
                 p=compile_best_available_card_program(self.db,card,semantic_registry=SemanticRegistry(),capability_registry=self.registry,capability_profile='commander_review')
                 b=bind_card_program_runtime(p,capability_registry=self.registry,profile='commander_review')
                 self.assertTrue(b['strict_capability_ready'],b['blockers'])
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         changed=json.loads(json.dumps(raw));next(r for r in changed['capabilities'] if r['id']=='zone.entry.fixed_copy').update(status='blocked',blockers=['copy owner omitted'])
         blocked=CapabilityRegistry(changed)
         card=self.db.lookup('Synth Infiltrator');p=compile_best_available_card_program(self.db,card,semantic_registry=SemanticRegistry(),capability_registry=blocked,capability_profile='commander_review')

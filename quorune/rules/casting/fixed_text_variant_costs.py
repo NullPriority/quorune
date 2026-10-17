@@ -2,10 +2,29 @@ from __future__ import annotations
 
 """Shared price/program correlation for closed, nonmodal text alternatives."""
 
+from collections.abc import Mapping
 from ..spell_text_variant_shapes import (
     fixed_variant_program_is_closed, variant_program_has_complete_admission, variant_spec,
 )
 from ...spell_text_variants import SpellTextVariantKind
+
+
+def _current_reviewed_overload_alternative(host, record, program, kind):
+    """Preserve a current historical declaration through its existing cost owner."""
+    if (kind is not SpellTextVariantKind.OVERLOAD or program is None
+            or record.layout != 'normal' or record.faces or program.oracle_id != record.oracle_id
+            or program.ability_id != 'spell:front' or program.active_zone != 'stack' or program.event != 'resolve'
+            or program.trust_level != 'trusted' or program.requires_arbiter
+            or kind.boundary in program.coverage or kind.value not in program.coverage
+            or program.provenance.get('review_status') != 'reviewed'
+            or not host.semantic_program_is_current_trusted(program)):
+        return False
+    alternatives = (program.cost_schema or {}).get('alternate_costs')
+    return isinstance(alternatives, (list, tuple)) and any(
+        isinstance(value, Mapping) and value.get('id') == kind.value and value.get('kind') == kind.value
+        and isinstance(value.get('requirements'), Mapping) and bool(value.get('effects'))
+        and isinstance(value.get('target_schema'), Mapping) and value['target_schema'].get('groups') == []
+        for value in alternatives)
 
 
 def normal_variant_program(host, card, program, kind):
@@ -44,7 +63,9 @@ def fixed_variant_cost_options(host, seat, card, program, *, kind, commander_tax
         return None
     if normal is None:
         record = host.card_record(card)
-        return None if record is not None and kind.value in {str(k).casefold() for k in record.keywords} else []
+        if record is not None and kind.value in {str(k).casefold() for k in record.keywords}:
+            return [] if _current_reviewed_overload_alternative(host, record, program, kind) else None
+        return []
     if force_without_mana_cost or alternative_base is not None or suppress_source_costs:
         return []
     try:
