@@ -471,6 +471,7 @@
       "test_fixed_source_effect_sequences",
       "test_fixed_token_creation_effects",
       "test_intrinsic_basic_land_mana",
+      "test_intrinsic_mana_ability_loss",
       "test_kicked_entry_triggers",
       "test_kicked_spell_conditions",
       "test_library_search_qualifiers",

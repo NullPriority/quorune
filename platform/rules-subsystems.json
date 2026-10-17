@@ -6411,14 +6411,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "state-based-replacement-only-commit-correction",
-      "compiler_version": "oracle-ir-v399",
+      "transition_id": "intrinsic-mana-ability-layer-correction",
+      "compiler_version": "oracle-ir-v409",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Commit represented nonmoving state-based destruction replacements before priority, including regeneration tap, damage clearing and shield consumption even when no permanent changes zones. Preserve indestructible no-op stabilization and ordinary nondestruction boundaries; no new support grammar or feature harvest."
+      "non_harvest_reason": "Correct intrinsic basic-land mana materialization after type-changing effects and before layer-six ability removal, so an admitted Humble removes Dryad Arbor mana despite retained Forest type. Preserve explicit later grants, ordinary intrinsic types, expiry restoration, shared advertised/accepted legality, automatic-payment rejection, privacy and replay. No new support grammar or feature harvest."
     },
 
     "forecast_corrections": [

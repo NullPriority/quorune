@@ -12,11 +12,9 @@ import re
 from typing import Any, ClassVar, Mapping
 
 from .characteristic_evaluation import type_parts
+from .basic_land_types import BASIC_LAND_MANA
 
 
-BASIC_LAND_MANA = dict(
-    zip("plains island swamp mountain forest".split(), "WUBRG", strict=True)
-)
 INTRINSIC_BASIC_LAND_MANA_CAPABILITY = "mana.intrinsic.basic_land_type"
 _REMINDER_SEPARATOR = re.compile(r"\s+[—-]\s+")
 _TYPE_WORD = re.compile(r"[A-Za-z]+(?:[-'][A-Za-z]+)*")

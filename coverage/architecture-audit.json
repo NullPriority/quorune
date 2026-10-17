@@ -8966,7 +8966,7 @@
           "module": "quorune.ability_fragments"
         },
         {
-          "fan_in": 124,
+          "fan_in": 125,
           "fan_out": 0,
           "module": "quorune.util"
         },
@@ -9108,7 +9108,7 @@
           "module": "quorune.zone_transitions"
         }
       ],
-      "internal_edges": 5103,
+      "internal_edges": 5108,
       "modules": [
         {
           "fan_in": 2,
@@ -9121,7 +9121,7 @@
           "module": "quorune.__main__"
         },
         {
-          "fan_in": 43,
+          "fan_in": 44,
           "fan_out": 20,
           "module": "quorune.abilities"
         },
@@ -9269,6 +9269,11 @@
           "fan_in": 1,
           "fan_out": 3,
           "module": "quorune.aura.typed_grammar"
+        },
+        {
+          "fan_in": 2,
+          "fan_out": 0,
+          "module": "quorune.basic_land_types"
         },
         {
           "fan_in": 3,
@@ -10937,7 +10942,7 @@
         },
         {
           "fan_in": 20,
-          "fan_out": 7,
+          "fan_out": 8,
           "module": "quorune.continuous_effects"
         },
         {
@@ -11461,7 +11466,7 @@
           "module": "quorune.fixed_keyword_entry_counters"
         },
         {
-          "fan_in": 17,
+          "fan_in": 18,
           "fan_out": 9,
           "module": "quorune.fixed_mana_abilities"
         },
@@ -11516,9 +11521,14 @@
           "module": "quorune.impulse_access_model"
         },
         {
-          "fan_in": 4,
-          "fan_out": 1,
+          "fan_in": 3,
+          "fan_out": 2,
           "module": "quorune.intrinsic_basic_land_mana"
+        },
+        {
+          "fan_in": 1,
+          "fan_out": 4,
+          "module": "quorune.intrinsic_land_abilities"
         },
         {
           "fan_in": 32,
@@ -12082,7 +12092,7 @@
         },
         {
           "fan_in": 1,
-          "fan_out": 6,
+          "fan_out": 5,
           "module": "quorune.rules.activation.query"
         },
         {
@@ -14011,7 +14021,7 @@
           "module": "quorune.untap_step_coordination"
         },
         {
-          "fan_in": 124,
+          "fan_in": 125,
           "fan_out": 0,
           "module": "quorune.util"
         },
@@ -14139,12 +14149,12 @@
     },
     "interaction_assurance_baseline": {
       "applicable_high_risk_pairs": 423,
-      "applicable_piece_pairs": 125706,
+      "applicable_piece_pairs": 125708,
       "available": true,
       "covered_high_risk_pairs": 423,
-      "covered_piece_pairs": 1310,
+      "covered_piece_pairs": 1312,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "179190b0504ee997e5d4a52d839e784ed2c290ac2e4706d923de3a4a2eaa5a6a",
+      "source_fingerprint": "5d48920793bd806aed50eb064764375e4e3fb6d7341b45f9e6d5fa7b6291b43c",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -14200,7 +14210,7 @@
       ]
     },
     "production": {
-      "file_count": 1021,
+      "file_count": 1023,
       "largest_functions_and_methods": [
         {
           "end_line": 1912,
@@ -14533,7 +14543,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 258800,
+      "logical_lines": 258815,
       "methods": {
         "dunder": 662,
         "private": 999,
@@ -15564,6 +15574,13 @@
           "physical_lines": 579
         },
         {
+          "file": "quorune/continuous_effects.py",
+          "functions_and_methods": 12,
+          "language": "python",
+          "logical_lines": 534,
+          "physical_lines": 580
+        },
+        {
           "file": "web/src/styles.css",
           "functions_and_methods": null,
           "language": "web",
@@ -15576,13 +15593,6 @@
           "language": "python",
           "logical_lines": 529,
           "physical_lines": 576
-        },
-        {
-          "file": "quorune/continuous_effects.py",
-          "functions_and_methods": 12,
-          "language": "python",
-          "logical_lines": 525,
-          "physical_lines": 571
         },
         {
           "file": "quorune/mana.py",
@@ -17923,13 +17933,6 @@
           "physical_lines": 140
         },
         {
-          "file": "quorune/intrinsic_basic_land_mana.py",
-          "functions_and_methods": 5,
-          "language": "python",
-          "logical_lines": 128,
-          "physical_lines": 155
-        },
-        {
           "file": "quorune/selection/copy_targets.py",
           "functions_and_methods": 8,
           "language": "python",
@@ -17965,11 +17968,11 @@
           "physical_lines": 139
         },
         {
-          "file": "quorune/rules/activation/query.py",
-          "functions_and_methods": 4,
+          "file": "quorune/intrinsic_basic_land_mana.py",
+          "functions_and_methods": 5,
           "language": "python",
           "logical_lines": 126,
-          "physical_lines": 138
+          "physical_lines": 153
         },
         {
           "file": "quorune/rules/reanimation_capability_shapes.py",
@@ -18628,6 +18631,13 @@
           "language": "python",
           "logical_lines": 92,
           "physical_lines": 106
+        },
+        {
+          "file": "quorune/rules/activation/query.py",
+          "functions_and_methods": 3,
+          "language": "python",
+          "logical_lines": 92,
+          "physical_lines": 104
         },
         {
           "file": "quorune/rules/counter_capability_shapes.py",
@@ -20247,6 +20257,13 @@
           "physical_lines": 52
         },
         {
+          "file": "quorune/intrinsic_land_abilities.py",
+          "functions_and_methods": 1,
+          "language": "python",
+          "logical_lines": 39,
+          "physical_lines": 44
+        },
+        {
           "file": "quorune/rules/activation/payment_commit.py",
           "functions_and_methods": 1,
           "language": "python",
@@ -21640,6 +21657,13 @@
           "physical_lines": 5
         },
         {
+          "file": "quorune/basic_land_types.py",
+          "functions_and_methods": 0,
+          "language": "python",
+          "logical_lines": 3,
+          "physical_lines": 5
+        },
+        {
           "file": "server/__init__.py",
           "functions_and_methods": 0,
           "language": "python",
@@ -22027,8 +22051,8 @@
           "physical_lines": 1690
         }
       ],
-      "physical_lines": 283976,
-      "python_file_count": 1005,
+      "physical_lines": 283998,
+      "python_file_count": 1007,
       "review_thresholds": {
         "function_logical_lines_review": 150,
         "module_logical_lines_review": 1500
@@ -29070,7 +29094,7 @@
         {
           "condition": "op == \"add_ability\"",
           "file": "quorune/continuous_effects.py",
-          "line": 338,
+          "line": 339,
           "string_literals": [
             "add_ability"
           ],
@@ -29079,7 +29103,7 @@
         {
           "condition": "op == \"remove_ability\"",
           "file": "quorune/continuous_effects.py",
-          "line": 344,
+          "line": 345,
           "string_literals": [
             "remove_ability"
           ],
@@ -29088,7 +29112,7 @@
         {
           "condition": "op == \"add_rules_text\"",
           "file": "quorune/continuous_effects.py",
-          "line": 350,
+          "line": 351,
           "string_literals": [
             "add_rules_text"
           ],
@@ -29097,7 +29121,7 @@
         {
           "condition": "op == \"add_ability_fragment\"",
           "file": "quorune/continuous_effects.py",
-          "line": 357,
+          "line": 358,
           "string_literals": [
             "add_ability_fragment"
           ],
@@ -29106,7 +29130,7 @@
         {
           "condition": "op == \"remove_ability_fragment\"",
           "file": "quorune/continuous_effects.py",
-          "line": 364,
+          "line": 365,
           "string_literals": [
             "remove_ability_fragment"
           ],
@@ -29115,7 +29139,7 @@
         {
           "condition": "op == \"remove_all_abilities\"",
           "file": "quorune/continuous_effects.py",
-          "line": 381,
+          "line": 382,
           "string_literals": [
             "remove_all_abilities"
           ],
@@ -29124,7 +29148,7 @@
         {
           "condition": "op == \"copy_values\"",
           "file": "quorune/continuous_effects.py",
-          "line": 396,
+          "line": 397,
           "string_literals": [
             "copy_values"
           ],
@@ -29133,7 +29157,7 @@
         {
           "condition": "op == \"face_down\"",
           "file": "quorune/continuous_effects.py",
-          "line": 399,
+          "line": 400,
           "string_literals": [
             "face_down"
           ],
@@ -29142,7 +29166,7 @@
         {
           "condition": "op == \"set_controller\"",
           "file": "quorune/continuous_effects.py",
-          "line": 402,
+          "line": 403,
           "string_literals": [
             "set_controller"
           ],
@@ -29151,7 +29175,7 @@
         {
           "condition": "op == \"replace_text\"",
           "file": "quorune/continuous_effects.py",
-          "line": 405,
+          "line": 406,
           "string_literals": [
             "replace_text"
           ],
@@ -29160,7 +29184,7 @@
         {
           "condition": "op == \"remove_creature_card_type\"",
           "file": "quorune/continuous_effects.py",
-          "line": 423,
+          "line": 424,
           "string_literals": [
             "remove_creature_card_type"
           ],
@@ -29169,7 +29193,7 @@
         {
           "condition": "op in {\"set_types\", \"add_types\", \"remove_types\"}",
           "file": "quorune/continuous_effects.py",
-          "line": 433,
+          "line": 434,
           "string_literals": [
             "add_types",
             "remove_types",
@@ -29180,7 +29204,7 @@
         {
           "condition": "op == \"set_types\"",
           "file": "quorune/continuous_effects.py",
-          "line": 445,
+          "line": 446,
           "string_literals": [
             "set_types"
           ],
@@ -29189,7 +29213,7 @@
         {
           "condition": "op == \"add_types\"",
           "file": "quorune/continuous_effects.py",
-          "line": 447,
+          "line": 448,
           "string_literals": [
             "add_types"
           ],
@@ -29198,7 +29222,7 @@
         {
           "condition": "op in {\"set_colors\", \"add_colors\", \"remove_colors\"}",
           "file": "quorune/continuous_effects.py",
-          "line": 458,
+          "line": 459,
           "string_literals": [
             "add_colors",
             "remove_colors",
@@ -29209,7 +29233,7 @@
         {
           "condition": "op == \"set_colors\"",
           "file": "quorune/continuous_effects.py",
-          "line": 460,
+          "line": 461,
           "string_literals": [
             "set_colors"
           ],
@@ -29218,7 +29242,7 @@
         {
           "condition": "op == \"add_colors\"",
           "file": "quorune/continuous_effects.py",
-          "line": 462,
+          "line": 463,
           "string_literals": [
             "add_colors"
           ],
@@ -29227,7 +29251,7 @@
         {
           "condition": "op == \"remove_all_colors\"",
           "file": "quorune/continuous_effects.py",
-          "line": 467,
+          "line": 468,
           "string_literals": [
             "remove_all_colors"
           ],
@@ -29236,14 +29260,14 @@
         {
           "condition": "_apply_ability_operation(state, operation)",
           "file": "quorune/continuous_effects.py",
-          "line": 470,
+          "line": 471,
           "string_literals": [],
           "symbol": "_apply_operation"
         },
         {
           "condition": "op == \"set_power\"",
           "file": "quorune/continuous_effects.py",
-          "line": 472,
+          "line": 473,
           "string_literals": [
             "set_power"
           ],
@@ -29252,7 +29276,7 @@
         {
           "condition": "op == \"set_toughness\"",
           "file": "quorune/continuous_effects.py",
-          "line": 475,
+          "line": 476,
           "string_literals": [
             "set_toughness"
           ],
@@ -29261,7 +29285,7 @@
         {
           "condition": "op == \"set_power_toughness\"",
           "file": "quorune/continuous_effects.py",
-          "line": 478,
+          "line": 479,
           "string_literals": [
             "set_power_toughness"
           ],
@@ -29270,7 +29294,7 @@
         {
           "condition": "op == \"modify_power_toughness\"",
           "file": "quorune/continuous_effects.py",
-          "line": 486,
+          "line": 487,
           "string_literals": [
             "modify_power_toughness"
           ],
@@ -29279,7 +29303,7 @@
         {
           "condition": "op == \"switch_power_toughness\"",
           "file": "quorune/continuous_effects.py",
-          "line": 496,
+          "line": 497,
           "string_literals": [
             "switch_power_toughness"
           ],
@@ -34835,7 +34859,7 @@
             "visibility": "public"
           }
         ],
-        "primary_test_count": 373,
+        "primary_test_count": 374,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_activated_draw_abilities",
@@ -35178,7 +35202,7 @@
             "visibility": "public"
           }
         ],
-        "primary_test_count": 58,
+        "primary_test_count": 59,
         "primary_tests": [
           "test_action_proposals",
           "test_activated_abilities",
@@ -35217,6 +35241,7 @@
           "test_flash_cast_timing",
           "test_graveyard_copy_keywords",
           "test_intrinsic_basic_land_mana",
+          "test_intrinsic_mana_ability_loss",
           "test_kicker_rules",
           "test_limited_event_triggers",
           "test_loyalty_abilities",
@@ -35672,6 +35697,7 @@
           "counter.producer.fixed_event_object",
           "hand.cleanup.no_maximum",
           "keyword_action.amass.fixed",
+          "mana.intrinsic.basic_land_type",
           "permanent.class.fixed_lifecycle",
           "quantity_expression.live_battlefield_count",
           "quantity_expression.public_characteristic_aggregate",
@@ -35682,7 +35708,7 @@
           "state_query.permanent.public_state_predicate",
           "trigger.condition.fixed_public_state"
         ],
-        "capability_count": 42,
+        "capability_count": 43,
         "compiler_cardprogram_representations": [],
         "continuations": [],
         "current_debt": "No missing-owner flag is set.",
@@ -35716,7 +35742,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 60,
+        "primary_test_count": 62,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_as_unblocked_assignment",
@@ -35747,6 +35773,8 @@
           "test_fixed_target_effect_sequences",
           "test_fixed_token_production",
           "test_global_plural_characteristic_sets",
+          "test_intrinsic_basic_land_mana",
+          "test_intrinsic_mana_ability_loss",
           "test_leveler_bands",
           "test_limited_event_triggers",
           "test_live_battlefield_quantities",
@@ -35785,7 +35813,7 @@
         "removal_condition": "No missing-owner removal condition applies.",
         "replay_behavior": "not explicitly declared",
         "responsibility": "Continuous effects.",
-        "reusable_piece_count": 42,
+        "reusable_piece_count": 43,
         "reusable_pieces": [
           "capability.activation.restriction.attached",
           "capability.activation.unearth.fixed_mana",
@@ -35820,6 +35848,7 @@
           "capability.counter.producer.fixed_event_object",
           "capability.hand.cleanup.no_maximum",
           "capability.keyword_action.amass.fixed",
+          "capability.mana.intrinsic.basic_land_type",
           "capability.permanent.class.fixed_lifecycle",
           "capability.quantity_expression.live_battlefield_count",
           "capability.quantity_expression.public_characteristic_aggregate",
@@ -37167,7 +37196,7 @@
             "visibility": "public"
           }
         ],
-        "primary_test_count": 347,
+        "primary_test_count": 348,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_activated_draw_abilities",
@@ -39895,7 +39924,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1420,
     "compiler_module_physical_lines": 1482,
-    "compiler_version": "oracle-ir-v399",
+    "compiler_version": "oracle-ir-v409",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -40178,22 +40207,22 @@
       "effective_date": "2026-08-07",
       "evidence": {
         "class_counts": {
-          "interaction": 1499,
-          "multiplayer": 717,
-          "mutation": 605,
-          "negative": 1241,
-          "positive": 1335,
-          "privacy": 602,
-          "property": 22,
-          "replay": 1100,
-          "rollback": 158
+          "interaction": 1503,
+          "multiplayer": 718,
+          "mutation": 606,
+          "negative": 1243,
+          "positive": 1337,
+          "privacy": 603,
+          "property": 23,
+          "replay": 1103,
+          "rollback": 159
         },
-        "declaration_count": 7279,
-        "declaration_source_fingerprint": "ae7d16d17c0770246aae820250d0dcf23715ab823ab0ba9c01574637f2b69ba2",
-        "fingerprint": "36e877e32fd92f1837bcbe1221a27203201b829d9d787c5348533c37c1159b3f",
-        "registry_fingerprint": "5b5e4108243fcd5b46e89eab518f30872496adf015e09e8e178f5aa181173e38"
+        "declaration_count": 7295,
+        "declaration_source_fingerprint": "febf453cde6e2678f7e9e55df533aece02b84084a7072785dc6278a45da70519",
+        "fingerprint": "7c6ad31820415c225a08c294e75a7be00af30afcedd0a67097a860695ee1fa4b",
+        "registry_fingerprint": "a54d563bfa69c38711f62a6b92c5e536dd15f68382db10805a049fb2b3e016f8"
       },
-      "fingerprint": "5b5e4108243fcd5b46e89eab518f30872496adf015e09e8e178f5aa181173e38",
+      "fingerprint": "a54d563bfa69c38711f62a6b92c5e536dd15f68382db10805a049fb2b3e016f8",
       "implementation_mutation_status_counts": {
         "killed": 411,
         "not_run": 4
@@ -40203,7 +40232,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "registry_version": 328,
+      "registry_version": 329,
       "schema_version": 1,
       "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
       "status_counts": {
@@ -40562,7 +40591,7 @@
         "contract_fingerprint": "1ec0efe6cc7917b4ef90cea81b4c1e546b73fc6153e967d4e4e535809b9dd45c",
         "exact_cards_with_template": 755,
         "exact_nodes": 912,
-        "fingerprint": "2a3877757a144f1f17d46773947e9ca9012efffad03eb35dfcdf037a3ea09b00",
+        "fingerprint": "15fb01e06b1278f2881ba38d78eb983410b20ff9183825bee238de51c55f5961",
         "grammar_source_fingerprint": "1117d0a614866ccc4deeb07e19451f789f43c3c8107febf05afaa67bb6b54c2f",
         "identity_fingerprint": "99bb6d4ead7c141c16ee931c83c7e86679b00167087ab7474eaf6ebf055119c9",
         "present": true,
@@ -40574,7 +40603,7 @@
         "contract_fingerprint": "1ec0efe6cc7917b4ef90cea81b4c1e546b73fc6153e967d4e4e535809b9dd45c",
         "exact_cards_with_template": 777,
         "exact_nodes": 945,
-        "fingerprint": "d33e094bce95ce009b6ecae1c5bc749dbdf89d02524cfe9f208531554546cb81",
+        "fingerprint": "16bbe70bf9bce83a8572079a5a0036f61595c965d7c8bd0ac2412acecfb77181",
         "grammar_source_fingerprint": "1117d0a614866ccc4deeb07e19451f789f43c3c8107febf05afaa67bb6b54c2f",
         "identity_fingerprint": "88c711892f132f8c0157923b3ec036266c1d96d8413c9af35b027bbba228e6ed",
         "present": true,
@@ -40593,7 +40622,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "68a8d66e471f10b22f99749636c770465d8845df52c676f566e4ffb41566d49c",
+      "fingerprint": "78c1e54520b79b52797cea96cca58a4464fa4fb0db5c20bf8ed1cef85966efe5",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -41423,7 +41452,7 @@
       "playwright_e2e_journeys": 11
     },
     "mutation_testing": {
-      "capability_mutation_declarations": 605,
+      "capability_mutation_declarations": 606,
       "configured_tools": [],
       "focused_executable_suite": true,
       "mutation_score": null
@@ -41451,8 +41480,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 6516,
-      "discovered_total": 9825,
+      "conventional_ast_cases": 6522,
+      "discovered_total": 9831,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 275,
@@ -41462,7 +41491,7 @@
         "server_named": 53
       },
       "reconciles": true,
-      "test_files": 479
+      "test_files": 480
     }
   }
 }
