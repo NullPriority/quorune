@@ -5120,6 +5120,21 @@
         "test_card_program_trust",
         "test_counted_activation_costs"
       ]
+    },
+    {
+      "id": "paid-spell-target-effect-corpus-assurance",
+      "patterns": [
+        "quorune/compiler/target_effect_corpus_assurance.py",
+        "quorune/compiler/overload_spell_faces.py",
+        "quorune/compiler/cleave_spell_faces.py",
+        "quorune/compiler/paired_spell_faces.py",
+        "quorune/rules/spell_text_variant_shapes.py"
+      ],
+      "test_modules": [
+        "test_fixed_target_effect_sequences",
+        "test_fixed_overload",
+        "test_fixed_cleave"
+      ]
     }
   ],
   "symbol_rules": [

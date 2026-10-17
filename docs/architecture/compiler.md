@@ -21,7 +21,7 @@ bodies at the whole-spell boundary. The normal physical spell and its separate
 target-free derived program retain the original source identity and spans.
 Generated-program lowering preserves their distinct identities; the adapter
 requires the derived program instead of silently admitting only the normal
-body. A declined pair keeps the keyword residual.
+  body. A declined pair keeps the keyword residual.
 
 `compiler/fixed_stack_spell_copy.py` lowers the closed instant/sorcery copy
 clause, including its optional current-controller restriction. The activated
@@ -1691,6 +1691,11 @@ then requires the source grammar, emitted effects, target relation, closed
 capability shape, and declared capability closure to agree. The normal pinned
 corpus includes the fixed source Exploit result as a composing carrier; its
 inner target effect retains the same independent grammar and shape checks.
+For paired Overload and Cleave sources, the audit reconstructs each resolution
+body from the retained printed source and checks the fixed price, program role,
+body fingerprint, and alternative-cost capability before the ordinary target
+grammar checks. A keyword declaration cannot become part of the leaf body or
+hide a changed target or price from assurance.
 The compiler census derives grammatical shapes and representative identities from
 the complete corpus; it does not maintain a card list. Its synthetic contract
 also covers every accepted keyword, spell/trigger/activation context,

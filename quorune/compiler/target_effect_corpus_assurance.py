@@ -16,6 +16,10 @@ from ..rules.node_capability_shapes import (
     fixed_target_effect_sequence_node_capabilities,
 )
 from ..util import stable_json
+from ..spell_text_variants import SpellTextVariantKind, spell_body_fingerprint
+from ..util import mana_cost_to_vector
+from ..rules.spell_text_variant_shapes import variant_spec
+from .cleave_spell_faces import cleave_bodies
 from .attached_granted_ability_nodes import (
     GRANTED_ACTIVATED_ABILITY_KIND,
     GRANTED_TRIGGERED_ABILITY_KIND,
@@ -44,7 +48,7 @@ if TYPE_CHECKING:
 
 
 ASSURANCE_SCHEMA_VERSION = 1
-ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v11"
+ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v12"
 STANDALONE_TEMPLATE_ID = (
     "fixed-target-characteristics-until-end-of-turn-v1"
 )
@@ -489,6 +493,10 @@ def grammar_source_fingerprint() -> str:
         accepted_target_effect_contracts,
         rejected_target_effect_contracts,
         _without_parenthetical_reminder,
+        cleave_bodies,
+        spell_body_fingerprint,
+        variant_spec,
+        _paired_spell_resolution_body,
         _resolution_body,
         _compiled_template,
         _required_capabilities,
@@ -523,6 +531,50 @@ def _without_parenthetical_reminder(text: str) -> str:
     return "".join(result).strip()
 
 
+def _paired_spell_resolution_body(record: CardRecord, node: OracleNode) -> str | None:
+    """Recover a paid leaf from printed source, validating its role and price."""
+    kinds = [kind for kind in SpellTextVariantKind if kind.boundary in node.runtime_coverage
+        or isinstance(node.cost, Mapping) and kind.value in node.cost]
+    if not kinds and node.kind != 'spell_variant':
+        return None
+    if (len(kinds) != 1 or record.layout != 'normal' or record.faces
+            or node.text != record.oracle_text or node.span.start != 0 or node.span.end != len(node.text)):
+        raise TargetEffectAssuranceError('Paid spell audit requires one complete printed source')
+    kind = kinds[0]
+    roles = set(node.runtime_coverage).intersection({kind.normal_role, kind.paid_role})
+    paid = roles == {kind.paid_role}
+    if (kind.boundary not in node.runtime_coverage or roles not in ({kind.normal_role}, {kind.paid_role})
+            or node.kind != ('spell_variant' if paid else 'spell_ability')
+            or not isinstance(node.cost, Mapping) or set(node.cost) != {kind.value}):
+        raise TargetEffectAssuranceError('Paid spell audit has a malformed source role')
+    pattern = re.compile(rf'{kind.value} (?P<cost>(?:\{{(?:0|[1-9]\d*|[WUBRGC])\}})+)\.?', re.I)
+    rows = [(index, _without_parenthetical_reminder(line).strip()) for index,line in enumerate(node.text.splitlines(),1)]
+    rows = [(index,line) for index,line in rows if line]
+    costs = [(index,pattern.fullmatch(line)) for index,line in rows if pattern.fullmatch(line)]
+    if len(costs) != 1 or len(rows) < 2 or kind is SpellTextVariantKind.OVERLOAD and len(rows) != 2:
+        raise TargetEffectAssuranceError('Paid spell audit has no closed printed price')
+    try:
+        spec = variant_spec(kind, node.cost[kind.value])
+        price, symbols = mana_cost_to_vector(costs[0][1]['cost'].upper())
+        if (symbols or dict(spec.requirements) != price
+                or spec.instance_id != f'front:{kind.value}:line:{costs[0][0]}'):
+            raise ValueError('Printed price and paired declaration differ')
+    except (KeyError, TypeError, ValueError) as exc:
+        raise TargetEffectAssuranceError(str(exc)) from exc
+    body = ' '.join(line for index,line in rows if index != costs[0][0])
+    if kind is SpellTextVariantKind.CLEAVE:
+        bodies = cleave_bodies(body)
+        if bodies is None:
+            raise TargetEffectAssuranceError('Paid spell audit has malformed brackets')
+        body = bodies[int(paid)]
+    elif paid:
+        body = re.sub(r'\btarget\b', 'each', body, flags=re.I)
+    expected = (spec.overloaded_fingerprint if kind is SpellTextVariantKind.OVERLOAD else spec.cleaved_fingerprint) if paid else spec.normal_fingerprint
+    if spell_body_fingerprint(node.effects, node.target_schema) != expected:
+        raise TargetEffectAssuranceError('Paid spell audit lost its declared body fingerprint')
+    return body
+
+
 def _resolution_body(
     record: CardRecord,
     node: OracleNode,
@@ -530,6 +582,9 @@ def _resolution_body(
     face_index: int,
     face_name: str,
 ) -> str | None:
+    paired_body = _paired_spell_resolution_body(record, node)
+    if paired_body is not None:
+        return paired_body
     text = " ".join(
         _without_parenthetical_reminder(node.text).strip().split()
     )
@@ -633,7 +688,8 @@ def _required_capabilities(
         else fixed_target_effect_sequence_node_capabilities
     )
     from .public_query_effect_amounts import public_query_amount_shape_context, declared_amount_dependencies
-    context = public_query_amount_shape_context(node.effects, set(node.mechanics))
+    variants = tuple(kind for kind in SpellTextVariantKind if kind.boundary in node.runtime_coverage)
+    context = public_query_amount_shape_context(node.effects, set(node.mechanics) - {kind.value for kind in variants})
     if context is None:
         return ()
     fixed_effects, fixed_mechanics = context
@@ -642,7 +698,8 @@ def _required_capabilities(
         target_schema=node.target_schema,
         mechanic_ids=fixed_mechanics,
     )
-    return tuple(sorted(set(fixed) | declared_amount_dependencies(set(node.mechanics)))) if fixed else ()
+    return tuple(sorted(set(fixed) | declared_amount_dependencies(set(node.mechanics))
+        | {kind.capability for kind in variants})) if fixed else ()
 
 
 def _observation(
@@ -726,6 +783,9 @@ def _observation(
         node_id=node.node_id,
         template_id=template_id,
         context=(
+            "spell_ability"
+            if node.kind == 'spell_variant'
+            else
             "activated_ability"
             if node.kind == GRANTED_ACTIVATED_ABILITY_KIND
             else "triggered_ability"
