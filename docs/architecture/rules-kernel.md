@@ -304,6 +304,10 @@ remove them while the land keeps those types, and later layer-6 grants remain
 distinct. Offers, direct activation, and automatic payment consume the surviving
 typed abilities. Ending a removal restores the intrinsic abilities on the next
 evaluation without changing the land's types.
+Reusing a characteristic state rebuilds only intrinsic descriptors previously
+created by that evaluator, before applying ability removal again. This private
+provenance stays out of snapshots; caller-supplied reserved intrinsic IDs still
+reject rather than masquerading as derived abilities.
 The catalog unifies discovery for ordinary Crew, Cycling, fixed Typecycling,
 fixed counter-keyword activations, and represented mana abilities without
 replacing those families' specialized execution owners or capability closure.

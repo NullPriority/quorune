@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 from types import SimpleNamespace
+from dataclasses import replace
+import copy
 import json
 import tempfile
 import unittest
@@ -62,6 +64,58 @@ class IntrinsicManaLayerBoundaryTests(unittest.TestCase):
         abilities=self.query(values)
         self.assertEqual({'granted:red'},{a.ability_id for a in abilities})
         self.assertEqual(1,abilities[0].fixed_mana_outputs[0].bundle['R'])
+
+    def test_repeated_evaluation_rebuilds_only_evaluator_owned_intrinsic_mana(self):
+        state=self.state()
+        first=evaluate_continuous_effects(state,()).characteristics
+        self.assertEqual({'intrinsic_forest'},{a['ability_id'] for a in first['activated_abilities']})
+        self.assertFalse(any(key.startswith('_') for key in first))
+        for current in (state,copy.deepcopy(state)):
+            with self.subTest(deep_copy=current is not state):
+                self.assertEqual(first,evaluate_continuous_effects(current,()).characteristics)
+                current.subtypes={'island'}
+                changed=evaluate_continuous_effects(current,()).characteristics
+                self.assertEqual(['intrinsic_island'],[a['ability_id'] for a in changed['activated_abilities']])
+                current.card_types={'creature'}
+                self.assertEqual([],evaluate_continuous_effects(current,()).characteristics['activated_abilities'])
+
+    def test_repeated_ability_removal_never_revives_intrinsic_mana(self):
+        state=self.state()
+        removed=self.effect('loss',Layer.ABILITY,[ContinuousOperation('remove_all_abilities')])
+        for _ in range(3):
+            values=evaluate_continuous_effects(state,(removed,)).characteristics
+            self.assertEqual(['forest'],values['subtypes'])
+            self.assertEqual([],values['activated_abilities'])
+            self.assertEqual((),self.query(values))
+
+    def test_repeated_evaluation_preserves_printed_abilities_and_rejects_reserved_spoof(self):
+        from quorune.intrinsic_land_abilities import intrinsic_land_mana_abilities
+        intrinsic=intrinsic_land_mana_abilities({'land'},{'forest'})[0]
+        printed=replace(intrinsic,ability_id='printed:green')
+        state=self.state();state.activated_abilities.append(printed)
+        first=evaluate_continuous_effects(state,()).characteristics
+        self.assertEqual(['printed:green','intrinsic_forest'],[a['ability_id'] for a in first['activated_abilities']])
+        self.assertEqual(first,evaluate_continuous_effects(state,()).characteristics)
+        self.assertIs(printed,state.activated_abilities[0])
+        state.activated_abilities.append(replace(intrinsic))
+        with self.assertRaisesRegex(ValueError,'reserved for CR 305.6'):
+            evaluate_continuous_effects(state,())
+
+    def test_intrinsic_provenance_omission_mutant_is_killed_by_repeated_evaluation(self):
+        import quorune.continuous_effects as owner
+        materialize=owner._materialize_intrinsic_mana
+        visited=[]
+        def untracked(state):
+            materialize(state)
+            visited.append(state.name)
+            state._intrinsic_mana_abilities=()
+        with mock.patch.object(owner,'_materialize_intrinsic_mana',side_effect=untracked):
+            result=unittest.TestResult()
+            witness=type(self)('test_repeated_evaluation_rebuilds_only_evaluator_owned_intrinsic_mana')
+            witness.run(result)
+        self.assertFalse(result.wasSuccessful())
+        self.assertTrue(any('reserved for CR 305.6' in error for _,error in result.errors))
+        self.assertTrue(visited)
 
 
 class IntrinsicManaAbilityLossRuntimeTests(unittest.TestCase):

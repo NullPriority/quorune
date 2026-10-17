@@ -4617,9 +4617,11 @@
         "test_card_program_trust",
         "test_continuous_effect_components",
         "test_continuous_effect_duration",
+        "test_fixed_source_characteristic_effects",
         "test_game_record_v3",
         "test_intrinsic_basic_land_mana",
         "test_intrinsic_mana_ability_loss",
+        "test_static_characteristic_settings",
         "test_typed_ability_fragments"
       ]
     }

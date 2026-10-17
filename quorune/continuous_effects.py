@@ -62,6 +62,10 @@ class CharacteristicState:
     loyalty: int | None = None
     defense: int | None = None
     copiable_values: dict[str, Any] = field(default_factory=dict)
+    # Ephemeral provenance, excluded from public snapshots and constructor data.
+    _intrinsic_mana_abilities: tuple[ActivatedAbility, ...] = field(
+        default=(), init=False, repr=False, compare=False
+    )
 
     def snapshot(self) -> dict[str, Any]:
         return {
@@ -502,12 +506,29 @@ def _apply_operation(
     )
 
 
+def _materialize_intrinsic_mana(state: CharacteristicState) -> None:
+    state._intrinsic_mana_abilities = intrinsic_land_mana_abilities(
+        state.card_types, state.subtypes,
+        existing_abilities=state.activated_abilities,
+    )
+    state.activated_abilities.extend(state._intrinsic_mana_abilities)
+
+
 def evaluate_continuous_effects(
     base: CharacteristicState,
     effects: Iterable[ContinuousEffect],
     *,
     context: Mapping[str, Any] | None = None,
 ) -> ContinuousEvaluation:
+    # Reusing a state must rebuild derived abilities at the layer boundary.
+    # Remove only descriptors this evaluator actually created, preserving the
+    # factory's rejection of caller-supplied reserved IDs.
+    previous_intrinsic = base._intrinsic_mana_abilities
+    base.activated_abilities[:] = [
+        ability for ability in base.activated_abilities
+        if not any(ability is previous for previous in previous_intrinsic)
+    ]
+    base._intrinsic_mana_abilities = ()
     context = dict(context or {})
     present: list[ContinuousEffect] = []
     inapplicable: list[str] = []
@@ -525,8 +546,7 @@ def evaluate_continuous_effects(
     intrinsic_ready=False
     for effect in ordered:
         if not intrinsic_ready and effect.layer>Layer.TYPE:
-            base.activated_abilities.extend(intrinsic_land_mana_abilities(
-                base.card_types,base.subtypes,existing_abilities=base.activated_abilities))
+            _materialize_intrinsic_mana(base)
             intrinsic_ready=True
         if effect.relation in {
             ContinuousEffectRelation.SOURCE_OBJECT,
@@ -570,8 +590,7 @@ def evaluate_continuous_effects(
             base.copiable_values = base.snapshot()
         applied.append(effect.effect_id)
     if not intrinsic_ready:
-        base.activated_abilities.extend(intrinsic_land_mana_abilities(
-            base.card_types,base.subtypes,existing_abilities=base.activated_abilities))
+        _materialize_intrinsic_mana(base)
     return ContinuousEvaluation(
         characteristics=base.snapshot(),
         applied_effects=tuple(applied),
