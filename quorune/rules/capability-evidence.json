@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "f4847faf72438fb6922d7ca477e009bdb338ff60dae29b68e883f4261422fc50",
-  "declaration_source_fingerprint": "ba19fbb019f163d3619af75d133045624330fbb9bcb4c94be97018cc7513cc6b",
+  "registry_fingerprint": "53c4cfa02ee517a8941ddf80b498d7e5f6093ab8ecf57c74e8ad556a45ef6560",
+  "declaration_source_fingerprint": "cb7e2ba6decfc61c07f4e9e0f754bbef4b2a9adc107e8fb69cbdd1be429efdf3",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -100904,6 +100904,27 @@
     },
     {
       "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaLayerBoundaryTests.test_repeated_ability_removal_never_revives_intrinsic_mana",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Repeated evaluation and deepcopy rebuild only evaluator-owned intrinsic descriptors. Type changes replace old mana, layer-six removal remains effective, printed abilities survive and separate equal-valued reserved spoofs reject. Provenance is absent from snapshots."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaAbilityLossRuntimeTests.test_actual_humble_removes_dryad_intrinsic_mana_and_rejects_activation",
       "official_rule_ids": [
@@ -100988,6 +101009,27 @@
     },
     {
       "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaLayerBoundaryTests.test_intrinsic_provenance_omission_mutant_is_killed_by_repeated_evaluation",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Repeated evaluation and deepcopy rebuild only evaluator-owned intrinsic descriptors. Type changes replace old mana, layer-six removal remains effective, printed abilities survive and separate equal-valued reserved spoofs reject. Provenance is absent from snapshots."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
       "evidence_class": "negative",
       "test_id": "tests.test_intrinsic_basic_land_mana.IntrinsicBasicLandManaTests.test_intrinsic_basic_land_mana_rejects_malformed_descriptors_and_near_misses",
       "official_rule_ids": [
@@ -101051,6 +101093,48 @@
     },
     {
       "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "negative",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaLayerBoundaryTests.test_repeated_ability_removal_never_revives_intrinsic_mana",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Repeated evaluation and deepcopy rebuild only evaluator-owned intrinsic descriptors. Type changes replace old mana, layer-six removal remains effective, printed abilities survive and separate equal-valued reserved spoofs reject. Provenance is absent from snapshots."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "negative",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaLayerBoundaryTests.test_repeated_evaluation_preserves_printed_abilities_and_rejects_reserved_spoof",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Repeated evaluation and deepcopy rebuild only evaluator-owned intrinsic descriptors. Type changes replace old mana, layer-six removal remains effective, printed abilities survive and separate equal-valued reserved spoofs reject. Provenance is absent from snapshots."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
       "evidence_class": "positive",
       "test_id": "tests.test_intrinsic_basic_land_mana.IntrinsicBasicLandManaTests.test_intrinsic_basic_land_mana_compiler_binds_type_line_and_reminder",
       "official_rule_ids": [
@@ -101094,6 +101178,27 @@
     {
       "capability_id": "mana.intrinsic.basic_land_type",
       "evidence_class": "positive",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaLayerBoundaryTests.test_repeated_evaluation_rebuilds_only_evaluator_owned_intrinsic_mana",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Repeated evaluation and deepcopy rebuild only evaluator-owned intrinsic descriptors. Type changes replace old mana, layer-six removal remains effective, printed abilities survive and separate equal-valued reserved spoofs reject. Provenance is absent from snapshots."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "positive",
       "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaLayerBoundaryTests.test_type_changes_precede_intrinsic_mana_and_later_ability_loss",
       "official_rule_ids": [
         "305.6",
@@ -101132,6 +101237,27 @@
         "traditional"
       ],
       "applicability_note": "Intrinsic mana materializes after current type changes and before ability removal. Actual original Dryad Arbor/Humble action, rejected mana activation and automatic cast, four-seat privacy/rollback, pending load and replay; actual cleanup restores Forest and Urborg-added Swamp. Isolated later grants stay distinct from regenerated intrinsic mana."
+    },
+    {
+      "capability_id": "mana.intrinsic.basic_land_type",
+      "evidence_class": "property",
+      "test_id": "tests.test_intrinsic_mana_ability_loss.IntrinsicManaLayerBoundaryTests.test_repeated_evaluation_rebuilds_only_evaluator_owned_intrinsic_mana",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Repeated evaluation and deepcopy rebuild only evaluator-owned intrinsic descriptors. Type changes replace old mana, layer-six removal remains effective, printed abilities survive and separate equal-valued reserved spoofs reject. Provenance is absent from snapshots."
     },
     {
       "capability_id": "mana.intrinsic.basic_land_type",
@@ -164451,5 +164577,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "534fc79152dca5e332171637db854260cb6d7b387946ff36c6d3325cc7ab622d"
+  "fingerprint": "1b6181914a13155e8ba7378284042be7ddb2e4ddb489cb4830ce2e1f093e850a"
 }

@@ -324,6 +324,10 @@ remove them while the land keeps those types, and later layer-6 grants remain
 distinct. Offers, direct activation, and automatic payment consume the surviving
 typed abilities. Ending a removal restores the intrinsic abilities on the next
 evaluation without changing the land's types.
+Reusing a characteristic state rebuilds only intrinsic descriptors previously
+created by that evaluator, before applying ability removal again. This private
+provenance stays out of snapshots; caller-supplied reserved intrinsic IDs still
+reject rather than masquerading as derived abilities.
 
 Fixed additive basic land types use a typed layer-4 component with global,
 controller-land, or current attached-land scope. One basic type or every basic
