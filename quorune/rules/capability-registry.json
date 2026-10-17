@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 342,
+  "registry_version": 344,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -26656,6 +26656,103 @@
       "dependency_fail_closed_rationale": "The new addition capability and intrinsic-mana owner must both close before source admission.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "test_setting_omission_is_killed_by_actual_blood_moon_entry preserves admission while omitting the live setting, and is detected by the original Vivid Creek entry result.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.additional_cost.entwine_fixed_modes",
+      "version": 1,
+      "official_rules": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Compile choose-one spells with one fixed mana Entwine cost and complete nonrepeating branches. Choose one at ordinary cost or all modes with the additional price exactly once; bind selected targets before total-cost modifiers.",
+        "inputs": [
+          "complete independently closed choose-one modal body",
+          "two to five ordered printed modes",
+          "one canonical fixed mana Entwine vector",
+          "source-bound chosen modes and existing base/alternative costs"
+        ],
+        "outputs": [
+          "one-mode or all-mode correlated cost options",
+          "additional Entwine cost added before total reductions",
+          "free base retains Entwine additional cost",
+          "printed mana value and printed resolution order retained"
+        ],
+        "exclusions": [
+          "unknown sibling modes",
+          "nonmana/variable/hybrid Entwine prices",
+          "repeated/unknown/intermediate mode subsets",
+          "other base choice counts",
+          "client-authored or malformed mode-price schemas"
+        ]
+      },
+      "dependencies": [
+        "choice.modal.fixed_nonrepeating"
+      ],
+      "implementation_components": [
+        "quorune.entwine_model.EntwineModeCost",
+        "quorune.compiler.entwine_templates.fixed_entwine_modal_template",
+        "quorune.compiler.whole_modal_templates.whole_modal_spell_template",
+        "quorune.rules.entwine_capability_shapes.entwine_modal_cost_capabilities",
+        "quorune.rules.casting.entwine_costs.with_entwine_mode_cost_options",
+        "quorune.rules.casting.spree_costs.default_cast_cost_option_id"
+      ],
+      "positive_tests": [
+        "test_entwine_model_preserves_one_or_all_cardinality_and_closed_wire_fields",
+        "test_entwine_compiler_and_cost_options_bind_all_modes_before_modifiers",
+        "test_entwine_originals_require_complete_modes_and_normal_registration"
+      ],
+      "negative_tests": [
+        "test_entwine_unknown_costs_siblings_and_uncorrelated_price_data_fail_closed",
+        "test_entwine_originals_require_complete_modes_and_normal_registration"
+      ],
+      "interaction_tests": [
+        "test_actual_entwine_binds_both_targets_and_requires_the_extra_cost",
+        "test_actual_entwine_same_target_uses_printed_order_and_unpaid_cast_chooses_one",
+        "test_actual_entwine_additional_cost_is_reduced_after_adding_and_survives_free_base",
+        "test_actual_rain_of_rust_retains_each_modes_target_domain_and_shared_target",
+        "test_actual_entwine_creates_tokens_before_affecting_current_creatures"
+      ],
+      "multiplayer_tests": [
+        "test_actual_entwine_binds_both_targets_and_requires_the_extra_cost",
+        "test_actual_rain_of_rust_retains_each_modes_target_domain_and_shared_target"
+      ],
+      "privacy_tests": [
+        "test_actual_entwine_binds_both_targets_and_requires_the_extra_cost"
+      ],
+      "replay_tests": [
+        "test_actual_entwine_binds_both_targets_and_requires_the_extra_cost",
+        "test_actual_entwine_same_target_uses_printed_order_and_unpaid_cast_chooses_one",
+        "test_actual_entwine_additional_cost_is_reduced_after_adding_and_survives_free_base",
+        "test_actual_rain_of_rust_retains_each_modes_target_domain_and_shared_target",
+        "test_actual_entwine_creates_tokens_before_affecting_current_creatures"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Every mode and the complete fixed price must close over the exact source schema. Missing child/Entwine/modal owners, malformed prices and illegal mode cardinalities fail before casting.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Removing only the all-mode additional price preserves source admission and target correlation but makes actual Dream's Grip accept an underpaid all-mode cast; the native witness detects this mutation.",
       "blockers": [],
       "status": "trusted"
     }

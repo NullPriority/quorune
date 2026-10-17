@@ -47,7 +47,8 @@ def default_cast_cost_option_id(options):
     normal = next((option.option_id for option in options if option.option_id == 'normal'), None)
     if normal is not None:
         return normal
-    normal_spree = next((option.option_id for option in options if option.to_dict().get('spree_base_option_id') == 'normal'), None)
+    normal_spree = next((option.option_id for option in options if any(option.to_dict().get(key)=='normal'
+        for key in ('spree_base_option_id','entwine_base_option_id'))), None)
     if normal_spree is not None:
         return normal_spree
     return options[0].option_id if len(options) == 1 else ''

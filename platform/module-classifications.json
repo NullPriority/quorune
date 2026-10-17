@@ -2837,6 +2837,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/entwine_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/event_card_return_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -6839,6 +6854,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/entwine_model.py",
+      "layer": "rules",
+      "owning_subsystem": "casting_activation_and_costs",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/errors.py",
       "layer": "rules",
       "owning_subsystem": "legacy_rules",
@@ -9125,6 +9154,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/casting/entwine_costs.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/casting/face_queries.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -9644,6 +9687,20 @@
     },
     {
       "file": "quorune/rules/entry_return_capability_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/entwine_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -14804,5 +14861,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "4b74c43e3d949457290388fd977fd766753129c0b9e61af6d5a3d2f8a279258e"
+  "fingerprint": "6ee8f1e79e12dab0898d7dc252c8fe6816df3af1e50620e6ac58d60ba788484c"
 }

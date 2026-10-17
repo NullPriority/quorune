@@ -8224,6 +8224,512 @@
       "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
     },
     {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_actual_entwine_additional_cost_is_reduced_after_adding_and_survives_free_base",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_actual_entwine_binds_both_targets_and_requires_the_extra_cost",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_actual_entwine_creates_tokens_before_affecting_current_creatures",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_actual_entwine_same_target_uses_printed_order_and_unpaid_cast_chooses_one",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_actual_rain_of_rust_retains_each_modes_target_domain_and_shared_target",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_actual_entwine_binds_both_targets_and_requires_the_extra_cost",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_actual_rain_of_rust_retains_each_modes_target_domain_and_shared_target",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_entwine_price_omission_is_killed_by_native_underpayment_check",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineCompilerTests.test_entwine_unknown_costs_siblings_and_uncorrelated_price_data_fail_closed",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_entwine_originals_require_complete_modes_and_normal_registration",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineCompilerTests.test_entwine_compiler_and_cost_options_bind_all_modes_before_modifiers",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineCompilerTests.test_entwine_model_preserves_one_or_all_cardinality_and_closed_wire_fields",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_entwine_originals_require_complete_modes_and_normal_registration",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_actual_entwine_binds_both_targets_and_requires_the_extra_cost",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineCompilerTests.test_entwine_compiler_and_cost_options_bind_all_modes_before_modifiers",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineCompilerTests.test_entwine_model_preserves_one_or_all_cardinality_and_closed_wire_fields",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineCompilerTests.test_entwine_unknown_costs_siblings_and_uncorrelated_price_data_fail_closed",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_actual_entwine_additional_cost_is_reduced_after_adding_and_survives_free_base",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_actual_entwine_binds_both_targets_and_requires_the_extra_cost",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_actual_entwine_creates_tokens_before_affecting_current_creatures",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_actual_entwine_same_target_uses_printed_order_and_unpaid_cast_chooses_one",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_actual_rain_of_rust_retains_each_modes_target_domain_and_shared_target",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
+      "capability_id": "casting.additional_cost.entwine_fixed_modes",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_actual_entwine_binds_both_targets_and_requires_the_extra_cost",
+      "official_rule_ids": [
+        "202.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "700.2",
+        "702.42a",
+        "702.42b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed-mana Entwine binds one/all mode cardinality to exact prices and targets. Actual Dream/Rain payments and target groups, same-target printed order, Electromancer and an existing typed free-base permission, newly created Goblins affected by the later mode, privacy/rollback/pending replay, complete original-card table and admission-preserving price omission."
+    },
+    {
       "capability_id": "casting.additional_cost.fixed_alternative",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_alternative_additional_costs.FixedAlternativeAdditionalCostRuntimeTests.test_fixed_life_and_mana_alternatives_share_total_cost_options",

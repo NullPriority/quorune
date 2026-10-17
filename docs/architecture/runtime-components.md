@@ -933,10 +933,23 @@ base. The shared affordability, target validation and payment owners enforce
 that binding; resolution retains printed mode order and ordinary copy behavior.
 Variable prices and incomplete mode bodies remain residual.
 
+### Fixed Entwine mode costs
+
+`EntwineModeCost` binds one fixed additional mana vector to every mode of a
+complete choose-one spell. The version-1 `entwine` cost schema admits one
+ordinary mode or all printed modes. Intermediate subsets, repeated modes,
+variable or complex prices, and unresolved sibling modes remain residual.
+
+The existing cost-option and target owners bind each selection before total
+cost reductions and payment. Choosing all modes adds the Entwine price once,
+including when a typed permission waives the base mana cost. Resolution uses
+printed order, so later modes observe the results of earlier ones. The same
+public mode and cost-option fields serve offers and accepted commands.
+
 ### Typed token children in modal branches
 
 `compiler/modal_token_branches.py` adapts the existing typed token-node compiler
-for complete ordinary and Spree modal branches. Each branch retains its token
+for complete ordinary, Spree, and Entwine modal branches. Each branch retains its token
 fragments and independently closed generated child nodes. Identical branch
 bodies may share one immutable child definition; different source rows and
 abilities retain distinct keys. Unknown children or sibling branches keep the

@@ -22,6 +22,7 @@ class FixedModalBranch:
 FIXED_MODAL_WRAPPER_MECHANICS = frozenset(
     {
         'fixed-spree-mode-costs',
+        'fixed-entwine-mode-costs',
         "cr-603-handling-triggered-abilities",
         "exhaust",
         "fixed-typed-event-effect-trigger",

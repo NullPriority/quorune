@@ -4897,6 +4897,28 @@
         "test_targeted_return_to_hand_effect_clauses",
         "test_transmute"
       ]
+    },
+    {
+      "id": "fixed-mana-entwine-mode-cost-contract",
+      "patterns": [
+        "quorune/entwine_model.py",
+        "quorune/compiler/entwine_templates.py",
+        "quorune/compiler/whole_modal_templates.py",
+        "quorune/rules/entwine_capability_shapes.py",
+        "quorune/rules/spree_capability_shapes.py",
+        "quorune/rules/casting/entwine_costs.py",
+        "quorune/rules/casting/spree_costs.py",
+        "tests/test_fixed_entwine.py",
+        "tests/fixtures/fixed-entwine-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_entwine",
+        "test_spree_mode_costs",
+        "test_fixed_nonrepeating_modal_programs",
+        "test_fixed_choose_one_modal_spells",
+        "test_modal_token_programs",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

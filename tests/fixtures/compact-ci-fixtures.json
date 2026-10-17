@@ -80,6 +80,7 @@
     "tests/fixtures/fixed-damage-source-lki-cards.json",
     "tests/fixtures/fixed-effect-clause-sequence-cards.json",
     "tests/fixtures/fixed-energy-payment-cards.json",
+    "tests/fixtures/fixed-entwine-cards.json",
     "tests/fixtures/fixed-evasion-grants.json",
     "tests/fixtures/fixed-extra-turn-cards.json",
     "tests/fixtures/fixed-keyword-event-effect-cards.json",

@@ -570,6 +570,8 @@ def _initial_options(
     expanded, mandatory = alternative_expansion
     from .spree_costs import with_spree_mode_cost_options
     expanded = with_spree_mode_cost_options(program, schema, expanded, response, hint=hint)
+    from .entwine_costs import with_entwine_mode_cost_options
+    expanded = with_entwine_mode_cost_options(program,schema,expanded,response,hint=hint)
     from .aftermath import with_aftermath_stack_context
     return with_aftermath_stack_context(host,card,expanded), mandatory, mechanics, has_x
 
