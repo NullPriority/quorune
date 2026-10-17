@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "630e2c7a32c7cc2ef40f488f67003cebd3149bf8ffb842b56f0cfe30e7129f43",
-  "declaration_source_fingerprint": "12898b267251a69edac3590a7d43e78b1756bad94fef9be3bf4f44f3a1e32380",
+  "registry_fingerprint": "f7fb43dc589d9ebd42560fa2461b52977fd4c5344550cf2e9b5c93e6ad830eca",
+  "declaration_source_fingerprint": "fa871e620b59ddb6f6c7a50343cab4a2c91b80fb17b83bfe735258de22eefbfe",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -14371,6 +14371,731 @@
         "commander_review"
       ],
       "applicability_note": "Reject a stale effective-type selection with identical authoritative state before mana, zone, stack, or journal mutation."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_actual_pyromatics_pays_repeated_total_cost_and_retargets_independent_copies",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed source-pinned fixed Replicate cost/trigger instance, repeated total pricing and independently chosen copies. Malformed/unsupported/missing-owner forms reject. Actual four-seat casts preserve privacy, principal rollback, pending load and replay."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_countered_original_retains_paid_copy_trigger_without_recursive_casts",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original normal registration, free-base optional payment/zero contrast, locked copies after countering the original, independent stale/legal target consequences, and four-seat command/privacy/pending/replay boundaries. Native price omission is detected while admission remains intact."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_free_base_retains_optional_replicate_cost_and_zero_creates_no_trigger",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original normal registration, free-base optional payment/zero contrast, locked copies after countering the original, independent stale/legal target consequences, and four-seat command/privacy/pending/replay boundaries. Native price omission is detected while admission remains intact."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_replicate_copies_revalidate_departed_targets_and_reject_illegal_new_targets",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original normal registration, free-base optional payment/zero contrast, locked copies after countering the original, independent stale/legal target consequences, and four-seat command/privacy/pending/replay boundaries. Native price omission is detected while admission remains intact."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_actual_pyromatics_pays_repeated_total_cost_and_retargets_independent_copies",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed source-pinned fixed Replicate cost/trigger instance, repeated total pricing and independently chosen copies. Malformed/unsupported/missing-owner forms reject. Actual four-seat casts preserve privacy, principal rollback, pending load and replay."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_countered_original_retains_paid_copy_trigger_without_recursive_casts",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original normal registration, free-base optional payment/zero contrast, locked copies after countering the original, independent stale/legal target consequences, and four-seat command/privacy/pending/replay boundaries. Native price omission is detected while admission remains intact."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_free_base_retains_optional_replicate_cost_and_zero_creates_no_trigger",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original normal registration, free-base optional payment/zero contrast, locked copies after countering the original, independent stale/legal target consequences, and four-seat command/privacy/pending/replay boundaries. Native price omission is detected while admission remains intact."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_replicate_copies_revalidate_departed_targets_and_reject_illegal_new_targets",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original normal registration, free-base optional payment/zero contrast, locked copies after countering the original, independent stale/legal target consequences, and four-seat command/privacy/pending/replay boundaries. Native price omission is detected while admission remains intact."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateModelCompilerTests.test_replicate_producer_omission_is_detected_by_independent_positive_contract",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Omitting the fixed Replicate compiler producer makes the independent source-span and paired-authority positive witness fail."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_replicate_repeat_price_omission_preserves_admission_but_changes_native_payment",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original normal registration, free-base optional payment/zero contrast, locked copies after countering the original, independent stale/legal target consequences, and four-seat command/privacy/pending/replay boundaries. Native price omission is detected while admission remains intact."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateModelCompilerTests.test_replicate_source_span_and_paired_dependency_boundary",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed source-pinned fixed Replicate cost/trigger instance, repeated total pricing and independently chosen copies. Malformed/unsupported/missing-owner forms reject. Actual four-seat casts preserve privacy, principal rollback, pending load and replay."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateModelCompilerTests.test_replicate_spec_is_immutable_and_payment_count_is_instance_correlated",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed source-pinned fixed Replicate cost/trigger instance, repeated total pricing and independently chosen copies. Malformed/unsupported/missing-owner forms reject. Actual four-seat casts preserve privacy, principal rollback, pending load and replay."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_countered_original_retains_paid_copy_trigger_without_recursive_casts",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original normal registration, free-base optional payment/zero contrast, locked copies after countering the original, independent stale/legal target consequences, and four-seat command/privacy/pending/replay boundaries. Native price omission is detected while admission remains intact."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_free_base_retains_optional_replicate_cost_and_zero_creates_no_trigger",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original normal registration, free-base optional payment/zero contrast, locked copies after countering the original, independent stale/legal target consequences, and four-seat command/privacy/pending/replay boundaries. Native price omission is detected while admission remains intact."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_original_replicate_cards_require_complete_normal_admission",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original normal registration, free-base optional payment/zero contrast, locked copies after countering the original, independent stale/legal target consequences, and four-seat command/privacy/pending/replay boundaries. Native price omission is detected while admission remains intact."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_replicate_copies_revalidate_departed_targets_and_reject_illegal_new_targets",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original normal registration, free-base optional payment/zero contrast, locked copies after countering the original, independent stale/legal target consequences, and four-seat command/privacy/pending/replay boundaries. Native price omission is detected while admission remains intact."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateModelCompilerTests.test_replicate_source_span_and_paired_dependency_boundary",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed source-pinned fixed Replicate cost/trigger instance, repeated total pricing and independently chosen copies. Malformed/unsupported/missing-owner forms reject. Actual four-seat casts preserve privacy, principal rollback, pending load and replay."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateModelCompilerTests.test_replicate_spec_is_immutable_and_payment_count_is_instance_correlated",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed source-pinned fixed Replicate cost/trigger instance, repeated total pricing and independently chosen copies. Malformed/unsupported/missing-owner forms reject. Actual four-seat casts preserve privacy, principal rollback, pending load and replay."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_actual_pyromatics_pays_repeated_total_cost_and_retargets_independent_copies",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed source-pinned fixed Replicate cost/trigger instance, repeated total pricing and independently chosen copies. Malformed/unsupported/missing-owner forms reject. Actual four-seat casts preserve privacy, principal rollback, pending load and replay."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_countered_original_retains_paid_copy_trigger_without_recursive_casts",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original normal registration, free-base optional payment/zero contrast, locked copies after countering the original, independent stale/legal target consequences, and four-seat command/privacy/pending/replay boundaries. Native price omission is detected while admission remains intact."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_free_base_retains_optional_replicate_cost_and_zero_creates_no_trigger",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original normal registration, free-base optional payment/zero contrast, locked copies after countering the original, independent stale/legal target consequences, and four-seat command/privacy/pending/replay boundaries. Native price omission is detected while admission remains intact."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_original_replicate_cards_require_complete_normal_admission",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original normal registration, free-base optional payment/zero contrast, locked copies after countering the original, independent stale/legal target consequences, and four-seat command/privacy/pending/replay boundaries. Native price omission is detected while admission remains intact."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_replicate_copies_revalidate_departed_targets_and_reject_illegal_new_targets",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original normal registration, free-base optional payment/zero contrast, locked copies after countering the original, independent stale/legal target consequences, and four-seat command/privacy/pending/replay boundaries. Native price omission is detected while admission remains intact."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_actual_pyromatics_pays_repeated_total_cost_and_retargets_independent_copies",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed source-pinned fixed Replicate cost/trigger instance, repeated total pricing and independently chosen copies. Malformed/unsupported/missing-owner forms reject. Actual four-seat casts preserve privacy, principal rollback, pending load and replay."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_free_base_retains_optional_replicate_cost_and_zero_creates_no_trigger",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original normal registration, free-base optional payment/zero contrast, locked copies after countering the original, independent stale/legal target consequences, and four-seat command/privacy/pending/replay boundaries. Native price omission is detected while admission remains intact."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_actual_pyromatics_pays_repeated_total_cost_and_retargets_independent_copies",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed source-pinned fixed Replicate cost/trigger instance, repeated total pricing and independently chosen copies. Malformed/unsupported/missing-owner forms reject. Actual four-seat casts preserve privacy, principal rollback, pending load and replay."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_countered_original_retains_paid_copy_trigger_without_recursive_casts",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original normal registration, free-base optional payment/zero contrast, locked copies after countering the original, independent stale/legal target consequences, and four-seat command/privacy/pending/replay boundaries. Native price omission is detected while admission remains intact."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_free_base_retains_optional_replicate_cost_and_zero_creates_no_trigger",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original normal registration, free-base optional payment/zero contrast, locked copies after countering the original, independent stale/legal target consequences, and four-seat command/privacy/pending/replay boundaries. Native price omission is detected while admission remains intact."
+    },
+    {
+      "capability_id": "casting.additional_cost.replicate_fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_replicate.FixedReplicateRuntimeTests.test_replicate_copies_revalidate_departed_targets_and_reject_illegal_new_targets",
+      "official_rule_ids": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual original normal registration, free-base optional payment/zero contrast, locked copies after countering the original, independent stale/legal target consequences, and four-seat command/privacy/pending/replay boundaries. Native price omission is detected while admission remains intact."
     },
     {
       "capability_id": "casting.additional_cost.spree_fixed_modes",
@@ -171291,5 +172016,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "ecf0707f2d5e8333f45de5fea9e8b85bef85bf461f1d790cf7de11ca5118c266"
+  "fingerprint": "6c1ba26447a3b141fcce34cc41ad37d9739c9385afb7522cd73f78be15c3ec76"
 }

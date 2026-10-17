@@ -476,6 +476,7 @@
       "test_fixed_library_searches",
       "test_fixed_optional_effect_choices",
       "test_fixed_optional_mana_payment_triggers",
+      "test_fixed_replicate",
       "test_fixed_sacrifice_additional_costs",
       "test_fixed_source_counter_activation_costs",
       "test_fixed_source_effect_sequences",

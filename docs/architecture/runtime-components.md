@@ -963,6 +963,26 @@ printed cost, mana value and cast triggers without an Emerge sacrifice.
 Complex prices, qualified sacrifices, other card forms and unresolved
 Emerge-paid result bodies remain outside this family.
 
+### Fixed mana Replicate and repeated additional payments
+
+`FixedRepeatedManaCostSpec` and the common optional-cost expansion represent
+source-pinned positive ordinary-mana costs and immutable paid counts. The
+Multikicker and Replicate owners retain distinct descriptors, cost options and
+count fields while sharing that arithmetic. Additional payments enter the
+total before increases and reductions and remain optional with a free base.
+
+`FixedManaReplicateSpec` binds one complete printed instance on a normal
+instant or sorcery. A paid cast creates one trigger with the correlated count
+and a locked spell template; an unpaid cast creates none. The existing spell
+copy targeting owner validates the separate typed trigger, offers independent
+new targets or retained targets, and creates copies through the ordinary copy
+owner. Countering the original leaves its trigger intact. Copies revalidate
+targets and do not count as casts or trigger Replicate again. Existing Storm
+descriptors, copy choices and historical continuations retain their format.
+
+Variable, nonmana, zero-priced, repeated or granted instances, permanent spells
+and unrepresented sibling bodies remain residual.
+
 ### Fixed mana Disturb and source-local graveyard exile
 
 `FixedManaDisturbSpec` binds one front-face declaration to its transforming

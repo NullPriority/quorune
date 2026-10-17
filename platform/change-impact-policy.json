@@ -4996,6 +4996,26 @@
         "test_card_program_trust",
         "test_activated_self_transform"
       ]
+    },
+    {
+      "id": "fixed-mana-replicate-and-shared-repeated-costs",
+      "patterns": [
+        "quorune/repeated_mana_costs.py",
+        "quorune/replicate_model.py",
+        "quorune/compiler/replicate_nodes.py",
+        "quorune/semantic_runtime/replicate.py",
+        "quorune/rules/casting/repeated_mana_costs.py",
+        "quorune/rules/casting/replicate_costs.py",
+        "quorune/replicate.py",
+        "tests/test_fixed_replicate.py",
+        "tests/fixtures/fixed-replicate-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_replicate",
+        "test_multikicker_entry_counters",
+        "test_storm_rules",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

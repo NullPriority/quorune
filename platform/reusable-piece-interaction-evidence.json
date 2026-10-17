@@ -14881,6 +14881,81 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Shock damages an opposing creature; original Cutpurse admits only that damaged target and rejects the undamaged opposing control. Its front dies normally, is cast using Disturb, and its back exiles on native Murder. Private projection, unauthorized rollback, pending save/load and pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_pyromatics_pays_repeated_total_cost_and_retargets_independent_copies",
+      "piece_ids": [
+        "capability.casting.additional_cost.replicate_fixed_mana",
+        "capability.damage.result.player_life"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.replicate_fixed_mana",
+        "damage.result.player_life"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Pyromatics pays two additional prices before Sphere and Ruby Medallion total modifiers, creates two independently targeted copies, and deals one damage to each of three different players. Actual mana, principal rollback, private projection and pending replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_countered_original_retains_paid_copy_trigger_without_recursive_casts",
+      "piece_ids": [
+        "capability.casting.additional_cost.replicate_fixed_mana",
+        "capability.stack.counter.effect"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.replicate_fixed_mana",
+        "stack.counter.effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native Counterspell counters original Pyromatics while its paid Replicate trigger remains. Exactly two copies deal damage to chosen players, the original target takes none, and spell-cast history counts only the original and Counterspell. Pending load and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_replicate_copies_revalidate_departed_targets_and_reject_illegal_new_targets",
+      "piece_ids": [
+        "capability.casting.additional_cost.replicate_fixed_mana",
+        "capability.target.revalidate_resolution"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.replicate_fixed_mana",
+        "target.revalidate_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Gigadrowse and one copy retain a creature target that leaves to native Unsummon after copy creation; both fail on that incarnation while the independently targeted copy taps a surviving creature. Invalid new player targets reject, pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_replicate_copies_revalidate_departed_targets_and_reject_illegal_new_targets",
+      "piece_ids": [
+        "capability.casting.additional_cost.replicate_fixed_mana",
+        "capability.permanent.tap.effect"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.replicate_fixed_mana",
+        "permanent.tap.effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Gigadrowse copies retain distinct target snapshots. After native bounce removes one target, only the surviving permanent becomes tapped; rejected illegal copy choices and pending replay preserve that result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_free_base_retains_optional_replicate_cost_and_zero_creates_no_trigger",
+      "piece_ids": [
+        "capability.casting.additional_cost.replicate_fixed_mana",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.replicate_fixed_mana",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "A typed free base removes Train of Thought base mana while optional Replicate still charges its two repeated prices. Zero payments draw once with no trigger; two payments draw three private cards with no extra cast. Malformed counts/options reject; all three opponents remain unable to inspect the draws; pending load and replay agree."
     }
   ]
 }

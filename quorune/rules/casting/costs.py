@@ -25,6 +25,7 @@ from ...compiled_flashback import (
 from ...compiled_kicker import compiled_fixed_mana_kicker_spec
 from .paid_entry_copy_costs import with_paid_entry_copy_cost_schema
 from .multikicker_costs import with_multikicker_cost_schema
+from .replicate_costs import with_replicate_cost_schema
 from .emerge_costs import emerge_base_options, reduce_emerge_total, finalize_emerge_selection
 from .disturb_costs import disturb_back_cast_permission,disturb_base_options
 from ...compiled_bestow import compiled_fixed_mana_bestow_spec
@@ -379,6 +380,7 @@ def _cast_schema_and_mechanics(
         _with_kicker_cost,
         with_paid_entry_copy_cost_schema,
         with_multikicker_cost_schema,
+        with_replicate_cost_schema,
         _with_bestow_cost,
         with_fixed_public_alternative_costs,
     ):

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 348,
+  "registry_version": 349,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -17323,24 +17323,108 @@
     },
     {
       "id": "trigger.keyword.storm",
-      "version": 1,
-      "official_rules": ["115.7d", "400.7", "601.2c", "601.2i", "603.2", "603.3", "702.40", "702.40a", "702.40b", "707.10", "707.10c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "115.7d",
+        "400.7",
+        "601.2c",
+        "601.2i",
+        "603.2",
+        "603.3",
+        "702.40",
+        "702.40a",
+        "702.40b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile each ordinary printed Storm instance as an independent stack-zone cast trigger, snapshot the number of other spells cast that turn, place it through ordinary APNAP ordering, and create independent retargetable spell-copy objects through the canonical Storm selection owner.",
-        "inputs": ["one ordinary printed Storm keyword instance", "the completed cast spell and selected face", "canonical current-turn spell-cast history", "the original spell's copied modes, X value, target groups, target snapshots, and trusted semantic key"],
-        "outputs": ["one ordinary trigger per printed Storm instance", "one immutable prior-spell count", "zero or more independent spell-copy objects", "optional public target reassignment for each targeted copy", "ordinary copy resolution, cessation, projection, rollback, and exact replay"],
-        "exclusions": ["Gravestorm and Oracle-equivalent nonkeyword wording", "granted, copied, text-changed, conditional, or face-down Storm outside trusted typed stack-ability propagation", "copying a spell as a cast event", "copying choices other than modes, X, and represented targets", "untrusted source spell programs or target schemas", "multiple different incarnations sharing one public target reference in the same copied assignment", "unavailable retained nonplayer controller facts required by relational target schemas"]
+        "inputs": [
+          "one ordinary printed Storm keyword instance",
+          "the completed cast spell and selected face",
+          "canonical current-turn spell-cast history",
+          "the original spell's copied modes, X value, target groups, target snapshots, and trusted semantic key"
+        ],
+        "outputs": [
+          "one ordinary trigger per printed Storm instance",
+          "one immutable prior-spell count",
+          "zero or more independent spell-copy objects",
+          "optional public target reassignment for each targeted copy",
+          "ordinary copy resolution, cessation, projection, rollback, and exact replay"
+        ],
+        "exclusions": [
+          "Gravestorm and Oracle-equivalent nonkeyword wording",
+          "granted, copied, text-changed, conditional, or face-down Storm outside trusted typed stack-ability propagation",
+          "copying a spell as a cast event",
+          "copying choices other than modes, X, and represented targets",
+          "untrusted source spell programs or target schemas",
+          "multiple different incarnations sharing one public target reference in the same copied assignment",
+          "unavailable retained nonplayer controller facts required by relational target schemas"
+        ]
       },
-      "dependencies": ["target.revalidate_resolution", "trigger.event.normalized_spell_cast", "trigger.placement.apnap"],
-      "implementation_components": ["quorune.ability_fragments.SpellCastKeywordTriggerSpec", "quorune.semantic_runtime.ability_fragments.StormAbilityFragmentHandler", "quorune.compiler.storm_nodes.storm_keyword_node", "quorune.storm.storm_trigger_items", "quorune.selection.storm.StormTargetChoiceOwnerMixin", "quorune.selection.copy_targets.prepare_copy_targets", "quorune.selection.target_validation.validate_grouped_target_assignment", "quorune.engine.CommanderEngine._create_copy_object"],
-      "positive_tests": ["test_all_real_storm_cards_lower_typed_stack_trigger", "test_nontargeted_storm_copies_prior_casts_without_extra_choice", "test_multiple_storm_instances_compile_separately", "test_storm_copy_retains_one_illegal_target_while_changing_another"],
-      "negative_tests": ["test_unsupported_storm_wording_remains_material_residual", "test_zero_prior_spells_resolves_without_copies", "test_stale_or_malformed_storm_choice_rolls_back", "test_copy_assignment_matrix_keeps_only_server_pinned_originals", "test_storm_copy_cannot_change_an_original_optional_target_count"],
-      "interaction_tests": ["test_targeted_storm_copies_retarget_and_revalidate_independently", "test_storm_and_prowess_share_one_trigger_order_batch", "test_spell_copies_do_not_increase_the_next_storm_count", "test_storm_copy_default_keeps_the_original_departed_incarnation", "test_generic_copy_owner_uses_the_same_pinned_target_assignment", "test_storm_partial_retention_actual_commands_from_precast_checkpoint"],
-      "multiplayer_tests": ["test_four_player_storm_choice_is_public_and_replays_exactly", "test_storm_partial_retention_actual_commands_from_precast_checkpoint"],
-      "privacy_tests": ["test_four_player_storm_choice_is_public_and_replays_exactly", "test_storm_partial_retention_actual_commands_from_precast_checkpoint"],
-      "replay_tests": ["test_four_player_storm_choice_is_public_and_replays_exactly", "test_storm_partial_retention_actual_commands_from_precast_checkpoint"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "target.revalidate_resolution",
+        "trigger.event.normalized_spell_cast",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.ability_fragments.SpellCastKeywordTriggerSpec",
+        "quorune.semantic_runtime.ability_fragments.StormAbilityFragmentHandler",
+        "quorune.compiler.storm_nodes.storm_keyword_node",
+        "quorune.storm.storm_trigger_items",
+        "quorune.selection.storm.StormTargetChoiceOwnerMixin",
+        "quorune.selection.copy_targets.prepare_copy_targets",
+        "quorune.selection.target_validation.validate_grouped_target_assignment",
+        "quorune.engine.CommanderEngine._create_copy_object",
+        "quorune.storm.spell_copy_template",
+        "quorune.storm.validated_spell_copy_trigger"
+      ],
+      "positive_tests": [
+        "test_all_real_storm_cards_lower_typed_stack_trigger",
+        "test_nontargeted_storm_copies_prior_casts_without_extra_choice",
+        "test_multiple_storm_instances_compile_separately",
+        "test_storm_copy_retains_one_illegal_target_while_changing_another"
+      ],
+      "negative_tests": [
+        "test_unsupported_storm_wording_remains_material_residual",
+        "test_zero_prior_spells_resolves_without_copies",
+        "test_stale_or_malformed_storm_choice_rolls_back",
+        "test_copy_assignment_matrix_keeps_only_server_pinned_originals",
+        "test_storm_copy_cannot_change_an_original_optional_target_count"
+      ],
+      "interaction_tests": [
+        "test_targeted_storm_copies_retarget_and_revalidate_independently",
+        "test_storm_and_prowess_share_one_trigger_order_batch",
+        "test_spell_copies_do_not_increase_the_next_storm_count",
+        "test_storm_copy_default_keeps_the_original_departed_incarnation",
+        "test_generic_copy_owner_uses_the_same_pinned_target_assignment",
+        "test_storm_partial_retention_actual_commands_from_precast_checkpoint"
+      ],
+      "multiplayer_tests": [
+        "test_four_player_storm_choice_is_public_and_replays_exactly",
+        "test_storm_partial_retention_actual_commands_from_precast_checkpoint"
+      ],
+      "privacy_tests": [
+        "test_four_player_storm_choice_is_public_and_replays_exactly",
+        "test_storm_partial_retention_actual_commands_from_precast_checkpoint"
+      ],
+      "replay_tests": [
+        "test_four_player_storm_choice_is_public_and_replays_exactly",
+        "test_storm_partial_retention_actual_commands_from_precast_checkpoint"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The dedicated compiler node retains a material dependency residual if target revalidation, normalized completed-cast facts, ordinary APNAP placement, or the Storm capability is blocked.",
       "implementation_mutation_status": "killed",
@@ -26163,7 +26247,7 @@
     },
     {
       "id": "casting.multikicker.fixed_mana",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "118.8",
         "400.7d",
@@ -26213,7 +26297,9 @@
         "quorune.rules.casting.multikicker_costs.expand_multikicker_costs",
         "quorune.rules.casting.multikicker_costs.validate_multikicker_commit",
         "quorune.zone_object_state.mark_multikicker_paid",
-        "quorune.semantic_runtime.multikicker.prospective_multikicker_fields"
+        "quorune.semantic_runtime.multikicker.prospective_multikicker_fields",
+        "quorune.repeated_mana_costs.FixedRepeatedManaCostSpec",
+        "quorune.rules.casting.repeated_mana_costs.expand_repeated_mana_costs"
       ],
       "positive_tests": [
         "test_actual_originals_close_with_source_spans_and_linked_counter_instances",
@@ -27228,6 +27314,117 @@
       "dependency_fail_closed_rationale": "Missing precise declaration/zone owners, incomplete source faces, malformed data and unknown sibling bodies remain residual before execution.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the distinct cost or source-exile compiler producer makes the independently specified positive front/back contract fail before promotion. Native admission-preserving price omission changes actual payment; removing only source replacement routing changes countering, and removing copied face provenance changes actual token death history.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.additional_cost.replicate_fixed_mana",
+      "version": 1,
+      "official_rules": [
+        "115.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "603.2",
+        "603.3",
+        "608.2h",
+        "702.56a",
+        "702.56b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One printed fixed ordinary-mana Replicate cost on a normal instant or sorcery. Paid multiplicity creates one independent cast trigger using the existing typed copy-target owner.",
+        "inputs": [
+          "one complete admitted instance",
+          "server-validated optional count and total payment",
+          "locked source spell and choices"
+        ],
+        "outputs": [
+          "repeated additional price before total modifiers",
+          "one correlated copy trigger and independently retargetable copies"
+        ],
+        "exclusions": [
+          "zero/variable/nonmana/multiple/granted instances",
+          "permanent spells",
+          "unrepresented sibling bodies"
+        ]
+      },
+      "dependencies": [
+        "target.revalidate_resolution",
+        "trigger.event.normalized_spell_cast",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.replicate_model.FixedManaReplicateSpec",
+        "quorune.repeated_mana_costs.FixedRepeatedManaCostSpec",
+        "quorune.compiler.replicate_nodes.replicate_static_node",
+        "quorune.semantic_runtime.replicate.FixedManaReplicateHandler",
+        "quorune.rules.casting.replicate_costs.compiled_replicate_spec",
+        "quorune.rules.casting.replicate_costs.validate_replicate_commit",
+        "quorune.rules.casting.replicate_costs.expand_replicate_costs",
+        "quorune.replicate.replicate_trigger_items",
+        "quorune.replicate.validated_replicate_trigger",
+        "quorune.storm.spell_copy_template",
+        "quorune.selection.storm.StormTargetChoiceOwnerMixin"
+      ],
+      "positive_tests": [
+        "test_actual_pyromatics_pays_repeated_total_cost_and_retargets_independent_copies",
+        "test_countered_original_retains_paid_copy_trigger_without_recursive_casts",
+        "test_free_base_retains_optional_replicate_cost_and_zero_creates_no_trigger",
+        "test_original_replicate_cards_require_complete_normal_admission",
+        "test_replicate_copies_revalidate_departed_targets_and_reject_illegal_new_targets",
+        "test_replicate_source_span_and_paired_dependency_boundary",
+        "test_replicate_spec_is_immutable_and_payment_count_is_instance_correlated"
+      ],
+      "negative_tests": [
+        "test_countered_original_retains_paid_copy_trigger_without_recursive_casts",
+        "test_free_base_retains_optional_replicate_cost_and_zero_creates_no_trigger",
+        "test_original_replicate_cards_require_complete_normal_admission",
+        "test_replicate_copies_revalidate_departed_targets_and_reject_illegal_new_targets",
+        "test_replicate_source_span_and_paired_dependency_boundary",
+        "test_replicate_spec_is_immutable_and_payment_count_is_instance_correlated"
+      ],
+      "interaction_tests": [
+        "test_actual_pyromatics_pays_repeated_total_cost_and_retargets_independent_copies",
+        "test_countered_original_retains_paid_copy_trigger_without_recursive_casts",
+        "test_free_base_retains_optional_replicate_cost_and_zero_creates_no_trigger",
+        "test_replicate_copies_revalidate_departed_targets_and_reject_illegal_new_targets"
+      ],
+      "multiplayer_tests": [
+        "test_actual_pyromatics_pays_repeated_total_cost_and_retargets_independent_copies",
+        "test_countered_original_retains_paid_copy_trigger_without_recursive_casts",
+        "test_free_base_retains_optional_replicate_cost_and_zero_creates_no_trigger",
+        "test_replicate_copies_revalidate_departed_targets_and_reject_illegal_new_targets"
+      ],
+      "privacy_tests": [
+        "test_actual_pyromatics_pays_repeated_total_cost_and_retargets_independent_copies",
+        "test_free_base_retains_optional_replicate_cost_and_zero_creates_no_trigger"
+      ],
+      "replay_tests": [
+        "test_actual_pyromatics_pays_repeated_total_cost_and_retargets_independent_copies",
+        "test_countered_original_retains_paid_copy_trigger_without_recursive_casts",
+        "test_free_base_retains_optional_replicate_cost_and_zero_creates_no_trigger",
+        "test_replicate_copies_revalidate_departed_targets_and_reject_illegal_new_targets"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Missing current cost/trigger dependencies, malformed prices, multiple instances, permanent spells and unknown sibling bodies remain residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the paired producer fails the independent complete source-spanned positive contract before promotion. Native price omission preserves complete admission but leaves unspent mana, so the actual paid-cast consequence witness kills it.",
       "blockers": [],
       "status": "trusted"
     }
