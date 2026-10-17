@@ -4776,6 +4776,25 @@
         "test_intrinsic_mana_ability_loss",
         "test_typed_ability_fragments"
       ]
+    },
+    {
+      "id": "scoped-basic-type-addition-contract",
+      "patterns": [
+        "quorune/basic_type_addition_model.py",
+        "quorune/compiler/basic_type_addition_templates.py",
+        "quorune/semantic_runtime/basic_type_addition.py",
+        "quorune/compiler/runtime_templates.py",
+        "quorune/semantic_runtime/continuous_components.py",
+        "tests/test_scoped_basic_type_addition.py",
+        "tests/fixtures/scoped-basic-type-addition-cards.json"
+      ],
+      "test_modules": [
+        "test_basic_land_type_mana",
+        "test_card_program_trust",
+        "test_intrinsic_mana_ability_loss",
+        "test_scoped_basic_type_addition",
+        "test_continuous_effect_components"
+      ]
     }
   ],
   "symbol_rules": [

@@ -165,6 +165,7 @@
     "tests/fixtures/reveal-entry-cards.json",
     "tests/fixtures/scalar-effect-amount-cards.json",
     "tests/fixtures/scheduled-player-triggers.json",
+    "tests/fixtures/scoped-basic-type-addition-cards.json",
     "tests/fixtures/scoped-damage-prevention-cards.json",
     "tests/fixtures/scryfall-exact-lists.json",
     "tests/fixtures/self-public-zone-cards.json",

@@ -315,6 +315,13 @@ remove them while the land keeps those types, and later layer-6 grants remain
 distinct. Offers, direct activation, and automatic payment consume the surviving
 typed abilities. Ending a removal restores the intrinsic abilities on the next
 evaluation without changing the land's types.
+
+Fixed additive basic land types use a typed layer-4 component with global,
+controller-land, or current attached-land scope. One basic type or every basic
+type adds its subtypes while preserving printed abilities, other types,
+supertypes, and names. A source's later ability removal does not undo an already
+applied type effect; removing that source or its attachment ends the effect.
+Type setting and its printed-ability loss use a separate contract.
 The catalog unifies discovery for ordinary Crew, Cycling, fixed Typecycling,
 fixed counter-keyword activations, and represented mana abilities without
 replacing those families' specialized execution owners or capability closure.

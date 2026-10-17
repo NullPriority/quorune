@@ -1,0 +1,596 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_scoped_basic_type_addition",
+  "source": "Pinned original Oracle/rulings and canonical shared fixture rows",
+  "cards": [
+    {
+      "oracle_id": "131a7475-0b9e-46eb-9ade-fef1b9820184",
+      "name": "Stormtide Leviathan",
+      "mana_cost": "{5}{U}{U}{U}",
+      "type_line": "Creature — Leviathan",
+      "oracle_text": "Islandwalk (This creature can't be blocked as long as defending player controls an Island.)\nAll lands are Islands in addition to their other types.\nCreatures without flying or islandwalk can't attack.",
+      "power": "8",
+      "toughness": "8",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Landwalk",
+        "Islandwalk"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-11-20",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 8.0
+    },
+    {
+      "oracle_id": "feb00c6d-ff43-49bc-84d5-57e2d4651258",
+      "name": "Swampbenders",
+      "mana_cost": "{4}{G}{G}",
+      "type_line": "Creature — Human Druid Ally",
+      "oracle_text": "Swampbenders's power and toughness are each equal to the number of Swamps on the battlefield.\nLands you control are Swamps in addition to their other types.",
+      "power": "*",
+      "toughness": "*",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-11-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 6.0
+    },
+    {
+      "oracle_id": "bdbde5d0-f5e4-44da-b27c-b4ad6f374cc9",
+      "name": "Dryad of the Ilysian Grove",
+      "mana_cost": "{2}{G}",
+      "type_line": "Enchantment Creature — Nymph Dryad",
+      "oracle_text": "You may play an additional land on each of your turns.\nLands you control are every basic land type in addition to their other types.",
+      "power": "2",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "6b2e6a51-b9e6-4848-b7d7-98f02f2b897f",
+      "name": "Leyline of the Guildpact",
+      "mana_cost": "{G/W}{G/U}{B/G}{R/G}",
+      "type_line": "Enchantment",
+      "oracle_text": "If this card is in your opening hand, you may begin the game with it on the battlefield.\nEach nonland permanent you control is all colors.\nLands you control are every basic land type in addition to their other types.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "93fe5eed-520f-467a-8e27-6f40eaa727e8",
+      "name": "Nylea's Presence",
+      "mana_cost": "{1}{G}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant land\nWhen this Aura enters, draw a card.\nEnchanted land is every basic land type in addition to its other types.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-09-27",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "d90882ae-6572-4214-8d9c-0bdfb75f9be2",
+      "name": "Prismatic Omen",
+      "mana_cost": "{1}{G}",
+      "type_line": "Enchantment",
+      "oracle_text": "Lands you control are every basic land type in addition to their other types.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Indestructible"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Darksteel Citadel",
+      "oracle_id": "8dc067bf-f78f-4ac4-b6e7-b305c42cf0bc",
+      "oracle_text": "Indestructible\n{T}: Add {C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2021-04-23",
+      "toughness": null,
+      "type_line": "Artifact Land"
+    },
+    {
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "name": "Disenchant",
+      "mana_cost": "{1}{W}",
+      "type_line": "Instant",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "5b2460a5-6ae5-4cad-ba94-1a9e98e6e4c0",
+      "name": "Snow-Covered Island",
+      "mana_cost": "",
+      "type_line": "Basic Snow Land — Island",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "U"
+      ],
+      "layout": "normal",
+      "released_at": "2021-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 0.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "131a7475-0b9e-46eb-9ade-fef1b9820184",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "Stormtide Leviathan's second ability causes each land on the battlefield to have the land type Island. Each land thus has the ability \"{T}: Add {U}.\" Nothing else changes about those lands, including their names, other subtypes, other abilities, and whether they're legendary or basic."
+    },
+    {
+      "oracle_id": "131a7475-0b9e-46eb-9ade-fef1b9820184",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "Stormtide Leviathan's third ability affects all creatures with neither flying nor islandwalk, regardless of who controls them. They can't attack any player or planeswalker."
+    },
+    {
+      "oracle_id": "131a7475-0b9e-46eb-9ade-fef1b9820184",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "Islandwalk cares about lands with the land type Island, not necessarily lands named Island."
+    },
+    {
+      "oracle_id": "131a7475-0b9e-46eb-9ade-fef1b9820184",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "If Stormtide Leviathan loses its abilities, all lands on the battlefield (including those that enter the battlefield later on) will still be Islands in addition to their other types and will still be able to tap to produce {U}. The way continuous effects work, Stormtide Leviathan's type-changing ability is applied before the effect that removes that ability is applied."
+    },
+    {
+      "oracle_id": "feb00c6d-ff43-49bc-84d5-57e2d4651258",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Swampbenders's second ability causes each land on the battlefield you control to have the land type Swamp in addition to its other types. Any land that's a Swamp has the ability \"{T}: Add {B}.\" Nothing else changes about those lands, including their names, other subtypes, other abilities, and whether they're legendary, basic, or snow."
+    },
+    {
+      "oracle_id": "feb00c6d-ff43-49bc-84d5-57e2d4651258",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Land cards not on the battlefield aren't affected by Swampbenders's second ability."
+    },
+    {
+      "oracle_id": "bdbde5d0-f5e4-44da-b27c-b4ad6f374cc9",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Each land you control will have the land types Plains, Island, Swamp, Mountain, and Forest. They’ll also have the mana ability of each basic land type (for example, Forests have “{T}: Add {G}.”). They’ll still have their other subtypes and abilities."
+    },
+    {
+      "oracle_id": "bdbde5d0-f5e4-44da-b27c-b4ad6f374cc9",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Dryad of the Ilysian Grove’s first ability is cumulative if you control more than one. It’s also cumulative with other effects that let you play additional lands, such as the one from Escape to the Wilds."
+    },
+    {
+      "oracle_id": "bdbde5d0-f5e4-44da-b27c-b4ad6f374cc9",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Giving a land additional basic land types doesn’t change its name or whether it’s legendary or basic."
+    },
+    {
+      "oracle_id": "6b2e6a51-b9e6-4848-b7d7-98f02f2b897f",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Each land you control will have the land types Plains, Island, Swamp, Mountain, and Forest. They'll also have the mana ability of each basic land type (for example, Forests have \"{T}: Add {G}.\"). They'll still have their other subtypes and abilities."
+    },
+    {
+      "oracle_id": "6b2e6a51-b9e6-4848-b7d7-98f02f2b897f",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Giving a land additional basic land types doesn't change its name or whether it's legendary or basic."
+    },
+    {
+      "oracle_id": "6b2e6a51-b9e6-4848-b7d7-98f02f2b897f",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "A player's \"opening hand\" is the hand of cards the player has after all players have taken mulligans. If players have any cards in hand that allow actions to be taken with them from a player's opening hand, the starting player takes all such actions first in any order, followed by each other player in turn order. Then the first turn begins."
+    },
+    {
+      "oracle_id": "93fe5eed-520f-467a-8e27-6f40eaa727e8",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "The enchanted land will have the land types Plains, Island, Swamp, Mountain, and Forest. It will also have the mana ability of each basic land type (for example, Forests can tap to produce {G}). It still has its other subtypes and abilities."
+    },
+    {
+      "oracle_id": "93fe5eed-520f-467a-8e27-6f40eaa727e8",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "Giving a land extra basic land types doesn't change its name or whether it's legendary or basic."
+    },
+    {
+      "oracle_id": "93fe5eed-520f-467a-8e27-6f40eaa727e8",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "If the target of an Aura is illegal when it tries to resolve, the Aura won't resolve. The Aura doesn't enter the battlefield, so you won't get to draw a card."
+    },
+    {
+      "oracle_id": "d90882ae-6572-4214-8d9c-0bdfb75f9be2",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "Each land you control will have the land types Plains, Island, Swamp, Mountain, and Forest. They’ll also have the mana ability of each basic land type (for example, Forests can tap to produce {G}). They’ll still have their other subtypes and abilities."
+    },
+    {
+      "oracle_id": "d90882ae-6572-4214-8d9c-0bdfb75f9be2",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "Giving a land extra basic land types doesn’t change its name or whether it’s legendary or basic."
+    },
+    {
+      "oracle_id": "8dc067bf-f78f-4ac4-b6e7-b305c42cf0bc",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "Although Darksteel Citadel is an artifact, it can't be cast as a spell. Playing it follows the normal rules for playing a land."
+    },
+    {
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "This is not modal. If the target changes from an artifact to an enchantment or vice versa, this still destroys it."
+    },
+    {
+      "oracle_id": "5b2460a5-6ae5-4cad-ba94-1a9e98e6e4c0",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Snow is a supertype, not a card type. It has no rules meaning or function by itself, but spells and abilities may refer to it."
+    },
+    {
+      "oracle_id": "5b2460a5-6ae5-4cad-ba94-1a9e98e6e4c0",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "The {S} symbol is a generic mana symbol. It represents a cost that can be paid by one mana that was produced by a snow source. That mana can be any color or colorless."
+    },
+    {
+      "oracle_id": "5b2460a5-6ae5-4cad-ba94-1a9e98e6e4c0",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Snow isn't a type of mana. If an effect says you may spend mana as though it were any type, you can't pay for {S} using mana that wasn't produced by a snow source."
+    },
+    {
+      "oracle_id": "5b2460a5-6ae5-4cad-ba94-1a9e98e6e4c0",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Some cards have additional effects for each {S} spent to cast them. You can cast these spells even if you don't spend any snow mana to cast them; their additional effects simply won't do anything."
+    },
+    {
+      "oracle_id": "5b2460a5-6ae5-4cad-ba94-1a9e98e6e4c0",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "In a Limited event (usually Booster Draft or Sealed Deck), you can't add basic snow lands to your card pool as you would other basic lands. You can play with basic snow lands only if you open them in your sealed deck or draft them."
+    },
+    {
+      "oracle_id": "5b2460a5-6ae5-4cad-ba94-1a9e98e6e4c0",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "The Kaldheim set doesn't have any cards with mana costs that include {S}, but some previous sets do. If an effect says such a spell costs {1} less to cast, that reduction doesn't apply to any {S} costs. This is also true for activated abilities that include {S} in their activation costs and effects that reduce those costs."
+    }
+  ]
+}

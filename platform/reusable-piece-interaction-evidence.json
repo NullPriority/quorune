@@ -14701,6 +14701,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Clone copies a humbled original Dryad Arbor through a pending entry choice. The copy has the original 1/1 stats and its own type-derived Forest mana, with summoning sickness preventing immediate activation. The source remains stripped; pending load and pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_nylea_presence_survives_recipient_humble_and_ends_with_source",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.continuous.basic_land_type.fixed_addition"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "continuous.basic_land_type.fixed_addition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Nylea Presence attaches to original Dryad Arbor and adds five basic types without erasing Dryad. Recipient Humble removes mana while all types remain. Actual Disenchant ends the Aura source and its type grant; pending spell load and every command segment replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_prismatic_omen_preserves_other_types_and_printed_mana",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.fixed_addition",
+        "capability.mana.intrinsic.basic_land_type"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.fixed_addition",
+        "mana.intrinsic.basic_land_type"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Prismatic Omen grants five basic types to a controlled Darksteel Citadel, preserving artifact type, printed colorless mana and indestructible. A foreign Snow Island retains only Island/basic/snow. A real red intrinsic activation consumes the shared tap cost; unauthorized principal rollback and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_stormtide_type_effect_precedes_source_humble",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.fixed_addition",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.fixed_addition",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Humble removes Stormtide Islandwalk and later source abilities while its earlier layer4 Island grant remains applied. A foreign Citadel retains Island type and intrinsic blue mana; the accepted spell and pre-action replay agree."
     }
   ]
 }

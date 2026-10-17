@@ -31272,6 +31272,306 @@
       "applicability_note": "Apply additive basic-land-type wording in layer 4 and derive the corresponding intrinsic mana ability."
     },
     {
+      "capability_id": "continuous.basic_land_type.fixed_addition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scoped_basic_type_addition.ScopedBasicTypeAdditionRuntimeTests.test_actual_nylea_presence_survives_recipient_humble_and_ends_with_source",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed additive scopes preserve names, basic/snow/card-type and printed ability facts; actual Omen/Nylea/Stormtide, source and recipient Humble, Aura loss, typed mana, rollback, pending load and replay distinguish addition from setting. Leyline independent siblings remain residual."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_addition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scoped_basic_type_addition.ScopedBasicTypeAdditionRuntimeTests.test_actual_prismatic_omen_preserves_other_types_and_printed_mana",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed additive scopes preserve names, basic/snow/card-type and printed ability facts; actual Omen/Nylea/Stormtide, source and recipient Humble, Aura loss, typed mana, rollback, pending load and replay distinguish addition from setting. Leyline independent siblings remain residual."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_addition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scoped_basic_type_addition.ScopedBasicTypeAdditionRuntimeTests.test_actual_stormtide_type_effect_precedes_source_humble",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed additive scopes preserve names, basic/snow/card-type and printed ability facts; actual Omen/Nylea/Stormtide, source and recipient Humble, Aura loss, typed mana, rollback, pending load and replay distinguish addition from setting. Leyline independent siblings remain residual."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_addition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_scoped_basic_type_addition.ScopedBasicTypeAdditionRuntimeTests.test_actual_prismatic_omen_preserves_other_types_and_printed_mana",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed additive scopes preserve names, basic/snow/card-type and printed ability facts; actual Omen/Nylea/Stormtide, source and recipient Humble, Aura loss, typed mana, rollback, pending load and replay distinguish addition from setting. Leyline independent siblings remain residual."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_addition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scoped_basic_type_addition.ScopedBasicTypeAdditionRuntimeTests.test_addition_omission_is_killed_by_actual_omen_witness",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed additive scopes preserve names, basic/snow/card-type and printed ability facts; actual Omen/Nylea/Stormtide, source and recipient Humble, Aura loss, typed mana, rollback, pending load and replay distinguish addition from setting. Leyline independent siblings remain residual."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_addition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scoped_basic_type_addition.ScopedBasicTypeAdditionCompilerTests.test_scoped_additions_are_closed_typed_and_source_spanned",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed additive scopes preserve names, basic/snow/card-type and printed ability facts; actual Omen/Nylea/Stormtide, source and recipient Humble, Aura loss, typed mana, rollback, pending load and replay distinguish addition from setting. Leyline independent siblings remain residual."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_addition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scoped_basic_type_addition.ScopedBasicTypeAdditionRuntimeTests.test_actual_nylea_presence_survives_recipient_humble_and_ends_with_source",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed additive scopes preserve names, basic/snow/card-type and printed ability facts; actual Omen/Nylea/Stormtide, source and recipient Humble, Aura loss, typed mana, rollback, pending load and replay distinguish addition from setting. Leyline independent siblings remain residual."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_addition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scoped_basic_type_addition.ScopedBasicTypeAdditionCompilerTests.test_scoped_additions_are_closed_typed_and_source_spanned",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed additive scopes preserve names, basic/snow/card-type and printed ability facts; actual Omen/Nylea/Stormtide, source and recipient Humble, Aura loss, typed mana, rollback, pending load and replay distinguish addition from setting. Leyline independent siblings remain residual."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_addition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scoped_basic_type_addition.ScopedBasicTypeAdditionRuntimeTests.test_actual_prismatic_omen_preserves_other_types_and_printed_mana",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed additive scopes preserve names, basic/snow/card-type and printed ability facts; actual Omen/Nylea/Stormtide, source and recipient Humble, Aura loss, typed mana, rollback, pending load and replay distinguish addition from setting. Leyline independent siblings remain residual."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_addition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scoped_basic_type_addition.ScopedBasicTypeAdditionRuntimeTests.test_originals_close_only_with_all_siblings_supported",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed additive scopes preserve names, basic/snow/card-type and printed ability facts; actual Omen/Nylea/Stormtide, source and recipient Humble, Aura loss, typed mana, rollback, pending load and replay distinguish addition from setting. Leyline independent siblings remain residual."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_addition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_scoped_basic_type_addition.ScopedBasicTypeAdditionRuntimeTests.test_actual_prismatic_omen_preserves_other_types_and_printed_mana",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Omen and one accepted intrinsic mana activation preserve other-seat private hand identity; unauthorized principal rejects with unchanged authoritative hash."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_addition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scoped_basic_type_addition.ScopedBasicTypeAdditionRuntimeTests.test_actual_nylea_presence_survives_recipient_humble_and_ends_with_source",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed additive scopes preserve names, basic/snow/card-type and printed ability facts; actual Omen/Nylea/Stormtide, source and recipient Humble, Aura loss, typed mana, rollback, pending load and replay distinguish addition from setting. Leyline independent siblings remain residual."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_addition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scoped_basic_type_addition.ScopedBasicTypeAdditionRuntimeTests.test_actual_prismatic_omen_preserves_other_types_and_printed_mana",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed additive scopes preserve names, basic/snow/card-type and printed ability facts; actual Omen/Nylea/Stormtide, source and recipient Humble, Aura loss, typed mana, rollback, pending load and replay distinguish addition from setting. Leyline independent siblings remain residual."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_addition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scoped_basic_type_addition.ScopedBasicTypeAdditionRuntimeTests.test_actual_stormtide_type_effect_precedes_source_humble",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed additive scopes preserve names, basic/snow/card-type and printed ability facts; actual Omen/Nylea/Stormtide, source and recipient Humble, Aura loss, typed mana, rollback, pending load and replay distinguish addition from setting. Leyline independent siblings remain residual."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_addition",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_scoped_basic_type_addition.ScopedBasicTypeAdditionRuntimeTests.test_actual_prismatic_omen_preserves_other_types_and_printed_mana",
+      "official_rule_ids": [
+        "305.6",
+        "305.7",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fixed additive scopes preserve names, basic/snow/card-type and printed ability facts; actual Omen/Nylea/Stormtide, source and recipient Humble, Aura loss, typed mana, rollback, pending load and replay distinguish addition from setting. Leyline independent siblings remain residual."
+    },
+    {
       "capability_id": "continuous.characteristics.changeling",
       "evidence_class": "interaction",
       "test_id": "tests.test_changeling_characteristics.ChangelingRuntimeTests.test_changeling_cda_orders_before_non_cda_type_setting_and_after_copy",

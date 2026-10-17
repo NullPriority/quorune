@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 338,
+  "registry_version": 339,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -26175,6 +26175,94 @@
       "dependency_fail_closed_rationale": "Exact source grammar requires the external source capability and ordinary entry-state owner; removal of either preserves a material residual.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Removing the source-owned ambient replacement preserves admission but is detected by actual Orb/Woe Strider casts and token entry.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.basic_land_type.fixed_addition",
+      "version": 1,
+      "official_rules": [
+        "305.6",
+        "305.7",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Add one fixed basic land type or every basic land type to all lands, controller lands, or a current attached land in layer4 while preserving other types and abilities; source participation precedes later ability removal.",
+        "inputs": [
+          "source-pinned full sentence",
+          "fixed scope and distinct basic-type vector",
+          "source controller or reciprocal same-incarnation attachment",
+          "source layer-four ability participation"
+        ],
+        "outputs": [
+          "one additive layer-four type effect",
+          "current basic intrinsic mana derived by the shared owner",
+          "preserved card types, supertypes, other subtypes, rules text and source lifetime"
+        ],
+        "exclusions": [
+          "basic-type setting and printed-ability loss",
+          "source-state conditions",
+          "nonland card-type addition",
+          "land animation",
+          "unsupported independent siblings"
+        ]
+      },
+      "dependencies": [
+        "mana.intrinsic.basic_land_type"
+      ],
+      "implementation_components": [
+        "quorune.basic_type_addition_model.BasicTypeAdditionSpec",
+        "quorune.compiler.basic_type_addition_templates.scoped_basic_type_addition_handler",
+        "quorune.semantic_runtime.basic_type_addition.ScopedBasicTypeAdditionHandler",
+        "quorune.card_programs.runtime.collect_card_program_continuous_effects",
+        "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._static_component_keys_at_layer"
+      ],
+      "positive_tests": [
+        "test_actual_prismatic_omen_preserves_other_types_and_printed_mana",
+        "test_originals_close_only_with_all_siblings_supported",
+        "test_scoped_additions_are_closed_typed_and_source_spanned"
+      ],
+      "negative_tests": [
+        "test_actual_nylea_presence_survives_recipient_humble_and_ends_with_source",
+        "test_scoped_additions_are_closed_typed_and_source_spanned"
+      ],
+      "interaction_tests": [
+        "test_actual_nylea_presence_survives_recipient_humble_and_ends_with_source",
+        "test_actual_prismatic_omen_preserves_other_types_and_printed_mana",
+        "test_actual_stormtide_type_effect_precedes_source_humble"
+      ],
+      "multiplayer_tests": [
+        "test_actual_prismatic_omen_preserves_other_types_and_printed_mana"
+      ],
+      "privacy_tests": [
+        "test_actual_prismatic_omen_preserves_other_types_and_printed_mana"
+      ],
+      "replay_tests": [
+        "test_actual_nylea_presence_survives_recipient_humble_and_ends_with_source",
+        "test_actual_prismatic_omen_preserves_other_types_and_printed_mana",
+        "test_actual_stormtide_type_effect_precedes_source_humble"
+      ],
+      "required_evidence": [
+        "interaction",
+        "multiplayer",
+        "negative",
+        "positive",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The new addition capability and intrinsic-mana owner must both close before source admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "An admission-preserving lowerer omission is killed by actual Prismatic Omen type and mana assertions.",
       "blockers": [],
       "status": "trusted"
     }

@@ -460,6 +460,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/basic_type_addition_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/bestow.py",
       "layer": "rules",
       "owning_subsystem": "casting_bestow",
@@ -1764,6 +1776,21 @@
     },
     {
       "file": "quorune/compiler/backup_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/basic_type_addition_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -11971,6 +11998,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/basic_type_addition.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/bestow.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -14705,5 +14747,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "80bc46e05ee31ae622aa0b0eb1adc5ebfc1a15f7f87acd4aeeda1de33431341f"
+  "fingerprint": "5973efed21587d013a36028d8a0be795719d9bdc17bbc8349a7753e9ca027793"
 }

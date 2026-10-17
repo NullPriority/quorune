@@ -361,6 +361,12 @@ def _continuous_static_runtime_template(
     setting = _constant_static_characteristic_template(text, source_name=source_name, source_is_class=source_is_class)
     if setting is not None:
         return setting
+    from .basic_type_addition_templates import scoped_basic_type_addition_handler
+    scoped_basic_type = scoped_basic_type_addition_handler(text)
+    if scoped_basic_type is not None:
+        return StaticRuntimeTemplate(compiled=scoped_basic_type,kind='static_ability',
+            event='characteristics.evaluate',runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason='Fixed scoped basic-type addition requires its current layer-four and intrinsic-mana owners')
     basic_land_type = basic_land_type_addition_handler(text)
     if basic_land_type is not None:
         return StaticRuntimeTemplate(
