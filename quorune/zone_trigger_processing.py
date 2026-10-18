@@ -177,6 +177,10 @@ def record_zone_change_history(
 ) -> None:
     """Record one committed occurrence without discovering its triggers."""
 
+    history=getattr(host.state,'turn_history',None)
+    if occurrence.destination=='graveyard' and occurrence.origin!='graveyard' and occurrence.card_object and getattr(history,'arrival_history_version',None)==1:
+        host._record_turn_history('card_arrived_graveyard',actor=occurrence.owner,
+            object_incarnation=occurrence.current_logical_object_id,types=set(),origin=occurrence.origin)
     normalized = tuple(events or normalized_zone_trigger_events(occurrence))
     previous_types = set(
         str(value)

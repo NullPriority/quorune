@@ -602,6 +602,7 @@ class CommanderEngine(
         target_object_incarnation: str | None = None,
         types: Iterable[str] = (),
         amount: int = 0,
+        origin: str | None = None,
     ) -> None:
         """Append one authoritative current-turn look-back fact.
 
@@ -618,7 +619,7 @@ class CommanderEngine(
             self.state.turn_history = history
         history.events.append(
             TurnHistoryEvent(
-                kind=kind,
+                kind=kind, origin=origin,
                 actor=actor,
                 object_incarnation=object_incarnation,
                 target=target,

@@ -9,6 +9,7 @@ from .creature_subtypes import canonical_creature_subtype
 from .object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from .target_numeric import TargetNumericCharacteristic, TargetNumericComparison
 from .token_copy_recipes import TokenCopyExceptionSpec
+from .entry_copy_predicates import EntryCopyPredicate
 
 ENTRY_COPY_HANDLER = 'replacement.zone.entry-copy.v1'
 ENTRY_COPY_QUERY_HANDLER = 'replacement.zone.entry-copy.v2'
@@ -104,14 +105,16 @@ class EntryCopySpec:
     selection: ObjectQuerySpec
     exception: TokenCopyExceptionSpec = TokenCopyExceptionSpec()
     schema_version: int = 1
+    predicate: EntryCopyPredicate | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4}:
             raise ValueError('Entry copy requires one current typed schema')
         if not isinstance(self.selection, ObjectQuerySpec) or not isinstance(self.exception, TokenCopyExceptionSpec):
             raise ValueError('Entry copy requires typed selection and copy exceptions')
+        if (self.schema_version==4)!=(self.predicate is not None) or self.predicate is not None and not isinstance(self.predicate,EntryCopyPredicate):raise ValueError('Entry copy predicates require version four')
         query = _legacy_view_of_copy_query(self.selection) if self.schema_version == 2 else self.selection
-        if self.schema_version==3 and query.zones==('graveyard',):
+        if self.schema_version in {3,4} and query.zones==('graveyard',):
             if query!=ObjectQuerySpec(zones=('graveyard',),types_all=('creature',)):raise ValueError('Graveyard copy selects only public creature cards')
             query=replace(query,zones=('battlefield',))
         permanent_types = {'artifact', 'battle', 'creature', 'enchantment', 'land', 'planeswalker'}
@@ -135,14 +138,15 @@ class EntryCopySpec:
 
     def to_dict(self) -> dict[str, Any]:
         return {'schema_version': self.schema_version, 'selection': self.selection.to_dict(),
-            'exception': self.exception.to_dict()}
+            'exception': self.exception.to_dict(),**({'predicate':self.predicate.to_dict()} if self.predicate is not None else {})}
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> 'EntryCopySpec':
-        if not isinstance(value, Mapping) or set(value) != {'schema_version', 'selection', 'exception'}:
+        if not isinstance(value, Mapping) or set(value) != ({'schema_version','selection','exception','predicate'} if value.get('schema_version')==4 else {'schema_version','selection','exception'}):
             raise ValueError('Entry copy fields are closed')
         try:
             return cls(ObjectQuerySpec.from_dict(value['selection']),
-                TokenCopyExceptionSpec.from_dict(value['exception']), value['schema_version'])
+                TokenCopyExceptionSpec.from_dict(value['exception']), value['schema_version'],
+                EntryCopyPredicate.from_dict(value['predicate']) if value['schema_version']==4 else None)
         except (TypeError, KeyError) as exc:
             raise ValueError('Entry copy fields are malformed') from exc

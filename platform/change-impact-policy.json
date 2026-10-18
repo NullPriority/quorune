@@ -5671,6 +5671,27 @@
         "test_attack_counter_triggers",
         "test_fixed_combat_entry_keyword_lifecycles"
       ]
+    },
+    {
+      "id": "entry-copy-history-and-payment-predicate-contract",
+      "patterns": [
+        "quorune/entry_copy_predicates.py",
+        "quorune/compiler/entry_copy_templates.py",
+        "quorune/semantic_runtime/entry_copy.py",
+        "quorune/record_state_provenance.py",
+        "quorune/turn_history.py",
+        "quorune/zone_trigger_processing.py",
+        "tests/fixtures/entry-copy-predicate-cards.json"
+      ],
+      "test_modules": [
+        "test_entry_copy_predicates",
+        "test_entry_copy_values",
+        "test_copy_objects",
+        "test_turn_history_rules",
+        "test_card_program_trust",
+        "test_record_lifecycle_v060",
+        "test_history_entry_counters"
+      ]
     }
   ],
   "symbol_rules": [

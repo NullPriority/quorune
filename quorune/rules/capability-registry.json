@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 375,
+  "registry_version": 376,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -30877,6 +30877,97 @@
       "dependency_fail_closed_rationale": "Withdrawing copy-value, intrinsic-copy, Haste or Dethrone authority keeps the source residual. Unknown child grants and hidden/ambiguous copy queries do not acquire execution.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitted pure value application and actual native name/type exception omissions fail independent result witnesses; fresh TestCase instances preserve native assertion failures.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "zone.entry.copy_source_predicates",
+      "version": 1,
+      "official_rules": [
+        "614.12",
+        "614.12a",
+        "707.2",
+        "707.9",
+        "400.7",
+        "400.7d",
+        "508.1",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Closed intrinsic entry-copy predicates consume current-controller declared-attack history, exact public graveyard arrival incarnation or actual accepted cast mana-spent provenance.",
+        "inputs": [
+          "entry controller",
+          "versioned current-turn history",
+          "accepted spell payment provenance",
+          "current public copy candidate"
+        ],
+        "outputs": [
+          "captured eligible optional entry-copy choices"
+        ],
+        "exclusions": [
+          "inferred printed/X payment",
+          "hidden zones",
+          "manufactured facts for old histories"
+        ]
+      },
+      "dependencies": [
+        "zone.entry.fixed_copy"
+      ],
+      "implementation_components": [
+        "quorune.entry_copy_predicates.EntryCopyPredicate",
+        "quorune.entry_copy_predicates.entry_copy_predicate_matches"
+      ],
+      "positive_tests": [
+        "test_all_three_originals_have_complete_predicate_admission",
+        "test_actual_mockingbird_filters_by_actual_total_mana_paid_and_copies_entry_draw",
+        "test_actual_sleeper_copies_current_arrival_but_not_discarded_creature",
+        "test_raid_qualifies_after_actual_attack_even_when_attacker_leaves"
+      ],
+      "negative_tests": [
+        "test_predicate_and_entry_codec_are_closed_without_changing_old_shapes",
+        "test_dependency_and_producer_omissions_keep_copy_predicates_residual",
+        "test_graveyard_predicate_is_arrived_card_not_died_or_same_physical_return",
+        "test_sleeper_does_not_reuse_arrival_after_card_returns_to_hand_and_is_discarded",
+        "test_raid_decline_without_attack_keeps_original_body_and_no_copy_choice"
+      ],
+      "interaction_tests": [
+        "test_arrival_not_death_qualifies_printed_creature_that_was_noncreature_artifact",
+        "test_noncast_mockingbird_has_zero_budget_and_can_copy_only_zero_mana_value",
+        "test_actual_mana_spent_uses_accepted_cast_and_copies_or_noncast_have_zero",
+        "test_mockingbird_native_mana_payment_pending_choice_privacy_and_replay"
+      ],
+      "multiplayer_tests": [
+        "test_raid_uses_entering_controller_current_turn_declared_attacks",
+        "test_actual_sleeper_copies_current_arrival_but_not_discarded_creature",
+        "test_mockingbird_native_mana_payment_pending_choice_privacy_and_replay"
+      ],
+      "privacy_tests": [
+        "test_mockingbird_native_mana_payment_pending_choice_privacy_and_replay"
+      ],
+      "replay_tests": [
+        "test_actual_sleeper_copies_current_arrival_but_not_discarded_creature",
+        "test_actual_mockingbird_filters_by_actual_total_mana_paid_and_copies_entry_draw",
+        "test_raid_qualifies_after_actual_attack_even_when_attacker_leaves",
+        "test_noncast_mockingbird_has_zero_budget_and_can_copy_only_zero_mana_value",
+        "test_mockingbird_native_mana_payment_pending_choice_privacy_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Actual compiler producer and intrinsic-copy/predicate capability withdrawal retain material residuals. Missing or malformed actual-cast payment and incompatible arrival histories cannot infer a positive.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "True always-allow/always-deny predicate substitutions fail actual Raid/no-attack and Sleeper/arrival witnesses, and pure omission fails exact current-incarnation/origin negatives. Native wrappers use fresh TestCase instances.",
       "blockers": [],
       "status": "trusted"
     }

@@ -13,6 +13,7 @@ from ..replacement_effects import ReplacementClass, ReplacementEffect, SetField
 from ..token_copy_recipes import apply_copy_exception
 from .component_registry import exact_fields
 from .context import SemanticNodeError
+from ..entry_copy_predicates import ENTRY_COPY_PREDICATE_HANDLER,ENTRY_COPY_PREDICATE_CAPABILITY,entry_copy_predicate_matches
 
 
 @dataclass(frozen=True, slots=True)
@@ -26,7 +27,7 @@ class EntryCopyHandler:
 
     def validate(self, descriptor):
         exact_fields(descriptor, {'handler_id', 'schema_version', 'event', 'copy'}, field='intrinsic entry copy')
-        expected = {ENTRY_COPY_HANDLER: 1, ENTRY_COPY_QUERY_HANDLER: 2, ENTRY_COPY_VALUES_HANDLER:3}.get(self.handler_id)
+        expected = {ENTRY_COPY_HANDLER: 1, ENTRY_COPY_QUERY_HANDLER: 2, ENTRY_COPY_VALUES_HANDLER:3, ENTRY_COPY_PREDICATE_HANDLER:4}.get(self.handler_id)
         if (self.schema_version != expected or descriptor['handler_id'] != self.handler_id or type(descriptor['schema_version']) is not int
                 or descriptor['schema_version'] != self.schema_version or descriptor['event'] != self.event):
             raise SemanticNodeError('Intrinsic entry copy identity changed')
@@ -59,6 +60,7 @@ def entry_copy_handler(version):
             capability_dependencies=ENTRY_COPY_QUERY_CAPABILITIES,
             rule_references=(*EntryCopyHandler().rule_references, '115.10a', '201.5'))
     if version==3:return EntryCopyHandler(handler_id=ENTRY_COPY_VALUES_HANDLER,schema_version=3,capability_dependencies=(ENTRY_COPY_CAPABILITY,ENTRY_COPY_VALUES_CAPABILITY),rule_references=(*EntryCopyHandler().rule_references,'707.9c','707.9d','205.3d'))
+    if version==4:return EntryCopyHandler(handler_id=ENTRY_COPY_PREDICATE_HANDLER,schema_version=4,capability_dependencies=(ENTRY_COPY_CAPABILITY,ENTRY_COPY_PREDICATE_CAPABILITY),rule_references=(*EntryCopyHandler().rule_references,'400.7d','601.2h'))
     raise SemanticNodeError('Copy selector version is unsupported')
 
 
@@ -121,7 +123,7 @@ def _copied_entry_effects(host, subject, source, target, values):
     registry = default_zone_change_replacement_registry()
     for program in programs:
         for index, descriptor in enumerate(program.handlers):
-            if descriptor.get('handler_id') in {ENTRY_COPY_HANDLER, ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_VALUES_HANDLER}:
+            if descriptor.get('handler_id') in {ENTRY_COPY_HANDLER, ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_VALUES_HANDLER, ENTRY_COPY_PREDICATE_HANDLER}:
                 raise SemanticNodeError('Repeated intrinsic copy-entry replacement is outside the represented composition')
             from ..entry_reveal import ENTRY_REVEAL_HANDLER
             from ..devour import DEVOUR_HANDLER
@@ -165,7 +167,7 @@ def entry_copy_replacement_effects(host, subject):
                 prospective_zone='battlefield', prospective_controller=subject.destination_controller):
             continue
         for index, descriptor in enumerate(program.handlers):
-            if descriptor.get('handler_id') not in {ENTRY_COPY_HANDLER, ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_VALUES_HANDLER}:
+            if descriptor.get('handler_id') not in {ENTRY_COPY_HANDLER, ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_VALUES_HANDLER, ENTRY_COPY_PREDICATE_HANDLER}:
                 continue
             handler = entry_copy_handler(descriptor.get('schema_version'))
             spec = handler.validate(descriptor)
@@ -182,6 +184,7 @@ def entry_copy_replacement_effects(host, subject):
                         and target.entered_battlefield_turn_sequence == host.state.turn_sequence))
                 if not object_matches_query(row, query):
                     continue
+                if spec.predicate is not None and not entry_copy_predicate_matches(host,spec.predicate,entering=source,target=target,controller=subject.destination_controller):continue
                 values = _copiable_values(host, target, spec, entering=source)
                 effects.extend(_copied_entry_effects(host, subject, source, target, values))
                 types = tuple(sorted(set().union(*host._type_parts(str(values['type_line'])))))

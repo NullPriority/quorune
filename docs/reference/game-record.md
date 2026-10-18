@@ -325,3 +325,12 @@ public import retained through `ability_fragments.py`. Version-three granted
 activated fragments add an explicit fixed `crew_threshold`; older grant payloads keep
 their prior shape. Copied grants retain their semantic program identity through
 pending replacement choices and subsequent copies.
+
+`arrival_history_version: 1` enables current-turn public graveyard-arrival
+facts in new games. A `card_arrived_graveyard` event stores the exact arrived
+logical incarnation and a closed `origin`; older event kinds omit `origin`.
+The history mode persists across reset/rollover and is bound to the initial
+checkpoint by manifest state provenance. Older histories omit the mode and
+cannot synthesize positive arrival facts. Version-four copy selectors retain
+one closed `predicate` beside the existing selection and exception payloads;
+older selectors keep their original key sets.

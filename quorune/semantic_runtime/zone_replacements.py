@@ -449,6 +449,7 @@ def default_zone_change_replacement_registry(
             EntryCopyHandler(),
             entry_copy_handler(2),
             entry_copy_handler(3),
+            entry_copy_handler(4),
             EntryRevealHandler(),
             DevourEntryHandler(),
             PreparationEntryHandler(),

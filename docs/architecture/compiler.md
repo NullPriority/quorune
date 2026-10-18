@@ -2889,3 +2889,9 @@ abilities compile through the existing inner ability/keyword owners and add
 those exact dependencies to the parent. Unknown children keep the original
 source residual. Public graveyard-copy selection is restricted to creature
 cards; it does not open hidden zones, history predicates or mana-spent queries.
+
+Conditional intrinsic entry-copy grammar admits only the closed declared-attack,
+current-turn battlefield-to-graveyard arrival, and actual-mana-spent predicates.
+Version four binds the predicate separately from source characteristics and
+copiable exceptions. Printed cost, declared X and a prior physical card
+incarnation cannot substitute for the corresponding authoritative fact.

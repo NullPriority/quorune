@@ -910,3 +910,12 @@ payment finalization preserves that frame rather than rebuilding it from the
 post-cost card. Failed and suspended payments retain the command's atomic
 rollback boundary. [Target legality](target-legality.md) owns the acting-object
 and source-information distinctions.
+
+Version-four intrinsic entry-copy selectors carry one closed eligibility
+predicate. The owner uses the entering controller's current-turn declared
+attack journal, the candidate card's exact current graveyard-arrival incarnation,
+or the entering spell's actual accepted mana payment. Noncast entries and spell
+copies have zero spent mana. Graveyard arrival is distinct from creature death:
+it records origin and arrived incarnation even when a noncreature permanent
+becomes a creature card in that zone. Copy choices remain nontargeted and use
+the existing immutable replacement preparation and selection journal.
