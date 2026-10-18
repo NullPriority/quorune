@@ -16185,6 +16185,96 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Octavia reaches its eighth-card own-graveyard threshold, casts for two blue and then receives a real Magecraft trigger. Its chosen creature has base 8/8 before the original Giant Growth adds 3/3; the final 11/11 and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_entry_counter_order_resumes_same_opening_hand_before_the_first_turn",
+      "piece_ids": [
+        "capability.counter.placement.quantity_replacement",
+        "capability.game.opening_hand.battlefield"
+      ],
+      "capability_ids": [
+        "counter.placement.quantity_replacement",
+        "game.opening_hand.battlefield"
+      ],
+      "interaction_order": 2,
+      "assertion": "Two admitted opening replacement sources apply double and additional-one entry counters in either chosen order. The original source stays in hand while suspended, then enters with five or six counters; pending load and full replay agree before exactly one first turn."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_nonspell_aura_entry_uses_untargeted_subject_choice_and_pending_replay",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.game.opening_hand.battlefield"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "game.opening_hand.battlefield"
+      ],
+      "interaction_order": 2,
+      "assertion": "A strictly admitted constructed opening Aura enters through the existing untargeted subject chooser, attaches across controllers to a Shroud creature and applies its bonus. Source remains in hand during the saved choice; foreign responses roll back and full replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_named_self_opener_keeps_pregame_entry_out_of_first_turn_power_up_discount",
+      "piece_ids": [
+        "capability.activation.power_up.entered_turn_cost",
+        "capability.game.opening_hand.battlefield"
+      ],
+      "capability_ids": [
+        "activation.power_up.entered_turn_cost",
+        "game.opening_hand.battlefield"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual named-self Quicksilver enters before the first turn and cannot use the entered-this-turn discount then. Its printed full Power-up cost commits both counters once; a funded second attempt rejects, preserving exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_no_opening_sources_preserve_normal_start_and_multiplayer_draw",
+      "piece_ids": [
+        "capability.game.opening_hand.battlefield",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "game.opening_hand.battlefield",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "With no eligible opening sources, all four real keeps take the ordinary start path and the starting multiplayer player draws during the first draw step. Native accepted passes and complete replay preserve that behavior."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_openers_retain_native_timing_targeting_counter_damage_token_life_and_equip_rules",
+      "piece_ids": [
+        "capability.attachment.equip.fixed_mana",
+        "capability.game.opening_hand.battlefield"
+      ],
+      "capability_ids": [
+        "attachment.equip.fixed_mana",
+        "game.opening_hand.battlefield"
+      ],
+      "interaction_order": 2,
+      "assertion": "The admitted original opening sources retain native off-turn casting, player Hexproof, uncounterable creatures, optional paid damage and life, token copy/stat bonuses and properly paid Equip through ordinary commands and full replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_openers_retain_native_timing_targeting_counter_damage_token_life_and_equip_rules",
+      "piece_ids": [
+        "capability.game.opening_hand.battlefield",
+        "capability.target.player.static_hexproof_shroud"
+      ],
+      "capability_ids": [
+        "game.opening_hand.battlefield",
+        "target.player.static_hexproof_shroud"
+      ],
+      "interaction_order": 2,
+      "assertion": "The admitted original opening sources retain native off-turn casting, player Hexproof, uncounterable creatures, optional paid damage and life, token copy/stat bonuses and properly paid Equip through ordinary commands and full replay."
     }
   ]
 }

@@ -239,6 +239,7 @@
       "test_library_rules",
       "test_mulligan_and_turns",
       "test_multiplayer_rules",
+      "test_opening_hand_battlefield",
       "test_opponent_keyword_prohibition",
       "test_public_condition_surfaces",
       "test_rule_capabilities",

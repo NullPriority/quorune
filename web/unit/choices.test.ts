@@ -15,6 +15,19 @@ function form(fields: ChoiceForm["fields"]): ChoiceForm {
   return { v: 1, fields, submit_label: "Submit" };
 }
 
+test("Opening hand actions allow one eligible card or finishing without exposing a continuation", () => {
+  const opening = form([{ name: "refs", label: "Opening-hand card", control: "refs", distinct: true,
+    minimum: 0, maximum: 1, options: [{ value: "A01", label: "First opener" },
+      { value: "A02", label: "Second opener" }] }]);
+  assert.deepEqual(initialChoices(opening), { refs: [] });
+  assert.deepEqual(validateChoices(opening, { refs: [] }), []);
+  assert.deepEqual(validateChoices(opening, { refs: ["A02"] }), []);
+  for (const refs of [["A01", "A02"], ["A01", "A01"], ["FOREIGN"]]) {
+    assert.ok(validateChoices(opening, { refs }).length > 0);
+  }
+  assert.deepEqual(executableChoices(opening, { refs: ["A02"], opening_hand: { index: 3 } }), { refs: ["A02"] });
+});
+
 test("Overlapping untap limits preserve all maximal choices and optional exclusions", () => {
   const limit = form([{ name: "refs", control: "refs", required: true, distinct: true,
     options: ["ANIMATED", "LAND", "CREATURE", "OPTIONAL"].map((value) => ({ value })),

@@ -550,6 +550,10 @@ def complete_replacement_order_choice(
     selection = _replacement_selection(
         response, pending, error_type=error_type
     )
+    if restored.resume_kind=='opening_hand_entry':
+        from .opening_hand import resume_opening_hand_replacement
+        resume_opening_hand_replacement(host,restored,selection)
+        return
     if restored.resume_kind == 'conditional_return':
         from .conditional_exile_return import resume_conditional_return
         resume_conditional_return(host,restored,selection)

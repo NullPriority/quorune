@@ -9,6 +9,14 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+`compiler/action_permission_templates.py` lowers the complete optional
+opening-hand battlefield clause to a hand-scoped permission in the existing
+action registry. Named self-references and ordinary object pronouns use the
+shared compiler reference owner. The descriptor requires the existing
+complete-card admission certificate: an independently trusted fragment cannot
+authorize entry when material siblings remain unclosed. Paid, conditional and
+reveal-only opening clauses retain their residuals.
+
 `compiler/conditional_flash_nodes.py` lowers complete conditional self-timing
 clauses against represented public-state predicates. An “as though” clause
 grants timing permission without granting the Flash keyword. An explicit

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 365,
+  "registry_version": 366,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -29274,6 +29274,147 @@
       "dependency_fail_closed_rationale": "Actual producer and each declared timing/public-state dependency omissions keep complete sources residual; numeric timing independently requires its numeric predicate capability.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Compiler producer omission leaves the whole clause residual. Native controls kill independent timing-permission and actual-keyword omissions; source-line program identities, selected faces, proposed costs and after-cost event keywords are independently asserted.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "game.opening_hand.battlefield",
+      "version": 1,
+      "official_rules": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "After all mulligans and bottoming, a complete-card-admitted source may optionally enter from its final opening hand in starting-player order. Private one-source choices share canonical entry replacements, nonspell Aura attachment and pending trigger ownership before the first turn.",
+        "inputs": [
+          "trusted hand-scoped self permission and complete-card admission certificate",
+          "final kept opening-hand identities",
+          "starting-player turn order",
+          "current canonical entry and replacement facts"
+        ],
+        "outputs": [
+          "private one-card-or-finish choices in player order",
+          "canonical uncast battlefield entries",
+          "resumable replacement and Aura continuations",
+          "held entry triggers and exactly one first turn"
+        ],
+        "exclusions": [
+          "revealed-hand and mulligan-time abilities",
+          "paid or conditional opening clauses",
+          "unrepresented sibling semantics"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.card_programs.admission.program_has_complete_card_program_admission",
+        "quorune.compiler.action_permission_templates.opening_hand_battlefield_permission_handler",
+        "quorune.opening_hand.OpeningHandFrame",
+        "quorune.opening_hand.begin_opening_hand_actions",
+        "quorune.opening_hand.complete_opening_hand_action",
+        "quorune.opening_hand.decode_opening_hand_entry",
+        "quorune.opening_hand.resume_opening_hand_aura",
+        "quorune.opening_hand.resume_opening_hand_replacement",
+        "quorune.semantic_runtime.action_permissions.OpeningHandBattlefieldPermissionHandler",
+        "quorune.turn_step_owner.TurnStepOwner.start_first_turn",
+        "quorune.turn_step_owner.TurnStepOwner.start_game",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_card"
+      ],
+      "positive_tests": [
+        "test_actual_kept_leyline_gets_private_atomic_loaded_action_before_first_turn",
+        "test_all_originals_are_admitted_and_enter_without_casts_or_auto_equipping",
+        "test_aura_that_cannot_enter_stays_available_after_another_opening_action",
+        "test_bottomed_leyline_is_not_in_the_final_opening_hand",
+        "test_complete_clause_has_original_span_and_hand_scoped_permission",
+        "test_decline_all_retains_original_hand_and_starts_exactly_one_turn",
+        "test_entry_counter_order_resumes_same_opening_hand_before_the_first_turn",
+        "test_named_self_and_complete_admission_certificates_are_source_pinned",
+        "test_named_self_opener_keeps_pregame_entry_out_of_first_turn_power_up_discount",
+        "test_no_opening_sources_preserve_normal_start_and_multiplayer_draw",
+        "test_nonspell_aura_entry_uses_untargeted_subject_choice_and_pending_replay",
+        "test_original_openers_retain_native_timing_targeting_counter_damage_token_life_and_equip_rules",
+        "test_starting_player_order_and_entry_trigger_wait_for_first_upkeep"
+      ],
+      "negative_tests": [
+        "test_actual_kept_leyline_gets_private_atomic_loaded_action_before_first_turn",
+        "test_bottomed_leyline_is_not_in_the_final_opening_hand",
+        "test_conditional_paid_and_reveal_variants_and_malformed_descriptors_remain_closed",
+        "test_corrupt_or_stale_opening_frame_is_rejected_before_entry",
+        "test_named_self_and_complete_admission_certificates_are_source_pinned",
+        "test_named_self_opener_keeps_pregame_entry_out_of_first_turn_power_up_discount",
+        "test_opening_frame_has_closed_shape_stable_roundtrip_and_ordered_seats",
+        "test_opening_permission_omission_blocks_the_complete_source",
+        "test_original_openers_retain_native_timing_targeting_counter_damage_token_life_and_equip_rules",
+        "test_original_with_unclosed_siblings_never_receives_partial_opening_permission"
+      ],
+      "interaction_tests": [
+        "test_actual_kept_leyline_gets_private_atomic_loaded_action_before_first_turn",
+        "test_all_originals_are_admitted_and_enter_without_casts_or_auto_equipping",
+        "test_aura_that_cannot_enter_stays_available_after_another_opening_action",
+        "test_bottomed_leyline_is_not_in_the_final_opening_hand",
+        "test_decline_all_retains_original_hand_and_starts_exactly_one_turn",
+        "test_entry_counter_order_resumes_same_opening_hand_before_the_first_turn",
+        "test_named_self_opener_keeps_pregame_entry_out_of_first_turn_power_up_discount",
+        "test_no_opening_sources_preserve_normal_start_and_multiplayer_draw",
+        "test_nonspell_aura_entry_uses_untargeted_subject_choice_and_pending_replay",
+        "test_original_openers_retain_native_timing_targeting_counter_damage_token_life_and_equip_rules",
+        "test_starting_player_order_and_entry_trigger_wait_for_first_upkeep"
+      ],
+      "multiplayer_tests": [
+        "test_actual_kept_leyline_gets_private_atomic_loaded_action_before_first_turn",
+        "test_all_originals_are_admitted_and_enter_without_casts_or_auto_equipping",
+        "test_entry_counter_order_resumes_same_opening_hand_before_the_first_turn",
+        "test_nonspell_aura_entry_uses_untargeted_subject_choice_and_pending_replay",
+        "test_original_openers_retain_native_timing_targeting_counter_damage_token_life_and_equip_rules",
+        "test_starting_player_order_and_entry_trigger_wait_for_first_upkeep"
+      ],
+      "privacy_tests": [
+        "test_actual_kept_leyline_gets_private_atomic_loaded_action_before_first_turn",
+        "test_nonspell_aura_entry_uses_untargeted_subject_choice_and_pending_replay",
+        "test_starting_player_order_and_entry_trigger_wait_for_first_upkeep"
+      ],
+      "replay_tests": [
+        "test_actual_kept_leyline_gets_private_atomic_loaded_action_before_first_turn",
+        "test_all_originals_are_admitted_and_enter_without_casts_or_auto_equipping",
+        "test_aura_that_cannot_enter_stays_available_after_another_opening_action",
+        "test_bottomed_leyline_is_not_in_the_final_opening_hand",
+        "test_decline_all_retains_original_hand_and_starts_exactly_one_turn",
+        "test_entry_counter_order_resumes_same_opening_hand_before_the_first_turn",
+        "test_named_self_opener_keeps_pregame_entry_out_of_first_turn_power_up_discount",
+        "test_no_opening_sources_preserve_normal_start_and_multiplayer_draw",
+        "test_nonspell_aura_entry_uses_untargeted_subject_choice_and_pending_replay",
+        "test_original_openers_retain_native_timing_targeting_counter_damage_token_life_and_equip_rules",
+        "test_starting_player_order_and_entry_trigger_wait_for_first_upkeep"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The exact static descriptor only authorizes the source controller's owned graveyard lands; ordinary land-play timing, quota, face selection, entry preparation, and zone mutation remain independently authoritative.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The actual permission lowerer omission removes the legal opening window, and bypassing the whole-source certificate incorrectly offers an original with unclosed siblings. Compiler omission and capability withdrawal preserve residuals. Typed frame, named-reference and native entry/order/replay controls protect the complete contract.",
       "blockers": [],
       "status": "trusted"
     }

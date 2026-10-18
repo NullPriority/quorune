@@ -155,6 +155,7 @@ class ReplacementContinuation:
     turn_action_actor: str = ""
     turn_action_frame: FrozenMap | None = None
     held_triggers: tuple[PendingTriggerItem, ...] = ()
+    opening_hand_entry: FrozenMap | None = None
 
     @classmethod
     def from_dict(
@@ -166,6 +167,9 @@ class ReplacementContinuation:
             )
         resume_kind = _validate_continuation_shape(value)
         batch, effects = _decode_batch_and_effects(value)
+        if resume_kind=='opening_hand_entry':
+            from ..opening_hand import decode_opening_hand_entry
+            return decode_opening_hand_entry(cls,value,batch,effects)
         if resume_kind == "combat_damage":
             return _decode_combat_continuation(cls, value, batch, effects)
         if resume_kind in {"mana_payment", "priority_action_cost"}:
@@ -280,6 +284,8 @@ class ReplacementContinuation:
 def _validate_continuation_shape(value: Mapping[str, Any]) -> str:
     resume_kind = str(value.get("replacement_resume_kind") or "semantic")
     shapes = {
+        'opening_hand_entry': ({'replacement_resume_kind','opening_hand_entry','replacement_selections',
+            'replacement_batch','replacement_effects'},'opening-hand entry continuation'),
         "combat_damage": (_COMBAT_FIELDS, "combat continuation"),
         "semantic": (_SEMANTIC_FIELDS, "semantic continuation"),
         "mana_payment": (_MANA_FIELDS, "mana-payment continuation"),

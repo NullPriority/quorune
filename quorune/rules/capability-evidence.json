@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "c906fa98205152f74aadacae867fa31206022027e98637f38761a60b8682b0ae",
-  "declaration_source_fingerprint": "465092ca8a2fc1c2bf505bc77bc56f2ae7c5ef761467a7e6b81e1febab07f63b",
+  "registry_fingerprint": "4c3506b29931fdcd9d66a600c26c129fa2ec6184c930f101300b7f8632e556b1",
+  "declaration_source_fingerprint": "8968c6d360a9ce5a0f4f58bff8098487a59a0377d7fe231b9e8eb612bd325e1c",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -112650,6 +112650,1798 @@
       "applicability_note": "Round-trip all reciprocal Partner with Commander designations through the canonical serialized game state."
     },
     {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_actual_kept_leyline_gets_private_atomic_loaded_action_before_first_turn",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The opening action composes with canonical entry, static abilities, replacement order, Aura choice, triggers or normal game actions as asserted by this witness."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_all_originals_are_admitted_and_enter_without_casts_or_auto_equipping",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The opening action composes with canonical entry, static abilities, replacement order, Aura choice, triggers or normal game actions as asserted by this witness."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_aura_that_cannot_enter_stays_available_after_another_opening_action",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The opening action composes with canonical entry, static abilities, replacement order, Aura choice, triggers or normal game actions as asserted by this witness."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_bottomed_leyline_is_not_in_the_final_opening_hand",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The opening action composes with canonical entry, static abilities, replacement order, Aura choice, triggers or normal game actions as asserted by this witness."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_decline_all_retains_original_hand_and_starts_exactly_one_turn",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The opening action composes with canonical entry, static abilities, replacement order, Aura choice, triggers or normal game actions as asserted by this witness."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_entry_counter_order_resumes_same_opening_hand_before_the_first_turn",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The opening action composes with canonical entry, static abilities, replacement order, Aura choice, triggers or normal game actions as asserted by this witness."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_named_self_opener_keeps_pregame_entry_out_of_first_turn_power_up_discount",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The opening action composes with canonical entry, static abilities, replacement order, Aura choice, triggers or normal game actions as asserted by this witness."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_no_opening_sources_preserve_normal_start_and_multiplayer_draw",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The opening action composes with canonical entry, static abilities, replacement order, Aura choice, triggers or normal game actions as asserted by this witness."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_nonspell_aura_entry_uses_untargeted_subject_choice_and_pending_replay",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The opening action composes with canonical entry, static abilities, replacement order, Aura choice, triggers or normal game actions as asserted by this witness."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_original_openers_retain_native_timing_targeting_counter_damage_token_life_and_equip_rules",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The opening action composes with canonical entry, static abilities, replacement order, Aura choice, triggers or normal game actions as asserted by this witness."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_starting_player_order_and_entry_trigger_wait_for_first_upkeep",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The opening action composes with canonical entry, static abilities, replacement order, Aura choice, triggers or normal game actions as asserted by this witness."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_actual_kept_leyline_gets_private_atomic_loaded_action_before_first_turn",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Four authenticated seats retain starting-player order, current chooser and source-controller distinctions before and after the first turn."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_all_originals_are_admitted_and_enter_without_casts_or_auto_equipping",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Four authenticated seats retain starting-player order, current chooser and source-controller distinctions before and after the first turn."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_entry_counter_order_resumes_same_opening_hand_before_the_first_turn",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Four authenticated seats retain starting-player order, current chooser and source-controller distinctions before and after the first turn."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_nonspell_aura_entry_uses_untargeted_subject_choice_and_pending_replay",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Four authenticated seats retain starting-player order, current chooser and source-controller distinctions before and after the first turn."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_original_openers_retain_native_timing_targeting_counter_damage_token_life_and_equip_rules",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Four authenticated seats retain starting-player order, current chooser and source-controller distinctions before and after the first turn."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_starting_player_order_and_entry_trigger_wait_for_first_upkeep",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Four authenticated seats retain starting-player order, current chooser and source-controller distinctions before and after the first turn."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldCompilerTests.test_opening_permission_omission_blocks_the_complete_source",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting the actual compiler/runtime permission or bypassing its complete-source certificate invalidates its corresponding independent positive or rejection control."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_permission_and_whole_source_omissions_fail_the_independent_native_controls",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting the actual compiler/runtime permission or bypassing its complete-source certificate invalidates its corresponding independent positive or rejection control."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldCompilerTests.test_conditional_paid_and_reveal_variants_and_malformed_descriptors_remain_closed",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unsupported clauses, malformed certificates/frames, partial source admission, bottomed or stale objects and illegal principals do not authorize the action."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldCompilerTests.test_named_self_and_complete_admission_certificates_are_source_pinned",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unsupported clauses, malformed certificates/frames, partial source admission, bottomed or stale objects and illegal principals do not authorize the action."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldCompilerTests.test_opening_frame_has_closed_shape_stable_roundtrip_and_ordered_seats",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unsupported clauses, malformed certificates/frames, partial source admission, bottomed or stale objects and illegal principals do not authorize the action."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldCompilerTests.test_opening_permission_omission_blocks_the_complete_source",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unsupported clauses, malformed certificates/frames, partial source admission, bottomed or stale objects and illegal principals do not authorize the action."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_actual_kept_leyline_gets_private_atomic_loaded_action_before_first_turn",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unsupported clauses, malformed certificates/frames, partial source admission, bottomed or stale objects and illegal principals do not authorize the action."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_bottomed_leyline_is_not_in_the_final_opening_hand",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unsupported clauses, malformed certificates/frames, partial source admission, bottomed or stale objects and illegal principals do not authorize the action."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_corrupt_or_stale_opening_frame_is_rejected_before_entry",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unsupported clauses, malformed certificates/frames, partial source admission, bottomed or stale objects and illegal principals do not authorize the action."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_named_self_opener_keeps_pregame_entry_out_of_first_turn_power_up_discount",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unsupported clauses, malformed certificates/frames, partial source admission, bottomed or stale objects and illegal principals do not authorize the action."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_original_openers_retain_native_timing_targeting_counter_damage_token_life_and_equip_rules",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unsupported clauses, malformed certificates/frames, partial source admission, bottomed or stale objects and illegal principals do not authorize the action."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_original_with_unclosed_siblings_never_receives_partial_opening_permission",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unsupported clauses, malformed certificates/frames, partial source admission, bottomed or stale objects and illegal principals do not authorize the action."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldCompilerTests.test_complete_clause_has_original_span_and_hand_scoped_permission",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The complete source and native opening action retain source identity, optional choice, ordinary entry and first-turn consequences asserted here."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldCompilerTests.test_named_self_and_complete_admission_certificates_are_source_pinned",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The complete source and native opening action retain source identity, optional choice, ordinary entry and first-turn consequences asserted here."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_actual_kept_leyline_gets_private_atomic_loaded_action_before_first_turn",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The complete source and native opening action retain source identity, optional choice, ordinary entry and first-turn consequences asserted here."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_all_originals_are_admitted_and_enter_without_casts_or_auto_equipping",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The complete source and native opening action retain source identity, optional choice, ordinary entry and first-turn consequences asserted here."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_aura_that_cannot_enter_stays_available_after_another_opening_action",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The complete source and native opening action retain source identity, optional choice, ordinary entry and first-turn consequences asserted here."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_bottomed_leyline_is_not_in_the_final_opening_hand",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The complete source and native opening action retain source identity, optional choice, ordinary entry and first-turn consequences asserted here."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_decline_all_retains_original_hand_and_starts_exactly_one_turn",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The complete source and native opening action retain source identity, optional choice, ordinary entry and first-turn consequences asserted here."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_entry_counter_order_resumes_same_opening_hand_before_the_first_turn",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The complete source and native opening action retain source identity, optional choice, ordinary entry and first-turn consequences asserted here."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_named_self_opener_keeps_pregame_entry_out_of_first_turn_power_up_discount",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The complete source and native opening action retain source identity, optional choice, ordinary entry and first-turn consequences asserted here."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_no_opening_sources_preserve_normal_start_and_multiplayer_draw",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The complete source and native opening action retain source identity, optional choice, ordinary entry and first-turn consequences asserted here."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_nonspell_aura_entry_uses_untargeted_subject_choice_and_pending_replay",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The complete source and native opening action retain source identity, optional choice, ordinary entry and first-turn consequences asserted here."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_original_openers_retain_native_timing_targeting_counter_damage_token_life_and_equip_rules",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The complete source and native opening action retain source identity, optional choice, ordinary entry and first-turn consequences asserted here."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_starting_player_order_and_entry_trigger_wait_for_first_upkeep",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The complete source and native opening action retain source identity, optional choice, ordinary entry and first-turn consequences asserted here."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_actual_kept_leyline_gets_private_atomic_loaded_action_before_first_turn",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The current chooser sees only its eligible hand references; future seats' unselected hands and pending private decisions remain isolated."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_nonspell_aura_entry_uses_untargeted_subject_choice_and_pending_replay",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The current chooser sees only its eligible hand references; future seats' unselected hands and pending private decisions remain isolated."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_starting_player_order_and_entry_trigger_wait_for_first_upkeep",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The current chooser sees only its eligible hand references; future seats' unselected hands and pending private decisions remain isolated."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "property",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldCompilerTests.test_named_self_and_complete_admission_certificates_are_source_pinned",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed typed frame/certificate shapes, source-pinned self references and deterministic codec round trips reject malformed or widened representations."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "property",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldCompilerTests.test_opening_frame_has_closed_shape_stable_roundtrip_and_ordered_seats",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed typed frame/certificate shapes, source-pinned self references and deterministic codec round trips reject malformed or widened representations."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_actual_kept_leyline_gets_private_atomic_loaded_action_before_first_turn",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pending hand, replacement or Aura choices load and resume with the same source identities; accepted native consequences agree under exact pre-action replay."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_all_originals_are_admitted_and_enter_without_casts_or_auto_equipping",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pending hand, replacement or Aura choices load and resume with the same source identities; accepted native consequences agree under exact pre-action replay."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_aura_that_cannot_enter_stays_available_after_another_opening_action",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pending hand, replacement or Aura choices load and resume with the same source identities; accepted native consequences agree under exact pre-action replay."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_bottomed_leyline_is_not_in_the_final_opening_hand",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pending hand, replacement or Aura choices load and resume with the same source identities; accepted native consequences agree under exact pre-action replay."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_decline_all_retains_original_hand_and_starts_exactly_one_turn",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pending hand, replacement or Aura choices load and resume with the same source identities; accepted native consequences agree under exact pre-action replay."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_entry_counter_order_resumes_same_opening_hand_before_the_first_turn",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pending hand, replacement or Aura choices load and resume with the same source identities; accepted native consequences agree under exact pre-action replay."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_named_self_opener_keeps_pregame_entry_out_of_first_turn_power_up_discount",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pending hand, replacement or Aura choices load and resume with the same source identities; accepted native consequences agree under exact pre-action replay."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_no_opening_sources_preserve_normal_start_and_multiplayer_draw",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pending hand, replacement or Aura choices load and resume with the same source identities; accepted native consequences agree under exact pre-action replay."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_nonspell_aura_entry_uses_untargeted_subject_choice_and_pending_replay",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pending hand, replacement or Aura choices load and resume with the same source identities; accepted native consequences agree under exact pre-action replay."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_original_openers_retain_native_timing_targeting_counter_damage_token_life_and_equip_rules",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pending hand, replacement or Aura choices load and resume with the same source identities; accepted native consequences agree under exact pre-action replay."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_starting_player_order_and_entry_trigger_wait_for_first_upkeep",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pending hand, replacement or Aura choices load and resume with the same source identities; accepted native consequences agree under exact pre-action replay."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_actual_kept_leyline_gets_private_atomic_loaded_action_before_first_turn",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Rejected principal, source, continuation or later target/resource commands preserve complete authoritative state before mutation."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_corrupt_or_stale_opening_frame_is_rejected_before_entry",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Rejected principal, source, continuation or later target/resource commands preserve complete authoritative state before mutation."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_entry_counter_order_resumes_same_opening_hand_before_the_first_turn",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Rejected principal, source, continuation or later target/resource commands preserve complete authoritative state before mutation."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_named_self_opener_keeps_pregame_entry_out_of_first_turn_power_up_discount",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Rejected principal, source, continuation or later target/resource commands preserve complete authoritative state before mutation."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_nonspell_aura_entry_uses_untargeted_subject_choice_and_pending_replay",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Rejected principal, source, continuation or later target/resource commands preserve complete authoritative state before mutation."
+    },
+    {
+      "capability_id": "game.opening_hand.battlefield",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_opening_hand_battlefield.OpeningHandBattlefieldRuntimeTests.test_original_openers_retain_native_timing_targeting_counter_damage_token_life_and_equip_rules",
+      "official_rule_ids": [
+        "103.5",
+        "103.5c",
+        "103.6",
+        "103.6a",
+        "103.8",
+        "103.8c",
+        "117.5",
+        "201.5",
+        "303.4f",
+        "303.4g",
+        "603.3",
+        "603.6a",
+        "614.12",
+        "616.1",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Rejected principal, source, continuation or later target/resource commands preserve complete authoritative state before mutation."
+    },
+    {
       "capability_id": "hand.cleanup.no_maximum",
       "evidence_class": "interaction",
       "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_no_maximum_hand_size_component_removal_restores_cleanup_discard",
@@ -198302,5 +200094,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "081a3176ea1f83baa55401a35d2299dba1cc433659bd99d9dd6b1472b7b143f7"
+  "fingerprint": "129dea2013a8f065504b54a49cd951ef15ded28d515fc75ac26140f166787830"
 }

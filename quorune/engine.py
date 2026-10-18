@@ -1459,6 +1459,9 @@ class CommanderEngine(
             self._complete_mulligan_declaration(decision)
         elif kind == "mulligan.bottom":
             self._complete_mulligan_bottom(decision)
+        elif kind == 'opening.hand':
+            from .opening_hand import complete_opening_hand_action
+            complete_opening_hand_action(self,decision)
         elif kind == "priority":
             self._complete_priority(decision)
         elif kind == "combat.attackers":

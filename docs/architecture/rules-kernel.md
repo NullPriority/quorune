@@ -9,6 +9,17 @@ maintenance: "hand-maintained"
 
 # Rules kernel
 
+`opening_hand.py` owns optional battlefield-entry actions after all multiplayer
+mulligans and bottoming finish. It snapshots eligible final hand incarnations
+and lets the starting player act in any order before proceeding through the
+remaining seats. Each private choice selects one card or finishes that seat;
+unselected hands stay hidden. The canonical zone owner performs each entry
+without casting, paying mana or placing a spell on the stack. Entry replacement
+and Aura choices suspend the same typed frame. Pending trigger batches remain
+held until ordinary first-turn priority. An entry prevented in its original
+hand does not consume that source's later opening action. The existing turn
+owner starts the first turn exactly once after the opening actions finish.
+
 Conditional self-timing evaluates current public facts for the would-be caster
 and selected face before locking costs. Losing the qualifying permanent while
 paying mana or other costs does not undo that legal cast. Actual conditional

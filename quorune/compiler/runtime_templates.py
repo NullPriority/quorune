@@ -9,7 +9,7 @@ from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from .activation_restriction_templates import (
     static_activation_restriction_handler,
 )
-from .action_permission_templates import static_action_permission_handler
+from .action_permission_templates import static_action_permission_handler,opening_hand_battlefield_permission_handler
 from .entry_designation_templates import entry_designation_handler, chosen_characteristics_handler
 from .casting_activation_metadata_templates import (
     static_loyalty_cost_modifier_handler,
@@ -238,8 +238,10 @@ def _source_permanent_participation_template(
             ),
             runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
         )
-    action_permission = static_action_permission_handler(text)
+    action_permission = (opening_hand_battlefield_permission_handler(text,source_name=source_name)
+        or static_action_permission_handler(text))
     if action_permission is not None:
+        opening_hand=action_permission[0]=='opening-hand-battlefield-permission-v1'
         return StaticRuntimeTemplate(
             compiled=action_permission,
             kind="static_ability",
@@ -248,7 +250,8 @@ def _source_permanent_participation_template(
                 "generic controller action permission requires its closed "
                 "typed runtime capability"
             ),
-            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            active_zone='hand' if opening_hand else 'battlefield',
+            runtime_coverage=() if opening_hand else (CURRENT_ABILITY_FRAGMENT_COVERAGE,),
         )
     from .untap_selection_templates import fixed_untap_selection_limit_handler
     untap_step = (

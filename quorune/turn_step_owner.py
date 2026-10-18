@@ -134,6 +134,14 @@ class TurnStepOwner:
         return self._host.state
 
     def start_game(self) -> None:
+        from .opening_hand import begin_opening_hand_actions
+        if begin_opening_hand_actions(self._host):
+            return
+        self.start_first_turn()
+
+    def start_first_turn(self) -> None:
+        if self.state.started:
+            raise GameRuleError('The first turn has already begun')
         self.state.started = True
         first = self.state.turn_order[0]
         entry = TurnEntry(

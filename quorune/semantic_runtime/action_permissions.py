@@ -33,9 +33,12 @@ LIBRARY_TOP_VISIBILITY_HANDLER_ID = (
 )
 LIBRARY_TOP_ACTION_HANDLER_ID = "permission.action.library-top-action.v1"
 ADDITIONAL_LAND_PLAY_HANDLER_ID = "permission.action.additional-land-play.v1"
+OPENING_HAND_BATTLEFIELD_HANDLER_ID = "permission.action.opening-hand-battlefield.v1"
+OPENING_HAND_BATTLEFIELD_CAPABILITY = "game.opening_hand.battlefield"
 
 
 class ActionPermissionKind(StrEnum):
+    OPENING_HAND_BATTLEFIELD = "opening_hand_battlefield"
     LAND_PLAY_FROM_OWN_GRAVEYARD = "land_play_from_own_graveyard"
     ACTIVATE_CONTROLLED_CREATURE_AS_HASTE = (
         "activate_controlled_creature_as_haste"
@@ -132,6 +135,22 @@ class StaticActionPermissionHandler:
                 source_semantic_key=context.source_semantic_key,
             ),
         )
+
+
+@dataclass(frozen=True, slots=True)
+class OpeningHandBattlefieldPermissionHandler(StaticActionPermissionHandler):
+    handler_id: str = OPENING_HAND_BATTLEFIELD_HANDLER_ID
+    permission: ActionPermissionKind = ActionPermissionKind.OPENING_HAND_BATTLEFIELD
+    rule_references: tuple[str,...] = ('103.6','103.6a')
+    capability_dependencies: tuple[str,...] = (OPENING_HAND_BATTLEFIELD_CAPABILITY,)
+
+    def validate(self,descriptor):
+        exact_fields(descriptor,{'handler_id','schema_version','event','permission','requires_complete_card_program'},
+            field='opening-hand action permission')
+        if descriptor['requires_complete_card_program'] is not True:
+            raise SemanticNodeError('Opening-hand entry requires complete-card admission')
+        return StaticActionPermissionHandler.validate(self,
+            {k:v for k,v in descriptor.items() if k!='requires_complete_card_program'})
 
 
 @dataclass(frozen=True, slots=True)
@@ -381,6 +400,7 @@ class ActionPermissionRegistry(
 def default_action_permission_registry() -> ActionPermissionRegistry:
     registry = ActionPermissionRegistry(
         (
+            OpeningHandBattlefieldPermissionHandler(),
             StaticActionPermissionHandler(
                 handler_id=LAND_PLAY_FROM_OWN_GRAVEYARD_HANDLER_ID,
                 permission=(

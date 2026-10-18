@@ -67,6 +67,15 @@ no such resolution retain their existing command and decision records without
 constructing an unused binding registry. A later semantic resolution validates
 fresh registry and evidence inputs; no action-level snapshot is retained.
 
+An `opening.hand` decision records a versioned private continuation containing
+turn order, remaining final-hand source incarnations and the current chooser.
+Only that chooser's eligible references enter the projected payload. Nested
+entry replacement choices use `opening_hand_entry` in the ordinary replacement
+continuation; nonspell Aura choices retain the same opening frame. Resumption
+revalidates the pre-turn window and original hand objects before entry. Older
+records keep their recorded decision shapes and do not insert opening actions
+after an already recorded game start.
+
 Derived mana activations omit `tap_source` for the historical tap-cost form,
 which defaults to true. A nontapping self-sacrifice mode explicitly records
 `tap_source: false`; its compact mode similarly includes `tap: false`.
