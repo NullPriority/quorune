@@ -108,6 +108,14 @@ reservation through a rolled-back mana replacement continuation. Pilots cannot
 submit the field. Resume rejects a changed selected incarnation, and ordinary
 actions preserve their previous descriptor and continuation keys.
 
+Preparation records use optional `prepared_designation` and `prepared_spell_copy`
+annotations with the same closed version-one binding. It contains the source's
+physical reference, logical incarnation, inset spell characteristics and linked
+copy identity. The copiable `_prepare_spell` value stores alternative spell
+characteristics separately from the noncopiable designation. Copies cast from
+exile retain their link through stack creation so the accepted cast consumes
+the original designation once. Ordinary records omit these annotations.
+
 Object-selecting replacement journals may carry an optional `objects` array of
 distinct selected references. The selected typed operation validates that set
 against its captured candidates and shared entry reservations. Object choices

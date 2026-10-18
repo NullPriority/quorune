@@ -55,6 +55,16 @@ registry and current static-ability fragments own runtime applicability.
 Subtype targets, activation taxes, self-spell discounts and colored or variable
 increases remain residual under this production.
 
+`compiler/preparation_nodes.py` binds an enters-prepared clause on the normal
+face of a preparation card to closed inset instant or sorcery characteristics.
+The handler requires complete-card admission, including the inset result.
+Current static-ability presence controls the entry replacement; alternative
+characteristics remain copiable independently of later ability removal.
+An inset copy has only its inset characteristics and does not acquire another
+prepare spell. Individual preparation names remain selectable by the existing
+card-name choice owner; the database's combined display name is not a name
+choice. Unknown preparation clauses and unsupported inset types stay residual.
+
 `compiler/conditional_flash_nodes.py` lowers complete conditional self-timing
 clauses against represented public-state predicates. An “as though” clause
 grants timing permission without granting the Flash keyword. An explicit

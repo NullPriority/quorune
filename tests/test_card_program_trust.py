@@ -369,6 +369,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "replacement.zone.read-ahead-entry-choice",
                 "replacement.zone.riot-entry-choice",
                 "replacement.zone.devour",
+                "replacement.zone.prepared_entry",
                 "replacement.zone.keyword-counter-entry-choice",
                 "replacement.zone.self-entry-counter",
                 "replacement.zone.sunburst",

@@ -83,6 +83,13 @@ display row as targets change and flags an absent payable combination. This
 metadata grants no command fields; clients submit the ordinary cost option,
 targets and modes, and the server determines the actual total cost again.
 
+Prepared battlefield objects project `prepared: true`; ordinary objects omit
+the field. Their inset spell copies are public exile objects with their own
+references and inset characteristics. Casting actions appear only for the
+prepared permanent's current controller. The client submits an ordinary cast
+action; it never supplies a prepared designation, lifetime binding, or source
+controller.
+
 The `combat.attackers` response may include an optional `enlist` mapping from
 declared attacker references to eligible nonattacking creature references.
 Multiple Enlist instances use a distinct donor list. The issued choice form

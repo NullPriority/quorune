@@ -1070,6 +1070,10 @@ def _commit_token_specs(
                     host, prepared_entries[object_id], token,
                     requested_destination="battlefield", error_type=TokenCreationError,
                 )
+                from .preparation_model import PREPARE_ENTRY_FIELD,PrepareSpellSpec
+                if PREPARE_ENTRY_FIELD in prepared_entries[object_id].event.payload:
+                    from .preparation import become_prepared
+                    become_prepared(host,token,spell=PrepareSpellSpec.from_dict(prepared_entries[object_id].event.payload[PREPARE_ENTRY_FIELD]))
             data = host._effective_card_data(
                 token,
                 printed_entry_characteristics=True,

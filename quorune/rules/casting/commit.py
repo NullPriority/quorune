@@ -1501,6 +1501,8 @@ def _commit_cast_costs_and_stack(
         proposal.seat,
     )
     host.state.stack.append(item)
+    from ...preparation import consume_prepared_cast
+    consume_prepared_cast(host,card)
     if 'waterbend_payment' in selected_option:
         from ...waterbend import WaterbendPayment
         from ..waterbend_payments import dispatch_waterbend_occurrence

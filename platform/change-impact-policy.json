@@ -5584,6 +5584,30 @@
       "browser_focuses": [
         "mana-action"
       ]
+    },
+    {
+      "id": "preparation-linked-inset-copy-contract",
+      "patterns": [
+        "quorune/preparation.py",
+        "quorune/preparation_model.py",
+        "quorune/compiler/preparation_nodes.py",
+        "quorune/semantic_runtime/preparation.py",
+        "tests/fixtures/preparation-cards.json"
+      ],
+      "test_modules": [
+        "test_preparation",
+        "test_copy_objects",
+        "test_paid_entry_copy",
+        "test_token_entry_boundaries",
+        "test_card_program_trust",
+        "test_state_based_actions",
+        "test_fixed_casting_surface",
+        "test_semantic_choice_characterization",
+        "test_choice_forms"
+      ],
+      "browser_focuses": [
+        "mana-action"
+      ]
     }
   ],
   "symbol_rules": [

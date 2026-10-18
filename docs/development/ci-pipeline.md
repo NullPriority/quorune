@@ -627,8 +627,10 @@ and `DeckLoader` paths from every module assigned by
 `platform/test-shards.json`. It then builds a fresh database from the canonical
 manifest, loads every discovered deck, resolves every dependency, and verifies
 that no `full_database_only` module is assigned to a compact shard. It also
-indexes fixture ownership and rejects conflicting canonical names, aliases, or
-Oracle IDs.
+indexes fixture ownership and rejects conflicting canonical names, equally
+ranked aliases, or Oracle IDs. Canonical card names take precedence over face
+aliases, matching database lookup when an inset shares the name of a standalone
+card.
 
 Genuinely dynamic requirements must be declared in the existing manifest by
 exact source path and symbol, with sorted card, Oracle-ID, deck, or fixture

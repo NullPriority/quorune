@@ -396,6 +396,9 @@ class StateProjector:
             obj["monstrous"] = card.monstrous_value
         if card.renowned:
             obj["renowned"] = True
+        if card.zone=='battlefield' and 'prepared_designation' in card.annotations:
+            from .preparation import prepared_designation
+            obj['prepared']=prepared_designation(card) is not None
         if card.class_level is not None:
             obj["class_level"] = card.class_level
         if card.unearthed:

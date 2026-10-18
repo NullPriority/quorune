@@ -42,7 +42,7 @@ _LIFE_LOSS_DIRECTION = "loss"
 
 _SET_FIELDS = {
     "damage": {"amount", "prevented", "prevented_by", "target"},
-    "zone.change": {"destination", "read_ahead_chapter", "tapped", "entry_chosen_color", "entry_chosen_creature_type", "entry_copy", "entry_copy_source", "object_types", 'entry_revealed_hand_card'},
+    "zone.change": {"destination", "read_ahead_chapter", "tapped", "entry_chosen_color", "entry_chosen_creature_type", "entry_copy", "entry_copy_source", "object_types", 'entry_revealed_hand_card','entry_prepared'},
     "token.create": {"quantity", "created_types", "created_subtypes"},
     "counter.place": {"amount"},
     "counter.add": {"amount", "quantity"},

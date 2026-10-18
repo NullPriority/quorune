@@ -142,6 +142,8 @@ def base_card_characteristics(
             ),
             None,
         )
+    if record.layout=='prepare' and not values.get('is_prepare_spell'):
+        face=record.faces[0]
     selected=face is not None and (record.layout!='split' or card.zone=='stack' or card.annotations.get('prospective_cast_face') is True)
     return {
         "name": str(face.get("name")) if face else record.name,

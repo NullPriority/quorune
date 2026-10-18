@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 372,
+  "registry_version": 373,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -30359,6 +30359,122 @@
       "dependency_fail_closed_rationale": "Omitting the targeted cost, shared public cost modifier, or target authority capability keeps the whole static source residual. Unknown subject and colored/discount/activation variants remain outside the closed production.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Actual compiler producer omission leaves the source residual; native paid cast fails when cost application is omitted; native unpaid-target offer fails when payable-target filtering is omitted. Fresh TestCase witnesses ensure expected failures escape subtests.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "card.preparation.fixed_entry_spell",
+      "version": 1,
+      "official_rules": [
+        "722.1",
+        "722.2",
+        "722.2a",
+        "722.2b",
+        "722.2c",
+        "722.3",
+        "722.3a",
+        "722.3b",
+        "722.3c",
+        "722.3d",
+        "722.4",
+        "722.5",
+        "601.2i",
+        "707.2",
+        "707.10",
+        "704.5e",
+        "400.7",
+        "702.26",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Preparation cards enter prepared and materialize one linked inset spell copy in exile, castable by the current controller with ordinary timing/payment; designation is consumed only by an accepted cast.",
+        "inputs": [
+          "complete compiled preparation source",
+          "captured alternative spell characteristics",
+          "prepared permanent incarnation"
+        ],
+        "outputs": [
+          "noncopiable prepared designation",
+          "linked persistent noncard exile copy",
+          "current controller cast permission and accepted-cast unprepare"
+        ],
+        "exclusions": [
+          "prepare or unprepare instruction grammar beyond intrinsic entry",
+          "non-instant/sorcery inset spells",
+          "general phasing action admission"
+        ]
+      },
+      "dependencies": [
+        "zone.entry.fixed_copy",
+        "casting.cost.modifier.fixed_query",
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.compiler.preparation_nodes.preparation_entry_node",
+        "quorune.semantic_runtime.preparation.PreparationEntryHandler",
+        "quorune.preparation.become_prepared",
+        "quorune.preparation.preparation_cast_permission",
+        "quorune.preparation.preparation_copy_retained",
+        "quorune.preparation.consume_prepared_cast",
+        "quorune.state_based_execution.synchronize_state_based_observers"
+      ],
+      "positive_tests": [
+        "test_prepared_entry_pins_the_inset_spell_and_complete_source_contract",
+        "test_all_fourteen_originals_have_complete_bindings_for_both_characteristic_sets",
+        "test_prepare_spell_uses_its_own_mana_draw_and_token_results",
+        "test_prepare_spell_targeted_growth_and_zone_results_use_normal_owners",
+        "test_inset_search_and_private_discard_choices_resume_without_preparing_again",
+        "test_rejoinder_tap_untap_and_decline_choices_all_continue_to_one_draw"
+      ],
+      "negative_tests": [
+        "test_missing_alternative_unknown_preparation_and_malformed_links_remain_closed",
+        "test_unsupported_source_or_inset_sibling_rejects_the_complete_preparation_program",
+        "test_physical_card_cannot_cast_inset_and_failed_copy_cast_keeps_preparation",
+        "test_linked_copy_rejects_malformed_or_changed_source_identity"
+      ],
+      "interaction_tests": [
+        "test_current_controller_owns_the_copy_permission_after_control_and_ability_loss",
+        "test_countering_accepted_prepare_spell_keeps_the_source_unprepared",
+        "test_source_departure_and_phase_boundary_end_old_copy_without_copying_prepared_status",
+        "test_copied_creature_entry_and_token_exceptions_retain_only_alternative_spell_values",
+        "test_existing_humility_suppresses_entry_but_face_down_or_inset_copies_have_no_prepare_alternative",
+        "test_stack_copy_keeps_prepare_spell_status_and_source_is_consumed_only_once",
+        "test_existing_preparation_survives_new_noncreature_copiable_values_but_cannot_be_regained",
+        "test_rules_authorized_free_base_can_apply_to_an_inset_copy_without_consuming_it_during_offers",
+        "test_inset_names_and_normal_card_names_remain_individually_nameable",
+        "test_prepare_copy_sba_exception_is_only_for_the_captured_exile_kind"
+      ],
+      "multiplayer_tests": [
+        "test_current_controller_owns_the_copy_permission_after_control_and_ability_loss",
+        "test_actual_entry_creates_public_persistent_inset_copy_and_native_cast_unprepares_once"
+      ],
+      "privacy_tests": [
+        "test_actual_entry_creates_public_persistent_inset_copy_and_native_cast_unprepares_once",
+        "test_inset_search_and_private_discard_choices_resume_without_preparing_again"
+      ],
+      "replay_tests": [
+        "test_actual_entry_creates_public_persistent_inset_copy_and_native_cast_unprepares_once",
+        "test_pending_inset_mana_replacement_keeps_prepared_until_cast_succeeds",
+        "test_copied_creature_entry_and_token_exceptions_retain_only_alternative_spell_values",
+        "test_stack_copy_keeps_prepare_spell_status_and_source_is_consumed_only_once"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Omitting Preparation, intrinsic copy, shared casting modifier or target authority keeps the source residual; an unsupported normal or inset sibling rejects complete-card admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Actual native witnesses kill omitted compiler production, copy allocation, exile retention, accepted-cast consumption and current-controller permission. An overly broad lifetime exception fails at the departed/phased source boundary. Wrapped witnesses use fresh TestCase instances.",
       "blockers": [],
       "status": "trusted"
     }

@@ -274,17 +274,20 @@ def fixture_paths(
     return tuple(root / relative for relative in manifest["fixtures"])
 
 
-def _aliases(card: Mapping[str, object]) -> tuple[str, ...]:
-    aliases = {str(card.get("name") or "")}
+def _aliases(card: Mapping[str, object]) -> dict[str, int]:
+    # Mirror CardDatabase's canonical (100), face (90), split-name (80) order.
     name = str(card.get("name") or "")
+    aliases = {name: 100} if name else {}
     if " // " in name:
-        aliases.update(name.split(" // "))
+        for alias in name.split(" // "):
+            aliases[alias] = max(aliases.get(alias, 0), 80)
     faces = card.get("card_faces") or []
     if isinstance(faces, list):
         for face in faces:
             if isinstance(face, dict) and face.get("name"):
-                aliases.add(str(face["name"]))
-    return tuple(sorted(alias for alias in aliases if alias))
+                alias = str(face["name"])
+                aliases[alias] = max(aliases.get(alias, 0), 90)
+    return aliases
 
 
 def index_fixture_ownership(
@@ -294,6 +297,7 @@ def index_fixture_ownership(
 ) -> dict[str, object]:
     by_oracle: dict[str, dict[str, object]] = {}
     by_name: dict[str, str] = {}
+    name_priorities: dict[str, int] = {}
     conflicts: list[dict[str, object]] = []
     ruling_count = 0
     for path in paths:
@@ -333,7 +337,7 @@ def index_fixture_ownership(
                 )
                 continue
             named_oracle = by_name.get(normalized)
-            if named_oracle is not None and named_oracle != oracle_id:
+            if named_oracle is not None and named_oracle != oracle_id and name_priorities[normalized] == 100:
                 conflicts.append(
                     {
                         "kind": "normalized_name",
@@ -353,10 +357,12 @@ def index_fixture_ownership(
                 }
                 by_oracle[oracle_id] = existing
             existing["owners"].add(relative)
-            for alias in _aliases(card):
+            for alias, priority in sorted(_aliases(card).items()):
                 normalized_alias = normalize_card_name(alias)
                 alias_oracle = by_name.get(normalized_alias)
-                if alias_oracle is not None and alias_oracle != oracle_id:
+                existing["aliases"].add(alias)
+                previous_priority = name_priorities.get(normalized_alias, 0)
+                if alias_oracle is not None and alias_oracle != oracle_id and previous_priority == priority:
                     conflicts.append(
                         {
                             "kind": "alias",
@@ -365,8 +371,9 @@ def index_fixture_ownership(
                         }
                     )
                     continue
-                by_name[normalized_alias] = oracle_id
-                existing["aliases"].add(alias)
+                if priority >= previous_priority:
+                    by_name[normalized_alias] = oracle_id
+                    name_priorities[normalized_alias] = priority
 
     ownership = [
         {

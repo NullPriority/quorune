@@ -66,6 +66,7 @@ from .entry_color_exclusion import ExcludedColorEntryDesignationHandler
 from .entry_copy import EntryCopyHandler, entry_copy_handler, entry_copy_replacement_effects
 from .entry_reveal import EntryRevealHandler,entry_reveal_replacement_effects
 from .devour import DevourEntryHandler,devour_replacement_effects,capture_devour_candidates
+from .preparation import PreparationEntryHandler
 from .kicker import FixedKickedEntryHandler
 from .multikicker import MultikickerEntryHandler, prospective_multikicker_fields
 from .madness import MadnessDiscardReplacementHandler
@@ -449,6 +450,7 @@ def default_zone_change_replacement_registry(
             entry_copy_handler(2),
             EntryRevealHandler(),
             DevourEntryHandler(),
+            PreparationEntryHandler(),
             ReadAheadEntryChoiceHandler(),
             RiotEntryChoiceHandler(),
             KeywordCounterEntryChoiceHandler(),

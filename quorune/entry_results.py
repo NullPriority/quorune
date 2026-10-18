@@ -75,6 +75,10 @@ def commit_prepared_entry_results(
         error_type=error_type,
         dispatch_events=False,
     )
+    from .preparation_model import PREPARE_ENTRY_FIELD,PrepareSpellSpec
+    if card.zone=='battlefield' and PREPARE_ENTRY_FIELD in prepared.event.payload:
+        from .preparation import become_prepared
+        become_prepared(host,card,spell=PrepareSpellSpec.from_dict(prepared.event.payload[PREPARE_ENTRY_FIELD]))
     try:
         commit_entry_keyword_grants(host, card, prepared.keyword_grants)
     except EntryKeywordGrantError as exc:

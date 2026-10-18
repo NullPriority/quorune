@@ -165,6 +165,8 @@ def _cast_face(
     card: Any,
 ) -> Mapping[str, Any] | None:
     requested_face = request.required_face or request.face
+    from ...preparation import preparation_cast_face
+    requested_face=preparation_cast_face(card,record,requested_face)
     face = host._select_cast_face(record, requested_face)
     if (
         request.required_face is None
@@ -894,6 +896,9 @@ def build_cast_offer(
     )
     if method_error is not None:
         return CastProposalResult("unavailable", method_error)
+    from ...preparation import preparation_cast_face
+    try:face_name=preparation_cast_face(card,record,face_name)
+    except (ValueError,GameRuleError) as exc:return CastProposalResult('unavailable',str(exc))
     front = host._select_cast_face(record,face_name) if record.faces else None
     card=prospective_cast_card(host,card,face_name)
     if card.zone not in {'hand','command'} and not cast_view_zone_permission(host,seat,card):

@@ -559,6 +559,28 @@ server-authored price table; choosing several qualifying targets still charges
 each source once. The client displays that table and the server recomputes the
 actual submitted target set through the same cost and legality owners.
 
+Preparation cards have normal permanent characteristics and separate copiable
+prepare-spell characteristics. The physical card casts only with its normal
+characteristics. A compiled enters-prepared replacement gives the entering
+permanent a noncopiable prepared designation and creates one linked noncard
+copy of its inset spell in exile. The existing copy owner allocates that object;
+the state-based owner retains it only while its original permanent incarnation
+remains present and prepared. Departure or unpreparing ends that exception.
+
+Only the prepared permanent's current controller can cast the exile copy, using
+ordinary timing, targets and payment. An offer or a failed payment preserves
+the designation. The accepted cast unprepares the source after the spell enters
+the stack; countering it does not restore preparation. Losing abilities or
+becoming a different copy after preparation leaves the existing link intact.
+A newly copied creature receives the alternative characteristics, but receives
+prepared status only through its own entry replacement. Token copy exceptions
+to its color or base statistics do not alter the inset spell's values.
+
+Phase boundaries preserve the designation, end the old exile copy, and create
+a new copy on phasing in. This lifecycle does not admit general phasing actions,
+which retain their existing unsupported boundary. Broader prepare or unprepare
+instruction grammar remains residual.
+
 Ordinary printed Convoke is a face-pinned typed cast-cost descriptor rather
 than live keyword interpretation. `convoke.py` owns the immutable candidate,
 contribution, whole-vector payment plan, and deterministic fingerprint;

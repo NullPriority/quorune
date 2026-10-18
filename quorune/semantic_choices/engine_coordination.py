@@ -334,7 +334,8 @@ class SemanticChoiceCoordinationMixin:
         }
         for value in submitted:
             try:
-                canonical[value.casefold()] = self.card_db.lookup(value).name
+                from ..preparation import canonical_preparation_name
+                if (name:=canonical_preparation_name(self.card_db.lookup(value),value)) is not None:canonical[value.casefold()]=name
             except KeyError:
                 continue
         return canonical

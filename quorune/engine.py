@@ -350,6 +350,7 @@ from .state_based_actions import (
     evaluate_state_based_actions,
 )
 from .state_based_execution import (
+    synchronize_state_based_observers,
     commit_state_based_principal_changes,
     commit_state_based_counter_removals,
     commit_state_based_zone_changes,
@@ -6561,6 +6562,7 @@ class CommanderEngine(
         return permanent_sba_snapshots(self)
 
     def _object_sba_snapshots(self) -> list[ObjectSnapshot]:
+        from .preparation import preparation_copy_retained
         return [
             ObjectSnapshot(
                 object_id=card.object_id,
@@ -6568,6 +6570,7 @@ class CommanderEngine(
                 is_token=card.is_token,
                 is_spell_copy=card.is_spell_copy,
                 is_card_copy=card.is_card_copy,
+                retained_prepare_spell=preparation_copy_retained(self,card),
             )
             for card in self.state.cards.values()
             if card.zone != "outside"
@@ -6719,7 +6722,7 @@ class CommanderEngine(
                 )
                 return True
 
-            self._synchronize_world_supertype_timestamps()
+            synchronize_state_based_observers(self)
             sba_batch = evaluate_state_based_actions(
                 permanents=self._permanent_sba_snapshots(),
                 objects=self._object_sba_snapshots(),
