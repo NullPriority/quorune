@@ -47,6 +47,10 @@ discount. Generic and colored components reduce only their corresponding cost
 requirements, with a zero floor. A face-down casting method suppresses printed
 self-reduction abilities while retaining independently applicable external
 modifiers through the existing cost owner.
+Undaunted uses the same total-cost stage with the casting player's current
+in-game opponents. Eliminated players do not contribute, repeated instances
+accumulate, and a later elimination does not change an already locked cost.
+The generic reduction leaves colored and nonmana payment obligations intact.
 
 Fixed untap participation reads current full characteristics and counter state
 before the simultaneous untap action. A subtype-only subject also matches a

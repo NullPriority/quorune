@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 382,
+  "registry_version": 383,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -5257,12 +5257,13 @@
     },
     {
       "id": "casting.cost.self_public_reduction",
-      "version": 6,
+      "version": 7,
       "official_rules": [
         "109.5",
         "111.1",
         "111.6",
         "117.1a",
+        "202.3",
         "601.2e",
         "601.2f",
         "601.2g",
@@ -5271,6 +5272,9 @@
         "700.8",
         "700.8a",
         "700.8b",
+        "702.125a",
+        "702.125b",
+        "702.125c",
         "702.37a",
         "702.37c",
         "708.2a"
@@ -5290,7 +5294,8 @@
           "fixed compound ordinary generic and colored mana reduction",
           "maximum distinct-creature assignment to the Cleric, Rogue, Warrior, and Wizard Party roles",
           "one source-spanned self spell-cost reduction descriptor",
-          "the selected face's ordinary total-cost option"
+          "the selected face's ordinary total-cost option",
+          "current in-game free-for-all opponent count for the casting player"
         ],
         "outputs": [
           "one immutable selected-face reduction program",
@@ -5328,6 +5333,7 @@
       "positive_tests": [
         "test_actual_cactarantula_opponent_target_draw_is_private_loaded_and_replayed",
         "test_actual_cactarantula_uses_own_desert_and_reduced_price_then_preserves_reach",
+        "test_actual_curtains_call_advertises_and_accepts_reduced_cost_with_two_targets",
         "test_actual_igneous_elemental_uses_own_land_card_then_resolves_optional_entry_damage",
         "test_actual_octavia_requires_eight_own_matching_cards_and_keeps_ward_and_magecraft",
         "test_actual_stormwing_uses_real_cast_history_reduces_blue_and_completes_private_scry",
@@ -5341,6 +5347,9 @@
         "test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
         "test_face_down_spell_does_not_receive_its_printed_self_reduction",
         "test_foreign_cast_history_does_not_enable_the_carrying_spells_colored_discount",
+        "test_keyword_instances_and_equivalent_text_keep_exact_spans_and_independent_terms",
+        "test_native_generic_floor_repeated_instances_and_kicker_total_preserve_private_draws",
+        "test_original_keyword_closes_only_the_three_independently_complete_bodies",
         "test_party_size_uses_maximum_distinct_creature_assignment",
         "test_public_cast_cost_closure_compiles_selected_grammar",
         "test_selected_back_face_cannot_inherit_front_face_self_reduction",
@@ -5352,14 +5361,17 @@
       ],
       "negative_tests": [
         "test_actual_cactarantula_uses_own_desert_and_reduced_price_then_preserves_reach",
+        "test_actual_curtains_call_advertises_and_accepts_reduced_cost_with_two_targets",
         "test_actual_igneous_elemental_uses_own_land_card_then_resolves_optional_entry_damage",
         "test_actual_octavia_requires_eight_own_matching_cards_and_keeps_ward_and_magecraft",
         "test_any_opponent_graveyard_threshold_is_not_combined_across_opponents",
         "test_any_opponent_zero_basic_land_condition_is_evaluated_per_opponent",
+        "test_closed_opponent_metric_excludes_caster_and_eliminated_seats_without_mutation",
         "test_current_graveyard_card_queries_exclude_tokens_and_legacy_descriptors_still_decode",
         "test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
         "test_face_down_spell_does_not_receive_its_printed_self_reduction",
         "test_foreign_cast_history_does_not_enable_the_carrying_spells_colored_discount",
+        "test_modified_keyword_and_withdrawn_cost_owner_remain_residual",
         "test_selected_back_face_cannot_inherit_front_face_self_reduction",
         "test_self_reduction_descriptor_fails_closed",
         "test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
@@ -5369,6 +5381,8 @@
       "interaction_tests": [
         "test_actual_cactarantula_opponent_target_draw_is_private_loaded_and_replayed",
         "test_actual_cactarantula_uses_own_desert_and_reduced_price_then_preserves_reach",
+        "test_actual_coastal_breach_preserves_lands_returns_to_owners_and_private_views",
+        "test_actual_elimination_updates_next_cast_price_and_never_reprices_paid_stack_spell",
         "test_actual_igneous_elemental_uses_own_land_card_then_resolves_optional_entry_damage",
         "test_actual_octavia_requires_eight_own_matching_cards_and_keeps_ward_and_magecraft",
         "test_actual_stormwing_uses_real_cast_history_reduces_blue_and_completes_private_scry",
@@ -5378,6 +5392,7 @@
         "test_face_down_spell_does_not_receive_its_printed_self_reduction",
         "test_foreign_cast_history_does_not_enable_the_carrying_spells_colored_discount",
         "test_multiple_qualifying_opponents_apply_one_fixed_reduction",
+        "test_native_generic_floor_repeated_instances_and_kicker_total_preserve_private_draws",
         "test_party_assignment_shares_offer_commit_control_and_replay",
         "test_public_cast_cost_vectors_counts_and_replay_share_total_cost_owner",
         "test_public_cost_history_uses_committed_discard_sacrifice_and_life",
@@ -5391,19 +5406,28 @@
       "multiplayer_tests": [
         "test_actual_cactarantula_opponent_target_draw_is_private_loaded_and_replayed",
         "test_actual_cactarantula_uses_own_desert_and_reduced_price_then_preserves_reach",
+        "test_actual_curtains_call_advertises_and_accepts_reduced_cost_with_two_targets",
+        "test_actual_elimination_updates_next_cast_price_and_never_reprices_paid_stack_spell",
         "test_foreign_cast_history_does_not_enable_the_carrying_spells_colored_discount",
+        "test_native_generic_floor_repeated_instances_and_kicker_total_preserve_private_draws",
         "test_self_reduction_is_private_multiplayer_and_replays",
         "test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions"
       ],
       "privacy_tests": [
         "test_actual_cactarantula_opponent_target_draw_is_private_loaded_and_replayed",
+        "test_actual_coastal_breach_preserves_lands_returns_to_owners_and_private_views",
+        "test_actual_curtains_call_advertises_and_accepts_reduced_cost_with_two_targets",
         "test_actual_stormwing_uses_real_cast_history_reduces_blue_and_completes_private_scry",
         "test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
+        "test_native_generic_floor_repeated_instances_and_kicker_total_preserve_private_draws",
         "test_self_reduction_is_private_multiplayer_and_replays"
       ],
       "replay_tests": [
         "test_actual_cactarantula_opponent_target_draw_is_private_loaded_and_replayed",
         "test_actual_cactarantula_uses_own_desert_and_reduced_price_then_preserves_reach",
+        "test_actual_coastal_breach_preserves_lands_returns_to_owners_and_private_views",
+        "test_actual_curtains_call_advertises_and_accepts_reduced_cost_with_two_targets",
+        "test_actual_elimination_updates_next_cast_price_and_never_reprices_paid_stack_spell",
         "test_actual_igneous_elemental_uses_own_land_card_then_resolves_optional_entry_damage",
         "test_actual_octavia_requires_eight_own_matching_cards_and_keeps_ward_and_magecraft",
         "test_actual_stormwing_uses_real_cast_history_reduces_blue_and_completes_private_scry",
@@ -5411,6 +5435,7 @@
         "test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
         "test_face_down_spell_does_not_receive_its_printed_self_reduction",
         "test_foreign_cast_history_does_not_enable_the_carrying_spells_colored_discount",
+        "test_native_generic_floor_repeated_instances_and_kicker_total_preserve_private_draws",
         "test_party_assignment_shares_offer_commit_control_and_replay",
         "test_public_cast_cost_vectors_counts_and_replay_share_total_cost_owner",
         "test_public_cost_history_uses_committed_discard_sacrifice_and_life",
@@ -5430,6 +5455,103 @@
       "dependency_fail_closed_rationale": "The descriptor consumes only current authoritative public objects, selected-face cost data, the deterministic CR 700.8 Party assignment, and the canonical bounded turn-history vocabulary; unsupported facts and queries do not compile.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the actual self-reduction lowerer prevents the native original cast. Swapping the blue component to white invalidates the native Stormwing price and accepted outcome. Producer/capability omissions leave complete source clauses residual; independent face-down and current-query controls protect scope.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.cost.undaunted",
+      "version": 1,
+      "official_rules": [
+        "702.125a",
+        "702.125b",
+        "702.125c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "109.5",
+        "202.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Each source-pinned Undaunted instance reduces only the carrying spells ordinary total generic cost by the current active-opponent count at cost determination. Uses the canonical self-cost component and locked total-cost owner.",
+        "inputs": [
+          "selected-face carrying spell",
+          "casting player and in-game free-for-all opponents",
+          "independent keyword instances",
+          "ordinary alternative/additional/increased total cost"
+        ],
+        "outputs": [
+          "immutable self-reduction descriptors",
+          "shared advertised and accepted total cost",
+          "colored and nonmana costs preserved",
+          "pending save/load and exact replay"
+        ],
+        "exclusions": [
+          "team formats",
+          "granted, copied or text-changed spell abilities outside selected-face propagation",
+          "unrepresented paired keyword or whole-card effect bodies",
+          "minimum-cost setting effects outside their owners"
+        ]
+      },
+      "dependencies": [
+        "casting.cost.self_public_reduction"
+      ],
+      "implementation_components": [
+        "quorune.compiler.undaunted_nodes.undaunted_keyword_node",
+        "quorune.compiler.cast_cost_modifier_templates._object_count_metric",
+        "quorune.self_cast_reductions.CastReductionMetric",
+        "quorune.self_cast_reductions.cast_reduction_multiplier",
+        "quorune.semantic_runtime.cast_costs.SelfSpellCostReductionHandler",
+        "quorune.rules.casting.static_modifiers.apply_static_reductions"
+      ],
+      "positive_tests": [
+        "test_actual_curtains_call_advertises_and_accepts_reduced_cost_with_two_targets",
+        "test_keyword_instances_and_equivalent_text_keep_exact_spans_and_independent_terms",
+        "test_native_generic_floor_repeated_instances_and_kicker_total_preserve_private_draws",
+        "test_original_keyword_closes_only_the_three_independently_complete_bodies"
+      ],
+      "negative_tests": [
+        "test_actual_curtains_call_advertises_and_accepts_reduced_cost_with_two_targets",
+        "test_closed_opponent_metric_excludes_caster_and_eliminated_seats_without_mutation",
+        "test_modified_keyword_and_withdrawn_cost_owner_remain_residual"
+      ],
+      "interaction_tests": [
+        "test_actual_coastal_breach_preserves_lands_returns_to_owners_and_private_views",
+        "test_actual_elimination_updates_next_cast_price_and_never_reprices_paid_stack_spell",
+        "test_native_generic_floor_repeated_instances_and_kicker_total_preserve_private_draws"
+      ],
+      "multiplayer_tests": [
+        "test_actual_curtains_call_advertises_and_accepts_reduced_cost_with_two_targets",
+        "test_actual_elimination_updates_next_cast_price_and_never_reprices_paid_stack_spell",
+        "test_native_generic_floor_repeated_instances_and_kicker_total_preserve_private_draws"
+      ],
+      "privacy_tests": [
+        "test_actual_coastal_breach_preserves_lands_returns_to_owners_and_private_views",
+        "test_actual_curtains_call_advertises_and_accepts_reduced_cost_with_two_targets",
+        "test_native_generic_floor_repeated_instances_and_kicker_total_preserve_private_draws"
+      ],
+      "replay_tests": [
+        "test_actual_coastal_breach_preserves_lands_returns_to_owners_and_private_views",
+        "test_actual_curtains_call_advertises_and_accepts_reduced_cost_with_two_targets",
+        "test_actual_elimination_updates_next_cast_price_and_never_reprices_paid_stack_spell",
+        "test_native_generic_floor_repeated_instances_and_kicker_total_preserve_private_draws"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawing the keyword or canonical self-cost dependency prevents exact admission; unsupported material tails remain residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the actual canonical intrinsic self-reduction collector leaves full price and is killed by a fresh native affordable-cast witness, without manufacturing an exception.",
       "blockers": [],
       "status": "trusted"
     },

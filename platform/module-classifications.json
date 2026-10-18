@@ -5756,6 +5756,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/undaunted_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/unearth_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -16414,5 +16429,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "668e7970c1ab753831160f1f933d9bd4dfe18c56435e6f9e105846cc8840e1c6"
+  "fingerprint": "b5e8241120b923d882113bd5ffb146e1b0329939f71d0191c073ccbd69748601"
 }

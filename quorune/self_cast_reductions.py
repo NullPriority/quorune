@@ -46,6 +46,7 @@ class CastReductionMetricKind(str, Enum):
     OPPONENT_COLORLESS_LAND_COUNT = "opponent_colorless_land_count"
     OPPONENT_COUNT_DIFFERENCE = "opponent_count_difference"
     OPPONENT_HAND_COUNT = "opponent_hand_count"
+    OPPONENT_COUNT = "opponent_count"
 
 
 class CastReductionTurnFact(str, Enum):
@@ -163,7 +164,15 @@ class CastReductionMetric:
     schema_version: int = 1
     aggregate: PublicCharacteristicAggregateSpec | None = None
 
-    def _validate_aggregate(self) -> bool:
+    def _validate_extended_shape(self) -> bool:
+        if self.kind is CastReductionMetricKind.OPPONENT_COUNT:
+            if (type(self.schema_version) is not int or self.schema_version not in {1, 2}
+                    or not isinstance(self.queries, tuple) or self.queries
+                    or self.minimum is not None or self.maximum is not None
+                    or self.require_all is not False or self.color is not None or self.turn_fact is not None
+                    or self.counter_name is not None or self.aggregate is not None):
+                raise SelfCastReductionError('Opponent counts require only the casting player and active seats')
+            return True
         if self.kind is not CastReductionMetricKind.PUBLIC_AGGREGATE:
             if self.aggregate is not None:raise SelfCastReductionError('Legacy cost metrics cannot carry an aggregate')
             if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
@@ -178,7 +187,7 @@ class CastReductionMetric:
         return True
 
     def __post_init__(self) -> None:
-        if self._validate_aggregate():return
+        if self._validate_extended_shape():return
         if not isinstance(self.kind, CastReductionMetricKind):
             raise SelfCastReductionError("Unsupported cast-reduction metric kind")
         if not isinstance(self.queries, tuple) or not all(
@@ -733,6 +742,8 @@ def cast_reduction_multiplier(
 ) -> int:
     """Return the deterministic nonnegative multiplier for one reduction term."""
 
+    if metric.kind is CastReductionMetricKind.OPPONENT_COUNT:
+        return sum(other != seat and player.in_game for other, player in host.state.players.items())
     if metric.kind is CastReductionMetricKind.PUBLIC_AGGREGATE:
         from .public_characteristic_aggregates import current_public_characteristic_aggregate
         return max(0,current_public_characteristic_aggregate(host,seat,metric.aggregate))

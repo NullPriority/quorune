@@ -81,6 +81,10 @@ card thresholds and conjunctive card-type exclusions. New graveyard quantities
 explicitly exclude tokens; historical serialized predicates retain their
 existing decoder. Counted graveyard condition captures normalize subtype and
 card-type whitespace before constructing the same immutable query values.
+`compiler/undaunted_nodes.py` lowers each printed Undaunted instance through
+that owner with an active-opponent quantity. Repeated instances contribute
+independent terms; reminder text stays in the original source span. Unknown
+keyword modifications and independently unsupported spell bodies remain residual.
 
 `compiler/cleave_spell_faces.py` derives normal and bracket-removed forms,
 including ordinary ordered body paragraphs. It shares paired-program assembly

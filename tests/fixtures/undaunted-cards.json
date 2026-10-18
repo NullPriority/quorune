@@ -1,0 +1,415 @@
+{
+  "cards": [
+    {
+      "cmc": 7.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Undaunted"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{6}{U}",
+      "name": "Coastal Breach",
+      "oracle_id": "e42b6bd7-8fdf-4452-85cc-9aed790ff682",
+      "oracle_text": "Undaunted (This spell costs {1} less to cast for each opponent.)\nReturn all nonland permanents to their owners' hands.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-11-11",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Undaunted"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{B}",
+      "name": "Curtains' Call",
+      "oracle_id": "cfb1b64b-bf78-4015-ac29-cdcdf2adaa02",
+      "oracle_text": "Undaunted (This spell costs {1} less to cast for each opponent.)\nDestroy two target creatures.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-04-19",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 7.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Undaunted"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{6}{R}",
+      "name": "Divergent Transformations",
+      "oracle_id": "f08e835a-7827-4fdc-8dcf-ae74507da052",
+      "oracle_text": "Undaunted (This spell costs {1} less to cast for each opponent.)\nExile two target creatures. For each of those creatures, its controller reveals cards from the top of their library until they reveal a creature card, puts that card onto the battlefield, then shuffles the rest into their library.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "fixture:undaunted-repeated",
+      "name": "Generic Repeated Undaunted",
+      "oracle_text": "Undaunted, undaunted\nDraw a card.",
+      "mana_cost": "{7}{U}",
+      "cmc": 8,
+      "type_line": "Sorcery",
+      "layout": "normal",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Undaunted"
+      ],
+      "produced_mana": [],
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture:undaunted-kicker",
+      "name": "Generic Undaunted Kicker",
+      "oracle_text": "Kicker {4}\nUndaunted\nDraw a card.",
+      "mana_cost": "{1}{U}",
+      "cmc": 2,
+      "type_line": "Sorcery",
+      "layout": "normal",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Kicker",
+        "Undaunted"
+      ],
+      "produced_mana": [],
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "cmc": 7.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Undaunted"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{6}{G}",
+      "name": "Seeds of Renewal",
+      "oracle_id": "48d63b86-8ddd-4306-960f-98490d1d80b9",
+      "oracle_text": "Undaunted (This spell costs {1} less to cast for each opponent.)\nReturn up to two target cards from your graveyard to your hand. Exile Seeds of Renewal.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-11-11",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 7.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Undaunted"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{6}{W}",
+      "name": "Sublime Exhalation",
+      "oracle_id": "9e0c66e9-7d2b-46bd-890e-886d0c029d1d",
+      "oracle_text": "Undaunted (This spell costs {1} less to cast for each opponent.)\nDestroy all creatures.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": null,
+      "type_line": "Sorcery"
+    }
+  ],
+  "fixture_kind": "pinned_undaunted_originals_and_generic_cost_controls",
+  "rulings": [
+    {
+      "comment": "Causing an opponent to lose the game after you've announced that you're casting a spell with undaunted and determined its total cost won't cause you to have to pay more mana.",
+      "oracle_id": "48d63b86-8ddd-4306-960f-98490d1d80b9",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that reduce what you pay to cast a spell don't affect its mana value.",
+      "oracle_id": "48d63b86-8ddd-4306-960f-98490d1d80b9",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If each target is illegal as Seeds of Renewal resolves, Seeds of Renewal doesn't resolve and is put into its owner's graveyard. It's not exiled.",
+      "oracle_id": "48d63b86-8ddd-4306-960f-98490d1d80b9",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If one target becomes illegal before Seeds of Renewal resolves, you'll still return the legal target from your graveyard to your hand.",
+      "oracle_id": "48d63b86-8ddd-4306-960f-98490d1d80b9",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Causing an opponent to lose the game after you've announced that you're casting a spell with undaunted and determined its total cost won't cause you to have to pay more mana.",
+      "oracle_id": "9e0c66e9-7d2b-46bd-890e-886d0c029d1d",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that reduce what you pay to cast a spell don't affect its mana value.",
+      "oracle_id": "9e0c66e9-7d2b-46bd-890e-886d0c029d1d",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Causing an opponent to lose the game after you've announced that you're casting a spell with undaunted and determined its total cost won't cause you to have to pay more mana.",
+      "oracle_id": "cfb1b64b-bf78-4015-ac29-cdcdf2adaa02",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that reduce what you pay to cast a spell don't affect its mana value.",
+      "oracle_id": "cfb1b64b-bf78-4015-ac29-cdcdf2adaa02",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't cast Curtains' Call without two creatures to target. If one becomes an illegal target after you've cast Curtains' Call, the other will still be destroyed.",
+      "oracle_id": "cfb1b64b-bf78-4015-ac29-cdcdf2adaa02",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Causing an opponent to lose the game after you’ve announced that you’re casting a spell with undaunted and determined its total cost won’t cause you to have to pay more mana.",
+      "oracle_id": "e42b6bd7-8fdf-4452-85cc-9aed790ff682",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that reduce what you pay to cast a spell don’t affect its mana value.",
+      "oracle_id": "e42b6bd7-8fdf-4452-85cc-9aed790ff682",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any abilities that trigger during the resolution of Divergent Transformations will wait to be put onto the stack until Divergent Transformations finishes resolving. An ability that triggers on the first creature entering the battlefield may target the second creature and vice versa.",
+      "oracle_id": "f08e835a-7827-4fdc-8dcf-ae74507da052",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Causing an opponent to lose the game after you've announced that you're casting a spell with undaunted and determined its total cost won't cause you to have to pay more mana.",
+      "oracle_id": "f08e835a-7827-4fdc-8dcf-ae74507da052",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that reduce what you pay to cast a spell don't affect its mana value.",
+      "oracle_id": "f08e835a-7827-4fdc-8dcf-ae74507da052",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If one player's creatures are exiled this way, that player repeats this process twice.",
+      "oracle_id": "f08e835a-7827-4fdc-8dcf-ae74507da052",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the controller of a creature exiled this way has no creature cards left in their library, that player reveals the cards in their library, then shuffles it.",
+      "oracle_id": "f08e835a-7827-4fdc-8dcf-ae74507da052",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If two players' creatures are exiled this way, start with the player whose turn it is. If that player controlled a creature exiled this way, that player follows the process on Divergent Transformations to replace it. If not, proceed to the next player in turn order. Repeat until the players who controlled the exiled creatures have each replaced those creatures.",
+      "oracle_id": "f08e835a-7827-4fdc-8dcf-ae74507da052",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The two creatures that are put onto the battlefield are put onto the battlefield sequentially. Triggered abilities of the second won't see the first enter the battlefield.",
+      "oracle_id": "f08e835a-7827-4fdc-8dcf-ae74507da052",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't cast Divergent Transformations without two target creatures. If a targeted creature becomes an illegal target for Divergent Transformations after it's been cast, its controller won't exile or replace that creature, but the other creature is still affected.",
+      "oracle_id": "f08e835a-7827-4fdc-8dcf-ae74507da052",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

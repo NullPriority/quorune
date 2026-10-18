@@ -431,8 +431,25 @@ def _turn_fact_metric(condition: str) -> CastReductionMetric | None:
     )
 
 
+def _scalar_count_metric(normalized: str) -> CastReductionMetric | None:
+    kind = {
+        'opponent': CastReductionMetricKind.OPPONENT_COUNT,
+        'opponent you have': CastReductionMetricKind.OPPONENT_COUNT,
+        'creature in your party': CastReductionMetricKind.PARTY_SIZE,
+        'color among permanents you control': CastReductionMetricKind.PERMANENT_COLOR_COUNT,
+        'land your opponents control that could produce {c}': CastReductionMetricKind.OPPONENT_COLORLESS_LAND_COUNT,
+        'lands your opponents control that could produce {c}': CastReductionMetricKind.OPPONENT_COLORLESS_LAND_COUNT,
+    }.get(normalized)
+    if kind is None:
+        return None
+    return CastReductionMetric(kind=kind, schema_version=1 if kind is CastReductionMetricKind.OPPONENT_COUNT else 2)
+
+
 def _object_count_metric(value: str) -> CastReductionMetric | None:
     normalized = " ".join(value.casefold().split())
+    scalar = _scalar_count_metric(normalized)
+    if scalar is not None:
+        return scalar
     queries: list[CastReductionObjectQuery] = []
     turn_value = {
         "card you've cycled or discarded this turn": (
@@ -461,24 +478,6 @@ def _object_count_metric(value: str) -> CastReductionMetric | None:
         return CastReductionMetric(
             kind=CastReductionMetricKind.TURN_VALUE,
             turn_fact=turn_value,
-            schema_version=2,
-        )
-    if normalized == "creature in your party":
-        return CastReductionMetric(
-            kind=CastReductionMetricKind.PARTY_SIZE,
-            schema_version=2,
-        )
-    if normalized == "color among permanents you control":
-        return CastReductionMetric(
-            kind=CastReductionMetricKind.PERMANENT_COLOR_COUNT,
-            schema_version=2,
-        )
-    if normalized in {
-        "land your opponents control that could produce {c}",
-        "lands your opponents control that could produce {c}",
-    }:
-        return CastReductionMetric(
-            kind=CastReductionMetricKind.OPPONENT_COLORLESS_LAND_COUNT,
             schema_version=2,
         )
     if normalized in {"attacking creature", "attacking creatures"}:

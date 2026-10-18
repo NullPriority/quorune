@@ -239,6 +239,7 @@
     "tests/fixtures/typed-land-entry-cards.json",
     "tests/fixtures/typed-token-ability-program-cards.json",
     "tests/fixtures/umbra-armor-cards.json",
+    "tests/fixtures/undaunted-cards.json",
     "tests/fixtures/untap-selection-limit-cards.json",
     "tests/fixtures/vanishing-cards.json",
     "tests/fixtures/variable-library-count-cards.json",
@@ -452,6 +453,17 @@
         "tests/fixtures/entry-copy-cards.json"
       ],
       "rationale": "The fixed four-original selector loop delegates its current card name through the existing assert_original_closed helper before controlled dependency-removal compiler checks. The canonical entry-copy fixture owns those original records."
+    },
+    {
+      "source": "tests/test_undaunted.py",
+      "symbol": "UndauntedCompilerTests.test_original_keyword_closes_only_the_three_independently_complete_bodies",
+      "card_names": [],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/undaunted-cards.json"
+      ],
+      "rationale": "The exact five pinned originals and two explicitly constructed cost controls are iterated by fixture Oracle identity; both unsupported original result bodies remain residual."
     }
   ],
   "full_database_only": []

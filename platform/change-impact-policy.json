@@ -5808,6 +5808,21 @@
         "test_conditional_copy_values",
         "test_activating_abilities_rules"
       ]
+    },
+    {
+      "id": "undaunted-current-opponent-self-cost-contract",
+      "patterns": [
+        "quorune/compiler/undaunted_nodes.py",
+        "quorune/compiler/cast_cost_modifier_templates.py",
+        "quorune/compiler/casting_keyword_nodes.py",
+        "quorune/self_cast_reductions.py"
+      ],
+      "test_modules": [
+        "test_undaunted",
+        "test_fixed_self_cost_surfaces",
+        "test_fixed_spell_cost_reductions",
+        "test_casting_activation_proposal_equivalence"
+      ]
     }
   ],
   "symbol_rules": [
