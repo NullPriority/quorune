@@ -8,6 +8,7 @@ import {
   orderedPartitionNames,
   record,
   targetGroups,
+  selectedTargetCostLabel,
   updateModalTargetSelection,
   type ChoiceField,
   type ChoiceValues,
@@ -701,7 +702,10 @@ function ChoiceControl({
   if (control === "mana_modes") return <ManaModes field={field} value={value} onValue={set} />;
   if (control === "refs") return <RefOptions field={field} value={value} onValue={set} labelFor={labelFor} />;
   if (control === "ordered_partition") return <OrderedPartition field={field} value={value} onValue={set} labelFor={labelFor} />;
-  if (control === "targets") return <TargetControl field={field} values={values} onChange={onChange} labelFor={labelFor} />;
+  if (control === "targets") return <>
+    <TargetControl field={field} values={values} onChange={onChange} labelFor={labelFor} />
+    {selectedTargetCostLabel(field, values) && <p role="status">{selectedTargetCostLabel(field, values)}</p>}
+  </>;
   if (control === "assignment_map") return <AssignmentMap field={field} value={value} onValue={set} labelFor={labelFor} />;
   if (control === "damage_assignments") return <DamageAssignments field={field} value={value} onValue={set} labelFor={labelFor} />;
   if (control === "object_map") return <ObjectMap field={field} value={value} onValue={set} labelFor={labelFor} />;

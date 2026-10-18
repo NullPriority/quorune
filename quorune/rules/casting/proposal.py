@@ -845,7 +845,12 @@ def _cast_offer_payload(
             if key in {"id", "kind", "requirements", "choice_schema", "label"}
         }
         if public_schema is not None:
+            from .targeted_costs import public_payable_target_schema
+            public_schema=public_payable_target_schema(public_schema,raw)
             projected["target_schema"] = public_schema
+            from .targeted_costs import public_target_costs
+            prices=public_target_costs(host,seat,raw)
+            if prices is not None:projected['target_costs']=prices
         public_options.append(projected)
         legal_options.append(option)
     cast_name = str(face.get("name") or "") if face else record.name

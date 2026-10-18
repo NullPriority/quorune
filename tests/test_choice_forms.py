@@ -10,6 +10,16 @@ from quorune.choice_forms import (
 
 
 class ChoiceFormTests(unittest.TestCase):
+    def test_target_dependent_cost_prices_are_display_metadata_without_command_authority(self):
+        prices={'kind':'generic_increase_once_per_source','clauses':[{'component_id':'source','any_target_refs':['TAXED']}],
+            'prices':[{'modes':[],'components':['source'],'requirements':{'GENERIC':2,'U':1},'label':'Pay {2}{U}'}]}
+        action={'id':'cast:SPELL','action':'cast','cost_options':[{'id':'normal','label':'Cast','target_costs':prices,
+            'target_schema':{'groups':[{'id':'target_0','min':1,'max':1,'legal_refs':['TAXED']}]}}]}
+        form=build_action_form(action,decision_kind='priority',context={})
+        field=form['variants']['options'][0]['fields'][0]
+        self.assertEqual(prices,field['target_costs'])
+        self.assertEqual({'cost_option','targets','modes'},delegated_choice_fields(action,decision_kind='priority',context={}))
+
     def test_exert_attack_form_retains_independent_linked_costs_and_attacker_requirement(self):
         rows=[{'value':'ATTACKER','label':'Attacker','maximum':2,'options':[
             {'value':'printed:trigger:front:n1','label':'Draw result'},

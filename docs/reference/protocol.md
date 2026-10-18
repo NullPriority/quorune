@@ -74,6 +74,15 @@ A client must:
 4. replace a stale decision when the packet carries `decision: null`; and
 5. submit only the action IDs and choice fields issued by the current decision.
 
+Target-dependent casting offers may include `target_costs` on a cost option and
+its target form field. Public clauses identify the current source components
+and matching target references. Each payable price row gives the selected mode
+set, applicable component set, exact mana requirements and display label.
+Multiple matching targets charge one component once. The browser selects a
+display row as targets change and flags an absent payable combination. This
+metadata grants no command fields; clients submit the ordinary cost option,
+targets and modes, and the server determines the actual total cost again.
+
 The `combat.attackers` response may include an optional `enlist` mapping from
 declared attacker references to eligible nonattacking creature references.
 Multiple Enlist instances use a distinct donor list. The issued choice form

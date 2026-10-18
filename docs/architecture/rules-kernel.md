@@ -543,6 +543,22 @@ cost is paid, including an all-mana payment. Countering the spell retains costs.
 Optional, linked whether-paid, variable, complex and mixed payment families
 remain outside this fixed contract.
 
+Opponent spell costs may depend on the announced target set. A compiled static
+component increases generic mana once when a spell targets its source or one or
+more commander creatures its controller controls. Independent components add
+their increases, followed by ordinary reductions. Current controller, phasing,
+copied abilities and ability removal determine which components apply. The
+selected cost option remains fixed while its mana is paid; this is a casting
+cost rather than a Ward trigger. Activated abilities and stack copies do not
+cast a spell and do not pay this tax.
+
+The casting offer queries canonical target groups and retains payable target
+witnesses for each cost signature. It preserves untaxed choices when another
+legal target is too expensive. Optional and modal target choices include a
+server-authored price table; choosing several qualifying targets still charges
+each source once. The client displays that table and the server recomputes the
+actual submitted target set through the same cost and legality owners.
+
 Ordinary printed Convoke is a face-pinned typed cast-cost descriptor rather
 than live keyword interpretation. `convoke.py` owns the immutable candidate,
 contribution, whole-vector payment plan, and deterministic fingerprint;

@@ -286,6 +286,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "casting.additional.paid_entry_copy",
                 "casting.bestow.fixed_mana",
                 "casting.cost.modifier.fixed_query",
+                "casting.cost.targeted_fixed_generic",
                 "casting.cost.modifier.self_public",
                 "casting.disguise.fixed_mana",
                 "casting.evoke.fixed_mana",

@@ -8,12 +8,30 @@ import {
   initialChoices,
   updateModalTargetSelection,
   validateChoices,
+  selectedTargetCostLabel,
 } from "../src/choices.ts";
 import type { ChoiceForm } from "../src/generated/protocol.ts";
 
 function form(fields: ChoiceForm["fields"]): ChoiceForm {
   return { v: 1, fields, submit_label: "Submit" };
 }
+
+test("Target-dependent casting prices display the server row once per source and reject missing combinations", () => {
+  const field = { name: "targets", control: "targets", schema: { groups: [{ id: "target_0", min: 0, max: 2 }] },
+    target_costs: { kind: "generic_increase_once_per_source", clauses: [
+      { component_id: "esior", any_target_refs: ["COMMANDER_A", "COMMANDER_B"] },
+      { component_id: "other", any_target_refs: ["OTHER"] }], prices: [
+      { modes: [], components: [], label: "Pay {U}" },
+      { modes: [], components: ["esior"], label: "Pay {3}{U}" }] } };
+  const choices = form([field]);
+  assert.equal(selectedTargetCostLabel(field, { targets: { target_0: [] } }), "Pay {U}");
+  assert.equal(selectedTargetCostLabel(field, { targets: { target_0: ["COMMANDER_A", "COMMANDER_B"] } }), "Pay {3}{U}");
+  assert.deepEqual(validateChoices(choices, { targets: { target_0: ["COMMANDER_A", "COMMANDER_B"] } }), []);
+  assert.match(selectedTargetCostLabel(field, { targets: { target_0: ["COMMANDER_A", "OTHER"] } }) ?? "", /No payable/);
+  assert.ok(validateChoices(choices, { targets: { target_0: ["COMMANDER_A", "OTHER"] } }).length);
+  assert.deepEqual(executableChoices(choices, { targets: { target_0: ["COMMANDER_A"] }, target_costs: { generic: 0 } }),
+    { targets: { target_0: ["COMMANDER_A"] } });
+});
 
 test("Opening hand actions allow one eligible card or finishing without exposing a continuation", () => {
   const opening = form([{ name: "refs", label: "Opening-hand card", control: "refs", distinct: true,

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 371,
+  "registry_version": 372,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -30262,6 +30262,103 @@
       "dependency_fail_closed_rationale": "Independent capability omissions keep typed Waterbend and complete price/result source residual; current focused tests exercise all declared dependencies.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Actual native witnesses kill omitted compiler price recognition, tap mutation, waterbent occurrence and wholeprice/result closure; each wrapped witness uses a fresh TestCase so subtests cannot swallow the expected failure.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.cost.targeted_fixed_generic",
+      "version": 1,
+      "official_rules": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Opponent spellcasting fixed generic tax tests the validated announced targets once per applicable source; source self and controlled commander subjects.",
+        "inputs": [
+          "complete source component",
+          "opponentcaster",
+          "canonical current target set"
+        ],
+        "outputs": [
+          "fixed generic increase before reductions",
+          "payable target witnesses"
+        ],
+        "exclusions": [
+          "activation taxes",
+          "subtype targets",
+          "self spell reductions",
+          "colored or variable increases"
+        ]
+      },
+      "dependencies": [
+        "casting.cost.modifier.fixed_query",
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.compiler.targeted_spell_costs.targeted_spell_cost_template",
+        "quorune.semantic_runtime.targeted_spell_costs.TargetedSpellCostHandler",
+        "quorune.rules.casting.targeted_costs.target_cost_variants",
+        "quorune.rules.casting.targeted_costs.public_target_costs",
+        "quorune.targeted_spell_costs.validate_targeted_spell_cost_fact"
+      ],
+      "positive_tests": [
+        "test_self_and_commander_targeted_costs_have_closed_source_spanned_components",
+        "test_all_five_original_tax_cards_have_complete_capability_bindings",
+        "test_original_tax_cards_keep_native_entry_characteristics_and_charix_activation",
+        "test_paid_boreal_tax_is_a_casting_cost_and_has_no_ward_choice"
+      ],
+      "negative_tests": [
+        "test_unknown_target_taxes_and_malformed_cost_specs_remain_closed",
+        "test_actual_boreal_tax_rejects_unpaid_target_and_preserves_an_untaxed_legal_offer",
+        "test_opponent_activation_targeting_tax_source_keeps_its_ordinary_price"
+      ],
+      "interaction_tests": [
+        "test_esior_taxes_one_or_more_commanders_once_and_independent_sources_stack",
+        "test_current_controller_phase_and_ability_removal_determine_future_taxes",
+        "test_increases_precede_ordinary_reductions_and_free_base_retains_the_tax",
+        "test_modal_untargeted_branch_and_aura_target_share_the_same_tax_contract",
+        "test_two_target_price_table_describes_combined_sources_and_reduced_requirements",
+        "test_copied_tax_source_uses_copied_ability_but_its_current_controller_and_identity",
+        "test_tax_cost_locks_before_mana_payment_changes_its_source",
+        "test_same_printed_tax_sources_keep_distinct_physical_cost_components"
+      ],
+      "multiplayer_tests": [
+        "test_esior_taxes_one_or_more_commanders_once_and_independent_sources_stack",
+        "test_paid_boreal_tax_is_a_casting_cost_and_has_no_ward_choice"
+      ],
+      "privacy_tests": [
+        "test_paid_boreal_tax_is_a_casting_cost_and_has_no_ward_choice"
+      ],
+      "replay_tests": [
+        "test_paid_target_tax_survives_pending_mana_replacement_with_private_loaded_replay",
+        "test_copied_tax_source_uses_copied_ability_but_its_current_controller_and_identity",
+        "test_two_target_price_table_describes_combined_sources_and_reduced_requirements"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Omitting the targeted cost, shared public cost modifier, or target authority capability keeps the whole static source residual. Unknown subject and colored/discount/activation variants remain outside the closed production.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Actual compiler producer omission leaves the source residual; native paid cast fails when cost application is omitted; native unpaid-target offer fails when payable-target filtering is omitted. Fresh TestCase witnesses ensure expected failures escape subtests.",
       "blockers": [],
       "status": "trusted"
     }

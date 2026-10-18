@@ -254,6 +254,7 @@
       "test_targeted_counter_effect_clauses",
       "test_targeted_graveyard_return_effect_clauses",
       "test_targeted_return_to_hand_effect_clauses",
+      "test_targeted_spell_costs",
       "test_trample_assignment_integration",
       "test_trigger_processing_owner",
       "test_typed_ability_fragments",

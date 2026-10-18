@@ -1391,6 +1391,8 @@ def _finalize_option(
     from .waterbend_costs import add_waterbend_requirements
     add_waterbend_requirements(option,mandatory_costs)
     option["base_requirements"] = host._mana_vector(option["requirements"])
+    from .targeted_costs import apply_target_cost_increase
+    apply_target_cost_increase(option)
     _apply_static_reductions(
         host,
         seat,
@@ -1539,23 +1541,26 @@ def build_cast_cost_options(
                 else host._effective_card_data(card).get("type_line") or ""
             )
         )
-        finalized = _finalize_option(
-            host,
-            seat,
-            card,
-            option,
-            program,
-            mandatory,
-            mechanics,
-            submission,
-            hint=hint,
-            spend_context=spend_context,
-            has_x=has_x,
-            cast_type_line=option_cast_type_line,
-        )
-        if finalized is not None:
-            result.append(finalized)
-    return tuple(result)
+        from .targeted_costs import target_cost_variants
+        for target_option in target_cost_variants(host,seat,card,program,option,submission,hint=hint):
+            finalized = _finalize_option(
+                host,
+                seat,
+                card,
+                target_option,
+                program,
+                mandatory,
+                mechanics,
+                submission,
+                hint=hint,
+                spend_context=spend_context,
+                has_x=has_x,
+                cast_type_line=option_cast_type_line,
+            )
+            if finalized is not None:
+                result.append(finalized)
+    from .targeted_costs import consolidate_target_cost_options
+    return consolidate_target_cost_options(result,hint=hint)
 
 
 __all__ = [

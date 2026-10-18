@@ -48,6 +48,13 @@ recognizing the price does not admit an unknown result. Printed Waterbend
 action observers bind the acting player through the normalized public-action
 event owner. Optional and variable Waterbend grammar remains residual.
 
+`compiler/targeted_spell_costs.py` lowers opponent spell-cost increases for the
+source itself and one or more controlled commander creatures. Descriptors bind
+the fixed generic amount and target subject; the existing cast-cost component
+registry and current static-ability fragments own runtime applicability.
+Subtype targets, activation taxes, self-spell discounts and colored or variable
+increases remain residual under this production.
+
 `compiler/conditional_flash_nodes.py` lowers complete conditional self-timing
 clauses against represented public-state predicates. An “as though” clause
 grants timing permission without granting the Flash keyword. An explicit

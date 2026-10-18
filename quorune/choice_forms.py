@@ -365,6 +365,7 @@ def _variant_form(
         fields = _schema_fields(row.get("choice_schema"), context)
         target = _target_field(row.get("target_schema"))
         if target is not None:
+            if isinstance(row.get('target_costs'),Mapping):target['target_costs']=copy.deepcopy(dict(row['target_costs']))
             fields.append(target)
         variants.append(
             {

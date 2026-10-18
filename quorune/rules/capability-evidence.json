@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "ec53fad47d7825b640865be49185c3b5123375218ea76f551bade44e9fd34820",
-  "declaration_source_fingerprint": "cda7561ca64dfb4d26389222c68eac207d3b17f23f14d70ea21bf0f412baa83a",
+  "registry_fingerprint": "368b596ef471fd78817d63e1f3150dc1ff0143935bc8ab5adc87346eaf3c525c",
+  "declaration_source_fingerprint": "078ee9530ed9944300b671aff5e31eee51311d3d32142127975f75948aebc92d",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -26516,6 +26516,512 @@
         "commander_review"
       ],
       "applicability_note": "The rejected principal, resource or face-down attempt leaves complete authoritative state unchanged."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostRuntimeTests.test_copied_tax_source_uses_copied_ability_but_its_current_controller_and_identity",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostRuntimeTests.test_current_controller_phase_and_ability_removal_determine_future_taxes",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostRuntimeTests.test_esior_taxes_one_or_more_commanders_once_and_independent_sources_stack",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostRuntimeTests.test_increases_precede_ordinary_reductions_and_free_base_retains_the_tax",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostRuntimeTests.test_modal_untargeted_branch_and_aura_target_share_the_same_tax_contract",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostRuntimeTests.test_same_printed_tax_sources_keep_distinct_physical_cost_components",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two actualBorealphysicalincarnationsretainseparatecomponentsandchargefourgenericforonecasttargetingboth;replayagrees."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostRuntimeTests.test_tax_cost_locks_before_mana_payment_changes_its_source",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostRuntimeTests.test_two_target_price_table_describes_combined_sources_and_reduced_requirements",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostRuntimeTests.test_esior_taxes_one_or_more_commanders_once_and_independent_sources_stack",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostRuntimeTests.test_paid_boreal_tax_is_a_casting_cost_and_has_no_ward_choice",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostRuntimeTests.test_targeted_spell_cost_omission_and_dependency_mutants_are_killed",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "negative",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostCompilerTests.test_unknown_target_taxes_and_malformed_cost_specs_remain_closed",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "negative",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostRuntimeTests.test_actual_boreal_tax_rejects_unpaid_target_and_preserves_an_untaxed_legal_offer",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "negative",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostRuntimeTests.test_opponent_activation_targeting_tax_source_keeps_its_ordinary_price",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostCompilerTests.test_self_and_commander_targeted_costs_have_closed_source_spanned_components",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostRuntimeTests.test_all_five_original_tax_cards_have_complete_capability_bindings",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostRuntimeTests.test_original_tax_cards_keep_native_entry_characteristics_and_charix_activation",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostRuntimeTests.test_paid_boreal_tax_is_a_casting_cost_and_has_no_ward_choice",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostRuntimeTests.test_paid_boreal_tax_is_a_casting_cost_and_has_no_ward_choice",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostRuntimeTests.test_copied_tax_source_uses_copied_ability_but_its_current_controller_and_identity",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostRuntimeTests.test_paid_target_tax_survives_pending_mana_replacement_with_private_loaded_replay",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
+    },
+    {
+      "capability_id": "casting.cost.targeted_fixed_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_targeted_spell_costs.TargetedSpellCostRuntimeTests.test_two_target_price_table_describes_combined_sources_and_reduced_requirements",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "115.1a",
+        "115.7",
+        "603.2",
+        "113.6",
+        "613.1f",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-typed opponent spell tax;actualannouncedtargetpayment/currentability/control/copy/commander andauthoritativepayableoffer/privatependingreplay within the explicit witness."
     },
     {
       "capability_id": "casting.disguise.fixed_mana",
@@ -205699,5 +206205,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "378dcc325c4f366762f87bd4615383971ba16f22480fbdc36869ed3d3e7a6107"
+  "fingerprint": "72dfedf56fba86f5cc9262cc988085fbe796e5d130865ed6fd3b7cd094c996a8"
 }

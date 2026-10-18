@@ -105,6 +105,29 @@ export function activeFields(form: ChoiceForm, values: ChoiceValues): ChoiceFiel
     .map((field) => resolveDependentField(field, values));
 }
 
+function selectedTargetPrice(field: ChoiceField, values: ChoiceValues): ChoiceField | null | undefined {
+  const costs = record(field.target_costs);
+  if (!Object.keys(costs).length) return undefined;
+  const targets = new Set(Object.values(record(values[stringValue(field.name)]))
+    .flatMap((refs) => list(refs).map(String)));
+  const components = list(costs.clauses).map(record)
+    .filter((clause) => list(clause.any_target_refs).some((ref) => targets.has(String(ref))))
+    .map((clause) => String(clause.component_id)).sort();
+  const modes = list(values.modes).map(String).sort();
+  const same = (left: string[], right: string[]) => left.length === right.length
+    && left.every((value, index) => value === right[index]);
+  const price = list(costs.prices).map(record).find((row) =>
+    same(list(row.components).map(String).sort(), components)
+    && same(list(row.modes).map(String).sort(), modes));
+  return price ?? null;
+}
+
+export function selectedTargetCostLabel(field: ChoiceField, values: ChoiceValues): string | undefined {
+  const price = selectedTargetPrice(field, values);
+  return price === undefined ? undefined : price === null
+    ? "No payable cost for these targets and modes." : String(price.label);
+}
+
 function resolveDependentField(field: ChoiceField, values: ChoiceValues): ChoiceField {
   const source = stringValue(field.options_from_map);
   if (!source) return field;
@@ -451,6 +474,9 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
       errors.push(`Choose at most ${schema.max_modes} mode(s).`);
     }
     const targets = record(value);
+    if (selectedTargetPrice(field, values) === null) {
+      errors.push("These targets and modes do not have a currently payable casting cost.");
+    }
     for (const group of selectedTargetGroups(field, values)) {
       const groupId = stringValue(group.id || "target");
       const count = list(targets[groupId]).length;
