@@ -5537,6 +5537,30 @@
         "test_choice_forms",
         "test_oracle_ir"
       ]
+    },
+    {
+      "id": "fixed-waterbend-cost-and-result-composition",
+      "patterns": [
+        "quorune/waterbend.py",
+        "quorune/compiler/waterbend_costs.py",
+        "quorune/rules/waterbend_payments.py",
+        "quorune/rules/casting/waterbend_costs.py",
+        "quorune/ability_line_normalization.py",
+        "quorune/rules/activation/offer_payload.py",
+        "tests/fixtures/waterbend-cards.json"
+      ],
+      "test_modules": [
+        "test_waterbend",
+        "test_fixed_tap_additional_costs",
+        "test_fixed_reveal_additional_costs",
+        "test_casting_payment_keywords",
+        "test_fixed_mana_abilities",
+        "test_activated_abilities",
+        "test_typed_activated_ability_catalog",
+        "test_oracle_ir",
+        "test_card_program_trust",
+        "test_choice_forms"
+      ]
     }
   ],
   "symbol_rules": [

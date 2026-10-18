@@ -384,6 +384,9 @@ def _pay_object_and_mana_costs(
     dict[str, int],
     tuple[str, Mapping[str, Any]] | None,
 ]:
+    if ability.waterbend is not None:
+        from ..waterbend_payments import pay_activation_waterbend
+        return pay_activation_waterbend(host,proposal,source,ability,response)
     if host._crew_threshold(ability) is not None:
         paid_objects, crew_context = host._pay_crew_cost(
             proposal.seat, source, ability, response
@@ -855,6 +858,10 @@ def _commit_activation_costs_and_stack(
         changed_players=[proposal.seat],
     )
     _dispatch_cycling_event(host, proposal, item, cycling_snapshot)
+    if ability.waterbend is not None:
+        from ..waterbend_payments import dispatch_waterbend_occurrence
+        from ...waterbend import WaterbendPayment
+        dispatch_waterbend_occurrence(host,proposal.seat,WaterbendPayment.from_dict(thaw_json(proposal.details)['waterbend_payment']),source_ref=source.ref,reason='Waterbend activation cost')
     return False
 
 

@@ -17,6 +17,8 @@ import re
 from typing import Any, Iterable, Mapping, Sequence
 from .public_quantity_mana_model import validate_dynamic_mana_output as _validate_dynamic_mana_output
 
+from .ability_line_normalization import strip_inline_reminder_and_granted_text as _strip_inline_reminder_and_granted_text
+from .waterbend import FixedWaterbendCost
 from .activation_usage import ActivationLimit
 from .activation_mana_cost import ActivationManaCostOption
 from .rules.activation_counter_cost import SourceCounterRemovalCost
@@ -288,6 +290,7 @@ class ActivatedAbility:
     life_payment: int = 0
     energy_payment: int = 0
     random_discard_payment: int = 0
+    waterbend: FixedWaterbendCost | None = None
     loyalty_delta: int | None = None
     source_counter_removal_cost: SourceCounterRemovalCost | None = None
     choices: tuple[CostChoice, ...] = ()
@@ -379,6 +382,7 @@ class ActivatedAbility:
             )
         if self.power_up is not None:result['power_up']=self.power_up.to_dict()
         if self.fixed_mana_result is not None:result['fixed_mana_result']=self.fixed_mana_result.to_dict()
+        if self.waterbend is not None:result['waterbend']=self.waterbend.to_dict()
         if self.random_discard_payment:result['random_discard_payment']=self.random_discard_payment
         return result
 
@@ -408,6 +412,7 @@ class ActivatedAbility:
             life_payment=value["life_payment"],
             energy_payment=value["energy_payment"],
             random_discard_payment=value.get('random_discard_payment',0),
+            waterbend=FixedWaterbendCost.from_dict(value['waterbend']) if 'waterbend' in value else None,
             loyalty_delta=value["loyalty_delta"],
             source_counter_removal_cost=(
                 None
@@ -457,7 +462,9 @@ class ActivatedAbility:
     def compiled_cost(self) -> bool:
         random_closed=not self.random_discard_payment or (self.zones==('battlefield',) and not self.mana_ability
             and not (self.choices or self.discard_source or self.sacrifice_source or self.exile_source))
-        return not self.complex_symbols and not self.uncompiled_costs and random_closed
+        waterbend_closed=self.waterbend is None or (self.zones==('battlefield',) and not self.mana_ability
+            and not (self.choices or self.discard_source or self.sacrifice_source or self.exile_source or self.untap_source or self.mana_cost_options))
+        return not self.complex_symbols and not self.uncompiled_costs and random_closed and waterbend_closed
 
     def compact(self, *, source_ref: str, zone: str) -> dict[str, Any]:
         result: dict[str, Any] = {
@@ -485,6 +492,7 @@ class ActivatedAbility:
             result["life"] = self.life_payment
         if self.energy_payment:
             result["energy"] = self.energy_payment
+        if self.waterbend is not None:result['waterbend']=self.waterbend.to_dict()
         if self.random_discard_payment:
             result['random_discard']=self.random_discard_payment
         if self.loyalty_delta is not None:
@@ -572,6 +580,7 @@ def _validate_ability_sequences_and_scalars(ability: ActivatedAbility) -> None:
         not isinstance(choice, CostChoice) for choice in ability.choices
     ):
         raise ValueError("activated ability choices must be typed")
+    if ability.waterbend is not None and not isinstance(ability.waterbend,FixedWaterbendCost):raise ValueError('Activation Waterbend cost must be typed')
     if not isinstance(ability.mana_cost_options, tuple) or any(
         not isinstance(option, ActivationManaCostOption)
         for option in ability.mana_cost_options
@@ -755,47 +764,6 @@ def _split_cost_clauses(cost_text: str) -> list[str]:
     return [clause.strip() for clause in cost_text.split(",") if clause.strip()]
 
 
-def _strip_inline_reminder_and_granted_text(line: str) -> str:
-    """Keep only activated abilities printed on the source itself.
-
-    Parenthetical reminder text and quoted abilities granted to other objects
-    can contain colons, but neither is an activated ability of this card.
-    Basic land types receive their mana abilities from the intrinsic type
-    owner rather than from their parenthesized Oracle reminder.
-    """
-
-    preserve_token_declaration = bool(
-        re.search(
-            r":\s*Create .+? creature tokens? with [\"“]"
-            r"This token can't (?:block|be blocked)\.",
-            line,
-            re.IGNORECASE,
-        )
-    )
-    result: list[str] = []
-    parenthetical_depth = 0
-    quoted = False
-    for character in line:
-        if character in {'"', "“", "”"} and parenthetical_depth == 0:
-            quoted = not quoted
-            if preserve_token_declaration:
-                result.append(character)
-            continue
-        if quoted:
-            if preserve_token_declaration:
-                result.append(character)
-            continue
-        if character == "(":
-            parenthetical_depth += 1
-            continue
-        if character == ")" and parenthetical_depth:
-            parenthetical_depth -= 1
-            continue
-        if parenthetical_depth == 0:
-            result.append(character)
-    return "".join(result).strip()
-
-
 def _builtin_effect_descriptor(
     effect_text: str,
 ) -> tuple[str | None, FrozenMap | None]:
@@ -895,6 +863,7 @@ def _fixed_equip_keyword_ability(
         life_payment=cost.life_payment,
         energy_payment=cost.energy_payment,
         random_discard_payment=cost.random_discard_payment,
+        waterbend=cost.waterbend,
         loyalty_delta=cost.loyalty_delta,
         choices=cost.choices,
         uncompiled_costs=cost.uncompiled,
@@ -1005,6 +974,7 @@ class _ParsedCost:
     choices: tuple[CostChoice, ...]
     uncompiled: tuple[str, ...]
     random_discard_payment: int = 0
+    waterbend: FixedWaterbendCost | None = None
 
 
 def _fixed_activation_energy_payment(clause: str) -> int | None:
@@ -1027,6 +997,7 @@ def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
     life_payment = 0
     energy_payment = 0
     random_discard_payment = 0
+    waterbend = None
     loyalty_delta: int | None = None
     source_counter_removal_cost: SourceCounterRemovalCost | None = None
     loyalty_clauses = 0
@@ -1052,6 +1023,11 @@ def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
         },
     }
     for clause in _split_cost_clauses(actual_cost):
+        bend=re.fullmatch(r'Waterbend \{(?P<amount>\d+)\}',clause.strip(),re.I)
+        if bend is not None:
+            if waterbend is not None:uncompiled.append(clause.strip())
+            else:waterbend=FixedWaterbendCost(int(bend['amount']))
+            continue
         symbols = parse_mana_symbols(clause)
         if 'E' in symbols:
             payment=_fixed_activation_energy_payment(clause)
@@ -1129,6 +1105,7 @@ def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
         life_payment=life_payment,
         energy_payment=energy_payment,
         random_discard_payment=random_discard_payment,
+        waterbend=waterbend,
         loyalty_delta=loyalty_delta,
         source_counter_removal_cost=source_counter_removal_cost,
         choices=tuple(choices),
@@ -1186,26 +1163,9 @@ def _cost_choice(lower: str) -> CostChoice | None:
     return None
 
 
-def _normalized_ability_line(raw_line: str) -> tuple[str, str | None]:
-    line = raw_line.strip()
-    line = _strip_inline_reminder_and_granted_text(line)
-    for keyword, effect in (
-        ("Cycling", "Draw a card."),
-        (
-            "Equip",
-            "Attach this Equipment to target creature you control. "
-            "Activate only as a sorcery.",
-        ),
-    ):
-        match = re.fullmatch(
-            rf"{keyword}\s+(?P<cost>(?:\{{[^{{}}]+\}})+)",
-            line,
-            re.IGNORECASE,
-        )
-        if match:
-            discard = ", Discard this card" if keyword == "Cycling" else ""
-            return f"{match.group('cost')}{discard}: {effect}", keyword
-    return line, None
+def _normalized_ability_line(raw_line: str) -> tuple[str,str | None]:
+    from .ability_line_normalization import normalized_ability_line
+    return normalized_ability_line(raw_line)
 
 
 def _activation_conditions(effect_text: str) -> tuple[ActivationCondition, ...]:
@@ -1543,6 +1503,7 @@ def _parse_activated_line(
             life_payment=cost.life_payment,
             energy_payment=cost.energy_payment,
             random_discard_payment=cost.random_discard_payment,
+            waterbend=cost.waterbend,
             loyalty_delta=cost.loyalty_delta,
             source_counter_removal_cost=cost.source_counter_removal_cost,
             choices=cost.choices,

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 370,
+  "registry_version": 371,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -30085,6 +30085,183 @@
       "dependency_fail_closed_rationale": "Independent omission of Devour, counter quantity, zone destination, normalized zone events and APNAP capabilities keeps Devour residual; the compiler producer omission is also rejected.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Actual native Slime fails when its replacement collector is omitted; the multiple-instance model kills omitted counter aggregation; native copied-token entry kills omitted sacrifice commit.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "cost.waterbend.fixed",
+      "version": 1,
+      "official_rules": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Fixed Waterbend casting and activation costs reserve controlled untapped artifacts or creatures for only their own generic cost, with one waterbent occurrence regardless of payment method.",
+        "inputs": [
+          "compiled fixed Waterbend cost",
+          "current controlled untapped permanent identities",
+          "canonical mana requirements"
+        ],
+        "outputs": [
+          "identity-pinned tap reservation",
+          "ordinary mana remainder",
+          "one paid Waterbend occurrence"
+        ],
+        "exclusions": [
+          "optional or linked whether-paid costs",
+          "unrepresented complex and variable costs",
+          "independent mixed payment mechanics"
+        ]
+      },
+      "dependencies": [
+        "casting.payment.improvise",
+        "permanent.tap_state.fixed_set",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.waterbend.FixedWaterbendCost",
+        "quorune.rules.waterbend_payments.select_waterbend_payment",
+        "quorune.rules.casting.waterbend_costs.finalize_waterbend_cast_option"
+      ],
+      "positive_tests": [
+        "test_fixed_waterbend_has_closed_identity_codecs_and_source_spanned_costs",
+        "test_all_eight_originals_have_complete_source_bindings",
+        "test_actual_ruthless_tapped_payment_offered_committed_and_replayed",
+        "test_vinebender_counter_and_flexible_base_stats_use_ordinary_resolution",
+        "test_water_whip_returns_both_selected_creatures_then_draws_two"
+      ],
+      "negative_tests": [
+        "test_unknown_variable_optional_and_malformed_waterbend_remain_closed",
+        "test_waterbend_rejects_wrong_objects_and_reserves_joint_mana_resources",
+        "test_waterbend_taps_cannot_pay_the_spells_ordinary_generic_cost",
+        "test_payment_rechecks_selected_incarnations_after_mana_activations",
+        "test_internal_waterbend_payment_cannot_be_forged_by_a_pilot"
+      ],
+      "interaction_tests": [
+        "test_paid_waterbend_triggers_once_for_mana_or_taps_and_uses_the_acting_player",
+        "test_source_tap_cost_cannot_share_its_object_with_waterbend",
+        "test_legal_waterbend_offer_preserves_the_colored_mana_source",
+        "test_total_cost_reduction_reduces_waterbend_mana_without_creating_extra_tap_capacity",
+        "test_countering_a_waterbend_spell_keeps_paid_taps_without_a_draw",
+        "test_free_base_cast_still_requires_the_waterbend_additional_price",
+        "test_original_waterbend_block_restrictions_use_actual_combat_legality",
+        "test_giant_koi_islandcycling_and_patrol_untap_keep_their_independent_costs"
+      ],
+      "multiplayer_tests": [
+        "test_paid_waterbend_triggers_once_for_mana_or_taps_and_uses_the_acting_player",
+        "test_actual_ruthless_tapped_payment_offered_committed_and_replayed"
+      ],
+      "privacy_tests": [
+        "test_geyser_loot_keeps_a_private_discard_choice_after_payment",
+        "test_river_spirit_keeps_flying_ward_and_private_scry_after_waterbend_cost"
+      ],
+      "replay_tests": [
+        "test_pending_mana_replacement_preserves_waterbend_reservation_and_replays",
+        "test_activation_mana_replacement_preserves_partial_waterbend_payment_and_replays",
+        "test_actual_ruthless_tapped_payment_offered_committed_and_replayed"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Independent capability omissions keep typed Waterbend and complete price/result source residual; current focused tests exercise all declared dependencies.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Actual native witnesses kill omitted compiler price recognition, tap mutation, waterbent occurrence and wholeprice/result closure; each wrapped witness uses a fresh TestCase so subtests cannot swallow the expected failure.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.additional_cost.waterbend_result_composition",
+      "version": 1,
+      "official_rules": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Compose one closed mandatory fixedWaterbend price with an independently admitted result, preserving full source span, costs and target set.",
+        "inputs": [
+          "one complete typedWaterbendprice",
+          "independently closed result descriptor"
+        ],
+        "outputs": [
+          "source-pinned complete price/result program"
+        ],
+        "exclusions": [
+          "unknown cost descriptors",
+          "unclosed result shapes",
+          "optional or multiple prices"
+        ]
+      },
+      "dependencies": [
+        "cost.waterbend.fixed"
+      ],
+      "implementation_components": [
+        "quorune.compiler.waterbend_costs.closed_waterbend_spell_result",
+        "quorune.compiler.spell_additional_cost_nodes.typed_additional_cost_spell_node"
+      ],
+      "positive_tests": [
+        "test_fixed_waterbend_has_closed_identity_codecs_and_source_spanned_costs"
+      ],
+      "negative_tests": [
+        "test_unknown_variable_optional_and_malformed_waterbend_remain_closed"
+      ],
+      "interaction_tests": [
+        "test_paid_waterbend_triggers_once_for_mana_or_taps_and_uses_the_acting_player"
+      ],
+      "multiplayer_tests": [
+        "test_paid_waterbend_triggers_once_for_mana_or_taps_and_uses_the_acting_player"
+      ],
+      "privacy_tests": [
+        "test_geyser_loot_keeps_a_private_discard_choice_after_payment"
+      ],
+      "replay_tests": [
+        "test_pending_mana_replacement_preserves_waterbend_reservation_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Independent capability omissions keep typed Waterbend and complete price/result source residual; current focused tests exercise all declared dependencies.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Actual native witnesses kill omitted compiler price recognition, tap mutation, waterbent occurrence and wholeprice/result closure; each wrapped witness uses a fresh TestCase so subtests cannot swallow the expected failure.",
       "blockers": [],
       "status": "trusted"
     }

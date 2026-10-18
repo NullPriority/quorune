@@ -16,6 +16,7 @@ from .spell_additional_cost_templates import (
     fixed_zone_change_additional_cost_template,
 )
 from ..rules.capabilities import capability_dependencies_for_node
+from .waterbend_costs import fixed_waterbend_additional_cost_template
 
 
 PERMANENT_ADDITIONAL_COST_TEMPLATE = "fixed-permanent-additional-cost-v1"
@@ -29,6 +30,7 @@ def permanent_additional_cost_node(*, node_id, line, material_line, span: Source
     if not material_line.casefold().startswith("as an additional cost to cast this spell,"):
         return None
     template = next((value for parse in (
+        fixed_waterbend_additional_cost_template,
         fixed_tap_additional_cost_template, fixed_counter_additional_cost_template, fixed_sacrifice_additional_cost_template,
         fixed_zone_change_additional_cost_template, fixed_life_payment_additional_cost_template,
         fixed_alternative_additional_cost_template,

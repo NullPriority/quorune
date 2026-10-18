@@ -750,11 +750,20 @@ def fixed_public_action_event_binding_spec(
     del card_name
     return (
         _public_attack_spec(material_line)
+        or _public_waterbend_spec(material_line)
         or _public_library_action_spec(material_line)
         or _public_damage_spec(material_line)
         or _public_zone_spec(material_line)
         or _public_cycle_spec(material_line)
     )
+
+
+def _public_waterbend_spec(material_line):
+    match=re.fullmatch(r'Whenever (?P<actor>you|a player|an opponent) (?P<verb>waterbend|waterbends), (?P<body>.+)',material_line,re.I)
+    if match is None or (match['actor'].casefold()=='you')!=(match['verb'].casefold()=='waterbend'):return None
+    from ..waterbend import WATERBEND_CAPABILITY,WATERBEND_EVENT
+    return _spec(WATERBEND_EVENT,'public_waterbend',match['body'],'fixed-waterbend-trigger-v1',
+        'trigger-event-normalized-public-action',condition=_actor_condition(match['actor'],field='player'),capabilities=(WATERBEND_CAPABILITY,))
 
 
 def _public_library_action_spec(material_line: str) -> FixedPublicEventBindingSpec | None:

@@ -40,6 +40,14 @@ ordinary redundancy. Concurrent Convoke and Improvise still require a mixed
 tap-payment owner and remain residual, as do variable tap discounts and unknown
 price or keyword qualifiers.
 
+Fixed Waterbend costs compile into an optional typed activation cost field or
+one mandatory casting-price descriptor. The existing result owners keep their
+source spans and capabilities. A separate price/result composition capability
+validates the complete Waterbend price and the independently admitted result;
+recognizing the price does not admit an unknown result. Printed Waterbend
+action observers bind the acting player through the normalized public-action
+event owner. Optional and variable Waterbend grammar remains residual.
+
 `compiler/conditional_flash_nodes.py` lowers complete conditional self-timing
 clauses against represented public-state predicates. An “as though” clause
 grants timing permission without granting the Flash keyword. An explicit

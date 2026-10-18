@@ -21,6 +21,7 @@ from .spell_additional_cost_templates import (
     fixed_zone_change_additional_cost_template,
 )
 from ..rules.capabilities import CapabilityRegistry
+from .waterbend_costs import fixed_waterbend_additional_cost_template
 
 
 EffectTemplate = Callable[
@@ -211,6 +212,8 @@ def _additional_cost_result_node(
     mechanics = tuple(dict.fromkeys(
         ("cr-601-casting-spells", *cost_mechanics, *effect_mechanics)
     ))
+    from ..waterbend import WATERBEND_COMPOSITION_MECHANIC
+    if cost.cost_schema.get('additional_costs',[{}])[0].get('kind')=='waterbend':mechanics=(*mechanics,WATERBEND_COMPOSITION_MECHANIC)
     gate = dependency_gate(
         mechanics=mechanics,
         effects=effects,
@@ -278,7 +281,7 @@ def typed_additional_cost_spell_node(
     if not rows:
         return None
     first_clause = rows[0][1].strip()
-    cost = fixed_tap_additional_cost_template(first_clause)
+    cost = fixed_waterbend_additional_cost_template(first_clause) or fixed_tap_additional_cost_template(first_clause)
     cost_mechanics = ()
     if cost is None:
         cost=fixed_counter_additional_cost_template(first_clause)

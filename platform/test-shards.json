@@ -258,6 +258,7 @@
       "test_trigger_processing_owner",
       "test_typed_ability_fragments",
       "test_untap_selection_limits",
+      "test_waterbend",
       "test_zone_general_rules"
     ],
     "functional-07": [

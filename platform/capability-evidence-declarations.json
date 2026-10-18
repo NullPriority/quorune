@@ -14114,6 +14114,174 @@
       "applicability_note": "Typed complete mode prices correlate nonempty distinct selections with exact targets and canonical total cost. Actual Raid casts prove summed costs, illegal/underpaid/unauthorized rollback, original printed cost, selected consequences and Electromancer total reduction; private projections, pending load and replay remain exact."
     },
     {
+      "capability_id": "casting.additional_cost.waterbend_result_composition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_paid_waterbend_triggers_once_for_mana_or_taps_and_uses_the_acting_player",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.waterbend_result_composition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_paid_waterbend_triggers_once_for_mana_or_taps_and_uses_the_acting_player",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.waterbend_result_composition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_waterbend_dependency_producer_payment_and_occurrence_mutants_are_killed",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.waterbend_result_composition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_waterbend.WaterbendModelCompilerTests.test_unknown_variable_optional_and_malformed_waterbend_remain_closed",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.waterbend_result_composition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_waterbend.WaterbendModelCompilerTests.test_fixed_waterbend_has_closed_identity_codecs_and_source_spanned_costs",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.waterbend_result_composition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_geyser_loot_keeps_a_private_discard_choice_after_payment",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.waterbend_result_composition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_pending_mana_replacement_preserves_waterbend_reservation_and_replays",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
       "capability_id": "casting.additional_cost.zone_change.fixed_discard",
       "evidence_class": "interaction",
       "test_id": "tests.test_counted_spell_additional_costs.CountedSpellCostRuntimeTests.test_actual_counted_discard_replacement_suspends_saves_and_replays",
@@ -67065,6 +67233,630 @@
         "commander_review"
       ],
       "applicability_note": "Actual Raff, Civil Servant and Redcap use real casts and resolution-time tap choices. Exact distinct counts, fresh creatures, current controller versus owner, locked payer after control changes, non-Human and another predicates, vigilant attacking source, tap-trigger group, atomic rejection, principal privacy and pending-load/preaction replay are covered."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_countering_a_waterbend_spell_keeps_paid_taps_without_a_draw",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_free_base_cast_still_requires_the_waterbend_additional_price",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_giant_koi_islandcycling_and_patrol_untap_keep_their_independent_costs",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_legal_waterbend_offer_preserves_the_colored_mana_source",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_original_waterbend_block_restrictions_use_actual_combat_legality",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_paid_waterbend_triggers_once_for_mana_or_taps_and_uses_the_acting_player",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_source_tap_cost_cannot_share_its_object_with_waterbend",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_total_cost_reduction_reduces_waterbend_mana_without_creating_extra_tap_capacity",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_actual_ruthless_tapped_payment_offered_committed_and_replayed",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_paid_waterbend_triggers_once_for_mana_or_taps_and_uses_the_acting_player",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_waterbend_dependency_producer_payment_and_occurrence_mutants_are_killed",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_waterbend.WaterbendModelCompilerTests.test_unknown_variable_optional_and_malformed_waterbend_remain_closed",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_internal_waterbend_payment_cannot_be_forged_by_a_pilot",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_payment_rechecks_selected_incarnations_after_mana_activations",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_waterbend_rejects_wrong_objects_and_reserves_joint_mana_resources",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_waterbend_taps_cannot_pay_the_spells_ordinary_generic_cost",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_waterbend.WaterbendModelCompilerTests.test_fixed_waterbend_has_closed_identity_codecs_and_source_spanned_costs",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_actual_ruthless_tapped_payment_offered_committed_and_replayed",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_all_eight_originals_have_complete_source_bindings",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_vinebender_counter_and_flexible_base_stats_use_ordinary_resolution",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_water_whip_returns_both_selected_creatures_then_draws_two",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_geyser_loot_keeps_a_private_discard_choice_after_payment",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_river_spirit_keeps_flying_ward_and_private_scry_after_waterbend_cost",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_activation_mana_replacement_preserves_partial_waterbend_payment_and_replays",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_actual_ruthless_tapped_payment_offered_committed_and_replayed",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
+    },
+    {
+      "capability_id": "cost.waterbend.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_waterbend.WaterbendRuntimeTests.test_pending_mana_replacement_preserves_waterbend_reservation_and_replays",
+      "official_rule_ids": [
+        "701.67",
+        "701.67a",
+        "701.67b",
+        "701.67c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "302.6",
+        "605.3a",
+        "603.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "FixedWaterbend source,own-costcap,nativecost/result/occurrence,authority,hiddenprojectionandexactreplay assertions within this witness scope."
     },
     {
       "capability_id": "counter.characteristic.keyword",

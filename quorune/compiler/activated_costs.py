@@ -19,6 +19,9 @@ def activated_ability_cost_capabilities(
     """Return the reviewed capability owners for one typed activation cost."""
 
     additional: list[str] = []
+    if ability.waterbend is not None:
+        from ..waterbend import WATERBEND_CAPABILITY
+        additional.append(WATERBEND_CAPABILITY)
     if ability.energy_payment:
         additional.append('activation.energy.fixed_payment')
     if ability.random_discard_payment:
@@ -91,6 +94,7 @@ def activated_ability_cost(ability: ActivatedAbility) -> dict[str, Any]:
         "choices": [choice.compact() for choice in ability.choices],
         "uncompiled_costs": list(ability.uncompiled_costs),
     }
+    if ability.waterbend is not None:result['waterbend']=ability.waterbend.to_dict()
     if ability.mana_cost_options:
         result["mana_cost_options"] = [
             option.to_dict() for option in ability.mana_cost_options

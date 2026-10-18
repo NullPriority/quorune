@@ -100,6 +100,14 @@ Delve and mana remainders. Save/load revalidates the original reservation rather
 than replacing it with a new selection. Existing casting options omit this
 frame and retain their serialized form.
 
+Fixed Waterbend activation descriptors omit `waterbend` unless present. A
+`waterbend_payment` records its closed cost and selected physical objects,
+public references and logical incarnations in the proposal or casting option.
+The server's internal `_waterbend_payment` response field carries that exact
+reservation through a rolled-back mana replacement continuation. Pilots cannot
+submit the field. Resume rejects a changed selected incarnation, and ordinary
+actions preserve their previous descriptor and continuation keys.
+
 Object-selecting replacement journals may carry an optional `objects` array of
 distinct selected references. The selected typed operation validates that set
 against its captured candidates and shared entry reservations. Object choices

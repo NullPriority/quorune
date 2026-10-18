@@ -48,7 +48,7 @@ ACTIVATED_ABILITY_DESCRIPTOR_FIELDS = frozenset(
     }
 )
 _OPTIONAL_DESCRIPTOR_FIELDS = frozenset(
-    {"mana_cost_options", "source_counter_removal_cost", "power_up", "fixed_mana_result", "random_discard_payment"}
+    {"mana_cost_options", "source_counter_removal_cost", "power_up", "fixed_mana_result", "random_discard_payment", "waterbend"}
 )
 
 _SEQUENCE_FIELDS = (

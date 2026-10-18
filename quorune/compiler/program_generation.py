@@ -1369,7 +1369,7 @@ def _is_closed_effect_program(program: SemanticProgram) -> bool:
     if is_closed_permanent_additional_cost_program(program):
         return True
     from .nonleaf_effect_closure import nonleaf_effect_program_is_closed
-    if nonleaf_effect_program_is_closed(program):return True
+    if nonleaf_effect_program_is_closed(program,recognizers=_closed_effect_recognizers()):return True
     if is_closed_composed_spell_effect_program(
         program,
         component_recognizers=_closed_effect_recognizers(),

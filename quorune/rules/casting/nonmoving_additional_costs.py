@@ -11,6 +11,12 @@ from .additional_tap_costs import validate_fixed_tap_payment
 
 def select_fixed_nonmoving_cost(host,seat,source,option,mandatory,response,*,hint,choice_schema,position):
     """None delegates other kinds; a result carries legality and an optional selection."""
+    from ...waterbend import fixed_waterbend_cost
+    from .waterbend_costs import validate_cast_waterbend
+    if fixed_waterbend_cost(mandatory[position]) is not None:
+        try:validate_cast_waterbend(host,seat,source,option)
+        except ValueError:return False,None
+        return True,None
     try:
         tap=fixed_tap_additional_cost(mandatory[position])
         reveal=fixed_reveal_additional_cost(mandatory[position])

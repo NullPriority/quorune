@@ -355,6 +355,13 @@ def build_activation_proposal(
                 request.actor
             ),
         )
+    waterbend_details={}
+    if ability.waterbend is not None:
+        from ..waterbend_payments import activation_waterbend_plan
+        try:payment=activation_waterbend_plan(host,request.actor,source,ability,requirements,response,hint=False)
+        except ValueError as exc:raise ActivationProposalError(str(exc),reason='stale_waterbend_payment') from exc
+        if payment is None:raise ActivationProposalError('Waterbend payment is not payable',status='unpayable',reason='waterbend_unpayable')
+        requirements,_,waterbend,_=payment;waterbend_details={'waterbend_payment':waterbend.to_dict()}
     proposal = ActivationProposal(
         seat=request.actor,
         source_ref=source.ref,
@@ -376,6 +383,7 @@ def build_activation_proposal(
                 "selected_modes": selected_modes,
                 "target_schema_override": target_schema,
                 "builtin_context": context,
+                **waterbend_details,
                 **(
                     {
                         "mana_cost_option": mana_option.to_dict(),
@@ -561,31 +569,8 @@ def build_activation_offer(
     fetch_types = selected.library_search_types
     if fetch_types:
         hint["search_types"] = list(fetch_types)
-    payload: dict[str, Any] = {
-        "kind": "activate",
-        "source": source.ref,
-        "ability": selected.ability_id,
-        "from": source.zone,
-        "cost_summary": {
-            key: value
-            for key, value in hint.items()
-            if key
-            in {
-                "m",
-                "tap",
-                "life",
-                "energy",
-                "random_discard",
-                "loyalty",
-                "remove_source_counter",
-                "sac_self",
-                "discard_self",
-                "exile_self",
-                "choose_cost",
-                "mana_options",
-            }
-        },
-    }
+    from .offer_payload import activation_offer_payload
+    payload=activation_offer_payload(source,selected,hint)
     if selected.mana_cost_options:
         payload["cost_options"] = [
             {
@@ -604,6 +589,12 @@ def build_activation_offer(
     choice_schema = _activation_choice_schema(
         host, seat, source, selected, hint
     )
+    if selected.waterbend is not None:
+        from ..waterbend_payments import activation_waterbend_plan
+        requirements=reduced_requirements(selected,legendary_creatures=host._legendary_creatures_controlled(seat))
+        payment=activation_waterbend_plan(host,seat,source,selected,requirements,{},hint=True)
+        if payment is None:return ActivationProposalResult('unpayable','waterbend_unpayable')
+        choice_schema={**(choice_schema or {}),**payment[3]}
     if choice_schema is not None:
         payload["choice_schema"] = choice_schema
     if public_schema is not None:

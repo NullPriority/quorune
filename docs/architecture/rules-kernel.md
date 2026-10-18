@@ -528,6 +528,21 @@ and post-mana checks reject a changed incarnation, controller, type, phase or
 tap state before the canonical tap group commits. Free base prices retain the
 mandatory taps; countered spells retain their completed payments.
 
+Fixed Waterbend costs use the same mana solver and canonical tap owner for
+casting and battlefield activations. The compiler retains Waterbend's own
+generic amount separately from the ordinary total requirements. Each selected
+untapped controlled artifact or creature replaces one generic mana, up to that
+amount; an artifact creature counts once. Source tap-symbol costs reserve the
+source separately, while other newly controlled creatures may help.
+The total cost receives ordinary reductions before a Waterbend payment is
+selected. An exact payable-subset search leaves required mana sources available.
+Both proposal and post-mana checks retain selected physical and logical identity.
+The existing mana replacement continuation carries that reservation across
+save/load. One normalized `player.waterbent` occurrence is published when the
+cost is paid, including an all-mana payment. Countering the spell retains costs.
+Optional, linked whether-paid, variable, complex and mixed payment families
+remain outside this fixed contract.
+
 Ordinary printed Convoke is a face-pinned typed cast-cost descriptor rather
 than live keyword interpretation. `convoke.py` owns the immutable candidate,
 contribution, whole-vector payment plan, and deterministic fingerprint;

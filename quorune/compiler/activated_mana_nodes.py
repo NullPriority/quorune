@@ -726,6 +726,8 @@ def activated_oracle_node(
             card_name=card_name,
             effect_template=effect_template,
         )
+    from .waterbend_costs import closed_waterbend_source_result
+    template,effects,target_schema,mechanics=closed_waterbend_source_result(ability,(template,effects,target_schema,mechanics))
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
         mechanics = tuple(dict.fromkeys((*mechanics, "exhaust")))
     residual_ids = _activated_effect_residuals(

@@ -1215,12 +1215,16 @@ def capability_dependencies_for_node(
     if (shape_context := _query.public_query_amount_shape_context(effects, mechanics)) is None: return ()
     shape_effects, shape_mechanics = shape_context
     dependencies: set[str] = _query.declared_amount_dependencies(mechanics)
+    from ..waterbend import WATERBEND_COMPOSITION_CAPABILITY,WATERBEND_COMPOSITION_MECHANIC
+    if WATERBEND_COMPOSITION_MECHANIC in mechanics:dependencies.add(WATERBEND_COMPOSITION_CAPABILITY)
     if PAYMENT_COMPOSITION_MECHANIC in mechanics:dependencies.add(PAYMENT_COMPOSITION_CAPABILITY)
     dependencies.update(
         fixed_alternative_additional_cost_node_capabilities(
             cost_schema=cost_schema
         )
     )
+    from ..waterbend import waterbend_node_capabilities
+    dependencies.update(waterbend_node_capabilities(cost_schema=cost_schema))
     dependencies.update(fixed_tap_additional_cost_node_capabilities(cost_schema=cost_schema))
     dependencies.update(
         fixed_counter_additional_cost_node_capabilities(
@@ -1503,11 +1507,14 @@ def capability_covered_mechanics(
     if "casting.additional_cost.fixed_sacrifice" in supplied:
         covered.add("cr-601-casting-spells")
     if PAYMENT_COMPOSITION_CAPABILITY in supplied:covered.add(PAYMENT_COMPOSITION_MECHANIC)
+    from ..waterbend import WATERBEND_COMPOSITION_CAPABILITY,WATERBEND_COMPOSITION_MECHANIC
+    if WATERBEND_COMPOSITION_CAPABILITY in supplied:covered.add(WATERBEND_COMPOSITION_MECHANIC)
     if supplied.intersection(
         {
             "casting.additional_cost.fixed_alternative",
             "casting.additional_cost.fixed_life_payment",
             "casting.additional_cost.fixed_tap",
+            "cost.waterbend.fixed",
         }
     ):
         covered.add("cr-601-casting-spells")

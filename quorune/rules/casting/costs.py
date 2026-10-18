@@ -837,6 +837,7 @@ def _find_improvise_plan(
     *,
     spend_context: Any,
     reserved_cards: Sequence[Any] = (),
+    maximum_taps: int | None = None,
 ) -> tuple[dict[str, int], list[Any]] | None:
     """Find a deterministic minimum-card Improvise payment."""
 
@@ -850,6 +851,7 @@ def _find_improvise_plan(
         reduced = host._mana_vector(base)
         if len(selected) > reduced["GENERIC"]:
             return
+        if maximum_taps is not None and len(selected)>maximum_taps:return
         reduced["GENERIC"] -= len(selected)
         if host._cost_is_affordable(
             seat,
@@ -1386,6 +1388,8 @@ def _finalize_option(
     option_additional_costs = option.pop("_additional_option_costs", ())
     if option_additional_costs:
         mandatory_costs = [*mandatory_costs, *option_additional_costs]
+    from .waterbend_costs import add_waterbend_requirements
+    add_waterbend_requirements(option,mandatory_costs)
     option["base_requirements"] = host._mana_vector(option["requirements"])
     _apply_static_reductions(
         host,
@@ -1402,8 +1406,8 @@ def _finalize_option(
         if not candidates:
             return None
         option["exile_candidates"] = candidates
-    from .additional_tap_costs import finalize_fixed_tap_option
-    return finalize_fixed_tap_option(host,seat,card,option,program,mandatory_costs,mechanics,response,
+    from .waterbend_costs import finalize_waterbend_cast_option
+    return finalize_waterbend_cast_option(host,seat,card,option,program,mandatory_costs,mechanics,response,
         hint=hint,spend_context=spend_context,has_x=has_x,cast_type_line=cast_type_line)
 
 
