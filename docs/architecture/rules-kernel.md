@@ -894,3 +894,11 @@ runtime fidelity gates. The generated
 families. Primary evidence is the deterministic test suite, replay tests,
 privacy tests, mutation/rollback evidence, and source-pinned conformance
 artifacts.
+
+Targeted activation announcement and payment share the ordinary stack owner.
+The announcement exists inside the command transaction before costs can move
+its source. Canonical zone transitions capture its source information, and
+payment finalization preserves that frame rather than rebuilding it from the
+post-cost card. Failed and suspended payments retain the command's atomic
+rollback boundary. [Target legality](target-legality.md) owns the acting-object
+and source-information distinctions.

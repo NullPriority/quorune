@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+from .target_source import stack_targeting_source
 from .entry_copy import copiable_oracle_id
 from .carddb_characteristics import copiable_card_characteristics
 from .rules.enlist import enlist_offer_rows,prepare_enlist_costs,commit_enlist_costs,enlist_trigger_items
@@ -3429,7 +3431,7 @@ class CommanderEngine(
             public_schema = self._public_target_schema(
                 item.controller,
                 target_schema,
-                source_ref=item.ref,
+                acting_source=stack_targeting_source(self,item), source_ref=item.ref,
             )
             if public_schema is None:
                 self._counter_stack_item(

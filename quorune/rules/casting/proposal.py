@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from ...target_source import spell_targeting_source
+
 import copy
 from collections.abc import Mapping
 from dataclasses import replace
@@ -69,6 +71,7 @@ class CastProposalHost(CastCostHost, Protocol):
         *,
         modes: list[str],
         source_ref: str,
+        acting_source: Any = None,
         target_schema: Mapping[str, Any] | None = None,
     ) -> tuple[list[str], Any]: ...
 
@@ -80,6 +83,7 @@ class CastProposalHost(CastCostHost, Protocol):
         schema: Mapping[str, Any],
         *,
         source_ref: str,
+        acting_source: Any = None,
     ) -> Mapping[str, Any] | None: ...
 
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
@@ -628,7 +632,7 @@ def _cast_targets_and_tap_costs(
         program,
         host._normalize_target_submission(request.response().get("targets")),
         modes=list(request.modes),
-        source_ref=card.ref,
+        acting_source=spell_targeting_source(host,card), source_ref=card.ref,
         target_schema=target_schema,
     )
     effective_target_schema = (
@@ -754,7 +758,7 @@ def build_cast_proposal(
     ) = _cast_targets_and_tap_costs(
         host,
         request,
-        card,
+        prospective_cast_card(host,card,str(face.get('name')) if face else None),
         program,
         selected,
         aura_target_schema,
@@ -837,7 +841,7 @@ def _cast_offer_payload(
         public_schema = None
         if target_spec is not None:
             public_schema = host._public_target_schema(
-                seat, target_spec, source_ref=card.ref
+                seat, target_spec, acting_source=spell_targeting_source(host,card), source_ref=card.ref
             )
             if public_schema is None:
                 continue

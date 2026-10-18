@@ -5501,6 +5501,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/target_restriction_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/targeted_spell_costs.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -9462,10 +9477,10 @@
         "rules",
         "semantics"
       ],
-      "game_state_access": "none",
+      "game_state_access": "mutable_owner",
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
-      "replay_participation": "none"
+      "replay_participation": "authoritative"
     },
     {
       "file": "quorune/rules/activation/proposal.py",
@@ -14836,6 +14851,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/target_restrictions.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/targeted_spell_costs.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -15439,6 +15469,34 @@
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "none"
+    },
+    {
+      "file": "quorune/target_restrictions.py",
+      "layer": "rules",
+      "owning_subsystem": "target_legality",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/target_source.py",
+      "layer": "rules",
+      "owning_subsystem": "target_legality",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "mutable_owner",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
     },
     {
       "file": "quorune/targeted_spell_costs.py",

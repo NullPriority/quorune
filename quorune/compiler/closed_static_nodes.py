@@ -90,6 +90,11 @@ def closed_static_or_replacement_node(
 ) -> OracleNode | None:
     """Dispatch closed nontriggered static and replacement line owners."""
 
+    from .target_restriction_nodes import target_restriction_node
+    restriction=target_restriction_node(node_id=node_id,line=line,material_line=material_line,span=span,
+        source_name=source_name,card_types=card_types,permanent_card_types=permanent_card_types,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if restriction is not None:return restriction
+
     from .entry_reveal_templates import entry_reveal_node
     revealed_entry=entry_reveal_node(node_id=node_id,line=line,material_line=material_line,
         span=span,source_name=source_name,capability_registry=capability_registry,

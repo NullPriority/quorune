@@ -574,6 +574,31 @@ def _commit_source_cost(
     return origin
 
 
+def _activation_payment_context(host,paid_objects,special_cost_context):
+    """Finalize paid-object facts without replacing announced source information."""
+    snapshots = [host._target_snapshot(host.state.cards[object_id].ref) for object_id in paid_objects]
+    return {
+        "cost_objects": [
+            host.state.cards[object_id].ref for object_id in paid_objects
+        ],
+        "cost_object_snapshots": snapshots,
+        **(
+            {
+                special_cost_context[0]: thaw_value(
+                    special_cost_context[1]
+                )
+            }
+            if special_cost_context is not None
+            else {}
+        ),
+        "cost_mana_value_plus_one": (
+            float(snapshots[0].get("mana_value", 0)) + 1
+            if len(snapshots) == 1
+            else None
+        ),
+    }
+
+
 def _activation_stack_item(
     host: ActivationCommitHost,
     proposal: ActivationProposal,
@@ -585,12 +610,14 @@ def _activation_stack_item(
     attachment_snapshot: SourceAttachmentSnapshot | None,
     special_cost_context: tuple[str, Mapping[str, Any]] | None,
     source_activation_context: Mapping[str, Any] | None,
+    *, announcement: StackItem | None = None,
 ) -> StackItem:
     details = dict(thaw_json(proposal.details))
-    snapshots = [
-        host._target_snapshot(host.state.cards[object_id].ref)
-        for object_id in paid_objects
-    ]
+    payment_context = _activation_payment_context(host,paid_objects,special_cost_context)
+    if announcement is not None:
+        announcement.context.update(payment_context)
+        announcement.context.update(source_activation_context or {})
+        return announcement
     ref = host._next_ref("S")
     return StackItem(
         stack_id=host._stable_runtime_id("stack", ref),
@@ -630,24 +657,7 @@ def _activation_stack_item(
                 if details.get("target_schema_override") is not None
                 else {}
             ),
-            "cost_objects": [
-                host.state.cards[object_id].ref for object_id in paid_objects
-            ],
-            "cost_object_snapshots": snapshots,
-            **(
-                {
-                    special_cost_context[0]: thaw_value(
-                        special_cost_context[1]
-                    )
-                }
-                if special_cost_context is not None
-                else {}
-            ),
-            "cost_mana_value_plus_one": (
-                float(snapshots[0].get("mana_value", 0)) + 1
-                if len(snapshots) == 1
-                else None
-            ),
+            **payment_context,
         },
     )
 
@@ -766,7 +776,8 @@ def _commit_activation_costs_and_stack(
         clear_mana_undo_stack(host.state.players[proposal.seat].stats)
     from ...chosen_color_mana_runtime import capture_chosen_color_mana_source
     chosen_source_information = capture_chosen_color_mana_source(source, ability)
-    from .payment_commit import commit_activation_payments
+    from .payment_commit import commit_activation_payments, announce_targeted_activation
+    announcement = announce_targeted_activation(host,proposal,source,ability,response,attachment_snapshot,transmute_context)
     paid_objects, activations, spent, special_cost_context = commit_activation_payments(
         host, proposal, source, ability, response, mana_option,
     )
@@ -811,12 +822,12 @@ def _commit_activation_costs_and_stack(
         paid_objects,
         attachment_snapshot,
         special_cost_context,
-        source_activation_context,
+        source_activation_context, announcement=announcement,
     )
     begin_ninjutsu_reveal(host, source, item)
     if duration_tracked:
         item.context["control_duration_snapshot"] = duration_snapshot.to_dict() if duration_snapshot is not None else None
-    host.state.stack.append(item)
+    if announcement is None:host.state.stack.append(item)
     from ..target_announcements import dispatch_target_announcements
     dispatch_target_announcements(host, item)
     collect_ward_occurrences(host, item)

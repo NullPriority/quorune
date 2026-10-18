@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from ...target_source import ability_targeting_source
+
 from collections.abc import Mapping
 from dataclasses import replace
 from typing import Any, Protocol
@@ -67,6 +69,7 @@ class ActivationProposalHost(Protocol):
         *,
         modes: list[str],
         source_ref: str,
+        acting_source: Any = None,
         target_schema: Mapping[str, Any] | None = None,
     ) -> tuple[list[str], Any]: ...
 
@@ -94,6 +97,7 @@ class ActivationProposalHost(Protocol):
         schema: Mapping[str, Any],
         *,
         source_ref: str,
+        acting_source: Any = None,
     ) -> Mapping[str, Any] | None: ...
 
     def _crew_threshold(self, ability: ActivatedAbility) -> int | None: ...
@@ -309,7 +313,7 @@ def build_activation_proposal(
         program,
         host._normalize_target_submission(response.get("targets")),
         modes=list(request.modes),
-        source_ref=source.ref,
+        acting_source=ability_targeting_source(host,source), source_ref=source.ref,
         target_schema=target_schema,
     )
     effective_target_schema = (
@@ -514,7 +518,7 @@ def build_activation_offer(
     public_schema = None
     if target_schema is not None:
         public_schema = host._public_target_schema(
-            seat, target_schema, source_ref=source.ref
+            seat, target_schema, acting_source=ability_targeting_source(host,source), source_ref=source.ref
         )
         if public_schema is None:
             return ActivationProposalResult("unavailable", "mandatory_target_unavailable")

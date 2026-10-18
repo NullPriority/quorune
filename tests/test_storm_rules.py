@@ -58,7 +58,7 @@ class CopyTargetModelTests(unittest.TestCase):
 
     def test_copy_assignment_matrix_keeps_only_server_pinned_originals(self):
         class Host(TargetSelectionOwnerMixin):
-            def _target_candidate_map(self, actor, plan, *, source_ref):
+            def _target_candidate_map(self, actor, plan, *, source_ref, acting_source=None):
                 return {group.group_id: ["CURRENT", "OTHER"] for group in plan.groups}
 
             def _target_snapshot(self, ref):

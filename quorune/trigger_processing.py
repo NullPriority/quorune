@@ -404,6 +404,8 @@ def enqueue_trigger_batch(
 
     if not items:
         return
+    from .target_source import ensure_trigger_targeting_source
+    for item in items:ensure_trigger_targeting_source(host,item)
     pending_items = [
         PendingTriggerItem.from_dict(item.to_dict())
         for item in items

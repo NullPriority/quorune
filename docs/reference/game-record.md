@@ -91,6 +91,17 @@ card keeps its own duration; copied stack contexts cannot extend or clear the
 original disclosure. Ordinary stack records omit this context and keep their
 existing bytes.
 
+Targeted ability frames may contain a version-one
+`targeting_source_characteristics` context. Its closed fields identify the
+physical object, public reference, logical incarnation, expected zone,
+controller, type line and colors. Canonical departure capture updates that
+binding before the source changes zones. Resolution uses current information
+for the same incarnation or its captured departure information. Stack copies
+of abilities retain the source binding while keeping their own controller.
+The binding is internal; it does not add projected choice authority. Older
+frames without it remain structurally readable under the existing execution
+provenance contract.
+
 Fixed additional tap prices record `fixed_additional_tap_payment` in the
 selected casting option. Its closed version-one frame contains the compiled
 price and each selected physical object, logical incarnation and reference.

@@ -1073,6 +1073,8 @@ def _semantic_trigger_context(
         stack_context[CREATURE_POWER_DAMAGE_LKI_CONTEXT] = source_lki
     from .scalar_effect_amounts import scalar_source_context
     stack_context.update(scalar_source_context(host, source, program.effects, characteristics=source_characteristics))
+    from .target_source import capture_targeting_source, TARGETING_SOURCE_CONTEXT
+    if program.target_schema:stack_context[TARGETING_SOURCE_CONTEXT]=capture_targeting_source(host,source,characteristics=source_characteristics,zone=active_zone).to_dict()
     from .rules.stack_damage_sources import fixed_damage_source_context
     stack_context.update(fixed_damage_source_context(host, source, (program.effects, program.target_schema), characteristics=source_characteristics))
     from .token_copy_references import copy_source_context

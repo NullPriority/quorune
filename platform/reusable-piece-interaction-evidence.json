@@ -16635,6 +16635,36 @@
       ],
       "interaction_order": 2,
       "assertion": "The price/payment composition producer retains source-spanned fixed tap authority and complete result admission while ordinary payment owners resolve one native transaction and full replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_target_restrictions.TargetRestrictionRuntimeTests.test_original_ground_seal_blocks_graveyard_card_targets_but_not_targeted_player_exile",
+      "piece_ids": [
+        "capability.target.prohibition.fixed_source_quality",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "target.prohibition.fixed_source_quality",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Ground Seal is cast with trusted generated registration and privately draws one identified card visible only to its controller across four seats. Its static restriction suppresses Raise Dead while an actual Crypt ability can target a player and exile that graveyard without targeting its cards. Exact save/load and pre-cast replay preserve all consequences."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_target_restrictions.TargetRestrictionRuntimeTests.test_worded_opponent_auras_follow_aura_controller_and_keep_own_spells_legal",
+      "piece_ids": [
+        "capability.target.prohibition.fixed_source_quality",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "target.prohibition.fixed_source_quality",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Shielding Plax enchants an opponent creature, privately draws for its Aura controller, permits that controller own spell and ability, and denies the protected creature controller spell and ability. Canopy Cover is the parallel no-draw control. Four-seat projection, unauthorized rollback and full pre-cast replay retain each subject."
     }
   ]
 }

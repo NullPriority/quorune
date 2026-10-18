@@ -5608,6 +5608,44 @@
       "browser_focuses": [
         "mana-action"
       ]
+    },
+    {
+      "id": "source-specific-target-prohibition-contract",
+      "patterns": [
+        "quorune/compiler/target_restriction_nodes.py",
+        "quorune/semantic_runtime/target_restrictions.py",
+        "quorune/target_restrictions.py",
+        "quorune/target_source.py",
+        "quorune/rules/activation/payment_commit.py",
+        "quorune/rules/public_zone_move_capability_shapes.py",
+        "tests/fixtures/target-restriction-cards.json",
+        "quorune/target_protection.py",
+        "quorune/target_protection_engine_adapter.py",
+        "quorune/selection/targeting.py",
+        "quorune/rules/activation/commit.py",
+        "quorune/rules/casting/proposal.py",
+        "quorune/rules/activation/proposal.py",
+        "quorune/selection/copy_targets.py",
+        "quorune/selection/exile_cast.py",
+        "quorune/trigger_targeting.py"
+      ],
+      "test_modules": [
+        "test_target_restrictions",
+        "test_hexproof_targeting",
+        "test_shroud_targeting",
+        "test_player_target_protection",
+        "test_trigger_targeting",
+        "test_storm_rules",
+        "test_copy_objects",
+        "test_fixed_public_zone_moves",
+        "test_fixed_activated_zone_change_costs",
+        "test_waterbend",
+        "test_preparation",
+        "test_aura_targeting_entry"
+      ],
+      "browser_focuses": [
+        "mana-action"
+      ]
     }
   ],
   "symbol_rules": [

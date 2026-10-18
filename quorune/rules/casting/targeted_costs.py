@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from ...target_source import spell_targeting_source
+
 """Target-dependent costs around the existing cost and target authorities."""
 
 from itertools import combinations,combinations_with_replacement,product
@@ -19,7 +21,7 @@ def target_cost_fact(sources,targets):
 def _target_assignments(host,seat,card,schema,modes,*,required=None,extra_targets=0):
     if schema is None:yield (),{};return
     plan=target_plan(schema,modes,require_modes=bool(available_modes(schema)))
-    candidates=host._target_candidate_map(seat,plan,source_ref=card.ref)
+    candidates=host._target_candidate_map(seat,plan,acting_source=spell_targeting_source(host,card), source_ref=card.ref)
     choices=[]
     for group in plan.groups:
         refs=candidates[group.group_id]
@@ -45,7 +47,7 @@ def target_cost_variants(host,seat,card,program,option,response,*,hint):
     modes=tuple(response.get('modes') or ())
     if not hint or 'targets' in response:
         targets,_=host._validate_semantic_targets(seat,program,host._normalize_target_submission(response.get('targets')),
-            modes=modes,source_ref=card.ref,target_schema=schema)
+            modes=modes,acting_source=spell_targeting_source(host,card), source_ref=card.ref,target_schema=schema)
         yield {**option,'targeted_cost':target_cost_fact(sources,targets)};return
     mode_sets=(modes,)
     if schema is not None and available_modes(schema) and not modes:
@@ -56,7 +58,7 @@ def target_cost_variants(host,seat,card,program,option,response,*,hint):
         required=(None,)
         if schema is not None:
             plan=target_plan(schema,selected,require_modes=bool(available_modes(schema)))
-            candidates=host._target_candidate_map(seat,plan,source_ref=card.ref)
+            candidates=host._target_candidate_map(seat,plan,acting_source=spell_targeting_source(host,card), source_ref=card.ref)
             required=(*required,*((group.group_id,ref) for group in plan.groups for ref in candidates[group.group_id] if group.max_targets))
         for needed in required:
             for targets,grouped in _target_assignments(host,seat,card,schema,selected,required=needed,extra_targets=len(sources)):

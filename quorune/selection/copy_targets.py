@@ -20,7 +20,7 @@ class CopyTargetHost(Protocol):
     def _validate_semantic_targets(self, controller: str, program: Any, targets: Sequence[Any],
                                   **options: Any) -> tuple[list[str], dict[str, list[str]]]: ...
 
-    def _target_candidate_map(self, actor: str, plan: Any, *, source_ref: str | None) -> Mapping[str, Sequence[str]]: ...
+    def _target_candidate_map(self, actor: str, plan: Any, *, source_ref: str | None, acting_source: Any = None) -> Mapping[str, Sequence[str]]: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -46,10 +46,10 @@ def original_copy_groups(host: CopyTargetHost, schema: Mapping[str, Any], modes:
 
 def copy_target_public_schema(host: CopyTargetHost, actor: str, schema: Mapping[str, Any],
                               modes: Sequence[str], targets: Sequence[str],
-                              groups: Mapping[str, Sequence[str]], source_ref: str | None) -> dict[str, Any]:
+                              groups: Mapping[str, Sequence[str]], source_ref: str | None, *, acting_source=None) -> dict[str, Any]:
     plan = target_plan(schema, modes, require_modes=bool(schema.get("modes")))
     original = original_copy_groups(host, schema, modes, targets, groups)
-    candidates = host._target_candidate_map(actor, plan, source_ref=source_ref)
+    candidates = host._target_candidate_map(actor, plan, source_ref=source_ref, acting_source=acting_source)
     return {"groups": [{**group.public_dict(candidates[group.group_id]),
                         "min": len(original[group.group_id]), "max": len(original[group.group_id])}
                        for group in plan.groups]}
@@ -58,7 +58,7 @@ def copy_target_public_schema(host: CopyTargetHost, actor: str, schema: Mapping[
 def prepare_copy_targets(host: CopyTargetHost, *, actor: str, schema: Mapping[str, Any] | None,
                          modes: Sequence[str], source_ref: str | None,
                          original_targets: Sequence[str], original_groups: Mapping[str, Sequence[str]],
-                         original_snapshots: Mapping[str, Any], submitted: Any) -> PreparedCopyTargets:
+                         original_snapshots: Mapping[str, Any], submitted: Any, acting_source=None) -> PreparedCopyTargets:
     """Retain pinned identities; explicit grouped refs select current objects."""
     defaults = list(original_targets)
     if schema is None:
@@ -127,7 +127,7 @@ def prepare_copy_targets(host: CopyTargetHost, *, actor: str, schema: Mapping[st
     )
     targets, groups = host._validate_semantic_targets(
         actor, None, selected, modes=modes, source_ref=source_ref,
-        target_schema=schema, copy_targets=proof,
+        target_schema=schema, copy_targets=proof, acting_source=acting_source,
     )
     for ref in changed_refs:
         snapshots[ref] = dict(host._target_snapshot(ref))

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 373,
+  "registry_version": 374,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -4156,23 +4156,99 @@
     {
       "id": "activation.source_zone_change.fixed",
       "version": 2,
-      "official_rules": ["400.2", "400.7", "602.2", "602.2b", "614.1", "616.1", "701.9a", "701.13a", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Commit one typed discard-self, exile-self, or sacrifice-self activated-ability cost through the canonical replacement-aware zone-change owner, rolling the complete activation back before a competing CR 616 choice and resuming the exact priority action before stack placement.",
-        "inputs": ["source-pinned discard-self, exile-self, or sacrifice-self activation descriptor", "same physical source and logical incarnation in its required origin zone", "current priority-action payment frame", "stable zone-change replacement event identity"],
-        "outputs": ["replacement-resolved source destination", "normalized source departure event before stack placement", "transactional rollback before a replacement choice", "seat-scoped private continuation", "exact resumed activation and replay"],
-        "exclusions": ["zone-change costs selecting objects other than the activation source", "multiple or optional source-zone costs", "return-to-hand source costs", "source-cost replacement choices made by a player other than the activator", "mana abilities with source-zone costs", "cost ordering choices beyond the represented activation transaction"]
+        "inputs": [
+          "source-pinned discard-self, exile-self, or sacrifice-self activation descriptor",
+          "same physical source and logical incarnation in its required origin zone",
+          "current priority-action payment frame",
+          "stable zone-change replacement event identity"
+        ],
+        "outputs": [
+          "replacement-resolved source destination",
+          "normalized source departure event before stack placement",
+          "transactional rollback before a replacement choice",
+          "seat-scoped private continuation",
+          "exact resumed activation and replay"
+        ],
+        "exclusions": [
+          "zone-change costs selecting objects other than the activation source",
+          "multiple or optional source-zone costs",
+          "return-to-hand source costs",
+          "source-cost replacement choices made by a player other than the activator",
+          "mana abilities with source-zone costs",
+          "cost ordering choices beyond the represented activation transaction"
+        ]
       },
-      "dependencies": ["trigger.event.normalized_zone_change", "zone.change.destination_replacement"],
-      "implementation_components": ["quorune.abilities.parse_activated_abilities", "quorune.rules.activation_zone_change_costs.activation_zone_change_cost_reference", "quorune.rules.activation.commit._commit_source_cost", "quorune.mana_payment_continuations.execute_mana_choice_capable_priority_action", "quorune.mana_payment_continuations.issue_mana_payment_replacement_choice", "quorune.replacement.replay.ReplacementContinuation", "quorune.replacement_decisions.complete_replacement_order_choice", "CommanderEngine.move_card"],
-      "positive_tests": ["test_generic_cycling_discards_before_stack_draw_and_replays_exactly", "test_each_fixed_counter_keyword_pays_cost_and_places_counters", "test_fixed_source_sacrifice_cost_compiles_source_spanned", "test_fixed_source_sacrifice_cost_compiles_and_resolves"],
-      "negative_tests": ["test_activation_zone_change_costs_exclude_mana_abilities", "test_activation_source_cost_replacement_journal_fails_closed", "test_rejected_source_cost_activation_rolls_back_mana_and_zone", "test_source_zone_cost_rejects_inconsistent_descriptor"],
-      "interaction_tests": ["test_cycling_discard_replacement_suspends_before_mutation_and_replays", "test_reinforce_source_cost_replacement_suspends_before_mutation", "test_source_sacrifice_replacement_is_private_and_replays"],
-      "multiplayer_tests": ["test_cycling_discard_replacement_suspends_before_mutation_and_replays", "test_source_sacrifice_replacement_is_private_and_replays"],
-      "privacy_tests": ["test_cycling_discard_replacement_suspends_before_mutation_and_replays", "test_source_sacrifice_replacement_is_private_and_replays"],
-      "replay_tests": ["test_cycling_discard_replacement_suspends_before_mutation_and_replays", "test_source_sacrifice_replacement_is_private_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.abilities.parse_activated_abilities",
+        "quorune.rules.activation_zone_change_costs.activation_zone_change_cost_reference",
+        "quorune.rules.activation.commit._commit_source_cost",
+        "quorune.mana_payment_continuations.execute_mana_choice_capable_priority_action",
+        "quorune.mana_payment_continuations.issue_mana_payment_replacement_choice",
+        "quorune.replacement.replay.ReplacementContinuation",
+        "quorune.replacement_decisions.complete_replacement_order_choice",
+        "CommanderEngine.move_card"
+      ],
+      "positive_tests": [
+        "test_generic_cycling_discards_before_stack_draw_and_replays_exactly",
+        "test_each_fixed_counter_keyword_pays_cost_and_places_counters",
+        "test_fixed_source_sacrifice_cost_compiles_source_spanned",
+        "test_fixed_source_sacrifice_cost_compiles_and_resolves"
+      ],
+      "negative_tests": [
+        "test_activation_zone_change_costs_exclude_mana_abilities",
+        "test_activation_source_cost_replacement_journal_fails_closed",
+        "test_rejected_source_cost_activation_rolls_back_mana_and_zone",
+        "test_source_zone_cost_rejects_inconsistent_descriptor"
+      ],
+      "interaction_tests": [
+        "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
+        "test_reinforce_source_cost_replacement_suspends_before_mutation",
+        "test_selected_self_sacrifice_cost_keeps_the_source_incarnation_and_controller",
+        "test_source_sacrifice_replacement_is_private_and_replays",
+        "test_targeted_announcement_rolls_back_while_mana_payment_is_pending_and_resumes_once"
+      ],
+      "multiplayer_tests": [
+        "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
+        "test_source_sacrifice_replacement_is_private_and_replays"
+      ],
+      "privacy_tests": [
+        "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
+        "test_source_sacrifice_replacement_is_private_and_replays"
+      ],
+      "replay_tests": [
+        "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
+        "test_source_sacrifice_replacement_is_private_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "test_fixed_counter_keyword_dependencies_fail_closed and the Cycling dependency contract both block trusted runtime discovery whenever normalized zone events or canonical destination replacement are unavailable.",
       "implementation_mutation_status": "killed",
@@ -15117,23 +15193,101 @@
     {
       "id": "zone.move.fixed_public_set",
       "version": 2,
-      "official_rules": ["108.3", "109.2", "400.2", "400.3", "400.7", "403.3", "404.3", "406.1", "406.2", "608.2b", "608.2c", "701.13", "701.13a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.7",
+        "403.3",
+        "404.3",
+        "406.1",
+        "406.2",
+        "608.2b",
+        "608.2c",
+        "701.13",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile and execute one mandatory fixed public battlefield or graveyard set moving simultaneously toward exile, each object's owner's hand, or the battlefield under one fixed owner/actor controller policy through an immutable APNAP snapshot and the canonical replacement-aware zone-change owner.",
-        "inputs": ["one source-spanned fixed public-set zone-move clause", "closed ObjectQuerySpec without dynamic characteristic counts", "any, actor, opponents, or target-player owner/controller relation", "fixed battlefield controller and tapped policy when entering", "current public object identities", "represented destination-replacement selections"],
-        "outputs": ["immutable APNAP-ordered public set", "one simultaneous replacement-aware zone batch", "new logical object identities", "normalized zone events and trigger batch", "seat-projected owner-hand knowledge or fixed-controller battlefield entries", "exact replay"],
-        "exclusions": ["variable, optional, modal-header-only, conditional, linked-result, delayed-return, random, chosen-color, numeric-characteristic, dynamic-count, named-card, attachment-expanded, and open exception-list clauses", "graveyard-to-battlefield sets that can contain Auras or need attachment choices", "library, hidden hand, command, and stack set origins", "multiple destinations or independently chosen subsets", "history-linked, counter-on-entry, and unrepresented target or destination-replacement interactions"]
+        "inputs": [
+          "one source-spanned fixed public-set zone-move clause",
+          "closed ObjectQuerySpec without dynamic characteristic counts",
+          "any, actor, opponents, or target-player owner/controller relation",
+          "fixed battlefield controller and tapped policy when entering",
+          "current public object identities",
+          "represented destination-replacement selections"
+        ],
+        "outputs": [
+          "immutable APNAP-ordered public set",
+          "one simultaneous replacement-aware zone batch",
+          "new logical object identities",
+          "normalized zone events and trigger batch",
+          "seat-projected owner-hand knowledge or fixed-controller battlefield entries",
+          "exact replay"
+        ],
+        "exclusions": [
+          "variable, optional, modal-header-only, conditional, linked-result, delayed-return, random, chosen-color, numeric-characteristic, dynamic-count, named-card, attachment-expanded, and open exception-list clauses",
+          "graveyard-to-battlefield sets that can contain Auras or need attachment choices",
+          "library, hidden hand, command, and stack set origins",
+          "multiple destinations or independently chosen subsets",
+          "history-linked, counter-on-entry, and unrepresented target or destination-replacement interactions"
+        ]
       },
-      "dependencies": ["target.revalidate_resolution", "variant.commander.zone_return", "zone.change.destination_replacement"],
-      "implementation_components": ["quorune.public_zone_moves.PublicZoneMoveSetSpec", "quorune.public_zone_moves.select_public_zone_move_objects", "quorune.public_zone_moves.resolve_public_zone_move_set", "quorune.compiler.public_zone_move_templates.PublicZoneMoveSetTemplate", "quorune.rules.public_zone_move_capability_shapes.fixed_public_zone_move_set_node_capabilities", "quorune.semantic_runtime.public_zone_move_handlers.MovePublicZoneSetHandler", "quorune.semantic_runtime.intents.MovePublicZoneSetIntent", "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"],
-      "positive_tests": ["test_fixed_public_zone_moves_compile_across_effect_contexts", "test_public_object_movement_matrix_preserves_meaning_fields", "test_mass_zone_moves_use_apnap_replacements_and_replay", "test_graveyard_public_sets_enter_with_fixed_controller_and_tapped_policy"],
-      "negative_tests": ["test_unsupported_public_zone_move_shapes_remain_residual", "test_public_zone_move_dependencies_and_shape_mutations_fail_closed", "test_public_zone_move_privacy_and_stale_identity_roll_back"],
-      "interaction_tests": ["test_mass_zone_moves_use_apnap_replacements_and_replay", "test_target_graveyard_exile_revalidates_and_replays"],
-      "multiplayer_tests": ["test_mass_zone_moves_use_apnap_replacements_and_replay"],
-      "privacy_tests": ["test_public_zone_move_privacy_and_stale_identity_roll_back"],
-      "replay_tests": ["test_mass_zone_moves_use_apnap_replacements_and_replay"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "target.revalidate_resolution",
+        "variant.commander.zone_return",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.public_zone_moves.PublicZoneMoveSetSpec",
+        "quorune.public_zone_moves.select_public_zone_move_objects",
+        "quorune.public_zone_moves.resolve_public_zone_move_set",
+        "quorune.compiler.public_zone_move_templates.PublicZoneMoveSetTemplate",
+        "quorune.rules.public_zone_move_capability_shapes.fixed_public_zone_move_set_node_capabilities",
+        "quorune.semantic_runtime.public_zone_move_handlers.MovePublicZoneSetHandler",
+        "quorune.semantic_runtime.intents.MovePublicZoneSetIntent",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
+      ],
+      "positive_tests": [
+        "test_fixed_public_zone_moves_compile_across_effect_contexts",
+        "test_public_object_movement_matrix_preserves_meaning_fields",
+        "test_mass_zone_moves_use_apnap_replacements_and_replay",
+        "test_graveyard_public_sets_enter_with_fixed_controller_and_tapped_policy"
+      ],
+      "negative_tests": [
+        "test_unsupported_public_zone_move_shapes_remain_residual",
+        "test_public_zone_move_dependencies_and_shape_mutations_fail_closed",
+        "test_public_zone_move_privacy_and_stale_identity_roll_back"
+      ],
+      "interaction_tests": [
+        "test_mass_zone_moves_use_apnap_replacements_and_replay",
+        "test_original_ground_seal_blocks_graveyard_card_targets_but_not_targeted_player_exile",
+        "test_public_zone_target_shape_retains_mechanics_across_sibling_probes",
+        "test_target_graveyard_exile_revalidates_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_mass_zone_moves_use_apnap_replacements_and_replay"
+      ],
+      "privacy_tests": [
+        "test_public_zone_move_privacy_and_stale_identity_roll_back"
+      ],
+      "replay_tests": [
+        "test_mass_zone_moves_use_apnap_replacements_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking destination replacement or target revalidation prevents every fixed public-set node, including nontargeted forms, from receiving trusted closure.",
       "implementation_mutation_status": "killed",
@@ -30475,6 +30629,150 @@
       "dependency_fail_closed_rationale": "Omitting Preparation, intrinsic copy, shared casting modifier or target authority keeps the source residual; an unsupported normal or inset sibling rejects complete-card admission.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Actual native witnesses kill omitted compiler production, copy allocation, exile retention, accepted-cast consumption and current-controller permission. An overly broad lifetime exception fails at the departed/phased source boundary. Wrapped witnesses use fresh TestCase instances.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "target.prohibition.fixed_source_quality",
+      "version": 1,
+      "official_rules": [
+        "101.2",
+        "109.2a",
+        "109.2b",
+        "109.2c",
+        "112.1",
+        "112.1a",
+        "113.7a",
+        "115.1a",
+        "115.1b",
+        "115.1c",
+        "115.1d",
+        "115.10a",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2h",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "601.2h",
+        "602.2a",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Current static targeting prohibitions distinguish acting spell/ability identity, locked acting controller, current/LKI ability-source color/type/controller, and public recipient scope.",
+        "inputs": [
+          "current effective trusted static components",
+          "explicit acting object kind/controller",
+          "incarnation-bound current/LKI source characteristics"
+        ],
+        "outputs": [
+          "shared offered/accepted/resolution target prohibition"
+        ],
+        "exclusions": [
+          "conditional attack-history or Wall-only target-schema introspection",
+          "qualified Hexproof keyword grammar",
+          "untargeted instructions or live attachment prohibition",
+          "static targeting prohibitions on instant or sorcery sources"
+        ]
+      },
+      "dependencies": [
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.compiler.target_restriction_nodes.target_restriction_node",
+        "quorune.semantic_runtime.target_restrictions.TargetRestrictionHandler",
+        "quorune.target_restrictions.current_target_prohibition",
+        "quorune.target_source.stack_targeting_source",
+        "quorune.target_source.pin_targeting_source_departures",
+        "quorune.rules.activation.payment_commit.announce_targeted_activation",
+        "quorune.target_restrictions.current_target_prohibitions"
+      ],
+      "positive_tests": [
+        "test_all_selected_originals_have_complete_admission_with_source_specific_restrictions",
+        "test_original_self_color_restrictions_keep_green_or_other_color_actions_and_whole_bodies",
+        "test_original_shanna_rejects_opponent_abilities_but_allows_opponent_spells",
+        "test_original_spellbane_protects_current_controlled_creatures_from_blue_only",
+        "test_original_auras_preserve_stats_and_distinguish_spell_from_artifact_source_abilities",
+        "test_original_bartel_rejects_aura_spells_but_remains_a_legal_ordinary_spell_target",
+        "test_original_ground_seal_blocks_graveyard_card_targets_but_not_targeted_player_exile",
+        "test_worded_opponent_auras_follow_aura_controller_and_keep_own_spells_legal"
+      ],
+      "negative_tests": [
+        "test_source_binding_is_closed_and_immutable",
+        "test_missing_source_information_is_not_falsely_colorless_and_malformed_binding_rejects",
+        "test_compiler_and_dependency_omissions_keep_material_restrictions_residual",
+        "test_fixed_grammar_rejects_open_or_ambiguous_siblings_and_unknown_fields",
+        "test_unpinned_sacrifice_mana_mode_stays_rejected_before_mutation",
+        "test_shared_opponent_clause_covers_both_kinds_and_spell_static_sources_stay_residual"
+      ],
+      "interaction_tests": [
+        "test_public_zone_target_shape_retains_mechanics_across_sibling_probes",
+        "test_spell_ability_source_and_acting_controller_predicates_are_distinct",
+        "test_current_source_changes_and_immediate_departure_lki_do_not_use_returned_object",
+        "test_native_thrun_rechecks_source_controller_instead_of_locked_ability_controller",
+        "test_native_gaea_uses_blue_departure_lki_after_green_source_returns_to_printed_hand",
+        "test_native_thrun_allows_locked_opponent_ability_from_now_owned_nongreen_source",
+        "test_restriction_entering_after_cast_revalidates_and_humility_removes_intrinsic_prohibition",
+        "test_clone_copies_prohibition_without_targeting_the_original",
+        "test_pending_entry_trigger_retains_source_incarnation_and_departure_colors",
+        "test_bartel_allows_nontargeted_aura_entry_from_a_compiled_graveyard_return",
+        "test_split_spell_offers_commit_and_revalidation_use_the_selected_face_colors",
+        "test_selected_self_sacrifice_cost_keeps_the_source_incarnation_and_controller",
+        "test_targeted_announcement_rolls_back_while_mana_payment_is_pending_and_resumes_once",
+        "test_worded_opponent_auras_follow_aura_controller_and_keep_own_spells_legal",
+        "test_target_query_source_work_scales_with_sources_and_rechecks_the_next_query"
+      ],
+      "multiplayer_tests": [
+        "test_actual_dense_foliage_filters_spells_but_allows_native_ability_private_rollback_and_replay",
+        "test_native_thrun_rechecks_source_controller_instead_of_locked_ability_controller",
+        "test_native_thrun_allows_locked_opponent_ability_from_now_owned_nongreen_source",
+        "test_original_shanna_rejects_opponent_abilities_but_allows_opponent_spells",
+        "test_worded_opponent_auras_follow_aura_controller_and_keep_own_spells_legal"
+      ],
+      "privacy_tests": [
+        "test_actual_dense_foliage_filters_spells_but_allows_native_ability_private_rollback_and_replay",
+        "test_targeted_announcement_rolls_back_while_mana_payment_is_pending_and_resumes_once",
+        "test_original_ground_seal_blocks_graveyard_card_targets_but_not_targeted_player_exile",
+        "test_worded_opponent_auras_follow_aura_controller_and_keep_own_spells_legal"
+      ],
+      "replay_tests": [
+        "test_actual_dense_foliage_filters_spells_but_allows_native_ability_private_rollback_and_replay",
+        "test_native_thrun_rechecks_source_controller_instead_of_locked_ability_controller",
+        "test_native_gaea_uses_blue_departure_lki_after_green_source_returns_to_printed_hand",
+        "test_native_thrun_allows_locked_opponent_ability_from_now_owned_nongreen_source",
+        "test_original_self_color_restrictions_keep_green_or_other_color_actions_and_whole_bodies",
+        "test_original_shanna_rejects_opponent_abilities_but_allows_opponent_spells",
+        "test_original_spellbane_protects_current_controlled_creatures_from_blue_only",
+        "test_original_auras_preserve_stats_and_distinguish_spell_from_artifact_source_abilities",
+        "test_original_bartel_rejects_aura_spells_but_remains_a_legal_ordinary_spell_target",
+        "test_original_ground_seal_blocks_graveyard_card_targets_but_not_targeted_player_exile",
+        "test_restriction_entering_after_cast_revalidates_and_humility_removes_intrinsic_prohibition",
+        "test_clone_copies_prohibition_without_targeting_the_original",
+        "test_pending_entry_trigger_retains_source_incarnation_and_departure_colors",
+        "test_bartel_allows_nontargeted_aura_entry_from_a_compiled_graveyard_return",
+        "test_split_spell_offers_commit_and_revalidation_use_the_selected_face_colors",
+        "test_selected_self_sacrifice_cost_keeps_the_source_incarnation_and_controller",
+        "test_targeted_announcement_rolls_back_while_mana_payment_is_pending_and_resumes_once",
+        "test_worded_opponent_auras_follow_aura_controller_and_keep_own_spells_legal"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Actual compiler and capability/revalidation omissions retain material residuals. Unsupported Wall/history grammar and malformed descriptors reject. Unpinned sacrifice mana remains unavailable rather than borrowing unrelated execution authority.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Independent actual native witnesses kill omitted prohibition evaluation, source departure capture and early announcement, plus replacement of source control with locked ability control. Pure compiler/dependency and controller/quality omissions also fail; wrapped native witnesses use fresh TestCase instances.",
       "blockers": [],
       "status": "trusted"
     }

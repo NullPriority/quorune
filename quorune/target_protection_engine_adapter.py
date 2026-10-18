@@ -22,6 +22,12 @@ class TargetProtectionEngineQuery(ProtectionQueryHost, Protocol):
     """Narrow read-only compatibility port for authoritative target rows."""
 
     state: GameState
+    semantics: Any
+    active_seats: tuple[str, ...]
+
+    def _effective_ability_fragments(self, card: CardInstance) -> tuple[Any, ...]: ...
+
+    def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
 
     def _source_colors_for_ref(
         self, source_ref: str | None
@@ -34,8 +40,14 @@ def target_protection_verdict_for_row(
     acting_controller: str,
     row: Mapping[str, Any],
     source_ref: str | None,
+    acting_source=None,
+    prohibitions=None,
 ) -> TargetProtectionVerdict:
     """Materialize one immutable target-protection snapshot from a public row."""
+
+    from .target_restrictions import current_target_prohibition
+    if current_target_prohibition(host,row=row,acting_controller=acting_controller,acting_source=acting_source,prohibitions=prohibitions):
+        return TargetProtectionVerdict.SOURCE_PROHIBITION
 
     category = str(row.get("category") or "")
     card = row.get("card")

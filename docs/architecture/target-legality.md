@@ -1,7 +1,7 @@
 ---
 title: "Target legality and protection"
 status: "current"
-authoritative_source: "quorune/targets.py, quorune/target_characteristics.py, quorune/target_history.py, quorune/target_numeric.py, quorune/object_query.py, quorune/target_predicates.py, quorune/protection.py, quorune/damage_source.py, quorune/target_protection.py, quorune/target_protection_engine_adapter.py, and CommanderEngine._target_row_matches"
+authoritative_source: "quorune/targets.py, quorune/target_characteristics.py, quorune/target_history.py, quorune/target_numeric.py, quorune/object_query.py, quorune/target_predicates.py, quorune/protection.py, quorune/damage_source.py, quorune/target_protection.py, quorune/target_protection_engine_adapter.py, quorune/target_source.py, quorune/target_restrictions.py, and CommanderEngine._target_row_matches"
 verified: "2026-10-17"
 audience: "rules, compiler, replay, and architecture contributors"
 maintenance: "hand-maintained"
@@ -133,6 +133,44 @@ composition limits, not successful approximations. Current-version replay,
 descriptor readability and historical execution remain separate claims; old
 records require matching execution provenance and are rejected when that
 provenance is incompatible.
+
+## Fixed source-specific prohibitions
+
+`target_restrictions.py` evaluates compiled static prohibitions through the
+same target predicate as offers, commands and resolution. Closed affected sets
+cover the source, an enchanted creature, creatures, controlled creatures, and
+actual cards in public graveyards. Predicates distinguish spells, abilities,
+fixed source colors, artifact sources and Aura spells. They restrict targeting;
+ordinary damage, blocking, attachment and untargeted instructions retain their
+own rules. Effective static-component presence controls these effects, including
+copied sources, ability removal, controller changes and phasing out.
+
+`target_source.py` supplies immutable acting-object facts. A spell uses its
+selected face's effective characteristics. An ability retains its own locked
+controller separately from its source's current controller and characteristics.
+Source-qualified controller predicates evaluate the source; controller predicates
+on the ability evaluate the ability. A shared opponent qualifier applies to
+both spells and abilities. For a worded Aura prohibition, its controller is
+the observer even when another player controls the enchanted creature; this
+does not grant the ordinary Hexproof keyword. Incarnation-bound departure capture retains
+immediate last-known source information. A returned physical card cannot replace
+that source. Missing required information fails closed.
+Each target-candidate query captures its immutable effective prohibition inputs
+once for that group. The next query captures them again; no mutable game-state
+cache or issued action can preserve an earlier source condition.
+
+Targeted activation announcement uses the ordinary stack owner before paying
+costs, as required by CR 602.2a. Selected-object costs and mana payments therefore
+share canonical departure capture. Payment finalization preserves that source
+frame and adds paid-object information. Failed or suspended commands roll back
+the announcement with their costs; replay and continuation resumption create one
+accepted frame. No transaction snapshot is client authority.
+
+The compiler retains fixed spell/ability restrictions and an attached fixed
+stat modifier in one source-spanned node when printed together. Conditional
+attack-history restrictions, Wall-only schema introspection and qualified
+Hexproof keyword grammar and instant or sorcery static sources remain outside
+this production.
 
 ## Typed protection boundary
 

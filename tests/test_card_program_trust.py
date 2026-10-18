@@ -370,6 +370,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "replacement.zone.riot-entry-choice",
                 "replacement.zone.devour",
                 "replacement.zone.prepared_entry",
+                "ability.static.target_prohibition",
                 "replacement.zone.keyword-counter-entry-choice",
                 "replacement.zone.self-entry-counter",
                 "replacement.zone.sunburst",

@@ -44,6 +44,7 @@ from ..trigger_participation import TriggerMultiplierSpec, WardSpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 from .player_target_protection import PlayerTargetProtectionHandler
+from .target_restrictions import TargetRestrictionHandler
 from .graveyard_copy_keyword import GraveyardCopyKeywordHandler
 from .player_speed import StartEnginesHandler
 from .city_blessing import AscendStaticHandler
@@ -1393,6 +1394,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             MentorAbilityFragmentHandler(),
             ProtectionAbilityFragmentHandler(),
             PlayerTargetProtectionHandler(),
+            TargetRestrictionHandler(),
             GraveyardCopyKeywordHandler(),
             StartEnginesHandler(),
             AscendStaticHandler(),

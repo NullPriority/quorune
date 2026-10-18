@@ -2872,3 +2872,12 @@ provenance live in the [Oracle IR reference](../reference/oracle-ir.md).
 See [ADR 0005](../adr/0005-card-program-v2.md),
 [ADR 0006](../adr/0006-typed-semantic-handler-boundary.md), and
 [ADR 0022](../adr/0022-reusable-rules-piece-inventory.md).
+
+Fixed targeting prohibitions lower explicit acting-kind, controller and source
+quality predicates with source spans. Attached fixed stat changes remain
+independently capability-bound in the same node. Selected-face characteristics
+feed the shared target query for both offers and command validation; see
+[target legality](target-legality.md) for current and last-known source facts.
+Public-zone effect closure materializes iterable mechanics before sibling
+shape checks, so both registration and whole-card binding retain the same
+closed effect authority.
