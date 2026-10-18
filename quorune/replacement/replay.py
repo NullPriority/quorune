@@ -456,6 +456,7 @@ def _decode_typed_selection(item: Mapping[str, Any]) -> FrozenMap:
         expected.add("allocation")
     if "event_id" in item:
         expected.add("event_id")
+    if 'objects' in item:expected.add('objects')
     if expected == {"effect_id"}:
         raise ReplacementEffectError(
             "Typed continuation selection has no typed payload"
@@ -473,6 +474,11 @@ def _decode_typed_selection(item: Mapping[str, Any]) -> FrozenMap:
         raise ReplacementEffectError(
             "Typed continuation selection is malformed"
         )
+    if 'objects' in item:
+        objects=item['objects']
+        if (not isinstance(objects,(list,tuple)) or any(type(v) is not str or not v for v in objects)
+                or len(set(objects))!=len(objects) or 'allocation' in item):
+            raise ReplacementEffectError('Typed continuation object choices are malformed')
     if "event_id" in item and (
         not isinstance(item["event_id"], str) or not item["event_id"]
     ):

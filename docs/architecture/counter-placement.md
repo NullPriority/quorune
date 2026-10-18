@@ -162,6 +162,26 @@ component. A suspended continuation validates that prospective child against
 its parent zone event and the unchanged origin incarnation; it does not require
 the card to occupy the replacement destination before the parent event commits.
 
+Devour adds a typed optional selection of controlled battlefield permanents to
+that entry tree. Fixed creature, artifact and Food multipliers, and a multiplier
+equal to the selected creature count, produce counters without moving objects
+during replacement preparation. Each selection retains physical and logical
+identity. Simultaneous entrants share reservations and their controller can
+choose which entry to process first; entering permanents cannot be selected.
+Multiple Devour instances and other entry counter contributions from the same
+placing player combine before quantity replacements inspect the placement.
+
+All replacements finish before the combined entry and sacrifices commit.
+A quantity source selected for sacrifice therefore still modifies the entry.
+Sacrifices use the canonical simultaneous zone owner, including destination
+replacement and before-event death sources. Copied tokens retain the token
+owner's prospective identities and allocation; the zone owner's commit and
+publication stages coordinate their sacrifices before any partial event is
+published. The token owner then seals actual entry characteristics and history.
+Existing ability removal participates in prospective Devour applicability.
+Unrepresented qualities, formulas and linked devoured-result clauses remain
+residual; a prevented sacrifice requires its own represented result contract.
+
 The Oracle compiler lowers the closed “an opponent's card from anywhere would
 enter a graveyard; exile it with one named counter instead” family to this same
 destination handler and nested counter operation. Different owners, origins,

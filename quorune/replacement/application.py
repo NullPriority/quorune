@@ -15,6 +15,7 @@ from .model import (
     string_sequence,
 )
 from .operations import (
+    DevourEntryOperation,
     AddAmount,
     AppendValues,
     CapResultLifeLoss,
@@ -693,6 +694,7 @@ def _apply_effect_operations(
     event: ReplaceableEvent,
     effect: ReplacementEffect,
     operations: Sequence[Any],
+    *,objects: tuple[str,...] | None = None,
 ) -> ReplaceableEvent:
     payload = thaw_value(event.payload)
     children = list(event.children)
@@ -700,6 +702,10 @@ def _apply_effect_operations(
     affected_player = event.affected_player
     affected_object = event.affected_object
     for operation in operations:
+        if isinstance(operation,DevourEntryOperation):
+            from .devour import apply_devour_entry_operation
+            entry_scope=apply_devour_entry_operation(event,payload,children,entry_scope,operation,effect_id=effect.effect_id,objects=objects)
+            continue
         if isinstance(operation, RedirectDamage):
             if event.kind != "damage":
                 raise ReplacementEffectError(
@@ -756,6 +762,8 @@ def _apply_effect_operations(
                 int(by_effect.get(effect.effect_id, 0)) + prevented
             )
             payload["prevention_applied"] = by_effect
+    from .devour import combine_devour_entry_counters
+    combine_devour_entry_counters(event,payload,children)
     chooser_history = dict(payload.get("replacement_choosers") or {})
     chooser_history[effect.effect_id] = event.chooser
     payload["replacement_choosers"] = chooser_history
@@ -775,11 +783,13 @@ def apply_replacement(
     choice: ReplacementChoice,
     effects: Iterable[ReplacementEffect],
     selected_effect_id: str | None,
+    *,objects: tuple[str,...] | None = None,
 ) -> ReplaceableEvent:
     all_effects = canonical_effects(effects)
     by_id = {effect.effect_id: effect for effect in all_effects}
     selection = canonical_replacement_selection(choice, selected_effect_id)
     if selection.startswith("decline:"):
+        if objects:raise ReplacementEffectError('Declining a replacement cannot select objects')
         declined = selection.removeprefix("decline:")
         if declined not in choice.options or declined not in choice.optional_options:
             raise ReplacementEffectError(
@@ -800,7 +810,10 @@ def apply_replacement(
             "Selected replacement is not currently applicable"
         )
     effect = by_id[selection]
-    return _apply_effect_operations(choice.event, effect, effect.operations)
+    if objects is not None and not any(isinstance(op,DevourEntryOperation) for op in effect.operations):
+        if objects:raise ReplacementEffectError('This replacement does not select objects')
+        objects=None
+    return _apply_effect_operations(choice.event, effect, effect.operations,objects=objects)
 
 
 def resolve_replacements(

@@ -100,6 +100,18 @@ Delve and mana remainders. Save/load revalidates the original reservation rather
 than replacing it with a new selection. Existing casting options omit this
 frame and retain their serialized form.
 
+Object-selecting replacement journals may carry an optional `objects` array of
+distinct selected references. The selected typed operation validates that set
+against its captured candidates and shared entry reservations. Object choices
+and prevention allocations are separate inputs; historical selections omit
+`objects` and retain their encoded form. Prepared entry serialization may also
+retain linked sacrifice zone plans in a nonempty `devour_sacrifices` array.
+Each plan must match a selected physical/logical incarnation and controller.
+Resume validates selected incarnations and current control before rebuilding
+the move. Shared Devour resources use the existing simultaneous-event selector;
+the payload associates each offered effect with its event and eligible objects.
+Empty arrays are omitted so ordinary prepared entries keep their prior keys.
+
 Derived mana activations omit `tap_source` for the historical tap-cost form,
 which defaults to true. A nontapping self-sacrifice mode explicitly records
 `tap_source: false`; its compact mode similarly includes `tap: false`.

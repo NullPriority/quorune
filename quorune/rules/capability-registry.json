@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 369,
+  "registry_version": 370,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -29969,6 +29969,122 @@
       "dependency_fail_closed_rationale": "The fixed price has no aggregate dependency; ordinary mana, tap owner and whole-card result admission retain their own requirements.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the actual price/payment composer fails the native composed-cast witness; withdrawing its producer, fixed-tap or Convoke capability prevents complete compiler admission. Source spans and unsupported concurrent tap mechanics retain independent controls.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "zone.entry.devour",
+      "version": 1,
+      "official_rules": [
+        "702.82",
+        "702.82a",
+        "702.82b",
+        "702.82c",
+        "614.1c",
+        "614.6",
+        "614.12",
+        "614.12a",
+        "614.12b",
+        "616.1",
+        "616.1c",
+        "616.1e",
+        "616.1f",
+        "616.1g",
+        "701.21a",
+        "122.6",
+        "400.7",
+        "603.6c",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Closed fixed, artifact, Food and selected-creature-count Devour replacements prepare distinct sacrifices and entry counters for one canonical simultaneous event.",
+        "inputs": [
+          "complete compiled Devour specification",
+          "current controlled quality-matching battlefield objects",
+          "one prospective entry and replacement boundary"
+        ],
+        "outputs": [
+          "optional identity-pinned sacrifice selection",
+          "fixed or square-count counter contribution",
+          "one combined entry and sacrifice event"
+        ],
+        "exclusions": [
+          "unrepresented qualities or variable formulas",
+          "unclosed linked devoured-result consumers",
+          "unrepresented sacrifice prevention"
+        ]
+      },
+      "dependencies": [
+        "counter.placement.quantity_replacement",
+        "zone.change.destination_replacement",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.compiler.devour_nodes.devour_keyword_nodes",
+        "quorune.semantic_runtime.devour.DevourEntryHandler",
+        "quorune.semantic_runtime.devour.capture_devour_candidates",
+        "quorune.semantic_runtime.devour_preparation.prepare_devour_snapshot",
+        "quorune.zone_devour.expand_devour_zone_plans",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
+      ],
+      "positive_tests": [
+        "test_fixed_quality_and_selected_count_devour_have_source_pinned_components",
+        "test_all_original_devour_cards_have_complete_capability_bindings",
+        "test_original_fixed_and_square_devour_counts_keep_intrinsic_bodies",
+        "test_mycoloth_upkeep_counts_current_counters_instead_of_prior_devour",
+        "test_hobbit_blocking_uses_current_power_after_devour_and_later_counter_changes",
+        "test_caldera_damage_and_viashino_paid_trample_execute_after_devour"
+      ],
+      "negative_tests": [
+        "test_unknown_devour_variants_and_open_descriptors_remain_closed",
+        "test_artifact_and_food_variants_select_only_controlled_quality_permanents",
+        "test_changed_incarnation_cannot_be_substituted_for_a_pending_devour_selection",
+        "test_zero_devour_is_legal_and_zero_toughness_stabilizes_after_entry"
+      ],
+      "interaction_tests": [
+        "test_actual_slime_chooses_public_sacrifices_before_one_entry_with_private_loaded_replay",
+        "test_consumed_counter_doubler_applies_before_the_combined_entry_and_sacrifice",
+        "test_multiple_and_intrinsic_entry_counter_sources_receive_one_scales_increment",
+        "test_controller_can_choose_either_simultaneous_devour_event_first",
+        "test_simultaneous_devourers_reserve_disjoint_existing_objects_with_saved_replay",
+        "test_copied_entry_devour_uses_the_copiers_controller_and_current_sacrifices",
+        "test_redirected_sacrifices_keep_devour_count_and_do_not_trigger_death",
+        "test_feaster_can_devour_a_creature_already_tapped_to_convoke_it",
+        "test_existing_ability_removal_suppresses_prospective_devour",
+        "test_token_devour_keeps_before_event_death_sources_and_consumed_quantity_sources",
+        "test_consumed_death_observer_sees_simultaneous_sacrifices_and_entry_observer_sees_counters"
+      ],
+      "multiplayer_tests": [
+        "test_actual_slime_chooses_public_sacrifices_before_one_entry_with_private_loaded_replay",
+        "test_artifact_and_food_variants_select_only_controlled_quality_permanents"
+      ],
+      "privacy_tests": [
+        "test_actual_slime_chooses_public_sacrifices_before_one_entry_with_private_loaded_replay",
+        "test_consumed_death_observer_sees_simultaneous_sacrifices_and_entry_observer_sees_counters"
+      ],
+      "replay_tests": [
+        "test_actual_slime_chooses_public_sacrifices_before_one_entry_with_private_loaded_replay",
+        "test_copied_token_entry_offers_devour_before_allocating_any_token_or_sacrifice",
+        "test_token_devour_keeps_before_event_death_sources_and_consumed_quantity_sources"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Independent omission of Devour, counter quantity, zone destination, normalized zone events and APNAP capabilities keeps Devour residual; the compiler producer omission is also rejected.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Actual native Slime fails when its replacement collector is omitted; the multiple-instance model kills omitted counter aggregation; native copied-token entry kills omitted sacrifice commit.",
       "blockers": [],
       "status": "trusted"
     }

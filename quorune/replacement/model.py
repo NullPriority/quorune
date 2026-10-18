@@ -187,6 +187,7 @@ class EntryReplacementScope:
             reserved_zone_changes=(*self.reserved_zone_changes, *selected),
         )
 
+
     def library_order_for_replacement(
         self, library_order: Iterable[str]
     ) -> tuple[str, ...]:
@@ -599,6 +600,7 @@ class ReplacementSelection:
     chooser: str
     effect_id: str
     allocation: Mapping[str, int] | None = None
+    objects: tuple[str,...] | None = None
 
     def __post_init__(self) -> None:
         if not self.event_id or not self.chooser:
@@ -611,6 +613,11 @@ class ReplacementSelection:
                 "Replacement selection paths require nonnegative integers"
             )
         object.__setattr__(self, "path", path)
+        if self.objects is not None:
+            if (not isinstance(self.objects,(list,tuple)) or any(type(v) is not str or not v for v in self.objects)
+                    or len(set(self.objects))!=len(self.objects) or self.allocation is not None):
+                raise ReplacementEffectError('Replacement object choices require distinct references and cannot be prevention allocations')
+            object.__setattr__(self,'objects',tuple(self.objects))
         if not isinstance(self.effect_id, str) or not self.effect_id:
             raise ReplacementEffectError(
                 "Replacement selection effect IDs must be canonical strings"
@@ -645,6 +652,7 @@ class ReplacementSelection:
             "path": list(self.path),
             "chooser": self.chooser,
             "effect_id": self.effect_id,
+            **({'objects':list(self.objects)} if self.objects is not None else {}),
             **(
                 {"allocation": thaw_value(self.allocation)}
                 if self.allocation is not None
@@ -657,7 +665,10 @@ class ReplacementSelection:
         expected = {"event_id", "path", "chooser", "effect_id"}
         if "allocation" in value:
             expected.add("allocation")
+        if 'objects' in value:expected.add('objects')
         exact_fields(value, expected, field_name="selection")
+        if 'objects' in value and not isinstance(value['objects'],(list,tuple)):
+            raise ReplacementEffectError('Replacement object selections must be an array')
         if not isinstance(value["effect_id"], str):
             raise ReplacementEffectError(
                 "Replacement selection effect IDs must be canonical strings"
@@ -675,6 +686,7 @@ class ReplacementSelection:
             allocation=(
                 value["allocation"] if "allocation" in value else None
             ),
+            objects=value['objects'] if 'objects' in value else None,
         )
 
 
@@ -808,6 +820,7 @@ class ReplacementBatchChoice:
     prior_public_choices: tuple[ReplacementSelection, ...]
     prevention_allocations: tuple["PreventionAllocationChoice", ...] = ()
     event_order_options: tuple[str, ...] = ()
+    event_choices: tuple[tuple[str,ReplacementChoice], ...] = ()
 
     def __post_init__(self) -> None:
         options = tuple(self.event_order_options)
@@ -821,6 +834,11 @@ class ReplacementBatchChoice:
                 "Replacement event-order options must be unique and include the current event"
             )
         object.__setattr__(self, "event_order_options", options)
+        choices=tuple(self.event_choices)
+        if choices and ({event_id for event_id,_ in choices}!=set(options)
+                or len(choices)!=len(options) or any(not isinstance(choice,ReplacementChoice) for _,choice in choices)):
+            raise ReplacementEffectError('Replacement event choices must match their available events')
+        object.__setattr__(self,'event_choices',choices)
 
     @property
     def choice(self) -> ReplacementChoice:

@@ -171,7 +171,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v444"
+ORACLE_COMPILER_VERSION = "oracle-ir-v445"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -675,6 +675,10 @@ def _keyword_nodes(
     capability_profile: str,
     residuals: list[OracleResidual],
 ) -> tuple[OracleNode, ...]:
+    from .compiler.devour_nodes import devour_keyword_nodes
+    devour=devour_keyword_nodes(node_id=node_id,line=line,material_line=material_line,span=span,
+        capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if devour is not None:return devour
     chapter_nodes = ordinary_saga_chapter_nodes(node_id=node_id, line=line, material_line=material_line, span=span, card_name=card_name, printed_subtypes=printed_subtypes, declared_chapters=saga_chapters, trusted_mechanics=trusted_mechanics, capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals, effect_template=effect_template)
     if chapter_nodes is not None: return chapter_nodes
 

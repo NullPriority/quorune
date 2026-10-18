@@ -57,6 +57,7 @@
     "tests/fixtures/damage-result-cards.json",
     "tests/fixtures/defender-permission-cards.json",
     "tests/fixtures/devoid-characteristics-cards.json",
+    "tests/fixtures/devour-cards.json",
     "tests/fixtures/draw-rules-cards.json",
     "tests/fixtures/each-player-life-cards.json",
     "tests/fixtures/each-player-mill-cards.json",

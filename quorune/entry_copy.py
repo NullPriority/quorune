@@ -44,7 +44,9 @@ def copied_entry_preview(card: Any, prepared: Any):
 def serialize_prepared_copy_entry(prepared):
     from dataclasses import fields
     from .replacement.immutable import thaw_value
-    result = {field.name: getattr(prepared, field.name) for field in fields(prepared)}
+    result = {field.name: getattr(prepared, field.name) for field in fields(prepared)
+        if field.name!='devour_sacrifices' or prepared.devour_sacrifices}
+    if prepared.devour_sacrifices:result['devour_sacrifices']=[serialize_prepared_copy_entry(v) for v in prepared.devour_sacrifices]
     result['transition_kind'] = prepared.transition_kind.value
     result['event'] = prepared.event.to_dict()
     for field in ('effects', 'counter_events', 'keyword_grants', 'journal'):
@@ -58,9 +60,13 @@ def restore_prepared_copy_entry(value, *, revision):
     from .entry_keyword_grants import EntryKeywordGrant
     from .zone_trigger_events import ZoneTransitionKind
     from dataclasses import fields
-    if not isinstance(value, Mapping) or set(value) != {field.name for field in fields(PreparedZoneChange)}:
+    expected={field.name for field in fields(PreparedZoneChange) if field.name!='devour_sacrifices'}
+    if not isinstance(value, Mapping) or set(value) != (expected|({'devour_sacrifices'} if 'devour_sacrifices' in value else set())):
         raise ValueError('Retained copied entry has a closed identity')
     data = dict(value)
+    if 'devour_sacrifices' in data:
+        if type(data['devour_sacrifices']) is not list or not data['devour_sacrifices']:raise ValueError('Prepared Devour sacrifices require a nonempty array')
+        data['devour_sacrifices']=tuple(restore_prepared_copy_entry(v,revision=revision) for v in data['devour_sacrifices'])
     data['state_revision'] = revision  # Choices advance revision without moving this object.
     data['transition_kind'] = ZoneTransitionKind(data['transition_kind'])
     data['event'] = ReplaceableEvent.from_dict(data['event'])

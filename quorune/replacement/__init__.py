@@ -23,6 +23,7 @@ from .model import (
     ReplacementTreeChoice,
 )
 from .operations import (
+    DevourEntryOperation,
     AddAmount,
     AppendValues,
     CapResultLifeLoss,
@@ -91,6 +92,7 @@ __all__ = [
     "ReplacementTreeChoice",
     "RedirectDamage",
     "ReserveZoneChange",
+    "DevourEntryOperation",
     "SetField",
     "UnionValues",
     "advance_replacement_batch",

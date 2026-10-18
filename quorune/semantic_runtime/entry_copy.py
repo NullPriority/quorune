@@ -112,6 +112,11 @@ def _copied_entry_effects(host, subject, source, target, values):
             if descriptor.get('handler_id') in {ENTRY_COPY_HANDLER, ENTRY_COPY_QUERY_HANDLER}:
                 raise SemanticNodeError('Repeated intrinsic copy-entry replacement is outside the represented composition')
             from ..entry_reveal import ENTRY_REVEAL_HANDLER
+            from ..devour import DEVOUR_HANDLER
+            if descriptor.get('handler_id')==DEVOUR_HANDLER:
+                from .devour import DevourEntryHandler,devour_effects_for_spec
+                effects.extend(devour_effects_for_spec(host,copied_subject,DevourEntryHandler().validate(descriptor),component_id=f'{program.key}:{index}'))
+                continue
             if descriptor.get('handler_id')==ENTRY_REVEAL_HANDLER:
                 from .entry_reveal import EntryRevealHandler,entry_reveal_effects_for_spec
                 effects.extend(entry_reveal_effects_for_spec(host,copied_subject,

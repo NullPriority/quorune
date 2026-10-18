@@ -1261,6 +1261,9 @@ def _commit_resolved_token_specs(
         )
     except CounterPlacementError as exc:
         raise TokenCreationError(str(exc)) from exc
+    from .zone_devour import prepare_token_devour_sacrifices,commit_token_devour_sacrifices,publish_token_devour_sacrifices
+    devour=prepare_token_devour_sacrifices(host,prepared_entries,reason=reason)
+    sacrifices=commit_token_devour_sacrifices(devour,timestamp=creation_timestamp,reason=reason)
     created, applied_components = _commit_token_specs(
         host,
         controller,
@@ -1271,6 +1274,7 @@ def _commit_resolved_token_specs(
         ordered_role_timestamps=role_timestamp_order is not None,
     )
     from .token_copy_runtime import finish_copy_aftercare
+    publish_token_devour_sacrifices(sacrifices,reason=reason)
     _record_and_dispatch_token_creation(
         host,
         controller,

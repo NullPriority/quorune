@@ -229,6 +229,7 @@ class ZoneTransitionOwner:
         characteristic_lki_prepared: bool = False,
         defer_control_sync: bool = False,
         manifest_entry: bool = False,
+        _devour_batch: bool = False,
     ) -> CardInstance:
         if type(defer_control_sync) is not bool:
             raise GameRuleError("Zone-move control synchronization policy must be boolean")
@@ -262,6 +263,9 @@ class ZoneTransitionOwner:
         if isinstance(plan_or_card, CardInstance):
             return plan_or_card
         plan = plan_or_card
+        if plan.prepared_replacement.devour_sacrifices and not _devour_batch:
+            from .zone_devour import commit_single_devour_entry
+            return commit_single_devour_entry(self,plan,reason=reason,log=log,aura_target_ref=aura_target_ref,semantic_events=semantic_events)
         if plan.origin == "battlefield" and not characteristic_lki_prepared:
             self.pin_characteristic_departures((card,))
         departure = self._capture_departure(
@@ -939,52 +943,25 @@ class ZoneTransitionOwner:
         aura_target_refs: Mapping[str, str] | None = None,
         replacement_selections: Sequence[str | None | Mapping[str, Any]] = (),
         transition_kinds: Mapping[str, ZoneTransitionKind] | None = None,
+        prepared_replacements: Mapping[str,PreparedZoneChange] | None = None,
+        entry_faces: Mapping[str,str] | None = None,
+        publish_events: bool = True,
     ) -> list[CardInstance]:
         kinds = normalized_transition_kind_map(changes, transition_kinds)
         controllers = dict(destination_controllers or {})
         aura_targets = dict(aura_target_refs or {})
+        faces=dict(entry_faces or {})
+        if type(publish_events) is not bool or set(faces)-{oid for oid,_ in changes}:raise GameRuleError('Simultaneous entry options changed')
         self._validate_simultaneous_controllers(changes,controllers,aura_targets)
-        entry_characteristics = {
-            object_id: capture_prospective_entry_characteristics(
-                self.host,
-                card=self.state.cards[object_id],
-                enter_face=None,
-            )[0]
-            for object_id, destination in changes
-            if destination == "battlefield"
-        }
-        sources = tuple(copy.deepcopy(source) for source in self.semantic_event_sources())
-        source_snapshot = DepartureTriggerSnapshot(
-            sources=sources,
-            source_zones={source.object_id: source.zone for source in sources},
-            source_characteristics={
-                source.object_id: _damage_source_characteristics(self.host, source)
-                for source in sources
-            },
-        )
-        prepared = prepare_zone_change_replacement_batch(
-            self.host,
-            tuple(changes),
-            requested_tapped={
-                object_id: bool(tapped) if tapped is not None else False
-                for object_id, _destination in changes
-            },
-            destination_controllers={
-                object_id: controllers[object_id]
-                for object_id, destination in changes
-                if destination == "battlefield" and object_id in controllers
-            },
-            entry_characteristics=entry_characteristics,
-            effect_entry_counters=effect_entry_counters,
-            sources=sources,
-            source_zones=source_snapshot.source_zones,
-            selections=tuple(replacement_selections),
-            transition_kinds=kinds,
-            error_type=GameRuleError,
-        )
-        changes = self._preflight_simultaneous_auras(changes,prepared,entry_characteristics,controllers,aura_targets,log)
+        changes,prepared,kinds,source_snapshot=self._prepare_simultaneous_zone_batch(changes,controllers,aura_targets,faces,
+            tapped=tapped,effect_entry_counters=effect_entry_counters,replacement_selections=replacement_selections,
+            kinds=kinds,prepared_replacements=prepared_replacements,log=log)
         if not changes:return []
-        prepared={object_id:prepared[object_id] for object_id,_destination in changes}
+        snapshots=self._commit_simultaneous_zone_batch(changes,prepared,kinds,controllers,aura_targets,faces,source_snapshot,reason=reason,log=log)
+        return self._publish_simultaneous_zone_batch(snapshots,prepared,kinds,reason=reason,publish_events=publish_events)
+
+    def _commit_simultaneous_zone_batch(self,changes,prepared,kinds,controllers,aura_targets,faces,source_snapshot,*,reason,log,destination_timestamp=None):
+        """Commit an already validated group without publishing partial facts."""
         snapshots = tuple(
             self._simultaneous_departure(
                 self.state.cards[object_id],
@@ -995,7 +972,7 @@ class ZoneTransitionOwner:
         self.pin_characteristic_departures(
             tuple(snapshot[0] for snapshot in snapshots)
         )
-        destination_timestamp = self.next_timestamp()
+        destination_timestamp = self.next_timestamp() if destination_timestamp is None else destination_timestamp
         for object_id, destination in changes:
             self.move_card(
                 object_id,
@@ -1003,7 +980,9 @@ class ZoneTransitionOwner:
                 zone_timestamp=destination_timestamp,
                 controller=controllers.get(object_id),
                 aura_target_ref=aura_targets.get(object_id),
-                tapped=tapped,
+                tapped=prepared[object_id].requested_tapped,
+                entry_pay_life=prepared[object_id].requested_entry_pay_life,
+                enter_face=faces.get(object_id),
                 reason=reason,
                 log=log,
                 semantic_events=False,
@@ -1011,7 +990,12 @@ class ZoneTransitionOwner:
                 characteristic_lki_prepared=True,
                 transition_kind=kinds.get(object_id, ZoneTransitionKind.ORDINARY),
                 defer_control_sync=True,
+                _devour_batch=True,
             )
+        return snapshots
+
+    def _publish_simultaneous_zone_batch(self,snapshots,prepared,kinds,*,reason,publish_events=True):
+        """Seal history and discover triggers after every group member commits."""
         from .control_effects import synchronize_control_effects
         synchronize_control_effects(self.host, reason="control duration sources changed zones simultaneously")
         from .rules.city_blessing import synchronize_citys_blessing
@@ -1038,6 +1022,7 @@ class ZoneTransitionOwner:
         from .counter_placement_events import dispatch_counter_event_trees
         dispatch_counter_event_trees(self.host, tuple(prepared.values()), reason=reason, trigger_batch=trigger_batch)
         for card, departure in snapshots:
+            if not publish_events:continue
             sources = departure.trigger_sources
             self.host._dispatch_zone_change_events(
                 card,
@@ -1074,6 +1059,61 @@ class ZoneTransitionOwner:
         from .conditional_exile_return import return_from_departure_snapshots
         return_from_departure_snapshots(self.host, snapshots)
         return [card for card, _departure in snapshots]
+
+    def _prepare_simultaneous_zone_batch(self,changes,controllers,aura_targets,faces,*,tapped,
+            effect_entry_counters,replacement_selections,kinds,prepared_replacements,log):
+        """Capture sources and validate every entry/sacrifice plan before movement."""
+        entry_characteristics = {
+            object_id: capture_prospective_entry_characteristics(
+                self.host,
+                card=self.state.cards[object_id],
+                enter_face=faces.get(object_id),
+            )[0]
+            for object_id, destination in changes
+            if destination == "battlefield"
+        }
+        sources = tuple(copy.deepcopy(source) for source in self.semantic_event_sources())
+        source_snapshot = DepartureTriggerSnapshot(
+            sources=sources,
+            source_zones={source.object_id: source.zone for source in sources},
+            source_characteristics={
+                source.object_id: _damage_source_characteristics(self.host, source)
+                for source in sources
+            },
+        )
+        prepared = prepare_zone_change_replacement_batch(
+            self.host,
+            tuple(changes),
+            requested_tapped={
+                object_id: bool(tapped) if tapped is not None else False
+                for object_id, _destination in changes
+            },
+            destination_controllers={
+                object_id: controllers[object_id]
+                for object_id, destination in changes
+                if destination == "battlefield" and object_id in controllers
+            },
+            entry_characteristics=entry_characteristics,
+            effect_entry_counters=effect_entry_counters,
+            sources=sources,
+            source_zones=source_snapshot.source_zones,
+            selections=tuple(replacement_selections),
+            transition_kinds=kinds,
+            error_type=GameRuleError,
+        ) if prepared_replacements is None else dict(prepared_replacements)
+        if set(prepared)!={oid for oid,_ in changes}:raise GameRuleError('Prepared simultaneous zone plans do not match their objects')
+        changes = self._preflight_simultaneous_auras(changes,prepared,entry_characteristics,controllers,aura_targets,log)
+        if not changes:return (),prepared,kinds,source_snapshot
+        prepared={object_id:prepared[object_id] for object_id,_destination in changes}
+        from .zone_devour import expand_devour_zone_plans
+        changes,prepared,kinds=expand_devour_zone_plans(self.host,changes,prepared,kinds)
+        for oid,destination in changes:
+            plan=prepared[oid]
+            prepare_zone_change_replacement(self.host,self.state.cards[oid],destination,
+                destination_controller=controllers.get(oid),entry_characteristics=entry_characteristics.get(oid),
+                requested_tapped=plan.requested_tapped,entry_pay_life=plan.requested_entry_pay_life,
+                transition_kind=kinds.get(oid,ZoneTransitionKind.ORDINARY),prepared=plan,error_type=GameRuleError)
+        return changes,prepared,kinds,source_snapshot
 
     def _validate_simultaneous_controllers(self, changes, controllers, aura_targets):
         change_ids = {object_id for object_id, _destination in changes}

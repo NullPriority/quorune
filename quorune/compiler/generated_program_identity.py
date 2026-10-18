@@ -125,6 +125,7 @@ def generated_ability_id(
                 SUNBURST_MECHANIC_ID,
                 _TOXIC_MECHANIC,
                 "affinity",
+                "devour",
             }
         ):
             return f"static:{face_id}:n{line}:{parts[-2]}:{parts[-1]}"
