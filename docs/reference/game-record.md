@@ -210,6 +210,16 @@ snapshot and resolution-start timestamp. `source_continuity` is omitted from
 card payloads until needed. Version one and absent-marker states retain their
 earlier control path; the new fixed-control capability requires version two.
 
+The optional `soulbond_pairs` array retains version-one pair identities,
+both exact object incarnations, their original controller, and control/phase
+continuity snapshots. It is absent until a pair is first committed, preserving
+historical hashes. A used relationship book can become an empty array; loading
+it preserves that distinction from absence. The decoder rejects duplicate
+pair identities, overlapping members, unknown fields and malformed versions.
+Principal projections expose only the current public counterpart reference as
+`paired_with` on battlefield objects; internal pair and incarnation identities
+remain authoritative record data.
+
 Resolution-created declaration rules retain their legacy locked-object payload
 when they apply to explicit target or source incarnations. Live creature-group
 rules use an additive `schema_version: 2` payload with `live_query` and an empty

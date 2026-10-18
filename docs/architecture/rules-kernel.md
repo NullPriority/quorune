@@ -347,6 +347,16 @@ logical incarnation. No handler receives mutable state, parses Oracle prose,
 or bypasses target, attachment, commander, replacement, trigger, projection,
 or replay coordination.
 
+Soulbond relationships use `soulbond_model.py` and the narrow
+`soulbond_state.py` mutation owner. Optional entry choices validate both
+unpaired, controlled creature incarnations without targeting them. Control,
+phasing and zone boundaries end the relationship immediately; characteristic
+observers expire pairs that cease being creatures. Returning to the earlier
+state does not restore an expired pair. Losing Soulbond alone leaves an
+established pair intact; paired effects still follow current source-ability
+presence. Typed granted abilities belong to their recipients, and pending
+triggers retain their locked controller and last-known source information.
+
 Continuous characteristics are a shared rules responsibility rather than a
 client reconstruction. `continuous_effect_state.py` owns the authoritative
 resolution-effect journal and expiration; `characteristic_evaluation.py`

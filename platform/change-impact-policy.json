@@ -5777,6 +5777,37 @@
         "test_job_select",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "soulbond-pair-choice-lifetime-and-live-grant-contract",
+      "patterns": [
+        "quorune/soulbond_model.py",
+        "quorune/soulbond_state.py",
+        "quorune/compiler/soulbond_nodes.py",
+        "quorune/compiler/soulbond_templates.py",
+        "quorune/semantic_choices/soulbond.py",
+        "quorune/semantic_runtime/soulbond.py",
+        "quorune/semantic_runtime/soulbond_intent.py",
+        "quorune/rules/soulbond_capability_shapes.py",
+        "quorune/compiler/generated_program_identity.py",
+        "quorune/control_effects.py",
+        "quorune/zone_transitions.py",
+        "quorune/state_based_execution.py",
+        "quorune/tap_state.py",
+        "quorune/permanent_transform.py",
+        "quorune/semantic_runtime/executor.py",
+        "quorune/semantic_choices/engine_coordination.py",
+        "quorune/semantic_runtime/continuous_components.py"
+      ],
+      "test_modules": [
+        "test_soulbond",
+        "test_card_program_trust",
+        "test_attached_static_characteristics",
+        "test_fixed_query_quoted_ability_grants",
+        "test_graft_rules",
+        "test_conditional_copy_values",
+        "test_activating_abilities_rules"
+      ]
     }
   ],
   "symbol_rules": [

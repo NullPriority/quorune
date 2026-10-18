@@ -171,7 +171,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v456"
+ORACLE_COMPILER_VERSION = "oracle-ir-v457"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -689,7 +689,7 @@ def _keyword_nodes(
     if mechanics is None:
         return ()
 
-    multi_nodes = multi_keyword_nodes(**locals())
+    multi_nodes = multi_keyword_nodes(**locals(), compile_single_keyword=_keyword_node_for_mechanics)
     if multi_nodes is not None: return multi_nodes
     if mechanics in {("madness",), ("partner with",), ("learn",)}: return ()
 

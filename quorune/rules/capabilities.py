@@ -133,6 +133,7 @@ from .optional_counter_capability_shapes import (
     optional_fixed_counter_event_trigger_node_capabilities,
 )
 from .graft_capability_shapes import graft_node_capabilities
+from .soulbond_capability_shapes import soulbond_node_capabilities
 from .enlist_shapes import enlist_reflexive_capabilities
 from .fixed_resolution_mana_shapes import fixed_resolution_mana_capabilities
 from .fixed_controller_effect_shapes import (
@@ -1157,6 +1158,7 @@ def _targeted_effect_capabilities(
         self_regeneration_node_capabilities,
         fixed_self_counter_keyword_action_node_capabilities,
         graft_node_capabilities,
+        soulbond_node_capabilities,
         enlist_reflexive_capabilities,
         fixed_resolution_mana_capabilities,
         fixed_bolster_node_capabilities,

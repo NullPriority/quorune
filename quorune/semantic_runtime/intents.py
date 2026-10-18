@@ -1,5 +1,6 @@
 from __future__ import annotations
 from ..city_blessing_model import AscendIntent
+from .soulbond_intent import PairSoulbondIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..random_discard import RandomDiscardIntent
 from .control_intents import ControlIntent
@@ -1580,6 +1581,7 @@ SemanticIntent: TypeAlias = (
     | SetCardDesignationIntent
     | BecomeMonstrousIntent
     | BecomeRenownedIntent
+    | PairSoulbondIntent
     | RecordChoiceIntent
     | ConniveCompletedIntent
     | ZoneMoveIntent

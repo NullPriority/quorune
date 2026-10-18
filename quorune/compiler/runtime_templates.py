@@ -511,6 +511,11 @@ def _continuous_static_runtime_template(
 
 
 def _constant_static_characteristic_template(text, *, source_name, source_is_class):
+    from .soulbond_templates import paired_characteristics_handler
+    paired = paired_characteristics_handler(text, source_name=source_name or 'source')
+    if paired is not None:
+        return StaticRuntimeTemplate(compiled=paired, kind='static_ability', event='characteristics.evaluate',
+            dependency_reason='Paired grants require trusted pairing and independently closed modifier capabilities')
     from .attached_control_templates import attached_control_handler
     control = attached_control_handler(text)
     if control is not None:

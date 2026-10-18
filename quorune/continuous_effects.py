@@ -569,6 +569,7 @@ def evaluate_continuous_effects(
         if effect.relation in {
             ContinuousEffectRelation.SOURCE_OBJECT,
             ContinuousEffectRelation.SOURCE_ATTACHED_TO_OBJECT,
+            ContinuousEffectRelation.SOURCE_PAIRED_WITH_OBJECT,
         }:
             object_id = str(context.get("object_id") or "")
             logical_object_id = str(

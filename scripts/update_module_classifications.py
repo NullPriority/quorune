@@ -53,6 +53,14 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/activated_ability_descriptor.py",
         "quorune/ability_fragment_primitives.py",
         "quorune/ability_fragments.py",
+        "quorune/ability_line_normalization.py",
+        "quorune/conditional_copy_model.py",
+        "quorune/copy_value_types.py",
+        "quorune/devour.py",
+        "quorune/granted_activation_model.py",
+        "quorune/preparation_model.py",
+        "quorune/targeted_spell_costs.py",
+        "quorune/waterbend.py",
         "quorune/basic_land_types.py",
         "quorune/basic_type_addition_model.py",
         "quorune/basic_type_setting_model.py",
@@ -107,6 +115,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/resolution_conditions.py",
         "quorune/continuous_effect_model.py",
         "quorune/source_continuity.py",
+        "quorune/soulbond_model.py",
         "quorune/creature_subtypes.py",
         "quorune/creature_power_damage_model.py",
         "quorune/enchant_spec.py",
@@ -339,6 +348,20 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/permanent_transform.py",
         "quorune/spell_history_transform.py",
         "quorune/zone_object_state.py",
+        "quorune/soulbond_state.py",
+        "quorune/counter_prevention.py",
+        "quorune/damage_aftermath_preparation.py",
+        "quorune/entry_copy_predicates.py",
+        "quorune/keyword_prohibition.py",
+        "quorune/opening_hand.py",
+        "quorune/opening_hand_model.py",
+        "quorune/opening_reveal.py",
+        "quorune/opening_reveal_model.py",
+        "quorune/preparation.py",
+        "quorune/target_restrictions.py",
+        "quorune/target_source.py",
+        "quorune/untap_selection.py",
+        "quorune/zone_devour.py",
         "quorune/zone_transition_journal.py",
         "quorune/zone_transition_model.py",
         "quorune/zone_transitions.py",
@@ -392,6 +415,28 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
+    if relative == "quorune/ability_line_normalization.py":
+        return "activated_abilities"
+    if relative == "quorune/copy_value_types.py":
+        return "card_characteristics"
+    if relative in {"quorune/counter_prevention.py", "quorune/damage_aftermath_preparation.py"}:
+        return "damage"
+    if relative == "quorune/keyword_prohibition.py":
+        return "continuous_effects"
+    if relative in {"quorune/opening_hand.py", "quorune/opening_hand_model.py",
+                    "quorune/opening_reveal.py", "quorune/opening_reveal_model.py"}:
+        return "turn_priority_and_decisions"
+    if relative == "quorune/preparation.py":
+        return "permanent_designations"
+    if relative in {"quorune/rules/casting/targeted_costs.py", "quorune/rules/casting/waterbend_costs.py",
+                    "quorune/rules/waterbend_payments.py"}:
+        return "casting_activation_and_costs"
+    if relative in {"quorune/target_restrictions.py", "quorune/target_source.py"}:
+        return "target_legality"
+    if relative == "quorune/untap_selection.py":
+        return "untap_step"
+    if relative == "quorune/zone_devour.py":
+        return "zones_and_object_identity"
     if relative == "quorune/copied_aura_entry.py":
         return "semantic_runtime"
     if relative.startswith("server/"):
@@ -737,7 +782,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/conditional_exile_return.py",
     }:
         return "zones_and_object_identity"
-    if relative == "quorune/permanent_designations.py":
+    if relative in {"quorune/permanent_designations.py", "quorune/soulbond_model.py", "quorune/soulbond_state.py"}:
         return "permanent_designations"
     if relative in {
         "quorune/zone_object_state.py",
@@ -958,6 +1003,23 @@ def build_classifications() -> dict[str, Any]:
                             "optional_untap.py",
                             "control_effects.py",
                             "source_continuity.py",
+                            "quorune/compiler/counter_prevention_templates.py",
+                            "quorune/compiler/keyword_prohibition_templates.py",
+                            "quorune/compiler/untap_selection_templates.py",
+                            "quorune/counter_prevention.py",
+                            "quorune/damage_aftermath_preparation.py",
+                            "quorune/keyword_prohibition.py",
+                            "quorune/opening_hand.py",
+                            "quorune/opening_hand_model.py",
+                            "quorune/opening_reveal.py",
+                            "quorune/opening_reveal_model.py",
+                            "quorune/preparation.py",
+                            "quorune/rules/activation/payment_commit.py",
+                            "quorune/target_source.py",
+                            "quorune/untap_selection.py",
+                            "quorune/zone_devour.py",
+                            "quorune/soulbond_model.py",
+                            "quorune/soulbond_state.py",
                             "spell_history_transform.py",
                         )
                     )

@@ -133,6 +133,7 @@ class ContinuousEffectSourceContext:
     resolved_quantity: int | None = None
     source_counters: FrozenMap = FrozenMap()
     source_designations: FrozenMap = FrozenMap()
+    paired_object: ContinuousObjectIdentity | None = None
 
     def __post_init__(self) -> None:
         if not self.source_object_id or not self.source_ref:
@@ -157,6 +158,8 @@ class ContinuousEffectSourceContext:
             raise SemanticNodeError(
                 "An attached continuous component requires typed object identity"
             )
+        if self.paired_object is not None and not isinstance(self.paired_object, ContinuousObjectIdentity):
+            raise SemanticNodeError('A paired component requires typed object identity')
         if self.source_logical_object_id is not None and (
             type(self.source_logical_object_id) is not str
             or not self.source_logical_object_id
@@ -1382,6 +1385,7 @@ def default_continuous_effect_component_registry(
     from .chosen_characteristics import ChosenCharacteristicsHandler
     from .conditional_chosen_characteristics import ConditionalChosenCharacteristicsHandler
     from .attached_continuous import AttachedFixedCharacteristicsHandler
+    from .soulbond import SoulbondPairedGrantHandler
     from .fixed_characteristic_settings import FixedCharacteristicSettingsHandler, ConditionalCharacteristicSettingsHandler, ConditionalCreatureTypeRemovalHandler
     from .attached_control import AttachedControlHandler
     from .conditional_continuous import (
@@ -1425,6 +1429,7 @@ def default_continuous_effect_component_registry(
             GraveyardStaticCharacteristicsHandler(),
             ConditionalTypedKeywordHandler(),
             AttachedFixedCharacteristicsHandler(),
+            SoulbondPairedGrantHandler(),
             FixedCharacteristicSettingsHandler(),
             ConditionalCharacteristicSettingsHandler(),
             ConditionalCreatureTypeRemovalHandler(),

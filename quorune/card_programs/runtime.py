@@ -764,6 +764,11 @@ def collect_card_program_continuous_effects(
                                 raw_quantity
                             ),
                         )
+                    from ..soulbond_model import SOULBOND_GRANT_HANDLER
+                    paired_object = None
+                    if descriptor.get('handler_id') == SOULBOND_GRANT_HANDLER:
+                        from ..soulbond_state import paired_object_identity
+                        paired_object = paired_object_identity(state, source)
                     context = ContinuousEffectSourceContext(
                         source_object_id=source.object_id,
                         source_ref=source.ref,
@@ -785,6 +790,7 @@ def collect_card_program_continuous_effects(
                         }),
                         public_state=public_state,
                         resolved_quantity=resolved_quantity,
+                        paired_object=paired_object,
                         attached_object=(
                             attached_object_identity(state.cards, source)
                             if getattr(source, "attached_to", None)

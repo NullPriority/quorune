@@ -198,6 +198,10 @@ class SemanticChoiceCoordinationMixin:
         effect: Mapping[str, Any],
         source_ref: str | None,
     ) -> tuple[str, ...]:
+        if effect.get("op") == "offer_soulbond_pair":
+            from ..soulbond_model import SoulbondOpportunity
+            from ..soulbond_state import opportunity_candidates
+            return opportunity_candidates(self, SoulbondOpportunity.from_effect(effect))
         if str(effect.get("op") or "") != "choose_objects":
             return ()
         selector = dict(effect.get("selector") or {})

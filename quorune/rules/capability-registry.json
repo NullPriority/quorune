@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 381,
+  "registry_version": 382,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -31268,6 +31268,216 @@
       "dependency_fail_closed_rationale": "Conditional copy/CDA capability or compiler withdrawal retains residual; a recipe carrying Embalm origin requires the existing graveyard-copy owner. Generic token status does not enable the exception.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Actual native omission of conditional no-cost/color/subtype values or added CDA fails complete result witnesses. Model omission also fails; native wrappers use fresh TestCase instances.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "pairing.soulbond",
+      "version": 1,
+      "official_rules": [
+        "702.95",
+        "702.95a",
+        "702.95b",
+        "702.95c",
+        "702.95d",
+        "702.95e",
+        "603.4",
+        "400.7",
+        "109.5",
+        "611.2b",
+        "702.26f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Two independent Soulbond entry triggers offer optional untargeted pairing of exact controlled, unpaired creature incarnations. A narrow pair owner retains symmetric identity and control/phase continuity and expires invalid relationships.",
+        "inputs": [
+          "current trusted Soulbond keyword at occurrence",
+          "locked trigger controller",
+          "source and entering incarnation facts",
+          "current public layer-four creature facts",
+          "retained active pair relationships"
+        ],
+        "outputs": [
+          "ordinary APNAP self-entry or other-entry trigger",
+          "optional untargeted current legal partner choice",
+          "one symmetric exact-incarnation relationship",
+          "current paired state for typed continuous/grant consumers",
+          "pending load and exact command replay"
+        ],
+        "exclusions": [
+          "unknown keyword modifications",
+          "unrepresented paired result bodies",
+          "unrepresented multiplayer or pairing producers outside ordinary Soulbond"
+        ]
+      },
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.compiler.soulbond_nodes.soulbond_keyword_nodes",
+        "quorune.rules.soulbond_capability_shapes.soulbond_node_capabilities",
+        "quorune.semantic_choices.soulbond.SoulbondPairChoiceHandler",
+        "quorune.semantic_runtime.soulbond_intent.PairSoulbondIntent",
+        "quorune.soulbond_model.SoulbondOpportunity",
+        "quorune.soulbond_model.SoulbondPair",
+        "quorune.soulbond_state.commit_soulbond_pair",
+        "quorune.soulbond_state.end_pairs_containing",
+        "quorune.soulbond_state.reconcile_soulbond_pairs"
+      ],
+      "positive_tests": [
+        "test_original_soulbond_cards_close_only_with_independent_paired_children",
+        "test_own_entry_offers_optional_untargeted_pair_and_grants_both_flying",
+        "test_paired_activated_blink_uses_recipient_and_new_incarnation_requires_new_pair",
+        "test_two_soulbond_sources_contribute_independent_stats_and_keywords"
+      ],
+      "negative_tests": [
+        "test_controller_change_before_resolution_invalidates_the_original_pairing_controller",
+        "test_creature_type_loss_ends_pair_and_restoring_type_does_not_repair",
+        "test_duplicate_books_and_stale_or_malformed_proposals_reject_without_mutation",
+        "test_lost_soulbond_does_not_cancel_pending_trigger_or_end_pair_but_grant_is_removed",
+        "test_other_entry_only_offers_the_entered_creature_and_decline_does_not_pair",
+        "test_phase_owner_ends_pair_and_phase_in_does_not_restore_it"
+      ],
+      "interaction_tests": [
+        "test_paired_activated_blink_uses_recipient_and_new_incarnation_requires_new_pair",
+        "test_paired_damage_trigger_survives_control_change_and_keeps_private_draw_controller",
+        "test_paired_death_grant_uses_recipient_last_known_power_after_pair_ends",
+        "test_real_control_continuity_expires_pair_after_control_is_restored",
+        "test_simultaneous_creature_entries_queue_opportunities_then_only_one_pair_forms",
+        "test_two_soulbond_sources_contribute_independent_stats_and_keywords"
+      ],
+      "multiplayer_tests": [
+        "test_own_entry_offers_optional_untargeted_pair_and_grants_both_flying",
+        "test_paired_damage_trigger_survives_control_change_and_keeps_private_draw_controller"
+      ],
+      "privacy_tests": [
+        "test_own_entry_offers_optional_untargeted_pair_and_grants_both_flying",
+        "test_paired_damage_trigger_survives_control_change_and_keeps_private_draw_controller",
+        "test_public_pair_projection_exposes_references_without_private_hands_or_identities"
+      ],
+      "replay_tests": [
+        "test_own_entry_offers_optional_untargeted_pair_and_grants_both_flying",
+        "test_paired_activated_blink_uses_recipient_and_new_incarnation_requires_new_pair",
+        "test_paired_damage_trigger_survives_control_change_and_keeps_private_draw_controller",
+        "test_paired_death_grant_uses_recipient_last_known_power_after_pair_ends",
+        "test_simultaneous_creature_entries_queue_opportunities_then_only_one_pair_forms"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Omitting pairing or paired-grant authority keeps the complete keyword/modifier residual; unknown keyword tails, malformed pinned identities and inexact quoted children retain residuals.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Pure lifetime omission changes independently expected expiry; suppressing the paired-grant lowerer is detected by actual admitted Wingcrafter entry, optional choice and both-creature flying consequences.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.soulbond.paired_grant",
+      "version": 1,
+      "official_rules": [
+        "702.95b",
+        "611.3a",
+        "613.1f",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Apply each current paired source keyword/P-T/independently exact ability grant to both exact creatures, with correct source/controller and ordinary layer ownership.",
+        "inputs": [
+          "one complete paired characteristic or quoted grant clause",
+          "reconciled current pair endpoints",
+          "trusted modifier and independently closed quoted child"
+        ],
+        "outputs": [
+          "current keyword/P-T/typed ability modifiers on both recipients",
+          "recipient-owned activated and triggered abilities",
+          "ordinary LKI and current ability/relationship lifetime"
+        ],
+        "exclusions": [
+          "unrepresented paired static procedures",
+          "partial quoted children",
+          "unknown paired characteristics or durations"
+        ]
+      },
+      "dependencies": [
+        "pairing.soulbond",
+        "continuous.characteristics.query_count_modifier"
+      ],
+      "implementation_components": [
+        "quorune.compiler.soulbond_templates.paired_characteristics_handler",
+        "quorune.compiler.soulbond_templates.paired_quoted_handler",
+        "quorune.semantic_runtime.soulbond.SoulbondPairedGrantHandler",
+        "quorune.soulbond_state.end_pairs_containing",
+        "quorune.soulbond_state.paired_object_identity"
+      ],
+      "positive_tests": [
+        "test_original_soulbond_cards_close_only_with_independent_paired_children",
+        "test_own_entry_offers_optional_untargeted_pair_and_grants_both_flying",
+        "test_paired_activated_blink_uses_recipient_and_new_incarnation_requires_new_pair",
+        "test_two_soulbond_sources_contribute_independent_stats_and_keywords"
+      ],
+      "negative_tests": [
+        "test_controller_change_before_resolution_invalidates_the_original_pairing_controller",
+        "test_creature_type_loss_ends_pair_and_restoring_type_does_not_repair",
+        "test_duplicate_books_and_stale_or_malformed_proposals_reject_without_mutation",
+        "test_lost_soulbond_does_not_cancel_pending_trigger_or_end_pair_but_grant_is_removed",
+        "test_other_entry_only_offers_the_entered_creature_and_decline_does_not_pair",
+        "test_phase_owner_ends_pair_and_phase_in_does_not_restore_it"
+      ],
+      "interaction_tests": [
+        "test_paired_activated_blink_uses_recipient_and_new_incarnation_requires_new_pair",
+        "test_paired_damage_trigger_survives_control_change_and_keeps_private_draw_controller",
+        "test_paired_death_grant_uses_recipient_last_known_power_after_pair_ends",
+        "test_real_control_continuity_expires_pair_after_control_is_restored",
+        "test_simultaneous_creature_entries_queue_opportunities_then_only_one_pair_forms",
+        "test_two_soulbond_sources_contribute_independent_stats_and_keywords"
+      ],
+      "multiplayer_tests": [
+        "test_own_entry_offers_optional_untargeted_pair_and_grants_both_flying",
+        "test_paired_damage_trigger_survives_control_change_and_keeps_private_draw_controller"
+      ],
+      "privacy_tests": [
+        "test_own_entry_offers_optional_untargeted_pair_and_grants_both_flying",
+        "test_paired_damage_trigger_survives_control_change_and_keeps_private_draw_controller",
+        "test_public_pair_projection_exposes_references_without_private_hands_or_identities"
+      ],
+      "replay_tests": [
+        "test_own_entry_offers_optional_untargeted_pair_and_grants_both_flying",
+        "test_paired_activated_blink_uses_recipient_and_new_incarnation_requires_new_pair",
+        "test_paired_damage_trigger_survives_control_change_and_keeps_private_draw_controller",
+        "test_paired_death_grant_uses_recipient_last_known_power_after_pair_ends",
+        "test_simultaneous_creature_entries_queue_opportunities_then_only_one_pair_forms"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Omitting pairing or paired-grant authority keeps the complete keyword/modifier residual; unknown keyword tails, malformed pinned identities and inexact quoted children retain residuals.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Pure lifetime omission changes independently expected expiry; suppressing the paired-grant lowerer is detected by actual admitted Wingcrafter entry, optional choice and both-creature flying consequences.",
       "blockers": [],
       "status": "trusted"
     }

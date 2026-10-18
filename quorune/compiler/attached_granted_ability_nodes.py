@@ -350,12 +350,14 @@ def compile_attached_granted_ability_nodes(
 ) -> tuple[OracleNode, OracleNode] | None:
     """Compile one accepted attached shell and one independent inner ability."""
 
-    if source_attachment_relation not in {
+    from .soulbond_templates import paired_quoted_text, paired_quoted_handler
+    paired = paired_quoted_text(material_line, source_name=source_name)
+    if paired is None and source_attachment_relation not in {
         AttachmentReferenceKind.ENCHANTED,
         AttachmentReferenceKind.EQUIPPED,
     }:
         return None
-    quoted = attached_quoted_ability_text(
+    quoted = paired or attached_quoted_ability_text(
         material_line,
         source_name=source_name,
     )
@@ -373,7 +375,7 @@ def compile_attached_granted_ability_nodes(
         span=span,
         quoted=quoted,
         compile_shell=lambda fragment, fragment_capabilities: (
-            attached_quoted_ability_handler(
+            (paired_quoted_handler if paired is not None else attached_quoted_ability_handler)(
                 material_line,
                 fragment=fragment,
                 fragment_capabilities=fragment_capabilities,

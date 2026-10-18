@@ -17,6 +17,7 @@ from .declaration_rule_effects import (
 from .trigger_batches import PendingTriggerBatch, TriggerBatchError
 from .util import normalize_mana_bundle, stable_json
 from .source_continuity import SourceContinuityHistory
+from .soulbond_model import SoulbondPair, canonical_pair_book
 
 CONTROL_HISTORY_VERSION = 2
 _COLORED_MANA_SYMBOLS = tuple("WUBRG")
@@ -897,6 +898,8 @@ class GameState:
     # use version 1 upkeep-relative control-acquisition history.
     control_history_version: int | None = None
     tap_state_event_version: int | None = None
+    # Absent until a Soulbond pair first exists; preserve historical hashes.
+    soulbond_pairs: tuple[SoulbondPair, ...] | None = None
     extra_turns: list[TurnEntry] = field(default_factory=list)
     active_player: str | None = None
     priority_player: str | None = None
@@ -965,6 +968,8 @@ class GameState:
             "players": {seat: player.to_dict() for seat, player in self.players.items()},
             "cards": {object_id: card.to_dict() for object_id, card in self.cards.items()},
             **({"tap_state_event_version": self.tap_state_event_version} if self.tap_state_event_version is not None else {}),
+            **({"soulbond_pairs": [pair.to_dict() for pair in canonical_pair_book(self.soulbond_pairs)]}
+               if self.soulbond_pairs is not None else {}),
             "deck_names": dict(self.deck_names),
             "commander_oracle_ids": {
                 seat: list(ids) for seat, ids in self.commander_oracle_ids.items()
@@ -1054,6 +1059,8 @@ class GameState:
             players={seat: PlayerState.from_dict(player) for seat, player in data["players"].items()},
             cards={oid: CardInstance.from_dict(card) for oid, card in data["cards"].items()},
             tap_state_event_version=data.get("tap_state_event_version"),
+            soulbond_pairs=(cls._soulbond_pairs_from_dict(data["soulbond_pairs"])
+                            if "soulbond_pairs" in data else None),
             deck_names=dict(data["deck_names"]),
             commander_oracle_ids={seat: list(ids) for seat, ids in data["commander_oracle_ids"].items()},
             turn_order=list(data["turn_order"]),
@@ -1120,6 +1127,12 @@ class GameState:
             mulligan_round=int(data.get("mulligan_round", 0)),
             ref_counters=dict(data.get("ref_counters", {})),
         )
+
+    @staticmethod
+    def _soulbond_pairs_from_dict(value: Any) -> tuple[SoulbondPair, ...]:
+        if type(value) is not list:
+            raise ValueError("Retained Soulbond pairs must be an array")
+        return canonical_pair_book(SoulbondPair.from_dict(row) for row in value)
 
     @staticmethod
     def _control_history_version_from_dict(data: Mapping[str, Any]) -> int | None:

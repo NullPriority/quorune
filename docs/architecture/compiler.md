@@ -2088,6 +2088,15 @@ granted ability text. Source ability loss or departure ends its rule, while
 recipient ability loss does not remove an Aura-owned rule. Other evasion,
 restrictions, requirements and costs retain their own owners.
 
+`compiler/soulbond_nodes.py` lowers Soulbond to two independently identified
+entry triggers, including repeated instances and printed keyword siblings.
+Their intervening-if checks and optional untargeted choices retain the original
+source, entering incarnation and trigger controller. `soulbond_templates.py`
+lowers complete paired keyword/P-T clauses and separately exact quoted children
+through the existing grant compiler. The paired runtime component applies each
+source's modifier to both current incarnations through an explicit paired
+relationship. Unknown paired procedures and inexact children remain residual.
+
 Fading, Graft and Vanishing lower their separate entry and lifecycle abilities to
 the current counter and trigger owners. Graft emits a non-targeted optional
 counter-movement choice with the intervening source-counter condition and

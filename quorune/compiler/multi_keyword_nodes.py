@@ -15,6 +15,10 @@ from .ir_model import SourceSpan
 
 
 def multi_keyword_nodes(**values: Any):
+    compile_sibling = values.pop('compile_single_keyword', None)
+    from .soulbond_nodes import soulbond_node_group
+    bonded = soulbond_node_group(compile_sibling=compile_sibling, **values)
+    if bonded is not None:return bonded
     from .paid_entry_copy_nodes import paid_entry_copy_keyword_nodes
     paid_copy = paid_entry_copy_keyword_nodes(**values)
     if paid_copy is not None:return paid_copy

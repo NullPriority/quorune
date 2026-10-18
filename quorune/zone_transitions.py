@@ -726,6 +726,10 @@ class ZoneTransitionOwner:
         if not defer_control_sync:
             from .control_effects import synchronize_control_effects
             synchronize_control_effects(self.host, reason="control duration source changed zones")
+            from .soulbond_state import end_pairs_containing, reconcile_soulbond_pairs
+            if departure.origin == 'battlefield' and plan.destination != 'battlefield':
+                end_pairs_containing(self.host, (card.object_id,), reason='paired object left the battlefield')
+            reconcile_soulbond_pairs(self.host)
         trigger_batch=[] if not defer_control_sync else None
         if semantic_events:
             sources = departure.trigger_sources
@@ -1002,6 +1006,11 @@ class ZoneTransitionOwner:
         synchronize_control_effects(self.host, reason="control duration sources changed zones simultaneously")
         from .rules.city_blessing import synchronize_citys_blessing
         synchronize_citys_blessing(self.host,reason='simultaneous zone transitions before trigger facts')
+        from .soulbond_state import end_pairs_containing, reconcile_soulbond_pairs
+        end_pairs_containing(self.host,
+            (card.object_id for card, departure in snapshots if departure.origin == 'battlefield'
+             and card.zone != 'battlefield'), reason='paired objects left simultaneously')
+        reconcile_soulbond_pairs(self.host)
         occurrences = tuple(
             self._zone_change_occurrence(
                 card,

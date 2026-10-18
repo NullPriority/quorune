@@ -372,7 +372,12 @@
       ,"quorune/selection/storm.py": "typed Storm copy-target selection and authoritative stack-copy commit owner"
       ,"quorune/selection/targeting.py": "typed target proposal, projection, completion, and resolution revalidation owner"
       ,"quorune/impulse_access.py": "typed fixed library-top exile, temporary ordinary-play permission, and duration-expiry owner delegating zone movement to the canonical zone-transition owner"
-      ,"quorune/rules/player_speed_state.py": "canonical typed persistent player speed and inherent once-per-own-turn trigger usage owner behind state-based stabilization and committed life transactions"
+      ,"quorune/rules/player_speed_state.py": "canonical typed persistent player speed and inherent once-per-own-turn trigger usage owner behind state-based stabilization and committed life transactions",
+      "quorune/soulbond_state.py": "typed symmetric Soulbond pair proposal, continuity validation, and relationship commit/expiry owner",
+      "quorune/preparation.py": "typed noncopiable Preparation designation and linked inset-spell-copy lifecycle owner",
+      "quorune/rules/activation/payment_commit.py": "canonical activation payment commit delegating paid choices and tap/zone/counter mutation to typed owners",
+      "quorune/target_source.py": "typed announced targeting-source and retained pre-cost/LKI stack provenance owner",
+      "quorune/untap_selection.py": "typed retained untap-selection choice and continuation owner"
     },
     "read_only_consumers": {
       "quorune/source_damage_death.py": "read-only exact source/victim incarnation predicate over typed committed current-turn damage history",
@@ -441,7 +446,21 @@
       ,"quorune/dynamic_characteristics.py": "typed read-only dynamic-characteristic evaluation over public battlefield and owner graveyard state"
       ,"quorune/self_cast_reductions.py": "typed read-only self spell-cost reduction metrics over public objects and canonical current-turn facts"
       ,"quorune/characteristic_evaluation_host.py": "typed read-only effective-characteristic integration over authoritative public state",
-      "quorune/conditional_exile_return.py": "typed CR 610.3 committed-departure return selection over retained source and actual exile incarnations; movement stays in the canonical simultaneous zone owner"
+      "quorune/conditional_exile_return.py": "typed CR 610.3 committed-departure return selection over retained source and actual exile incarnations; movement stays in the canonical simultaneous zone owner",
+      "quorune/counter_prevention.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
+      "quorune/damage_aftermath_preparation.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
+      "quorune/keyword_prohibition.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
+      "quorune/opening_hand.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
+      "quorune/opening_hand_model.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
+      "quorune/opening_reveal.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
+      "quorune/opening_reveal_model.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
+      "quorune/rules/casting/targeted_costs.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
+      "quorune/rules/casting/waterbend_costs.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
+      "quorune/rules/waterbend_payments.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
+      "quorune/semantic_runtime/devour.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
+      "quorune/semantic_runtime/targeted_spell_costs.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
+      "quorune/target_restrictions.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
+      "quorune/zone_devour.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners"
     },
     "model_definition": "quorune/model.py"
   },

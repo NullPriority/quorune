@@ -161,6 +161,9 @@ def record_source_transition(
             updates["last_phase_in_timestamp"] = host._next_zone_timestamp()
     if updates:
         card.source_continuity = replace(history, **updates)
+    if control_changed or (previous_phased_out is False and card.phased_out):
+        from .soulbond_state import end_pairs_containing
+        end_pairs_containing(host, (card.object_id,), reason='paired object changed control or phased out')
 
 
 def _source_is_current(host: ControlEffectHost, source: ResolutionEffectSource) -> Any | None:

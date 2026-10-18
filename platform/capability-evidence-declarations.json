@@ -68499,6 +68499,386 @@
     {"capability_id":"continuous.resolution.temporary_target_interactions","evidence_class":"replay","test_id":"tests.test_temporary_target_interactions.TemporaryTargetInteractionRuntimeTests.test_trusted_x_cast_uses_selected_cost_and_expires","official_rule_ids":["115.1","400.7","608.2b","608.2d","608.2h","611.2a","611.2c","611.2d","613.1f","613.4c","702.16"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Replay positive and negative X casts from checkpoints before their offered actions."},
     {"capability_id":"continuous.resolution.temporary_target_interactions","evidence_class":"rollback","test_id":"tests.test_temporary_target_interactions.TemporaryTargetInteractionRuntimeTests.test_stale_target_and_payment_rejection_roll_back","official_rule_ids":["115.1","400.7","608.2b","608.2d","608.2h","611.2a","611.2c","611.2d","613.1f","613.4c","702.16"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Illegal targets and insufficient X payment leave state unchanged; resolution cannot modify a returned target incarnation."},
     {
+      "capability_id": "continuous.soulbond.paired_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_paired_activated_blink_uses_recipient_and_new_incarnation_requires_new_pair",
+      "official_rule_ids": [
+        "702.95b",
+        "611.3a",
+        "613.1f",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "continuous.soulbond.paired_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_paired_death_grant_uses_recipient_last_known_power_after_pair_ends",
+      "official_rule_ids": [
+        "702.95b",
+        "611.3a",
+        "613.1f",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "continuous.soulbond.paired_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_simultaneous_creature_entries_queue_opportunities_then_only_one_pair_forms",
+      "official_rule_ids": [
+        "702.95b",
+        "611.3a",
+        "613.1f",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "continuous.soulbond.paired_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_token_copy_does_not_copy_pair_relation_and_can_form_its_own_pair",
+      "official_rule_ids": [
+        "702.95b",
+        "611.3a",
+        "613.1f",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "continuous.soulbond.paired_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_two_soulbond_sources_contribute_independent_stats_and_keywords",
+      "official_rule_ids": [
+        "702.95b",
+        "611.3a",
+        "613.1f",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "continuous.soulbond.paired_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_soulbond.SoulbondStateOwnerTests.test_real_control_continuity_expires_pair_after_control_is_restored",
+      "official_rule_ids": [
+        "702.95b",
+        "611.3a",
+        "613.1f",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Ordinary Soulbond uses two distinct trigger identities, optional untargeted exact-incarnation pairing, both-recipient effects and a narrow lifecycle owner. Actual entry/decline, controller response, death LKI, blink, simultaneous entry, token copy, private projection and replay witnesses protect the contract. Independently inexact paired procedures remain residual."
+    },
+    {
+      "capability_id": "continuous.soulbond.paired_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_own_entry_offers_optional_untargeted_pair_and_grants_both_flying",
+      "official_rule_ids": [
+        "702.95b",
+        "611.3a",
+        "613.1f",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Ordinary Soulbond uses two distinct trigger identities, optional untargeted exact-incarnation pairing, both-recipient effects and a narrow lifecycle owner. Actual entry/decline, controller response, death LKI, blink, simultaneous entry, token copy, private projection and replay witnesses protect the contract. Independently inexact paired procedures remain residual."
+    },
+    {
+      "capability_id": "continuous.soulbond.paired_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_paired_damage_trigger_survives_control_change_and_keeps_private_draw_controller",
+      "official_rule_ids": [
+        "702.95b",
+        "611.3a",
+        "613.1f",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "continuous.soulbond.paired_grant",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_paired_grant_omission_is_detected_by_real_entry_and_choice",
+      "official_rule_ids": [
+        "702.95b",
+        "611.3a",
+        "613.1f",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Ordinary Soulbond uses two distinct trigger identities, optional untargeted exact-incarnation pairing, both-recipient effects and a narrow lifecycle owner. Actual entry/decline, controller response, death LKI, blink, simultaneous entry, token copy, private projection and replay witnesses protect the contract. Independently inexact paired procedures remain residual."
+    },
+    {
+      "capability_id": "continuous.soulbond.paired_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_soulbond.SoulbondPairModelTests.test_duplicate_books_and_stale_or_malformed_proposals_reject_without_mutation",
+      "official_rule_ids": [
+        "702.95b",
+        "611.3a",
+        "613.1f",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Ordinary Soulbond uses two distinct trigger identities, optional untargeted exact-incarnation pairing, both-recipient effects and a narrow lifecycle owner. Actual entry/decline, controller response, death LKI, blink, simultaneous entry, token copy, private projection and replay witnesses protect the contract. Independently inexact paired procedures remain residual."
+    },
+    {
+      "capability_id": "continuous.soulbond.paired_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_controller_change_before_resolution_invalidates_the_original_pairing_controller",
+      "official_rule_ids": [
+        "702.95b",
+        "611.3a",
+        "613.1f",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "continuous.soulbond.paired_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_original_soulbond_cards_close_only_with_independent_paired_children",
+      "official_rule_ids": [
+        "702.95b",
+        "611.3a",
+        "613.1f",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "continuous.soulbond.paired_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_own_entry_offers_optional_untargeted_pair_and_grants_both_flying",
+      "official_rule_ids": [
+        "702.95b",
+        "611.3a",
+        "613.1f",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Ordinary Soulbond uses two distinct trigger identities, optional untargeted exact-incarnation pairing, both-recipient effects and a narrow lifecycle owner. Actual entry/decline, controller response, death LKI, blink, simultaneous entry, token copy, private projection and replay witnesses protect the contract. Independently inexact paired procedures remain residual."
+    },
+    {
+      "capability_id": "continuous.soulbond.paired_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_own_entry_offers_optional_untargeted_pair_and_grants_both_flying",
+      "official_rule_ids": [
+        "702.95b",
+        "611.3a",
+        "613.1f",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Ordinary Soulbond uses two distinct trigger identities, optional untargeted exact-incarnation pairing, both-recipient effects and a narrow lifecycle owner. Actual entry/decline, controller response, death LKI, blink, simultaneous entry, token copy, private projection and replay witnesses protect the contract. Independently inexact paired procedures remain residual."
+    },
+    {
+      "capability_id": "continuous.soulbond.paired_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_public_pair_projection_exposes_references_without_private_hands_or_identities",
+      "official_rule_ids": [
+        "702.95b",
+        "611.3a",
+        "613.1f",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "continuous.soulbond.paired_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_own_entry_offers_optional_untargeted_pair_and_grants_both_flying",
+      "official_rule_ids": [
+        "702.95b",
+        "611.3a",
+        "613.1f",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Ordinary Soulbond uses two distinct trigger identities, optional untargeted exact-incarnation pairing, both-recipient effects and a narrow lifecycle owner. Actual entry/decline, controller response, death LKI, blink, simultaneous entry, token copy, private projection and replay witnesses protect the contract. Independently inexact paired procedures remain residual."
+    },
+    {
+      "capability_id": "continuous.soulbond.paired_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_paired_damage_trigger_survives_control_change_and_keeps_private_draw_controller",
+      "official_rule_ids": [
+        "702.95b",
+        "611.3a",
+        "613.1f",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "continuous.soulbond.paired_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_paired_death_grant_uses_recipient_last_known_power_after_pair_ends",
+      "official_rule_ids": [
+        "702.95b",
+        "611.3a",
+        "613.1f",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "continuous.soulbond.paired_grant",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_own_entry_offers_optional_untargeted_pair_and_grants_both_flying",
+      "official_rule_ids": [
+        "702.95b",
+        "611.3a",
+        "613.1f",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
       "capability_id": "cost.counter.source_fixed_resolution",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_source_counter_payments.FixedSourceCounterPaymentCompilerTests.test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
@@ -104547,6 +104927,462 @@
         "commander_review"
       ],
       "applicability_note": "Exact chosen-color output shares complete existing activation costs and shared explicit/automatic mode ownership. Actual Grail/Quirion/Coldsteel casts and choices cover private projections, fresh tap guard, control, entry/tap/re-entry, pending load/replay. Both source and selected-source sacrifice retain original designation and bad output rolls back all costs."
+    },
+    {
+      "capability_id": "pairing.soulbond",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_paired_activated_blink_uses_recipient_and_new_incarnation_requires_new_pair",
+      "official_rule_ids": [
+        "702.95",
+        "702.95a",
+        "702.95b",
+        "702.95c",
+        "702.95d",
+        "702.95e",
+        "603.4",
+        "400.7",
+        "109.5",
+        "611.2b",
+        "702.26f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "pairing.soulbond",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_paired_death_grant_uses_recipient_last_known_power_after_pair_ends",
+      "official_rule_ids": [
+        "702.95",
+        "702.95a",
+        "702.95b",
+        "702.95c",
+        "702.95d",
+        "702.95e",
+        "603.4",
+        "400.7",
+        "109.5",
+        "611.2b",
+        "702.26f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "pairing.soulbond",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_simultaneous_creature_entries_queue_opportunities_then_only_one_pair_forms",
+      "official_rule_ids": [
+        "702.95",
+        "702.95a",
+        "702.95b",
+        "702.95c",
+        "702.95d",
+        "702.95e",
+        "603.4",
+        "400.7",
+        "109.5",
+        "611.2b",
+        "702.26f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "pairing.soulbond",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_token_copy_does_not_copy_pair_relation_and_can_form_its_own_pair",
+      "official_rule_ids": [
+        "702.95",
+        "702.95a",
+        "702.95b",
+        "702.95c",
+        "702.95d",
+        "702.95e",
+        "603.4",
+        "400.7",
+        "109.5",
+        "611.2b",
+        "702.26f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "pairing.soulbond",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_two_soulbond_sources_contribute_independent_stats_and_keywords",
+      "official_rule_ids": [
+        "702.95",
+        "702.95a",
+        "702.95b",
+        "702.95c",
+        "702.95d",
+        "702.95e",
+        "603.4",
+        "400.7",
+        "109.5",
+        "611.2b",
+        "702.26f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "pairing.soulbond",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_soulbond.SoulbondStateOwnerTests.test_real_control_continuity_expires_pair_after_control_is_restored",
+      "official_rule_ids": [
+        "702.95",
+        "702.95a",
+        "702.95b",
+        "702.95c",
+        "702.95d",
+        "702.95e",
+        "603.4",
+        "400.7",
+        "109.5",
+        "611.2b",
+        "702.26f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Ordinary Soulbond uses two distinct trigger identities, optional untargeted exact-incarnation pairing, both-recipient effects and a narrow lifecycle owner. Actual entry/decline, controller response, death LKI, blink, simultaneous entry, token copy, private projection and replay witnesses protect the contract. Independently inexact paired procedures remain residual."
+    },
+    {
+      "capability_id": "pairing.soulbond",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_own_entry_offers_optional_untargeted_pair_and_grants_both_flying",
+      "official_rule_ids": [
+        "702.95",
+        "702.95a",
+        "702.95b",
+        "702.95c",
+        "702.95d",
+        "702.95e",
+        "603.4",
+        "400.7",
+        "109.5",
+        "611.2b",
+        "702.26f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Ordinary Soulbond uses two distinct trigger identities, optional untargeted exact-incarnation pairing, both-recipient effects and a narrow lifecycle owner. Actual entry/decline, controller response, death LKI, blink, simultaneous entry, token copy, private projection and replay witnesses protect the contract. Independently inexact paired procedures remain residual."
+    },
+    {
+      "capability_id": "pairing.soulbond",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_paired_damage_trigger_survives_control_change_and_keeps_private_draw_controller",
+      "official_rule_ids": [
+        "702.95",
+        "702.95a",
+        "702.95b",
+        "702.95c",
+        "702.95d",
+        "702.95e",
+        "603.4",
+        "400.7",
+        "109.5",
+        "611.2b",
+        "702.26f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "pairing.soulbond",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_soulbond.SoulbondPairModelTests.test_pair_lifetime_predicate_omission_is_detected",
+      "official_rule_ids": [
+        "702.95",
+        "702.95a",
+        "702.95b",
+        "702.95c",
+        "702.95d",
+        "702.95e",
+        "603.4",
+        "400.7",
+        "109.5",
+        "611.2b",
+        "702.26f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Ordinary Soulbond uses two distinct trigger identities, optional untargeted exact-incarnation pairing, both-recipient effects and a narrow lifecycle owner. Actual entry/decline, controller response, death LKI, blink, simultaneous entry, token copy, private projection and replay witnesses protect the contract. Independently inexact paired procedures remain residual."
+    },
+    {
+      "capability_id": "pairing.soulbond",
+      "evidence_class": "negative",
+      "test_id": "tests.test_soulbond.SoulbondPairModelTests.test_duplicate_books_and_stale_or_malformed_proposals_reject_without_mutation",
+      "official_rule_ids": [
+        "702.95",
+        "702.95a",
+        "702.95b",
+        "702.95c",
+        "702.95d",
+        "702.95e",
+        "603.4",
+        "400.7",
+        "109.5",
+        "611.2b",
+        "702.26f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Ordinary Soulbond uses two distinct trigger identities, optional untargeted exact-incarnation pairing, both-recipient effects and a narrow lifecycle owner. Actual entry/decline, controller response, death LKI, blink, simultaneous entry, token copy, private projection and replay witnesses protect the contract. Independently inexact paired procedures remain residual."
+    },
+    {
+      "capability_id": "pairing.soulbond",
+      "evidence_class": "negative",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_controller_change_before_resolution_invalidates_the_original_pairing_controller",
+      "official_rule_ids": [
+        "702.95",
+        "702.95a",
+        "702.95b",
+        "702.95c",
+        "702.95d",
+        "702.95e",
+        "603.4",
+        "400.7",
+        "109.5",
+        "611.2b",
+        "702.26f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "pairing.soulbond",
+      "evidence_class": "positive",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_original_soulbond_cards_close_only_with_independent_paired_children",
+      "official_rule_ids": [
+        "702.95",
+        "702.95a",
+        "702.95b",
+        "702.95c",
+        "702.95d",
+        "702.95e",
+        "603.4",
+        "400.7",
+        "109.5",
+        "611.2b",
+        "702.26f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "pairing.soulbond",
+      "evidence_class": "positive",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_own_entry_offers_optional_untargeted_pair_and_grants_both_flying",
+      "official_rule_ids": [
+        "702.95",
+        "702.95a",
+        "702.95b",
+        "702.95c",
+        "702.95d",
+        "702.95e",
+        "603.4",
+        "400.7",
+        "109.5",
+        "611.2b",
+        "702.26f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Ordinary Soulbond uses two distinct trigger identities, optional untargeted exact-incarnation pairing, both-recipient effects and a narrow lifecycle owner. Actual entry/decline, controller response, death LKI, blink, simultaneous entry, token copy, private projection and replay witnesses protect the contract. Independently inexact paired procedures remain residual."
+    },
+    {
+      "capability_id": "pairing.soulbond",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_own_entry_offers_optional_untargeted_pair_and_grants_both_flying",
+      "official_rule_ids": [
+        "702.95",
+        "702.95a",
+        "702.95b",
+        "702.95c",
+        "702.95d",
+        "702.95e",
+        "603.4",
+        "400.7",
+        "109.5",
+        "611.2b",
+        "702.26f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Ordinary Soulbond uses two distinct trigger identities, optional untargeted exact-incarnation pairing, both-recipient effects and a narrow lifecycle owner. Actual entry/decline, controller response, death LKI, blink, simultaneous entry, token copy, private projection and replay witnesses protect the contract. Independently inexact paired procedures remain residual."
+    },
+    {
+      "capability_id": "pairing.soulbond",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_public_pair_projection_exposes_references_without_private_hands_or_identities",
+      "official_rule_ids": [
+        "702.95",
+        "702.95a",
+        "702.95b",
+        "702.95c",
+        "702.95d",
+        "702.95e",
+        "603.4",
+        "400.7",
+        "109.5",
+        "611.2b",
+        "702.26f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "pairing.soulbond",
+      "evidence_class": "replay",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_own_entry_offers_optional_untargeted_pair_and_grants_both_flying",
+      "official_rule_ids": [
+        "702.95",
+        "702.95a",
+        "702.95b",
+        "702.95c",
+        "702.95d",
+        "702.95e",
+        "603.4",
+        "400.7",
+        "109.5",
+        "611.2b",
+        "702.26f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Ordinary Soulbond uses two distinct trigger identities, optional untargeted exact-incarnation pairing, both-recipient effects and a narrow lifecycle owner. Actual entry/decline, controller response, death LKI, blink, simultaneous entry, token copy, private projection and replay witnesses protect the contract. Independently inexact paired procedures remain residual."
+    },
+    {
+      "capability_id": "pairing.soulbond",
+      "evidence_class": "replay",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_paired_damage_trigger_survives_control_change_and_keeps_private_draw_controller",
+      "official_rule_ids": [
+        "702.95",
+        "702.95a",
+        "702.95b",
+        "702.95c",
+        "702.95d",
+        "702.95e",
+        "603.4",
+        "400.7",
+        "109.5",
+        "611.2b",
+        "702.26f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "pairing.soulbond",
+      "evidence_class": "replay",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_paired_death_grant_uses_recipient_last_known_power_after_pair_ends",
+      "official_rule_ids": [
+        "702.95",
+        "702.95a",
+        "702.95b",
+        "702.95c",
+        "702.95d",
+        "702.95e",
+        "603.4",
+        "400.7",
+        "109.5",
+        "611.2b",
+        "702.26f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
+    },
+    {
+      "capability_id": "pairing.soulbond",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_soulbond.SoulbondRuntimeTests.test_own_entry_offers_optional_untargeted_pair_and_grants_both_flying",
+      "official_rule_ids": [
+        "702.95",
+        "702.95a",
+        "702.95b",
+        "702.95c",
+        "702.95d",
+        "702.95e",
+        "603.4",
+        "400.7",
+        "109.5",
+        "611.2b",
+        "702.26f"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Native ordinary Soulbond controller/incarnation/lifetime and both-recipient programs with exact pre-action replay; owner-level type/phasing checks are separate from printed-card support claims."
     },
     {
       "capability_id": "permanent.class.fixed_lifecycle",

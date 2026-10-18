@@ -461,6 +461,7 @@
       "test_semantic_searches",
       "test_server_data",
       "test_server_persistence",
+      "test_soulbond",
       "test_source_references",
       "test_source_self_optional_results",
       "test_spells_abilities_effects_general",

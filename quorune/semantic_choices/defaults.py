@@ -43,6 +43,7 @@ from .attacking_tokens import ATTACKING_TOKEN_CHOICE_HANDLERS
 from .hand_inspection import HAND_INSPECTION_CHOICE_HANDLERS
 from .connive import FixedConniveChoiceHandler
 from .exploit import ExploitChoiceHandler
+from .soulbond import SoulbondPairChoiceHandler
 
 
 @lru_cache(maxsize=1)
@@ -83,5 +84,6 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             *HAND_INSPECTION_CHOICE_HANDLERS,
             FixedConniveChoiceHandler(),
             ExploitChoiceHandler(),
+            SoulbondPairChoiceHandler(),
         )
     ).freeze()

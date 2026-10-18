@@ -233,6 +233,10 @@ def _keyword_intervening_condition_actual(
     context: Mapping[str, Any],
 ) -> bool:
     """Evaluate typed keyword conditions outside the generic dispatcher."""
+    from .soulbond_model import SOULBOND_SELF_CONDITION, SOULBOND_OTHER_CONDITION
+    if field in {SOULBOND_SELF_CONDITION, SOULBOND_OTHER_CONDITION}:
+        from .soulbond_state import intervening_pair_available
+        return intervening_pair_available(host, source, context, other_entry=field == SOULBOND_OTHER_CONDITION)
 
     if field == RENOWN_EVENT_CONDITION_FIELD:
         try:
@@ -434,7 +438,8 @@ def _semantic_condition_actual(
         return bool(
             controlled_values and max(controlled_values) == max(all_values)
         )
-    if field in {EVOLVE_EVENT_CONDITION_FIELD, RENOWN_EVENT_CONDITION_FIELD}:
+    if field in {EVOLVE_EVENT_CONDITION_FIELD, RENOWN_EVENT_CONDITION_FIELD,
+                 'soulbond_self_entry_available', 'soulbond_other_entry_available'}:
         return _keyword_intervening_condition_actual(
             host,
             field,
@@ -1010,6 +1015,9 @@ def _semantic_trigger_context(
             raise GameRuleError("Graft entry trigger lost its entering creature")
         stack_context["source_logical_object_id"] = source.logical_object_id
         stack_context["graft_recipient_identity"] = recipient.logical_object_id
+    if 'identity_pinned_soulbond_pairing' in program.coverage:
+        stack_context['source_logical_object_id'] = source.logical_object_id
+        stack_context['intervening_condition_controller'] = source.controller
     if "one_or_more_event_batch" in program.coverage:
         aggregation_scope = (
             {"damaged_player": context.get("player")}
@@ -1252,6 +1260,14 @@ def _granted_prowess_trigger_items(host, source, event, context, *, active_zone,
     return tuple(result)
 
 
+def _program_trigger_ability_is_present(program, characteristics):
+    if ('identity_pinned_soulbond_pairing' in program.coverage
+            and 'soulbond' not in {str(keyword).casefold() for keyword in characteristics.get('keywords', ())}):
+        return False
+    return (CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage
+            or program_has_current_ability_fragments(program, characteristics))
+
+
 def dispatch_semantic_event(
     host: TriggerDiscoveryHost,
     event: str,
@@ -1313,13 +1329,7 @@ def dispatch_semantic_event(
                 continue
             if program.trust_level == "unresolved":
                 continue
-            if (
-                CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage
-                and not program_has_current_ability_fragments(
-                    program,
-                    characteristics,
-                )
-            ):
+            if not _program_trigger_ability_is_present(program, characteristics):
                 continue
             if not semantic_event_matches(
                 host,

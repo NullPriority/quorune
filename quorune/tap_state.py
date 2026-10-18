@@ -324,6 +324,8 @@ def dispatch_tap_state_occurrence(
     Entry state and rollback do not call this boundary. Coordinated groups
     commit every member before invoking it so discovery sees the whole event.
     """
+    from .soulbond_state import reconcile_soulbond_pairs
+    reconcile_soulbond_pairs(host)
 
     version = getattr(host.state, "tap_state_event_version", None)
     if version is None:

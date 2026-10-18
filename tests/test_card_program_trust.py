@@ -314,6 +314,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.fixed_query_keyword_grant",
                 "continuous.opponent_keyword_prohibition",
                 "continuous.attached.fixed_characteristics",
+                "continuous.soulbond.paired_grant",
                 "continuous.characteristics.fixed_public_state",
                 "continuous.characteristics.conditional_creature_type_removal",
                 "continuous.characteristics.graveyard_public_state",
