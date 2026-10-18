@@ -5348,6 +5348,26 @@
         "test_nonmana_morph",
         "test_public_state_condition_compiler"
       ]
+    },
+    {
+      "id": "fixed-untap-participation-surfaces-contract",
+      "patterns": [
+        "quorune/compiler/untap_step_templates.py",
+        "quorune/compiler/runtime_templates.py",
+        "quorune/semantic_runtime/untap_steps.py",
+        "quorune/untap_step.py",
+        "quorune/untap_step_coordination.py",
+        "tests/test_fixed_untap_participation.py",
+        "tests/fixtures/fixed-untap-participation-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_untap_participation",
+        "test_typed_untap_step_participation",
+        "test_untap_step_rules",
+        "test_untap_selection_limits",
+        "test_card_program_trust",
+        "test_object_query"
+      ]
     }
   ],
   "symbol_rules": [

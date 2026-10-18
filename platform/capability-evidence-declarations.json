@@ -137417,74 +137417,1452 @@
     {
       "capability_id": "untap.step.static_participation",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_actual_back_to_basics_preserves_basic_mana_and_blocks_nonbasic_untap",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The existing untap planner composes current queries with counters, source control, attachment restrictions, mana, copies or held triggers as asserted by this native witness."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_actual_humility_removes_a_creatures_additional_untap_before_next_step",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The existing untap planner composes current queries with counters, source control, attachment restrictions, mana, copies or held triggers as asserted by this native witness."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_actual_inertia_bubble_does_not_block_other_turn_mana_untap",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The existing untap planner composes current queries with counters, source control, attachment restrictions, mana, copies or held triggers as asserted by this native witness."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_actual_rimescale_activation_adds_ice_and_blocks_only_current_creatures",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The existing untap planner composes current queries with counters, source control, attachment restrictions, mana, copies or held triggers as asserted by this native witness."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_additional_untap_triggers_wait_for_upkeep_and_resolve_from_loaded_programs",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The existing untap planner composes current queries with counters, source control, attachment restrictions, mana, copies or held triggers as asserted by this native witness."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_all_three_self_untappers_use_other_turns_and_current_controller",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The existing untap planner composes current queries with counters, source control, attachment restrictions, mana, copies or held triggers as asserted by this native witness."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_arena_and_root_cage_preserve_supertype_and_noncreature_subtype_subjects",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The existing untap planner composes current queries with counters, source control, attachment restrictions, mana, copies or held triggers as asserted by this native witness."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_copied_additional_untap_survives_original_departure_and_replays",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The existing untap planner composes current queries with counters, source control, attachment restrictions, mana, copies or held triggers as asserted by this native witness."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_murkfiend_color_union_is_current_mandatory_and_duplicate_stun_attempts_are_not_added",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The existing untap planner composes current queries with counters, source control, attachment restrictions, mana, copies or held triggers as asserted by this native witness."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_numeric_originals_use_current_power_counters_and_inclusive_thresholds",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The existing untap planner composes current queries with counters, source control, attachment restrictions, mana, copies or held triggers as asserted by this native witness."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "interaction",
       "test_id": "tests.test_typed_untap_step_participation.UntapStepParticipationRuntimeTests.test_static_prohibition_does_not_consume_stun_and_next_step_marker_expires",
-      "official_rule_ids": ["502.3", "604.1", "611.3b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compose a current static untap prohibition with the canonical stun-counter replacement and a next-step prohibition without consuming or retaining the wrong state."
     },
     {
       "capability_id": "untap.step.static_participation",
       "evidence_class": "interaction",
       "test_id": "tests.test_untap_step_rules.UntapStepRuleTests.test_shared_public_queries_govern_untap_participation",
-      "official_rule_ids": ["502.3", "604.1", "611.3b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Select current shared-query members during untap and remove the prohibition immediately when its source leaves."
     },
     {
       "capability_id": "untap.step.static_participation",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_actual_back_to_basics_preserves_basic_mana_and_blocks_nonbasic_untap",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The four-player native transition preserves active-player, source-controller and foreign-seat distinctions."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_actual_inertia_bubble_does_not_block_other_turn_mana_untap",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The four-player native transition preserves active-player, source-controller and foreign-seat distinctions."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_additional_untap_triggers_wait_for_upkeep_and_resolve_from_loaded_programs",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The four-player native transition preserves active-player, source-controller and foreign-seat distinctions."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_all_three_self_untappers_use_other_turns_and_current_controller",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The four-player native transition preserves active-player, source-controller and foreign-seat distinctions."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_murkfiend_color_union_is_current_mandatory_and_duplicate_stun_attempts_are_not_added",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The four-player native transition preserves active-player, source-controller and foreign-seat distinctions."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_typed_untap_step_participation.UntapStepParticipationRuntimeTests.test_global_and_other_player_participation_compose_in_four_players",
-      "official_rule_ids": ["502.3", "604.1", "611.3b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Apply a global active-player prohibition and a different controller's additional untap in the same four-player untap step."
     },
     {
       "capability_id": "untap.step.static_participation",
       "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationCompilerTests.test_unrepresented_qualifiers_malformed_descriptors_and_producer_omission_fail_closed",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omission of the actual compiler query producer or runtime participation lowerer makes the corresponding positive witness fail."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_native_untap_participation_omission_is_killed",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omission of the actual compiler query producer or runtime participation lowerer makes the corresponding positive witness fail."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "mutation",
       "test_id": "tests.test_typed_untap_step_participation.UntapStepParticipationModelTests.test_untap_step_planner_and_compiler_mutants_are_killed",
-      "official_rule_ids": ["502.3", "604.1", "611.3b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Kill omission of the closed global compiler production and omission of typed predicate application in the pure planner."
     },
     {
       "capability_id": "untap.step.static_participation",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_query_dependency_fails_closed_across_consumers",
-      "official_rule_ids": ["502.3", "604.1", "611.3b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Block the shared public query and keep the affected untap participation ability residual."
     },
     {
       "capability_id": "untap.step.static_participation",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationCompilerTests.test_each_declared_untap_dependency_blocks_complete_admission",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The nearest unsupported qualifier, nonmatching subject, removed ability, foreign controller or forbidden dependency does not gain untap participation."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationCompilerTests.test_unrepresented_qualifiers_malformed_descriptors_and_producer_omission_fail_closed",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The nearest unsupported qualifier, nonmatching subject, removed ability, foreign controller or forbidden dependency does not gain untap participation."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_actual_back_to_basics_preserves_basic_mana_and_blocks_nonbasic_untap",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The nearest unsupported qualifier, nonmatching subject, removed ability, foreign controller or forbidden dependency does not gain untap participation."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_actual_humility_removes_a_creatures_additional_untap_before_next_step",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The nearest unsupported qualifier, nonmatching subject, removed ability, foreign controller or forbidden dependency does not gain untap participation."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_all_three_self_untappers_use_other_turns_and_current_controller",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The nearest unsupported qualifier, nonmatching subject, removed ability, foreign controller or forbidden dependency does not gain untap participation."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_arena_and_root_cage_preserve_supertype_and_noncreature_subtype_subjects",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The nearest unsupported qualifier, nonmatching subject, removed ability, foreign controller or forbidden dependency does not gain untap participation."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_murkfiend_color_union_is_current_mandatory_and_duplicate_stun_attempts_are_not_added",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The nearest unsupported qualifier, nonmatching subject, removed ability, foreign controller or forbidden dependency does not gain untap participation."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_numeric_originals_use_current_power_counters_and_inclusive_thresholds",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The nearest unsupported qualifier, nonmatching subject, removed ability, foreign controller or forbidden dependency does not gain untap participation."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "negative",
       "test_id": "tests.test_typed_untap_step_participation.UntapStepCompilerTests.test_unsupported_untap_step_wording_remains_residual",
-      "official_rule_ids": ["502.3", "604.1", "611.3b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Keep optional, variable, controller-qualified, and maximum-selection wording outside the executable compiler family."
     },
     {
       "capability_id": "untap.step.static_participation",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationCompilerTests.test_fixed_subjects_preserve_complete_spans_typed_queries_and_current_ability_presence",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete trusted original bindings and native turn transitions preserve the fixed query, current source, current controller and mandatory untap consequences asserted here."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_actual_back_to_basics_preserves_basic_mana_and_blocks_nonbasic_untap",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete trusted original bindings and native turn transitions preserve the fixed query, current source, current controller and mandatory untap consequences asserted here."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_actual_humility_removes_a_creatures_additional_untap_before_next_step",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete trusted original bindings and native turn transitions preserve the fixed query, current source, current controller and mandatory untap consequences asserted here."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_actual_inertia_bubble_does_not_block_other_turn_mana_untap",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete trusted original bindings and native turn transitions preserve the fixed query, current source, current controller and mandatory untap consequences asserted here."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_actual_rimescale_activation_adds_ice_and_blocks_only_current_creatures",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete trusted original bindings and native turn transitions preserve the fixed query, current source, current controller and mandatory untap consequences asserted here."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_additional_untap_triggers_wait_for_upkeep_and_resolve_from_loaded_programs",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete trusted original bindings and native turn transitions preserve the fixed query, current source, current controller and mandatory untap consequences asserted here."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_all_three_self_untappers_use_other_turns_and_current_controller",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete trusted original bindings and native turn transitions preserve the fixed query, current source, current controller and mandatory untap consequences asserted here."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_all_twelve_original_cards_have_complete_trusted_bindings",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete trusted original bindings and native turn transitions preserve the fixed query, current source, current controller and mandatory untap consequences asserted here."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_arena_and_root_cage_preserve_supertype_and_noncreature_subtype_subjects",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete trusted original bindings and native turn transitions preserve the fixed query, current source, current controller and mandatory untap consequences asserted here."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_copied_additional_untap_survives_original_departure_and_replays",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete trusted original bindings and native turn transitions preserve the fixed query, current source, current controller and mandatory untap consequences asserted here."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_murkfiend_color_union_is_current_mandatory_and_duplicate_stun_attempts_are_not_added",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete trusted original bindings and native turn transitions preserve the fixed query, current source, current controller and mandatory untap consequences asserted here."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_numeric_originals_use_current_power_counters_and_inclusive_thresholds",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete trusted original bindings and native turn transitions preserve the fixed query, current source, current controller and mandatory untap consequences asserted here."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "positive",
       "test_id": "tests.test_typed_untap_step_participation.UntapStepCompilerTests.test_closed_static_untap_templates_compile_exactly",
-      "official_rule_ids": ["502.3", "604.1", "611.3b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile the closed global, source, attached-object, and other-player families to one source-spanned typed runtime descriptor."
     },
     {
       "capability_id": "untap.step.static_participation",
       "evidence_class": "positive",
       "test_id": "tests.test_untap_step_rules.UntapStepRuleTests.test_shared_public_queries_govern_untap_participation",
-      "official_rule_ids": ["502.3", "604.1", "611.3b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile Island, Snow, nonland, and source-controlled artifact subjects into the existing untap-step descriptor."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_actual_back_to_basics_preserves_basic_mana_and_blocks_nonbasic_untap",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Foreign principal packets retain hidden hands across the native turn transition and rejected command."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_actual_back_to_basics_preserves_basic_mana_and_blocks_nonbasic_untap",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted pre-turn priority passes and complete consequences agree under pending load and exact replay."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_actual_humility_removes_a_creatures_additional_untap_before_next_step",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted pre-turn priority passes and complete consequences agree under pending load and exact replay."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_actual_inertia_bubble_does_not_block_other_turn_mana_untap",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted pre-turn priority passes and complete consequences agree under pending load and exact replay."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_actual_rimescale_activation_adds_ice_and_blocks_only_current_creatures",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted pre-turn priority passes and complete consequences agree under pending load and exact replay."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_additional_untap_triggers_wait_for_upkeep_and_resolve_from_loaded_programs",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted pre-turn priority passes and complete consequences agree under pending load and exact replay."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_all_three_self_untappers_use_other_turns_and_current_controller",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted pre-turn priority passes and complete consequences agree under pending load and exact replay."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_arena_and_root_cage_preserve_supertype_and_noncreature_subtype_subjects",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted pre-turn priority passes and complete consequences agree under pending load and exact replay."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_copied_additional_untap_survives_original_departure_and_replays",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted pre-turn priority passes and complete consequences agree under pending load and exact replay."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_murkfiend_color_union_is_current_mandatory_and_duplicate_stun_attempts_are_not_added",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted pre-turn priority passes and complete consequences agree under pending load and exact replay."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_numeric_originals_use_current_power_counters_and_inclusive_thresholds",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted pre-turn priority passes and complete consequences agree under pending load and exact replay."
     },
     {
       "capability_id": "untap.step.static_participation",
       "evidence_class": "replay",
       "test_id": "tests.test_typed_untap_step_participation.UntapStepParticipationRuntimeTests.test_typed_untap_participation_replays_exactly",
-      "official_rule_ids": ["502.3", "604.1", "611.3b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Replay the same global prohibition and other-player additional untap through a command-driven turn boundary."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_untap_participation.FixedUntapParticipationRuntimeTests.test_actual_back_to_basics_preserves_basic_mana_and_blocks_nonbasic_untap",
+      "official_rule_ids": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An unauthorized principal cannot pass the current priority decision; the rejected command preserves the complete authoritative state."
     },
     {
       "capability_id": "variant.commander.zone_return",

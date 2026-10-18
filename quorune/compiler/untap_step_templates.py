@@ -5,7 +5,9 @@ from __future__ import annotations
 import re
 from typing import Any, Mapping
 
-from ..object_predicate import ObjectQuerySpec
+from ..creature_subtypes import canonical_creature_subtype, canonical_creature_subtype_surface
+from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
+from ..target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
 from ..untap_step import UntapInstruction
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
@@ -22,7 +24,7 @@ _GLOBAL_PROHIBITION = re.compile(
 )
 _ATTACHED_PROHIBITION = re.compile(
     r"^(?:(?P<aura>Enchanted)|(?P<equipment>Equipped)) "
-    r"(?P<kind>creature|permanent) doesn['’]t untap during its "
+    r"(?P<kind>artifact|battle|creature|enchantment|land|permanent|planeswalker) doesn['’]t untap during its "
     r"controller['’]s untap step\.?$",
     re.IGNORECASE,
 )
@@ -48,6 +50,36 @@ def _predicate(*, creature: bool) -> dict[str, Any]:
         zones=("battlefield",),
         types_all=(("creature",) if creature else ()),
     ).canonical_dict()
+
+
+def _fixed_untap_query_subject(subject: str):
+    """Keep untap-only numeric and counter surfaces out of layer generators."""
+    text=' '.join(subject.casefold().split())
+    if text=='nonbasic lands':
+        return 'any',ObjectQuerySpec(zones=('battlefield',),types_all=('land',),excluded_supertypes=('basic',)),False
+    if text=='legendary creatures':
+        return 'any',ObjectQuerySpec(zones=('battlefield',),types_all=('creature',),supertypes_all=('legendary',)),False
+    subtype=canonical_creature_subtype_surface(text)
+    if subtype is None and text.endswith('ies'):
+        subtype=canonical_creature_subtype(text[:-3]+'y')
+    if subtype is not None:
+        return 'any',ObjectQuerySpec(zones=('battlefield',),subtypes_all=(subtype,)),False
+    numeric=re.fullmatch(rf'creatures with power (?P<count>{FIXED_COUNT_PATTERN}) or (?P<comparison>greater|less)',text)
+    if numeric is not None:
+        predicate=TargetNumericCharacteristicSpec(TargetNumericCharacteristic.POWER,
+            TargetNumericComparison.AT_LEAST if numeric['comparison']=='greater' else TargetNumericComparison.AT_MOST,
+            fixed_number(numeric['count']))
+        return 'any',ObjectQuerySpec(zones=('battlefield',),types_all=('creature',),numeric_characteristic=predicate),False
+    counter=re.fullmatch(r'creatures with (?P<counter>[a-z]+(?: [a-z]+)?) counters on them',text)
+    if counter is not None:
+        return 'any',ObjectQuerySpec(zones=('battlefield',),types_all=('creature',),
+            state_predicate=PermanentStatePredicateSpec(counter_name=counter['counter'],minimum_counter_count=1)),False
+    colors=re.fullmatch(r'(?P<first>white|blue|black|red|green) and/or (?P<second>white|blue|black|red|green) creatures you control',text)
+    if colors is not None:
+        symbols={'white':'W','blue':'U','black':'B','red':'R','green':'G'}
+        return 'source_controller',ObjectQuerySpec(zones=('battlefield',),types_all=('creature',),
+            colors_any=tuple(sorted({symbols[colors['first']],symbols[colors['second']]}))),False
+    return fixed_battlefield_query_subject(subject)
 
 
 def _descriptor(
@@ -143,6 +175,7 @@ def static_untap_step_handler(
                 controller_relation="any",
                 creature=kind == "creature",
                 turn_relation="subject_controller",
+                predicate=ObjectQuerySpec(zones=('battlefield',),types_all=() if kind=='permanent' else (kind,)),
             ),
             "untap.step.static_participation",
         )
@@ -164,7 +197,7 @@ def static_untap_step_handler(
 
     query_prohibition = _QUERY_PROHIBITION.fullmatch(normalized)
     if query_prohibition is not None:
-        parsed = fixed_battlefield_query_subject(
+        parsed = _fixed_untap_query_subject(
             query_prohibition.group("subject")
         )
         if (
@@ -189,7 +222,7 @@ def static_untap_step_handler(
 
     query_other_player = _QUERY_OTHER_PLAYER_UNTAP.fullmatch(normalized)
     if query_other_player is not None:
-        parsed = fixed_battlefield_query_subject(
+        parsed = _fixed_untap_query_subject(
             query_other_player.group("subject")
         )
         if parsed is not None:
@@ -214,6 +247,11 @@ def static_untap_step_handler(
     source_reference = (
         rf"(?:{escaped_name}|this (?:artifact|creature|land|permanent))"
     )
+    if re.fullmatch(rf"Untap {source_reference} during each other player['’]s untap step\.?",
+            normalized,re.IGNORECASE) is not None:
+        return ('untap-step-additional-source-v1',_descriptor(instruction=UntapInstruction.ADDITIONAL.value,
+            subject_relation='source',controller_relation='any',creature=False,
+            turn_relation='other_player'),'untap.step.static_participation')
     if re.fullmatch(
         rf"{source_reference} doesn['’]t untap during "
         rf"(?:your|its controller['’]s) untap step\.?",

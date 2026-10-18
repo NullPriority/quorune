@@ -1590,6 +1590,17 @@ the existing layer-two journal and custody history, without reading Oracle
 text during play. Exchange, dynamic subjects, unsupported durations, and
 independently unsupported siblings remain residuals.
 
+`compiler/untap_step_templates.py` lowers mandatory self untaps on other
+players' turns and fixed untap prohibitions against nonbasic lands, legendary
+creatures, represented subtype sets, inclusive fixed power thresholds, or named
+counter minima. The untap-specific numeric grammar reuses immutable object
+queries without widening continuous characteristic generators. Color unions
+use one current controlled set; attached subjects retain their stated type.
+Current untap components carry ability-fragment presence, so ability removal
+suppresses their participation. Historical programs retain their recorded
+coverage. Choice-dependent, variable, unrepresented conditional and compound
+subjects remain residual.
+
 The source-only optional untap clause lowers to a separate component in the
 existing static untap participation family. `untap.step.optional_source`
 authorizes the active controller's retained zero-or-more choice. The planner

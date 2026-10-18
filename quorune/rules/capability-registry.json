@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 363,
+  "registry_version": 364,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -16039,28 +16039,152 @@
     },
     {
       "id": "untap.step.static_participation",
-      "version": 2,
-      "official_rules": ["502.3", "604.1", "611.3b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 3,
+      "official_rules": [
+        "101.2",
+        "113.6",
+        "122.1d",
+        "502.1",
+        "502.3",
+        "502.4",
+        "604.1",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Compile and evaluate closed battlefield static abilities that prohibit a source, attached object, or typed permanent query from untapping during its controller's untap step, or additionally untap source-controlled creatures or permanents during each other player's untap step.",
-        "inputs": ["trusted source-spanned untap-step runtime component", "current phased-in battlefield sources", "shared immutable effective-characteristic type, subtype, supertype, token, public-state, or positive ability object query", "current controller and attachment relationships", "active player"],
-        "outputs": ["deterministic prohibited object identities", "deterministic additional untap identities", "typed fail-closed selection-limit source"],
-        "exclusions": ["optional or modal untaps", "variable, conditional, qualified, or compound subjects beyond the closed typed query", "choose-not-to-untap instructions", "one-shot next-untap effects", "implemented selection under maximum untap limits", "phasing and day/night turn actions", "untap replacement ordering beyond the represented stun-counter owner", "unsupported effective-characteristic dependencies; those cards remain material residuals and fail match trust closed"]
+        "summary": "Compile and evaluate source-spanned current battlefield static untap participation: source, attached typed permanent or fixed public-set prohibitions during its controller's untap step; mandatory source or controlled-set untaps during each other player's untap step. Fixed numeric power and named counter predicates reuse immutable current object queries.",
+        "inputs": [
+          "active player",
+          "current controller and attachment relationships",
+          "current effective power including counters and continuous modifiers",
+          "current phased-in battlefield sources",
+          "current source ability-fragment presence",
+          "fixed named counter minimum and inclusive numeric threshold",
+          "shared immutable effective-characteristic type, subtype, supertype, token, public-state, or positive ability object query",
+          "trusted source-spanned untap-step runtime component"
+        ],
+        "outputs": [
+          "deterministic prohibited object identities",
+          "deterministic additional untap identities",
+          "typed fail-closed selection-limit source"
+        ],
+        "exclusions": [
+          "optional or modal untaps",
+          "variable, conditional, qualified, or compound subjects beyond the closed typed query",
+          "choose-not-to-untap instructions",
+          "one-shot next-untap effects",
+          "implemented selection under maximum untap limits",
+          "phasing and day/night turn actions",
+          "untap replacement ordering beyond the represented stun-counter owner",
+          "unsupported effective-characteristic dependencies; those cards remain material residuals and fail match trust closed"
+        ]
       },
-      "dependencies": ["permanent.untap.effect", "state_query.permanent.public_state_predicate"],
-      "implementation_components": ["quorune.compiler.public_state_queries.fixed_battlefield_query_subject", "quorune.compiler.untap_step_templates.static_untap_step_handler", "quorune.semantic_runtime.untap_steps.StaticUntapStepParticipationHandler", "quorune.semantic_runtime.untap_steps.current_untap_step_plan", "quorune.untap_step.plan_untap_step", "quorune.untap_step_coordination.coordinate_untap_step", "quorune.tap_state.untap_permanent"],
-      "positive_tests": ["test_closed_static_untap_templates_compile_exactly", "test_intruder_alarm_suppresses_controller_untap_and_untaps_on_entry", "test_seedborn_muse_untaps_all_permanents_on_opponent_untap", "test_source_and_attached_prohibitions_use_current_relationships", "test_shared_public_queries_govern_untap_participation"],
-      "negative_tests": ["test_unsupported_untap_step_wording_remains_residual", "test_untap_step_descriptor_rejects_malformed_shapes", "test_shared_public_query_dependency_fails_closed_across_consumers"],
-      "interaction_tests": ["test_static_prohibition_does_not_consume_stun_and_next_step_marker_expires", "test_source_leaves_and_control_changes_recompute_participation", "test_shared_public_queries_govern_untap_participation"],
-      "multiplayer_tests": ["test_seedborn_muse_untaps_all_permanents_on_opponent_untap", "test_global_and_other_player_participation_compose_in_four_players"],
-      "privacy_tests": [],
-      "replay_tests": ["test_typed_untap_participation_replays_exactly"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "replay"],
+      "dependencies": [
+        "permanent.untap.effect",
+        "state_query.permanent.public_state_predicate"
+      ],
+      "implementation_components": [
+        "quorune.compiler.public_state_queries.fixed_battlefield_query_subject",
+        "quorune.compiler.runtime_templates._source_permanent_participation_template",
+        "quorune.compiler.untap_step_templates._fixed_untap_query_subject",
+        "quorune.compiler.untap_step_templates.static_untap_step_handler",
+        "quorune.semantic_runtime.untap_steps.StaticUntapStepParticipationHandler",
+        "quorune.semantic_runtime.untap_steps.current_untap_step_plan",
+        "quorune.tap_state.untap_permanent",
+        "quorune.untap_step.plan_untap_step",
+        "quorune.untap_step_coordination.coordinate_untap_step"
+      ],
+      "positive_tests": [
+        "test_actual_back_to_basics_preserves_basic_mana_and_blocks_nonbasic_untap",
+        "test_actual_humility_removes_a_creatures_additional_untap_before_next_step",
+        "test_actual_inertia_bubble_does_not_block_other_turn_mana_untap",
+        "test_actual_rimescale_activation_adds_ice_and_blocks_only_current_creatures",
+        "test_additional_untap_triggers_wait_for_upkeep_and_resolve_from_loaded_programs",
+        "test_all_three_self_untappers_use_other_turns_and_current_controller",
+        "test_all_twelve_original_cards_have_complete_trusted_bindings",
+        "test_arena_and_root_cage_preserve_supertype_and_noncreature_subtype_subjects",
+        "test_closed_static_untap_templates_compile_exactly",
+        "test_copied_additional_untap_survives_original_departure_and_replays",
+        "test_fixed_subjects_preserve_complete_spans_typed_queries_and_current_ability_presence",
+        "test_intruder_alarm_suppresses_controller_untap_and_untaps_on_entry",
+        "test_murkfiend_color_union_is_current_mandatory_and_duplicate_stun_attempts_are_not_added",
+        "test_numeric_originals_use_current_power_counters_and_inclusive_thresholds",
+        "test_seedborn_muse_untaps_all_permanents_on_opponent_untap",
+        "test_shared_public_queries_govern_untap_participation",
+        "test_source_and_attached_prohibitions_use_current_relationships"
+      ],
+      "negative_tests": [
+        "test_actual_back_to_basics_preserves_basic_mana_and_blocks_nonbasic_untap",
+        "test_actual_humility_removes_a_creatures_additional_untap_before_next_step",
+        "test_all_three_self_untappers_use_other_turns_and_current_controller",
+        "test_arena_and_root_cage_preserve_supertype_and_noncreature_subtype_subjects",
+        "test_each_declared_untap_dependency_blocks_complete_admission",
+        "test_murkfiend_color_union_is_current_mandatory_and_duplicate_stun_attempts_are_not_added",
+        "test_numeric_originals_use_current_power_counters_and_inclusive_thresholds",
+        "test_shared_public_query_dependency_fails_closed_across_consumers",
+        "test_unrepresented_qualifiers_malformed_descriptors_and_producer_omission_fail_closed",
+        "test_unsupported_untap_step_wording_remains_residual",
+        "test_untap_step_descriptor_rejects_malformed_shapes"
+      ],
+      "interaction_tests": [
+        "test_actual_back_to_basics_preserves_basic_mana_and_blocks_nonbasic_untap",
+        "test_actual_humility_removes_a_creatures_additional_untap_before_next_step",
+        "test_actual_inertia_bubble_does_not_block_other_turn_mana_untap",
+        "test_actual_rimescale_activation_adds_ice_and_blocks_only_current_creatures",
+        "test_additional_untap_triggers_wait_for_upkeep_and_resolve_from_loaded_programs",
+        "test_all_three_self_untappers_use_other_turns_and_current_controller",
+        "test_arena_and_root_cage_preserve_supertype_and_noncreature_subtype_subjects",
+        "test_copied_additional_untap_survives_original_departure_and_replays",
+        "test_murkfiend_color_union_is_current_mandatory_and_duplicate_stun_attempts_are_not_added",
+        "test_numeric_originals_use_current_power_counters_and_inclusive_thresholds",
+        "test_shared_public_queries_govern_untap_participation",
+        "test_source_leaves_and_control_changes_recompute_participation",
+        "test_static_prohibition_does_not_consume_stun_and_next_step_marker_expires"
+      ],
+      "multiplayer_tests": [
+        "test_actual_back_to_basics_preserves_basic_mana_and_blocks_nonbasic_untap",
+        "test_actual_inertia_bubble_does_not_block_other_turn_mana_untap",
+        "test_additional_untap_triggers_wait_for_upkeep_and_resolve_from_loaded_programs",
+        "test_all_three_self_untappers_use_other_turns_and_current_controller",
+        "test_global_and_other_player_participation_compose_in_four_players",
+        "test_murkfiend_color_union_is_current_mandatory_and_duplicate_stun_attempts_are_not_added",
+        "test_seedborn_muse_untaps_all_permanents_on_opponent_untap"
+      ],
+      "privacy_tests": [
+        "test_actual_back_to_basics_preserves_basic_mana_and_blocks_nonbasic_untap"
+      ],
+      "replay_tests": [
+        "test_actual_back_to_basics_preserves_basic_mana_and_blocks_nonbasic_untap",
+        "test_actual_humility_removes_a_creatures_additional_untap_before_next_step",
+        "test_actual_inertia_bubble_does_not_block_other_turn_mana_untap",
+        "test_actual_rimescale_activation_adds_ice_and_blocks_only_current_creatures",
+        "test_additional_untap_triggers_wait_for_upkeep_and_resolve_from_loaded_programs",
+        "test_all_three_self_untappers_use_other_turns_and_current_controller",
+        "test_arena_and_root_cage_preserve_supertype_and_noncreature_subtype_subjects",
+        "test_copied_additional_untap_survives_original_departure_and_replays",
+        "test_murkfiend_color_union_is_current_mandatory_and_duplicate_stun_attempts_are_not_added",
+        "test_numeric_originals_use_current_power_counters_and_inclusive_thresholds",
+        "test_typed_untap_participation_replays_exactly"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "Capability closure requires both the canonical public-query and single-permanent untap owners; registry mutation evidence proves the untap-step component cannot become trusted when either dependency is blocked.",
+      "dependency_fail_closed_rationale": "Each declared dependency independently blocks complete original-shape admission; the fixed-query producer omission also leaves the complete source residual.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Focused planner and compiler mutants that drop the prohibition, other-player relation, source relationship, or typed predicate are rejected by the exact compilation, multiplayer state, and replay assertions.",
+      "implementation_mutation_rationale": "The native Back to Basics transition fails when the actual shared participation lowerer is omitted. Exact source-spanned descriptor and public-query omission controls protect typed matching. The actual Humility before/after witness independently requires current ability-presence filtering.",
       "blockers": [],
       "status": "trusted"
     },

@@ -17,6 +17,14 @@ permission contributes no keyword. Cost modifiers inspect a detached proposed
 spell under its caster, while completed cast events use its current after-cost
 characteristics. Face-down methods suppress intrinsic timing and keywords.
 
+Fixed untap participation reads current full characteristics and counter state
+before the simultaneous untap action. A subtype-only subject also matches a
+current noncreature permanent with that subtype. An additional self untap uses
+the current controller and occurs on each other player's untap step; duplicate
+permissions cause one untap attempt. An own-step-only prohibition does not
+block that additional untap. General prohibitions and stun replacement still
+apply, and resulting triggers wait for upkeep and ordinary APNAP placement.
+
 Ordinary Morph, Megamorph and Disguise turn-up offers keep their canonical
 unsuffixed action identity when acceptance reads the printed method from the
 offer payload. Manifested permanents expose distinct suffixed method choices.

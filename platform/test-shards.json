@@ -229,6 +229,7 @@
       "test_fixed_cleave",
       "test_fixed_counter_prevention",
       "test_fixed_hand_inspection",
+      "test_fixed_untap_participation",
       "test_fixture_ruling_merge",
       "test_graveyard_rules",
       "test_keyword_counter_composition",

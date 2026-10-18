@@ -266,8 +266,7 @@ def _source_permanent_participation_template(
                 "generic untap-step participation requires its closed "
                 "typed runtime capability"
             ),
-            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,) if untap_step[1]['handler_id'] ==
-                'participation.untap-step.fixed-selection-limit.v1' else (),
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
         )
     entry_state = static_entry_state_handler(
         text,

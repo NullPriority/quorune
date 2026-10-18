@@ -16035,6 +16035,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Dragon Grip uses its qualifying creature's effective power, including counters. Sacrificing that sole power-four creature during mana payment preserves the already legal Aura cast and its complete native result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_inertia_bubble_does_not_block_other_turn_mana_untap",
+      "piece_ids": [
+        "capability.mana.activated.fixed_output",
+        "capability.untap.step.static_participation"
+      ],
+      "capability_ids": [
+        "mana.activated.fixed_output",
+        "untap.step.static_participation"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native Inertia Bubble attaches across controllers. It prevents only the target controller's own-step untap, so Bender's Waterskin untaps during another player's step and pays a real Unsummon through ordinary mana payment. Pre-turn replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_numeric_originals_use_current_power_counters_and_inclusive_thresholds",
+      "piece_ids": [
+        "capability.state_query.permanent.public_state_predicate",
+        "capability.untap.step.static_participation"
+      ],
+      "capability_ids": [
+        "state_query.permanent.public_state_predicate",
+        "untap.step.static_participation"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Meekstone, Marble Titan and Juntu Stakes use current counter-modified power with inclusive thresholds, exclude a noncreature control and preserve the opposite boundary through a native turn transition and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_murkfiend_color_union_is_current_mandatory_and_duplicate_stun_attempts_are_not_added",
+      "piece_ids": [
+        "capability.permanent.untap.effect",
+        "capability.untap.step.static_participation"
+      ],
+      "capability_ids": [
+        "permanent.untap.effect",
+        "untap.step.static_participation"
+      ],
+      "interaction_order": 2,
+      "assertion": "Duplicate actual Murkfiend Lieges select the same current green creature once; its two stun counters become one rather than zero. Blue own creatures and the active player untap while foreign and white controls retain their state."
     }
   ]
 }
