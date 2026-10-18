@@ -1015,9 +1015,9 @@ def _graveyard_query_count_condition(
         else _fixed_condition_amount(typed_count.group("count"))
     )
     assert amount is not None and amount > 0
-    quality = ((presence or typed_count).group("quality") or "").casefold()
+    quality = ((presence or typed_count).group("quality") or "").strip().casefold()
     fields: dict[str, Any] = {"zones": ("graveyard",), "token": False}
-    if quality == "instant and/or sorcery ":
+    if quality == "instant and/or sorcery":
         fields["types_any"] = ("instant", "sorcery")
     elif quality in _CARD_TYPE_WORDS:
         fields["types_all"] = (quality,)

@@ -127,11 +127,12 @@ def apply_static_reductions(
             {"kind": "fixed_query", "reduction": applied_colored}
         )
     self_reduction: dict[str, int] = {}
-    for specification in compiled_self_spell_cost_reduction_specs(
+    specifications = () if face_down_method is not None else compiled_self_spell_cost_reduction_specs(
         host,
         card.oracle_id,
         spell_program=program,
-    ):
+    )
+    for specification in specifications:
         for key, amount in evaluated_self_reduction(
             host,
             seat,

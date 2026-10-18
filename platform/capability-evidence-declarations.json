@@ -15940,49 +15940,477 @@
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_cactarantula_opponent_target_draw_is_private_loaded_and_replayed",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native cost payment composes with public conditions, mana sacrifice, face-down methods, private scry/draw, entry damage or Magecraft as asserted in this witness."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_cactarantula_uses_own_desert_and_reduced_price_then_preserves_reach",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native cost payment composes with public conditions, mana sacrifice, face-down methods, private scry/draw, entry damage or Magecraft as asserted in this witness."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_igneous_elemental_uses_own_land_card_then_resolves_optional_entry_damage",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native cost payment composes with public conditions, mana sacrifice, face-down methods, private scry/draw, entry damage or Magecraft as asserted in this witness."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_octavia_requires_eight_own_matching_cards_and_keeps_ward_and_magecraft",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native cost payment composes with public conditions, mana sacrifice, face-down methods, private scry/draw, entry damage or Magecraft as asserted in this witness."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_stormwing_uses_real_cast_history_reduces_blue_and_completes_private_scry",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native cost payment composes with public conditions, mana sacrifice, face-down methods, private scry/draw, entry damage or Magecraft as asserted in this witness."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_current_graveyard_card_queries_exclude_tokens_and_legacy_descriptors_still_decode",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native cost payment composes with public conditions, mana sacrifice, face-down methods, private scry/draw, entry damage or Magecraft as asserted in this witness."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_desert_sacrificed_for_mana_does_not_revoke_locked_self_reduction",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native cost payment composes with public conditions, mana sacrifice, face-down methods, private scry/draw, entry damage or Magecraft as asserted in this witness."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_face_down_spell_does_not_receive_its_printed_self_reduction",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native cost payment composes with public conditions, mana sacrifice, face-down methods, private scry/draw, entry damage or Magecraft as asserted in this witness."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_foreign_cast_history_does_not_enable_the_carrying_spells_colored_discount",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native cost payment composes with public conditions, mana sacrifice, face-down methods, private scry/draw, entry damage or Magecraft as asserted in this witness."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_selected_back_face_cannot_inherit_front_face_self_reduction",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native cost payment composes with public conditions, mana sacrifice, face-down methods, private scry/draw, entry damage or Magecraft as asserted in this witness."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native cost payment composes with public conditions, mana sacrifice, face-down methods, private scry/draw, entry damage or Magecraft as asserted in this witness."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_multiple_qualifying_opponents_apply_one_fixed_reduction",
-      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Apply one fixed existential reduction when several opponents independently satisfy the same public threshold."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_party_assignment_shares_offer_commit_control_and_replay",
-      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Share the maximum distinct-creature Party assignment across offers, accepted commands, control changes, phasing, payment rollback, and resolution."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cost_history_uses_committed_discard_sacrifice_and_life",
-      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Derive discard, sacrifice, and life-gain quantities only from committed typed producers in the authoritative turn journal."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_and_source_reductions_share_total_cost_pipeline",
-      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compose the carrying spell's public reduction with an independently active source reducer in one deterministic total-cost stage."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_recomputes_current_control_and_rejects_stale_offer",
-      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Recompute a public controller-relative threshold through the same offer and command query, rejecting a stale controller change before payment or stack mutation."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_uses_mana_value_devotion_history_and_colored_floor",
-      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compose cycle-safe public mana-value, devotion, current-turn, generic, and colored reductions in the canonical total-cost stage."
     },
     {
@@ -15990,11 +16418,21 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
       "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
         "601.2f",
+        "601.2g",
         "601.2h",
+        "601.2i",
         "700.8",
         "700.8a",
-        "700.8b"
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
       ],
       "supported_profiles": [
         "traditional",
@@ -16006,49 +16444,589 @@
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_cactarantula_opponent_target_draw_is_private_loaded_and_replayed",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual four-seat commands preserve the current caster or trigger controller and exclude another player's graveyard, controlled permanent or cast history."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_cactarantula_uses_own_desert_and_reduced_price_then_preserves_reach",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual four-seat commands preserve the current caster or trigger controller and exclude another player's graveyard, controlled permanent or cast history."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_foreign_cast_history_does_not_enable_the_carrying_spells_colored_discount",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual four-seat commands preserve the current caster or trigger controller and exclude another player's graveyard, controlled permanent or cast history."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual four-seat commands preserve the current caster or trigger controller and exclude another player's graveyard, controlled permanent or cast history."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_is_private_multiplayer_and_replays",
-      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Price and cast the carrying spell in four-player state without granting another seat access to the hidden hand action."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceCompilerTests.test_unsupported_costs_malformed_descriptors_and_omitted_capability_or_producer_fail_closed",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Producer, runtime self-reduction omission or colored-component substitution invalidates its corresponding positive contract."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_native_self_reduction_omission_and_color_swap_are_killed",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Producer, runtime self-reduction omission or colored-component substitution invalidates its corresponding positive contract."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "mutation",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_compiler_and_runtime_mutants_are_killed",
-      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Remove source-spanned lowering and evaluated runtime reduction independently so exact compilation and cost assertions reject both mutants."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceCompilerTests.test_unsupported_costs_malformed_descriptors_and_omitted_capability_or_producer_fail_closed",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Foreign facts, insufficient thresholds, token/card distinctions, suppressed intrinsic abilities and malformed or unsupported source forms do not gain the reduction."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_cactarantula_uses_own_desert_and_reduced_price_then_preserves_reach",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Foreign facts, insufficient thresholds, token/card distinctions, suppressed intrinsic abilities and malformed or unsupported source forms do not gain the reduction."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_igneous_elemental_uses_own_land_card_then_resolves_optional_entry_damage",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Foreign facts, insufficient thresholds, token/card distinctions, suppressed intrinsic abilities and malformed or unsupported source forms do not gain the reduction."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_octavia_requires_eight_own_matching_cards_and_keeps_ward_and_magecraft",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Foreign facts, insufficient thresholds, token/card distinctions, suppressed intrinsic abilities and malformed or unsupported source forms do not gain the reduction."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_current_graveyard_card_queries_exclude_tokens_and_legacy_descriptors_still_decode",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Foreign facts, insufficient thresholds, token/card distinctions, suppressed intrinsic abilities and malformed or unsupported source forms do not gain the reduction."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_face_down_spell_does_not_receive_its_printed_self_reduction",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Foreign facts, insufficient thresholds, token/card distinctions, suppressed intrinsic abilities and malformed or unsupported source forms do not gain the reduction."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_foreign_cast_history_does_not_enable_the_carrying_spells_colored_discount",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Foreign facts, insufficient thresholds, token/card distinctions, suppressed intrinsic abilities and malformed or unsupported source forms do not gain the reduction."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_selected_back_face_cannot_inherit_front_face_self_reduction",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Foreign facts, insufficient thresholds, token/card distinctions, suppressed intrinsic abilities and malformed or unsupported source forms do not gain the reduction."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Foreign facts, insufficient thresholds, token/card distinctions, suppressed intrinsic abilities and malformed or unsupported source forms do not gain the reduction."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_self_reduction_descriptor_fails_closed",
-      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Reject unknown fields, changed identity, empty terms, negative mana, and malformed public metrics before a cost option exists."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_unsupported_spell_reduction_grammar_remains_residual",
-      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Keep target-relative, power totals, distinct card-type or mana-value sets, Adventure predicates, and unrelated reducer grammar material."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_any_opponent_graveyard_threshold_is_not_combined_across_opponents",
-      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Reject an existential graveyard threshold when no individual opponent qualifies even though the combined opponent count reaches the threshold."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_any_opponent_zero_basic_land_condition_is_evaluated_per_opponent",
-      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Evaluate a singular opponent's zero-basic-land condition independently instead of requiring every opponent's combined battlefield to contain no basic land."
     },
     {
@@ -16056,11 +17034,21 @@
       "evidence_class": "negative",
       "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
       "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
         "601.2f",
+        "601.2g",
         "601.2h",
+        "601.2i",
         "700.8",
         "700.8a",
-        "700.8b"
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
       ],
       "supported_profiles": [
         "traditional",
@@ -16072,33 +17060,533 @@
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceCompilerTests.test_complete_source_spans_reuse_typed_threshold_count_and_colored_descriptors",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source-spanned descriptors and admitted original cards retain fixed self-cost quantities, colored components, selected face and actual native consequences."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceCompilerTests.test_counted_graveyard_qualities_normalize_capture_whitespace_and_card_types",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source-spanned descriptors and admitted original cards retain fixed self-cost quantities, colored components, selected face and actual native consequences."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceCompilerTests.test_current_graveyard_card_qualifiers_and_desert_land_type_are_preserved",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source-spanned descriptors and admitted original cards retain fixed self-cost quantities, colored components, selected face and actual native consequences."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_cactarantula_opponent_target_draw_is_private_loaded_and_replayed",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source-spanned descriptors and admitted original cards retain fixed self-cost quantities, colored components, selected face and actual native consequences."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_cactarantula_uses_own_desert_and_reduced_price_then_preserves_reach",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source-spanned descriptors and admitted original cards retain fixed self-cost quantities, colored components, selected face and actual native consequences."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_igneous_elemental_uses_own_land_card_then_resolves_optional_entry_damage",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source-spanned descriptors and admitted original cards retain fixed self-cost quantities, colored components, selected face and actual native consequences."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_octavia_requires_eight_own_matching_cards_and_keeps_ward_and_magecraft",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source-spanned descriptors and admitted original cards retain fixed self-cost quantities, colored components, selected face and actual native consequences."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_stormwing_uses_real_cast_history_reduces_blue_and_completes_private_scry",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source-spanned descriptors and admitted original cards retain fixed self-cost quantities, colored components, selected face and actual native consequences."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_all_five_original_cards_have_complete_trusted_bindings",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source-spanned descriptors and admitted original cards retain fixed self-cost quantities, colored components, selected face and actual native consequences."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_current_graveyard_card_queries_exclude_tokens_and_legacy_descriptors_still_decode",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source-spanned descriptors and admitted original cards retain fixed self-cost quantities, colored components, selected face and actual native consequences."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_desert_sacrificed_for_mana_does_not_revoke_locked_self_reduction",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source-spanned descriptors and admitted original cards retain fixed self-cost quantities, colored components, selected face and actual native consequences."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_face_down_spell_does_not_receive_its_printed_self_reduction",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source-spanned descriptors and admitted original cards retain fixed self-cost quantities, colored components, selected face and actual native consequences."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_foreign_cast_history_does_not_enable_the_carrying_spells_colored_discount",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source-spanned descriptors and admitted original cards retain fixed self-cost quantities, colored components, selected face and actual native consequences."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_selected_back_face_cannot_inherit_front_face_self_reduction",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source-spanned descriptors and admitted original cards retain fixed self-cost quantities, colored components, selected face and actual native consequences."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source-spanned descriptors and admitted original cards retain fixed self-cost quantities, colored components, selected face and actual native consequences."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_self_reducers_compile_closed_public_metrics",
-      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile fixed public thresholds, public object counts, total mana value, devotion, turn facts, and colored reductions into selected-face typed descriptors."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_self_reduction_compiler_preserves_opponent_quantification",
-      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Lower singular and plural opponent wording to distinct typed existential and combined scopes while retaining legacy scope decoding."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_combined_opponents_threshold_still_aggregates_when_oracle_wording_requires_it",
-      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Aggregate objects across all opponents only for plural Oracle wording that explicitly names the combined opponents set."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_party_size_uses_maximum_distinct_creature_assignment",
-      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compute the greatest legal Party size for overlapping roles with one distinct controlled creature per assigned role, independent of iteration order."
     },
     {
@@ -16106,11 +17594,21 @@
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_uses_mana_value_devotion_history_and_colored_floor",
       "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
         "601.2f",
+        "601.2g",
         "601.2h",
+        "601.2i",
         "700.8",
         "700.8a",
-        "700.8b"
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
       ],
       "supported_profiles": [
         "traditional",
@@ -16124,11 +17622,21 @@
       "evidence_class": "positive",
       "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
       "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
         "601.2f",
+        "601.2g",
         "601.2h",
+        "601.2i",
         "700.8",
         "700.8a",
-        "700.8b"
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
       ],
       "supported_profiles": [
         "traditional",
@@ -16140,9 +17648,85 @@
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_cactarantula_opponent_target_draw_is_private_loaded_and_replayed",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Only the current chooser receives the pending private draw/scry decision or library references; foreign attempts preserve authoritative state."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_stormwing_uses_real_cast_history_reduces_blue_and_completes_private_scry",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Only the current chooser receives the pending private draw/scry decision or library references; foreign attempts preserve authoritative state."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_is_private_multiplayer_and_replays",
-      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Use only public count inputs while withholding the carrying spell and its cast action from every other pilot."
     },
     {
@@ -16150,11 +17734,21 @@
       "evidence_class": "privacy",
       "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
       "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
         "601.2f",
+        "601.2g",
         "601.2h",
+        "601.2i",
         "700.8",
         "700.8a",
-        "700.8b"
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
       ],
       "supported_profiles": [
         "traditional",
@@ -16165,18 +17759,394 @@
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceCompilerTests.test_counted_graveyard_qualities_normalize_capture_whitespace_and_card_types",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current quantity normalization and card-only filtering are deterministic and read-only; historical serialized query predicates retain their original decoding and round trip."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_current_graveyard_card_queries_exclude_tokens_and_legacy_descriptors_still_decode",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current quantity normalization and card-only filtering are deterministic and read-only; historical serialized query predicates retain their original decoding and round trip."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_cactarantula_opponent_target_draw_is_private_loaded_and_replayed",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted casts and complete effect consequences agree under pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_cactarantula_uses_own_desert_and_reduced_price_then_preserves_reach",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted casts and complete effect consequences agree under pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_igneous_elemental_uses_own_land_card_then_resolves_optional_entry_damage",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted casts and complete effect consequences agree under pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_octavia_requires_eight_own_matching_cards_and_keeps_ward_and_magecraft",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted casts and complete effect consequences agree under pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_stormwing_uses_real_cast_history_reduces_blue_and_completes_private_scry",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted casts and complete effect consequences agree under pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_desert_sacrificed_for_mana_does_not_revoke_locked_self_reduction",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted casts and complete effect consequences agree under pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_face_down_spell_does_not_receive_its_printed_self_reduction",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted casts and complete effect consequences agree under pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_foreign_cast_history_does_not_enable_the_carrying_spells_colored_discount",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted casts and complete effect consequences agree under pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_selected_back_face_cannot_inherit_front_face_self_reduction",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted casts and complete effect consequences agree under pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted casts and complete effect consequences agree under pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_party_assignment_shares_offer_commit_control_and_replay",
-      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Checkpoint and replay the distinct-creature Party assignment, reduced payment, stack transition, resolution, and final state exactly."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_is_private_multiplayer_and_replays",
-      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Replay the public count, reduced mana payment, stack transition, resolution, and final authoritative hash exactly."
     },
     {
@@ -16184,11 +18154,21 @@
       "evidence_class": "replay",
       "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
       "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
         "601.2f",
+        "601.2g",
         "601.2h",
+        "601.2i",
         "700.8",
         "700.8a",
-        "700.8b"
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
       ],
       "supported_profiles": [
         "traditional",
@@ -16196,6 +18176,118 @@
         "commander_review"
       ],
       "applicability_note": "Shared current devotion participates in native cast-cost and mana outcomes; modifier departure changes affordability and a real recast restores the accepted cast, while hybrid and foreign sources retain their scoped contribution."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_cactarantula_opponent_target_draw_is_private_loaded_and_replayed",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The rejected principal, resource or face-down attempt leaves complete authoritative state unchanged."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_cactarantula_uses_own_desert_and_reduced_price_then_preserves_reach",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The rejected principal, resource or face-down attempt leaves complete authoritative state unchanged."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_actual_stormwing_uses_real_cast_history_reduces_blue_and_completes_private_scry",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The rejected principal, resource or face-down attempt leaves complete authoritative state unchanged."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_face_down_spell_does_not_receive_its_printed_self_reduction",
+      "official_rule_ids": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "700.8",
+        "700.8a",
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The rejected principal, resource or face-down attempt leaves complete authoritative state unchanged."
     },
     {
       "capability_id": "casting.disguise.fixed_mana",
@@ -46463,6 +48555,44 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native cost payment composes with public conditions, mana sacrifice, face-down methods, private scry/draw, entry damage or Magecraft as asserted in this witness."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
       "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_history_characteristic_distinguishing_controls",
       "official_rule_ids": [
         "604.1",
@@ -49123,6 +51253,82 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceCompilerTests.test_counted_graveyard_qualities_normalize_capture_whitespace_and_card_types",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Foreign facts, insufficient thresholds, token/card distinctions, suppressed intrinsic abilities and malformed or unsupported source forms do not gain the reduction."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Foreign facts, insufficient thresholds, token/card distinctions, suppressed intrinsic abilities and malformed or unsupported source forms do not gain the reduction."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_conditional_spell_cost_schema_and_dependencies_fail_closed",
       "official_rule_ids": [
         "604.1",
@@ -50905,6 +53111,82 @@
         "commander_review"
       ],
       "applicability_note": "Reuse the same public target query under a separately typed source-state condition."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceCompilerTests.test_counted_graveyard_qualities_normalize_capture_whitespace_and_card_types",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source-spanned descriptors and admitted original cards retain fixed self-cost quantities, colored components, selected face and actual native consequences."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source-spanned descriptors and admitted original cards retain fixed self-cost quantities, colored components, selected face and actual native consequences."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -53489,6 +55771,44 @@
         "commander_review"
       ],
       "applicability_note": "Actual fixed otherwise Auras preserve independent recipient predicates, current type/color/combat changes, signed stat arithmetic, counters, source removal, combat damage and state-based stabilization. Each base/correction omission is caught after complete admission; pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_self_cost_surfaces.FixedSelfCostSurfaceRuntimeTests.test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10",
+        "303.4",
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "613.1e",
+        "109.5",
+        "201.5",
+        "205.4c",
+        "400.7",
+        "603.6a",
+        "111.6",
+        "205.3i",
+        "205.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted casts and complete effect consequences agree under pending load and exact pre-action replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",

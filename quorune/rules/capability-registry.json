@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 364,
+  "registry_version": 365,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -5077,13 +5077,23 @@
     },
     {
       "id": "casting.cost.self_public_reduction",
-      "version": 5,
+      "version": 6,
       "official_rules": [
+        "109.5",
+        "111.1",
+        "111.6",
+        "117.1a",
+        "601.2e",
         "601.2f",
+        "601.2g",
         "601.2h",
+        "601.2i",
         "700.8",
         "700.8a",
-        "700.8b"
+        "700.8b",
+        "702.37a",
+        "702.37c",
+        "708.2a"
       ],
       "supported_profiles": [
         "traditional",
@@ -5093,11 +5103,14 @@
       "applicability": {
         "summary": "Reduce the carrying spell's selected-face total cost through one or more closed public-state, public-object, source-counter, mana-value, devotion, Domain, life, party, color, effective-name, or authoritative history quantities while preserving existential or aggregate opponent quantification.",
         "inputs": [
-          "one source-spanned self spell-cost reduction descriptor",
-          "the selected face's ordinary total-cost option",
+          "current Desert land predicate and selected-face intrinsic ability presence",
+          "current card-only graveyard thresholds and conjunctive card-type exclusions",
           "current public battlefield, graveyard, exile, controller, per-opponent, combined-opponent, source-counter, life, party, color, effective-name, and turn facts",
           "cycle-safe effective object characteristics",
-          "maximum distinct-creature assignment to the Cleric, Rogue, Warrior, and Wizard Party roles"
+          "fixed compound ordinary generic and colored mana reduction",
+          "maximum distinct-creature assignment to the Cleric, Rogue, Warrior, and Wizard Party roles",
+          "one source-spanned self spell-cost reduction descriptor",
+          "the selected face's ordinary total-cost option"
         ],
         "outputs": [
           "one immutable selected-face reduction program",
@@ -5116,60 +5129,114 @@
       },
       "dependencies": [],
       "implementation_components": [
+        "quorune.compiled_cast_costs.compiled_self_spell_cost_reduction_specs",
+        "quorune.compiler.cast_cost_modifier_templates._public_condition_metric",
+        "quorune.compiler.cast_cost_modifier_templates._quality_query",
+        "quorune.compiler.cast_cost_modifier_templates.self_spell_cost_reduction_handler",
+        "quorune.devotion.current_devotion",
+        "quorune.life_state.commit_life_changes",
+        "quorune.rules.casting.costs._apply_static_reductions",
+        "quorune.rules.casting.static_modifiers.apply_static_reductions",
         "quorune.self_cast_reductions.CastReductionMetric",
         "quorune.self_cast_reductions.SelfSpellCostReductionSpec",
-        "quorune.compiler.cast_cost_modifier_templates.self_spell_cost_reduction_handler",
-        "quorune.semantic_runtime.cast_costs.SelfSpellCostReductionHandler",
-        "quorune.compiled_cast_costs.compiled_self_spell_cost_reduction_specs",
         "quorune.self_cast_reductions._party_size",
         "quorune.self_cast_reductions.cast_reduction_multiplier",
         "quorune.self_cast_reductions.evaluated_self_reduction",
-        "quorune.zone_trigger_processing.dispatch_zone_change_occurrence",
-        "quorune.life_state.commit_life_changes",
-        "quorune.rules.casting.costs._apply_static_reductions",
-        "quorune.devotion.current_devotion"
+        "quorune.semantic_runtime.cast_costs.SelfSpellCostReductionHandler",
+        "quorune.zone_trigger_processing.dispatch_zone_change_occurrence"
       ],
       "positive_tests": [
+        "test_actual_cactarantula_opponent_target_draw_is_private_loaded_and_replayed",
+        "test_actual_cactarantula_uses_own_desert_and_reduced_price_then_preserves_reach",
+        "test_actual_igneous_elemental_uses_own_land_card_then_resolves_optional_entry_damage",
+        "test_actual_octavia_requires_eight_own_matching_cards_and_keeps_ward_and_magecraft",
+        "test_actual_stormwing_uses_real_cast_history_reduces_blue_and_completes_private_scry",
+        "test_all_five_original_cards_have_complete_trusted_bindings",
+        "test_combined_opponents_threshold_still_aggregates_when_oracle_wording_requires_it",
+        "test_complete_source_spans_reuse_typed_threshold_count_and_colored_descriptors",
+        "test_counted_graveyard_qualities_normalize_capture_whitespace_and_card_types",
+        "test_current_graveyard_card_qualifiers_and_desert_land_type_are_preserved",
+        "test_current_graveyard_card_queries_exclude_tokens_and_legacy_descriptors_still_decode",
+        "test_desert_sacrificed_for_mana_does_not_revoke_locked_self_reduction",
+        "test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
+        "test_face_down_spell_does_not_receive_its_printed_self_reduction",
+        "test_foreign_cast_history_does_not_enable_the_carrying_spells_colored_discount",
+        "test_party_size_uses_maximum_distinct_creature_assignment",
+        "test_public_cast_cost_closure_compiles_selected_grammar",
+        "test_selected_back_face_cannot_inherit_front_face_self_reduction",
         "test_self_reducers_compile_closed_public_metrics",
         "test_self_reduction_compiler_preserves_opponent_quantification",
         "test_self_reduction_offer_and_commit_share_public_query",
-        "test_combined_opponents_threshold_still_aggregates_when_oracle_wording_requires_it",
-        "test_public_cast_cost_closure_compiles_selected_grammar",
-        "test_party_size_uses_maximum_distinct_creature_assignment",
         "test_self_reduction_uses_mana_value_devotion_history_and_colored_floor",
-        "test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays"
+        "test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions"
       ],
       "negative_tests": [
-        "test_unsupported_spell_reduction_grammar_remains_residual",
-        "test_self_reduction_descriptor_fails_closed",
+        "test_actual_cactarantula_uses_own_desert_and_reduced_price_then_preserves_reach",
+        "test_actual_igneous_elemental_uses_own_land_card_then_resolves_optional_entry_damage",
+        "test_actual_octavia_requires_eight_own_matching_cards_and_keeps_ward_and_magecraft",
         "test_any_opponent_graveyard_threshold_is_not_combined_across_opponents",
         "test_any_opponent_zero_basic_land_condition_is_evaluated_per_opponent",
-        "test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays"
+        "test_current_graveyard_card_queries_exclude_tokens_and_legacy_descriptors_still_decode",
+        "test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
+        "test_face_down_spell_does_not_receive_its_printed_self_reduction",
+        "test_foreign_cast_history_does_not_enable_the_carrying_spells_colored_discount",
+        "test_selected_back_face_cannot_inherit_front_face_self_reduction",
+        "test_self_reduction_descriptor_fails_closed",
+        "test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
+        "test_unsupported_costs_malformed_descriptors_and_omitted_capability_or_producer_fail_closed",
+        "test_unsupported_spell_reduction_grammar_remains_residual"
       ],
       "interaction_tests": [
-        "test_self_and_source_reductions_share_total_cost_pipeline",
-        "test_self_reduction_recomputes_current_control_and_rejects_stale_offer",
-        "test_self_reduction_uses_mana_value_devotion_history_and_colored_floor",
+        "test_actual_cactarantula_opponent_target_draw_is_private_loaded_and_replayed",
+        "test_actual_cactarantula_uses_own_desert_and_reduced_price_then_preserves_reach",
+        "test_actual_igneous_elemental_uses_own_land_card_then_resolves_optional_entry_damage",
+        "test_actual_octavia_requires_eight_own_matching_cards_and_keeps_ward_and_magecraft",
+        "test_actual_stormwing_uses_real_cast_history_reduces_blue_and_completes_private_scry",
+        "test_current_graveyard_card_queries_exclude_tokens_and_legacy_descriptors_still_decode",
+        "test_desert_sacrificed_for_mana_does_not_revoke_locked_self_reduction",
+        "test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
+        "test_face_down_spell_does_not_receive_its_printed_self_reduction",
+        "test_foreign_cast_history_does_not_enable_the_carrying_spells_colored_discount",
         "test_multiple_qualifying_opponents_apply_one_fixed_reduction",
+        "test_party_assignment_shares_offer_commit_control_and_replay",
         "test_public_cast_cost_vectors_counts_and_replay_share_total_cost_owner",
         "test_public_cost_history_uses_committed_discard_sacrifice_and_life",
         "test_public_cost_quantities_use_current_characteristic_boundary",
-        "test_party_assignment_shares_offer_commit_control_and_replay",
-        "test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays"
+        "test_selected_back_face_cannot_inherit_front_face_self_reduction",
+        "test_self_and_source_reductions_share_total_cost_pipeline",
+        "test_self_reduction_recomputes_current_control_and_rejects_stale_offer",
+        "test_self_reduction_uses_mana_value_devotion_history_and_colored_floor",
+        "test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions"
       ],
       "multiplayer_tests": [
-        "test_self_reduction_is_private_multiplayer_and_replays"
+        "test_actual_cactarantula_opponent_target_draw_is_private_loaded_and_replayed",
+        "test_actual_cactarantula_uses_own_desert_and_reduced_price_then_preserves_reach",
+        "test_foreign_cast_history_does_not_enable_the_carrying_spells_colored_discount",
+        "test_self_reduction_is_private_multiplayer_and_replays",
+        "test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions"
       ],
       "privacy_tests": [
-        "test_self_reduction_is_private_multiplayer_and_replays",
-        "test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays"
+        "test_actual_cactarantula_opponent_target_draw_is_private_loaded_and_replayed",
+        "test_actual_stormwing_uses_real_cast_history_reduces_blue_and_completes_private_scry",
+        "test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
+        "test_self_reduction_is_private_multiplayer_and_replays"
       ],
       "replay_tests": [
-        "test_self_reduction_is_private_multiplayer_and_replays",
+        "test_actual_cactarantula_opponent_target_draw_is_private_loaded_and_replayed",
+        "test_actual_cactarantula_uses_own_desert_and_reduced_price_then_preserves_reach",
+        "test_actual_igneous_elemental_uses_own_land_card_then_resolves_optional_entry_damage",
+        "test_actual_octavia_requires_eight_own_matching_cards_and_keeps_ward_and_magecraft",
+        "test_actual_stormwing_uses_real_cast_history_reduces_blue_and_completes_private_scry",
+        "test_desert_sacrificed_for_mana_does_not_revoke_locked_self_reduction",
+        "test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays",
+        "test_face_down_spell_does_not_receive_its_printed_self_reduction",
+        "test_foreign_cast_history_does_not_enable_the_carrying_spells_colored_discount",
+        "test_party_assignment_shares_offer_commit_control_and_replay",
         "test_public_cast_cost_vectors_counts_and_replay_share_total_cost_owner",
         "test_public_cost_history_uses_committed_discard_sacrifice_and_life",
-        "test_party_assignment_shares_offer_commit_control_and_replay",
-        "test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays"
+        "test_selected_back_face_cannot_inherit_front_face_self_reduction",
+        "test_self_reduction_is_private_multiplayer_and_replays",
+        "test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions"
       ],
       "required_evidence": [
         "positive",
@@ -5182,7 +5249,7 @@
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "The descriptor consumes only current authoritative public objects, selected-face cost data, the deterministic CR 700.8 Party assignment, and the canonical bounded turn-history vocabulary; unsupported facts and queries do not compile.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_self_reduction_compiler_and_runtime_mutants_are_killed removes lowering and evaluated reduction independently; exact compilation and authoritative cost assertions reject both survivors.",
+      "implementation_mutation_rationale": "Omitting the actual self-reduction lowerer prevents the native original cast. Swapping the blue component to white invalidates the native Stormwing price and accepted outcome. Producer/capability omissions leave complete source clauses residual; independent face-down and current-query controls protect scope.",
       "blockers": [],
       "status": "trusted"
     },
@@ -10407,7 +10474,7 @@
     },
     {
       "id": "continuous.characteristics.fixed_public_state",
-      "version": 20,
+      "version": 21,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -10530,6 +10597,7 @@
         "test_conditional_spell_cost_keeps_public_condition_and_existing_modifier",
         "test_conditional_stats_and_declaration_result_preserve_one_live_condition",
         "test_conditional_typed_keywords_keep_their_fragments_and_condition",
+        "test_counted_graveyard_qualities_normalize_capture_whitespace_and_card_types",
         "test_current_graveyard_card_queries_are_card_only_and_legacy_decoding_stays_exact",
         "test_desert_token_can_satisfy_battlefield_branch_but_is_not_a_graveyard_card",
         "test_fixed_public_condition_models_use_closed_current_facts",
@@ -10550,6 +10618,7 @@
         "test_public_object_state_and_query_conditions_compile_closed",
         "test_public_state_conditions_recompute_layer_six_and_seven_results",
         "test_self_graveyard_permission_preserves_general_public_condition",
+        "test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
         "test_seven_original_otherwise_stat_auras_bind_as_complete_programs",
         "test_shared_public_set_query_fans_into_layers_and_resolution",
         "test_source_spans_unsupported_neighbors_and_surface_omissions",
@@ -10578,6 +10647,7 @@
         "test_conditional_declaration_composition_rejects_open_grammar_and_malformed_descriptors",
         "test_conditional_spell_cost_schema_and_dependencies_fail_closed",
         "test_conditional_typed_keyword_schema_dependencies_and_omission_fail_closed",
+        "test_counted_graveyard_qualities_normalize_capture_whitespace_and_card_types",
         "test_current_graveyard_card_queries_are_card_only_and_legacy_decoding_stays_exact",
         "test_desert_token_can_satisfy_battlefield_branch_but_is_not_a_graveyard_card",
         "test_fixed_public_condition_dependencies_fail_closed",
@@ -10594,6 +10664,7 @@
         "test_pre_history_characteristic_sealing_mutant_is_killed",
         "test_public_state_descriptors_fail_closed_without_effects",
         "test_self_graveyard_public_permission_schema_and_unknown_scope_fail_closed",
+        "test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
         "test_shared_public_query_dependency_fails_closed_across_consumers",
         "test_source_spans_unsupported_neighbors_and_surface_omissions",
         "test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
@@ -10638,6 +10709,7 @@
         "test_public_fact_conditions_recompute_and_replay",
         "test_public_state_conditions_recompute_layer_six_and_seven_results",
         "test_replacement_adjusted_history_characteristic_quantity",
+        "test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
         "test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
         "test_subtype_attack_threshold_counts_distinct_event_time_objects",
         "test_turn_gated_attachment_and_anthem_compose"
@@ -10717,6 +10789,7 @@
         "test_public_fact_conditions_recompute_and_replay",
         "test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders",
         "test_replacement_adjusted_history_characteristic_quantity",
+        "test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
         "test_two_simultaneous_copies_use_post_event_history_characteristics"
       ],
       "required_evidence": [

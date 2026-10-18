@@ -16080,6 +16080,111 @@
       ],
       "interaction_order": 2,
       "assertion": "Duplicate actual Murkfiend Lieges select the same current green creature once; its two stun counters become one rather than zero. Blue own creatures and the active player untap while foreign and white controls retain their state."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_desert_sacrificed_for_mana_does_not_revoke_locked_self_reduction",
+      "piece_ids": [
+        "capability.casting.cost.self_public_reduction",
+        "capability.mana.activated.fixed_output"
+      ],
+      "capability_ids": [
+        "casting.cost.self_public_reduction",
+        "mana.activated.fixed_output"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Cactarantula locks its reduced cost before automatically sacrificing its sole Desert Wild Cantor for mana. The accepted spell resolves with Reach and exact replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
+      "piece_ids": [
+        "capability.casting.cost.self_public_reduction",
+        "capability.timing.cast.conditional_self_flash"
+      ],
+      "capability_ids": [
+        "casting.cost.self_public_reduction",
+        "timing.cast.conditional_self_flash"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Serpent uses three current Lesson cards for off-turn permission and separately counts only noncreature nonland graveyard cards for its discount; artifact creature/land controls do not reduce it, and no actual Flash keyword is granted."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
+      "piece_ids": [
+        "capability.casting.cost.self_public_reduction",
+        "capability.continuous.characteristics.fixed_public_state"
+      ],
+      "capability_ids": [
+        "casting.cost.self_public_reduction",
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "The complete Serpent evaluates a normalized counted Lesson subtype and a separate conjunctive graveyard discount against the caster's current cards. Underpayment rejects atomically; the legal off-turn cast and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_stormwing_uses_real_cast_history_reduces_blue_and_completes_private_scry",
+      "piece_ids": [
+        "capability.casting.cost.self_public_reduction",
+        "capability.library.scry.fixed_controller"
+      ],
+      "capability_ids": [
+        "casting.cost.self_public_reduction",
+        "library.scry.fixed_controller"
+      ],
+      "interaction_order": 2,
+      "assertion": "After a real Unsummon cast, actual Stormwing receives two generic plus one blue reduction, enters, completes its private ordered Scry two choice, then receives its native Prowess result on a later spell. Pending load and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_face_down_spell_does_not_receive_its_printed_self_reduction",
+      "piece_ids": [
+        "capability.casting.cost.self_public_reduction",
+        "capability.casting.morph.fixed_mana"
+      ],
+      "capability_ids": [
+        "casting.cost.self_public_reduction",
+        "casting.morph.fixed_mana"
+      ],
+      "interaction_order": 2,
+      "assertion": "A strictly admitted constructed carrier of the same printed self-discount and Morph cannot pay two for its face-down three-mana cast. Three pays and the face-down permanent resolves under the existing method and replay owners."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_cactarantula_opponent_target_draw_is_private_loaded_and_replayed",
+      "piece_ids": [
+        "capability.casting.cost.self_public_reduction",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "casting.cost.self_public_reduction",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "An opponent's actual targeted Shock triggers admitted original Cactarantula's optional draw for its controller. Foreign choice rejects, only the controller sees the pending decision, and pending load plus full replay preserve draw and damage consequences."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_octavia_requires_eight_own_matching_cards_and_keeps_ward_and_magecraft",
+      "piece_ids": [
+        "capability.casting.cost.self_public_reduction",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "casting.cost.self_public_reduction",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Octavia reaches its eighth-card own-graveyard threshold, casts for two blue and then receives a real Magecraft trigger. Its chosen creature has base 8/8 before the original Giant Growth adds 3/3; the final 11/11 and full replay agree."
     }
   ]
 }

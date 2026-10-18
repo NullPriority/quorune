@@ -17,6 +17,14 @@ permission contributes no keyword. Cost modifiers inspect a detached proposed
 spell under its caster, while completed cast events use its current after-cost
 characteristics. Face-down methods suppress intrinsic timing and keywords.
 
+Self-cost reductions use the selected spell face and current caster's public
+facts or committed cast history. The total cost locks before mana activation,
+so sacrificing a qualifying permanent while paying does not revoke its
+discount. Generic and colored components reduce only their corresponding cost
+requirements, with a zero floor. A face-down casting method suppresses printed
+self-reduction abilities while retaining independently applicable external
+modifiers through the existing cost owner.
+
 Fixed untap participation reads current full characteristics and counter state
 before the simultaneous untap action. A subtype-only subject also matches a
 current noncreature permanent with that subtype. An additional self untap uses

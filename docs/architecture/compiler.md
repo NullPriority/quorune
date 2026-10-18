@@ -18,6 +18,14 @@ program identities and their complete original source span. Unrepresented
 source-attribute conditions, compound numeric timing conditions and cyclic
 keyword conditions remain residual.
 
+`compiler/cast_cost_modifier_templates.py` lowers fixed ordinary mana bundles
+for a carrying spell's self-reduction, including separate generic and colored
+components. Its public queries cover current land subtypes, fixed own-graveyard
+card thresholds and conjunctive card-type exclusions. New graveyard quantities
+explicitly exclude tokens; historical serialized predicates retain their
+existing decoder. Counted graveyard condition captures normalize subtype and
+card-type whitespace before constructing the same immutable query values.
+
 `compiler/cleave_spell_faces.py` derives normal and bracket-removed forms,
 including ordinary ordered body paragraphs. It shares paired-program assembly
 with Overload while preserving each form's target schema. Balanced source

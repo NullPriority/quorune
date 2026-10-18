@@ -5368,6 +5368,29 @@
         "test_card_program_trust",
         "test_object_query"
       ]
+    },
+    {
+      "id": "fixed-self-cost-surface-contract",
+      "patterns": [
+        "quorune/compiler/cast_cost_modifier_templates.py",
+        "quorune/compiler/public_state_queries.py",
+        "quorune/rules/casting/static_modifiers.py",
+        "quorune/rules/casting/costs.py",
+        "quorune/compiled_cast_costs.py",
+        "quorune/self_cast_reductions.py",
+        "quorune/semantic_runtime/cast_costs.py",
+        "tests/test_fixed_self_cost_surfaces.py",
+        "tests/fixtures/fixed-self-cost-surface-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_self_cost_surfaces",
+        "test_fixed_spell_cost_reductions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_conditional_flash",
+        "test_nonmana_morph",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [
