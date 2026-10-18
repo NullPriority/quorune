@@ -127,6 +127,7 @@ class FixedLibrarySelectionChoiceHandler:
         "library.select.fixed_controller",
     )
     continuation_fields: tuple[str, ...] = (
+        'schema_version','selected_destination',
         "look_count",
         "maximum",
         "minimum",
@@ -171,7 +172,14 @@ class FixedLibrarySelectionChoiceHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> tuple[tuple[ObjectQuerySpec, ...], ...]:
-        if set(effect) != _EFFECT_FIELDS:
+        version_two=type(effect.get('schema_version')) is int and effect.get('schema_version')==2
+        expected=_EFFECT_FIELDS|{'schema_version','selected_destination'} if version_two else _EFFECT_FIELDS
+        if (set(effect)!=expected or version_two and (effect.get('selected_destination')!='library_top'
+                or effect.get('remainder_destination')!='exile' or effect.get('selection_policy')!='up_to_any'
+                or type(effect.get('minimum')) is not int or effect['minimum']!=0
+                or type(effect.get('maximum')) is not int or effect['maximum']!=1
+                or effect.get('remainder_order')!='chosen' or effect.get('public_reveal') is not False
+                or effect.get('selected_reveal') is not False) or effect.get('selection_policy')=='up_to_any' and not version_two):
             raise SemanticChoiceError(
                 "Fixed library selection effects have a closed field set"
             )
@@ -195,9 +203,10 @@ class FixedLibrarySelectionChoiceHandler:
                 "up_to_matching",
                 "all_matching",
                 "optional_slots",
+                "up_to_any",
             }
             or effect.get("remainder_destination")
-            not in {"graveyard", "library_bottom"}
+            not in ({'exile'} if version_two else {"graveyard", "library_bottom"})
             or effect.get("remainder_order") not in {"chosen", "random"}
         ):
             raise SemanticChoiceError(
@@ -206,7 +215,7 @@ class FixedLibrarySelectionChoiceHandler:
         groups = _specs(effect["predicate_groups"])
         policy = effect["selection_policy"]
         if (
-            (policy == "fixed_any" and groups)
+            (policy in {"fixed_any",'up_to_any'} and groups)
             or (
                 policy in {"up_to_matching", "all_matching"}
                 and len(groups) != 1
@@ -241,7 +250,10 @@ class FixedLibrarySelectionChoiceHandler:
         identities = tuple(_identity(row) for row in rows)
         eligible = _eligible_groups(rows, groups)
         policy = str(effect["selection_policy"])
-        if policy == "fixed_any":
+        if policy=='up_to_any':
+            effective_maximum=min(int(effect['maximum']),len(refs));effective_minimum=min(int(effect['minimum']),effective_maximum)
+            legal_refs=refs
+        elif policy == "fixed_any":
             effective_maximum = min(int(effect["maximum"]), len(refs))
             effective_minimum = effective_maximum
             legal_refs = refs
@@ -301,6 +313,7 @@ class FixedLibrarySelectionChoiceHandler:
                 ),
                 remainder_destination=str(effect["remainder_destination"]),
                 remainder_order=str(effect["remainder_order"]),
+                selected_destination=str(effect.get('selected_destination','hand')),
             )
             return SemanticChoicePreparation(
                 request=None,
@@ -354,7 +367,7 @@ class FixedLibrarySelectionChoiceHandler:
             }
         )
         if effect["remainder_order"] == "chosen":
-            destination = (
+            destination = 'exile' if effect['remainder_destination']=='exile' else (
                 "graveyard"
                 if effect["remainder_destination"] == "graveyard"
                 else "bottom"
@@ -365,20 +378,21 @@ class FixedLibrarySelectionChoiceHandler:
                 visibility="actor_private",
                 partitions=FrozenMap(
                     {
-                        "hand": {
-                            "order": "selection_order",
-                            "label": "Hand",
+                        ('top' if effect.get('selected_destination')=='library_top' else 'hand'): {
+                            "order": 'top_to_bottom' if effect.get('selected_destination')=='library_top' else "selection_order",
+                            "label": 'Top of library' if effect.get('selected_destination')=='library_top' else "Hand",
+                            **({'minimum':effective_minimum,'maximum':effective_maximum} if effect.get('selected_destination')=='library_top' else {}),
                         },
                         destination: {
                             "order": (
                                 "graveyard_top_to_bottom"
                                 if destination == "graveyard"
-                                else "bottom_to_top"
+                                else 'selection_order' if destination=='exile' else "bottom_to_top"
                             ),
                             "label": (
                                 "Graveyard"
                                 if destination == "graveyard"
-                                else "Bottom of library"
+                                else 'Exile' if destination=='exile' else "Bottom of library"
                             ),
                         },
                     }
@@ -398,8 +412,9 @@ class FixedLibrarySelectionChoiceHandler:
             )
         return SemanticChoiceRequest(
             prompt=(
-                "Choose the looked-at cards to put into your hand and "
-                "complete the remainder ordering."
+                f"Choose up to {effective_maximum} looked-at card(s) to keep on top; exile the rest."
+                if effect.get('selected_destination')=='library_top' else
+                "Choose the looked-at cards to put into your hand and complete the remainder ordering."
             ),
             choice=choice,
             public_context=public_context,
@@ -446,19 +461,20 @@ class FixedLibrarySelectionChoiceHandler:
         looked_refs = tuple(value.ref for value in looked)
         raw_cards = response.get("cards")
         if isinstance(raw_cards, Mapping):
-            destination = (
+            destination = 'exile' if effect['remainder_destination']=='exile' else (
                 "graveyard"
                 if effect["remainder_destination"] == "graveyard"
                 else "bottom"
             )
-            if set(raw_cards) != {"hand", destination}:
+            selected_key='top' if effect.get('selected_destination')=='library_top' else 'hand'
+            if set(raw_cards) != {selected_key, destination}:
                 raise SemanticChoiceError(
                     "Library partition destinations are malformed"
                 )
             try:
                 selected = partition_refs(
-                    raw_cards["hand"],
-                    field="cards.hand",
+                    raw_cards[selected_key],
+                    field='cards.'+selected_key,
                 )
                 remainder = partition_refs(
                     raw_cards[destination],
@@ -487,7 +503,7 @@ class FixedLibrarySelectionChoiceHandler:
             tuple(str(ref) for ref in group)
             for group in effect.get("_eligible_groups", ())
         )
-        if policy == "fixed_any":
+        if policy in {"fixed_any",'up_to_any'}:
             valid_selection = all(ref in looked_refs for ref in selected)
         elif policy == "optional_slots":
             valid_selection = _slot_assignment_exists(selected, eligible)
@@ -507,6 +523,7 @@ class FixedLibrarySelectionChoiceHandler:
                 remainder_refs=remainder,
                 remainder_destination=str(effect["remainder_destination"]),
                 remainder_order=str(effect["remainder_order"]),
+                selected_destination=str(effect.get('selected_destination','hand')),
             )
         except LibrarySelectionError as exc:
             raise SemanticChoiceError(str(exc)) from exc

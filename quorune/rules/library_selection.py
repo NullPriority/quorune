@@ -68,6 +68,7 @@ class LibrarySelectionArrangement:
     remainder_refs: tuple[str, ...]
     remainder_destination: str
     remainder_order: str
+    selected_destination: str='hand'
 
     def __post_init__(self) -> None:
         looked = tuple(self.looked)
@@ -82,7 +83,10 @@ class LibrarySelectionArrangement:
             or self.remainder_destination not in {
                 "graveyard",
                 "library_bottom",
+                "exile",
             }
+            or self.selected_destination not in {'hand','library_top'}
+            or (self.selected_destination=='library_top')!=(self.remainder_destination=='exile')
             or self.remainder_order not in {"chosen", "random"}
         ):
             raise LibrarySelectionError(
@@ -210,6 +214,9 @@ def commit_library_selection(
         player=player,
         arrangement=arrangement,
     )
+    if arrangement.selected_destination=='library_top':
+        return _commit_top_exile_selection(host,actor=actor,player=player,arrangement=arrangement,cards=cards,
+            reason=reason,replacement_selections=replacement_selections)
     changes = [
         (cards[ref].object_id, "hand")
         for ref in arrangement.selected_refs
@@ -279,6 +286,24 @@ def commit_library_selection(
         changed_players=[player],
     )
     return tuple(value.ref for value in arrangement.looked)
+
+
+def _commit_top_exile_selection(host,*,actor,player,arrangement,cards,reason,replacement_selections):
+    """Keep the selected current objects on top and exile the exact remainder."""
+    from ..zone_transitions import ZoneTransitionOwner
+    changes=[(cards[ref].object_id,'exile') for ref in arrangement.remainder_refs]
+    if changes:ZoneTransitionOwner(host).move_cards_simultaneously(changes,reason=reason,log=False,
+        replacement_selections=replacement_selections)
+    top=[cards[ref].object_id for ref in arrangement.selected_refs]
+    library=host.state.players[player].zones['library']
+    if any(oid not in library for oid in top):raise LibrarySelectionError('A selected top card left the library')
+    try:commit_ordered_library_partition(library,top_top_first=top)
+    except LibraryPartitionError as exc:raise LibrarySelectionError(str(exc)) from exc
+    host._log(actor,'library.selection',f'{player} kept {len(top)} looked-at card(s) on top and exiled the remainder.',
+        {'player':player,'looked_count':len(arrangement.looked),'selected_count':len(top),
+            'remainder_count':len(changes),'selected_destination':'library_top','remainder_destination':'exile','reason':reason},
+        visibility=[player,'analyst'],importance=1,changed_objects=[v.object_id for v in arrangement.looked],changed_players=[player])
+    return tuple(v.ref for v in arrangement.looked)
 
 
 __all__ = [

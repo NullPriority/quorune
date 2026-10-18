@@ -441,6 +441,30 @@ test("ordered library partitions honor server-issued Surveil destinations and or
   });
 });
 
+test("ordered library partitions honor per-destination limits and permit an empty top", () => {
+  const selection = form([{
+    name: "cards", label: "Cards", control: "ordered_partition", required: true,
+    options: ["A01", "A02", "A03"].map((value) => ({ value, label: value })),
+    partitions: {
+      top: { label: "Top of library", order: "top_to_bottom", minimum: 0, maximum: 1 },
+      exile: { label: "Exile", order: "chosen" },
+    },
+  }]);
+  const choices = initialChoices(selection);
+  assert.deepEqual(choices.cards, { top: ["A01"], exile: ["A02", "A03"] });
+  assert.deepEqual(validateChoices(selection, choices), []);
+  choices.cards = { top: [], exile: ["A03", "A01", "A02"] };
+  assert.deepEqual(validateChoices(selection, choices), []);
+  assert.deepEqual(executableChoices(selection, choices), choices);
+  choices.cards = { top: ["A01", "A02"], exile: ["A03"] };
+  assert.match(validateChoices(selection, choices).join(" "), /at most 1/);
+  const required = structuredClone(selection);
+  const field = required.fields[0] as Record<string, any>;
+  field.partitions.exile.minimum = 1;
+  field.partitions.top.maximum = 3;
+  assert.deepEqual(initialChoices(required).cards, { top: ["A01", "A02"], exile: ["A03"] });
+});
+
 test("mana modes preserve an exact server-issued bundle", () => {
   const mana = form([
     {

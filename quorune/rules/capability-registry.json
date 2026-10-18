@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 366,
+  "registry_version": 367,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -6269,6 +6269,82 @@
       "status": "trusted"
     },
     {
+      "id": "life.transfer.actual_opponent_loss",
+      "version": 1,
+      "official_rules": [
+        "119.3",
+        "119.9",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Fixed loss by each current opponent followed by the actual aggregate life lost, committed through the existing replacement-aware life owners.",
+        "inputs": [
+          "one fixed positive opponent-loss amount",
+          "current controller and active opponents",
+          "resolved life-loss batch result"
+        ],
+        "outputs": [
+          "each opponent loses the represented amount subject to life rules",
+          "controller gains the actual total lost subject to gain rules"
+        ],
+        "exclusions": [
+          "targets or noncontroller beneficiaries",
+          "variable loss amounts",
+          "damage substituted for life loss",
+          "fixed gain independent of actual losses"
+        ]
+      },
+      "dependencies": [
+        "life.change.effect"
+      ],
+      "implementation_components": [
+        "quorune.compiler.life_templates.fixed_actual_life_transfer_template",
+        "quorune.rules.actual_life_transfer.actual_life_transfer_capabilities",
+        "quorune.semantic_choices.actual_life_transfer.ActualLifeTransferHandler",
+        "quorune.semantic_choices.life_intent_commit.apply_life_loss_batch_intent"
+      ],
+      "positive_tests": [
+        "test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
+        "test_actual_life_transfer_and_top_exile_results_have_reusable_closed_templates",
+        "test_actual_life_transfer_binds_resolved_loss_and_keeps_fixed_gain_drain_distinct"
+      ],
+      "negative_tests": [
+        "test_actual_life_transfer_binds_resolved_loss_and_keeps_fixed_gain_drain_distinct",
+        "test_reveal_and_result_dependency_omissions_and_closed_result_mutants_are_killed"
+      ],
+      "interaction_tests": [
+        "test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
+        "test_actual_dross_uses_actual_loss_when_one_opponents_loss_is_stopped"
+      ],
+      "multiplayer_tests": [
+        "test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
+        "test_actual_dross_uses_actual_loss_when_one_opponents_loss_is_stopped"
+      ],
+      "privacy_tests": [],
+      "replay_tests": [
+        "test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
+        "test_actual_dross_uses_actual_loss_when_one_opponents_loss_is_stopped"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Omitting life.change.effect or this result capability prevents exact compiler admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Replacing actual resolved gain with the fixed loss amount fails the native four-player stopped-loss witness. Malformed result binding is rejected and gain-replacement reload preserves previously committed losses.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "trigger.event.normalized_counter_removal",
       "version": 1,
       "official_rules": [
@@ -6750,7 +6826,7 @@
     },
     {
       "id": "library.select.fixed_controller",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "400.2",
         "401.4",
@@ -6771,7 +6847,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Resolve one fixed-count controller library inspection that selects a bounded characteristic-matching set into hand and sends the complete remainder to the graveyard or the library bottom. Independently quantified card slots retain their distinct bounds before union parsing; closed type intersections and exclusions cannot be mistaken for subtype names.",
+        "summary": "Resolve one fixed-count controller library inspection that selects a bounded characteristic-matching set into hand and sends the complete remainder to the graveyard or the library bottom. Independently quantified card slots retain their distinct bounds before union parsing; closed type intersections and exclusions cannot be mistaken for subtype names. A closed version-two private look may keep up to one card on top and exile the exhaustive remainder through the same owners.",
         "inputs": [
           "one capability-shaped fixed controller selection effect",
           "one positive fixed look count",
@@ -6786,12 +6862,13 @@
           "one complete graveyard or bottom remainder",
           "one replacement-aware simultaneous public-zone transition",
           "one chosen or deterministic-random remainder order",
-          "exact replay without hidden-order disclosure"
+          "exact replay without hidden-order disclosure",
+          "optional up-to-one top retention and complete exile remainder for the version-two private look"
         ],
         "exclusions": [
           "dynamic or variable look counts",
           "target, opponent, or noncontroller libraries",
-          "battlefield, exile, cast, play, or linked-result destinations",
+          "battlefield, unrepresented exile, cast, play, or linked-result destinations",
           "conditional, payment, opponent-choice, and chosen-characteristic selections",
           "power, toughness, mana-value, name, and state predicates",
           "effects before or after the complete selection instruction",
@@ -6814,6 +6891,8 @@
         "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
       ],
       "positive_tests": [
+        "test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
+        "test_actual_life_transfer_and_top_exile_results_have_reusable_closed_templates",
         "test_card_qualifiers_and_optional_slots_preserve_independent_meaning",
         "test_compiles_fixed_library_selection_across_spell_activation_trigger_and_modal_contexts",
         "test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
@@ -6823,39 +6902,47 @@
         "test_single_other_remainder_uses_fixed_selection_only_when_cardinality_agrees"
       ],
       "negative_tests": [
+        "test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
+        "test_devourer_empty_library_completes_and_changed_looked_incarnation_rejects",
         "test_malformed_stale_and_predicate_invalid_responses_fail_before_mutation",
         "test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
         "test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
         "test_single_other_remainder_uses_fixed_selection_only_when_cardinality_agrees",
         "test_slot_priority_and_unrepresented_subtype_descriptor_mutants_are_killed",
+        "test_top_exile_descriptor_and_intent_codec_preserve_the_legacy_hand_shape",
         "test_unknown_library_qualifiers_fail_closed_and_real_subtypes_remain_literal",
         "test_unsupported_library_selection_grammar_remains_residual"
       ],
       "interaction_tests": [
+        "test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
         "test_graveyard_destination_replacement_resumes_before_partition_commit",
         "test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
         "test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
         "test_original_sleight_on_short_library_commits_only_available_cards"
       ],
       "multiplayer_tests": [
+        "test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
         "test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
         "test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
         "test_original_sleight_and_tower_geist_private_partition_reload_and_replay",
         "test_private_look_and_public_reveal_are_projected_to_the_correct_seats"
       ],
       "privacy_tests": [
+        "test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
         "test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
         "test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
         "test_original_sleight_and_tower_geist_private_partition_reload_and_replay",
         "test_private_look_and_public_reveal_are_projected_to_the_correct_seats"
       ],
       "replay_tests": [
+        "test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
         "test_graveyard_destination_replacement_resumes_before_partition_commit",
         "test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
         "test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
         "test_original_sleight_and_tower_geist_private_partition_reload_and_replay",
         "test_original_sleight_on_short_library_commits_only_available_cards",
-        "test_selected_cards_and_remainder_commit_in_printed_destinations"
+        "test_selected_cards_and_remainder_commit_in_printed_destinations",
+        "test_top_exile_descriptor_and_intent_codec_preserve_the_legacy_hand_shape"
       ],
       "required_evidence": [
         "positive",
@@ -29415,6 +29502,111 @@
       "dependency_fail_closed_rationale": "The exact static descriptor only authorizes the source controller's owned graveyard lands; ordinary land-play timing, quota, face selection, entry preparation, and zone mutation remain independently authoritative.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "The actual permission lowerer omission removes the legal opening window, and bypassing the whole-source certificate incorrectly offers an original with unclosed siblings. Compiler omission and capability withdrawal preserve residuals. Typed frame, named-reference and native entry/order/replay controls protect the complete contract.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "game.opening_hand.reveal_scheduled",
+      "version": 1,
+      "official_rules": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Optional final-opening-hand reveal with one represented delayed result using existing phase, knowledge, delayed-trigger, result and choice owners.",
+        "inputs": [
+          "complete-card hand permission",
+          "closed result and timing spec",
+          "final opening source incarnation"
+        ],
+        "outputs": [
+          "once-only public reveal",
+          "scoped one-shot delayed ability",
+          "private later choices and exact replay"
+        ],
+        "exclusions": [
+          "unrepresented result clauses",
+          "incomplete siblings",
+          "first-opponent-spell or unsupported conditional delays"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.compiler.opening_hand_reveal_templates.opening_hand_reveal_permission_handler",
+        "quorune.opening_reveal_model.OpeningRevealSpec",
+        "quorune.opening_reveal.commit_opening_reveal",
+        "quorune.opening_hand_model.OpeningHandFrame",
+        "quorune.trigger_processing.schedule_delayed_trigger",
+        "quorune.effect_runtime.hand_inspection.begin_opening_hand_reveal"
+      ],
+      "positive_tests": [
+        "test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
+        "test_actual_forge_first_upkeep_uses_revealing_controller_instead_of_starting_player",
+        "test_actual_originals_retain_their_normal_creature_and_entry_bodies",
+        "test_actual_sphinx_reveal_stays_in_hand_until_start_and_scry_is_private_loaded_and_replayed",
+        "test_fixed_existing_results_have_complete_source_and_scoped_delayed_specs",
+        "test_tangle_waits_for_its_creators_first_main_and_resolves_on_the_stack"
+      ],
+      "negative_tests": [
+        "test_declined_and_unclosed_sources_cannot_reveal_and_stale_finish_rolls_back",
+        "test_result_and_permission_descriptors_reject_unrepresented_or_malformed_inputs",
+        "test_reveal_and_result_dependency_omissions_and_closed_result_mutants_are_killed"
+      ],
+      "interaction_tests": [
+        "test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
+        "test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
+        "test_reveal_once_and_battlefield_action_are_distinct_and_source_departure_keeps_delay",
+        "test_revealed_copies_scry_separately_at_their_own_first_upkeep",
+        "test_tangle_waits_for_its_creators_first_main_and_resolves_on_the_stack"
+      ],
+      "multiplayer_tests": [
+        "test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
+        "test_actual_forge_first_upkeep_uses_revealing_controller_instead_of_starting_player",
+        "test_actual_sphinx_reveal_stays_in_hand_until_start_and_scry_is_private_loaded_and_replayed",
+        "test_revealed_copies_scry_separately_at_their_own_first_upkeep"
+      ],
+      "privacy_tests": [
+        "test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
+        "test_actual_sphinx_reveal_stays_in_hand_until_start_and_scry_is_private_loaded_and_replayed",
+        "test_declined_and_unclosed_sources_cannot_reveal_and_stale_finish_rolls_back"
+      ],
+      "replay_tests": [
+        "test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
+        "test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
+        "test_actual_originals_retain_their_normal_creature_and_entry_bodies",
+        "test_actual_sphinx_reveal_stays_in_hand_until_start_and_scry_is_private_loaded_and_replayed",
+        "test_reveal_once_and_battlefield_action_are_distinct_and_source_departure_keeps_delay",
+        "test_revealed_copies_scry_separately_at_their_own_first_upkeep"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The opening action has no aggregate dependency; each validated result descriptor declares its own fixed-result capabilities and whole-card admission requires their trusted closure.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the actual permission lowerer removes the native opening action. Compiler permission omission and result-capability withdrawal fail exact admission; separate-copy and mixed-action witnesses protect once-only source and timing semantics.",
       "blockers": [],
       "status": "trusted"
     }

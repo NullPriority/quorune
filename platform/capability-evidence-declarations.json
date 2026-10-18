@@ -88280,6 +88280,924 @@
       "applicability_note": "Rejected principal, source, continuation or later target/resource commands preserve complete authoritative state before mutation."
     },
     {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_reveal_once_and_battlefield_action_are_distinct_and_source_departure_keeps_delay",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_revealed_copies_scry_separately_at_their_own_first_upkeep",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_tangle_waits_for_its_creators_first_main_and_resolves_on_the_stack",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_forge_first_upkeep_uses_revealing_controller_instead_of_starting_player",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_sphinx_reveal_stays_in_hand_until_start_and_scry_is_private_loaded_and_replayed",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_revealed_copies_scry_separately_at_their_own_first_upkeep",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealCompilerTests.test_reveal_and_result_dependency_omissions_and_closed_result_mutants_are_killed",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_reveal_permission_and_actual_total_gain_omission_mutants_are_killed",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealCompilerTests.test_result_and_permission_descriptors_reject_unrepresented_or_malformed_inputs",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealCompilerTests.test_reveal_and_result_dependency_omissions_and_closed_result_mutants_are_killed",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_declined_and_unclosed_sources_cannot_reveal_and_stale_finish_rolls_back",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealCompilerTests.test_fixed_existing_results_have_complete_source_and_scoped_delayed_specs",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_forge_first_upkeep_uses_revealing_controller_instead_of_starting_player",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_originals_retain_their_normal_creature_and_entry_bodies",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_sphinx_reveal_stays_in_hand_until_start_and_scry_is_private_loaded_and_replayed",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_tangle_waits_for_its_creators_first_main_and_resolves_on_the_stack",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_sphinx_reveal_stays_in_hand_until_start_and_scry_is_private_loaded_and_replayed",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_declined_and_unclosed_sources_cannot_reveal_and_stale_finish_rolls_back",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "property",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealCompilerTests.test_frame_one_bytes_remain_unchanged_and_frame_two_closes_action_identity",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "property",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealCompilerTests.test_result_and_permission_descriptors_reject_unrepresented_or_malformed_inputs",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_originals_retain_their_normal_creature_and_entry_bodies",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_sphinx_reveal_stays_in_hand_until_start_and_scry_is_private_loaded_and_replayed",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_reveal_once_and_battlefield_action_are_distinct_and_source_departure_keeps_delay",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_revealed_copies_scry_separately_at_their_own_first_upkeep",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_declined_and_unclosed_sources_cannot_reveal_and_stale_finish_rolls_back",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "game.opening_hand.reveal_scheduled",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_reveal_once_and_battlefield_action_are_distinct_and_source_departure_keeps_delay",
+      "official_rule_ids": [
+        "103.5",
+        "103.6",
+        "103.6b",
+        "109.5",
+        "603.3",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7g",
+        "400.7",
+        "401.2",
+        "701.20a",
+        "701.22a",
+        "106.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
       "capability_id": "hand.cleanup.no_maximum",
       "evidence_class": "interaction",
       "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_no_maximum_hand_size_component_removal_restores_cleanup_discard",
@@ -91448,6 +92366,31 @@
     },
     {
       "capability_id": "library.select.fixed_controller",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionRuntimeTests.test_private_look_and_public_reveal_are_projected_to_the_correct_seats",
       "official_rule_ids": [
@@ -91548,6 +92491,31 @@
     },
     {
       "capability_id": "library.select.fixed_controller",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionCompilerTests.test_library_selection_shape_and_compiler_mutants_are_killed",
       "official_rule_ids": [
@@ -91595,6 +92563,31 @@
         "commander_review"
       ],
       "applicability_note": "Original Relentless Pursuit trusted cast offers and accepts one creature plus one land while rejecting duplicates, two-creature substitution and foreign answers; original Frontier Seeker privately selects a Mount creature rather than an invented subtype. Pending save/load, complete destination/remainder consequences and exact replay preserve principal projection. Trained Arynx is selection data; this witness does not claim its Saddle ability support. Minimal predicate and slot mutations protect semantic distinctions and fail closed for unrepresented layout/qualifiers."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealCompilerTests.test_top_exile_descriptor_and_intent_codec_preserve_the_legacy_hand_shape",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
     },
     {
       "capability_id": "library.select.fixed_controller",
@@ -91720,6 +92713,81 @@
         "commander_review"
       ],
       "applicability_note": "The sole other remainder requires a mandatory fixed selection leaving one card, then uses the existing private complete partition. Native Sleight of Hand and Tower Geist casts cover controller privacy, rejected commands, short libraries, pending reload and replay."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealCompilerTests.test_top_exile_descriptor_and_intent_codec_preserve_the_legacy_hand_shape",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_devourer_empty_library_completes_and_changed_looked_incarnation_rejects",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
     },
     {
       "capability_id": "library.select.fixed_controller",
@@ -91873,6 +92941,56 @@
     },
     {
       "capability_id": "library.select.fixed_controller",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealCompilerTests.test_actual_life_transfer_and_top_exile_results_have_reusable_closed_templates",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionRuntimeTests.test_private_look_and_public_reveal_are_projected_to_the_correct_seats",
       "official_rule_ids": [
@@ -91970,6 +93088,56 @@
         "commander_review"
       ],
       "applicability_note": "The sole other remainder requires a mandatory fixed selection leaving one card, then uses the existing private complete partition. Native Sleight of Hand and Tower Geist casts cover controller privacy, rejected commands, short libraries, pending reload and replay."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "property",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealCompilerTests.test_top_exile_descriptor_and_intent_codec_preserve_the_legacy_hand_shape",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
     },
     {
       "capability_id": "library.select.fixed_controller",
@@ -92095,6 +93263,81 @@
         "commander_review"
       ],
       "applicability_note": "The sole other remainder requires a mandatory fixed selection leaving one card, then uses the existing private complete partition. Native Sleight of Hand and Tower Geist casts cover controller privacy, rejected commands, short libraries, pending reload and replay."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealCompilerTests.test_top_exile_descriptor_and_intent_codec_preserve_the_legacy_hand_shape",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
     },
     {
       "capability_id": "library.surveil.fixed_controller",
@@ -93108,6 +94351,214 @@
         "commander_review"
       ],
       "applicability_note": "Existing subject/event compatibility binds the sealed player before typed half-life normalization. Actual Quietus cast/equip/combat, pending life gain and departure, distinct AEquipment/Dattacker/Brecipient, atomic unauthorized attack, four-player privacy and pending load/replay preserve recipient and current quantity independently."
+    },
+    {
+      "capability_id": "life.transfer.actual_opponent_loss",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
+      "official_rule_ids": [
+        "119.3",
+        "119.9",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "life.transfer.actual_opponent_loss",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_dross_uses_actual_loss_when_one_opponents_loss_is_stopped",
+      "official_rule_ids": [
+        "119.3",
+        "119.9",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "life.transfer.actual_opponent_loss",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
+      "official_rule_ids": [
+        "119.3",
+        "119.9",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "life.transfer.actual_opponent_loss",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_dross_uses_actual_loss_when_one_opponents_loss_is_stopped",
+      "official_rule_ids": [
+        "119.3",
+        "119.9",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "life.transfer.actual_opponent_loss",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_reveal_permission_and_actual_total_gain_omission_mutants_are_killed",
+      "official_rule_ids": [
+        "119.3",
+        "119.9",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "life.transfer.actual_opponent_loss",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealCompilerTests.test_actual_life_transfer_binds_resolved_loss_and_keeps_fixed_gain_drain_distinct",
+      "official_rule_ids": [
+        "119.3",
+        "119.9",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "life.transfer.actual_opponent_loss",
+      "evidence_class": "negative",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealCompilerTests.test_reveal_and_result_dependency_omissions_and_closed_result_mutants_are_killed",
+      "official_rule_ids": [
+        "119.3",
+        "119.9",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "life.transfer.actual_opponent_loss",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealCompilerTests.test_actual_life_transfer_and_top_exile_results_have_reusable_closed_templates",
+      "official_rule_ids": [
+        "119.3",
+        "119.9",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "life.transfer.actual_opponent_loss",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealCompilerTests.test_actual_life_transfer_binds_resolved_loss_and_keeps_fixed_gain_drain_distinct",
+      "official_rule_ids": [
+        "119.3",
+        "119.9",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "life.transfer.actual_opponent_loss",
+      "evidence_class": "positive",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
+      "official_rule_ids": [
+        "119.3",
+        "119.9",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "life.transfer.actual_opponent_loss",
+      "evidence_class": "property",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealCompilerTests.test_reveal_and_result_dependency_omissions_and_closed_result_mutants_are_killed",
+      "official_rule_ids": [
+        "119.3",
+        "119.9",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "life.transfer.actual_opponent_loss",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
+      "official_rule_ids": [
+        "119.3",
+        "119.9",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
+    },
+    {
+      "capability_id": "life.transfer.actual_opponent_loss",
+      "evidence_class": "replay",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_dross_uses_actual_loss_when_one_opponents_loss_is_stopped",
+      "official_rule_ids": [
+        "119.3",
+        "119.9",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
     },
     {
       "capability_id": "mana.activated.color_set",

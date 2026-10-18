@@ -22,7 +22,9 @@ changed.
 looked-at library cards. The server names the two destinations and their order
 semantics; the browser renders those issued destinations without deriving a
 card-specific choice. Scry supplies `top` and `bottom`, while Surveil supplies
-`top` and `graveyard`.
+`top` and `graveyard`. Optional top/exile selection supplies `top` and `exile`
+with a server-issued maximum for the top group. The browser initializes and
+validates per-destination bounds when present; the server revalidates them.
 
 `OrderedLibraryPartition` validates that every looked-at reference occurs
 exactly once across the two groups. Operation-specific arrangements retain
@@ -109,9 +111,18 @@ before any member of the partition moves. Public reveals project the known top
 to every seat; private looks and hidden resulting order remain seat-scoped.
 Exact replay carries the immutable arrangement and any replacement selections.
 
+A version-two fixed selection additionally represents a private fixed look,
+keeping up to one available card on top and exiling the complete remainder.
+Zero kept and short or empty libraries preserve the printed procedure.
+The same identity-pinned arrangement commits exiles through the canonical
+zone transaction before the shared library-order owner places the retained
+card. Saved intent identities explicitly record `library_top` only for this
+form; historical hand-selection descriptors and intent bytes keep their
+existing default. This narrow form does not authorize other exile selections.
+
 The family excludes variable counts, another player's library, conditional or
 payment instructions, numeric, chosen, and name predicates, battlefield,
-exile, cast, or play destinations, and any unowned preceding or trailing
+unrepresented exile, cast, or play destinations, and any unowned preceding or trailing
 effect. These exclusions remain material compiler residuals rather than
 runtime prose interpretation.
 

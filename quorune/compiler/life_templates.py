@@ -74,12 +74,25 @@ def _player_target_schema(relation: str) -> dict[str, Any]:
     }
 
 
+def fixed_actual_life_transfer_template(text: str):
+    from ..rules.actual_life_transfer import ACTUAL_LIFE_TRANSFER_OPERATION
+    match=re.fullmatch(rf'each opponent loses (?P<count>{FIXED_COUNT_PATTERN}) life(?:, then|\. Then) you gain life equal to the life lost this way\.?',text,re.I)
+    if match is None:return None
+    count=fixed_number(match['count'])
+    if count<=0:return None
+    return FixedLifeEffectTemplate(template_id='actual-opponent-life-transfer-v1',
+        effect={'op':ACTUAL_LIFE_TRANSFER_OPERATION,'schema_version':1,'player':'$controller','amount':count},
+        mechanic_ids=(LIFE_MECHANIC,))
+
+
 def fixed_life_effect_template(
     text: str,
 ) -> FixedLifeEffectTemplate | None:
     """Lower closed fixed controller, target-player, and opponent changes."""
 
     normalized = " ".join(text.strip().split())
+    actual=fixed_actual_life_transfer_template(normalized)
+    if actual is not None:return actual
     match = re.fullmatch(
         rf"target opponent loses (?P<count>{FIXED_COUNT_PATTERN}) life "
         rf"and you gain (?P<gain>{FIXED_COUNT_PATTERN}) life\.?",

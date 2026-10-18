@@ -20,6 +20,18 @@ held until ordinary first-turn priority. An entry prevented in its original
 hand does not consume that source's later opening action. The existing turn
 owner starts the first turn exactly once after the opening actions finish.
 
+Opening reveals share that ordered phase and require complete-card admission.
+Each eligible final-hand incarnation may be revealed once without casting or
+moving it. The canonical hand-visibility owner retains the reveal until the
+first turn starts; learned identity remains known afterward. A separate
+battlefield action on the same card is still available. Its versioned frame
+retains both action identities and restores pending visibility after load.
+`opening_reveal.py` creates one ordinary delayed trigger for the revealing
+controller. First-global-upkeep, first-own-upkeep and first-own-main conditions
+remain distinct, copies resolve separately, and source departure does not
+cancel an already created delay. All results, including mana, use the ordinary
+stack and their existing mutation owners.
+
 Conditional self-timing evaluates current public facts for the would-be caster
 and selected face before locking costs. Losing the qualifying permanent while
 paying mana or other costs does not undo that legal cast. Actual conditional

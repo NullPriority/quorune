@@ -4,6 +4,7 @@ from functools import lru_cache
 
 from .registry import SemanticChoiceRegistry
 from .extort import ExtortChoiceHandler
+from .actual_life_transfer import ActualLifeTransferHandler
 from .artifact_exchange import ARTIFACT_EXCHANGE_CHOICE_HANDLERS
 from .object_selection import OBJECT_SELECTION_HANDLERS
 from .library_and_hand import LIBRARY_AND_HAND_CHOICE_HANDLERS
@@ -49,6 +50,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
     return SemanticChoiceRegistry(
         (
             ExtortChoiceHandler(),
+            ActualLifeTransferHandler(),
             *ARTIFACT_EXCHANGE_CHOICE_HANDLERS,
             *SCALAR_CHOICE_HANDLERS,
             *OBJECT_SELECTION_HANDLERS,

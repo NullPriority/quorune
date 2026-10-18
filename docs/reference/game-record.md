@@ -76,6 +76,13 @@ revalidates the pre-turn window and original hand objects before entry. Older
 records keep their recorded decision shapes and do not insert opening actions
 after an already recorded game start.
 
+Battlefield-only opening frames retain version one and its original bytes.
+Version two names battlefield and reveal actions separately, pins their
+semantic program identities, and records revealed hand incarnations with any
+earlier disclosure. The final opening action ends that reveal duration before
+starting the first turn. Pending records retain already created delayed
+triggers; loading does not reveal again or recreate the scheduled result.
+
 Derived mana activations omit `tap_source` for the historical tap-cost form,
 which defaults to true. A nontapping self-sacrifice mode explicitly records
 `tap_source: false`; its compact mode similarly includes `tap: false`.

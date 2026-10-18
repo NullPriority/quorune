@@ -1,0 +1,871 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "opening_hand_reveal_candidates",
+  "source": "Pinned original reveal candidates, canonical shared controls, and explicitly constructed boundary/composition fixtures.",
+  "cards": [
+    {
+      "oracle_id": "0aedf049-db6b-420e-80e7-591ed38d4fba",
+      "name": "Chancellor of the Forge",
+      "mana_cost": "{4}{R}{R}{R}",
+      "cmc": 7.0,
+      "type_line": "Creature — Phyrexian Giant",
+      "oracle_text": "You may reveal this card from your opening hand. If you do, at the beginning of the first upkeep, create a 1/1 red Phyrexian Goblin creature token with haste.\nWhen this creature enters, create X 1/1 red Phyrexian Goblin creature tokens with haste, where X is the number of creatures you control.",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-05-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "2a521811-7106-4531-b69c-631e207b8988",
+      "name": "Chancellor of the Tangle",
+      "mana_cost": "{4}{G}{G}{G}",
+      "cmc": 7.0,
+      "type_line": "Creature — Phyrexian Beast",
+      "oracle_text": "You may reveal this card from your opening hand. If you do, at the beginning of your first main phase of the game, add {G}.\nVigilance, reach",
+      "power": "6",
+      "toughness": "7",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Reach",
+        "Vigilance"
+      ],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2011-05-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "89215e6d-ebe7-4eb0-9999-11ee2e6eb1d2",
+      "name": "Devourer of Destiny",
+      "mana_cost": "{5}{C}{C}",
+      "cmc": 7.0,
+      "type_line": "Creature — Eldrazi",
+      "oracle_text": "You may reveal this card from your opening hand. If you do, at the beginning of your first upkeep, look at the top four cards of your library. You may put one of those cards back on top of your library. Exile the rest.\nWhen you cast this spell, exile target permanent that's one or more colors.",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "8ce2a750-1137-4f8d-803c-9aac30db4193",
+      "name": "Chancellor of the Dross",
+      "mana_cost": "{4}{B}{B}{B}",
+      "cmc": 7.0,
+      "type_line": "Creature — Phyrexian Vampire",
+      "oracle_text": "You may reveal this card from your opening hand. If you do, at the beginning of the first upkeep, each opponent loses 3 life, then you gain life equal to the life lost this way.\nFlying, lifelink",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying",
+        "Lifelink"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-05-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d1108bd1-87b2-4795-9690-54ff4504e04f",
+      "name": "Sphinx of Foresight",
+      "mana_cost": "{2}{U}{U}",
+      "cmc": 4.0,
+      "type_line": "Creature — Sphinx",
+      "oracle_text": "You may reveal this card from your opening hand. If you do, scry 3 at the beginning of your first upkeep.\nFlying\nAt the beginning of your upkeep, scry 1.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Scry",
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-01-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "492e0e6c-8c27-4376-938b-f8a8b6205810",
+      "name": "Leyline of Sanctity",
+      "mana_cost": "{2}{W}{W}",
+      "cmc": 4.0,
+      "type_line": "Enchantment",
+      "oracle_text": "If this card is in your opening hand, you may begin the game with it on the battlefield.\nYou have hexproof. (You can't be the target of spells or abilities your opponents control.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-07-12",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "cbf2b19e-32a3-489f-9979-ba2748c52845",
+      "name": "Leyline of Vitality",
+      "mana_cost": "{2}{G}{G}",
+      "cmc": 4.0,
+      "type_line": "Enchantment",
+      "oracle_text": "If this card is in your opening hand, you may begin the game with it on the battlefield.\nCreatures you control get +0/+1.\nWhenever a creature you control enters, you may gain 1 life.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2010-07-16",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "oracle_id": "a9d288b8-cdc1-4e55-a0c9-d6edfc95e65d",
+      "name": "Shock",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Shock deals 2 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "c6a2e410-b182-48d1-aeb2-bc8de27e9cd2",
+      "name": "Cremate",
+      "mana_cost": "{B}",
+      "type_line": "Instant",
+      "oracle_text": "Exile target card from a graveyard.\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-10-05",
+      "cmc": 1.0,
+      "card_faces": []
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Birds of Paradise",
+      "oracle_id": "d3a0b660-358c-41bd-9cd2-41fbf3491b1a",
+      "oracle_text": "Flying\n{T}: Add one mana of any color.",
+      "power": "0",
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": "1",
+      "type_line": "Creature — Bird"
+    },
+    {
+      "oracle_id": "9dc65ffe-17fc-4280-b4bd-78073ac7e12b",
+      "name": "Leyline of Anticipation",
+      "mana_cost": "{2}{U}{U}",
+      "cmc": 4.0,
+      "type_line": "Enchantment",
+      "oracle_text": "If this card is in your opening hand, you may begin the game with it on the battlefield.\nYou may cast spells as though they had flash.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "name": "Boon Reflection",
+      "mana_cost": "{4}{W}",
+      "cmc": 5.0,
+      "type_line": "Enchantment",
+      "oracle_text": "If you would gain life, you gain twice that much life instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-08-07",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "oracle_id": "bdddfc82-ab10-5d5f-bb2b-b1d3d9703ff0",
+      "name": "Generic Opening Life Multiplier",
+      "mana_cost": "{4}{W}",
+      "cmc": 5.0,
+      "type_line": "Enchantment",
+      "oracle_text": "If this card is in your opening hand, you may begin the game with it on the battlefield.\nIf you would gain life, you gain twice that much life instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-08-07",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "oracle_id": "dc37dd79-a816-59e0-b544-a41868ff1a9d",
+      "name": "Generic Opening Dual Action",
+      "mana_cost": "{2}{U}{U}",
+      "cmc": 4.0,
+      "type_line": "Creature — Sphinx",
+      "oracle_text": "If this card is in your opening hand, you may begin the game with it on the battlefield.\nYou may reveal this card from your opening hand. If you do, scry 3 at the beginning of your first upkeep.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Scry",
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-01-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4cd809f5-a46e-581a-927e-562036fead04",
+      "name": "Generic Unclosed Opening Reveal",
+      "mana_cost": "{2}{U}{U}",
+      "cmc": 4.0,
+      "type_line": "Creature — Sphinx",
+      "oracle_text": "You may reveal this card from your opening hand. If you do, scry 3 at the beginning of your first upkeep.\nFlying\nAt the beginning of your upkeep, scry 1.\nPerform an undefined instruction.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Scry",
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-01-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "0aedf049-db6b-420e-80e7-591ed38d4fba",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "The number of creature tokens you put onto the battlefield with the last ability is determined when the ability resolves. If Chancellor of the Forge is still on the battlefield at that time, it will be counted."
+    },
+    {
+      "oracle_id": "0aedf049-db6b-420e-80e7-591ed38d4fba",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "A player’s “opening hand” is the hand of cards the player has after all players have taken mulligans. If players have any cards in hand that allow actions to be taken with them from a player’s opening hand, the starting player takes all such actions first in any order, followed by each other player in turn order. Then the first turn begins."
+    },
+    {
+      "oracle_id": "2a521811-7106-4531-b69c-631e207b8988",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "A player’s “opening hand” is the hand of cards the player has after all players have taken mulligans. If players have any cards in hand that allow actions to be taken with them from a player’s opening hand, the starting player takes all such actions first in any order, followed by each other player in turn order. Then the first turn begins."
+    },
+    {
+      "oracle_id": "89215e6d-ebe7-4eb0-9999-11ee2e6eb1d2",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Devourer of Destiny's last triggered ability will resolve before Devourer of Destiny does. If Devourer of Destiny is countered or otherwise leaves the stack in response to that triggered ability, the triggered ability will still resolve as normal."
+    },
+    {
+      "oracle_id": "89215e6d-ebe7-4eb0-9999-11ee2e6eb1d2",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If you reveal more than one Devourer of Destiny from your opening hand, you'll put that many triggered abilities on the stack at the beginning of your first upkeep. As a result, you'll look at the top four cards of your library, put up to one back on top, and exile the rest once for each Devour of Destiny you revealed."
+    },
+    {
+      "oracle_id": "89215e6d-ebe7-4eb0-9999-11ee2e6eb1d2",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "A player's \"opening hand\" is the hand of cards the player has after all players have taken mulligans. If players have any cards in hand that allow actions to be taken with them from a player's opening hand, the starting player takes all such actions first in any order, followed by each other player in turn order. Then the first turn begins."
+    },
+    {
+      "oracle_id": "8ce2a750-1137-4f8d-803c-9aac30db4193",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "A player’s “opening hand” is the hand of cards the player has after all players have taken mulligans. If players have any cards in hand that allow actions to be taken with them from a player’s opening hand, the starting player takes all such actions first in any order, followed by each other player in turn order. Then the first turn begins."
+    },
+    {
+      "oracle_id": "d1108bd1-87b2-4795-9690-54ff4504e04f",
+      "published_at": "2019-01-25",
+      "source": "wotc",
+      "comment": "If you reveal two Sphinxes of Foresight from your opening hand, you'll scry 3 twice; you won't scry 6. Any cards you put on top of your library the first time you scry 3 will be part of the second time you scry 3."
+    },
+    {
+      "oracle_id": "d1108bd1-87b2-4795-9690-54ff4504e04f",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "A player's \"opening hand\" is the hand of cards the player has after all players have taken mulligans. If players have any cards in hand that allow actions to be taken with them from a player's opening hand, the starting player takes all such actions first in any order, followed by each other player in turn order. Then the first turn begins."
+    },
+    {
+      "oracle_id": "492e0e6c-8c27-4376-938b-f8a8b6205810",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "A player's \"opening hand\" is the hand of cards the player has after all players have taken mulligans. If players have any cards in hand that allow actions to be taken with them from a player's opening hand, the starting player takes all such actions first in any order, followed by each other player in turn order. Then the first turn begins."
+    },
+    {
+      "oracle_id": "cbf2b19e-32a3-489f-9979-ba2748c52845",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If Leyline of Vitality and a creature enter under your control at the same time, Leyline of Vitality's third ability will trigger."
+    },
+    {
+      "oracle_id": "cbf2b19e-32a3-489f-9979-ba2748c52845",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "A player's \"opening hand\" is the hand of cards the player has after all players have taken mulligans. If players have any cards in hand that allow actions to be taken with them from a player's opening hand, the starting player takes all such actions first in any order, followed by each other player in turn order. Then the first turn begins."
+    },
+    {
+      "oracle_id": "c6a2e410-b182-48d1-aeb2-bc8de27e9cd2",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "If the target card is no longer in the graveyard when Cremate tries to resolve, it won't resolve and none of its effects will happen. You won't draw a card."
+    },
+    {
+      "oracle_id": "c6a2e410-b182-48d1-aeb2-bc8de27e9cd2",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "You must be able to target a card in a graveyard to cast Cremate."
+    },
+    {
+      "oracle_id": "9dc65ffe-17fc-4280-b4bd-78073ac7e12b",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "A player's \"opening hand\" is the hand of cards the player has after all players have taken mulligans. If players have any cards in hand that allow actions to be taken with them from a player's opening hand, the starting player takes all such actions first in any order, followed by each other player in turn order. Then the first turn begins."
+    },
+    {
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, only Boon Reflection's controller is affected by it. If that player's teammate gains life, Boon Reflection will have no effect, even when that life gain is applied to the shared team life total."
+    },
+    {
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "If an effect would set your life total to a specific number that's higher than your current life total, that effect would cause you to gain life equal to the difference. Boon Reflection will then double the amount of life that effect would cause you to gain. For example, if you have 3 life and an effect says that your life total “becomes 10,” your life total will actually become 17."
+    },
+    {
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "The effects of multiple Boon Reflections are cumulative. For example, if you control two Boon Reflections, you'll gain four times the original amount of life. If you control three Boon Reflections, you'll gain eight times the original amount, and so on."
+    }
+  ]
+}

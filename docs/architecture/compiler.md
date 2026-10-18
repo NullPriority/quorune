@@ -14,8 +14,13 @@ opening-hand battlefield clause to a hand-scoped permission in the existing
 action registry. Named self-references and ordinary object pronouns use the
 shared compiler reference owner. The descriptor requires the existing
 complete-card admission certificate: an independently trusted fragment cannot
-authorize entry when material siblings remain unclosed. Paid, conditional and
-reveal-only opening clauses retain their residuals.
+authorize entry when material siblings remain unclosed. The separate
+`compiler/opening_hand_reveal_templates.py` production uses that same admission
+boundary for optional opening reveals. It closes the complete clause around
+one represented result and a first-global-upkeep, first-own-upkeep or
+first-own-main timing. Result lowering happens at compilation through the
+existing fixed Scry, token, mana, actual-life-transfer and library-selection
+owners. Paid reveals, unknown results and unrepresented timing remain residual.
 
 `compiler/conditional_flash_nodes.py` lowers complete conditional self-timing
 clauses against represented public-state predicates. An “as though” clause

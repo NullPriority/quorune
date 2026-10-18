@@ -186,6 +186,7 @@ class FixedLibrarySelectionEffectTemplate:
     predicate_groups: tuple[tuple[Mapping[str, Any], ...], ...]
     remainder_destination: str
     remainder_order: str
+    selected_destination: str='hand'
 
     def compiled(
         self,
@@ -208,6 +209,7 @@ class FixedLibrarySelectionEffectTemplate:
                     ],
                     "remainder_destination": self.remainder_destination,
                     "remainder_order": self.remainder_order,
+                    **({'schema_version':2,'selected_destination':self.selected_destination} if self.selected_destination!='hand' else {}),
                 },
             ),
             None,
@@ -397,6 +399,13 @@ def fixed_library_selection_effect_template(
     """Lower one complete fixed self-library hand/remainder instruction."""
 
     normalized = " ".join(text.strip().split())
+    top_exile=re.fullmatch(rf'Look at the top (?P<count>{FIXED_COUNT_PATTERN}) cards of your library\. '
+        r'You may put one of those cards back on top of your library\. Exile the rest\.?',normalized,re.I)
+    if top_exile is not None:
+        count=fixed_number(top_exile['count'])
+        if count<=0:return None
+        return FixedLibrarySelectionEffectTemplate(count,False,False,'up_to_any',0,1,
+            (),'exile','chosen','library_top')
     start = _START.match(normalized)
     remainder = _REMAINDER.search(normalized)
     if start is None or remainder is None or start.end() > remainder.start():

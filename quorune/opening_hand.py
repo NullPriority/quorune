@@ -2,16 +2,18 @@ from __future__ import annotations
 
 """CR 103.6 actions between completed mulligans and the first turn."""
 
-from dataclasses import dataclass,replace,asdict
+from dataclasses import replace
 from typing import Any,Mapping
 
 from .errors import GameRuleError
+from .opening_hand_model import OpeningHandSubject,OpeningHandFrame,OpeningHandRevealed
 from .card_program_faces import program_matches_face
 from .card_programs.admission import program_has_complete_card_program_admission
 from .semantic_runtime.action_permissions import (
     ActionPermissionKind,ActionPermissionSourceContext,default_action_permission_registry,
     OPENING_HAND_BATTLEFIELD_HANDLER_ID,
 )
+from .opening_reveal_model import OPENING_REVEAL_HANDLER
 from .zone_transitions import ZoneTransitionOwner
 from .replacement_effects import ReplacementChoiceRequired,ReplacementEffectError,replacement_choice_payload
 from .replacement.immutable import FrozenMap,thaw_value
@@ -19,90 +21,48 @@ from .aura import AuraEntryChoiceRequired
 from .enchant_spec import TypedEnchantSpec,AuraEnchantSubject
 
 
-@dataclass(frozen=True,slots=True)
-class OpeningHandSubject:
-    object_id: str
-    logical_object_id: str
-    ref: str
-    player: str
 
-    def __post_init__(self):
-        if any(type(v) is not str or not v for v in (self.object_id,self.logical_object_id,self.ref,self.player)):
-            raise GameRuleError('Opening-hand source identity is malformed')
-
-
-@dataclass(frozen=True,slots=True)
-class OpeningHandFrame:
-    seats: tuple[str,...]
-    subjects: tuple[OpeningHandSubject,...]
-    index: int=0
-
-    def __post_init__(self):
-        if (type(self.seats) is not tuple or not self.seats or len(set(self.seats))!=len(self.seats)
-                or any(type(v) is not str or not v for v in self.seats)
-                or type(self.index) is not int or not 0<=self.index<=len(self.seats)
-                or type(self.subjects) is not tuple or any(not isinstance(v,OpeningHandSubject) for v in self.subjects)
-                or len({v.object_id for v in self.subjects})!=len(self.subjects)
-                or len({v.ref for v in self.subjects})!=len(self.subjects)
-                or len({v.logical_object_id for v in self.subjects})!=len(self.subjects)
-                or any(v.player not in self.seats[self.index:] for v in self.subjects)):
-            raise GameRuleError('Opening-hand continuation is malformed')
-
-    def to_dict(self):
-        return {'schema_version':1,'seats':list(self.seats),'subjects':[asdict(v) for v in self.subjects],'index':self.index}
-
-    @classmethod
-    def from_dict(cls,value):
-        if (not isinstance(value,Mapping) or set(value)!={'schema_version','seats','subjects','index'}
-                or type(value['schema_version']) is not int or value['schema_version']!=1
-                or type(value['seats']) is not list or type(value['subjects']) is not list):
-            raise GameRuleError('Opening-hand continuation fields changed')
-        subjects=[]
-        for row in value['subjects']:
-            if not isinstance(row,Mapping) or set(row)!={'object_id','logical_object_id','ref','player'}:
-                raise GameRuleError('Opening-hand subject fields changed')
-            subjects.append(OpeningHandSubject(**row))
-        return cls(tuple(value['seats']),tuple(subjects),value['index'])
-
-    def validate_state(self,host):
-        state=host.state
-        if (state.started or state.current_turn is not None or state.turn_sequence!=0
-                or state.phase!='setup' or state.step!='mulligan' or state.phase_index!=0
-                or state.priority_player is not None or state.stack or tuple(state.turn_order)!=self.seats
-                or not all(p.kept_hand for p in state.players.values())):
-            raise GameRuleError('Opening-hand actions require the completed mulligan window')
-
-
-def _permission(host,card,seat):
+def _permissions(host,card,seat):
     if card.zone!='hand' or card.owner!=seat or card.face_down or card.is_token:
-        return False
+        return ()
     record=host.card_record(card)
-    if record is None:return False
+    if record is None:return ()
     programs=tuple(host.semantics.runtime_handler_programs_for_oracle(record.oracle_id,
         active_zone='hand',event='action.permission'))
-    if not any(any(d.get('handler_id')==OPENING_HAND_BATTLEFIELD_HANDLER_ID for d in p.handlers) for p in programs):
-        return False
+    handler_ids={OPENING_HAND_BATTLEFIELD_HANDLER_ID,OPENING_REVEAL_HANDLER}
+    if not any(any(d.get('handler_id') in handler_ids for d in p.handlers) for p in programs):return ()
     registry=default_action_permission_registry()
+    result=[]
     for program in programs:
         if (not host.semantic_program_is_current_trusted(program)
                 or not program_has_complete_card_program_admission(program)
                 or not program_matches_face(record,program,card)):continue
         for descriptor in program.handlers:
-            if descriptor.get('handler_id')!=OPENING_HAND_BATTLEFIELD_HANDLER_ID:continue
+            if descriptor.get('handler_id') not in handler_ids:continue
             permissions=registry.lower(descriptor,ActionPermissionSourceContext(card.ref,card.logical_object_id,
                 program.key,seat,tuple(host.active_seats)))
-            if any(p.kind is ActionPermissionKind.OPENING_HAND_BATTLEFIELD and p.player==seat for p in permissions):return True
-    return False
+            result.extend(p for p in permissions if p.player==seat)
+    return tuple(result)
+
+
+def _permission_for_subject(host,card,subject):
+    expected=ActionPermissionKind.OPENING_HAND_REVEAL if subject.action_kind=='reveal' else ActionPermissionKind.OPENING_HAND_BATTLEFIELD
+    return next((p for p in _permissions(host,card,subject.player) if p.kind is expected
+        and (not subject.semantic_key or p.source_semantic_key==subject.semantic_key)),None)
 
 
 def begin_opening_hand_actions(host):
     if host.state.started:raise GameRuleError('Opening-hand actions cannot begin after the first turn')
     seats=tuple(host.state.turn_order)
-    subjects=tuple(OpeningHandSubject(c.object_id,c.logical_object_id,c.ref,seat)
-        for seat in seats for oid in host.state.players[seat].zones['hand']
-        if _permission(host,(c:=host.state.cards[oid]),seat))
+    subjects=tuple(OpeningHandSubject(c.object_id,c.logical_object_id,c.ref,seat,
+        'reveal' if p.kind is ActionPermissionKind.OPENING_HAND_REVEAL else 'battlefield',p.source_semantic_key)
+        for seat in seats for oid in host.state.players[seat].zones['hand'] for c in (host.state.cards[oid],)
+        for p in _permissions(host,c,seat))
     if not subjects:return False
-    frame=OpeningHandFrame(seats,subjects);frame.validate_state(host)
+    version=2 if any(s.action_kind=='reveal' for s in subjects) else 1
+    if version==1:
+        unique={s.object_id:replace(s,semantic_key='') for s in subjects};subjects=tuple(unique.values())
+    frame=OpeningHandFrame(seats,subjects,version=version);frame.validate_state(host)
     _issue_next(host,frame)
     return True
 
@@ -114,7 +74,7 @@ def _current_subjects(host,frame):
         if subject.player!=seat:continue
         card=host.state.cards.get(subject.object_id)
         if (card is None or card.logical_object_id!=subject.logical_object_id or card.ref!=subject.ref
-                or card.object_id not in host.state.players[seat].zones['hand'] or not _permission(host,card,seat)):
+                or card.object_id not in host.state.players[seat].zones['hand'] or _permission_for_subject(host,card,subject) is None):
             raise GameRuleError('An opening-hand source changed since its offer')
         result.append(subject)
     return tuple(result)
@@ -127,9 +87,24 @@ def _issue_next(host,frame):
         if subjects and host.state.players[frame.seats[frame.index]].in_game:break
         frame=replace(frame,subjects=tuple(s for s in frame.subjects if s.player!=frame.seats[frame.index]),index=frame.index+1)
     if frame.index==len(frame.seats):
+        if frame.revealed:
+            from .opening_reveal import finish_opening_reveals
+            finish_opening_reveals(host,frame)
         host.turn_steps.start_first_turn()
         return
     seat=frame.seats[frame.index];refs=[s.ref for s in subjects]
+    if frame.version==2:
+        import hashlib
+        options=[{'id':'finish','label':'Finish opening actions'}]
+        for s in subjects:
+            key='opening:'+hashlib.sha256((s.object_id+'|'+s.action_kind+'|'+s.semantic_key).encode('utf-8')).hexdigest()[:24]
+            options.append({'id':key,'label':('Reveal ' if s.action_kind=='reveal' else 'Begin with ')+host.state.cards[s.object_id].printed_name})
+        host.permissions.issue(kind='opening.hand',role='pilot',actors=[seat],allowed_actions=['choose'],
+            payload_by_actor={seat:{'prompt':'Choose an opening action, or finish.','options':options,
+                'legal_actions':[{'id':'choose','action':'choose','choice_schema':{'opening_action':{
+                    'type':'enum','label':'Opening action','required':True,'legal_values':[o['id'] for o in options],
+                    'default':'finish'}}}]}},continuation={'opening_hand':frame.to_dict()})
+        return
     host.permissions.issue(kind='opening.hand',role='pilot',actors=[seat],allowed_actions=['choose'],
         payload_by_actor={seat:{'prompt':'Put one opening-hand card onto the battlefield, or finish.',
             'candidates':[{'id':s.ref,'name':host.state.cards[s.object_id].printed_name} for s in subjects],
@@ -147,6 +122,23 @@ def complete_opening_hand_action(host,decision):
     seat=decision.actors[0];response=decision.responses[seat]
     choices=response.get('choices',{})
     if not isinstance(choices,Mapping):raise GameRuleError('Opening-hand selection must be an object')
+    if frame.version==2:
+        value=choices.get('opening_action',response.get('opening_action'))
+        if type(value) is not str:raise GameRuleError('Choose one offered opening action')
+        subjects=_current_subjects(host,frame)
+        if value=='finish':
+            _issue_next(host,replace(frame,subjects=tuple(s for s in frame.subjects if s.player!=seat),index=frame.index+1))
+            return
+        import hashlib
+        subject=next((s for s in subjects if value=='opening:'+hashlib.sha256(
+            (s.object_id+'|'+s.action_kind+'|'+s.semantic_key).encode('utf-8')).hexdigest()[:24]),None)
+        if subject is None:raise GameRuleError('The opening action was not offered to this player')
+        if subject.action_kind=='reveal':
+            from .opening_reveal import commit_opening_reveal
+            permission=_permission_for_subject(host,host.state.cards[subject.object_id],subject)
+            _issue_next(host,commit_opening_reveal(host,frame,subject,permission))
+        else:_place(host,{'frame':frame.to_dict(),'subject':subject.to_dict(frame.version),'aura_target':None})
+        return
     refs=choices.get('refs',response.get('refs',[]))
     if type(refs) is not list or len(refs)>1 or any(type(ref) is not str for ref in refs):
         raise GameRuleError('Choose at most one opening-hand card')
@@ -156,17 +148,15 @@ def complete_opening_hand_action(host,decision):
         return
     subject=next((s for s in subjects if s.ref==refs[0]),None)
     if subject is None:raise GameRuleError('The selected card was not offered from this opening hand')
-    _place(host,{'frame':frame.to_dict(),'subject':asdict(subject),'aura_target':None})
+    _place(host,{'frame':frame.to_dict(),'subject':subject.to_dict(frame.version),'aura_target':None})
 
 
 def _entry(value):
     if not isinstance(value,Mapping) or set(value)!={'frame','subject','aura_target'}:
         raise GameRuleError('Opening-hand entry fields changed')
     frame=OpeningHandFrame.from_dict(value['frame'])
-    if not isinstance(value['subject'],Mapping) or set(value['subject'])!={'object_id','logical_object_id','ref','player'}:
-        raise GameRuleError('Opening-hand entry subject is malformed')
-    subject=OpeningHandSubject(**value['subject'])
-    if frame.index==len(frame.seats) or subject not in frame.subjects or subject.player!=frame.seats[frame.index]:
+    subject=OpeningHandSubject.from_dict(value['subject'],frame.version)
+    if frame.index==len(frame.seats) or subject.action_kind!='battlefield' or subject not in frame.subjects or subject.player!=frame.seats[frame.index]:
         raise GameRuleError('Opening-hand entry no longer belongs to the chooser')
     if value['aura_target'] is not None and (type(value['aura_target']) is not str or not value['aura_target']):
         raise GameRuleError('Opening-hand Aura subject is malformed')
@@ -202,7 +192,8 @@ def _place(host,entry,selections=()):
         return
     current=host.state.cards.get(subject.object_id)
     unchanged_hand=current is not None and current.zone=='hand' and current.logical_object_id==subject.logical_object_id
-    _issue_next(host,frame if unchanged_hand else replace(frame,subjects=tuple(s for s in frame.subjects if s!=subject)))
+    _issue_next(host,frame if unchanged_hand else replace(frame,subjects=tuple(s for s in frame.subjects
+        if not (s.object_id==subject.object_id and s.logical_object_id==subject.logical_object_id))))
 
 
 def decode_opening_hand_entry(continuation_type,value,batch,effects):

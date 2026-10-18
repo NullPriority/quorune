@@ -16275,6 +16275,126 @@
       ],
       "interaction_order": 2,
       "assertion": "The admitted original opening sources retain native off-turn casting, player Hexproof, uncounterable creatures, optional paid damage and life, token copy/stat bonuses and properly paid Equip through ordinary commands and full replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_reveal_once_and_battlefield_action_are_distinct_and_source_departure_keeps_delay",
+      "piece_ids": [
+        "capability.game.opening_hand.battlefield",
+        "capability.game.opening_hand.reveal_scheduled"
+      ],
+      "capability_ids": [
+        "game.opening_hand.battlefield",
+        "game.opening_hand.reveal_scheduled"
+      ],
+      "interaction_order": 2,
+      "assertion": "A complete constructed source reveals once and separately enters from the same opening hand; its delayed Scry survives the changed source incarnation, with pending load and exact command replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_revealed_copies_scry_separately_at_their_own_first_upkeep",
+      "piece_ids": [
+        "capability.game.opening_hand.reveal_scheduled",
+        "capability.library.scry.fixed_controller"
+      ],
+      "capability_ids": [
+        "game.opening_hand.reveal_scheduled",
+        "library.scry.fixed_controller"
+      ],
+      "interaction_order": 2,
+      "assertion": "Two actual Sphinx copies wait through other seats and issue separate Scry three choices at their own first upkeep, preserving sequential results and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
+      "piece_ids": [
+        "capability.game.opening_hand.reveal_scheduled",
+        "capability.library.select.fixed_controller"
+      ],
+      "capability_ids": [
+        "game.opening_hand.reveal_scheduled",
+        "library.select.fixed_controller"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Devourer privately looks at available cards, keeps zero or one, exiles the exact remainder, and retains its normal native cast-trigger exile, with pending load, foreign-response rollback and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
+      "piece_ids": [
+        "capability.game.opening_hand.reveal_scheduled",
+        "capability.life.transfer.actual_opponent_loss"
+      ],
+      "capability_ids": [
+        "game.opening_hand.reveal_scheduled",
+        "life.transfer.actual_opponent_loss"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Dross locks the revealing controller, loses three for each opponent, then gains actual total; two gain replacements suspend after losses and load/resume once under full command replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_dross_uses_actual_loss_when_one_opponents_loss_is_stopped",
+      "piece_ids": [
+        "capability.life.change.effect",
+        "capability.life.transfer.actual_opponent_loss"
+      ],
+      "capability_ids": [
+        "life.change.effect",
+        "life.transfer.actual_opponent_loss"
+      ],
+      "interaction_order": 2,
+      "assertion": "A represented replacement sets one opponent loss to zero; the actual Dross native delayed ability gains six rather than three or nine, and exact pre-action replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_tangle_waits_for_its_creators_first_main_and_resolves_on_the_stack",
+      "piece_ids": [
+        "capability.game.opening_hand.reveal_scheduled",
+        "capability.mana.production.fixed_resolution"
+      ],
+      "capability_ids": [
+        "game.opening_hand.reveal_scheduled",
+        "mana.production.fixed_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Tangle ignores the starting opponent upkeep and main phase, triggers at its revealing controller first main, adds no mana before ordinary stack resolution, then funds a native creature cast and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_forge_first_upkeep_uses_revealing_controller_instead_of_starting_player",
+      "piece_ids": [
+        "capability.game.opening_hand.reveal_scheduled",
+        "capability.token.creation.fixed_definition"
+      ],
+      "capability_ids": [
+        "game.opening_hand.reveal_scheduled",
+        "token.creation.fixed_definition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Forge creates its controller one haste token at a different starting player first upkeep; the source remains in hand and full replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_opening_hand_reveal.OpeningRevealRuntimeTests.test_actual_originals_retain_their_normal_creature_and_entry_bodies",
+      "piece_ids": [
+        "capability.game.opening_hand.reveal_scheduled",
+        "capability.quantity_expression.public_query_effect_amount"
+      ],
+      "capability_ids": [
+        "game.opening_hand.reveal_scheduled",
+        "quantity_expression.public_query_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Forge retains its ordinary paid cast and entry trigger, counting the earlier opening token and itself at resolution to create two further haste tokens, with native replay."
     }
   ]
 }

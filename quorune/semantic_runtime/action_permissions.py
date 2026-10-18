@@ -19,6 +19,7 @@ from .component_registry import (
 )
 from .context import SemanticNodeError
 from .current_ability_components import program_has_current_ability_fragments
+from ..opening_reveal_model import OpeningRevealSpec,OPENING_REVEAL_CAPABILITY,OPENING_REVEAL_HANDLER
 
 
 ACTION_PERMISSION_EVENT = "action.permission"
@@ -39,6 +40,7 @@ OPENING_HAND_BATTLEFIELD_CAPABILITY = "game.opening_hand.battlefield"
 
 class ActionPermissionKind(StrEnum):
     OPENING_HAND_BATTLEFIELD = "opening_hand_battlefield"
+    OPENING_HAND_REVEAL = "opening_hand_reveal"
     LAND_PLAY_FROM_OWN_GRAVEYARD = "land_play_from_own_graveyard"
     ACTIVATE_CONTROLLED_CREATURE_AS_HASTE = (
         "activate_controlled_creature_as_haste"
@@ -78,6 +80,7 @@ class StaticActionPermission:
     top_land_queries: tuple[ObjectQuerySpec, ...] = ()
     top_spell_queries: tuple[ObjectQuerySpec, ...] = ()
     additional_land_plays: int = 0
+    opening_reveal_spec: OpeningRevealSpec | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -151,6 +154,29 @@ class OpeningHandBattlefieldPermissionHandler(StaticActionPermissionHandler):
             raise SemanticNodeError('Opening-hand entry requires complete-card admission')
         return StaticActionPermissionHandler.validate(self,
             {k:v for k,v in descriptor.items() if k!='requires_complete_card_program'})
+
+
+@dataclass(frozen=True,slots=True)
+class OpeningHandRevealPermissionHandler(StaticActionPermissionHandler):
+    handler_id: str = OPENING_REVEAL_HANDLER
+    permission: ActionPermissionKind = ActionPermissionKind.OPENING_HAND_REVEAL
+    rule_references: tuple[str,...] = ('103.6b','603.7a','603.7g')
+    capability_dependencies: tuple[str,...] = (OPENING_REVEAL_CAPABILITY,)
+
+    def validate(self,descriptor):
+        exact_fields(descriptor,{'handler_id','schema_version','event','permission','requires_complete_card_program','scheduled_result'},
+            field='opening-hand reveal permission')
+        if descriptor['requires_complete_card_program'] is not True:
+            raise SemanticNodeError('Opening reveal requires complete-card admission')
+        StaticActionPermissionHandler.validate(self,
+            {k:v for k,v in descriptor.items() if k not in {'requires_complete_card_program','scheduled_result'}})
+        try:return OpeningRevealSpec.from_dict(descriptor['scheduled_result'])
+        except (ValueError,TypeError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
+
+    def lower(self,descriptor,context):
+        spec=self.validate(descriptor)
+        return (StaticActionPermission(self.permission,context.source_controller,context.source_ref,
+            context.source_logical_object_id,context.source_semantic_key,opening_reveal_spec=spec),)
 
 
 @dataclass(frozen=True, slots=True)
@@ -401,6 +427,7 @@ def default_action_permission_registry() -> ActionPermissionRegistry:
     registry = ActionPermissionRegistry(
         (
             OpeningHandBattlefieldPermissionHandler(),
+            OpeningHandRevealPermissionHandler(),
             StaticActionPermissionHandler(
                 handler_id=LAND_PLAY_FROM_OWN_GRAVEYARD_HANDLER_ID,
                 permission=(

@@ -51,11 +51,18 @@ function initialField(field: ChoiceField): JsonValue | undefined {
   }
   if (control === "ordered_partition") {
     const [primary, secondary] = orderedPartitionNames(field);
+    const options = list(field.options).map((option) =>
+      stringValue(record(option).value),
+    );
+    const primaryRule = record(record(field.partitions)[primary]);
+    const secondaryRule = record(record(field.partitions)[secondary]);
+    const primaryCount = Math.max(0, Math.min(
+      options.length - Number(secondaryRule.minimum ?? 0),
+      Number(primaryRule.maximum ?? options.length),
+    ));
     return {
-      [primary]: list(field.options).map((option) =>
-        stringValue(record(option).value),
-      ),
-      [secondary]: [],
+      [primary]: options.slice(0, primaryCount),
+      [secondary]: options.slice(primaryCount),
     };
   }
   if (control === "copy_targets") {
@@ -385,6 +392,16 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
     const legalSet = new Set(legal);
     if (selected.some((ref) => !legalSet.has(ref))) {
       errors.push(`${label} contains a card that is no longer available.`);
+    }
+    for (const group of groups) {
+      const rule = record(record(field.partitions)[group]);
+      const count = list(partition[group]).length;
+      if (rule.minimum !== undefined && count < Number(rule.minimum)) {
+        errors.push(`${String(rule.label ?? group)} requires at least ${rule.minimum} card(s).`);
+      }
+      if (rule.maximum !== undefined && count > Number(rule.maximum)) {
+        errors.push(`${String(rule.label ?? group)} allows at most ${rule.maximum} card(s).`);
+      }
     }
   } else if (control === "object_map") {
     const count = Object.keys(record(value)).length;

@@ -5418,6 +5418,41 @@
         "test_trigger_batches",
         "test_game_record_v3"
       ]
+    },
+    {
+      "id": "opening-hand-reveal-result-contract",
+      "patterns": [
+        "quorune/opening_hand.py",
+        "quorune/opening_hand_model.py",
+        "quorune/opening_reveal.py",
+        "quorune/opening_reveal_model.py",
+        "quorune/compiler/opening_hand_reveal_templates.py",
+        "quorune/compiler/runtime_templates.py",
+        "quorune/compiler/life_templates.py",
+        "quorune/compiler/fixed_library_selection_templates.py",
+        "quorune/rules/actual_life_transfer.py",
+        "quorune/rules/library_selection.py",
+        "quorune/rules/library_selection_capability_shapes.py",
+        "quorune/semantic_runtime/action_permissions.py",
+        "quorune/semantic_choices/actual_life_transfer.py",
+        "quorune/semantic_choices/fixed_library_selection.py",
+        "quorune/semantic_choices/intent_replacement.py",
+        "quorune/effect_runtime/hand_inspection.py",
+        "quorune/trigger_processing.py",
+        "tests/test_opening_hand_reveal.py",
+        "tests/fixtures/opening-hand-reveal-cards.json"
+      ],
+      "test_modules": [
+        "test_opening_hand_reveal",
+        "test_opening_hand_battlefield",
+        "test_extort_rules",
+        "test_fixed_library_selection",
+        "test_card_program_trust",
+        "test_game_record_v3",
+        "test_mulligan_and_turns",
+        "test_trigger_batches",
+        "test_scry_rules"
+      ]
     }
   ],
   "symbol_rules": [
