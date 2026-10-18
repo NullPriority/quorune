@@ -5711,6 +5711,23 @@
         "test_token_entry_boundaries",
         "test_preparation"
       ]
+    },
+    {
+      "id": "acquired-entry-copy-occurrence-and-form-contract",
+      "patterns": [
+        "quorune/semantic_runtime/entry_copy.py",
+        "quorune/replacement/model.py",
+        "quorune/replacement/applicability.py",
+        "quorune/replacement/application.py"
+      ],
+      "test_modules": [
+        "test_nested_entry_copy",
+        "test_copy_objects",
+        "test_conditional_copy_values",
+        "test_copied_self_entry_counters",
+        "test_replacement_model_hardening",
+        "test_replacement_event_ordering"
+      ]
     }
   ],
   "symbol_rules": [

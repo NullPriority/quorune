@@ -786,13 +786,17 @@ through `compiler/entry_copy_templates.py` and the registered
 `semantic_runtime/entry_copy.py` replacement owner. Its nontarget choice
 captures current public copiable values, applies the existing typed copy
 exceptions and runs at the enters-copy replacement priority. Copied intrinsic
-entry producers activate only after that choice. The canonical entry owner
+entry producers activate only after that choice. Acquired intrinsic copy
+abilities participate before entry: immutable form conditions activate only
+the current form, and candidate alternatives share one ability occurrence.
+Accepting or declining that occurrence consumes its opportunity for the same
+entry event, including when a later copy reacquires it. The canonical entry owner
 retains physical Oracle identity while copied program provenance selects the
 copied static, activated and triggered descriptors. Source departure preserves
 the snapshot; zone departure clears the copy. A copied Aura uses the existing
 attachment choice before entry, with a retained replacement result through
 save/load and replay. Unknown quoted exceptions, hidden-zone references,
-recursive intrinsic copy choices and unsupported copied programs remain
+unrepresented copy selectors and unsupported copied programs remain
 outside the represented composition.
 
 `compiler/conditional_granted_ability_templates.py` wraps one independently

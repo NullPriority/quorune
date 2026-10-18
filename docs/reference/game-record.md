@@ -152,6 +152,13 @@ registered program identity; the resolving spell's generic fallback records
 the originally announced physical spell. A pending copied-Aura attachment
 choice retains the chosen replacement result and resumes without refreshing
 the copy from its source.
+Acquired entry-copy effects may serialize an optional `occurrence_id`, restricted
+to entering-copy zone replacements. Alternative candidate effect IDs share this
+identity; the applied-effect journal consumes the occurrence on acceptance or
+decline. Historical effects omit the field and retain their serialized shape.
+The internal `entry_copy_form` event value selects the immutable captured form
+and gates its acquired copy abilities and other entry producers. Pending records
+retain these values through save/load without exposing them in pilot packets.
 
 Replacement effects with a mandatory alternative result may serialize an
 optional `decline_label` for that second branch. It requires the existing

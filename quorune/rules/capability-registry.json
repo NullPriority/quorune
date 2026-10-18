@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 377,
+  "registry_version": 378,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -3331,7 +3331,7 @@
     },
     {
       "id": "zone.entry.fixed_copy",
-      "version": 6,
+      "version": 7,
       "official_rules": [
         "115.10a",
         "201.5",
@@ -3348,7 +3348,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -3356,7 +3359,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Capture optional intrinsic copy-entry selection as a typed canonical replacement over current public permanent choices, preserving copiable values, exceptions, physical card identity and copied entry/program ownership. Fixed additive subtype/card-type descriptions and other-creature-types wording consume exact copy exceptions; changes remain copiable. One quoted exact activated/triggered child can become part of creature-copy entry values; unresolved, static, recursive and unbound-value grants reject.",
+        "summary": "Capture optional intrinsic copy-entry selection as a typed canonical replacement over current public permanent choices, preserving copiable values, exceptions, physical card identity and copied entry/program ownership. Fixed additive subtype/card-type descriptions and other-creature-types wording consume exact copy exceptions; changes remain copiable. One quoted exact activated/triggered child can become part of creature-copy entry values; unresolved, static, recursive and unbound-value grants reject. Acquired intrinsic copy abilities use immutable captured forms and one shared occurrence per ability across candidate alternatives; only the selected final form contributes entry results.",
         "inputs": [
           "one complete intrinsic copy entry descriptor",
           "prospective controller",
@@ -3371,7 +3374,6 @@
           "decline retains original entry"
         ],
         "exclusions": [
-          "unrepresented recursive copy-entry replacement",
           "unknown quoted exceptions",
           "hidden-zone copy references",
           "unsupported copied program or entry compositions"
@@ -3381,6 +3383,8 @@
         "zone.change.destination_replacement"
       ],
       "implementation_components": [
+        "quorune.carddb_characteristics.base_card_characteristics",
+        "quorune.carddb_characteristics.copiable_card_characteristics",
         "quorune.compiler.entry_copy_ability_nodes.entry_copy_ability_nodes",
         "quorune.compiler.entry_copy_templates._qualified_copy_query",
         "quorune.compiler.entry_copy_templates.entry_copy_node",
@@ -3389,24 +3393,32 @@
         "quorune.entry_copy.copiable_oracle_id",
         "quorune.entry_copy.restore_prepared_copy_entry",
         "quorune.entry_results.commit_prepared_entry_results",
+        "quorune.replacement.applicability.replacement_choice",
+        "quorune.replacement.model.ReplacementEffect",
+        "quorune.rules.face_characteristic_values.current_face_mana_value",
         "quorune.semantic_runtime.entry_copy.EntryCopyHandler",
         "quorune.semantic_runtime.entry_copy.entry_copy_handler",
-        "quorune.semantic_runtime.entry_copy.entry_copy_replacement_effects",
-        "quorune.carddb_characteristics.base_card_characteristics",
-        "quorune.carddb_characteristics.copiable_card_characteristics",
-        "quorune.rules.face_characteristic_values.current_face_mana_value"
+        "quorune.semantic_runtime.entry_copy.entry_copy_replacement_effects"
       ],
       "positive_tests": [
         "test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death",
         "test_actual_clone_inherits_phantasmal_target_trigger_on_its_own_source",
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
         "test_actual_copy_added_activation_is_copiable_and_uses_its_own_source",
         "test_actual_copy_of_copy_keeps_both_connive_triggers_and_private_choices",
         "test_actual_frostkite_eligibility_uses_current_power_but_copy_keeps_base_values",
+        "test_actual_kessig_transform_keeps_one_mana_value",
         "test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
         "test_actual_protege_cascade_permanent_qualifies_and_copied_mana_ability_works",
+        "test_actual_token_copy_of_back_face_has_zero_mana_value",
+        "test_chosen_vizier_copy_acquires_second_copy_before_only_final_entry_draw",
+        "test_copiable_back_face_value_is_derived_from_its_cost_and_keeps_copy_exceptions",
         "test_copiable_quoted_grants_consume_one_closed_child_and_keep_near_misses_residual",
         "test_fixed_copy_type_exceptions_consume_full_type_words",
         "test_intrinsic_copy_entry_has_an_independent_source_spanned_replacement_owner",
+        "test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values",
+        "test_ordinary_token_copy_of_uncopied_vizier_acquires_entry_choice_without_embalm",
+        "test_original_back_face_retains_front_value_without_front_cost_or_color",
         "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
         "test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
         "test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation",
@@ -3414,19 +3426,16 @@
         "test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
         "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
         "test_original_type_exception_carriers_require_whole_card_admission",
-        "test_qualified_copy_originals_bind_and_dependencies_fail_closed",
-        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
-        "test_actual_kessig_transform_keeps_one_mana_value",
-        "test_actual_token_copy_of_back_face_has_zero_mana_value",
-        "test_copiable_back_face_value_is_derived_from_its_cost_and_keeps_copy_exceptions",
-        "test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values",
-        "test_original_back_face_retains_front_value_without_front_cost_or_color"
+        "test_qualified_copy_originals_bind_and_dependencies_fail_closed"
       ],
       "negative_tests": [
+        "test_actual_eliminate_rejects_transformed_five_mana_creature",
         "test_controller_qualified_copy_cannot_choose_an_opponent_creature",
         "test_copiable_quoted_grants_consume_one_closed_child_and_keep_near_misses_residual",
+        "test_declining_acquired_copy_occurrence_does_not_offer_another_alternative_again",
         "test_entry_copy_contract_rejects_hidden_targets_open_tails_and_malformed_values",
         "test_fixed_copy_type_exceptions_consume_full_type_words",
+        "test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values",
         "test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
         "test_original_copiable_grant_carriers_require_normal_registration_and_child_closure",
         "test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
@@ -3435,18 +3444,21 @@
         "test_qualified_copy_originals_bind_and_dependencies_fail_closed",
         "test_qualified_copy_schema_rejects_hidden_mixed_and_unrepresented_queries",
         "test_registered_entry_copy_handler_rejects_open_fields_and_has_no_mutation_context",
-        "test_actual_eliminate_rejects_transformed_five_mana_creature",
-        "test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values"
+        "test_unselected_copier_candidate_does_not_break_safe_clone_choice"
       ],
       "interaction_tests": [
         "test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death",
         "test_actual_clone_inherits_phantasmal_target_trigger_on_its_own_source",
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
         "test_actual_copy_added_activation_is_copiable_and_uses_its_own_source",
         "test_actual_copy_of_copy_keeps_both_connive_triggers_and_private_choices",
+        "test_actual_eliminate_rejects_transformed_five_mana_creature",
         "test_actual_frostkite_eligibility_uses_current_power_but_copy_keeps_base_values",
         "test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
         "test_actual_protege_cascade_permanent_qualifies_and_copied_mana_ability_works",
         "test_actual_synth_exception_is_copiable_and_survives_ability_removal",
+        "test_actual_token_copy_of_back_face_has_zero_mana_value",
+        "test_chosen_vizier_copy_acquires_second_copy_before_only_final_entry_draw",
         "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
         "test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
         "test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation",
@@ -3454,36 +3466,42 @@
         "test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
         "test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
         "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
-        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
-        "test_actual_eliminate_rejects_transformed_five_mana_creature",
-        "test_actual_token_copy_of_back_face_has_zero_mana_value"
+        "test_reacquired_same_copier_occurrence_terminates_without_repeating_forever",
+        "test_unchosen_counter_producer_does_not_leak_and_nested_final_counter_applies"
       ],
       "multiplayer_tests": [
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
         "test_actual_copy_added_activation_is_copiable_and_uses_its_own_source",
         "test_actual_copy_of_copy_keeps_both_connive_triggers_and_private_choices",
         "test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
         "test_actual_synth_exception_is_copiable_and_survives_ability_removal",
+        "test_chosen_vizier_copy_acquires_second_copy_before_only_final_entry_draw",
         "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
-        "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
-        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value"
+        "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry"
       ],
       "privacy_tests": [
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
         "test_actual_copy_added_activation_is_copiable_and_uses_its_own_source",
         "test_actual_copy_of_copy_keeps_both_connive_triggers_and_private_choices",
         "test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
         "test_actual_synth_exception_is_copiable_and_survives_ability_removal",
-        "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
-        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value"
+        "test_chosen_vizier_copy_acquires_second_copy_before_only_final_entry_draw",
+        "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay"
       ],
       "replay_tests": [
         "test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death",
         "test_actual_clone_inherits_phantasmal_target_trigger_on_its_own_source",
+        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
         "test_actual_copy_added_activation_is_copiable_and_uses_its_own_source",
         "test_actual_copy_of_copy_keeps_both_connive_triggers_and_private_choices",
+        "test_actual_eliminate_rejects_transformed_five_mana_creature",
         "test_actual_frostkite_eligibility_uses_current_power_but_copy_keeps_base_values",
+        "test_actual_kessig_transform_keeps_one_mana_value",
         "test_actual_masterwork_filters_equipment_enters_unattached_and_equips_as_copy",
         "test_actual_protege_cascade_permanent_qualifies_and_copied_mana_ability_works",
         "test_actual_synth_exception_is_copiable_and_survives_ability_removal",
+        "test_actual_token_copy_of_back_face_has_zero_mana_value",
+        "test_chosen_vizier_copy_acquires_second_copy_before_only_final_entry_draw",
         "test_controller_qualified_copy_cannot_choose_an_opponent_creature",
         "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
         "test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
@@ -3492,10 +3510,7 @@
         "test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
         "test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
         "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
-        "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
-        "test_actual_eliminate_rejects_transformed_five_mana_creature",
-        "test_actual_kessig_transform_keeps_one_mana_value",
-        "test_actual_token_copy_of_back_face_has_zero_mana_value"
+        "test_unchosen_counter_producer_does_not_leak_and_nested_final_counter_applies"
       ],
       "required_evidence": [
         "positive",
@@ -3508,7 +3523,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The current registry mutation keeps the exact copy-entry descriptor residual when its precise capability is unavailable.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "The producer omission removes the actual original Clone replacement and is detected by the pre-cast real action witness. Omitting the shared selection predicate admits an ineligible actual artifact into Masterwork choices and is detected by its native witness. The native Synth copy-type omission mutation removes only added types and is detected without changing source admission. Copiable-grant omission and exact source-return promotion omission are detected by original admitted Mercurial/Clone/Humble actions and normal registration, without forced trust. The original-face and copied-derived-value omission witnesses distinguish front-derived original mana value from a zero-value actual Clone of a transforming back face.",
+      "implementation_mutation_rationale": "The producer omission removes the actual original Clone replacement and is detected by the pre-cast real action witness. Omitting the shared selection predicate admits an ineligible actual artifact into Masterwork choices and is detected by its native witness. The native Synth copy-type omission mutation removes only added types and is detected without changing source admission. Copiable-grant omission and exact source-return promotion omission are detected by original admitted Mercurial/Clone/Humble actions and normal registration, without forced trust. The original-face and copied-derived-value omission witnesses distinguish front-derived original mana value from a zero-value actual Clone of a transforming back face. Acquired-copy and final counter-producer omissions are killed by native trusted nested-copy consequences; shared-occurrence omission is killed by independent accept/decline alternative consumption.",
       "blockers": [],
       "status": "trusted"
     },

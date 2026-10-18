@@ -300,6 +300,12 @@ enters-copy replacement captures layer-one values and activates the selected
 source's typed intrinsic entry producers. Commit retains the physical card's
 Oracle identity and carries separate copied program provenance into effective
 characteristics, static owners, activation catalogs and event discovery.
+An acquired intrinsic copy ability applies before entry. The snapshot captures
+the reachable copiable forms without mutating the entering object. Each form
+enables its own entry producers; unchosen forms contribute no results. Candidate
+alternatives share one replacement occurrence, so acceptance or decline consumes
+that ability's opportunity across later forms under CR 614.5. Distinct acquired
+abilities remain available, and only the final form enters and emits entry events.
 Fixed additive copy exceptions retain other types while adding represented
 card types or creature subtypes. These exceptions are copiable values and
 survive later ability removal; unknown words and unrepresented grants reject.

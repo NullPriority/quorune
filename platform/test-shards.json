@@ -245,6 +245,7 @@
       "test_library_rules",
       "test_mulligan_and_turns",
       "test_multiplayer_rules",
+      "test_nested_entry_copy",
       "test_opening_hand_battlefield",
       "test_opening_hand_reveal",
       "test_opponent_keyword_prohibition",

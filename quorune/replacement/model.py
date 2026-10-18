@@ -403,8 +403,11 @@ class ReplacementEffect:
     label: str = ""
     application_group_id: str | None = None
     decline_label: str | None = None
+    occurrence_id: str | None = None
 
     def __post_init__(self) -> None:
+        if self.occurrence_id is not None and (type(self.occurrence_id) is not str or not self.occurrence_id or self.event_kind!='zone.change' or self.replacement_class is not ReplacementClass.ENTERS_COPY):
+            raise ReplacementEffectError('Shared replacement occurrence requires an entering-copy identity')
         if not self.effect_id or not self.source_id:
             raise ReplacementEffectError(
                 "Replacement effects require stable IDs"
@@ -492,6 +495,7 @@ class ReplacementEffect:
             result["application_group_id"] = self.application_group_id
         if self.decline_label is not None:
             result["decline_label"] = self.decline_label
+        if self.occurrence_id is not None:result["occurrence_id"]=self.occurrence_id
         return result
 
     @classmethod
@@ -512,7 +516,7 @@ class ReplacementEffect:
         unknown = sorted(
             actual
             - required
-            - {"application_group_id", "decline_operations", "decline_label"}
+            - {"application_group_id", "decline_operations", "decline_label", "occurrence_id"}
         )
         if missing or unknown:
             details: list[str] = []
@@ -561,6 +565,7 @@ class ReplacementEffect:
             chooser=str(value["chooser"] or ""),
             label=str(value["label"] or ""),
             decline_label=value.get("decline_label"),
+            occurrence_id=value.get("occurrence_id"),
             application_group_id=(
                 str(value["application_group_id"])
                 if value.get("application_group_id") is not None

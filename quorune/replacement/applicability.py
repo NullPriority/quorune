@@ -138,11 +138,14 @@ def replacement_choice(
     event: ReplaceableEvent,
     effects: Iterable[ReplacementEffect],
 ) -> ReplacementChoice | None:
+    values=canonical_effects(effects)
+    used_occurrences={effect.occurrence_id for effect in values if effect.effect_id in event.applied_effects and effect.occurrence_id is not None}
     applicable = _deduplicate_explicit_application_groups([
         effect
-        for effect in canonical_effects(effects)
+        for effect in values
         if effect.event_kind == event.kind
         and effect.effect_id not in event.applied_effects
+        and (effect.occurrence_id is None or effect.occurrence_id not in used_occurrences)
         and condition_matches(effect.conditions, event)
     ])
     if not applicable:

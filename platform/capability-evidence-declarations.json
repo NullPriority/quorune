@@ -158382,7 +158382,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -158411,7 +158414,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -158440,7 +158446,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -158469,7 +158478,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -158498,7 +158510,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -158527,7 +158542,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -158556,7 +158574,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -158585,7 +158606,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -158614,7 +158638,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -158643,7 +158670,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -158672,7 +158702,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -158701,7 +158734,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -158730,7 +158766,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -158759,7 +158798,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -158788,7 +158830,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -158796,6 +158841,38 @@
         "traditional"
       ],
       "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nested_entry_copy.NestedEntryCopyRuntimeTests.test_unchosen_counter_producer_does_not_leak_and_nested_final_counter_applies",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b",
+        "202.3b",
+        "202.3d",
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Trusted native Clone and ordinary token copy acquire an intrinsic second-copy choice before entry. Distinct occurrences, acceptance/decline consumption, repeated copier termination, only-final counters/draw, pending save/load, foreign-command rollback, four-seat privacy and pre-action replay are explicit. Native acquired-producer and counter omissions and model occurrence omission are detected; this repair claims no new card closure."
     },
     {
       "capability_id": "zone.entry.fixed_copy",
@@ -158817,7 +158894,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -158846,7 +158926,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -158875,7 +158958,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -158904,7 +158990,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -158933,7 +159022,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -158962,7 +159054,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -158991,7 +159086,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -159020,7 +159118,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -159049,7 +159150,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -159057,6 +159161,38 @@
         "traditional"
       ],
       "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nested_entry_copy.NestedEntryCopyRuntimeTests.test_chosen_vizier_copy_acquires_second_copy_before_only_final_entry_draw",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b",
+        "202.3b",
+        "202.3d",
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Trusted native Clone and ordinary token copy acquire an intrinsic second-copy choice before entry. Distinct occurrences, acceptance/decline consumption, repeated copier termination, only-final counters/draw, pending save/load, foreign-command rollback, four-seat privacy and pre-action replay are explicit. Native acquired-producer and counter omissions and model occurrence omission are detected; this repair claims no new card closure."
     },
     {
       "capability_id": "zone.entry.fixed_copy",
@@ -159078,7 +159214,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -159107,7 +159246,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -159136,7 +159278,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -159165,7 +159310,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -159194,7 +159342,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -159202,6 +159353,38 @@
         "traditional"
       ],
       "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_nested_entry_copy.NestedEntryCopyRuntimeTests.test_acquired_copy_and_final_counter_producer_omissions_fail_native_results",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b",
+        "202.3b",
+        "202.3d",
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Trusted native Clone and ordinary token copy acquire an intrinsic second-copy choice before entry. Distinct occurrences, acceptance/decline consumption, repeated copier termination, only-final counters/draw, pending save/load, foreign-command rollback, four-seat privacy and pre-action replay are explicit. Native acquired-producer and counter omissions and model occurrence omission are detected; this repair claims no new card closure."
     },
     {
       "capability_id": "zone.entry.fixed_copy",
@@ -159223,7 +159406,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -159252,7 +159438,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -159281,7 +159470,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -159310,7 +159502,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -159339,7 +159534,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -159368,7 +159566,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -159397,7 +159598,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -159426,7 +159630,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -159455,7 +159662,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -159484,7 +159694,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -159513,7 +159726,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -159542,7 +159758,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -159571,7 +159790,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -159600,7 +159822,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -159608,6 +159833,38 @@
         "traditional"
       ],
       "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nested_entry_copy.NestedEntryCopyRuntimeTests.test_declining_acquired_copy_occurrence_does_not_offer_another_alternative_again",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b",
+        "202.3b",
+        "202.3d",
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Trusted native Clone and ordinary token copy acquire an intrinsic second-copy choice before entry. Distinct occurrences, acceptance/decline consumption, repeated copier termination, only-final counters/draw, pending save/load, foreign-command rollback, four-seat privacy and pre-action replay are explicit. Native acquired-producer and counter omissions and model occurrence omission are detected; this repair claims no new card closure."
     },
     {
       "capability_id": "zone.entry.fixed_copy",
@@ -159629,7 +159886,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -159658,7 +159918,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -159687,7 +159950,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -159716,7 +159982,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -159745,7 +160014,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -159774,7 +160046,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -159803,7 +160078,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -159832,7 +160110,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -159861,7 +160142,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -159890,7 +160174,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -159919,7 +160206,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -159948,7 +160238,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -159977,7 +160270,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -160006,7 +160302,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -160035,7 +160334,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -160064,7 +160366,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -160093,7 +160398,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -160122,7 +160430,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -160151,7 +160462,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -160180,7 +160494,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -160188,6 +160505,38 @@
         "traditional"
       ],
       "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nested_entry_copy.NestedEntryCopyRuntimeTests.test_chosen_vizier_copy_acquires_second_copy_before_only_final_entry_draw",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b",
+        "202.3b",
+        "202.3d",
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Trusted native Clone and ordinary token copy acquire an intrinsic second-copy choice before entry. Distinct occurrences, acceptance/decline consumption, repeated copier termination, only-final counters/draw, pending save/load, foreign-command rollback, four-seat privacy and pre-action replay are explicit. Native acquired-producer and counter omissions and model occurrence omission are detected; this repair claims no new card closure."
     },
     {
       "capability_id": "zone.entry.fixed_copy",
@@ -160209,7 +160558,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -160238,7 +160590,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -160267,7 +160622,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -160296,7 +160654,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -160325,7 +160686,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -160354,7 +160718,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -160383,7 +160750,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -160412,7 +160782,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -160441,7 +160814,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -160470,7 +160846,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -160499,7 +160878,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -160507,6 +160889,38 @@
         "traditional"
       ],
       "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_nested_entry_copy.NestedEntryCopyRuntimeTests.test_chosen_vizier_copy_acquires_second_copy_before_only_final_entry_draw",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b",
+        "202.3b",
+        "202.3d",
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Trusted native Clone and ordinary token copy acquire an intrinsic second-copy choice before entry. Distinct occurrences, acceptance/decline consumption, repeated copier termination, only-final counters/draw, pending save/load, foreign-command rollback, four-seat privacy and pre-action replay are explicit. Native acquired-producer and counter omissions and model occurrence omission are detected; this repair claims no new card closure."
     },
     {
       "capability_id": "zone.entry.fixed_copy",
@@ -160528,7 +160942,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -160557,7 +160974,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -160586,7 +161006,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -160594,6 +161017,38 @@
         "commander_review"
       ],
       "applicability_note": "Qualified copy-entry choices observe current public state without targeting, then capture separate copiable base values. Historical schema-1 stays strict; actual Equipment/equip, Hexproof/decline, Growth/power and Cascade/current-entry witnesses retain identity, principal privacy, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "property",
+      "test_id": "tests.test_nested_entry_copy.CopyReplacementOccurrenceTests.test_occurrence_is_optional_closed_and_consumes_all_candidate_alternatives",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b",
+        "202.3b",
+        "202.3d",
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Trusted native Clone and ordinary token copy acquire an intrinsic second-copy choice before entry. Distinct occurrences, acceptance/decline consumption, repeated copier termination, only-final counters/draw, pending save/load, foreign-command rollback, four-seat privacy and pre-action replay are explicit. Native acquired-producer and counter omissions and model occurrence omission are detected; this repair claims no new card closure."
     },
     {
       "capability_id": "zone.entry.fixed_copy",
@@ -160615,7 +161070,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -160644,7 +161102,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -160673,7 +161134,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -160702,7 +161166,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -160731,7 +161198,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -160760,7 +161230,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -160789,7 +161262,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -160818,7 +161294,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -160847,7 +161326,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -160876,7 +161358,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -160905,7 +161390,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -160934,7 +161422,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -160963,7 +161454,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -160992,7 +161486,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -161021,7 +161518,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -161050,7 +161550,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -161079,7 +161582,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -161108,7 +161614,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -161137,7 +161646,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -161145,6 +161657,38 @@
         "traditional"
       ],
       "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nested_entry_copy.NestedEntryCopyRuntimeTests.test_chosen_vizier_copy_acquires_second_copy_before_only_final_entry_draw",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b",
+        "202.3b",
+        "202.3d",
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Trusted native Clone and ordinary token copy acquire an intrinsic second-copy choice before entry. Distinct occurrences, acceptance/decline consumption, repeated copier termination, only-final counters/draw, pending save/load, foreign-command rollback, four-seat privacy and pre-action replay are explicit. Native acquired-producer and counter omissions and model occurrence omission are detected; this repair claims no new card closure."
     },
     {
       "capability_id": "zone.entry.fixed_copy",
@@ -161166,7 +161710,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -161195,7 +161742,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -161224,7 +161774,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -161253,7 +161806,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -161282,7 +161838,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -161311,7 +161870,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -161340,7 +161902,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -161369,7 +161934,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "traditional",
@@ -161398,7 +161966,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -161406,6 +161977,38 @@
         "traditional"
       ],
       "applicability_note": "Shared fixed copy-exception grammar preserves exact additive card types/subtypes and copiable values. Actual Synth/Clone/Humble, private pending choice, wrong-principal rollback and replay; tests claim native copy-entry behavior rather than new token-result activation grammar."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_nested_entry_copy.NestedEntryCopyRuntimeTests.test_chosen_vizier_copy_acquires_second_copy_before_only_final_entry_draw",
+      "official_rule_ids": [
+        "115.10a",
+        "201.5",
+        "613.1g",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9",
+        "707.9a",
+        "707.9b",
+        "202.3b",
+        "202.3d",
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Trusted native Clone and ordinary token copy acquire an intrinsic second-copy choice before entry. Distinct occurrences, acceptance/decline consumption, repeated copier termination, only-final counters/draw, pending save/load, foreign-command rollback, four-seat privacy and pre-action replay are explicit. Native acquired-producer and counter omissions and model occurrence omission are detected; this repair claims no new card closure."
     },
     {
       "capability_id": "zone.entry.fixed_copy",
@@ -161427,7 +162030,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -161456,7 +162062,10 @@
         "707.9b",
         "202.3b",
         "202.3d",
-        "712.8c"
+        "712.8c",
+        "614.5",
+        "616.1f",
+        "616.1g"
       ],
       "supported_profiles": [
         "commander_duel",

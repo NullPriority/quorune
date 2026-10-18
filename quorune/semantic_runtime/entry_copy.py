@@ -3,6 +3,8 @@ from __future__ import annotations
 """Intrinsic entry-copy choices through the existing replacement journal."""
 
 from dataclasses import dataclass, replace
+import hashlib
+from ..util import stable_json
 from typing import Any, Mapping
 
 from ..entry_copy import (EntryCopySpec, ENTRY_COPY_HANDLER, ENTRY_COPY_CAPABILITY,
@@ -99,7 +101,7 @@ def _copiable_values(host, target, spec, *, entering=None):
     return values
 
 
-def _copied_entry_effects(host, subject, source, target, values):
+def _copied_entry_effects(host, subject, source, target, values, *, form_key):
     """Prebind copied intrinsic producers, enabled only after this copy choice."""
     from ..card_program_faces import program_matches_face
     from ..entry_counters import intrinsic_entry_counter_effects, intrinsic_entry_counters
@@ -110,7 +112,7 @@ def _copied_entry_effects(host, subject, source, target, values):
     if record is None or target.face_down:
         return ()
     programs = tuple(p for p in host.semantics.runtime_handler_programs_for_oracle(
-        record.oracle_id, active_zone='all', event='zone.change')
+        copiable_oracle_id(target,values), active_zone='all', event='zone.change')
         if host.semantic_program_is_current_trusted(p) and program_matches_face(record, p, target))
     # This view owns no state. Cast provenance stays on the entering physical
     # object while copiable descriptors come from the selected source.
@@ -131,7 +133,7 @@ def _copied_entry_effects(host, subject, source, target, values):
     for program in programs:
         for index, descriptor in enumerate(program.handlers):
             if descriptor.get('handler_id') in {ENTRY_COPY_HANDLER, ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_VALUES_HANDLER, ENTRY_COPY_PREDICATE_HANDLER, CONDITIONAL_COPY_HANDLER}:
-                raise SemanticNodeError('Repeated intrinsic copy-entry replacement is outside the represented composition')
+                continue
             from ..entry_reveal import ENTRY_REVEAL_HANDLER
             from ..devour import DEVOUR_HANDLER
             from ..preparation_model import PREPARATION_HANDLER
@@ -151,58 +153,79 @@ def _copied_entry_effects(host, subject, source, target, values):
             effects.extend(registry.subject_replacement_effects(descriptor, subject=copied_subject,
                 component_id=f'{program.key}:{index}'))
     return tuple(replace(effect, effect_id=f'copied-entry:{target.ref}:{effect.effect_id}',
-        conditions={**dict(effect.conditions), 'entry_copy_source':{'eq':target.ref}}) for effect in effects)
+        conditions={**dict(effect.conditions), 'entry_copy_form':{'eq':form_key}}) for effect in effects)
 
 
-def entry_copy_replacement_effects(host, subject, *, prospective_objects=None):
-    """Capture each legal existing public choice as one immutable replacement."""
-    if subject.destination != 'battlefield':
-        return ()
-    source = (prospective_objects or {}).get(subject.object_id) or host.state.cards.get(subject.object_id)
-    if source is None:
-        return ()
-    record = host.card_record(source)
-    if record is None:
-        return ()
+def _copy_form_key(values):
+    return hashlib.sha256(stable_json(values).encode('utf-8')).hexdigest()
+
+
+def _copy_form_view(source,values):
+    return replace(source,annotations={**source.annotations,'copy_overrides':dict(values)},active_face=values.get(COPIABLE_FACE_FIELD))
+
+
+def _copy_programs(host,source,subject):
     from ..card_program_faces import program_matches_face
-    effects = []
-    for program in host.semantics.runtime_handler_programs_for_oracle(record.oracle_id, active_zone='all', event='zone.change'):
-        if not host.semantic_program_is_current_trusted(program) or not program_matches_face(record, program, source):
-            continue
-        from .self_entry_counters import program_static_component_is_applicable
-        if not program_static_component_is_applicable(host, program, source,
-                prospective_zone='battlefield', prospective_controller=subject.destination_controller):
-            continue
-        for index, descriptor in enumerate(program.handlers):
-            if descriptor.get('handler_id') not in {ENTRY_COPY_HANDLER, ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_VALUES_HANDLER, ENTRY_COPY_PREDICATE_HANDLER, CONDITIONAL_COPY_HANDLER}:
-                continue
-            handler = entry_copy_handler(descriptor.get('schema_version'))
-            spec = handler.validate(descriptor)
-            query = replace(spec.selection,
-                controller=subject.destination_controller if spec.selection.controller is not None else None,
-                excluded_controllers=(subject.destination_controller,) if spec.selection.excluded_controllers else ())
-            for target in host._semantic_event_sources(zones=set(query.zones)):
-                if query.zones==('graveyard',) and not target.is_card_object:continue
-                effective = host._effective_card_data(target)
-                row = object_query_result(target, effective,
-                    type_parts=host._type_parts(str(effective.get('type_line') or '')),
-                    known_to_actor=True, attached_to_ref=None,
-                    entered_this_turn=(host.state.turn_sequence > 0
-                        and target.entered_battlefield_turn_sequence == host.state.turn_sequence))
-                if not object_matches_query(row, query):
-                    continue
-                if spec.predicate is not None and not entry_copy_predicate_matches(host,spec.predicate,entering=source,target=target,controller=subject.destination_controller):continue
-                values = _copiable_values(host, target, spec, entering=source)
-                effects.extend(_copied_entry_effects(host, subject, source, target, values))
-                types = tuple(sorted(set().union(*host._type_parts(str(values['type_line'])))))
-                effects.append(ReplacementEffect(
-                    effect_id=f'{descriptor["handler_id"]}:{subject.object_ref}:{program.key}:{index}:{target.ref}',
-                    source_id=subject.object_ref, event_kind='zone.change',
-                    replacement_class=ReplacementClass.ENTERS_COPY,
-                    conditions={'destination': {'eq':'battlefield'}, 'object_ref': {'eq':subject.object_ref},
-                        'entry_copy_source': {'eq':None}},
-                    operations=(SetField('entry_copy_source', target.ref), SetField('entry_copy', values),
-                        SetField('object_types', types)),
-                    decline_operations=(SetField('entry_copy_source', 'declined'),), optional=True,
-                    label=f'{subject.object_ref}: enter as a copy of {target.ref}'))
-    return tuple(effects)
+    from .self_entry_counters import program_static_component_is_applicable
+    record=host.card_record(source)
+    if record is None:return ()
+    return tuple(program for program in host.semantics.runtime_handler_programs_for_oracle(
+        copiable_oracle_id(source),active_zone='all',event='zone.change')
+        if host.semantic_program_is_current_trusted(program) and program_matches_face(record,program,source)
+        and program_static_component_is_applicable(host,program,source,prospective_zone='battlefield',
+            prospective_controller=subject.destination_controller))
+
+
+def _copy_candidates(host,spec,subject):
+    query=replace(spec.selection,controller=subject.destination_controller if spec.selection.controller is not None else None,
+        excluded_controllers=(subject.destination_controller,) if spec.selection.excluded_controllers else ())
+    for target in host._semantic_event_sources(zones=set(query.zones)):
+        if query.zones==('graveyard',) and not target.is_card_object:continue
+        effective=host._effective_card_data(target)
+        row=object_query_result(target,effective,type_parts=host._type_parts(str(effective.get('type_line') or '')),
+            known_to_actor=True,attached_to_ref=None,entered_this_turn=(host.state.turn_sequence>0
+                and target.entered_battlefield_turn_sequence==host.state.turn_sequence))
+        if object_matches_query(row,query):yield target
+
+
+def entry_copy_replacement_effects(host,subject,*,prospective_objects=None):
+    """Capture the finite graph of acquired copy forms before mutation.
+
+    Each compiled ability occurrence is shared by its candidate alternatives;
+    CR614.5 consumption uses that occurrence, while form conditions expose only
+    abilities present after the previous copy has actually been selected.
+    """
+    if subject.destination!='battlefield':return ()
+    source=(prospective_objects or {}).get(subject.object_id) or host.state.cards.get(subject.object_id)
+    if source is None or host.card_record(source) is None:return ()
+    root_key=None
+    queue=[(source,root_key)];seen=set();effects={};forms={}
+    copy_handlers={ENTRY_COPY_HANDLER,ENTRY_COPY_QUERY_HANDLER,ENTRY_COPY_VALUES_HANDLER,ENTRY_COPY_PREDICATE_HANDLER,CONDITIONAL_COPY_HANDLER}
+    while queue:
+        view,form_key=queue.pop(0)
+        key=form_key or '<initial>'
+        if key in seen:continue
+        seen.add(key)
+        for program in _copy_programs(host,view,subject):
+            for index,descriptor in enumerate(program.handlers):
+                if descriptor.get('handler_id') not in copy_handlers:continue
+                spec=entry_copy_handler(descriptor.get('schema_version')).validate(descriptor)
+                occurrence=f'entry-copy-occurrence:{subject.object_ref}:{program.key}:{index}'
+                for target in _copy_candidates(host,spec,subject):
+                    if spec.predicate is not None and not entry_copy_predicate_matches(host,spec.predicate,entering=source,target=target,controller=subject.destination_controller):continue
+                    values=_copiable_values(host,target,spec,entering=source)
+                    next_key=_copy_form_key(values)
+                    if next_key not in forms:
+                        forms[next_key]=values
+                        for effect in _copied_entry_effects(host,subject,source,target,values,form_key=next_key):
+                            effects[effect.effect_id+':'+next_key]=replace(effect,effect_id=effect.effect_id+':'+next_key)
+                        queue.append((_copy_form_view(source,values),next_key))
+                    effect_id=f'{descriptor["handler_id"]}:{subject.object_ref}:{program.key}:{index}:{key}:{target.ref}'
+                    types=tuple(sorted(set().union(*host._type_parts(str(values['type_line'])))))
+                    effects[effect_id]=ReplacementEffect(effect_id=effect_id,source_id=subject.object_ref,event_kind='zone.change',
+                        replacement_class=ReplacementClass.ENTERS_COPY,occurrence_id=occurrence,
+                        conditions={'destination':{'eq':'battlefield'},'object_ref':{'eq':subject.object_ref},'entry_copy_form':{'eq':form_key}},
+                        operations=(SetField('entry_copy_source',target.ref),SetField('entry_copy_form',next_key),SetField('entry_copy',values),SetField('object_types',types)),
+                        decline_operations=(SetField('entry_copy_source','declined'),),optional=True,
+                        label=f'{subject.object_ref}: enter as a copy of {target.ref}')
+    return tuple(effects.values())
