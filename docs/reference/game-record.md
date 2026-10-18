@@ -67,6 +67,13 @@ no such resolution retain their existing command and decision records without
 constructing an unused binding registry. A later semantic resolution validates
 fresh registry and evidence inputs; no action-level snapshot is retained.
 
+Derived mana activations omit `tap_source` for the historical tap-cost form,
+which defaults to true. A nontapping self-sacrifice mode explicitly records
+`tap_source: false`; its compact mode similarly includes `tap: false`.
+Acceptance revalidates the flag against the trusted current ability, so a
+supplied flag cannot bypass a tap cost. Ordinary tap modes preserve their
+existing serialized shape.
+
 Intrinsic entry-copy records preserve physical card identity separately from
 copied program provenance. A copied triggered or activated ability records its
 registered program identity; the resolving spell's generic fallback records

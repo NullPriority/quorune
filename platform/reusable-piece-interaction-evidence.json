@@ -15975,6 +15975,66 @@
       ],
       "interaction_order": 2,
       "assertion": "A current Kindred Merfolk qualifies without a creature gate. After it leaves, a canonical layer-four land/Island addition to Speaker qualifies only the Island branch, proving source exclusion remains local to the Merfolk branch."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_condition_loss_during_actual_mana_payment_does_not_cancel_as_though_casts",
+      "piece_ids": [
+        "capability.mana.activated.fixed_output",
+        "capability.timing.cast.conditional_self_flash"
+      ],
+      "capability_ids": [
+        "mana.activated.fixed_output",
+        "timing.cast.conditional_self_flash"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native Yeti and Dragon Grip lock legal conditional timing before automatically sacrificing Wild Cantor for mana. Losing the sole qualifying permanent during payment does not undo either cast; the completed cast has no Flash keyword and full replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_real_flash_reduces_locked_cost_then_can_end_during_mana_payment_before_cast_event",
+      "piece_ids": [
+        "capability.casting.cost.modifier.fixed_query",
+        "capability.timing.cast.conditional_self_flash"
+      ],
+      "capability_ids": [
+        "casting.cost.modifier.fixed_query",
+        "timing.cast.conditional_self_flash"
+      ],
+      "interaction_order": 2,
+      "assertion": "The real conditional Flash spell receives a current keyword-qualified cost reduction. Mana payment then sacrifices its sole Desert, ending Flash before the completed cast event while preserving its locked legal cost and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_real_battlefield_flash_uses_current_control_and_ability_removal",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_state",
+        "capability.timing.cast.conditional_self_flash"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_state",
+        "timing.cast.conditional_self_flash"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Flash follows the source's current controller and current Desert control, then disappears under the ordinary ability-removal layer."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_condition_loss_during_actual_mana_payment_does_not_cancel_as_though_casts",
+      "piece_ids": [
+        "capability.condition.creature.fixed_numeric_exists",
+        "capability.timing.cast.conditional_self_flash"
+      ],
+      "capability_ids": [
+        "condition.creature.fixed_numeric_exists",
+        "timing.cast.conditional_self_flash"
+      ],
+      "interaction_order": 2,
+      "assertion": "Dragon Grip uses its qualifying creature's effective power, including counters. Sacrificing that sole power-four creature during mana payment preserves the already legal Aura cast and its complete native result."
     }
   ]
 }

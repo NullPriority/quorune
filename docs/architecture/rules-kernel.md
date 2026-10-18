@@ -9,6 +9,14 @@ maintenance: "hand-maintained"
 
 # Rules kernel
 
+Conditional self-timing evaluates current public facts for the would-be caster
+and selected face before locking costs. Losing the qualifying permanent while
+paying mana or other costs does not undo that legal cast. Actual conditional
+Flash contributes through layer six on the battlefield and stack; “as though”
+permission contributes no keyword. Cost modifiers inspect a detached proposed
+spell under its caster, while completed cast events use its current after-cost
+characteristics. Face-down methods suppress intrinsic timing and keywords.
+
 Ordinary Morph, Megamorph and Disguise turn-up offers keep their canonical
 unsuffixed action identity when acceptance reads the printed method from the
 offer payload. Manifested permanents expose distinct suffixed method choices.
@@ -53,6 +61,14 @@ permanent, even after a control change. Both explicit activation and automatic
 spell payment apply the result once after mana production. Result-bearing
 activations are irreversible for mana undo and retain ordinary transactional
 rollback, replacement continuations and replay.
+
+Automatic mana payment also accepts a represented fixed-output ability whose
+only nonmana cost is sacrificing its source without tapping it. Discovery and
+commit share current source eligibility and ability-condition checks. Such a
+source may be tapped or newly controlled; tap-symbol abilities retain their
+ordinary restrictions. The source can contribute once and its sacrifice uses
+the canonical zone-cost owner. Additional costs and choices outside this
+bounded form require explicit activation.
 
 Enlist adds an optional tap cost to an accepted attack declaration. Each
 instance may tap one distinct eligible controlled nonattacking creature that

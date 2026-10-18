@@ -159,6 +159,7 @@ def mana_modes_for_ability(
                 ),
                 side_effects=tuple(side_effects) or mode.side_effects,
                 requires_choice=bool(ability.choices) or mode.requires_choice,
+                tap_source=ability.tap_source,
             )
             for mode in modes
         )
@@ -267,7 +268,7 @@ def typed_mana_modes_for_abilities(
 ) -> tuple[ManaMode, ...]:
     """Return deduplicated modes owned by typed mana descriptors."""
 
-    result: dict[tuple[tuple[str, int], ...], ManaMode] = {}
+    result: dict[tuple[tuple[tuple[str, int], ...], bool], ManaMode] = {}
     for ability in abilities:
         if not ability.mana_ability:
             continue
@@ -277,7 +278,7 @@ def typed_mana_modes_for_abilities(
                 for color in "WUBRGC"
                 if int(mode.bundle.get(color, 0))
             )
-            result.setdefault(key, mode)
+            result.setdefault((key,mode.tap_source), mode)
     return tuple(result.values())
 
 

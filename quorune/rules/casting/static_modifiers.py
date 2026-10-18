@@ -16,6 +16,7 @@ def fixed_generic_reduction(
     card: Any,
     *,
     cast_type_line: str | None = None,
+    face_down_method: str | None = None,
 ) -> int:
     return sum(
         modifier.generic_reduction
@@ -24,6 +25,7 @@ def fixed_generic_reduction(
             seat,
             card,
             cast_type_line=cast_type_line,
+            face_down_method=face_down_method,
         )
     )
 
@@ -35,6 +37,7 @@ def apply_fixed_generic_increases(
     option: dict[str, Any],
     *,
     cast_type_line: str | None = None,
+    face_down_method: str | None = None,
 ) -> None:
     increase = sum(
         max(0, modifier.generic_adjustment)
@@ -43,6 +46,7 @@ def apply_fixed_generic_increases(
             seat,
             card,
             cast_type_line=cast_type_line,
+            face_down_method=face_down_method,
         )
     )
     if not increase:
@@ -65,12 +69,14 @@ def apply_static_reductions(
     program: Any,
     fixed_reduction: int,
     cast_type_line: str | None = None,
+    face_down_method: str | None = None,
 ) -> None:
     public_modifiers = active_fixed_spell_cost_reductions(
         host,
         seat,
         card,
         cast_type_line=cast_type_line,
+        face_down_method=face_down_method,
     )
     apply_fixed_generic_increases(
         host,
@@ -78,6 +84,7 @@ def apply_static_reductions(
         card,
         option,
         cast_type_line=cast_type_line,
+        face_down_method=face_down_method,
     )
     colored_increases: dict[str, int] = {}
     colored_reductions: dict[str, int] = {}

@@ -658,6 +658,9 @@ class CharacteristicEvaluationHostMixin:
             if card.zone == "battlefield"
             else ()
         )
+        if card.zone=='stack' and (maximum_layer is None or maximum_layer>=Layer.ABILITY):
+            from .compiled_cast_timing import compiled_conditional_flash_stack_effects
+            runtime_effects=(*runtime_effects,*compiled_conditional_flash_stack_effects(self,card))
         enchanted, equipped, modified = (
             self._attachment_public_state(
                 card,

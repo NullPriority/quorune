@@ -491,6 +491,12 @@ def compile_keyword_or_attached_grant_nodes(
     grant_effect_templates: Callable[..., tuple[Any, Any]],
     material_line_for: Callable[[str], str],
 ) -> tuple[OracleNode, ...] | None:
+    from .conditional_flash_nodes import conditional_self_flash_nodes
+    conditional_flash = conditional_self_flash_nodes(node_id=node_id,line=line,material_line=material_line,
+        span=span,source_name=source_name,capability_registry=capability_registry,
+        capability_profile=capability_profile,residuals=residuals)
+    if conditional_flash is not None:
+        return conditional_flash
     from .role_token_nodes import role_token_nodes
     role = role_token_nodes(record=record, face_id=face_id, node_id=node_id, line=line,
         material_line=material_line, span=span, source_name=source_name, effect_template=effect_template,

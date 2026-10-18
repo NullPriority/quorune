@@ -122,7 +122,7 @@ def _suspend_timing_is_legal(
         host.state,
         seat,
         type_line,
-        compiled_cast_timing_permissions(host, card, face_name=face_name),
+        compiled_cast_timing_permissions(host, card, face_name=face_name, actor=seat),
     )
 
 

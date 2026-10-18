@@ -2906,6 +2906,7 @@ class CommanderEngine(
                         restriction=mode.restriction,
                         side_effects=mode.side_effects,
                         requires_choice=mode.requires_choice,
+                        tap_source=mode.tap_source,
                     )
                 )
         return compiled_modes

@@ -660,6 +660,7 @@ def _component_public_state_snapshot(
         'continuous.characteristics.graveyard-public-state.v1',
         'continuous.characteristics.public-state-keywords.v1',
         'continuous.characteristics.conditional-chosen-designation.v1',
+        'continuous.ability.conditional-flash.v1',
     )
     if is_conditional and maximum_layer is not None and maximum_layer < Layer.ABILITY:
         # These components emit only layers 6/7; their query conditions must

@@ -9,6 +9,15 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+`compiler/conditional_flash_nodes.py` lowers complete conditional self-timing
+clauses against represented public-state predicates. An “as though” clause
+grants timing permission without granting the Flash keyword. An explicit
+conditional “has flash” clause additionally emits separate battlefield and
+stack characteristic programs. Same-line contributions retain distinct stable
+program identities and their complete original source span. Unrepresented
+source-attribute conditions, compound numeric timing conditions and cyclic
+keyword conditions remain residual.
+
 `compiler/cleave_spell_faces.py` derives normal and bracket-removed forms,
 including ordinary ordered body paragraphs. It shares paired-program assembly
 with Overload while preserving each form's target schema. Balanced source

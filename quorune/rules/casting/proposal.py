@@ -380,6 +380,7 @@ def _combined_cast_timing_permissions(
             host,
             card,
             face_name=face_name,
+            actor=actor,
         )
     )
     return (

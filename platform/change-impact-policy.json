@@ -5313,6 +5313,41 @@
         "test_public_state_condition_compiler",
         "test_public_state_condition_runtime"
       ]
+    },
+    {
+      "id": "conditional-self-flash-contract",
+      "patterns": [
+        "quorune/card_programs/runtime.py",
+        "quorune/characteristic_evaluation_host.py",
+        "quorune/compiled_cast_timing.py",
+        "quorune/compiler/attached_granted_ability_nodes.py",
+        "quorune/compiler/conditional_flash_nodes.py",
+        "quorune/compiler/generated_program_identity.py",
+        "quorune/engine.py",
+        "quorune/mana.py",
+        "quorune/mana_ability_runtime.py",
+        "quorune/mana_activation.py",
+        "quorune/mana_source_discovery.py",
+        "quorune/rules/casting/costs.py",
+        "quorune/rules/casting/proposal.py",
+        "quorune/rules/casting/static_modifiers.py",
+        "quorune/rules/current_face_keywords.py",
+        "quorune/semantic_runtime/cast_costs.py",
+        "quorune/semantic_runtime/cast_permissions.py",
+        "quorune/semantic_runtime/conditional_flash.py",
+        "quorune/semantic_runtime/continuous_components.py",
+        "quorune/suspend.py",
+        "tests/fixtures/conditional-flash-cards.json",
+        "tests/test_conditional_flash.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_conditional_flash",
+        "test_fixed_mana_abilities",
+        "test_flash_cast_timing",
+        "test_nonmana_morph",
+        "test_public_state_condition_compiler"
+      ]
     }
   ],
   "symbol_rules": [

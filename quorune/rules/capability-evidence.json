@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "93cedd946e192d63a0321d5c99e904e85989932428326adba258f17265a206bb",
-  "declaration_source_fingerprint": "aaba595ce03b94add7b65e3ca9b12c5169613aaa6a5a69c5bcc34be1c50cfc51",
+  "registry_fingerprint": "b465f61d288d362f02f0760461aa81705dc89254298f99f2d5c661faf2eb7079",
+  "declaration_source_fingerprint": "87176a3d783eeed5b5e09b5afc81dd2e79e85d831eda9b6ddc3aa679f62d920c",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -118162,10 +118162,91 @@
     {
       "capability_id": "mana.activated.fixed_output",
       "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_actual_copied_nontap_mana_source_uses_the_same_payment_eligibility",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public-state timing composes with native costs, mana sacrifice, actual characteristics, control, copying or face-down methods as asserted by this witness."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_condition_loss_during_actual_mana_payment_does_not_cancel_as_though_casts",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public-state timing composes with native costs, mana sacrifice, actual characteristics, control, copying or face-down methods as asserted by this witness."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_real_flash_reduces_locked_cost_then_can_end_during_mana_payment_before_cast_event",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public-state timing composes with native costs, mana sacrifice, actual characteristics, control, copying or face-down methods as asserted by this witness."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_tapped_newly_controlled_nontap_self_sacrifice_source_can_pay_once",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public-state timing composes with native costs, mana sacrifice, actual characteristics, control, copying or face-down methods as asserted by this witness."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_mana_abilities.FixedManaRuntimeTests.test_compiled_fixed_output_creature_respects_haste_cost_dependency",
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118185,6 +118266,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118204,6 +118286,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118223,6 +118306,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118242,6 +118326,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118261,6 +118346,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118280,6 +118366,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118299,6 +118386,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118318,6 +118406,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118333,10 +118422,31 @@
     {
       "capability_id": "mana.activated.fixed_output",
       "evidence_class": "negative",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_manual_nontap_flag_cannot_bypass_an_intrinsic_land_tap_cost",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Malformed descriptors, unsupported grammar, omitted dependencies, stale offers and intrinsic-face boundaries fail closed."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_mana_abilities.FixedManaCompilerTests.test_fixed_output_compiler_leaves_dynamic_and_restricted_variants_residual",
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118356,6 +118466,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118375,6 +118486,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118394,6 +118506,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118413,6 +118526,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118432,6 +118546,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118451,6 +118566,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118470,6 +118586,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118489,6 +118606,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118508,6 +118626,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118523,10 +118642,91 @@
     {
       "capability_id": "mana.activated.fixed_output",
       "evidence_class": "positive",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_actual_copied_nontap_mana_source_uses_the_same_payment_eligibility",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source and native accepted-cast witnesses preserve timing, actual keywords, selected costs and outcomes."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_condition_loss_during_actual_mana_payment_does_not_cancel_as_though_casts",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source and native accepted-cast witnesses preserve timing, actual keywords, selected costs and outcomes."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_real_flash_reduces_locked_cost_then_can_end_during_mana_payment_before_cast_event",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source and native accepted-cast witnesses preserve timing, actual keywords, selected costs and outcomes."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_tapped_newly_controlled_nontap_self_sacrifice_source_can_pay_once",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source and native accepted-cast witnesses preserve timing, actual keywords, selected costs and outcomes."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_mana_abilities.FixedManaCompilerTests.test_fixed_output_compiler_lowers_source_spanned_cardprogram",
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118546,6 +118746,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118565,6 +118766,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118584,6 +118786,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118603,6 +118806,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118622,6 +118826,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118641,6 +118846,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118660,6 +118866,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118679,6 +118886,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118698,6 +118906,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118717,6 +118926,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118736,6 +118946,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118751,10 +118962,111 @@
     {
       "capability_id": "mana.activated.fixed_output",
       "evidence_class": "replay",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_actual_copied_nontap_mana_source_uses_the_same_payment_eligibility",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The accepted native command consequences agree after pending load and replay from the pre-action checkpoint."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_condition_loss_during_actual_mana_payment_does_not_cancel_as_though_casts",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The accepted native command consequences agree after pending load and replay from the pre-action checkpoint."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_manual_nontap_flag_cannot_bypass_an_intrinsic_land_tap_cost",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The accepted native command consequences agree after pending load and replay from the pre-action checkpoint."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_real_flash_reduces_locked_cost_then_can_end_during_mana_payment_before_cast_event",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The accepted native command consequences agree after pending load and replay from the pre-action checkpoint."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_tapped_newly_controlled_nontap_self_sacrifice_source_can_pay_once",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The accepted native command consequences agree after pending load and replay from the pre-action checkpoint."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "replay",
       "test_id": "tests.test_fixed_mana_abilities.FixedManaRuntimeTests.test_compiled_alternative_output_is_advertised_accepted_and_replayed",
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118774,6 +119086,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118793,6 +119106,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -118812,6 +119126,7 @@
       "official_rule_ids": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -149816,6 +150131,1488 @@
         "traditional"
       ],
       "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_actual_copied_nontap_mana_source_uses_the_same_payment_eligibility",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public-state timing composes with native costs, mana sacrifice, actual characteristics, control, copying or face-down methods as asserted by this witness."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_actual_copy_keeps_conditional_keyword_after_original_returns",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public-state timing composes with native costs, mana sacrifice, actual characteristics, control, copying or face-down methods as asserted by this witness."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_actual_yeti_off_turn_cast_uses_current_green_permanent",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public-state timing composes with native costs, mana sacrifice, actual characteristics, control, copying or face-down methods as asserted by this witness."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_all_four_originals_use_current_conditions_and_keep_real_keyword_distinct",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public-state timing composes with native costs, mana sacrifice, actual characteristics, control, copying or face-down methods as asserted by this witness."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_as_though_permission_does_not_receive_flash_cost_reduction",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public-state timing composes with native costs, mana sacrifice, actual characteristics, control, copying or face-down methods as asserted by this witness."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_caster_relative_permissions_and_proposed_spell_views_preserve_foreign_owner_and_state",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public-state timing composes with native costs, mana sacrifice, actual characteristics, control, copying or face-down methods as asserted by this witness."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_condition_loss_during_actual_mana_payment_does_not_cancel_as_though_casts",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public-state timing composes with native costs, mana sacrifice, actual characteristics, control, copying or face-down methods as asserted by this witness."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_losing_condition_after_offer_rejects_before_any_payment_and_keeps_private_hand",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public-state timing composes with native costs, mana sacrifice, actual characteristics, control, copying or face-down methods as asserted by this witness."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_manual_nontap_flag_cannot_bypass_an_intrinsic_land_tap_cost",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public-state timing composes with native costs, mana sacrifice, actual characteristics, control, copying or face-down methods as asserted by this witness."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_omitted_timing_and_actual_keyword_contributions_fail_native_controls",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public-state timing composes with native costs, mana sacrifice, actual characteristics, control, copying or face-down methods as asserted by this witness."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_real_battlefield_flash_uses_current_control_and_ability_removal",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public-state timing composes with native costs, mana sacrifice, actual characteristics, control, copying or face-down methods as asserted by this witness."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_real_flash_reduces_locked_cost_then_can_end_during_mana_payment_before_cast_event",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public-state timing composes with native costs, mana sacrifice, actual characteristics, control, copying or face-down methods as asserted by this witness."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_selected_face_and_face_down_method_do_not_inherit_other_intrinsic_flash",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public-state timing composes with native costs, mana sacrifice, actual characteristics, control, copying or face-down methods as asserted by this witness."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_tapped_newly_controlled_nontap_self_sacrifice_source_can_pay_once",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current public-state timing composes with native costs, mana sacrifice, actual characteristics, control, copying or face-down methods as asserted by this witness."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_actual_yeti_off_turn_cast_uses_current_green_permanent",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The four-seat witness preserves current caster or controller semantics instead of owner or foreign-seat facts."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_caster_relative_permissions_and_proposed_spell_views_preserve_foreign_owner_and_state",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The four-seat witness preserves current caster or controller semantics instead of owner or foreign-seat facts."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_losing_condition_after_offer_rejects_before_any_payment_and_keeps_private_hand",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The four-seat witness preserves current caster or controller semantics instead of owner or foreign-seat facts."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_real_battlefield_flash_uses_current_control_and_ability_removal",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The four-seat witness preserves current caster or controller semantics instead of owner or foreign-seat facts."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashCompilerTests.test_producer_and_each_timing_dependency_omission_keep_complete_source_closed",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting the actual compiler producer or one of the two distinct runtime contributions makes the corresponding positive witness fail."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_omitted_timing_and_actual_keyword_contributions_fail_native_controls",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting the actual compiler producer or one of the two distinct runtime contributions makes the corresponding positive witness fail."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashCompilerTests.test_malformed_and_unrepresented_timing_variants_remain_closed",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Malformed descriptors, unsupported grammar, omitted dependencies, stale offers and intrinsic-face boundaries fail closed."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashCompilerTests.test_producer_and_each_timing_dependency_omission_keep_complete_source_closed",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Malformed descriptors, unsupported grammar, omitted dependencies, stale offers and intrinsic-face boundaries fail closed."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_as_though_permission_does_not_receive_flash_cost_reduction",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Malformed descriptors, unsupported grammar, omitted dependencies, stale offers and intrinsic-face boundaries fail closed."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_caster_relative_permissions_and_proposed_spell_views_preserve_foreign_owner_and_state",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Malformed descriptors, unsupported grammar, omitted dependencies, stale offers and intrinsic-face boundaries fail closed."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_losing_condition_after_offer_rejects_before_any_payment_and_keeps_private_hand",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Malformed descriptors, unsupported grammar, omitted dependencies, stale offers and intrinsic-face boundaries fail closed."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_manual_nontap_flag_cannot_bypass_an_intrinsic_land_tap_cost",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Malformed descriptors, unsupported grammar, omitted dependencies, stale offers and intrinsic-face boundaries fail closed."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_omitted_timing_and_actual_keyword_contributions_fail_native_controls",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Malformed descriptors, unsupported grammar, omitted dependencies, stale offers and intrinsic-face boundaries fail closed."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_real_battlefield_flash_uses_current_control_and_ability_removal",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Malformed descriptors, unsupported grammar, omitted dependencies, stale offers and intrinsic-face boundaries fail closed."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_selected_face_and_face_down_method_do_not_inherit_other_intrinsic_flash",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Malformed descriptors, unsupported grammar, omitted dependencies, stale offers and intrinsic-face boundaries fail closed."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashCompilerTests.test_permission_and_real_keyword_nodes_preserve_whole_source_spans",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source and native accepted-cast witnesses preserve timing, actual keywords, selected costs and outcomes."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashCompilerTests.test_same_line_programs_stay_distinct_and_legacy_tap_plan_shape_is_preserved",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source and native accepted-cast witnesses preserve timing, actual keywords, selected costs and outcomes."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_actual_copied_nontap_mana_source_uses_the_same_payment_eligibility",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source and native accepted-cast witnesses preserve timing, actual keywords, selected costs and outcomes."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_actual_copy_keeps_conditional_keyword_after_original_returns",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source and native accepted-cast witnesses preserve timing, actual keywords, selected costs and outcomes."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_actual_yeti_off_turn_cast_uses_current_green_permanent",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source and native accepted-cast witnesses preserve timing, actual keywords, selected costs and outcomes."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_all_four_originals_use_current_conditions_and_keep_real_keyword_distinct",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source and native accepted-cast witnesses preserve timing, actual keywords, selected costs and outcomes."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_as_though_permission_does_not_receive_flash_cost_reduction",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source and native accepted-cast witnesses preserve timing, actual keywords, selected costs and outcomes."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_caster_relative_permissions_and_proposed_spell_views_preserve_foreign_owner_and_state",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source and native accepted-cast witnesses preserve timing, actual keywords, selected costs and outcomes."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_condition_loss_during_actual_mana_payment_does_not_cancel_as_though_casts",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source and native accepted-cast witnesses preserve timing, actual keywords, selected costs and outcomes."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_losing_condition_after_offer_rejects_before_any_payment_and_keeps_private_hand",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source and native accepted-cast witnesses preserve timing, actual keywords, selected costs and outcomes."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_manual_nontap_flag_cannot_bypass_an_intrinsic_land_tap_cost",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source and native accepted-cast witnesses preserve timing, actual keywords, selected costs and outcomes."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_real_battlefield_flash_uses_current_control_and_ability_removal",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source and native accepted-cast witnesses preserve timing, actual keywords, selected costs and outcomes."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_real_flash_reduces_locked_cost_then_can_end_during_mana_payment_before_cast_event",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source and native accepted-cast witnesses preserve timing, actual keywords, selected costs and outcomes."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_selected_face_and_face_down_method_do_not_inherit_other_intrinsic_flash",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source and native accepted-cast witnesses preserve timing, actual keywords, selected costs and outcomes."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_tapped_newly_controlled_nontap_self_sacrifice_source_can_pay_once",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source and native accepted-cast witnesses preserve timing, actual keywords, selected costs and outcomes."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_losing_condition_after_offer_rejects_before_any_payment_and_keeps_private_hand",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Principal-projected packets hide another seat's hand and rejected commands retain authoritative state."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_actual_copied_nontap_mana_source_uses_the_same_payment_eligibility",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The accepted native command consequences agree after pending load and replay from the pre-action checkpoint."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_actual_copy_keeps_conditional_keyword_after_original_returns",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The accepted native command consequences agree after pending load and replay from the pre-action checkpoint."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_actual_yeti_off_turn_cast_uses_current_green_permanent",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The accepted native command consequences agree after pending load and replay from the pre-action checkpoint."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_all_four_originals_use_current_conditions_and_keep_real_keyword_distinct",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The accepted native command consequences agree after pending load and replay from the pre-action checkpoint."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_as_though_permission_does_not_receive_flash_cost_reduction",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The accepted native command consequences agree after pending load and replay from the pre-action checkpoint."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_condition_loss_during_actual_mana_payment_does_not_cancel_as_though_casts",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The accepted native command consequences agree after pending load and replay from the pre-action checkpoint."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_manual_nontap_flag_cannot_bypass_an_intrinsic_land_tap_cost",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The accepted native command consequences agree after pending load and replay from the pre-action checkpoint."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_real_flash_reduces_locked_cost_then_can_end_during_mana_payment_before_cast_event",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The accepted native command consequences agree after pending load and replay from the pre-action checkpoint."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_selected_face_and_face_down_method_do_not_inherit_other_intrinsic_flash",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The accepted native command consequences agree after pending load and replay from the pre-action checkpoint."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_tapped_newly_controlled_nontap_self_sacrifice_source_can_pay_once",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The accepted native command consequences agree after pending load and replay from the pre-action checkpoint."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_losing_condition_after_offer_rejects_before_any_payment_and_keeps_private_hand",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The rejected stale or malformed payment attempt preserves the complete authoritative state."
+    },
+    {
+      "capability_id": "timing.cast.conditional_self_flash",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_conditional_flash.ConditionalFlashRuntimeTests.test_manual_nontap_flag_cannot_bypass_an_intrinsic_land_tap_cost",
+      "official_rule_ids": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The rejected stale or malformed payment attempt preserves the complete authoritative state."
     },
     {
       "capability_id": "timing.cast.printed_flash",
@@ -193069,5 +194866,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "90169f87369697ecb0ddef1785d730c2815a9ab0e8ff495b0f9d716c989117e8"
+  "fingerprint": "0e116be9f39b67feda057e615a574a738a7d23d54f38e5d432af64a1c5e0ed13"
 }

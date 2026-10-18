@@ -545,6 +545,8 @@ def _apply_static_reductions(
     program: Any,
     cast_type_line: str | None = None,
 ) -> None:
+    from ...morph import FACE_DOWN_CAST_METHODS
+    face_down_method=option.get('id') if option.get('id') in FACE_DOWN_CAST_METHODS else None
     _apply_owned_static_reductions(
         host,
         seat,
@@ -556,8 +558,10 @@ def _apply_static_reductions(
             seat,
             card,
             cast_type_line=cast_type_line,
+            face_down_method=face_down_method,
         ),
         cast_type_line=cast_type_line,
+        face_down_method=face_down_method,
     )
 
 

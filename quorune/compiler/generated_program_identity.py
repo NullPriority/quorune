@@ -91,6 +91,8 @@ def generated_ability_id(
         if str(node_id or '').endswith(':max-speed-scope'):return f'static:{face_id}:n{line}:max-speed-scope'
         parts = str(node_id or "").split(":")
         suffix = parts[-1]
+        if suffix in {'flash-keyword','flash-stack'}:
+            return f'static:{face_id}:n{line}:{suffix}'
         if suffix in {"unleash-entry", "unleash-block"}:
             if (
                 len(parts) >= 3

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 362,
+  "registry_version": 363,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -14173,10 +14173,11 @@
     },
     {
       "id": "mana.activated.fixed_output",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "106.1",
         "106.4",
+        "302.6",
         "605.1a",
         "605.2",
         "605.3a",
@@ -14190,9 +14191,10 @@
       "applicability": {
         "summary": "Compile and immediately resolve a target-free nonloyalty activated mana ability whose complete fixed output modes and mandatory activation costs are represented by a typed CardProgram descriptor.",
         "inputs": [
-          "trusted source-spanned fixed-output mana descriptor",
+          "current per-mode tap or bounded nontap self-sacrifice cost",
           "current source-cost availability",
-          "selected fixed output mode"
+          "selected fixed output mode",
+          "trusted source-spanned fixed-output mana descriptor"
         ],
         "outputs": [
           "one advertised and accepted mode set",
@@ -14217,19 +14219,26 @@
         "quorune.compiled_activated_abilities.compiled_activated_abilities",
         "quorune.fixed_mana_abilities.compile_fixed_activated_mana_ability",
         "quorune.mana_activation.complete_mana_activation",
+        "quorune.mana_activation.complete_mana_plan_activations",
+        "quorune.mana_source_discovery.available_mana_sources",
+        "quorune.mana_source_discovery.mana_plan_abilities",
         "quorune.semantic_runtime.mana_abilities.FixedActivatedManaAbilityHandler",
         "quorune.semantic_runtime.mana_abilities.FixedManaSelectedCostAbilityHandler"
       ],
       "positive_tests": [
+        "test_actual_copied_nontap_mana_source_uses_the_same_payment_eligibility",
         "test_compiled_alternative_output_is_advertised_accepted_and_replayed",
         "test_compiled_fixed_output_can_pay_during_casting",
         "test_compiled_fixed_output_offer_and_activation_share_modes",
+        "test_condition_loss_during_actual_mana_payment_does_not_cancel_as_though_casts",
         "test_fixed_mana_sacrifice_choice_retains_typed_cost_and_modes",
         "test_fixed_mana_selected_tap_retains_query_count_and_source_exclusion",
         "test_fixed_mandatory_costs_commit_through_canonical_owners",
         "test_fixed_output_compiler_lowers_source_spanned_cardprogram",
         "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
-        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays"
+        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+        "test_real_flash_reduces_locked_cost_then_can_end_during_mana_payment_before_cast_event",
+        "test_tapped_newly_controlled_nontap_self_sacrifice_source_can_pay_once"
       ],
       "negative_tests": [
         "test_changed_executable_oracle_fails_closed_instead_of_reparsing_mana",
@@ -14237,6 +14246,7 @@
         "test_fixed_output_compiler_rejects_library_movement_costs_and_effects",
         "test_invalid_compiled_mana_mode_rolls_back",
         "test_invalid_mode_rolls_back_fixed_mandatory_costs",
+        "test_manual_nontap_flag_cannot_bypass_an_intrinsic_land_tap_cost",
         "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
         "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
         "test_parenthesized_basic_land_reminder_is_not_an_executable_program",
@@ -14244,9 +14254,13 @@
         "test_selected_tap_mana_dependency_and_malformed_choice_fail_closed"
       ],
       "interaction_tests": [
+        "test_actual_copied_nontap_mana_source_uses_the_same_payment_eligibility",
         "test_compiled_fixed_output_creature_respects_haste_cost_dependency",
+        "test_condition_loss_during_actual_mana_payment_does_not_cancel_as_though_casts",
         "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
-        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays"
+        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+        "test_real_flash_reduces_locked_cost_then_can_end_during_mana_payment_before_cast_event",
+        "test_tapped_newly_controlled_nontap_self_sacrifice_source_can_pay_once"
       ],
       "multiplayer_tests": [
         "test_compiled_fixed_output_is_controller_scoped_in_four_player_game",
@@ -14259,10 +14273,15 @@
         "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays"
       ],
       "replay_tests": [
+        "test_actual_copied_nontap_mana_source_uses_the_same_payment_eligibility",
         "test_compiled_alternative_output_is_advertised_accepted_and_replayed",
         "test_compiled_fixed_output_activation_replays_exactly",
+        "test_condition_loss_during_actual_mana_payment_does_not_cancel_as_though_casts",
+        "test_manual_nontap_flag_cannot_bypass_an_intrinsic_land_tap_cost",
         "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
-        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays"
+        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+        "test_real_flash_reduces_locked_cost_then_can_end_during_mana_payment_before_cast_event",
+        "test_tapped_newly_controlled_nontap_self_sacrifice_source_can_pay_once"
       ],
       "required_evidence": [
         "positive",
@@ -28922,6 +28941,142 @@
       "dependency_fail_closed_rationale": "Requires the existing conditional typed grant and every independent child capability. Unsupported color/condition/modifier siblings keep the whole source residual.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Compiler or parent/child capability omission blocks the full source. Runtime lowering omission and omission of layer-five source participation independently violate the actual Possessed Aven/Humility color and P/T contract.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "timing.cast.conditional_self_flash",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "113.6",
+        "113.6e",
+        "117.1a",
+        "601.2a",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.3d",
+        "613.1f",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Current caster-relative self timing from closed public conditions, preserving distinct as-though permission and real layer-six conditional Flash on battlefield and stack.",
+        "inputs": [
+          "trusted selected-face descriptors",
+          "current would-be caster public facts",
+          "ordinary zone/timing/cost/target proposal",
+          "proposed or completed spell characteristics"
+        ],
+        "outputs": [
+          "conditional instant-timing permission before costs",
+          "live real Flash keyword only when explicitly granted",
+          "shared advertised and accepted casting verdict",
+          "atomic private replayable commands"
+        ],
+        "exclusions": [
+          "extra-cost and target-dependent timing",
+          "unrepresented source-attribute or compound numeric timing",
+          "unrepresented cyclic actual-keyword conditions"
+        ]
+      },
+      "dependencies": [
+        "timing.cast.printed_flash",
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "implementation_components": [
+        "quorune.compiled_cast_timing.compiled_cast_timing_permissions",
+        "quorune.compiled_cast_timing.compiled_conditional_flash_stack_effects",
+        "quorune.compiled_cast_timing.prospective_conditional_flash_spell_data",
+        "quorune.compiler.conditional_flash_nodes.conditional_self_flash_nodes",
+        "quorune.compiler.generated_program_identity.generated_ability_id",
+        "quorune.semantic_runtime.conditional_flash.ConditionalFlashKeywordHandler",
+        "quorune.semantic_runtime.conditional_flash.ConditionalFlashPermissionHandler"
+      ],
+      "positive_tests": [
+        "test_actual_copied_nontap_mana_source_uses_the_same_payment_eligibility",
+        "test_actual_copy_keeps_conditional_keyword_after_original_returns",
+        "test_actual_yeti_off_turn_cast_uses_current_green_permanent",
+        "test_all_four_originals_use_current_conditions_and_keep_real_keyword_distinct",
+        "test_as_though_permission_does_not_receive_flash_cost_reduction",
+        "test_caster_relative_permissions_and_proposed_spell_views_preserve_foreign_owner_and_state",
+        "test_condition_loss_during_actual_mana_payment_does_not_cancel_as_though_casts",
+        "test_losing_condition_after_offer_rejects_before_any_payment_and_keeps_private_hand",
+        "test_manual_nontap_flag_cannot_bypass_an_intrinsic_land_tap_cost",
+        "test_permission_and_real_keyword_nodes_preserve_whole_source_spans",
+        "test_real_battlefield_flash_uses_current_control_and_ability_removal",
+        "test_real_flash_reduces_locked_cost_then_can_end_during_mana_payment_before_cast_event",
+        "test_same_line_programs_stay_distinct_and_legacy_tap_plan_shape_is_preserved",
+        "test_selected_face_and_face_down_method_do_not_inherit_other_intrinsic_flash",
+        "test_tapped_newly_controlled_nontap_self_sacrifice_source_can_pay_once"
+      ],
+      "negative_tests": [
+        "test_as_though_permission_does_not_receive_flash_cost_reduction",
+        "test_caster_relative_permissions_and_proposed_spell_views_preserve_foreign_owner_and_state",
+        "test_losing_condition_after_offer_rejects_before_any_payment_and_keeps_private_hand",
+        "test_malformed_and_unrepresented_timing_variants_remain_closed",
+        "test_manual_nontap_flag_cannot_bypass_an_intrinsic_land_tap_cost",
+        "test_omitted_timing_and_actual_keyword_contributions_fail_native_controls",
+        "test_producer_and_each_timing_dependency_omission_keep_complete_source_closed",
+        "test_real_battlefield_flash_uses_current_control_and_ability_removal",
+        "test_selected_face_and_face_down_method_do_not_inherit_other_intrinsic_flash"
+      ],
+      "interaction_tests": [
+        "test_actual_copied_nontap_mana_source_uses_the_same_payment_eligibility",
+        "test_actual_copy_keeps_conditional_keyword_after_original_returns",
+        "test_actual_yeti_off_turn_cast_uses_current_green_permanent",
+        "test_all_four_originals_use_current_conditions_and_keep_real_keyword_distinct",
+        "test_as_though_permission_does_not_receive_flash_cost_reduction",
+        "test_caster_relative_permissions_and_proposed_spell_views_preserve_foreign_owner_and_state",
+        "test_condition_loss_during_actual_mana_payment_does_not_cancel_as_though_casts",
+        "test_losing_condition_after_offer_rejects_before_any_payment_and_keeps_private_hand",
+        "test_manual_nontap_flag_cannot_bypass_an_intrinsic_land_tap_cost",
+        "test_omitted_timing_and_actual_keyword_contributions_fail_native_controls",
+        "test_real_battlefield_flash_uses_current_control_and_ability_removal",
+        "test_real_flash_reduces_locked_cost_then_can_end_during_mana_payment_before_cast_event",
+        "test_selected_face_and_face_down_method_do_not_inherit_other_intrinsic_flash",
+        "test_tapped_newly_controlled_nontap_self_sacrifice_source_can_pay_once"
+      ],
+      "multiplayer_tests": [
+        "test_actual_yeti_off_turn_cast_uses_current_green_permanent",
+        "test_caster_relative_permissions_and_proposed_spell_views_preserve_foreign_owner_and_state",
+        "test_losing_condition_after_offer_rejects_before_any_payment_and_keeps_private_hand",
+        "test_real_battlefield_flash_uses_current_control_and_ability_removal"
+      ],
+      "privacy_tests": [
+        "test_losing_condition_after_offer_rejects_before_any_payment_and_keeps_private_hand"
+      ],
+      "replay_tests": [
+        "test_actual_copied_nontap_mana_source_uses_the_same_payment_eligibility",
+        "test_actual_copy_keeps_conditional_keyword_after_original_returns",
+        "test_actual_yeti_off_turn_cast_uses_current_green_permanent",
+        "test_all_four_originals_use_current_conditions_and_keep_real_keyword_distinct",
+        "test_as_though_permission_does_not_receive_flash_cost_reduction",
+        "test_condition_loss_during_actual_mana_payment_does_not_cancel_as_though_casts",
+        "test_manual_nontap_flag_cannot_bypass_an_intrinsic_land_tap_cost",
+        "test_real_flash_reduces_locked_cost_then_can_end_during_mana_payment_before_cast_event",
+        "test_selected_face_and_face_down_method_do_not_inherit_other_intrinsic_flash",
+        "test_tapped_newly_controlled_nontap_self_sacrifice_source_can_pay_once"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Actual producer and each declared timing/public-state dependency omissions keep complete sources residual; numeric timing independently requires its numeric predicate capability.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Compiler producer omission leaves the whole clause residual. Native controls kill independent timing-permission and actual-keyword omissions; source-line program identities, selected faces, proposed costs and after-cost event keywords are independently asserted.",
       "blockers": [],
       "status": "trusted"
     }
