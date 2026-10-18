@@ -6,7 +6,7 @@ from dataclasses import replace
 import re
 
 from ..entry_copy import (EntryCopySpec, ENTRY_COPY_HANDLER, ENTRY_COPY_CAPABILITY,
-    ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_QUERY_CAPABILITIES)
+    ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_QUERY_CAPABILITIES, ENTRY_COPY_VALUES_HANDLER, ENTRY_COPY_VALUES_CAPABILITY)
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..target_numeric import TargetNumericCharacteristicSpec, TargetNumericCharacteristic, TargetNumericComparison
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
@@ -26,6 +26,22 @@ def _qualified_copy_query(subject):
             numeric_characteristic=TargetNumericCharacteristicSpec(
                 TargetNumericCharacteristic.POWER, TargetNumericComparison.AT_LEAST, int(numeric['minimum'])))
     return None
+
+
+def _entry_copy_value_exception(text,*,source_name):
+    from ..token_copy_recipes import TokenCopyExceptionSpec
+    normalized=text.strip().rstrip('.')
+    named=re.fullmatch(r"(?:its|his) name is (?P<name>.+)",normalized,re.I)
+    if named is not None:
+        if named['name']!=source_name:return None
+        return TokenCopyExceptionSpec(schema_version=3,name=source_name)
+    if normalized.casefold()=="it's a vehicle artifact and it loses all other card types":
+        return TokenCopyExceptionSpec(schema_version=3,card_types=('artifact',),add_subtypes=('vehicle',))
+    if normalized.casefold()=="it's an artifact":
+        return TokenCopyExceptionSpec(schema_version=3,card_types=('artifact',))
+    if normalized.casefold()=="it's an artifact creature in addition to its other types, and its power and toughness are equal to this creature's power and toughness":
+        return TokenCopyExceptionSpec(schema_version=3,add_card_types=('artifact','creature'),retain_source_stats=True)
+    return _fixed_exception(text)
 
 
 def entry_copy_spec(text: str, *, source_name: str) -> EntryCopySpec | None:
@@ -48,6 +64,8 @@ def entry_copy_spec(text: str, *, source_name: str) -> EntryCopySpec | None:
         if union['first'].casefold() == union['second'].casefold():
             return None
         query = ObjectQuerySpec(zones=('battlefield',), types_any=(union['first'], union['second']))
+    elif subject.casefold()=='creature card in a graveyard':
+        query=ObjectQuerySpec(zones=('graveyard',),types_all=('creature',))
     else:
         parsed = fixed_characteristic_battlefield_query_subject(subject)
         if parsed is not None and parsed[0] == 'any' and not parsed[2]:
@@ -60,10 +78,11 @@ def entry_copy_spec(text: str, *, source_name: str) -> EntryCopySpec | None:
         query = replace(query, controller='$controller')
     elif relation == 'opponents':
         query = replace(query, excluded_controllers=('$controller',))
-    exception = _fixed_exception(match['exception'] or '')
+    exception = _entry_copy_value_exception(match['exception'] or '',source_name=source_name)
     if exception is None:
         return None
     try:
+        if exception.schema_version==3 or query.zones==('graveyard',):return EntryCopySpec(query,exception,schema_version=3)
         return EntryCopySpec(query, exception)
     except ValueError:
         try:
@@ -81,9 +100,9 @@ def entry_copy_node(*, node_id, line, material_line, span, source_name,
         return None
     return runtime_handler_node(node_id=node_id, line=line, span=span,
         compiled=(f'intrinsic-entry-copy-v{spec.schema_version}',
-            {'handler_id': ENTRY_COPY_HANDLER if spec.schema_version == 1 else ENTRY_COPY_QUERY_HANDLER,
+            {'handler_id': {1:ENTRY_COPY_HANDLER,2:ENTRY_COPY_QUERY_HANDLER,3:ENTRY_COPY_VALUES_HANDLER}[spec.schema_version],
             'schema_version': spec.schema_version, 'event': 'zone.change', 'copy': spec.to_dict()},
-            ENTRY_COPY_CAPABILITY if spec.schema_version == 1 else ENTRY_COPY_QUERY_CAPABILITIES),
+            ENTRY_COPY_CAPABILITY if spec.schema_version == 1 else ENTRY_COPY_QUERY_CAPABILITIES if spec.schema_version==2 else (ENTRY_COPY_CAPABILITY,ENTRY_COPY_VALUES_CAPABILITY)),
         kind='replacement_effect', event='zone.change', active_zone='all',
         runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
         dependency_reason='Intrinsic copy entry requires the canonical copy/replacement owner.',

@@ -98,7 +98,7 @@ def _closed_granted_activation(ability: ActivatedAbility) -> bool:
         and ability.source_counter_removal_cost is None
         and not ability.uncompiled_costs
         and ability.generic_reduction_per_legendary_creature == 0
-        and ability.crew_threshold is None
+        and (ability.crew_threshold is None or type(ability.crew_threshold) is int and ability.crew_threshold>=0)
         and ability.color_set_mana_output is None
         and ability.activation_limit is None
         and not ability.library_search_types
@@ -187,7 +187,8 @@ def attached_granted_ability_plan(
                 life_payment=ability.life_payment,
                 choices=tuple(choice.to_dict() for choice in ability.choices),
                 mana_spend_restriction=ability.mana_spend_restriction,
-                schema_version=2 if extended_cost else 1,
+                crew_threshold=ability.crew_threshold,
+                schema_version=3 if ability.crew_threshold is not None else 2 if extended_cost else 1,
             )
         )
         return AttachedGrantedAbilityPlan(
@@ -563,7 +564,7 @@ def compile_keyword_or_attached_grant_nodes(
     copied = entry_copy_ability_nodes(record=record,face_id=face_id,node_id=node_id,line=line,
         material_line=material_line,span=span,source_name=source_name,trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,capability_profile=capability_profile,compile_inner=compile_inner,
-        effect_template=granted_effect,trigger_effect_template=granted_trigger_effect,material_line_for=material_line_for)
+        effect_template=granted_effect,trigger_effect_template=granted_trigger_effect,material_line_for=material_line_for,keyword_node_compiler=keyword_node_compiler)
     if copied is not None:return copied
     from .temporary_quoted_ability_nodes import temporary_quoted_ability_nodes
     temporary = temporary_quoted_ability_nodes(record=record, face_id=face_id,

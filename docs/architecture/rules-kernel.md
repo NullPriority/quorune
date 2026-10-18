@@ -303,8 +303,16 @@ characteristics, static owners, activation catalogs and event discovery.
 Fixed additive copy exceptions retain other types while adding represented
 card types or creature subtypes. These exceptions are copiable values and
 survive later ability removal; unknown words and unrepresented grants reject.
-Creature-copy entry exceptions can also add one quoted activated or triggered
-ability when its independently compiled child closes over trusted capabilities.
+Version-three copy selectors also choose public creature cards in graveyards.
+Version-three exception values can retain the entering card's full name or
+printed/prototype stats and replace its card types with artifact while retaining
+only applicable artifact subtypes. These values are resolved before entry and
+remain copiable. Fixed P/T replacement removes the copied P/T CDA; additive type
+exceptions retain applicable CDAs. Actual zone return clears the old copy.
+Creature-copy entry exceptions can also add a quoted activated or triggered
+ability or a represented keyword when its independently compiled child closes
+over trusted capabilities. Fixed mana and Crew grants retain their typed costs;
+Dethrone and Myriad retain executable fragments/programs, not just keywords.
 The shared promotion owner recognizes the exact source-return shape through its
 existing capability matcher. Added fragments remain copiable, and repeated
 grants retain their multiplicity. Static, recursive, and unbound-value grants

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 374,
+  "registry_version": 375,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -30773,6 +30773,110 @@
       "dependency_fail_closed_rationale": "Actual compiler and capability/revalidation omissions retain material residuals. Unsupported Wall/history grammar and malformed descriptors reject. Unpinned sacrifice mana remains unavailable rather than borrowing unrelated execution authority.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Independent actual native witnesses kill omitted prohibition evaluation, source departure capture and early announcement, plus replacement of source control with locked ability control. Pure compiler/dependency and controller/quality omissions also fail; wrapped native witnesses use fresh TestCase instances.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "zone.entry.copy_value_exceptions",
+      "version": 1,
+      "official_rules": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Versioned copiable entry exceptions retain names or printed/prototype stats, replace card types with legal subtypes and select public creature cards in graveyards. Added abilities require independent exact child compilation.",
+        "inputs": [
+          "closed entry copy selector",
+          "copiable target values",
+          "entering original values"
+        ],
+        "outputs": [
+          "copy replacement proposals with immutable modified copiable values"
+        ],
+        "exclusions": [
+          "history/mana-spent eligibility",
+          "unadmitted child abilities",
+          "runtime Oracle interpretation"
+        ]
+      },
+      "dependencies": [
+        "zone.entry.fixed_copy"
+      ],
+      "implementation_components": [
+        "quorune.entry_copy.EntryCopySpec",
+        "quorune.token_copy_recipes.apply_copy_exception",
+        "quorune.semantic_runtime.entry_copy.entry_copy_replacement_effects",
+        "quorune.granted_activation_model.GrantedActivatedAbilitySpec"
+      ],
+      "positive_tests": [
+        "test_copy_name_stats_and_graveyard_selection_have_explicit_version_three",
+        "test_all_seven_originals_and_added_children_have_complete_admission",
+        "test_body_double_copies_public_graveyard_card_and_its_entry_draw_with_replay",
+        "test_chameleon_retained_full_name_is_copiable_through_second_clone",
+        "test_effigy_enters_as_noncreature_artifact_draws_and_retains_copiable_blue_mana",
+        "test_hulking_metamorph_uses_original_seven_stats_and_copied_entry_draw",
+        "test_imposter_opponent_copy_loses_creature_subtypes_and_crew_uses_copied_stats"
+      ],
+      "negative_tests": [
+        "test_legacy_copy_exception_bytes_and_extended_value_shapes_are_closed",
+        "test_new_value_and_added_ability_dependencies_fail_closed",
+        "test_graveyard_card_domain_and_granted_crew_codec_reject_ambiguous_forms"
+      ],
+      "interaction_tests": [
+        "test_type_replacement_retains_only_artifact_subtypes_and_supertypes",
+        "test_prototyped_hulking_retains_three_stats_but_copies_target_mana_and_color",
+        "test_dack_added_haste_and_dethrone_are_copiable_and_trigger_on_actual_attack",
+        "test_auton_added_myriad_creates_optional_copies_with_copiable_exceptions",
+        "test_dack_second_copy_retains_added_dethrone_and_haste_after_original_leaves",
+        "test_name_and_fixed_stat_values_survive_ability_removal_and_zone_return_resets",
+        "test_graveyard_copy_ignores_targeting_prohibition_and_excludes_noncards",
+        "test_retained_stats_suppress_copied_power_toughness_cda"
+      ],
+      "multiplayer_tests": [
+        "test_body_double_copies_public_graveyard_card_and_its_entry_draw_with_replay",
+        "test_imposter_opponent_copy_loses_creature_subtypes_and_crew_uses_copied_stats",
+        "test_auton_added_myriad_creates_optional_copies_with_copiable_exceptions"
+      ],
+      "privacy_tests": [
+        "test_chameleon_retained_full_name_is_copiable_through_second_clone"
+      ],
+      "replay_tests": [
+        "test_body_double_copies_public_graveyard_card_and_its_entry_draw_with_replay",
+        "test_chameleon_retained_full_name_is_copiable_through_second_clone",
+        "test_effigy_enters_as_noncreature_artifact_draws_and_retains_copiable_blue_mana",
+        "test_auton_added_myriad_creates_optional_copies_with_copiable_exceptions",
+        "test_imposter_opponent_copy_loses_creature_subtypes_and_crew_uses_copied_stats"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawing copy-value, intrinsic-copy, Haste or Dethrone authority keeps the source residual. Unknown child grants and hidden/ambiguous copy queries do not acquire execution.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitted pure value application and actual native name/type exception omissions fail independent result witnesses; fresh TestCase instances preserve native assertion failures.",
       "blockers": [],
       "status": "trusted"
     }

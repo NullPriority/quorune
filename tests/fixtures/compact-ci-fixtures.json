@@ -66,6 +66,7 @@
     "tests/fixtures/enlist-cards.json",
     "tests/fixtures/entry-color-composition-cards.json",
     "tests/fixtures/entry-copy-cards.json",
+    "tests/fixtures/entry-copy-values-cards.json",
     "tests/fixtures/entry-designation-cards.json",
     "tests/fixtures/entry-keyword-counter-choice-cards.json",
     "tests/fixtures/escaped-entry-counter-cards.json",

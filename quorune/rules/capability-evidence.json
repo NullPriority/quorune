@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "62b95a13fff2e0c2873fd5285f773e553b2e5098fcd6f19341624346db198557",
-  "declaration_source_fingerprint": "9b6667736596a06decd5fec70c40012cc82d786186c9578d9ddc3e2928b16e19",
+  "registry_fingerprint": "558e9b07954f5bdff8148f83f8f307190488a22bc7089b3a21542411221b46d4",
+  "declaration_source_fingerprint": "f4ac9ec6777138bcbe61e52a53a31260302fa5bcad9042c1bd74fd2aa258b138",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -198349,6 +198349,818 @@
       "applicability_note": "Finite color exclusion and complete tapped-entry composition retain existing replacement, destination-controller and incarnation owners. Actual Gate/Thriving/Sunken land play covers forbidden/wrong-principal rollback, offered replacement orders, pending load/replay, exact fixed-or-chosen mana and restricted land-ability spending; four-player projection keeps private hands hidden."
     },
     {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueModelTests.test_type_replacement_retains_only_artifact_subtypes_and_supertypes",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_auton_added_myriad_creates_optional_copies_with_copiable_exceptions",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_dack_added_haste_and_dethrone_are_copiable_and_trigger_on_actual_attack",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_dack_second_copy_retains_added_dethrone_and_haste_after_original_leaves",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_graveyard_copy_ignores_targeting_prohibition_and_excludes_noncards",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual graveyard copy is a nontargeted choice under Ground Seal. Retained printed stats suppress the copied CDA and remain7/7 through a second Clone; native replay verifies consequences."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_name_and_fixed_stat_values_survive_ability_removal_and_zone_return_resets",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_prototyped_hulking_retains_three_stats_but_copies_target_mana_and_color",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_retained_stats_suppress_copied_power_toughness_cda",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual graveyard copy is a nontargeted choice under Ground Seal. Retained printed stats suppress the copied CDA and remain7/7 through a second Clone; native replay verifies consequences."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_auton_added_myriad_creates_optional_copies_with_copiable_exceptions",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_body_double_copies_public_graveyard_card_and_its_entry_draw_with_replay",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_imposter_opponent_copy_loses_creature_subtypes_and_crew_uses_copied_stats",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueModelTests.test_omitting_copy_value_application_fails_independent_type_contract",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual pure/native omission of copy values fails the expected result; wrapped native methods use fresh TestCase instances."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_real_copy_value_and_grant_omissions_fail_native_witnesses",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual pure/native omission of copy values fails the expected result; wrapped native methods use fresh TestCase instances."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueCompilerBoundaryTests.test_graveyard_card_domain_and_granted_crew_codec_reject_ambiguous_forms",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueCompilerBoundaryTests.test_new_value_and_added_ability_dependencies_fail_closed",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueModelTests.test_legacy_copy_exception_bytes_and_extended_value_shapes_are_closed",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueModelTests.test_copy_name_stats_and_graveyard_selection_have_explicit_version_three",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_all_seven_originals_and_added_children_have_complete_admission",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_body_double_copies_public_graveyard_card_and_its_entry_draw_with_replay",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_chameleon_retained_full_name_is_copiable_through_second_clone",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_effigy_enters_as_noncreature_artifact_draws_and_retains_copiable_blue_mana",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_hulking_metamorph_uses_original_seven_stats_and_copied_entry_draw",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_imposter_opponent_copy_loses_creature_subtypes_and_crew_uses_copied_stats",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_chameleon_retained_full_name_is_copiable_through_second_clone",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "replay",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_auton_added_myriad_creates_optional_copies_with_copiable_exceptions",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "replay",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_body_double_copies_public_graveyard_card_and_its_entry_draw_with_replay",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "replay",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_chameleon_retained_full_name_is_copiable_through_second_clone",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "replay",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_effigy_enters_as_noncreature_artifact_draws_and_retains_copiable_blue_mana",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
+      "capability_id": "zone.entry.copy_value_exceptions",
+      "evidence_class": "replay",
+      "test_id": "tests.test_entry_copy_values.EntryCopyValueRuntimeTests.test_imposter_opponent_copy_loses_creature_subtypes_and_crew_uses_copied_stats",
+      "official_rule_ids": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9b",
+        "707.9c",
+        "707.9d",
+        "614.12",
+        "614.12a",
+        "400.7",
+        "205.3d",
+        "205.3g",
+        "702.105",
+        "702.116",
+        "702.122",
+        "702.160"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native generic copy-value/source-query witnesses use normal compiler registration, principal-issued copy choices, complete results, unauthorized rollback and exact replay where cited. No added child ability is replaced with raw Oracle parsing."
+    },
+    {
       "capability_id": "zone.entry.devour",
       "evidence_class": "interaction",
       "test_id": "tests.test_devour.DevourReplacementModelTests.test_controller_can_choose_either_simultaneous_devour_event_first",
@@ -209294,5 +210106,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "3efe0176f193d00af9a8af0101d925c2c079e0368ab38f59ca4b119d565b6d31"
+  "fingerprint": "b6d118dd811e46180817b637b66a0c5849c3e11b8c938017857606a171f5150d"
 }

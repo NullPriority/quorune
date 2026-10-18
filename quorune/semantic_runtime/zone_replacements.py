@@ -448,6 +448,7 @@ def default_zone_change_replacement_registry(
             ExcludedColorEntryDesignationHandler(),
             EntryCopyHandler(),
             entry_copy_handler(2),
+            entry_copy_handler(3),
             EntryRevealHandler(),
             DevourEntryHandler(),
             PreparationEntryHandler(),

@@ -14,6 +14,8 @@ ENTRY_COPY_HANDLER = 'replacement.zone.entry-copy.v1'
 ENTRY_COPY_QUERY_HANDLER = 'replacement.zone.entry-copy.v2'
 ENTRY_COPY_CAPABILITY = 'zone.entry.fixed_copy'
 ENTRY_COPY_QUERY_CAPABILITIES = (ENTRY_COPY_CAPABILITY, 'state_query.permanent.public_state_predicate')
+ENTRY_COPY_VALUES_HANDLER = 'replacement.zone.entry-copy.v3'
+ENTRY_COPY_VALUES_CAPABILITY = 'zone.entry.copy_value_exceptions'
 COPIABLE_ORACLE_FIELD = '_copiable_oracle_id'
 COPIABLE_FACE_FIELD = '_copiable_face_id'
 
@@ -104,11 +106,14 @@ class EntryCopySpec:
     schema_version: int = 1
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3}:
             raise ValueError('Entry copy requires one current typed schema')
         if not isinstance(self.selection, ObjectQuerySpec) or not isinstance(self.exception, TokenCopyExceptionSpec):
             raise ValueError('Entry copy requires typed selection and copy exceptions')
         query = _legacy_view_of_copy_query(self.selection) if self.schema_version == 2 else self.selection
+        if self.schema_version==3 and query.zones==('graveyard',):
+            if query!=ObjectQuerySpec(zones=('graveyard',),types_all=('creature',)):raise ValueError('Graveyard copy selects only public creature cards')
+            query=replace(query,zones=('battlefield',))
         permanent_types = {'artifact', 'battle', 'creature', 'enchantment', 'land', 'planeswalker'}
         if (query.zones != ('battlefield',) or query.owner is not None
                 or query.controller not in {None, '$controller'}

@@ -82,6 +82,7 @@ def _typed_granted_abilities(
                     for key in ("GENERIC", "W", "U", "B", "R", "G", "C")
                 },
                 tap_source=spec.tap_source,
+                crew_threshold=spec.crew_threshold,
                 untap_source=spec.untap_source,
                 sacrifice_source=spec.sacrifice_source,
                 life_payment=spec.life_payment,

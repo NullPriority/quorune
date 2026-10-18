@@ -6,7 +6,7 @@ from dataclasses import dataclass, replace
 from typing import Any, Mapping
 
 from ..entry_copy import (EntryCopySpec, ENTRY_COPY_HANDLER, ENTRY_COPY_CAPABILITY,
-    ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_QUERY_CAPABILITIES,
+    ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_QUERY_CAPABILITIES, ENTRY_COPY_VALUES_HANDLER, ENTRY_COPY_VALUES_CAPABILITY,
     COPIABLE_ORACLE_FIELD, COPIABLE_FACE_FIELD, copiable_oracle_id)
 from ..object_query import object_matches_query, object_query_result
 from ..replacement_effects import ReplacementClass, ReplacementEffect, SetField
@@ -26,7 +26,7 @@ class EntryCopyHandler:
 
     def validate(self, descriptor):
         exact_fields(descriptor, {'handler_id', 'schema_version', 'event', 'copy'}, field='intrinsic entry copy')
-        expected = {ENTRY_COPY_HANDLER: 1, ENTRY_COPY_QUERY_HANDLER: 2}.get(self.handler_id)
+        expected = {ENTRY_COPY_HANDLER: 1, ENTRY_COPY_QUERY_HANDLER: 2, ENTRY_COPY_VALUES_HANDLER:3}.get(self.handler_id)
         if (self.schema_version != expected or descriptor['handler_id'] != self.handler_id or type(descriptor['schema_version']) is not int
                 or descriptor['schema_version'] != self.schema_version or descriptor['event'] != self.event):
             raise SemanticNodeError('Intrinsic entry copy identity changed')
@@ -58,10 +58,11 @@ def entry_copy_handler(version):
         return EntryCopyHandler(handler_id=ENTRY_COPY_QUERY_HANDLER, schema_version=2,
             capability_dependencies=ENTRY_COPY_QUERY_CAPABILITIES,
             rule_references=(*EntryCopyHandler().rule_references, '115.10a', '201.5'))
+    if version==3:return EntryCopyHandler(handler_id=ENTRY_COPY_VALUES_HANDLER,schema_version=3,capability_dependencies=(ENTRY_COPY_CAPABILITY,ENTRY_COPY_VALUES_CAPABILITY),rule_references=(*EntryCopyHandler().rule_references,'707.9c','707.9d','205.3d'))
     raise SemanticNodeError('Copy selector version is unsupported')
 
 
-def _copiable_values(host, target, spec):
+def _copiable_values(host, target, spec, *, entering=None):
     from ..card_program_faces import selected_face_id
     record = host.card_record(target)
     if target.face_down:
@@ -73,7 +74,18 @@ def _copiable_values(host, target, spec):
         values = dict(host._copyable_characteristics(target))
         identity = copiable_oracle_id(target)
         face = selected_face_id(record, target) if record is not None else 'front'
-    values = apply_copy_exception(values, spec.exception)
+    exception=spec.exception
+    if exception.retain_source_stats:
+        if entering is None:raise SemanticNodeError('Retained copy stats require the entering source')
+        # Printed/prototype spell values, before the copy and battlefield boosts.
+        from ..carddb_characteristics import base_card_characteristics
+        from ..rules.prototype import prototype_characteristic_values
+        original=base_card_characteristics(entering,host.card_record(entering))
+        original.update(prototype_characteristic_values(entering))
+        try:power,toughness=int(original['power']),int(original['toughness'])
+        except (ValueError,TypeError,KeyError) as exc:raise SemanticNodeError('Entering source stats are not represented') from exc
+        exception=replace(exception,power=power,toughness=toughness,retain_source_stats=False)
+    values = apply_copy_exception(values, exception)
     values[COPIABLE_ORACLE_FIELD], values[COPIABLE_FACE_FIELD] = identity, face
     return values
 
@@ -109,7 +121,7 @@ def _copied_entry_effects(host, subject, source, target, values):
     registry = default_zone_change_replacement_registry()
     for program in programs:
         for index, descriptor in enumerate(program.handlers):
-            if descriptor.get('handler_id') in {ENTRY_COPY_HANDLER, ENTRY_COPY_QUERY_HANDLER}:
+            if descriptor.get('handler_id') in {ENTRY_COPY_HANDLER, ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_VALUES_HANDLER}:
                 raise SemanticNodeError('Repeated intrinsic copy-entry replacement is outside the represented composition')
             from ..entry_reveal import ENTRY_REVEAL_HANDLER
             from ..devour import DEVOUR_HANDLER
@@ -153,14 +165,15 @@ def entry_copy_replacement_effects(host, subject):
                 prospective_zone='battlefield', prospective_controller=subject.destination_controller):
             continue
         for index, descriptor in enumerate(program.handlers):
-            if descriptor.get('handler_id') not in {ENTRY_COPY_HANDLER, ENTRY_COPY_QUERY_HANDLER}:
+            if descriptor.get('handler_id') not in {ENTRY_COPY_HANDLER, ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_VALUES_HANDLER}:
                 continue
             handler = entry_copy_handler(descriptor.get('schema_version'))
             spec = handler.validate(descriptor)
             query = replace(spec.selection,
                 controller=subject.destination_controller if spec.selection.controller is not None else None,
                 excluded_controllers=(subject.destination_controller,) if spec.selection.excluded_controllers else ())
-            for target in host._semantic_event_sources(zones={'battlefield'}):
+            for target in host._semantic_event_sources(zones=set(query.zones)):
+                if query.zones==('graveyard',) and not target.is_card_object:continue
                 effective = host._effective_card_data(target)
                 row = object_query_result(target, effective,
                     type_parts=host._type_parts(str(effective.get('type_line') or '')),
@@ -169,7 +182,7 @@ def entry_copy_replacement_effects(host, subject):
                         and target.entered_battlefield_turn_sequence == host.state.turn_sequence))
                 if not object_matches_query(row, query):
                     continue
-                values = _copiable_values(host, target, spec)
+                values = _copiable_values(host, target, spec, entering=source)
                 effects.extend(_copied_entry_effects(host, subject, source, target, values))
                 types = tuple(sorted(set().union(*host._type_parts(str(values['type_line'])))))
                 effects.append(ReplacementEffect(

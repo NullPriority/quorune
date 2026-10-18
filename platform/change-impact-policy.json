@@ -5646,6 +5646,31 @@
       "browser_focuses": [
         "mana-action"
       ]
+    },
+    {
+      "id": "entry-copy-value-and-source-query-contract",
+      "patterns": [
+        "quorune/copy_value_types.py",
+        "quorune/entry_copy.py",
+        "quorune/token_copy_recipes.py",
+        "quorune/compiler/entry_copy_templates.py",
+        "quorune/compiler/entry_copy_ability_nodes.py",
+        "quorune/semantic_runtime/entry_copy.py",
+        "tests/fixtures/entry-copy-values-cards.json",
+        "quorune/granted_activation_model.py"
+      ],
+      "test_modules": [
+        "test_entry_copy_values",
+        "test_copy_objects",
+        "test_copiable_entry_ability_grants",
+        "test_fixed_copy_type_exceptions",
+        "test_ordinary_crew",
+        "test_prototype_rules",
+        "test_card_program_trust",
+        "test_preparation",
+        "test_attack_counter_triggers",
+        "test_fixed_combat_entry_keyword_lifecycles"
+      ]
     }
   ],
   "symbol_rules": [

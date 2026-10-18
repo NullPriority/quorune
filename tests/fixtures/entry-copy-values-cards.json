@@ -1,0 +1,1258 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned seven-original entry-copy value/source query contract",
+  "cards": [
+    {
+      "oracle_id": "1ce239f2-79ad-4a30-8e8f-f985045f78dc",
+      "name": "Chameleon, Master of Disguise",
+      "mana_cost": "{3}{U}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Human Shapeshifter Villain",
+      "oracle_text": "You may have Chameleon enter as a copy of a creature you control, except his name is Chameleon, Master of Disguise.\nMayhem {2}{U} (You may cast this card from your graveyard for {2}{U} if you discarded it this turn. Timing rules still apply.)",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Mayhem"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "64ebdd6f-acde-4aab-a86b-2798bad5f70c",
+      "name": "Machine God's Effigy",
+      "mana_cost": "{4}",
+      "cmc": 4.0,
+      "type_line": "Artifact",
+      "oracle_text": "You may have this artifact enter as a copy of any creature on the battlefield, except it's an artifact and it has \"{T}: Add {U}.\" (It's not a creature.)\n{T}: Add {U}.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "U"
+      ],
+      "layout": "normal",
+      "released_at": "2022-11-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "724767ca-bd84-4137-9133-4ad2e96b8428",
+      "name": "Dack's Duplicate",
+      "mana_cost": "{2}{U}{R}",
+      "cmc": 4.0,
+      "type_line": "Creature — Shapeshifter",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield, except it has haste and dethrone. (Whenever it attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-07-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "895527a6-e3b2-454d-a3be-c0036630ec73",
+      "name": "Body Double",
+      "mana_cost": "{4}{U}",
+      "cmc": 5.0,
+      "type_line": "Creature — Shapeshifter",
+      "oracle_text": "You may have this creature enter as a copy of any creature card in a graveyard.",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "94357494-4ccc-43d4-b2d4-351581cbf9b6",
+      "name": "Auton Soldier",
+      "mana_cost": "{4}{U}{U}",
+      "cmc": 6.0,
+      "type_line": "Artifact Creature — Alien Soldier",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield, except it isn't legendary, is an artifact in addition to its other types, and has myriad. (Whenever it attacks, for each opponent other than defending player, you may create a token copy that's tapped and attacking that player or a planeswalker they control. Exile the tokens at end of combat.)",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-10-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b2b09dc3-8239-4f3b-91d2-e7cbbdc062f7",
+      "name": "Hulking Metamorph",
+      "mana_cost": "{9}",
+      "cmc": 9.0,
+      "type_line": "Artifact Creature — Shapeshifter",
+      "oracle_text": "Prototype {2}{U}{U} — 3/3 (You may cast this spell with different mana cost, color, and size. It keeps its abilities and types.)\nYou may have this creature enter as a copy of an artifact or creature you control, except it's an artifact creature in addition to its other types, and its power and toughness are equal to this creature's power and toughness.",
+      "power": "7",
+      "toughness": "7",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Prototype"
+      ],
+      "produced_mana": [],
+      "layout": "prototype",
+      "released_at": "2022-11-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f434e266-d9d6-4058-96ff-a1bd4029d8dc",
+      "name": "Imposter Mech",
+      "mana_cost": "{1}{U}",
+      "cmc": 2.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "You may have this Vehicle enter as a copy of a creature an opponent controls, except it's a Vehicle artifact with crew 3 and it loses all other card types.\nCrew 3",
+      "power": "3",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "name": "Clone",
+      "mana_cost": "{3}{U}",
+      "type_line": "Creature — Shapeshifter",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield.",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-07-19",
+      "faces": [],
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Humble",
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "oracle_text": "Until end of turn, target creature loses all abilities and has base power and toughness 0/1.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-06-10",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "c6a3a882-a127-4590-93d7-679ef4313efe",
+      "name": "Elvish Visionary",
+      "mana_cost": "{1}{G}",
+      "type_line": "Creature — Elf Shaman",
+      "oracle_text": "When this creature enters, draw a card.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-08-14",
+      "faces": [],
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Command Tower",
+      "oracle_id": "0895c9b7-ae7d-4bb3-af17-3b75deb50a25",
+      "oracle_text": "{T}: Add one mana of any color in your commander's color identity.",
+      "power": null,
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Land"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "restricted"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Sol Ring",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Lightning Greaves",
+      "oracle_id": "ca204b66-8d0c-431a-8d34-282f7c2d17da",
+      "oracle_text": "Equipped creature has haste and shroud. (It can't be the target of spells or abilities.)\nEquip {0}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "oracle_id": "5748ebf1-24e3-499d-ab7c-c2cebd462a24",
+      "name": "Giant Growth",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "13f6f960-ef79-4f2c-8874-90fe9e77099e",
+      "name": "Ground Seal",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Enchantment",
+      "oracle_text": "When this enchantment enters, draw a card.\nCards in graveyards can't be the targets of spells or abilities.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-08-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3d7d609a-e447-4757-9a0c-28f9787eab38",
+      "name": "Tarmogoyf",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Token Creature — Lhurgoyf",
+      "oracle_text": "Tarmogoyf's power is equal to the number of card types among cards in all graveyards and its toughness is equal to that number plus 1.\n(This token's mana cost is {1}{G}.)",
+      "power": "*",
+      "toughness": "1+*",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "token",
+      "released_at": "2024-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "not_legal",
+        "competitivebrawl": "not_legal",
+        "duel": "not_legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "not_legal",
+        "modern": "not_legal",
+        "oathbreaker": "not_legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "not_legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "1ce239f2-79ad-4a30-8e8f-f985045f78dc",
+      "published_at": "2025-09-19",
+      "source": "wotc",
+      "comment": "You must follow all normal timing rules when casting a spell with mayhem. For example, you can't cast a creature card with mayhem you couldn't normally cast during an opponent's turn, even if you discard that card during an opponent's turn."
+    },
+    {
+      "oracle_id": "1ce239f2-79ad-4a30-8e8f-f985045f78dc",
+      "published_at": "2025-09-19",
+      "source": "wotc",
+      "comment": "Mayhem represents an alternative cost that can be paid to cast a spell from your graveyard if you discarded the card with mayhem that turn. You must pay any additional costs the spell has."
+    },
+    {
+      "oracle_id": "64ebdd6f-acde-4aab-a86b-2798bad5f70c",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If Machine God’s Effigy copies a land with a basic land type that has become a creature due to an effect, it will not have any mana abilities that land had due to its land types (it will have the one it gives itself, though). For example, if a basic Forest became a creature due to some effect, and Machine God’s Effigy entered the battlefield as a copy of it, it would be a basic artifact named Forest and have “{T}: Add {U},” but not the intrinsic ability “{T}: Add {G}.”"
+    },
+    {
+      "oracle_id": "64ebdd6f-acde-4aab-a86b-2798bad5f70c",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If Machine God’s Effigy copies a planeswalker that became a creature due to an effect, Machine God’s Effigy will have that planeswalker’s loyalty abilities but its only card type is artifact (it will still be legendary in most cases). Because it isn’t a planeswalker itself, it won’t enter the battlefield with any loyalty counters, but it also won’t die because due to not having any. Similarly, it can’t be attacked and damage can’t be dealt to it. You may activate only one loyalty ability of that permanent per turn. If it later becomes a creature and damage is dealt to it, that damage won’t remove any loyalty counters."
+    },
+    {
+      "oracle_id": "64ebdd6f-acde-4aab-a86b-2798bad5f70c",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If Machine God’s Effigy somehow enters the battlefield at the same time as another creature, it can’t become a copy of that creature. You may choose only a creature that’s already on the battlefield."
+    },
+    {
+      "oracle_id": "64ebdd6f-acde-4aab-a86b-2798bad5f70c",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If the chosen creature is a token, Machine God’s Effigy copies the original characteristics of that token as stated by the effect that created the token, plus the listed exceptions. Machine God’s Effigy is not a token, even when copying one."
+    },
+    {
+      "oracle_id": "64ebdd6f-acde-4aab-a86b-2798bad5f70c",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Except for its types and non-artifact subtypes, Machine God’s Effigy copies exactly what was printed on the original creature and nothing more (unless that creature is copying something else or is a token; see below), and it will have “{T}:Add {U}.” It doesn’t copy whether that creature is tapped or untapped, whether it has any counters on it or Auras attached to it, or any non-copy effects that have changed its types, color, and so on."
+    },
+    {
+      "oracle_id": "64ebdd6f-acde-4aab-a86b-2798bad5f70c",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If the copied creature has {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "64ebdd6f-acde-4aab-a86b-2798bad5f70c",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If the chosen creature is copying something else, then Machine God’s Effigy enters the battlefield as whatever the chosen creature is copying (with the listed exceptions)."
+    },
+    {
+      "oracle_id": "64ebdd6f-acde-4aab-a86b-2798bad5f70c",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "The ability of Machine God’s Effigy doesn’t target the creature."
+    },
+    {
+      "oracle_id": "64ebdd6f-acde-4aab-a86b-2798bad5f70c",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied creature will trigger when Machine God’s Effigy enters the battlefield. Any “as [this creature] enters the battlefield” or “[this creature] enters the battlefield with” abilities of the chosen creature will also work. Note that some of these effects may function correctly only if it is a creature, and will not do anything productive since the copy is an artifact, not a creature."
+    },
+    {
+      "oracle_id": "64ebdd6f-acde-4aab-a86b-2798bad5f70c",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If Machine God’s Effigy copies a Saga that has become a creature due to an effect, it will have that Saga’s chapter abilities, but it won’t get a lore counter every turn because it isn’t itself a Saga since its only card type is artifact. Unless it has the read ahead ability found on some Saga cards in the Dominaria United set, it also won’t enter the battlefield with any counters. If you do find a way to put lore counters on it, the appropriate ability or abilities will trigger. It will not be sacrificed after it has lore counters equal to its final chapter number."
+    },
+    {
+      "oracle_id": "64ebdd6f-acde-4aab-a86b-2798bad5f70c",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Machine God’s Effigy will not copy any types (such as creature or enchantment) or non-artifact subtypes (such as Phyrexian or Elf) that creature had, but it will copy any supertypes, such as legendary, and artifact subtypes (such as Treasure or Vehicle). It also has the same name, so if you copy a legendary creature you control, you will need to choose one of them to put in your graveyard due to the legend rule."
+    },
+    {
+      "oracle_id": "724767ca-bd84-4137-9133-4ad2e96b8428",
+      "published_at": "2014-05-29",
+      "source": "wotc",
+      "comment": "Once dethrone triggers, it doesn't matter what happens to the players' life totals before the ability resolves. You'll put a +1/+1 counter on the creature even if the defending player doesn't have the most life as the ability resolves."
+    },
+    {
+      "oracle_id": "724767ca-bd84-4137-9133-4ad2e96b8428",
+      "published_at": "2014-05-29",
+      "source": "wotc",
+      "comment": "Dack's Duplicate copies exactly what was printed on the original creature and nothing more (unless that creature is copying something else or is a token; see below), except it will have haste and dethrone. It doesn't copy whether that creature is tapped or untapped, whether it has any counters on it or Auras attached to it, or any non-copy effects that have changed its power, toughness, types, color, and so on."
+    },
+    {
+      "oracle_id": "724767ca-bd84-4137-9133-4ad2e96b8428",
+      "published_at": "2014-05-29",
+      "source": "wotc",
+      "comment": "Haste and dethrone are part of the copiable values of Dack's Duplicate. If another creature enters the battlefield as or becomes a copy of Dack's Duplicate, it will copy whatever Dack's Duplicate is copying and have haste and dethrone."
+    },
+    {
+      "oracle_id": "724767ca-bd84-4137-9133-4ad2e96b8428",
+      "published_at": "2014-05-29",
+      "source": "wotc",
+      "comment": "If Dack's Duplicate somehow enters the battlefield at the same time as another creature, Dack's Duplicate can't become a copy of that creature. You may choose only a creature that's already on the battlefield."
+    },
+    {
+      "oracle_id": "724767ca-bd84-4137-9133-4ad2e96b8428",
+      "published_at": "2014-05-29",
+      "source": "wotc",
+      "comment": "The +1/+1 counter is put on the creature before blockers are declared."
+    },
+    {
+      "oracle_id": "724767ca-bd84-4137-9133-4ad2e96b8428",
+      "published_at": "2014-05-29",
+      "source": "wotc",
+      "comment": "The ability of Dack's Duplicate doesn't target the creature."
+    },
+    {
+      "oracle_id": "724767ca-bd84-4137-9133-4ad2e96b8428",
+      "published_at": "2014-05-29",
+      "source": "wotc",
+      "comment": "If the chosen creature is copying something else (for example, if the chosen creature is another Dack's Duplicate), then Dack's Duplicate enters the battlefield as whatever the chosen creature is copying. It will have haste and dethrone."
+    },
+    {
+      "oracle_id": "724767ca-bd84-4137-9133-4ad2e96b8428",
+      "published_at": "2014-05-29",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, dethrone will trigger if the creature attacks either player on the team with the most life or tied for the most life."
+    },
+    {
+      "oracle_id": "724767ca-bd84-4137-9133-4ad2e96b8428",
+      "published_at": "2014-05-29",
+      "source": "wotc",
+      "comment": "If the chosen creature is a token, Dack's Duplicate copies the original characteristics of that token as stated by the effect that put the token onto the battlefield. Dack's Duplicate is not a token, even when copying one."
+    },
+    {
+      "oracle_id": "724767ca-bd84-4137-9133-4ad2e96b8428",
+      "published_at": "2014-05-29",
+      "source": "wotc",
+      "comment": "You can choose to not copy anything. In that case, Dack's Duplicate enters the battlefield as a 0/0 Shapeshifter creature, and will probably die almost immediately, when state-based actions are next performed."
+    },
+    {
+      "oracle_id": "724767ca-bd84-4137-9133-4ad2e96b8428",
+      "published_at": "2014-05-29",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied creature will trigger when Dack's Duplicate enters the battlefield. Any \"as [this creature] enters the battlefield\" or \"[this creature] enters the battlefield with\" abilities of the chosen creature will also work."
+    },
+    {
+      "oracle_id": "724767ca-bd84-4137-9133-4ad2e96b8428",
+      "published_at": "2014-05-29",
+      "source": "wotc",
+      "comment": "If the copied creature has {X} in its mana cost (such as Grenzo, Dungeon Warden), X is considered to be 0."
+    },
+    {
+      "oracle_id": "724767ca-bd84-4137-9133-4ad2e96b8428",
+      "published_at": "2023-07-28",
+      "source": "wotc",
+      "comment": "Dethrone doesn't trigger if the creature attacks a planeswalker, even if its controller has the most life. The same is true if the creature attacks a battle, even if its protector has the most life."
+    },
+    {
+      "oracle_id": "895527a6-e3b2-454d-a3be-c0036630ec73",
+      "published_at": "2007-02-01",
+      "source": "wotc",
+      "comment": "You don't have to choose a card to copy. If you don't, Body Double enters as a 0/0 creature and is probably put into your graveyard immediately, unless something is increasing its toughness to keep it alive."
+    },
+    {
+      "oracle_id": "895527a6-e3b2-454d-a3be-c0036630ec73",
+      "published_at": "2007-02-01",
+      "source": "wotc",
+      "comment": "If Body Double copies a Vesuvan Shapeshifter which then copies another creature and then is somehow turned face down, the Body Double is now a face-down Vesuvan Shapeshifter and may be turned face up via its Morph ability."
+    },
+    {
+      "oracle_id": "895527a6-e3b2-454d-a3be-c0036630ec73",
+      "published_at": "2007-02-01",
+      "source": "wotc",
+      "comment": "Treat Body Double as though it were the chosen card entering. Any \"As this card enters,\" \"This card enters with,\" and \"When this card enters\" abilities of the chosen card will work."
+    },
+    {
+      "oracle_id": "94357494-4ccc-43d4-b2d4-351581cbf9b6",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "If the defending player is your only opponent, no tokens are put onto the battlefield."
+    },
+    {
+      "oracle_id": "94357494-4ccc-43d4-b2d4-351581cbf9b6",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "Although the tokens enter the battlefield attacking, they were never declared as attackers. Abilities that trigger whenever a creature attacks won't trigger, including the myriad ability of the tokens. If there any costs to have a creature attack, those costs won't apply to the tokens."
+    },
+    {
+      "oracle_id": "94357494-4ccc-43d4-b2d4-351581cbf9b6",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "The tokens all enter the battlefield at the same time."
+    },
+    {
+      "oracle_id": "94357494-4ccc-43d4-b2d4-351581cbf9b6",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "If myriad creates more than one token for any given player (due to an effect such as the one Doubling Season creates), you may choose separately for each token whether it's attacking the player or a planeswalker they control."
+    },
+    {
+      "oracle_id": "94357494-4ccc-43d4-b2d4-351581cbf9b6",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "The term \"defending player\" in the myriad rules (or any other ability of an attacking creature) refers to the player the creature with myriad was attacking at the time it became an attacking creature this combat, or the controller of the planeswalker or protector of the battle the creature was attacking at the time it became an attacking creature this combat."
+    },
+    {
+      "oracle_id": "94357494-4ccc-43d4-b2d4-351581cbf9b6",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "If you choose not to have Auton Soldier enter the battlefield as a copy of another creature, it won't have myriad. It will also probably die due to having 0 toughness."
+    },
+    {
+      "oracle_id": "94357494-4ccc-43d4-b2d4-351581cbf9b6",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "Each token created by the myriad ability will be a copy of whatever Auton Soldier is copying, along with the listed exceptions. However, it doesn't copy whether Auton Soldier is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, and so on."
+    },
+    {
+      "oracle_id": "94357494-4ccc-43d4-b2d4-351581cbf9b6",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied creature will trigger when the token enters the battlefield. Any \"as [this permanent] enters the battlefield\" or \"[this permanent] enters the battlefield with\" abilities of the copied creature will also work."
+    },
+    {
+      "oracle_id": "94357494-4ccc-43d4-b2d4-351581cbf9b6",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "You choose whether each token is attacking the player or a planeswalker they control as the token is created."
+    },
+    {
+      "oracle_id": "b2b09dc3-8239-4f3b-91d2-e7cbbdc062f7",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied permanent will trigger when Hulking Metamorph enters the battlefield. Any \"as [this] enters the battlefield\" or \"[this] enters the battlefield with\" abilities of the chosen permanent will also work."
+    },
+    {
+      "oracle_id": "b2b09dc3-8239-4f3b-91d2-e7cbbdc062f7",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Casting a prototyped spell isn't the same as casting it for an alternative cost, and an alternative cost may be applied to a spell cast this way. For example, if an effect allows you to cast an artifact card without paying its mana cost, you could either cast Blitz Automaton normally, or as a prototyped spell."
+    },
+    {
+      "oracle_id": "b2b09dc3-8239-4f3b-91d2-e7cbbdc062f7",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "The prototype ability functions in any zone that the spell could be cast from. For example, if an effect allows you to cast artifact spells from your graveyard, you could cast a prototyped Blitz Automaton from your graveyard."
+    },
+    {
+      "oracle_id": "b2b09dc3-8239-4f3b-91d2-e7cbbdc062f7",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If the chosen permanent is a token, Hulking Metamorph copies the original characteristics of that token as stated by the effect that put the token onto the battlefield, with the listed exceptions. Hulking Metamorph does not become a token."
+    },
+    {
+      "oracle_id": "b2b09dc3-8239-4f3b-91d2-e7cbbdc062f7",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "When cast as a prototyped spell, that spell has the mana cost, power, and toughness characteristics shown in its colored, secondary text box rather than the normal values of those characteristics. Its color and mana value are determined by that mana cost. The permanent that spell becomes as it resolves has the same characteristics. If the spell leaves the stack in any other way, or the permanent it becomes leaves the battlefield, it immediately resumes using its normal characteristics."
+    },
+    {
+      "oracle_id": "b2b09dc3-8239-4f3b-91d2-e7cbbdc062f7",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If an effect copies a prototyped spell, that copy (as well as the token it becomes on the battlefield) will have the same characteristics as the prototyped spell. Similarly, if an effect creates a token that's a copy of a prototyped permanent or causes another permanent to become a copy of it, the copy would have the same characteristics as the prototyped permanent."
+    },
+    {
+      "oracle_id": "b2b09dc3-8239-4f3b-91d2-e7cbbdc062f7",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Regardless of how it was cast, a prototype card always has the same name, abilities, types, and so on. Only the mana cost, mana value, color, power, and toughness change depending on whether the card was cast as a prototyped spell."
+    },
+    {
+      "oracle_id": "b2b09dc3-8239-4f3b-91d2-e7cbbdc062f7",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "When casting a prototyped spell, use only its prototype characteristics to determine whether it's legal to cast it. For example, if Blitz Automaton is exiled with the last ability of Chandra, Dressed to Kill, you would be able to cast it for {2}{R} (because it's a red spell), even though you wouldn't be able to cast it as a colorless spell for its normal cost."
+    },
+    {
+      "oracle_id": "b2b09dc3-8239-4f3b-91d2-e7cbbdc062f7",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "A prototype card is a colorless card in every zone except the stack or the battlefield, as well as while on the stack or the battlefield if not cast as a prototyped spell. Ignore its alternative characteristics in those cases. For example, while it's in your graveyard, Blitz Automaton is a colorless creature card with mana value 7. It can't be the target of Recommission, a spell that targets an artifact or creature card with mana value 3 or less in your graveyard."
+    },
+    {
+      "oracle_id": "b2b09dc3-8239-4f3b-91d2-e7cbbdc062f7",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If Hulking Metamorph somehow enters the battlefield at the same time as another permanent, Hulking Metamorph can't become a copy of that permanent. You may choose only a permanent that's already on the battlefield."
+    },
+    {
+      "oracle_id": "b2b09dc3-8239-4f3b-91d2-e7cbbdc062f7",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Use the appropriate printed power and toughness (either 7/7 or 3/3) to determine the result of Hulking Metamorph's copy effect."
+    },
+    {
+      "oracle_id": "b2b09dc3-8239-4f3b-91d2-e7cbbdc062f7",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "You can choose not to copy anything. In that case, Hulking Metamorph simply enters the battlefield as a 7/7 (or 3/3) artifact creature."
+    },
+    {
+      "oracle_id": "b2b09dc3-8239-4f3b-91d2-e7cbbdc062f7",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If the chosen permanent is copying something else (for example, if the chosen permanent is a Clone), then your Hulking Metamorph enters the battlefield as whatever the chosen permanent copied, with the stated exceptions."
+    },
+    {
+      "oracle_id": "b2b09dc3-8239-4f3b-91d2-e7cbbdc062f7",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If the chosen permanent has {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "b2b09dc3-8239-4f3b-91d2-e7cbbdc062f7",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Except for also being an artifact creature and having a different power and toughness, Hulking Metamorph copies exactly what was printed on the original permanent and nothing more (unless that permanent is itself copying something or is a token; see below). It doesn't copy whether that permanent is tapped or untapped, whether it has any counters on it or Auras attached to it, or any noncopy effects that have changed its power, toughness, types, color, and so on."
+    },
+    {
+      "oracle_id": "f434e266-d9d6-4058-96ff-a1bd4029d8dc",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Imposter Mech does not copy any subtypes related to a card type that it lost. For example, if Imposter Mech enters the battlefield as a copy of a 1/1 Human Soldier token, it is neither a Human nor a Soldier. It won't gain those subtypes if it is later crewed."
+    },
+    {
+      "oracle_id": "f434e266-d9d6-4058-96ff-a1bd4029d8dc",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If Imposter Mech enters the battlefield as a copy of a creature that was also a planeswalker, it loses both the planeswalker and creature card types. Its controller may activate any loyalty abilities it now has as normal, but it notably cannot be attacked and it does not lose loyalty counters when it is dealt damage."
+    },
+    {
+      "comment": "Any enters abilities of the copied creature will trigger when Clone enters. Any \"as [this creature] enters\" or \"[this creature] enters with\" abilities of the chosen creature will also work.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Clone copies exactly what was printed on the original creature and nothing else (unless that creature is copying something else or is a token; see below). It doesn't copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, or so on.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Clone's ability doesn't target the chosen creature.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Clone somehow enters at the same time as another creature, Clone can't become a copy of that creature. You may choose only a creature that's already on the battlefield.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature has {X} in its mana cost, X is considered to be 0.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature is a token, Clone copies the original characteristics of that token as stated by the effect that created the token.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature is copying something else (for example, if the copied creature is an Evil Twin), then Clone enters as whatever that creature copied.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose not to copy anything. In that case, Clone enters as a 0/0 Shapeshifter creature, and is probably put into the graveyard immediately.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble doesn’t counter abilities that have already triggered or been activated. In particular, casting this spell won’t stop a creature’s ability that says “At the beginning of your upkeep,” “When this creature enters the battlefield,” or similar from triggering."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble overwrites all previous effects that set the creature’s base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Humble resolves will overwrite this effect."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Effects that modify a creature’s power and/or toughness, such as the effect of Seal of Strength, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness and effects that switch its power and toughness."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "If the affected creature gains an ability after Humble resolves, it will keep that ability."
+    },
+    {
+      "comment": "If you don't have a commander, Command Tower's ability produces no mana.",
+      "oracle_id": "0895c9b7-ae7d-4bb3-af17-3b75deb50a25",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you have two commanders, the ability adds one mana of any color in their combined color identities.",
+      "oracle_id": "0895c9b7-ae7d-4bb3-af17-3b75deb50a25",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your commander is a card that has no colors in its color identity, Command Tower's ability produces no mana. It doesn't produce {C}.",
+      "oracle_id": "0895c9b7-ae7d-4bb3-af17-3b75deb50a25",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature enters the battlefield under your control and gains haste, but then loses it before attacking, it won't be able to attack that turn. This means that you can't use one Lightning Greaves to allow two new creatures to attack in the same turn.",
+      "oracle_id": "ca204b66-8d0c-431a-8d34-282f7c2d17da",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't simply unequip Equipment from a creature. If Lightning Greaves is attached to the only creature you control, you won't be able to attach other equipment to it (or target it with anything else) until you have another creature to which you can attach Lightning Greaves.",
+      "oracle_id": "ca204b66-8d0c-431a-8d34-282f7c2d17da",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "oracle_id": "13f6f960-ef79-4f2c-8874-90fe9e77099e",
+      "published_at": "2012-07-01",
+      "source": "wotc",
+      "comment": "The last ability only works when Ground Seal is on the battlefield."
+    },
+    {
+      "oracle_id": "13f6f960-ef79-4f2c-8874-90fe9e77099e",
+      "published_at": "2012-07-01",
+      "source": "wotc",
+      "comment": "Only spells and abilities that target cards in graveyards will be affected. Abilities that don’t target cards in graveyards (like the one Tormod’s Crypt has) can still affect those cards."
+    }
+  ]
+}

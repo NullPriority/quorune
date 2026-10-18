@@ -315,3 +315,13 @@ Migration and inspection commands are discoverable through `simctl.py --help`.
 Never hand-edit a record to make verification pass. See
 [replay architecture](../architecture/replay.md),
 [protocol](protocol.md), and [privacy testing](../testing/privacy.md).
+
+Version-three copy exceptions add closed `name`, `card_types` and
+`retain_source_stats` fields alongside the existing exception vocabulary.
+Preparation resolves retained stats to actual printed/prototype values before
+committing copied values. Version-one and version-two payloads omit these
+fields and retain their original key sets. The closed grant codec is owned by `granted_activation_model.py`, with its
+public import retained through `ability_fragments.py`. Version-three granted
+activated fragments add an explicit fixed `crew_threshold`; older grant payloads keep
+their prior shape. Copied grants retain their semantic program identity through
+pending replacement choices and subsequent copies.

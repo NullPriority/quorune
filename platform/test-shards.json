@@ -225,6 +225,7 @@
       "test_continuous_compiler_hardening",
       "test_declare_attackers_rules",
       "test_devour",
+      "test_entry_copy_values",
       "test_entry_keyword_counter_choices",
       "test_exact_deck_triggers",
       "test_explore_compiler",

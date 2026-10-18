@@ -2881,3 +2881,11 @@ feed the shared target query for both offers and command validation; see
 Public-zone effect closure materializes iterable mechanics before sibling
 shape checks, so both registration and whole-card binding retain the same
 closed effect authority.
+
+Entry-copy value productions reuse the shared immutable copy-exception codec.
+Retained name/stat and replacement-type fields require explicit version three;
+older descriptors retain their key sets. Added mana, Crew, Dethrone and Myriad
+abilities compile through the existing inner ability/keyword owners and add
+those exact dependencies to the parent. Unknown children keep the original
+source residual. Public graveyard-copy selection is restricted to creature
+cards; it does not open hidden zones, history predicates or mana-spent queries.
