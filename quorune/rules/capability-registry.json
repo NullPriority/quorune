@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 368,
+  "registry_version": 369,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -4588,7 +4588,7 @@
     },
     {
       "id": "casting.additional_cost.fixed_alternative",
-      "version": 2,
+      "version": 3,
       "official_rules": [
         "601.2f",
         "601.2g",
@@ -4601,7 +4601,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Choose exactly one of two source-spanned fixed additional-cost leaves, expose each currently payable branch as a distinct server-authored total-cost option, and commit only the selected typed leaf before stack placement. A canonical subtype-qualified hand-reveal leaf shares the existing binary choice; its mana alternative is included before ordinary total-cost reductions.",
+        "summary": "Choose exactly one of two source-spanned fixed additional-cost leaves, expose each currently payable branch as a distinct server-authored total-cost option, and commit only the selected typed leaf before stack placement. A canonical subtype-qualified hand-reveal leaf shares the existing binary choice; its mana alternative is included before ordinary total-cost reductions. A fixed controlled-object tap leaf may use the same binary choice without merging its reserved objects into the mana payment.",
         "inputs": [
           "one binary typed alternative-cost descriptor",
           "two distinct fixed ordinary-mana, fixed-life, or single-object zone-change leaves",
@@ -4634,23 +4634,28 @@
       ],
       "positive_tests": [
         "test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+        "test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
         "test_actual_stalwart_reveal_and_mana_prices_use_one_native_cast_and_replay",
         "test_all_originals_have_complete_independent_bindings",
         "test_cost_options_require_explicit_branch_and_commit_selected_payment",
         "test_fixed_alternative_costs_compile_source_spanned_programs",
+        "test_fixed_single_union_and_alternative_tap_prices_have_complete_spans",
         "test_generic_reveal_or_mana_price_is_source_pinned_and_closed",
         "test_original_creatures_keep_their_bodies_and_actual_silvergill_entry_draw"
       ],
       "negative_tests": [
         "test_alternative_descriptor_and_unsupported_grammar_fail_closed",
         "test_compiler_runtime_and_disclosure_omission_mutants_are_killed",
+        "test_fixed_tap_descriptor_and_unknown_variable_or_optional_prices_fail_closed",
         "test_immutable_cast_plan_rejects_changed_reveal_incarnation_without_partial_payment",
         "test_malformed_unknown_optional_and_linked_reveals_remain_closed",
         "test_reveal_choices_reject_foreign_stale_wrong_subtype_and_duplicate_cards_before_mutation",
-        "test_stale_alternative_selection_rolls_back"
+        "test_stale_alternative_selection_rolls_back",
+        "test_wrong_controller_type_phase_and_tap_state_do_not_supply_cost_objects"
       ],
       "interaction_tests": [
         "test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+        "test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
         "test_changeling_is_an_eligible_current_hand_card_and_direct_stack_departure_ends_reveal",
         "test_fixed_life_and_mana_alternatives_share_total_cost_options",
         "test_original_creatures_keep_their_bodies_and_actual_silvergill_entry_draw",
@@ -4660,6 +4665,7 @@
         "test_zone_replacement_suspends_alternative_cost_before_mutation_and_replays"
       ],
       "multiplayer_tests": [
+        "test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
         "test_actual_stalwart_reveal_and_mana_prices_use_one_native_cast_and_replay",
         "test_reveal_choices_reject_foreign_stale_wrong_subtype_and_duplicate_cards_before_mutation",
         "test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration",
@@ -4673,6 +4679,7 @@
       ],
       "replay_tests": [
         "test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+        "test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
         "test_actual_stalwart_reveal_and_mana_prices_use_one_native_cast_and_replay",
         "test_original_creatures_keep_their_bodies_and_actual_silvergill_entry_draw",
         "test_overlapping_native_spells_keep_the_same_hand_card_revealed_until_both_leave",
@@ -29790,6 +29797,178 @@
       "dependency_fail_closed_rationale": "The reveal leaf has no aggregate dependencies; its enclosing alternative-price and whole-card result capabilities retain independent closure.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Compiler leaf omission and reveal capability withdrawal reject complete admission. Omitting the actual canonical cost-disclosure commitment fails the native four-player duration/privacy witness. Typed malformed descriptors and stale immutable selections fail before payment.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.additional_cost.fixed_tap",
+      "version": 1,
+      "official_rules": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Fixed distinct untapped controlled-object tap casting prices, including mixed permanent-type unions and a fixed mana alternative, sharing canonical joint mana and payment owners.",
+        "inputs": [
+          "one fixed positive tap count",
+          "one closed permanent type union",
+          "current controlled untapped phased-in battlefield identities",
+          "disjoint payable mana and other payment resources"
+        ],
+        "outputs": [
+          "one fixed immutable tap reservation",
+          "one canonical cast and tap transaction",
+          "ordinary printed spell results"
+        ],
+        "exclusions": [
+          "variable or optional any-number linked tap discounts",
+          "targeted or unknown tap predicates",
+          "unrepresented multiple mandatory price composition"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.rules.tap_additional_cost.FixedTapAdditionalCost",
+        "quorune.compiler.spell_additional_cost_templates.fixed_tap_additional_cost_template",
+        "quorune.rules.casting.additional_tap_costs.finalize_fixed_tap_option",
+        "quorune.rules.casting.additional_tap_costs.validate_fixed_tap_payment",
+        "quorune.rules.casting.commit._commit_tap_costs"
+      ],
+      "positive_tests": [
+        "test_actual_mixed_type_union_prices_enter_original_creatures_once",
+        "test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
+        "test_actual_shared_discovery_pays_new_creatures_then_draws_three_and_replays",
+        "test_all_five_originals_have_complete_independent_admission",
+        "test_fixed_single_union_and_alternative_tap_prices_have_complete_spans"
+      ],
+      "negative_tests": [
+        "test_changed_cost_incarnation_during_mana_payment_rejects_atomically",
+        "test_fixed_tap_descriptor_and_unknown_variable_or_optional_prices_fail_closed",
+        "test_free_base_cost_keeps_mandatory_taps_and_the_payment_snapshot_stays_closed",
+        "test_joint_affordability_keeps_blue_mana_source_out_of_the_additional_tap_selection",
+        "test_wrong_controller_type_phase_and_tap_state_do_not_supply_cost_objects"
+      ],
+      "interaction_tests": [
+        "test_actual_mixed_type_union_prices_enter_original_creatures_once",
+        "test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
+        "test_changed_cost_incarnation_during_mana_payment_rejects_atomically",
+        "test_countering_actual_shared_discovery_keeps_paid_taps_and_mana_without_a_draw",
+        "test_joint_affordability_keeps_blue_mana_source_out_of_the_additional_tap_selection",
+        "test_native_convoke_improvise_and_delve_keep_additional_taps_disjoint_and_replay"
+      ],
+      "multiplayer_tests": [
+        "test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
+        "test_actual_shared_discovery_pays_new_creatures_then_draws_three_and_replays",
+        "test_countering_actual_shared_discovery_keeps_paid_taps_and_mana_without_a_draw"
+      ],
+      "privacy_tests": [
+        "test_actual_shared_discovery_pays_new_creatures_then_draws_three_and_replays"
+      ],
+      "replay_tests": [
+        "test_actual_mixed_type_union_prices_enter_original_creatures_once",
+        "test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
+        "test_actual_shared_discovery_pays_new_creatures_then_draws_three_and_replays",
+        "test_countering_actual_shared_discovery_keeps_paid_taps_and_mana_without_a_draw",
+        "test_joint_affordability_keeps_blue_mana_source_out_of_the_additional_tap_selection",
+        "test_native_convoke_improvise_and_delve_keep_additional_taps_disjoint_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The fixed price has no aggregate dependency; ordinary mana, tap owner and whole-card result admission retain their own requirements.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting canonical tap commitment fails the native Shared Discovery result. Restricting the offer search to the first subset misses a legal payment. Omitting post-mana identity validation permits a changed reserved incarnation and fails native atomic rejection.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.additional_cost.payment_keyword_composition",
+      "version": 1,
+      "official_rules": [
+        "702.51a",
+        "702.51b",
+        "702.66a",
+        "702.66b",
+        "702.126a",
+        "702.126b",
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Composition of independently closed mandatory casting prices, literal Convoke/Improvise/Delve producers and one complete spell result, preserving original source spans and ordinary payment owners.",
+        "inputs": [
+          "one represented additional casting-price clause",
+          "literal represented payment keyword clauses",
+          "one complete represented result"
+        ],
+        "outputs": [
+          "capability-closed price and payment source nodes",
+          "one ordinary jointly payable native cast"
+        ],
+        "exclusions": [
+          "concurrent Convoke and Improvise",
+          "unrepresented price/result/keyword variants"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.compiler.additional_cost_payment_faces.compile_additional_cost_payment_face"
+      ],
+      "positive_tests": [
+        "test_composition_closes_each_original_span_and_preserves_payment_boundaries",
+        "test_existing_payment_keywords_compose_with_the_complete_price_and_keep_source_spans",
+        "test_native_convoke_improvise_and_delve_keep_additional_taps_disjoint_and_replay"
+      ],
+      "negative_tests": [
+        "test_composition_closes_each_original_span_and_preserves_payment_boundaries",
+        "test_fixed_tap_descriptor_and_unknown_variable_or_optional_prices_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_native_convoke_improvise_and_delve_keep_additional_taps_disjoint_and_replay"
+      ],
+      "multiplayer_tests": [
+        "test_native_convoke_improvise_and_delve_keep_additional_taps_disjoint_and_replay"
+      ],
+      "privacy_tests": [],
+      "replay_tests": [
+        "test_native_convoke_improvise_and_delve_keep_additional_taps_disjoint_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The fixed price has no aggregate dependency; ordinary mana, tap owner and whole-card result admission retain their own requirements.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the actual price/payment composer fails the native composed-cast witness; withdrawing its producer, fixed-tap or Convoke capability prevents complete compiler admission. Source spans and unsupported concurrent tap mechanics retain independent controls.",
       "blockers": [],
       "status": "trusted"
     }

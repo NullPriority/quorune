@@ -5482,6 +5482,37 @@
         "test_opening_hand_reveal",
         "test_opening_hand_battlefield"
       ]
+    },
+    {
+      "id": "fixed-tap-additional-cost-contract",
+      "patterns": [
+        "quorune/rules/tap_additional_cost.py",
+        "quorune/compiler/spell_additional_cost_templates.py",
+        "quorune/compiler/spell_additional_cost_nodes.py",
+        "quorune/compiler/permanent_additional_cost_nodes.py",
+        "quorune/compiler/additional_cost_payment_faces.py",
+        "quorune/rules/casting/additional_tap_costs.py",
+        "quorune/rules/casting/nonmoving_additional_costs.py",
+        "quorune/rules/casting_additional_cost_groups.py",
+        "quorune/rules/casting/costs.py",
+        "quorune/rules/casting/proposal.py",
+        "quorune/rules/casting/commit.py",
+        "tests/fixtures/fixed-tap-additional-cost-cards.json",
+        "tests/test_fixed_tap_additional_costs.py"
+      ],
+      "test_modules": [
+        "test_fixed_tap_additional_costs",
+        "test_fixed_reveal_additional_costs",
+        "test_fixed_alternative_additional_costs",
+        "test_fixed_sacrifice_additional_costs",
+        "test_fixed_counter_additional_costs",
+        "test_fixed_zone_change_additional_costs",
+        "test_convoke_rules",
+        "test_casting_payment_keywords",
+        "test_fixed_conspire",
+        "test_card_program_trust",
+        "test_game_record_v3"
+      ]
     }
   ],
   "symbol_rules": [

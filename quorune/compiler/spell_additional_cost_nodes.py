@@ -15,6 +15,7 @@ from .ir_model import (
 from .spell_additional_cost_templates import (
     fixed_alternative_additional_cost_template,
     fixed_counter_additional_cost_template,
+    fixed_tap_additional_cost_template,
     fixed_life_payment_additional_cost_template,
     fixed_sacrifice_additional_cost_template,
     fixed_zone_change_additional_cost_template,
@@ -277,8 +278,11 @@ def typed_additional_cost_spell_node(
     if not rows:
         return None
     first_clause = rows[0][1].strip()
-    cost = fixed_counter_additional_cost_template(first_clause)
-    cost_mechanics = ("cr-122-counters",)
+    cost = fixed_tap_additional_cost_template(first_clause)
+    cost_mechanics = ()
+    if cost is None:
+        cost=fixed_counter_additional_cost_template(first_clause)
+        cost_mechanics=("cr-122-counters",) if cost is not None else ()
     if cost is None:
         cost = fixed_sacrifice_additional_cost_template(first_clause)
         cost_mechanics = ()

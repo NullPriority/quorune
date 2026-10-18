@@ -646,6 +646,9 @@ def _cast_targets_and_tap_costs(
         else []
     )
     snapshots = {ref: host._target_snapshot(ref) for ref in targets}
+    from .additional_tap_costs import validate_fixed_tap_payment
+    try:validate_fixed_tap_payment(host,request.actor,card,selected_dict)
+    except ValueError as exc:raise CastProposalError(str(exc),status='unpayable',reason='stale_fixed_tap_cost') from exc
     tap_refs: list[str] = []
     for tap_ref in selected_dict.get("selected_tap_cost_cards", []):
         tap_card = host._resolve_object(

@@ -91,6 +91,15 @@ card keeps its own duration; copied stack contexts cannot extend or clear the
 original disclosure. Ordinary stack records omit this context and keep their
 existing bytes.
 
+Fixed additional tap prices record `fixed_additional_tap_payment` in the
+selected casting option. Its closed version-one frame contains the compiled
+price and each selected physical object, logical incarnation and reference.
+The ordinary tap-cost reference list also contains any Convoke or Improvise
+payment; the fixed reservation distinguishes those resources when validating
+Delve and mana remainders. Save/load revalidates the original reservation rather
+than replacing it with a new selection. Existing casting options omit this
+frame and retain their serialized form.
+
 Derived mana activations omit `tap_source` for the historical tap-cost form,
 which defaults to true. A nontapping self-sacrifice mode explicitly records
 `tap_source: false`; its compact mode similarly includes `tap: false`.

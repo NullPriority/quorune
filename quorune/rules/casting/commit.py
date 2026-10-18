@@ -1400,6 +1400,11 @@ def _revalidate_cast_contracts(
             status="unpayable",
             reason="stale_convoke_payment",
         )
+    from .additional_tap_costs import validate_fixed_tap_payment
+    try:
+        fixed_taps=validate_fixed_tap_payment(host,proposal.seat,card,selected_option)
+        if not {c.ref for c in fixed_taps}<=set(proposal.tap_cost_refs):raise ValueError('Fixed tap reservation changed')
+    except ValueError as exc:raise CastProposalError(str(exc),reason='stale_fixed_tap_cost') from exc
     return selected_option
 
 
@@ -1458,6 +1463,9 @@ def _commit_cast_costs_and_stack(
         conspire_tap_cards(host, proposal.seat, card, selected_option)
     except ValueError as exc:
         raise CastProposalError(str(exc), reason='stale_conspire_after_mana') from exc
+    from .additional_tap_costs import validate_fixed_tap_payment
+    try:validate_fixed_tap_payment(host,proposal.seat,card,selected_option)
+    except ValueError as exc:raise CastProposalError(str(exc),reason='stale_fixed_tap_after_mana') from exc
     _commit_tap_costs(host, proposal, card)
     costs = _commit_additional_costs(
         host, proposal, response, card, selected_option

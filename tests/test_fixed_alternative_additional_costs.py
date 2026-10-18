@@ -122,7 +122,7 @@ class FixedAlternativeAdditionalCostCompilerTests(unittest.TestCase):
             "you may discard a card or pay {5}",
             "discard a card at random or pay {5}",
             "discard a card or pay {X}",
-            "tap an untapped creature you control or pay {3}",
+            "tap an untapped creature with flying you control or pay {3}",
             "pay {2} and discard a card",
             "pay {2} or pay {2}",
             "pay 2 life or pay {2} or discard a card",
@@ -138,6 +138,9 @@ class FixedAlternativeAdditionalCostCompilerTests(unittest.TestCase):
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
 
+        promoted=self.compile('As an additional cost to cast this spell, tap an untapped creature you control or pay {3}.\nDraw two cards.')
+        self.assertEqual('exact',promoted.status,promoted.material_residuals)
+        self.assertIn('casting.additional_cost.fixed_tap',promoted.faces[0].nodes[0].capability_dependencies)
         descriptor = compiled_cost(
             "As an additional cost to cast this spell, "
             "discard a card or pay 3 life."

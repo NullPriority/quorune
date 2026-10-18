@@ -517,6 +517,17 @@ resolution, countering or another canonical departure. Overlapping spells
 retain their independent reveal durations. Ordinary prior disclosure and
 learned identity survive the final duration ending.
 
+Fixed additional tap prices use one identity-pinned reservation over current
+untapped controlled permanents. A type union counts each object once, and
+worded tap costs can use newly controlled creatures without Haste or targeting.
+The offer search reserves those objects before the ordinary mana and payment
+owners run; it searches other selections when an early subset would consume a
+required mana source. Convoke and Improvise use separate objects, while Delve
+retains its graveyard payment and actual remaining mana requirements. Proposal
+and post-mana checks reject a changed incarnation, controller, type, phase or
+tap state before the canonical tap group commits. Free base prices retain the
+mandatory taps; countered spells retain their completed payments.
+
 Ordinary printed Convoke is a face-pinned typed cast-cost descriptor rather
 than live keyword interpretation. `convoke.py` owns the immutable candidate,
 contribution, whole-vector payment plan, and deterministic fingerprint;

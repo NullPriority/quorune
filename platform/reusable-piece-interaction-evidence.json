@@ -16485,6 +16485,156 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Thunderherd Migration reveals a Dinosaur as its casting price, privately chooses a basic land, enters it tapped, shuffles once and ends the reveal on spell departure; pending load and full native replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_actual_shared_discovery_pays_new_creatures_then_draws_three_and_replays",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_tap",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_tap",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Shared Discovery pays four distinct newly controlled objects, including a Shroud creature, then privately draws three under native accepted actions, unauthorized rollback, pending load and full replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_alternative",
+        "capability.casting.additional_cost.fixed_tap"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_alternative",
+        "casting.additional_cost.fixed_tap"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Disruption Protocol chooses artifact tap or added generic mana while responding to a real opposing spell, pays its selected price and counters that spell with saved pending state and full replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_countering_actual_shared_discovery_keeps_paid_taps_and_mana_without_a_draw",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_tap",
+        "capability.stack.counter.effect"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_tap",
+        "stack.counter.effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual opposing Counterspell counters paid Shared Discovery without refunding mana or untapping its four cost objects, and no draw occurs. Complete native command replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_native_convoke_improvise_and_delve_keep_additional_taps_disjoint_and_replay",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_tap",
+        "capability.casting.payment.convoke"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_tap",
+        "casting.payment.convoke"
+      ],
+      "interaction_order": 2,
+      "assertion": "The strictly admitted constructed priced spells keep additional tap objects disjoint from Convoke or Improvise and preserve Delve remainders, including combined Convoke/Delve. Overlap rejects atomically and native command replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_native_convoke_improvise_and_delve_keep_additional_taps_disjoint_and_replay",
+      "piece_ids": [
+        "capability.casting.additional_cost.payment_keyword_composition",
+        "capability.casting.payment.convoke"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.payment_keyword_composition",
+        "casting.payment.convoke"
+      ],
+      "interaction_order": 2,
+      "assertion": "Independently lowered price, literal payment keywords and draw result compose in one strictly admitted native cast; the existing mana/tap/exile owners commit its disjoint payment and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_native_convoke_improvise_and_delve_keep_additional_taps_disjoint_and_replay",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_tap",
+        "capability.casting.payment.improvise"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_tap",
+        "casting.payment.improvise"
+      ],
+      "interaction_order": 2,
+      "assertion": "The strictly admitted constructed priced spells keep additional tap objects disjoint from Convoke or Improvise and preserve Delve remainders, including combined Convoke/Delve. Overlap rejects atomically and native command replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_native_convoke_improvise_and_delve_keep_additional_taps_disjoint_and_replay",
+      "piece_ids": [
+        "capability.casting.additional_cost.payment_keyword_composition",
+        "capability.casting.payment.improvise"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.payment_keyword_composition",
+        "casting.payment.improvise"
+      ],
+      "interaction_order": 2,
+      "assertion": "Independently lowered price, literal payment keywords and draw result compose in one strictly admitted native cast; the existing mana/tap/exile owners commit its disjoint payment and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_native_convoke_improvise_and_delve_keep_additional_taps_disjoint_and_replay",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_tap",
+        "capability.casting.payment.delve"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_tap",
+        "casting.payment.delve"
+      ],
+      "interaction_order": 2,
+      "assertion": "The strictly admitted constructed priced spells keep additional tap objects disjoint from Convoke or Improvise and preserve Delve remainders, including combined Convoke/Delve. Overlap rejects atomically and native command replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_native_convoke_improvise_and_delve_keep_additional_taps_disjoint_and_replay",
+      "piece_ids": [
+        "capability.casting.additional_cost.payment_keyword_composition",
+        "capability.casting.payment.delve"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.payment_keyword_composition",
+        "casting.payment.delve"
+      ],
+      "interaction_order": 2,
+      "assertion": "Independently lowered price, literal payment keywords and draw result compose in one strictly admitted native cast; the existing mana/tap/exile owners commit its disjoint payment and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_native_convoke_improvise_and_delve_keep_additional_taps_disjoint_and_replay",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_tap",
+        "capability.casting.additional_cost.payment_keyword_composition"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_tap",
+        "casting.additional_cost.payment_keyword_composition"
+      ],
+      "interaction_order": 2,
+      "assertion": "The price/payment composition producer retains source-spanned fixed tap authority and complete result admission while ordinary payment owners resolve one native transaction and full replay."
     }
   ]
 }

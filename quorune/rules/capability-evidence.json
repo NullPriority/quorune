@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "afe01c66394ecd38113f72fe5424d3a5b4aeb3469319ca713464a34a0e9ad667",
-  "declaration_source_fingerprint": "bc1545de6e586006c5b30f2691490a7a73520d4e831505ab0b11ba10c9f94361",
+  "registry_fingerprint": "220498a1800f550b368a926e213c4673213c910215deac478dc4b054a76e7419",
+  "declaration_source_fingerprint": "45a8e288cf4a519b2576f670fc37b2c7103f4dc231b6283955913a0e36d0227f",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -14493,6 +14493,23 @@
     {
       "capability_id": "casting.additional_cost.fixed_alternative",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "interaction",
       "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_real_alternative_mana_or_sacrifice_price_is_paid_once_and_replays",
       "official_rule_ids": [
         "601.2f",
@@ -14577,6 +14594,23 @@
     },
     {
       "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_alternative_additional_costs.FixedAlternativeAdditionalCostCompilerTests.test_alternative_compiler_mutant_is_killed",
       "official_rule_ids": [
@@ -14608,6 +14642,23 @@
         "commander_review"
       ],
       "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_actual_tap_commit_legal_selection_search_and_post_mana_omission_mutants_are_killed",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
     },
     {
       "capability_id": "casting.additional_cost.fixed_alternative",
@@ -14710,6 +14761,40 @@
         "commander_review"
       ],
       "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostCompilerTests.test_fixed_tap_descriptor_and_unknown_variable_or_optional_prices_fail_closed",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_wrong_controller_type_phase_and_tap_state_do_not_supply_cost_objects",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
     },
     {
       "capability_id": "casting.additional_cost.fixed_alternative",
@@ -14846,6 +14931,40 @@
         "commander_review"
       ],
       "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostCompilerTests.test_fixed_single_union_and_alternative_tap_prices_have_complete_spans",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
     },
     {
       "capability_id": "casting.additional_cost.fixed_alternative",
@@ -15084,6 +15203,23 @@
         "commander_review"
       ],
       "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
     },
     {
       "capability_id": "casting.additional_cost.fixed_alternative",
@@ -16757,6 +16893,984 @@
         "commander_review"
       ],
       "applicability_note": "Reject a stale effective-type selection with identical authoritative state before mana, zone, stack, or journal mutation."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_actual_mixed_type_union_prices_enter_original_creatures_once",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_changed_cost_incarnation_during_mana_payment_rejects_atomically",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_countering_actual_shared_discovery_keeps_paid_taps_and_mana_without_a_draw",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_joint_affordability_keeps_blue_mana_source_out_of_the_additional_tap_selection",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_native_convoke_improvise_and_delve_keep_additional_taps_disjoint_and_replay",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_actual_shared_discovery_pays_new_creatures_then_draws_three_and_replays",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_countering_actual_shared_discovery_keeps_paid_taps_and_mana_without_a_draw",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_actual_tap_commit_legal_selection_search_and_post_mana_omission_mutants_are_killed",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostCompilerTests.test_fixed_tap_descriptor_and_unknown_variable_or_optional_prices_fail_closed",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_changed_cost_incarnation_during_mana_payment_rejects_atomically",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_free_base_cost_keeps_mandatory_taps_and_the_payment_snapshot_stays_closed",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_joint_affordability_keeps_blue_mana_source_out_of_the_additional_tap_selection",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_wrong_controller_type_phase_and_tap_state_do_not_supply_cost_objects",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostCompilerTests.test_fixed_single_union_and_alternative_tap_prices_have_complete_spans",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_actual_mixed_type_union_prices_enter_original_creatures_once",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_actual_shared_discovery_pays_new_creatures_then_draws_three_and_replays",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_all_five_originals_have_complete_independent_admission",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_actual_shared_discovery_pays_new_creatures_then_draws_three_and_replays",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostCompilerTests.test_fixed_tap_descriptor_and_unknown_variable_or_optional_prices_fail_closed",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_free_base_cost_keeps_mandatory_taps_and_the_payment_snapshot_stays_closed",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_actual_mixed_type_union_prices_enter_original_creatures_once",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_actual_shared_discovery_pays_new_creatures_then_draws_three_and_replays",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_countering_actual_shared_discovery_keeps_paid_taps_and_mana_without_a_draw",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_joint_affordability_keeps_blue_mana_source_out_of_the_additional_tap_selection",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_native_convoke_improvise_and_delve_keep_additional_taps_disjoint_and_replay",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_changed_cost_incarnation_during_mana_payment_rejects_atomically",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_native_convoke_improvise_and_delve_keep_additional_taps_disjoint_and_replay",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_tap",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_wrong_controller_type_phase_and_tap_state_do_not_supply_cost_objects",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "302.6",
+        "701.26a",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.payment_keyword_composition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_native_convoke_improvise_and_delve_keep_additional_taps_disjoint_and_replay",
+      "official_rule_ids": [
+        "702.51a",
+        "702.51b",
+        "702.66a",
+        "702.66b",
+        "702.126a",
+        "702.126b",
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.payment_keyword_composition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_native_convoke_improvise_and_delve_keep_additional_taps_disjoint_and_replay",
+      "official_rule_ids": [
+        "702.51a",
+        "702.51b",
+        "702.66a",
+        "702.66b",
+        "702.126a",
+        "702.126b",
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.payment_keyword_composition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_payment_composition_production_omission_is_killed_by_native_composed_casts",
+      "official_rule_ids": [
+        "702.51a",
+        "702.51b",
+        "702.66a",
+        "702.66b",
+        "702.126a",
+        "702.126b",
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.payment_keyword_composition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostCompilerTests.test_composition_closes_each_original_span_and_preserves_payment_boundaries",
+      "official_rule_ids": [
+        "702.51a",
+        "702.51b",
+        "702.66a",
+        "702.66b",
+        "702.126a",
+        "702.126b",
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.payment_keyword_composition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostCompilerTests.test_fixed_tap_descriptor_and_unknown_variable_or_optional_prices_fail_closed",
+      "official_rule_ids": [
+        "702.51a",
+        "702.51b",
+        "702.66a",
+        "702.66b",
+        "702.126a",
+        "702.126b",
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.payment_keyword_composition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostCompilerTests.test_composition_closes_each_original_span_and_preserves_payment_boundaries",
+      "official_rule_ids": [
+        "702.51a",
+        "702.51b",
+        "702.66a",
+        "702.66b",
+        "702.126a",
+        "702.126b",
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.payment_keyword_composition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostCompilerTests.test_existing_payment_keywords_compose_with_the_complete_price_and_keep_source_spans",
+      "official_rule_ids": [
+        "702.51a",
+        "702.51b",
+        "702.66a",
+        "702.66b",
+        "702.126a",
+        "702.126b",
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.payment_keyword_composition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_native_convoke_improvise_and_delve_keep_additional_taps_disjoint_and_replay",
+      "official_rule_ids": [
+        "702.51a",
+        "702.51b",
+        "702.66a",
+        "702.66b",
+        "702.126a",
+        "702.126b",
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.payment_keyword_composition",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostCompilerTests.test_composition_closes_each_original_span_and_preserves_payment_boundaries",
+      "official_rule_ids": [
+        "702.51a",
+        "702.51b",
+        "702.66a",
+        "702.66b",
+        "702.126a",
+        "702.126b",
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
+    },
+    {
+      "capability_id": "casting.additional_cost.payment_keyword_composition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_tap_additional_costs.FixedTapCostRuntimeTests.test_native_convoke_improvise_and_delve_keep_additional_taps_disjoint_and_replay",
+      "official_rule_ids": [
+        "702.51a",
+        "702.51b",
+        "702.66a",
+        "702.66b",
+        "702.126a",
+        "702.126b",
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This focused method asserts its source-pinned price/result, current exact object selection, joint payment, native consequence, principal rejection, transaction rollback or exact replay; incidental combinations are not inferred."
     },
     {
       "capability_id": "casting.additional_cost.replicate_fixed_mana",
@@ -202865,5 +203979,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "11de62ded4b1826a30c1236a5d836d61c2fd427711b3dff4abbbfcd7e3774418"
+  "fingerprint": "7dfd8632c5e06295edfd3ae3c439559088cf1100fd7322353876df34afbdcef0"
 }

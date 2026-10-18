@@ -5,8 +5,7 @@ from collections.abc import Mapping, Sequence
 from typing import Any, Protocol
 
 from ...additional_cost_vocabulary import ZONE_CHANGE_COST_KIND
-from ..reveal_additional_cost import fixed_reveal_additional_cost
-from .reveal_costs import reveal_cost_selection
+from .nonmoving_additional_costs import select_fixed_nonmoving_cost
 from ...casting_payment_keywords import (
     AffinitySpec,
     CastingPaymentKeywordError,
@@ -636,11 +635,12 @@ def _convoke_plan_is_affordable(
     plan: ConvokePaymentPlan,
     *,
     spend_context: Any,
+    reserved_cards: Sequence[Any] = (),
 ) -> bool:
     return host._cost_is_affordable(
         seat,
         plan.remaining_dict,
-        exclude_sources=set(plan.selected_object_ids),
+        exclude_sources=set(plan.selected_object_ids)|{c.object_id for c in reserved_cards},
         spend_context=spend_context,
     )
 
@@ -711,6 +711,7 @@ def _apply_convoke(
         seat,
         plan,
         spend_context=spend_context,
+        reserved_cards=selected_cards,
     )
     if hint:
         plan = find_convoke_plan(requirements, candidates, affordable=affordable)
@@ -784,6 +785,7 @@ def _apply_improvise(
             option["requirements"],
             candidates,
             spend_context=spend_context,
+            reserved_cards=selected_cards,
         )
         if plan is None:
             return False
@@ -834,6 +836,7 @@ def _find_improvise_plan(
     candidates: Sequence[Any],
     *,
     spend_context: Any,
+    reserved_cards: Sequence[Any] = (),
 ) -> tuple[dict[str, int], list[Any]] | None:
     """Find a deterministic minimum-card Improvise payment."""
 
@@ -851,7 +854,7 @@ def _find_improvise_plan(
         if host._cost_is_affordable(
             seat,
             reduced,
-            exclude_sources={card.object_id for card in selected},
+            exclude_sources={card.object_id for card in (*reserved_cards,*selected)},
             spend_context=spend_context,
         ):
             best = (reduced, list(selected))
@@ -914,7 +917,8 @@ def revalidate_delve_payment(
             and convoke_plan.remaining_dict == final_requirements
         )
     else:
-        tap_refs = tuple(option.get("selected_tap_cost_cards", ()))
+        fixed_refs={row['object_ref'] for row in option.get('fixed_additional_tap_payment',{}).get('objects',())}
+        tap_refs = tuple(ref for ref in option.get("selected_tap_cost_cards", ()) if ref not in fixed_refs)
         expected_final = dict(post_delve)
         expected_final["GENERIC"] -= len(tap_refs)
         remainder_matches = (
@@ -1030,9 +1034,10 @@ def _apply_payment_mechanics(
     *,
     hint: bool,
     spend_context: Any,
+    reserved_cards: Sequence[Any] = (),
 ) -> tuple[dict[str, Any], list[Any]] | None:
     choice_schema: dict[str, Any] = {}
-    selected_cards: list[Any] = []
+    selected_cards: list[Any] = list(reserved_cards)
     kinds = tuple(
         str(mechanic.get("kind") or "").casefold()
         for mechanic in mechanics
@@ -1063,7 +1068,7 @@ def _apply_payment_mechanics(
         response,
         hint=hint,
         spend_context=spend_context,
-        followed_by_tap_payment=bool(tap_mechanics),
+        followed_by_tap_payment=bool(tap_mechanics) or bool(reserved_cards),
         choice_schema=choice_schema,
     ):
         return None
@@ -1106,6 +1111,7 @@ def _maximum_affordable_x_with_mechanics(
     *,
     spend_context: Any,
     limit: int = 100,
+    reserved_cards: Sequence[Any] = (),
 ) -> int:
     maximum = -1
     for value in range(limit + 1):
@@ -1134,6 +1140,7 @@ def _maximum_affordable_x_with_mechanics(
                 {},
                 hint=True,
                 spend_context=spend_context,
+                reserved_cards=reserved_cards,
             )
             if payment is None:
                 continue
@@ -1222,14 +1229,11 @@ def _apply_additional_costs(
     for index, raw in enumerate(mandatory_costs):
         additional = dict(raw)
         kind = str(additional.get("kind") or "")
-        try:reveal_cost=fixed_reveal_additional_cost(additional)
-        except AdditionalCostError:return False
-        if reveal_cost is not None:
-            if len(mandatory_costs)!=1:return False
-            valid,selection=reveal_cost_selection(host,seat=seat,source=card,cost=reveal_cost,response=response,
-                hint=hint,choice_schema=choice_schema,cost_position=index)
-            if not valid:return False
-            if selection is not None:selected_nonmana.append(selection)
+        nonmoving=select_fixed_nonmoving_cost(host,seat,card,option,mandatory_costs,response,
+            hint=hint,choice_schema=choice_schema,position=index)
+        if nonmoving is not None:
+            if not nonmoving[0]:return False
+            if nonmoving[1] is not None:selected_nonmana.append(nonmoving[1])
             continue
         try:
             counter_cost = fixed_counter_additional_cost(additional)
@@ -1398,6 +1402,15 @@ def _finalize_option(
         if not candidates:
             return None
         option["exile_candidates"] = candidates
+    from .additional_tap_costs import finalize_fixed_tap_option
+    return finalize_fixed_tap_option(host,seat,card,option,program,mandatory_costs,mechanics,response,
+        hint=hint,spend_context=spend_context,has_x=has_x,cast_type_line=cast_type_line)
+
+
+def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mechanics,response,*,
+        hint,spend_context,has_x,cast_type_line,reserved_cards=(),tap_choice_schema=None):
+    """Complete the ordinary payment after fixed tap resources are reserved."""
+    exile_spec=option.get('exile_from_hand')
     payment = _apply_payment_mechanics(
         host,
         seat,
@@ -1406,10 +1419,12 @@ def _finalize_option(
         response,
         hint=hint,
         spend_context=spend_context,
+        reserved_cards=reserved_cards,
     )
     if payment is None:
         return None
     choice_schema, selected_cards = payment
+    if tap_choice_schema is not None:choice_schema.update(tap_choice_schema)
     from .conspire_costs import conspire_payment_cards
     selected_cards = conspire_payment_cards(host, seat, card, option, selected_cards)
     if selected_cards is None:
@@ -1437,6 +1452,7 @@ def _finalize_option(
             program,
             mechanics,
             spend_context=spend_context,
+            reserved_cards=reserved_cards,
         )
         if maximum < 0:
             return None

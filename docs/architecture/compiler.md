@@ -29,6 +29,17 @@ permanents and instant/sorcery results. Optional linked cast-fact reveals,
 Behold and unknown qualifiers remain residual. Complete result admission stays
 independent of recognizing the casting price.
 
+Fixed additional tap prices compile a positive count and a closed union of
+controlled permanent types. The existing alternative-price production may
+pair one with a fixed mana payment. The separate
+`compiler/additional_cost_payment_faces.py` composer preserves independently
+lowered literal Convoke, Improvise and Delve nodes beside an admitted price and
+one complete result. Each node retains its original source span, including
+payment keywords between the price and result. Repeated instances retain their
+ordinary redundancy. Concurrent Convoke and Improvise still require a mixed
+tap-payment owner and remain residual, as do variable tap discounts and unknown
+price or keyword qualifiers.
+
 `compiler/conditional_flash_nodes.py` lowers complete conditional self-timing
 clauses against represented public-state predicates. An “as though” clause
 grants timing permission without granting the Flash keyword. An explicit

@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+from .tap_additional_cost import fixed_tap_additional_cost_node_capabilities,PAYMENT_COMPOSITION_CAPABILITY,PAYMENT_COMPOSITION_MECHANIC
 from ..landwalk import QUALIFIED_LANDWALK_KEYWORDS
 from .counter_placement_capability_shapes import counter_placement_covered_mechanics
 from .control_capability_shapes import fixed_control_node_capabilities
@@ -1213,11 +1215,13 @@ def capability_dependencies_for_node(
     if (shape_context := _query.public_query_amount_shape_context(effects, mechanics)) is None: return ()
     shape_effects, shape_mechanics = shape_context
     dependencies: set[str] = _query.declared_amount_dependencies(mechanics)
+    if PAYMENT_COMPOSITION_MECHANIC in mechanics:dependencies.add(PAYMENT_COMPOSITION_CAPABILITY)
     dependencies.update(
         fixed_alternative_additional_cost_node_capabilities(
             cost_schema=cost_schema
         )
     )
+    dependencies.update(fixed_tap_additional_cost_node_capabilities(cost_schema=cost_schema))
     dependencies.update(
         fixed_counter_additional_cost_node_capabilities(
             cost_schema=cost_schema
@@ -1498,10 +1502,12 @@ def capability_covered_mechanics(
         covered.update({"cr-601-casting-spells", "cr-122-counters"})
     if "casting.additional_cost.fixed_sacrifice" in supplied:
         covered.add("cr-601-casting-spells")
+    if PAYMENT_COMPOSITION_CAPABILITY in supplied:covered.add(PAYMENT_COMPOSITION_MECHANIC)
     if supplied.intersection(
         {
             "casting.additional_cost.fixed_alternative",
             "casting.additional_cost.fixed_life_payment",
+            "casting.additional_cost.fixed_tap",
         }
     ):
         covered.add("cr-601-casting-spells")

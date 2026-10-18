@@ -10,6 +10,7 @@ from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
 from .spell_additional_cost_templates import (
     fixed_alternative_additional_cost_template,
     fixed_counter_additional_cost_template,
+    fixed_tap_additional_cost_template,
     fixed_life_payment_additional_cost_template,
     fixed_sacrifice_additional_cost_template,
     fixed_zone_change_additional_cost_template,
@@ -28,7 +29,7 @@ def permanent_additional_cost_node(*, node_id, line, material_line, span: Source
     if not material_line.casefold().startswith("as an additional cost to cast this spell,"):
         return None
     template = next((value for parse in (
-        fixed_counter_additional_cost_template, fixed_sacrifice_additional_cost_template,
+        fixed_tap_additional_cost_template, fixed_counter_additional_cost_template, fixed_sacrifice_additional_cost_template,
         fixed_zone_change_additional_cost_template, fixed_life_payment_additional_cost_template,
         fixed_alternative_additional_cost_template,
     ) if (value := parse(material_line)) is not None), None)
