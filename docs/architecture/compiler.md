@@ -580,6 +580,10 @@ their conditional read timing is represented; their unconditional owners remain
 available. Existing typed
 leaf validators also participate in the common closed-component gate; no leaf
 grammar or mutation owner is duplicated.
+Card-only graveyard conditions retain their versioned token exclusion at this
+consumer boundary. A plain public graveyard object count is admitted without
+enabling other quantity reductions or arithmetic. Historical version-one
+queries retain their earlier decoding and admission behavior.
 The mandatory delayed-draw leaf retains its separate temporal scope and is not
 lifted into optional or closed multi-result programs by this component gate.
 

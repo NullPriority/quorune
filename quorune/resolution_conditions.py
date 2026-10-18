@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Mapping
 
-from .characteristic_fragments import CharacteristicQuantityScope
+from .characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantityReduction
 from .continuous_conditions import (
     FixedPublicStateConditionKind,
     FixedPublicStateConditionSpec,
@@ -74,6 +74,18 @@ class KickedCastCondition:
         return {'schema_version': self.schema_version, 'kind': self.kind}
 
 
+def _card_only_graveyard_count(quantity) -> bool:
+    """Admit the versioned card filter without admitting new arithmetic."""
+    return (quantity.schema_version == 2
+        and quantity.scope in {CharacteristicQuantityScope.CONTROLLER_ZONE,
+            CharacteristicQuantityScope.OPPONENT_ZONES, CharacteristicQuantityScope.ALL_ZONES}
+        and quantity.query is not None and quantity.query.zones == ('graveyard',)
+        and quantity.query.token is False
+        and quantity.reduction is CharacteristicQuantityReduction.OBJECT_COUNT
+        and quantity.multiplier == 1 and quantity.offset == 0
+        and not quantity.terms and not quantity.mana_colors)
+
+
 def resolution_condition_is_closed(condition: FixedPublicStateConditionSpec) -> bool:
     """Exclude object-relative bindings; this boundary binds only the controller."""
 
@@ -91,7 +103,7 @@ def resolution_condition_is_closed(condition: FixedPublicStateConditionSpec) -> 
         return False
     quantity = condition.quantity
     return quantity is None or not (
-        quantity.schema_version != 1
+        (quantity.schema_version != 1 and not _card_only_graveyard_count(quantity))
         or quantity.scope is CharacteristicQuantityScope.ATTACHED_TO_SOURCE
         or quantity.scope is CharacteristicQuantityScope.SOURCE_COUNTER
         or quantity.exclude_source

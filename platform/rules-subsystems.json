@@ -554,6 +554,7 @@
             "capability:life.transfer.actual_opponent_loss",
             "capability:mana.activated.fixed_output",
             "capability:pairing.soulbond",
+            "capability:resolution.effect.public_condition",
             "capability:state_query.permanent.public_state_predicate",
             "capability:target.prohibition.fixed_source_quality",
             "capability:timing.cast.conditional_self_flash",
@@ -6660,7 +6661,7 @@
     },
     "semantic_transition_declaration": {
       "transition_id": "oracle-ir-v458-batched-reusable-card-support",
-      "compiler_version": "oracle-ir-v458",
+      "compiler_version": "oracle-ir-v459",
       "bundle_id": "bundle:batched-reusable-card-support-v458",
       "candidate_ids": [
         "bundle:batched-reusable-card-support-v458"
@@ -6705,6 +6706,7 @@
         "life.transfer.actual_opponent_loss",
         "mana.activated.fixed_output",
         "pairing.soulbond",
+        "resolution.effect.public_condition",
         "state_query.permanent.public_state_predicate",
         "target.prohibition.fixed_source_quality",
         "timing.cast.conditional_self_flash",

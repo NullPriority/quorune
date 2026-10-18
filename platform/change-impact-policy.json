@@ -5823,6 +5823,21 @@
         "test_fixed_spell_cost_reductions",
         "test_casting_activation_proposal_equivalence"
       ]
+    },
+    {
+      "id": "card-only-graveyard-resolution-condition-consumer",
+      "patterns": [
+        "quorune/resolution_conditions.py",
+        "quorune/compiler/resolution_condition_templates.py",
+        "quorune/compiler/public_state_queries.py",
+        "quorune/characteristic_fragments.py"
+      ],
+      "test_modules": [
+        "test_graveyard_resolution_conditions",
+        "test_resolution_public_conditions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime"
+      ]
     }
   ],
   "symbol_rules": [

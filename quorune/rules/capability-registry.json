@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 383,
+  "registry_version": 384,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -16380,10 +16380,13 @@
     },
     {
       "id": "resolution.effect.public_condition",
-      "version": 2,
+      "version": 3,
       "official_rules": [
+        "108.2",
+        "108.2b",
         "109.2",
         "109.5",
+        "111.6",
         "608.2b",
         "608.2c",
         "608.2h"
@@ -16400,7 +16403,8 @@
           "an optional independently typed mandatory prefix",
           "the resolving spell or ability controller",
           "current canonical public-state facts",
-          "independently capability-closed child effects"
+          "independently capability-closed child effects",
+          "versioned plain card-only graveyard object counts, preserving public player scope and excluding tokens without new arithmetic"
         ],
         "outputs": [
           "printed-order condition evaluation",
@@ -16421,37 +16425,48 @@
         "continuous.characteristics.fixed_public_state"
       ],
       "implementation_components": [
-        "quorune.resolution_conditions.validate_resolution_condition_instruction",
         "quorune.compiler.resolution_condition_templates.resolution_condition_template",
+        "quorune.resolution_conditions._card_only_graveyard_count",
+        "quorune.resolution_conditions.validate_resolution_condition_instruction",
         "quorune.rules.resolution_condition_shapes.resolution_condition_node_capabilities",
         "quorune.semantic_choices.resolution_condition.PublicResolutionConditionHandler"
       ],
       "positive_tests": [
         "test_condition_keeps_printed_order_and_child_capability_shapes",
-        "test_trusted_prefix_changes_condition_before_private_result_and_replay",
-        "test_replacement_schema_requires_owned_otherwise_shape_and_preserves_old_variants"
+        "test_four_originals_and_card_only_condition_keep_complete_admission",
+        "test_original_unholy_hunger_reads_resolution_time_own_cards_with_private_replay",
+        "test_replacement_schema_requires_owned_otherwise_shape_and_preserves_old_variants",
+        "test_trusted_prefix_changes_condition_before_private_result_and_replay"
       ],
       "negative_tests": [
         "test_conditional_exclusions_are_fully_consumed",
         "test_derived_conditional_results_remain_residual_without_timing_proof",
         "test_handler_binds_controller_and_rejects_unavailable_facts",
+        "test_legacy_card_queries_remain_closed_but_other_v2_quantities_stay_excluded",
+        "test_original_unholy_hunger_excludes_opponent_cards_and_resolving_spell",
         "test_replacement_schema_requires_owned_otherwise_shape_and_preserves_old_variants"
       ],
       "interaction_tests": [
+        "test_mandatory_earlier_life_prefix_survives_and_condition_precedes_default_draw",
+        "test_original_unholy_hunger_excludes_opponent_cards_and_resolving_spell",
+        "test_original_unholy_hunger_reads_resolution_time_own_cards_with_private_replay",
         "test_trusted_death_prefix_updates_history_before_condition_and_replays",
-        "test_trusted_prefix_changes_condition_before_private_result_and_replay",
-        "test_mandatory_earlier_life_prefix_survives_and_condition_precedes_default_draw"
+        "test_trusted_prefix_changes_condition_before_private_result_and_replay"
       ],
       "multiplayer_tests": [
+        "test_original_unholy_hunger_reads_resolution_time_own_cards_with_private_replay",
         "test_trusted_prefix_changes_condition_before_private_result_and_replay"
       ],
       "privacy_tests": [
+        "test_original_unholy_hunger_reads_resolution_time_own_cards_with_private_replay",
         "test_trusted_prefix_changes_condition_before_private_result_and_replay"
       ],
       "replay_tests": [
-        "test_trusted_prefix_changes_condition_before_private_result_and_replay",
+        "test_mandatory_earlier_life_prefix_survives_and_condition_precedes_default_draw",
+        "test_original_unholy_hunger_excludes_opponent_cards_and_resolving_spell",
+        "test_original_unholy_hunger_reads_resolution_time_own_cards_with_private_replay",
         "test_trusted_death_prefix_updates_history_before_condition_and_replays",
-        "test_mandatory_earlier_life_prefix_survives_and_condition_precedes_default_draw"
+        "test_trusted_prefix_changes_condition_before_private_result_and_replay"
       ],
       "required_evidence": [
         "positive",

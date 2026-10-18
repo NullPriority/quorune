@@ -316,6 +316,7 @@
       "test_fixed_damage_history_targets",
       "test_fixed_library_selection",
       "test_fixed_zone_change_additional_costs",
+      "test_graveyard_resolution_conditions",
       "test_interactions_v070",
       "test_intrinsic_entry_counters",
       "test_landwalk",

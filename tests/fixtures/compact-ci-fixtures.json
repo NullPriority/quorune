@@ -123,6 +123,7 @@
     "tests/fixtures/granted-skulk-cards.json",
     "tests/fixtures/graveyard-copy-keyword-cards.json",
     "tests/fixtures/graveyard-exile-payment-cards.json",
+    "tests/fixtures/graveyard-resolution-condition-cards.json",
     "tests/fixtures/group-declaration-rules.json",
     "tests/fixtures/half-event-player-result-cards.json",
     "tests/fixtures/hand-entry-expansion-cards.json",

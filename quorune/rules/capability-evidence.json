@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "5e8711f6cc7f97e9c5efd6870533dac7ec3173d4b3dc97a69f0d94e1784c4bbe",
-  "declaration_source_fingerprint": "67055068ac945b08e96b1607a84fa9f19986cbc687bc46a4cb4f8fee90b321c1",
+  "registry_fingerprint": "5f1a28599b384a9283bb463a9364971cbb2a62cc524b0b4e8a64c331049c42f6",
+  "declaration_source_fingerprint": "45892457ae60985e99fe7e16b3ea5ecf4fd54631e7f7062a48f34422fb43b34d",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -148691,10 +148691,55 @@
     {
       "capability_id": "resolution.effect.public_condition",
       "evidence_class": "interaction",
-      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementRuntimeTests.test_mandatory_earlier_life_prefix_survives_and_condition_precedes_default_draw",
+      "test_id": "tests.test_graveyard_resolution_conditions.GraveyardResolutionConditionTests.test_original_unholy_hunger_excludes_opponent_cards_and_resolving_spell",
       "official_rule_ids": [
+        "108.2",
+        "108.2b",
         "109.2",
         "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Restore the existing controller-bound conditional spell consumer for schema2 plain card-only graveyard counts; native resolution-time response, own/opponent distinction, self-onstack exclusion, private projection, pending load, exact replay and fresh omission mutant."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_graveyard_resolution_conditions.GraveyardResolutionConditionTests.test_original_unholy_hunger_reads_resolution_time_own_cards_with_private_replay",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Restore the existing controller-bound conditional spell consumer for schema2 plain card-only graveyard counts; native resolution-time response, own/opponent distinction, self-onstack exclusion, private projection, pending load, exact replay and fresh omission mutant."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementRuntimeTests.test_mandatory_earlier_life_prefix_survives_and_condition_precedes_default_draw",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
         "608.2b",
         "608.2c",
         "608.2h"
@@ -148711,8 +148756,11 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_death_prefix_updates_history_before_condition_and_replays",
       "official_rule_ids": [
+        "108.2",
+        "108.2b",
         "109.2",
         "109.5",
+        "111.6",
         "608.2b",
         "608.2c",
         "608.2h"
@@ -148729,8 +148777,11 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_subtype_condition_counts_noncreature_kindred_and_replays",
       "official_rule_ids": [
+        "108.2",
+        "108.2b",
         "109.2",
         "109.5",
+        "111.6",
         "608.2b",
         "608.2c",
         "608.2h"
@@ -148745,10 +148796,34 @@
     {
       "capability_id": "resolution.effect.public_condition",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
+      "test_id": "tests.test_graveyard_resolution_conditions.GraveyardResolutionConditionTests.test_original_unholy_hunger_reads_resolution_time_own_cards_with_private_replay",
       "official_rule_ids": [
+        "108.2",
+        "108.2b",
         "109.2",
         "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Restore the existing controller-bound conditional spell consumer for schema2 plain card-only graveyard counts; native resolution-time response, own/opponent distinction, self-onstack exclusion, private projection, pending load, exact replay and fresh omission mutant."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
         "608.2b",
         "608.2c",
         "608.2h"
@@ -148763,10 +148838,34 @@
     {
       "capability_id": "resolution.effect.public_condition",
       "evidence_class": "mutation",
-      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
+      "test_id": "tests.test_graveyard_resolution_conditions.GraveyardResolutionConditionTests.test_card_only_consumer_omission_is_killed_by_native_original",
       "official_rule_ids": [
+        "108.2",
+        "108.2b",
         "109.2",
         "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Restore the existing controller-bound conditional spell consumer for schema2 plain card-only graveyard counts; native resolution-time response, own/opponent distinction, self-onstack exclusion, private projection, pending load, exact replay and fresh omission mutant."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
         "608.2b",
         "608.2c",
         "608.2h"
@@ -148781,10 +148880,55 @@
     {
       "capability_id": "resolution.effect.public_condition",
       "evidence_class": "negative",
-      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementCompilerTests.test_replacement_schema_requires_owned_otherwise_shape_and_preserves_old_variants",
+      "test_id": "tests.test_graveyard_resolution_conditions.GraveyardResolutionConditionTests.test_legacy_card_queries_remain_closed_but_other_v2_quantities_stay_excluded",
       "official_rule_ids": [
+        "108.2",
+        "108.2b",
         "109.2",
         "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Restore the existing controller-bound conditional spell consumer for schema2 plain card-only graveyard counts; native resolution-time response, own/opponent distinction, self-onstack exclusion, private projection, pending load, exact replay and fresh omission mutant."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_graveyard_resolution_conditions.GraveyardResolutionConditionTests.test_original_unholy_hunger_excludes_opponent_cards_and_resolving_spell",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Restore the existing controller-bound conditional spell consumer for schema2 plain card-only graveyard counts; native resolution-time response, own/opponent distinction, self-onstack exclusion, private projection, pending load, exact replay and fresh omission mutant."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementCompilerTests.test_replacement_schema_requires_owned_otherwise_shape_and_preserves_old_variants",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
         "608.2b",
         "608.2c",
         "608.2h"
@@ -148801,8 +148945,11 @@
       "evidence_class": "negative",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_derived_conditional_results_remain_residual_without_timing_proof",
       "official_rule_ids": [
+        "108.2",
+        "108.2b",
         "109.2",
         "109.5",
+        "111.6",
         "608.2b",
         "608.2c",
         "608.2h"
@@ -148819,8 +148966,11 @@
       "evidence_class": "negative",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_handler_binds_controller_and_rejects_unavailable_facts",
       "official_rule_ids": [
+        "108.2",
+        "108.2b",
         "109.2",
         "109.5",
+        "111.6",
         "608.2b",
         "608.2c",
         "608.2h"
@@ -148835,10 +148985,55 @@
     {
       "capability_id": "resolution.effect.public_condition",
       "evidence_class": "positive",
-      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementCompilerTests.test_replacement_schema_requires_owned_otherwise_shape_and_preserves_old_variants",
+      "test_id": "tests.test_graveyard_resolution_conditions.GraveyardResolutionConditionTests.test_four_originals_and_card_only_condition_keep_complete_admission",
       "official_rule_ids": [
+        "108.2",
+        "108.2b",
         "109.2",
         "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Restore the existing controller-bound conditional spell consumer for schema2 plain card-only graveyard counts; native resolution-time response, own/opponent distinction, self-onstack exclusion, private projection, pending load, exact replay and fresh omission mutant."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_graveyard_resolution_conditions.GraveyardResolutionConditionTests.test_original_unholy_hunger_reads_resolution_time_own_cards_with_private_replay",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Restore the existing controller-bound conditional spell consumer for schema2 plain card-only graveyard counts; native resolution-time response, own/opponent distinction, self-onstack exclusion, private projection, pending load, exact replay and fresh omission mutant."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementCompilerTests.test_replacement_schema_requires_owned_otherwise_shape_and_preserves_old_variants",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
         "608.2b",
         "608.2c",
         "608.2h"
@@ -148855,8 +149050,11 @@
       "evidence_class": "positive",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
       "official_rule_ids": [
+        "108.2",
+        "108.2b",
         "109.2",
         "109.5",
+        "111.6",
         "608.2b",
         "608.2c",
         "608.2h"
@@ -148871,10 +149069,34 @@
     {
       "capability_id": "resolution.effect.public_condition",
       "evidence_class": "privacy",
-      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
+      "test_id": "tests.test_graveyard_resolution_conditions.GraveyardResolutionConditionTests.test_original_unholy_hunger_reads_resolution_time_own_cards_with_private_replay",
       "official_rule_ids": [
+        "108.2",
+        "108.2b",
         "109.2",
         "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Restore the existing controller-bound conditional spell consumer for schema2 plain card-only graveyard counts; native resolution-time response, own/opponent distinction, self-onstack exclusion, private projection, pending load, exact replay and fresh omission mutant."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
         "608.2b",
         "608.2c",
         "608.2h"
@@ -148889,10 +149111,55 @@
     {
       "capability_id": "resolution.effect.public_condition",
       "evidence_class": "replay",
-      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementRuntimeTests.test_mandatory_earlier_life_prefix_survives_and_condition_precedes_default_draw",
+      "test_id": "tests.test_graveyard_resolution_conditions.GraveyardResolutionConditionTests.test_original_unholy_hunger_excludes_opponent_cards_and_resolving_spell",
       "official_rule_ids": [
+        "108.2",
+        "108.2b",
         "109.2",
         "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Restore the existing controller-bound conditional spell consumer for schema2 plain card-only graveyard counts; native resolution-time response, own/opponent distinction, self-onstack exclusion, private projection, pending load, exact replay and fresh omission mutant."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_graveyard_resolution_conditions.GraveyardResolutionConditionTests.test_original_unholy_hunger_reads_resolution_time_own_cards_with_private_replay",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Restore the existing controller-bound conditional spell consumer for schema2 plain card-only graveyard counts; native resolution-time response, own/opponent distinction, self-onstack exclusion, private projection, pending load, exact replay and fresh omission mutant."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementRuntimeTests.test_mandatory_earlier_life_prefix_survives_and_condition_precedes_default_draw",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
         "608.2b",
         "608.2c",
         "608.2h"
@@ -148909,8 +149176,11 @@
       "evidence_class": "replay",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
       "official_rule_ids": [
+        "108.2",
+        "108.2b",
         "109.2",
         "109.5",
+        "111.6",
         "608.2b",
         "608.2c",
         "608.2h"
@@ -215561,5 +215831,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "33341032eda7f6cd60bf2c02cab9d455cc45f069b045f0920754b7b93f631c31"
+  "fingerprint": "aacfe5a2bd0351227a92cbdc0c47c0f8eec2a0d5834c13c4f1fe1c4e3d1a2656"
 }
