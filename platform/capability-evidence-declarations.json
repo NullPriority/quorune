@@ -146200,7 +146200,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146219,7 +146225,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146238,7 +146250,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146257,7 +146275,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146276,7 +146300,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146295,7 +146325,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146314,7 +146350,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146333,7 +146375,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146341,6 +146389,31 @@
         "commander_review"
       ],
       "applicability_note": "Qualified entry/death subscriptions retain controller, source exclusion and public characteristic predicates across canonical occurrences, predeparture snapshots and replay; unknown subjects remain residual."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_block_pair.SourceBlockPairRuntimeTests.test_real_multiplayer_blocks_bind_both_sources_once_and_resume_privately",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Unqualified source blocks/becomes-blocked pairs use two independent source-pinned subscriptions and the existing signed P/T owner. Original Chub Toad and Brushwagg witness both roles, multiple blockers trigger once, unrelated source stays unchanged, all defenders finish before placement. Foreign rollback, pending load, four-seat privacy and pre-action replay are explicit. Valid two-event branch mutation is killed by native consequences; qualified/per-blocker pairs remain residual."
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
@@ -146352,7 +146425,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146371,7 +146450,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146390,7 +146475,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146409,7 +146500,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146417,6 +146514,31 @@
         "commander_review"
       ],
       "applicability_note": "Qualified entry/death subscriptions retain controller, source exclusion and public characteristic predicates across canonical occurrences, predeparture snapshots and replay; unknown subjects remain residual."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_block_pair.SourceBlockPairRuntimeTests.test_real_multiplayer_blocks_bind_both_sources_once_and_resume_privately",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Unqualified source blocks/becomes-blocked pairs use two independent source-pinned subscriptions and the existing signed P/T owner. Original Chub Toad and Brushwagg witness both roles, multiple blockers trigger once, unrelated source stays unchanged, all defenders finish before placement. Foreign rollback, pending load, four-seat privacy and pre-action replay are explicit. Valid two-event branch mutation is killed by native consequences; qualified/per-blocker pairs remain residual."
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
@@ -146428,7 +146550,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146447,7 +146575,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146466,7 +146600,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146474,6 +146614,31 @@
         "commander_review"
       ],
       "applicability_note": "Qualified entry/death subscriptions retain controller, source exclusion and public characteristic predicates across canonical occurrences, predeparture snapshots and replay; unknown subjects remain residual."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_source_block_pair.SourceBlockPairRuntimeTests.test_pair_binding_omission_is_killed_by_native_combat_consequences",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Unqualified source blocks/becomes-blocked pairs use two independent source-pinned subscriptions and the existing signed P/T owner. Original Chub Toad and Brushwagg witness both roles, multiple blockers trigger once, unrelated source stays unchanged, all defenders finish before placement. Foreign rollback, pending load, four-seat privacy and pre-action replay are explicit. Valid two-event branch mutation is killed by native consequences; qualified/per-blocker pairs remain residual."
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
@@ -146485,7 +146650,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146504,7 +146675,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146523,7 +146700,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146542,7 +146725,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146561,7 +146750,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146580,7 +146775,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146588,6 +146789,31 @@
         "commander_review"
       ],
       "applicability_note": "Qualified entry/death subscriptions retain controller, source exclusion and public characteristic predicates across canonical occurrences, predeparture snapshots and replay; unknown subjects remain residual."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_block_pair.SourceBlockPairGrammarTests.test_pair_binds_each_source_event_and_keeps_qualified_occurrences_residual",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Unqualified source blocks/becomes-blocked pairs use two independent source-pinned subscriptions and the existing signed P/T owner. Original Chub Toad and Brushwagg witness both roles, multiple blockers trigger once, unrelated source stays unchanged, all defenders finish before placement. Foreign rollback, pending load, four-seat privacy and pre-action replay are explicit. Valid two-event branch mutation is killed by native consequences; qualified/per-blocker pairs remain residual."
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
@@ -146599,7 +146825,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146618,7 +146850,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146637,7 +146875,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146656,7 +146900,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146675,7 +146925,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146694,7 +146950,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146713,7 +146975,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146732,7 +147000,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146751,7 +147025,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146759,6 +147039,31 @@
         "commander_review"
       ],
       "applicability_note": "Qualified entry/death subscriptions retain controller, source exclusion and public characteristic predicates across canonical occurrences, predeparture snapshots and replay; unknown subjects remain residual."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_block_pair.SourceBlockPairRuntimeTests.test_original_block_pair_cards_have_complete_normal_admission",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Unqualified source blocks/becomes-blocked pairs use two independent source-pinned subscriptions and the existing signed P/T owner. Original Chub Toad and Brushwagg witness both roles, multiple blockers trigger once, unrelated source stays unchanged, all defenders finish before placement. Foreign rollback, pending load, four-seat privacy and pre-action replay are explicit. Valid two-event branch mutation is killed by native consequences; qualified/per-blocker pairs remain residual."
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
@@ -146770,7 +147075,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146789,7 +147100,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146808,7 +147125,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146816,6 +147139,56 @@
         "commander_review"
       ],
       "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_source_block_pair.SourceBlockPairRuntimeTests.test_real_multiplayer_blocks_bind_both_sources_once_and_resume_privately",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Unqualified source blocks/becomes-blocked pairs use two independent source-pinned subscriptions and the existing signed P/T owner. Original Chub Toad and Brushwagg witness both roles, multiple blockers trigger once, unrelated source stays unchanged, all defenders finish before placement. Foreign rollback, pending load, four-seat privacy and pre-action replay are explicit. Valid two-event branch mutation is killed by native consequences; qualified/per-blocker pairs remain residual."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "property",
+      "test_id": "tests.test_source_block_pair.SourceBlockPairRuntimeTests.test_real_multiplayer_blocks_bind_both_sources_once_and_resume_privately",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Unqualified source blocks/becomes-blocked pairs use two independent source-pinned subscriptions and the existing signed P/T owner. Original Chub Toad and Brushwagg witness both roles, multiple blockers trigger once, unrelated source stays unchanged, all defenders finish before placement. Foreign rollback, pending load, four-seat privacy and pre-action replay are explicit. Valid two-event branch mutation is killed by native consequences; qualified/per-blocker pairs remain residual."
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
@@ -146827,7 +147200,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146846,7 +147225,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146865,7 +147250,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146884,7 +147275,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146903,7 +147300,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146922,7 +147325,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146941,7 +147350,13 @@
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -146949,6 +147364,56 @@
         "commander_review"
       ],
       "applicability_note": "Qualified entry/death subscriptions retain controller, source exclusion and public characteristic predicates across canonical occurrences, predeparture snapshots and replay; unknown subjects remain residual."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_block_pair.SourceBlockPairRuntimeTests.test_real_multiplayer_blocks_bind_both_sources_once_and_resume_privately",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Unqualified source blocks/becomes-blocked pairs use two independent source-pinned subscriptions and the existing signed P/T owner. Original Chub Toad and Brushwagg witness both roles, multiple blockers trigger once, unrelated source stays unchanged, all defenders finish before placement. Foreign rollback, pending load, four-seat privacy and pre-action replay are explicit. Valid two-event branch mutation is killed by native consequences; qualified/per-blocker pairs remain residual."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_source_block_pair.SourceBlockPairRuntimeTests.test_real_multiplayer_blocks_bind_both_sources_once_and_resume_privately",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Unqualified source blocks/becomes-blocked pairs use two independent source-pinned subscriptions and the existing signed P/T owner. Original Chub Toad and Brushwagg witness both roles, multiple blockers trigger once, unrelated source stays unchanged, all defenders finish before placement. Foreign rollback, pending load, four-seat privacy and pre-action replay are explicit. Valid two-event branch mutation is killed by native consequences; qualified/per-blocker pairs remain residual."
     },
     {
       "capability_id": "trigger.upkeep.previous_turn_transform",

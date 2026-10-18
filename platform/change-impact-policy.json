@@ -5728,6 +5728,23 @@
         "test_replacement_model_hardening",
         "test_replacement_event_ordering"
       ]
+    },
+    {
+      "id": "unqualified-source-block-pair-event-and-result-contract",
+      "patterns": [
+        "quorune/compiler/fixed_public_multi_event_bindings.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "quorune/compiler/fixed_source_combat_growth.py",
+        "tests/fixtures/source-block-pair-cards.json"
+      ],
+      "test_modules": [
+        "test_source_block_pair",
+        "test_fixed_counter_event_triggers",
+        "test_fixed_counter_player_cast_triggers",
+        "test_fixed_source_combat_growth_triggers",
+        "test_block_keyword_triggers",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

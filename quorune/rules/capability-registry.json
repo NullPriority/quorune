@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 378,
+  "registry_version": 379,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -17532,14 +17532,20 @@
     },
     {
       "id": "trigger.subscription.fixed_multi_event",
-      "version": 2,
+      "version": 3,
       "official_rules": [
         "603.2",
         "603.3",
         "603.6",
         "201.5",
         "400.7",
-        "603.10a"
+        "603.10a",
+        "509.1h",
+        "509.2a",
+        "509.3a",
+        "509.3c",
+        "603.2c",
+        "603.2e"
       ],
       "supported_profiles": [
         "traditional",
@@ -17547,7 +17553,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Bind one source-spanned triggered ability to two fixed normalized events in the same active zone, preserving an independent typed condition for each subscription and one shared effect body. Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope.",
+        "summary": "Bind one source-spanned triggered ability to two fixed normalized events in the same active zone, preserving an independent typed condition for each subscription and one shared effect body. Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope. Unqualified source blocks/becomes-blocked pairs retain source identity independently on each event; multiple blockers produce one becomes-blocked occurrence and reuse the signed source P/T result owner.",
         "inputs": [
           "one exact two-event source clause",
           "two represented normalized event identities",
@@ -17555,7 +17561,8 @@
           "one closed predicate per event",
           "one independently exact noncounter effect body",
           "one explicit source-entry prefix conjoined with one independently closed distinct same-zone event prefix",
-          "one independently closed qualified public subject entering or dying/leaving"
+          "one independently closed qualified public subject entering or dying/leaving",
+          "unqualified source blocks or becomes blocked pair; per-blocker and qualified pairs require separate exact grammar"
         ],
         "outputs": [
           "one CardProgram ability",
@@ -17586,52 +17593,60 @@
         "quorune.trigger_discovery._selected_event_subscription"
       ],
       "positive_tests": [
-        "test_fixed_multi_event_trigger_contract_matrix",
-        "test_fixed_multi_event_source_triggers_share_events_and_replay",
         "test_fixed_multi_event_departure_uses_lki_and_apnap",
+        "test_fixed_multi_event_source_triggers_share_events_and_replay",
+        "test_fixed_multi_event_trigger_contract_matrix",
+        "test_independent_children_preserve_standalone_source_global_and_departure_meaning",
+        "test_independent_damage_child_keeps_source_identity_in_event_and_predicate",
         "test_independent_dual_event_subscription_keeps_each_condition",
         "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
-        "test_qualified_zone_event_pair_preserves_each_occurrence_predicate",
+        "test_original_block_pair_cards_have_complete_normal_admission",
         "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller",
-        "test_independent_damage_child_keeps_source_identity_in_event_and_predicate",
-        "test_independent_children_preserve_standalone_source_global_and_departure_meaning"
+        "test_qualified_zone_event_pair_preserves_each_occurrence_predicate",
+        "test_real_multiplayer_blocks_bind_both_sources_once_and_resume_privately"
       ],
       "negative_tests": [
-        "test_fixed_multi_event_trigger_near_misses_remain_material",
-        "test_fixed_multi_event_subscription_model_rejects_malformed",
         "test_fixed_multi_event_dependency_and_parser_mutant_fail_closed",
+        "test_fixed_multi_event_subscription_model_rejects_malformed",
+        "test_fixed_multi_event_trigger_near_misses_remain_material",
+        "test_independent_damage_child_keeps_source_identity_in_event_and_predicate",
         "test_independent_dual_event_rejects_nested_or_unrepresented_prefixes_and_mutant",
+        "test_multi_event_and_source_result_dependencies_fail_closed",
         "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
+        "test_pair_binds_each_source_event_and_keeps_qualified_occurrences_residual",
         "test_qualified_event_pair_unknown_predicate_and_parser_omission_fail_closed",
-        "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller",
-        "test_independent_damage_child_keeps_source_identity_in_event_and_predicate"
+        "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller"
       ],
       "interaction_tests": [
-        "test_fixed_multi_event_source_triggers_share_events_and_replay",
+        "test_created_dual_source_trigger_survives_real_ability_removal_response_and_replays",
         "test_fixed_multi_event_departure_uses_lki_and_apnap",
+        "test_fixed_multi_event_source_triggers_share_events_and_replay",
+        "test_multiple_source_wound_observers_draw_once_each_after_actual_combat_in_apnap_order",
         "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
         "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller",
-        "test_trusted_dual_event_draws_only_for_each_actual_source_in_real_combat",
-        "test_multiple_source_wound_observers_draw_once_each_after_actual_combat_in_apnap_order",
-        "test_created_dual_source_trigger_survives_real_ability_removal_response_and_replays"
+        "test_real_multiplayer_blocks_bind_both_sources_once_and_resume_privately",
+        "test_trusted_dual_event_draws_only_for_each_actual_source_in_real_combat"
       ],
       "multiplayer_tests": [
         "test_fixed_multi_event_departure_uses_lki_and_apnap",
+        "test_multiple_source_wound_observers_draw_once_each_after_actual_combat_in_apnap_order",
         "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
         "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller",
-        "test_multiple_source_wound_observers_draw_once_each_after_actual_combat_in_apnap_order"
+        "test_real_multiplayer_blocks_bind_both_sources_once_and_resume_privately"
       ],
       "privacy_tests": [
         "test_fixed_multi_event_source_triggers_share_events_and_replay",
+        "test_multiple_source_wound_observers_draw_once_each_after_actual_combat_in_apnap_order",
         "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
-        "test_multiple_source_wound_observers_draw_once_each_after_actual_combat_in_apnap_order"
+        "test_real_multiplayer_blocks_bind_both_sources_once_and_resume_privately"
       ],
       "replay_tests": [
+        "test_created_dual_source_trigger_survives_real_ability_removal_response_and_replays",
         "test_fixed_multi_event_source_triggers_share_events_and_replay",
         "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
         "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller",
-        "test_trusted_dual_event_draws_only_for_each_actual_source_in_real_combat",
-        "test_created_dual_source_trigger_survives_real_ability_removal_response_and_replays"
+        "test_real_multiplayer_blocks_bind_both_sources_once_and_resume_privately",
+        "test_trusted_dual_event_draws_only_for_each_actual_source_in_real_combat"
       ],
       "required_evidence": [
         "positive",
@@ -17644,7 +17659,7 @@
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "The subscription descriptor only selects among already committed normalized events; each consuming program separately declares its event-producer, placement, current-ability, target, and effect dependencies.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Focused compiler tests remove the shared multi-event parser and block the subscription capability, while runtime witnesses require both distinct events to reach the same typed body.",
+      "implementation_mutation_rationale": "Focused compiler tests remove the shared multi-event parser and block the subscription capability, while runtime witnesses require both distinct events to reach the same typed body. Replacing only the becomes-blocked subscription with a valid attack subscription is killed by actual multiblocker combat consequences, while preserving closed two-event model validation.",
       "blockers": [],
       "status": "trusted"
     },

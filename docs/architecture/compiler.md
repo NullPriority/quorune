@@ -2801,6 +2801,10 @@ damage, monstrous, block, and sacrifice pairs plus the exact current enchanted
 creature attack/block relation. Cross-zone Cycling/death pairs, commander and
 Room subjects, linked Haunt, chosen or another-object predicates, unavailable
 event producers, and more than two events remain residual.
+The unqualified source "blocks or becomes blocked" pair preserves independent
+source conditions on both subscriptions. Its fixed signed P/T body uses the
+existing source-incarnation and until-end-of-turn effect owner. The pair does
+not infer a per-blocker "by a creature" occurrence or a qualified combat subject.
 `card_programs/reviewed_overlay.py` owns the single precedence query shared by
 CardProgram compilation and live generated-program registration. It removes a
 reviewed split only when every subscription has one trusted, body-identical

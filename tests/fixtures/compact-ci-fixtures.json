@@ -202,6 +202,7 @@
     "tests/fixtures/scryfall-exact-lists.json",
     "tests/fixtures/self-public-zone-cards.json",
     "tests/fixtures/shared-characteristic-query-cards.json",
+    "tests/fixtures/source-block-pair-cards.json",
     "tests/fixtures/source-counter-amounts.json",
     "tests/fixtures/source-counter-anthem-cards.json",
     "tests/fixtures/source-damage-death-cards.json",

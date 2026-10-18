@@ -200,6 +200,7 @@ MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "source_enters_or_attacks",
         "source_enters_or_dies",
         "source_attacks_or_blocks",
+        "source_blocks_or_becomes_blocked",
         "source_enters_or_leaves_the_battlefield",
         "source_enters_or_is_put_into_a_graveyard_from_the_battlefield",
         "source_enters_or_is_turned_face_up",

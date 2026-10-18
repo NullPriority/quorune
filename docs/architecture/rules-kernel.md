@@ -734,6 +734,11 @@ the existing dispatcher selects the matching normalized event and condition
 while CardProgram projection exposes both trigger entries. Every supported
 subscription shares one battlefield active zone, current-ability
 applicability, APNAP placement, projection, and replay boundary.
+An unqualified source blocks/becomes-blocked pair consumes the canonical
+declaration events: multiple blockers do not multiply its becomes-blocked
+trigger. All defenders finish declaring before APNAP placement. The event pair
+does not substitute the distinct per-blocker occurrence, and one source's block
+cannot satisfy another source's subscription.
 
 `turn_history.py` retains current-turn events plus one bounded per-player
 spell-count summary for the immediately previous turn. `day_night.py` consumes
