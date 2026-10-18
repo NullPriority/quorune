@@ -16395,6 +16395,96 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Forge retains its ordinary paid cast and entry trigger, counting the earlier opening token and itself at resolution to create two further haste tokens, with native replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_actual_stalwart_reveal_and_mana_prices_use_one_native_cast_and_replay",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_alternative",
+        "capability.casting.additional_cost.fixed_reveal"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_alternative",
+        "casting.additional_cost.fixed_reveal"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Stalwart offers its generic-mana or other-Kithkin reveal price, pays exactly the chosen total, preserves the revealed hand object through its saved stack lifetime and enters through ordinary native casting and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_changeling_is_an_eligible_current_hand_card_and_direct_stack_departure_ends_reveal",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_reveal",
+        "capability.continuous.characteristics.changeling"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_reveal",
+        "continuous.characteristics.changeling"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual hand Changeling supplies the current Kithkin subtype for the native reveal price. Canonical direct spell departure ends the disclosure and preserves its earlier owner visibility."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_original_creatures_keep_their_bodies_and_actual_silvergill_entry_draw",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_reveal",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_reveal",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Silvergill Adept pays its revealed Merfolk price, enters as its original body and draws once through its native entry trigger; exact command replay agrees for all selected original creature bodies."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_reveal",
+        "capability.stack.counter.effect"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_reveal",
+        "stack.counter.effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "A revealed Kithkin remains publicly disclosed through saved Stalwart stack state. An actual opposing Counterspell sends the original spell to graveyard; disclosure ends while learned identity and paid mana remain, with full native replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_reveal_and_total_cost_branches_keep_reductions_and_free_base_costs_distinct",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_reveal",
+        "capability.casting.cost.modifier.fixed_query"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_reveal",
+        "casting.cost.modifier.fixed_query"
+      ],
+      "interaction_order": 2,
+      "assertion": "The mana alternative is added before the native static cost reduction. Separately forcing a free base cost leaves the additional mana or reveal price in the authoritative cost options."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_reveal",
+        "capability.library.search.fixed_to_battlefield"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_reveal",
+        "library.search.fixed_to_battlefield"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Thunderherd Migration reveals a Dinosaur as its casting price, privately chooses a basic land, enters it tapped, shuffles once and ends the reveal on spell departure; pending load and full native replay agree."
     }
   ]
 }

@@ -506,6 +506,17 @@ the cast event. Historical unversioned discard and sacrifice schemas remain in
 an isolated compatibility query outside `CommanderEngine`. Unsupported cost
 grammar residualizes the entire spell rather than exposing a cost-free result.
 
+A fixed reveal leaf shares the existing alternative additional-cost algebra.
+Its hand query excludes the casting spell and pins one other qualifying owned
+incarnation. Choosing the fixed mana branch adds that payment before ordinary
+total-cost reductions; a free base mana cost still requires the additional
+price. Offer, proposal and commit recheck the same current subtype predicate.
+The hand-visibility owner discloses only the chosen card without moving it.
+That card remains revealed until its spell leaves the stack, including through
+resolution, countering or another canonical departure. Overlapping spells
+retain their independent reveal durations. Ordinary prior disclosure and
+learned identity survive the final duration ending.
+
 Ordinary printed Convoke is a face-pinned typed cast-cost descriptor rather
 than live keyword interpretation. `convoke.py` owns the immutable candidate,
 contribution, whole-vector payment plan, and deterministic fingerprint;

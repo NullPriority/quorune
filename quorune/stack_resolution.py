@@ -16,6 +16,7 @@ from .rules.casting.face_queries import prospective_cast_record
 from .semantic_runtime.zone_replacements import PreparedZoneChange
 from .stack_counter import oracle_has_intrinsic_counter_prohibition
 from .combat_entry_activations import cleanup_ninjutsu_reveal
+from .effect_runtime.hand_inspection import cleanup_stack_cost_hand_reveals
 
 
 _COPY_TERM = "copy"
@@ -109,6 +110,7 @@ def complete_stack_resolution(
         mark_multikicker_paid(host.state.cards[item.card_object_id], item.context)
     host.state.stack.remove(item)
     cleanup_ninjutsu_reveal(host, item)
+    cleanup_stack_cost_hand_reveals(host,item)
     if item.context.get("copy_permanent_spell"):
         if not item.card_object_id:
             raise StateInvariantError(

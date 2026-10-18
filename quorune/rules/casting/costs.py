@@ -5,6 +5,8 @@ from collections.abc import Mapping, Sequence
 from typing import Any, Protocol
 
 from ...additional_cost_vocabulary import ZONE_CHANGE_COST_KIND
+from ..reveal_additional_cost import fixed_reveal_additional_cost
+from .reveal_costs import reveal_cost_selection
 from ...casting_payment_keywords import (
     AffinitySpec,
     CastingPaymentKeywordError,
@@ -1220,6 +1222,15 @@ def _apply_additional_costs(
     for index, raw in enumerate(mandatory_costs):
         additional = dict(raw)
         kind = str(additional.get("kind") or "")
+        try:reveal_cost=fixed_reveal_additional_cost(additional)
+        except AdditionalCostError:return False
+        if reveal_cost is not None:
+            if len(mandatory_costs)!=1:return False
+            valid,selection=reveal_cost_selection(host,seat=seat,source=card,cost=reveal_cost,response=response,
+                hint=hint,choice_schema=choice_schema,cost_position=index)
+            if not valid:return False
+            if selection is not None:selected_nonmana.append(selection)
+            continue
         try:
             counter_cost = fixed_counter_additional_cost(additional)
         except AdditionalCostError:

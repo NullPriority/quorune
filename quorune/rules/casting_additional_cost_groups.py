@@ -17,6 +17,7 @@ from ..additional_cost_vocabulary import (
     RETURN_ONE_TO_OWNER_HAND_COST,
     SACRIFICE_ONE_COST,
 )
+from .reveal_additional_cost import FixedRevealAdditionalCost,REVEAL_ADDITIONAL_COST_CAPABILITY,fixed_reveal_additional_cost
 from .casting_additional_costs import (
     AdditionalCostError,
     FixedZoneChangeAdditionalCost,
@@ -150,6 +151,7 @@ FixedAdditionalCostLeaf: TypeAlias = (
     FixedZoneChangeAdditionalCost
     | FixedLifePaymentAdditionalCost
     | FixedManaPaymentAdditionalCost
+    | FixedRevealAdditionalCost
 )
 
 
@@ -158,6 +160,8 @@ def fixed_additional_cost_leaf(
 ) -> FixedAdditionalCostLeaf:
     """Parse one non-nested leaf from the closed alternative-cost algebra."""
 
+    reveal=fixed_reveal_additional_cost(value)
+    if reveal is not None:return reveal
     try:
         zone_change = fixed_zone_change_additional_cost(value)
         if zone_change is not None:
@@ -322,6 +326,8 @@ def fixed_alternative_additional_cost_node_capabilities(
             )
         elif isinstance(option, FixedLifePaymentAdditionalCost):
             capabilities.add("casting.additional_cost.fixed_life_payment")
+        elif isinstance(option,FixedRevealAdditionalCost):
+            capabilities.add(REVEAL_ADDITIONAL_COST_CAPABILITY)
         elif not isinstance(option, FixedManaPaymentAdditionalCost):
             return ()
     return tuple(sorted(capabilities))
@@ -332,6 +338,7 @@ def fixed_additional_cost_option_label(
 ) -> str:
     """Describe typed cost data for presentation without granting authority."""
 
+    if isinstance(cost,FixedRevealAdditionalCost):return f'Reveal one {cost.subtype} card from your hand'
     if isinstance(cost, FixedManaPaymentAdditionalCost):
         requirements = cost.requirements_dict
         symbols = (

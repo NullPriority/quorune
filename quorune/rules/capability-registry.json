@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 367,
+  "registry_version": 368,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -4588,24 +4588,106 @@
     },
     {
       "id": "casting.additional_cost.fixed_alternative",
-      "version": 1,
-      "official_rules": ["601.2f", "601.2g", "601.2h", "601.2i"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Choose exactly one of two source-spanned fixed additional-cost leaves, expose each currently payable branch as a distinct server-authored total-cost option, and commit only the selected typed leaf before stack placement.",
-        "inputs": ["one binary typed alternative-cost descriptor", "two distinct fixed ordinary-mana, fixed-life, or single-object zone-change leaves", "one selected server-authored cost-option identity", "current mana, life, and object-payment state"],
-        "outputs": ["one distinct payable cast option per currently affordable branch", "the selected branch folded into the spell's total cost", "one typed nonmana commit when selected", "transactional rollback, private replacement continuation, and exact replay"],
-        "exclusions": ["optional costs", "three or more alternatives", "variable, random, repeatable, linked-result, or composite leaves", "counter, reveal, tap, collect-evidence, forage, behold, blight, or waterbend leaves", "choices whose branch changes the spell result", "copied spells and alternate casting procedures outside the represented cast path"]
+        "summary": "Choose exactly one of two source-spanned fixed additional-cost leaves, expose each currently payable branch as a distinct server-authored total-cost option, and commit only the selected typed leaf before stack placement. A canonical subtype-qualified hand-reveal leaf shares the existing binary choice; its mana alternative is included before ordinary total-cost reductions.",
+        "inputs": [
+          "one binary typed alternative-cost descriptor",
+          "two distinct fixed ordinary-mana, fixed-life, or single-object zone-change leaves",
+          "one selected server-authored cost-option identity",
+          "current mana, life, and object-payment state"
+        ],
+        "outputs": [
+          "one distinct payable cast option per currently affordable branch",
+          "the selected branch folded into the spell's total cost",
+          "one typed nonmana commit when selected",
+          "transactional rollback, private replacement continuation, and exact replay"
+        ],
+        "exclusions": [
+          "optional costs",
+          "three or more alternatives",
+          "variable, random, repeatable, linked-result, or composite leaves",
+          "counter, reveal, tap, collect-evidence, forage, behold, blight, or waterbend leaves",
+          "choices whose branch changes the spell result",
+          "copied spells and alternate casting procedures outside the represented cast path"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.compiler.spell_additional_cost_templates.FixedAlternativeAdditionalCostTemplate", "quorune.compiler.spell_additional_cost_nodes.typed_additional_cost_spell_node", "quorune.rules.casting_additional_cost_groups.FixedAlternativeAdditionalCost", "quorune.rules.casting.costs._initial_options", "quorune.rules.casting.costs._apply_additional_costs", "quorune.rules.casting.commit._commit_additional_costs"],
-      "positive_tests": ["test_fixed_alternative_costs_compile_source_spanned_programs", "test_cost_options_require_explicit_branch_and_commit_selected_payment"],
-      "negative_tests": ["test_alternative_descriptor_and_unsupported_grammar_fail_closed", "test_stale_alternative_selection_rolls_back"],
-      "interaction_tests": ["test_zone_replacement_suspends_alternative_cost_before_mutation_and_replays", "test_fixed_life_and_mana_alternatives_share_total_cost_options"],
-      "multiplayer_tests": ["test_zone_replacement_suspends_alternative_cost_before_mutation_and_replays"],
-      "privacy_tests": ["test_private_alternative_discard_offer_is_seat_scoped"],
-      "replay_tests": ["test_zone_replacement_suspends_alternative_cost_before_mutation_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.compiler.spell_additional_cost_templates.FixedAlternativeAdditionalCostTemplate",
+        "quorune.compiler.spell_additional_cost_nodes.typed_additional_cost_spell_node",
+        "quorune.rules.casting_additional_cost_groups.FixedAlternativeAdditionalCost",
+        "quorune.rules.casting.costs._initial_options",
+        "quorune.rules.casting.costs._apply_additional_costs",
+        "quorune.rules.casting.commit._commit_additional_costs"
+      ],
+      "positive_tests": [
+        "test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+        "test_actual_stalwart_reveal_and_mana_prices_use_one_native_cast_and_replay",
+        "test_all_originals_have_complete_independent_bindings",
+        "test_cost_options_require_explicit_branch_and_commit_selected_payment",
+        "test_fixed_alternative_costs_compile_source_spanned_programs",
+        "test_generic_reveal_or_mana_price_is_source_pinned_and_closed",
+        "test_original_creatures_keep_their_bodies_and_actual_silvergill_entry_draw"
+      ],
+      "negative_tests": [
+        "test_alternative_descriptor_and_unsupported_grammar_fail_closed",
+        "test_compiler_runtime_and_disclosure_omission_mutants_are_killed",
+        "test_immutable_cast_plan_rejects_changed_reveal_incarnation_without_partial_payment",
+        "test_malformed_unknown_optional_and_linked_reveals_remain_closed",
+        "test_reveal_choices_reject_foreign_stale_wrong_subtype_and_duplicate_cards_before_mutation",
+        "test_stale_alternative_selection_rolls_back"
+      ],
+      "interaction_tests": [
+        "test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+        "test_changeling_is_an_eligible_current_hand_card_and_direct_stack_departure_ends_reveal",
+        "test_fixed_life_and_mana_alternatives_share_total_cost_options",
+        "test_original_creatures_keep_their_bodies_and_actual_silvergill_entry_draw",
+        "test_overlapping_native_spells_keep_the_same_hand_card_revealed_until_both_leave",
+        "test_reveal_and_total_cost_branches_keep_reductions_and_free_base_costs_distinct",
+        "test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration",
+        "test_zone_replacement_suspends_alternative_cost_before_mutation_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_actual_stalwart_reveal_and_mana_prices_use_one_native_cast_and_replay",
+        "test_reveal_choices_reject_foreign_stale_wrong_subtype_and_duplicate_cards_before_mutation",
+        "test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration",
+        "test_zone_replacement_suspends_alternative_cost_before_mutation_and_replays"
+      ],
+      "privacy_tests": [
+        "test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+        "test_private_alternative_discard_offer_is_seat_scoped",
+        "test_reveal_choices_reject_foreign_stale_wrong_subtype_and_duplicate_cards_before_mutation",
+        "test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration"
+      ],
+      "replay_tests": [
+        "test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+        "test_actual_stalwart_reveal_and_mana_prices_use_one_native_cast_and_replay",
+        "test_original_creatures_keep_their_bodies_and_actual_silvergill_entry_draw",
+        "test_overlapping_native_spells_keep_the_same_hand_card_revealed_until_both_leave",
+        "test_reveal_and_total_cost_branches_keep_reductions_and_free_base_costs_distinct",
+        "test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration",
+        "test_zone_replacement_suspends_alternative_cost_before_mutation_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "test_alternative_capability_closure_fails_closed blocks the binary grouping capability and each selected zone-change leaf dependency, proving that the complete source-spanned spell remains inexact.",
       "implementation_mutation_status": "killed",
@@ -29607,6 +29689,107 @@
       "dependency_fail_closed_rationale": "The opening action has no aggregate dependency; each validated result descriptor declares its own fixed-result capabilities and whole-card admission requires their trusted closure.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the actual permission lowerer removes the native opening action. Compiler permission omission and result-capability withdrawal fail exact admission; separate-copy and mixed-action witnesses protect once-only source and timing semantics.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.additional_cost.fixed_reveal",
+      "version": 1,
+      "official_rules": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One qualifying other hand-card reveal in a closed alternative additional casting price; ordinary mana alternative remains part of total cost.",
+        "inputs": [
+          "one canonical creature subtype",
+          "one current owned other hand incarnation",
+          "chosen existing fixed alternative cost branch"
+        ],
+        "outputs": [
+          "ordinary printed mana plus chosen fixed additional cost",
+          "public selected-card reveal through spell stack departure",
+          "retained private unselected cards and known revealed identity afterward"
+        ],
+        "exclusions": [
+          "optional linked cast-fact reveals",
+          "behold",
+          "multiple or arbitrary reveal predicates",
+          "runtime Oracle interpretation"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.rules.reveal_additional_cost.FixedRevealAdditionalCost",
+        "quorune.rules.casting.reveal_costs.reveal_cost_selection",
+        "quorune.rules.casting.reveal_costs.commit_reveal_additional_costs",
+        "quorune.effect_runtime.hand_inspection.begin_stack_cost_hand_reveal",
+        "quorune.effect_runtime.hand_inspection.cleanup_stack_cost_hand_reveals"
+      ],
+      "positive_tests": [
+        "test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+        "test_actual_stalwart_reveal_and_mana_prices_use_one_native_cast_and_replay",
+        "test_all_originals_have_complete_independent_bindings",
+        "test_generic_reveal_or_mana_price_is_source_pinned_and_closed",
+        "test_original_creatures_keep_their_bodies_and_actual_silvergill_entry_draw"
+      ],
+      "negative_tests": [
+        "test_compiler_runtime_and_disclosure_omission_mutants_are_killed",
+        "test_immutable_cast_plan_rejects_changed_reveal_incarnation_without_partial_payment",
+        "test_malformed_unknown_optional_and_linked_reveals_remain_closed",
+        "test_reveal_choices_reject_foreign_stale_wrong_subtype_and_duplicate_cards_before_mutation"
+      ],
+      "interaction_tests": [
+        "test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+        "test_changeling_is_an_eligible_current_hand_card_and_direct_stack_departure_ends_reveal",
+        "test_original_creatures_keep_their_bodies_and_actual_silvergill_entry_draw",
+        "test_overlapping_native_spells_keep_the_same_hand_card_revealed_until_both_leave",
+        "test_reveal_and_total_cost_branches_keep_reductions_and_free_base_costs_distinct",
+        "test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration"
+      ],
+      "multiplayer_tests": [
+        "test_actual_stalwart_reveal_and_mana_prices_use_one_native_cast_and_replay",
+        "test_reveal_choices_reject_foreign_stale_wrong_subtype_and_duplicate_cards_before_mutation",
+        "test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration"
+      ],
+      "privacy_tests": [
+        "test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+        "test_reveal_choices_reject_foreign_stale_wrong_subtype_and_duplicate_cards_before_mutation",
+        "test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration"
+      ],
+      "replay_tests": [
+        "test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+        "test_actual_stalwart_reveal_and_mana_prices_use_one_native_cast_and_replay",
+        "test_original_creatures_keep_their_bodies_and_actual_silvergill_entry_draw",
+        "test_overlapping_native_spells_keep_the_same_hand_card_revealed_until_both_leave",
+        "test_reveal_and_total_cost_branches_keep_reductions_and_free_base_costs_distinct",
+        "test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The reveal leaf has no aggregate dependencies; its enclosing alternative-price and whole-card result capabilities retain independent closure.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Compiler leaf omission and reveal capability withdrawal reject complete admission. Omitting the actual canonical cost-disclosure commitment fails the native four-player duration/privacy witness. Typed malformed descriptors and stale immutable selections fail before payment.",
       "blockers": [],
       "status": "trusted"
     }

@@ -532,6 +532,9 @@ class ZoneTransitionOwner:
             except LifeStateError as exc:
                 raise GameRuleError(str(exc)) from exc
         if departure.origin == "stack":
+            from .effect_runtime.hand_inspection import cleanup_stack_cost_hand_reveals
+            for item in tuple(self.state.stack):
+                if item.card_object_id==card.object_id:cleanup_stack_cost_hand_reveals(self.host,item)
             if not any(
                 item.card_object_id == card.object_id
                 and item.context.get("currently_resolving")

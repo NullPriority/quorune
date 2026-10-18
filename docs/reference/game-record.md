@@ -83,6 +83,14 @@ earlier disclosure. The final opening action ends that reveal duration before
 starting the first turn. Pending records retain already created delayed
 triggers; loading does not reveal again or recreate the scheduled result.
 
+A spell with a paid hand-reveal cost records a version-one
+`casting_hand_reveals` context containing selected physical/logical identities,
+its stack reference and earlier disclosure. Pending load retains the reveal
+until that original spell leaves the stack. Another spell revealing the same
+card keeps its own duration; copied stack contexts cannot extend or clear the
+original disclosure. Ordinary stack records omit this context and keep their
+existing bytes.
+
 Derived mana activations omit `tap_source` for the historical tap-cost form,
 which defaults to true. A nontapping self-sacrifice mode explicitly records
 `tap_source: false`; its compact mode similarly includes `tap: false`.

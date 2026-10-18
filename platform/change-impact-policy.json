@@ -5453,6 +5453,35 @@
         "test_trigger_batches",
         "test_scry_rules"
       ]
+    },
+    {
+      "id": "fixed-reveal-additional-cost-contract",
+      "patterns": [
+        "quorune/compiler/spell_additional_cost_templates.py",
+        "quorune/rules/reveal_additional_cost.py",
+        "quorune/rules/casting/reveal_costs.py",
+        "quorune/rules/casting_additional_cost_groups.py",
+        "quorune/rules/casting/costs.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/effect_runtime/hand_inspection.py",
+        "quorune/stack_resolution.py",
+        "quorune/stack_counter.py",
+        "quorune/zone_transitions.py",
+        "tests/test_fixed_reveal_additional_costs.py",
+        "tests/fixtures/fixed-reveal-additional-cost-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_reveal_additional_costs",
+        "test_fixed_alternative_additional_costs",
+        "test_fixed_zone_change_additional_costs",
+        "test_fixed_library_searches",
+        "test_nonmana_morph",
+        "test_fixed_combat_entry_keyword_lifecycles",
+        "test_card_program_trust",
+        "test_game_record_v3",
+        "test_opening_hand_reveal",
+        "test_opening_hand_battlefield"
+      ]
     }
   ],
   "symbol_rules": [

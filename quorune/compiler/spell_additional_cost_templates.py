@@ -24,6 +24,7 @@ from ..util import mana_cost_to_vector
 from .creature_subtypes import canonical_creature_subtype
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .counted_zone_costs import fixed_counted_zone_change_cost_clause
+from ..rules.reveal_additional_cost import FixedRevealAdditionalCost
 
 
 _COUNTER_NAME = (
@@ -349,10 +350,22 @@ class FixedManaPaymentAdditionalCostTemplate:
         }
 
 
+@dataclass(frozen=True,slots=True)
+class FixedRevealAdditionalCostTemplate:
+    subtype: str
+
+    @property
+    def template_id(self):return 'spell-additional-cost-fixed-reveal-hand-v1'
+
+    @property
+    def descriptor(self):return FixedRevealAdditionalCost(self.subtype).to_descriptor()
+
+
 FixedAlternativeLeafTemplate = (
     FixedZoneChangeAdditionalCostTemplate
     | FixedLifePaymentAdditionalCostTemplate
     | FixedManaPaymentAdditionalCostTemplate
+    | FixedRevealAdditionalCostTemplate
 )
 
 
@@ -723,6 +736,11 @@ def _fixed_zone_change_additional_cost_leaf_template(
 def _fixed_alternative_leaf_template(
     text: str,
 ) -> FixedAlternativeLeafTemplate | None:
+    reveal=re.fullmatch(r'reveal (?P<article>a|an) (?P<subtype>.+?) card from your hand',text.strip(),re.I)
+    if reveal is not None:
+        subtype=canonical_creature_subtype(reveal['subtype'])
+        if subtype is None or not _article_matches(reveal['article'],subtype):return None
+        return FixedRevealAdditionalCostTemplate(subtype)
     mana = _fixed_mana_additional_cost_leaf_template(text)
     if mana is not None:
         return mana

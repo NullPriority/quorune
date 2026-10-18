@@ -1,4 +1,7 @@
 from __future__ import annotations
+
+from ..reveal_additional_cost import REVEAL_ADDITIONAL_COST_KIND
+from .reveal_costs import commit_reveal_additional_costs
 from ...trigger_discovery import _ordered_event_sources
 
 import copy
@@ -682,6 +685,7 @@ def _commit_additional_costs(
     changes = []
     for selected in selections:
         kind = str(selected["kind"])
+        if kind==REVEAL_ADDITIONAL_COST_KIND:continue
         if kind == "counter_placement":
             result.paid_refs.append(
                 _commit_counter_placement_additional_cost(
@@ -1470,6 +1474,7 @@ def _commit_cast_costs_and_stack(
         costs,
     )
     item.x_value = response.get("x")
+    commit_reveal_additional_costs(host,proposal,card,item,selected_option)
     item.notes = str(response.get("note") or "")
     prior_spell_count = prior_storm_spell_count(host)
     prior_controller_spell_count = _prior_controller_spell_count(

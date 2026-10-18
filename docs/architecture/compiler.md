@@ -22,6 +22,13 @@ first-own-main timing. Result lowering happens at compilation through the
 existing fixed Scry, token, mana, actual-life-transfer and library-selection
 owners. Paid reveals, unknown results and unrepresented timing remain residual.
 
+The existing binary additional-cost production also accepts a canonical
+creature-subtype card revealed from the caster's hand. The reveal leaf uses
+the same typed alternative-price schema as the fixed mana branch, for both
+permanents and instant/sorcery results. Optional linked cast-fact reveals,
+Behold and unknown qualifiers remain residual. Complete result admission stays
+independent of recognizing the casting price.
+
 `compiler/conditional_flash_nodes.py` lowers complete conditional self-timing
 clauses against represented public-state predicates. An “as though” clause
 grants timing permission without granting the Flash keyword. An explicit

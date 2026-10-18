@@ -9993,6 +9993,108 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Suspend the selected discard branch for competing destination replacements before mana, discard, or stack mutation, then resume the same typed branch."
     },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_changeling_is_an_eligible_current_hand_card_and_direct_stack_departure_ends_reveal",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_original_creatures_keep_their_bodies_and_actual_silvergill_entry_draw",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_overlapping_native_spells_keep_the_same_hand_card_revealed_until_both_leave",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_reveal_and_total_cost_branches_keep_reductions_and_free_base_costs_distinct",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
     {"capability_id": "casting.additional_cost.fixed_alternative", "evidence_class": "interaction", "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_real_alternative_mana_or_sacrifice_price_is_paid_once_and_replays", "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Both publicly offered Bayou Groff sacrifice and extra-mana branches pay their independent exact prices once, preserve printed mana cost and resolve as a permanent with replay."},
     {
       "capability_id": "casting.additional_cost.fixed_alternative",
@@ -10004,11 +10106,79 @@
     },
     {
       "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_actual_stalwart_reveal_and_mana_prices_use_one_native_cast_and_replay",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_reveal_choices_reject_foreign_stale_wrong_subtype_and_duplicate_cards_before_mutation",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_alternative_additional_costs.FixedAlternativeAdditionalCostCompilerTests.test_alternative_compiler_mutant_is_killed",
       "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill removal of the closed binary grammar production rather than retaining a false exact spell promotion."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_compiler_runtime_and_disclosure_omission_mutants_are_killed",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
     },
     {
       "capability_id": "casting.additional_cost.fixed_alternative",
@@ -10025,6 +10195,74 @@
       "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject a selected branch whose object payment is no longer legal before mana or stack mutation."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostCompilerTests.test_malformed_unknown_optional_and_linked_reveals_remain_closed",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_compiler_runtime_and_disclosure_omission_mutants_are_killed",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_immutable_cast_plan_rejects_changed_reveal_incarnation_without_partial_payment",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_reveal_choices_reject_foreign_stale_wrong_subtype_and_duplicate_cards_before_mutation",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
     },
     {"capability_id": "casting.additional_cost.fixed_alternative", "evidence_class": "negative", "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostCompilerTests.test_price_capability_omission_keeps_whole_permanent_untrusted", "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Blocking the required fixed-price capability leaves the original permanent card inexact; no cast-price omission grants whole-card trust."},
     {
@@ -10045,11 +10283,198 @@
     },
     {
       "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostCompilerTests.test_generic_reveal_or_mana_price_is_source_pinned_and_closed",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_actual_stalwart_reveal_and_mana_prices_use_one_native_cast_and_replay",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_all_originals_have_complete_independent_bindings",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_original_creatures_keep_their_bodies_and_actual_silvergill_entry_draw",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_alternative_additional_costs.FixedAlternativeAdditionalCostRuntimeTests.test_private_alternative_discard_offer_is_seat_scoped",
       "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Project private discard candidates only to the caster and omit those hand references from opposing views."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_reveal_choices_reject_foreign_stale_wrong_subtype_and_duplicate_cards_before_mutation",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostCompilerTests.test_malformed_unknown_optional_and_linked_reveals_remain_closed",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_copied_stack_context_cannot_end_original_disclosure_and_malformed_frames_fail_closed",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_immutable_cast_plan_rejects_changed_reveal_incarnation_without_partial_payment",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
     },
     {
       "capability_id": "casting.additional_cost.fixed_alternative",
@@ -10059,6 +10484,108 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the selected branch, suspended destination-replacement decision, mana payment, and stack placement to the identical authoritative hash."
     },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_actual_stalwart_reveal_and_mana_prices_use_one_native_cast_and_replay",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_original_creatures_keep_their_bodies_and_actual_silvergill_entry_draw",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_overlapping_native_spells_keep_the_same_hand_card_revealed_until_both_leave",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_reveal_and_total_cost_branches_keep_reductions_and_free_base_costs_distinct",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
     {"capability_id": "casting.additional_cost.fixed_alternative", "evidence_class": "replay", "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_real_alternative_mana_or_sacrifice_price_is_paid_once_and_replays", "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Both publicly offered Bayou Groff sacrifice and extra-mana branches pay their independent exact prices once, preserve printed mana cost and resolve as a permanent with replay."},
     {
       "capability_id": "casting.additional_cost.fixed_alternative",
@@ -10067,6 +10594,40 @@
       "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Preserve the authoritative hash when a selected object-payment branch becomes stale."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_immutable_cast_plan_rejects_changed_reveal_incarnation_without_partial_payment",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_reveal_choices_reject_foreign_stale_wrong_subtype_and_duplicate_cards_before_mutation",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
     },
     {
       "capability_id": "casting.additional_cost.fixed_counter_placement",
@@ -10203,6 +10764,765 @@
       "official_rule_ids": ["119.4", "601.2f", "601.2g", "601.2h", "601.2i"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Roll back mana and stack mutations when a fixed life payment becomes stale before commit."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_changeling_is_an_eligible_current_hand_card_and_direct_stack_departure_ends_reveal",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_original_creatures_keep_their_bodies_and_actual_silvergill_entry_draw",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_overlapping_native_spells_keep_the_same_hand_card_revealed_until_both_leave",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_reveal_and_total_cost_branches_keep_reductions_and_free_base_costs_distinct",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_actual_stalwart_reveal_and_mana_prices_use_one_native_cast_and_replay",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_reveal_choices_reject_foreign_stale_wrong_subtype_and_duplicate_cards_before_mutation",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_compiler_runtime_and_disclosure_omission_mutants_are_killed",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostCompilerTests.test_malformed_unknown_optional_and_linked_reveals_remain_closed",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_compiler_runtime_and_disclosure_omission_mutants_are_killed",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_immutable_cast_plan_rejects_changed_reveal_incarnation_without_partial_payment",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_reveal_choices_reject_foreign_stale_wrong_subtype_and_duplicate_cards_before_mutation",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostCompilerTests.test_generic_reveal_or_mana_price_is_source_pinned_and_closed",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_actual_stalwart_reveal_and_mana_prices_use_one_native_cast_and_replay",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_all_originals_have_complete_independent_bindings",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_original_creatures_keep_their_bodies_and_actual_silvergill_entry_draw",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_reveal_choices_reject_foreign_stale_wrong_subtype_and_duplicate_cards_before_mutation",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostCompilerTests.test_malformed_unknown_optional_and_linked_reveals_remain_closed",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_copied_stack_context_cannot_end_original_disclosure_and_malformed_frames_fail_closed",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_immutable_cast_plan_rejects_changed_reveal_incarnation_without_partial_payment",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_actual_stalwart_reveal_and_mana_prices_use_one_native_cast_and_replay",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_original_creatures_keep_their_bodies_and_actual_silvergill_entry_draw",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_overlapping_native_spells_keep_the_same_hand_card_revealed_until_both_leave",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_reveal_and_total_cost_branches_keep_reductions_and_free_base_costs_distinct",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_immutable_cast_plan_rejects_changed_reveal_incarnation_without_partial_payment",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_reveal",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_reveal_choices_reject_foreign_stale_wrong_subtype_and_duplicate_cards_before_mutation",
+      "official_rule_ids": [
+        "118.8",
+        "118.8a",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.20a",
+        "701.20b",
+        "400.7",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "This witness asserts the typed reveal/mana branch, current other hand incarnation, total price, disclosure duration, original result, rejection or exact replay that its method exercises."
     },
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
