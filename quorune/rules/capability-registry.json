@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 379,
+  "registry_version": 380,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -5678,28 +5678,96 @@
     },
     {
       "id": "attachment.equip.fixed_mana",
-      "version": 1,
-      "official_rules": ["301.5", "602.1", "602.2", "608.2b", "608.2h", "701.3", "702.6a", "702.6b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "301.5",
+        "602.1",
+        "602.2",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "702.6a",
+        "702.6b",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Activate an Equipment's printed Equip ability with a fixed ordinary mana cost at sorcery speed, target a creature its controller controls, and attach the live Equipment on resolution.",
-        "inputs": ["phased-in battlefield Equipment", "fixed numeric and colored mana cost", "active-player sorcery timing", "one target creature controlled by the activator"],
-        "outputs": ["payable activated-ability offer", "public target contract", "stack object", "live reciprocal attachment relation", "new attachment timestamp when the relation changes"],
-        "exclusions": ["Equip costs containing X, hybrid, Phyrexian, snow, or nonmana costs", "Equip variants with different target restrictions", "instant-speed Equip permissions", "Equipment controlled by another player", "attachment legality beyond creature control and represented protection", "static characteristics granted by the Equipment"]
+        "summary": "Activate an Equipment's printed Equip ability with a fixed ordinary mana cost at sorcery speed, target a creature its controller controls, and attach the live Equipment on resolution. Decorative leading flavor labels preserve the original source span while the same complete fixed-mana Equip shape supplies both offers and commands.",
+        "inputs": [
+          "phased-in battlefield Equipment",
+          "fixed numeric and colored mana cost",
+          "active-player sorcery timing",
+          "one target creature controlled by the activator"
+        ],
+        "outputs": [
+          "payable activated-ability offer",
+          "public target contract",
+          "stack object",
+          "live reciprocal attachment relation",
+          "new attachment timestamp when the relation changes"
+        ],
+        "exclusions": [
+          "Equip costs containing X, hybrid, Phyrexian, snow, or nonmana costs",
+          "Equip variants with different target restrictions",
+          "instant-speed Equip permissions",
+          "Equipment controlled by another player",
+          "attachment legality beyond creature control and represented protection",
+          "static characteristics granted by the Equipment"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.abilities.parse_activated_abilities", "quorune.rules.activation.resolution.builtin_activation_resolution", "quorune.effect_runtime.zones_and_attachments._apply_attach", "quorune.attachments.attach_objects"],
-      "positive_tests": ["test_fixed_equip_parser_exposes_only_executable_target_contract", "test_generic_fixed_equip_activation_attaches_and_applies_characteristics"],
-      "negative_tests": ["test_fixed_equip_keyword_has_exact_bounded_capability", "test_equip_resolves_without_effect_after_equipment_leaves"],
-      "interaction_tests": ["test_live_generic_equipment_effect_moves_detaches_and_tracks_control", "test_generic_fixed_equip_activation_attaches_and_applies_characteristics", "test_aura_equipment_anthem_temporary_effect_and_draw_compose"],
-      "multiplayer_tests": ["test_multiple_sources_apply_independently_in_four_player_game"],
-      "privacy_tests": ["test_projection_hides_relation_identity_and_replay_is_exact"],
-      "replay_tests": ["test_projection_hides_relation_identity_and_replay_is_exact"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.abilities.parse_activated_abilities",
+        "quorune.attachments.attach_objects",
+        "quorune.effect_runtime.zones_and_attachments._apply_attach",
+        "quorune.rules.activation.resolution.builtin_activation_resolution",
+        "quorune.rules.attachment_actions.fixed_equip_ability_spec"
+      ],
+      "positive_tests": [
+        "test_fixed_equip_parser_exposes_only_executable_target_contract",
+        "test_generic_fixed_equip_activation_attaches_and_applies_characteristics",
+        "test_hero_profile_source_span_and_flavored_equip_keep_closed_values",
+        "test_native_hero_and_flavored_equip_actions_resume_with_private_rollback"
+      ],
+      "negative_tests": [
+        "test_equip_resolves_without_effect_after_equipment_leaves",
+        "test_fixed_equip_keyword_has_exact_bounded_capability",
+        "test_hero_profile_source_span_and_flavored_equip_keep_closed_values"
+      ],
+      "interaction_tests": [
+        "test_aura_equipment_anthem_temporary_effect_and_draw_compose",
+        "test_generic_fixed_equip_activation_attaches_and_applies_characteristics",
+        "test_live_generic_equipment_effect_moves_detaches_and_tracks_control",
+        "test_native_hero_and_flavored_equip_actions_resume_with_private_rollback"
+      ],
+      "multiplayer_tests": [
+        "test_multiple_sources_apply_independently_in_four_player_game",
+        "test_native_hero_and_flavored_equip_actions_resume_with_private_rollback"
+      ],
+      "privacy_tests": [
+        "test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
+        "test_projection_hides_relation_identity_and_replay_is_exact"
+      ],
+      "replay_tests": [
+        "test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
+        "test_projection_hides_relation_identity_and_replay_is_exact"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "This bounded intrinsic keyword ability owns its cost, timing, target, stack, and attachment commit without another optional capability.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_generic_equip_resolution_mutant_is_killed removes recognition of the typed built-in Equip resolution and the exact attach operation assertion rejects the survivor.",
+      "implementation_mutation_rationale": "test_generic_equip_resolution_mutant_is_killed removes recognition of the typed built-in Equip resolution and the exact attach operation assertion rejects the survivor. Flavored Equip remains covered by the actual principal-issued Paladin action, full four-mana payment, target change, foreign rollback and replay.",
       "blockers": [],
       "status": "trusted"
     },
@@ -7818,6 +7886,101 @@
       "dependency_fail_closed_rationale": "For Mirrodin! remains residual unless fixed token creation, normalized entry triggers, APNAP placement, and the canonical source-attachment action are all trusted.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "test_attachment_action_compiler_and_runtime_mutants_are_killed removes token-linked attachment dispatch and the fixed Rebel plus exact reciprocal relation assertions reject the survivor.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.keyword.job_select",
+      "version": 1,
+      "official_rules": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "701.3a",
+        "701.3b",
+        "702.182",
+        "702.182a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Compile ordinary Job select as the canonical Equipment entry trigger: create a fixed 1/1 colorless Hero under the trigger controller, then attach the exact source incarnation using the existing token/attachment owners.",
+        "inputs": [
+          "one complete ordinary Job select keyword",
+          "entering Equipment physical/logical identity",
+          "locked trigger controller",
+          "fixed 1/1 colorless Hero definition",
+          "applicable represented token replacements"
+        ],
+        "outputs": [
+          "one ordinary APNAP entry trigger",
+          "replacement-aware Hero creation",
+          "attachment to the original created Hero while independent additional replacement tokens remain unattached",
+          "ordinary token entry events",
+          "exact replay"
+        ],
+        "exclusions": [
+          "unknown keyword tails or modified Hero definitions",
+          "copied, granted, removed or text-changed Job select outside the represented current-ability boundary",
+          "replacement outcomes that multiply, replace or modify the original Hero",
+          "attachment to a departed or newer source incarnation",
+          "unsupported token replacement aftermath and unresolved whole-card siblings"
+        ]
+      },
+      "dependencies": [
+        "attachment.action.fixed_source",
+        "token.creation.fixed_definition",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.compiler.fixed_attachment_keyword_nodes.fixed_attachment_keyword_node",
+        "quorune.effect_runtime.zones_and_attachments._apply_create_attached_token",
+        "quorune.token_creation.create_tokens",
+        "quorune.effect_runtime.zones_and_attachments._apply_attach",
+        "quorune.attachments.attach_objects"
+      ],
+      "positive_tests": [
+        "test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
+        "test_original_card_admission_and_unsupported_siblings_remain_distinct",
+        "test_hero_profile_source_span_and_flavored_equip_keep_closed_values"
+      ],
+      "negative_tests": [
+        "test_departed_equipment_still_creates_unattached_one_one_hero",
+        "test_keyword_dependencies_and_unknown_keyword_tails_fail_closed",
+        "test_original_card_admission_and_unsupported_siblings_remain_distinct"
+      ],
+      "interaction_tests": [
+        "test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
+        "test_departed_equipment_still_creates_unattached_one_one_hero"
+      ],
+      "multiplayer_tests": [
+        "test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
+        "test_departed_equipment_still_creates_unattached_one_one_hero"
+      ],
+      "privacy_tests": [
+        "test_native_hero_and_flavored_equip_actions_resume_with_private_rollback"
+      ],
+      "replay_tests": [
+        "test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
+        "test_departed_equipment_still_creates_unattached_one_one_hero"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Omitting Job select, fixed source attachment or fixed token creation authority leaves the complete keyword residual under normal registration.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Native admitted Paladin Hero and flavored Equip consequences detect a valid wrong Rebel profile and a missing canonical attachment operation.",
       "blockers": [],
       "status": "trusted"
     },

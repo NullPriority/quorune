@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "ae18396f4ea9927111329a20c2ac4a63bd20c80f748daa69ecb2e35fa2dd7a7d",
-  "declaration_source_fingerprint": "d93574147c8a4a76faecebb87a43cc38a1c508d5d37000222c6c3c8c31d84129",
+  "registry_fingerprint": "6efbaac2aa19d8a6f30f2e788dbfb85f5a393777d12b92f692da3a6c1ab445b2",
+  "declaration_source_fingerprint": "15c4296b759f240dcb4545f72721bd4369a7e70cea4648798b92dbc479b6046f",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -9601,7 +9601,8 @@
         "608.2h",
         "701.3",
         "702.6a",
-        "702.6b"
+        "702.6b",
+        "207.2d"
       ],
       "supported_profiles": [
         "traditional",
@@ -9622,7 +9623,8 @@
         "608.2h",
         "701.3",
         "702.6a",
-        "702.6b"
+        "702.6b",
+        "207.2d"
       ],
       "supported_profiles": [
         "traditional",
@@ -9643,7 +9645,8 @@
         "608.2h",
         "701.3",
         "702.6a",
-        "702.6b"
+        "702.6b",
+        "207.2d"
       ],
       "supported_profiles": [
         "traditional",
@@ -9651,6 +9654,28 @@
         "commander_review"
       ],
       "applicability_note": "Move and detach Equipment while retaining one reciprocal authoritative relation."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_job_select.JobSelectRuntimeTests.test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
+      "official_rule_ids": [
+        "301.5",
+        "602.1",
+        "602.2",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "702.6a",
+        "702.6b",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Paladin/Monk Job select uses normal closure, actual casts, a 1/1 colorless Hero and canonical source attachment; decorated Equip preserves four-mana cost and target/timing authority. Pending load, four-seat privacy, foreign rollback, source-departure token creation, replay and real producer omissions are explicit. Unsupported sibling cards remain unadmitted."
     },
     {
       "capability_id": "attachment.equip.fixed_mana",
@@ -9664,7 +9689,8 @@
         "608.2h",
         "701.3",
         "702.6a",
-        "702.6b"
+        "702.6b",
+        "207.2d"
       ],
       "supported_profiles": [
         "traditional",
@@ -9672,6 +9698,28 @@
         "commander_review"
       ],
       "applicability_note": "Maintain independent attachment relations for Equipment controlled by different seats in a four-player state."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_job_select.JobSelectRuntimeTests.test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
+      "official_rule_ids": [
+        "301.5",
+        "602.1",
+        "602.2",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "702.6a",
+        "702.6b",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Paladin/Monk Job select uses normal closure, actual casts, a 1/1 colorless Hero and canonical source attachment; decorated Equip preserves four-mana cost and target/timing authority. Pending load, four-seat privacy, foreign rollback, source-departure token creation, replay and real producer omissions are explicit. Unsupported sibling cards remain unadmitted."
     },
     {
       "capability_id": "attachment.equip.fixed_mana",
@@ -9685,7 +9733,8 @@
         "608.2h",
         "701.3",
         "702.6a",
-        "702.6b"
+        "702.6b",
+        "207.2d"
       ],
       "supported_profiles": [
         "traditional",
@@ -9693,6 +9742,28 @@
         "commander_review"
       ],
       "applicability_note": "Kill removal of intrinsic Equip resolution lowering."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_job_select.JobSelectRuntimeTests.test_token_profile_and_attachment_omissions_fail_native_consequences",
+      "official_rule_ids": [
+        "301.5",
+        "602.1",
+        "602.2",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "702.6a",
+        "702.6b",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Paladin/Monk Job select uses normal closure, actual casts, a 1/1 colorless Hero and canonical source attachment; decorated Equip preserves four-mana cost and target/timing authority. Pending load, four-seat privacy, foreign rollback, source-departure token creation, replay and real producer omissions are explicit. Unsupported sibling cards remain unadmitted."
     },
     {
       "capability_id": "attachment.equip.fixed_mana",
@@ -9706,7 +9777,8 @@
         "608.2h",
         "701.3",
         "702.6a",
-        "702.6b"
+        "702.6b",
+        "207.2d"
       ],
       "supported_profiles": [
         "traditional",
@@ -9727,7 +9799,8 @@
         "608.2h",
         "701.3",
         "702.6a",
-        "702.6b"
+        "702.6b",
+        "207.2d"
       ],
       "supported_profiles": [
         "traditional",
@@ -9735,6 +9808,28 @@
         "commander_review"
       ],
       "applicability_note": "Do not attach anything when the Equipment source left before resolution."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_job_select.JobSelectModelTests.test_hero_profile_source_span_and_flavored_equip_keep_closed_values",
+      "official_rule_ids": [
+        "301.5",
+        "602.1",
+        "602.2",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "702.6a",
+        "702.6b",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Paladin/Monk Job select uses normal closure, actual casts, a 1/1 colorless Hero and canonical source attachment; decorated Equip preserves four-mana cost and target/timing authority. Pending load, four-seat privacy, foreign rollback, source-departure token creation, replay and real producer omissions are explicit. Unsupported sibling cards remain unadmitted."
     },
     {
       "capability_id": "attachment.equip.fixed_mana",
@@ -9748,7 +9843,8 @@
         "608.2h",
         "701.3",
         "702.6a",
-        "702.6b"
+        "702.6b",
+        "207.2d"
       ],
       "supported_profiles": [
         "traditional",
@@ -9769,7 +9865,8 @@
         "608.2h",
         "701.3",
         "702.6a",
-        "702.6b"
+        "702.6b",
+        "207.2d"
       ],
       "supported_profiles": [
         "traditional",
@@ -9777,6 +9874,28 @@
         "commander_review"
       ],
       "applicability_note": "Pay, target, resolve, attach, and expose the resulting live characteristics through the generic path."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_job_select.JobSelectRuntimeTests.test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
+      "official_rule_ids": [
+        "301.5",
+        "602.1",
+        "602.2",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "702.6a",
+        "702.6b",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Paladin/Monk Job select uses normal closure, actual casts, a 1/1 colorless Hero and canonical source attachment; decorated Equip preserves four-mana cost and target/timing authority. Pending load, four-seat privacy, foreign rollback, source-departure token creation, replay and real producer omissions are explicit. Unsupported sibling cards remain unadmitted."
     },
     {
       "capability_id": "attachment.equip.fixed_mana",
@@ -9790,7 +9909,8 @@
         "608.2h",
         "701.3",
         "702.6a",
-        "702.6b"
+        "702.6b",
+        "207.2d"
       ],
       "supported_profiles": [
         "traditional",
@@ -9798,6 +9918,28 @@
         "commander_review"
       ],
       "applicability_note": "Project the public attachment without exposing authoritative object-incarnation identities."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_job_select.JobSelectRuntimeTests.test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
+      "official_rule_ids": [
+        "301.5",
+        "602.1",
+        "602.2",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "702.6a",
+        "702.6b",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Paladin/Monk Job select uses normal closure, actual casts, a 1/1 colorless Hero and canonical source attachment; decorated Equip preserves four-mana cost and target/timing authority. Pending load, four-seat privacy, foreign rollback, source-departure token creation, replay and real producer omissions are explicit. Unsupported sibling cards remain unadmitted."
     },
     {
       "capability_id": "attachment.equip.fixed_mana",
@@ -9811,7 +9953,8 @@
         "608.2h",
         "701.3",
         "702.6a",
-        "702.6b"
+        "702.6b",
+        "207.2d"
       ],
       "supported_profiles": [
         "traditional",
@@ -9819,6 +9962,50 @@
         "commander_review"
       ],
       "applicability_note": "Replay the attachment command and verify the exact relation result."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_job_select.JobSelectRuntimeTests.test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
+      "official_rule_ids": [
+        "301.5",
+        "602.1",
+        "602.2",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "702.6a",
+        "702.6b",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Paladin/Monk Job select uses normal closure, actual casts, a 1/1 colorless Hero and canonical source attachment; decorated Equip preserves four-mana cost and target/timing authority. Pending load, four-seat privacy, foreign rollback, source-departure token creation, replay and real producer omissions are explicit. Unsupported sibling cards remain unadmitted."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_mana",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_job_select.JobSelectRuntimeTests.test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
+      "official_rule_ids": [
+        "301.5",
+        "602.1",
+        "602.2",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "702.6a",
+        "702.6b",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Paladin/Monk Job select uses normal closure, actual casts, a 1/1 colorless Hero and canonical source attachment; decorated Equip preserves four-mana cost and target/timing authority. Pending load, four-seat privacy, foreign rollback, source-departure token creation, replay and real producer omissions are explicit. Unsupported sibling cards remain unadmitted."
     },
     {
       "capability_id": "attachment.equip.fixed_restricted",
@@ -184568,6 +184755,174 @@
       "applicability_note": "Replay ingest triggers, choices, delayed work, and authoritative results exactly."
     },
     {
+      "capability_id": "trigger.keyword.job_select",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_job_select.JobSelectRuntimeTests.test_departed_equipment_still_creates_unattached_one_one_hero",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "701.3a",
+        "701.3b",
+        "702.182",
+        "702.182a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Paladin/Monk Job select uses normal closure, actual casts, a 1/1 colorless Hero and canonical source attachment; decorated Equip preserves four-mana cost and target/timing authority. Pending load, four-seat privacy, foreign rollback, source-departure token creation, replay and real producer omissions are explicit. Unsupported sibling cards remain unadmitted."
+    },
+    {
+      "capability_id": "trigger.keyword.job_select",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_job_select.JobSelectRuntimeTests.test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "701.3a",
+        "701.3b",
+        "702.182",
+        "702.182a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Paladin/Monk Job select uses normal closure, actual casts, a 1/1 colorless Hero and canonical source attachment; decorated Equip preserves four-mana cost and target/timing authority. Pending load, four-seat privacy, foreign rollback, source-departure token creation, replay and real producer omissions are explicit. Unsupported sibling cards remain unadmitted."
+    },
+    {
+      "capability_id": "trigger.keyword.job_select",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_job_select.JobSelectRuntimeTests.test_token_profile_and_attachment_omissions_fail_native_consequences",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "701.3a",
+        "701.3b",
+        "702.182",
+        "702.182a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Paladin/Monk Job select uses normal closure, actual casts, a 1/1 colorless Hero and canonical source attachment; decorated Equip preserves four-mana cost and target/timing authority. Pending load, four-seat privacy, foreign rollback, source-departure token creation, replay and real producer omissions are explicit. Unsupported sibling cards remain unadmitted."
+    },
+    {
+      "capability_id": "trigger.keyword.job_select",
+      "evidence_class": "negative",
+      "test_id": "tests.test_job_select.JobSelectModelTests.test_keyword_dependencies_and_unknown_keyword_tails_fail_closed",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "701.3a",
+        "701.3b",
+        "702.182",
+        "702.182a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Paladin/Monk Job select uses normal closure, actual casts, a 1/1 colorless Hero and canonical source attachment; decorated Equip preserves four-mana cost and target/timing authority. Pending load, four-seat privacy, foreign rollback, source-departure token creation, replay and real producer omissions are explicit. Unsupported sibling cards remain unadmitted."
+    },
+    {
+      "capability_id": "trigger.keyword.job_select",
+      "evidence_class": "positive",
+      "test_id": "tests.test_job_select.JobSelectRuntimeTests.test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "701.3a",
+        "701.3b",
+        "702.182",
+        "702.182a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Paladin/Monk Job select uses normal closure, actual casts, a 1/1 colorless Hero and canonical source attachment; decorated Equip preserves four-mana cost and target/timing authority. Pending load, four-seat privacy, foreign rollback, source-departure token creation, replay and real producer omissions are explicit. Unsupported sibling cards remain unadmitted."
+    },
+    {
+      "capability_id": "trigger.keyword.job_select",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_job_select.JobSelectRuntimeTests.test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "701.3a",
+        "701.3b",
+        "702.182",
+        "702.182a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Paladin/Monk Job select uses normal closure, actual casts, a 1/1 colorless Hero and canonical source attachment; decorated Equip preserves four-mana cost and target/timing authority. Pending load, four-seat privacy, foreign rollback, source-departure token creation, replay and real producer omissions are explicit. Unsupported sibling cards remain unadmitted."
+    },
+    {
+      "capability_id": "trigger.keyword.job_select",
+      "evidence_class": "replay",
+      "test_id": "tests.test_job_select.JobSelectRuntimeTests.test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "701.3a",
+        "701.3b",
+        "702.182",
+        "702.182a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Paladin/Monk Job select uses normal closure, actual casts, a 1/1 colorless Hero and canonical source attachment; decorated Equip preserves four-mana cost and target/timing authority. Pending load, four-seat privacy, foreign rollback, source-departure token creation, replay and real producer omissions are explicit. Unsupported sibling cards remain unadmitted."
+    },
+    {
+      "capability_id": "trigger.keyword.job_select",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_job_select.JobSelectRuntimeTests.test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "701.3a",
+        "701.3b",
+        "702.182",
+        "702.182a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original Paladin/Monk Job select uses normal closure, actual casts, a 1/1 colorless Hero and canonical source attachment; decorated Equip preserves four-mana cost and target/timing authority. Pending load, four-seat privacy, foreign rollback, source-departure token creation, replay and real producer omissions are explicit. Unsupported sibling cards remain unadmitted."
+    },
+    {
       "capability_id": "trigger.keyword.living_weapon",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_token_replacement_attaches_exactly_one_created_token",
@@ -212036,5 +212391,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "97a67afda71a9c471f045b8f47333fdd6b79f056442558fcd727909f323d429d"
+  "fingerprint": "5177a43d093767949a27308db32aa14b3bbc29c5304e6f897a035cafabdde762"
 }

@@ -8,6 +8,7 @@ from .attachment_actions import (
     FIXED_SOURCE_ATTACHMENT_CAPABILITY,
     FOR_MIRRODIN_CAPABILITY,
     LIVING_WEAPON_CAPABILITY,
+    JOB_SELECT_CAPABILITY,
 )
 
 
@@ -28,6 +29,8 @@ def attachment_action_covered_mechanics(
         mechanics.append("living weapon")
     if FOR_MIRRODIN_CAPABILITY in capabilities:
         mechanics.append("for mirrodin!")
+    if JOB_SELECT_CAPABILITY in capabilities:
+        mechanics.append("job select")
     return tuple(mechanics)
 
 

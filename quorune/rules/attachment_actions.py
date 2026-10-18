@@ -13,6 +13,7 @@ FIXED_SOURCE_ATTACHMENT_CAPABILITY = "attachment.action.fixed_source"
 FIXED_RESTRICTED_EQUIP_CAPABILITY = "attachment.equip.fixed_restricted"
 LIVING_WEAPON_CAPABILITY = "trigger.keyword.living_weapon"
 FOR_MIRRODIN_CAPABILITY = "trigger.keyword.for_mirrodin"
+JOB_SELECT_CAPABILITY = "trigger.keyword.job_select"
 
 _FIXED_MANA = r"(?:\{(?:\d+|[WUBRGC])\})+"
 _EQUIP = re.compile(
@@ -41,7 +42,11 @@ class FixedEquipAbilitySpec:
 def fixed_equip_ability_spec(text: str) -> FixedEquipAbilitySpec | None:
     """Parse ordinary or one closed fixed-mana restricted Equip ability."""
 
-    match = _EQUIP.fullmatch(" ".join(text.strip().split()))
+    normalized = " ".join(text.strip().split())
+    flavor = re.fullmatch(r"[A-Za-z][A-Za-z0-9 '’!?-]+\s+[—-]\s+(Equip .+)", normalized)
+    if flavor is not None:
+        normalized = flavor.group(1)
+    match = _EQUIP.fullmatch(normalized)
     if match is None:
         return None
     restriction = match.group("restriction")
@@ -79,5 +84,6 @@ __all__ = [
     "FIXED_SOURCE_ATTACHMENT_CAPABILITY",
     "FixedEquipAbilitySpec",
     "LIVING_WEAPON_CAPABILITY",
+    "JOB_SELECT_CAPABILITY",
     "fixed_equip_ability_spec",
 ]

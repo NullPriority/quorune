@@ -839,7 +839,7 @@ def _fixed_equip_keyword_ability(
 ) -> ActivatedAbility | None:
     if "equip" not in {str(value).casefold() for value in keywords}:
         return None
-    spec = fixed_equip_ability_spec(raw_line)
+    spec = fixed_equip_ability_spec(_strip_inline_reminder_and_granted_text(raw_line))
     if spec is None:
         return None
     cost = _parse_cost(spec.cost_text, card_name)

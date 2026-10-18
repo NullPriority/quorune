@@ -31,6 +31,7 @@
       "test_game_record_v3",
       "test_granted_skulk",
       "test_indestructible_rules",
+      "test_job_select",
       "test_loyalty_abilities",
       "test_multikicker_entry_counters",
       "test_nonmana_morph",

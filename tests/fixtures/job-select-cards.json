@@ -1,0 +1,1380 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Job select",
+        "Diana",
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Astrologian's Planisphere",
+      "oracle_id": "4dcd0583-cee0-46a6-ba43-93bca5eb0428",
+      "oracle_text": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature is a Wizard in addition to its other types and has \"Whenever you cast a noncreature spell and whenever you draw your third card each turn, put a +1/+1 counter on this creature.\"\nDiana — Equip {2}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Job select",
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Bard's Bow",
+      "oracle_id": "4aceb786-960d-4719-9de8-79dffd491a51",
+      "oracle_text": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature gets +2/+2, has reach, and is a Bard in addition to its other types.\nPerseus's Bow — Equip {6} ({6}: Attach to target creature you control. Equip only as a sorcery.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Job select",
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Black Mage's Rod",
+      "oracle_id": "909b3d90-5762-461b-b49a-004a9e72733d",
+      "oracle_text": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature gets +1/+0, has \"Whenever you cast a noncreature spell, this creature deals 1 damage to each opponent,\" and is a Wizard in addition to its other types.\nEquip {3}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Job select",
+        "Spirit of the Whalaqee",
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Blue Mage's Cane",
+      "oracle_id": "6290233b-b015-4909-8aba-bf8d65cc37b5",
+      "oracle_text": "Job select\nEquipped creature gets +0/+2, is a Wizard in addition to its other types, and has \"Whenever this creature attacks, exile up to one target instant or sorcery card from defending player's graveyard. If you do, copy it. You may cast the copy by paying {3} rather than paying its mana cost.\"\nSpirit of the Whalaqee — Equip {2}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Job select",
+        "Equip",
+        "Krishna"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}",
+      "name": "Dancer's Chakrams",
+      "oracle_id": "7465d02f-3eee-483c-8de3-404381aa21eb",
+      "oracle_text": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature gets +2/+2, has lifelink and \"Other commanders you control get +2/+2 and have lifelink,\" and is a Performer in addition to its other types.\nKrishna — Equip {3}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Chaosbringer",
+        "Job select",
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}",
+      "name": "Dark Knight's Greatsword",
+      "oracle_id": "eda09ed4-7509-4d1e-b169-2b7c1c87e936",
+      "oracle_text": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature gets +3/+0 and is a Knight in addition to its other types.\nChaosbringer — Equip—Pay 3 life. Activate only once each turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Gae Bolg",
+        "Job select",
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Dragoon's Lance",
+      "oracle_id": "a66c35fc-d5db-4cfd-9b85-d70b001d83d3",
+      "oracle_text": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature gets +1/+0 and is a Knight in addition to its other types.\nDuring your turn, equipped creature has flying.\nGae Bolg — Equip {4}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Machina",
+        "Job select",
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{W}",
+      "name": "Machinist's Arsenal",
+      "oracle_id": "e7fff34e-9b80-4a67-a917-fd9efddb5a1f",
+      "oracle_text": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature gets +2/+2 for each artifact you control and is an Artificer in addition to its other types.\nMachina — Equip {4} ({4}: Attach to target creature you control. Equip only as a sorcery.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Job select",
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Monk's Fist",
+      "oracle_id": "1b524149-340e-4f94-9520-6a5258fabb00",
+      "oracle_text": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature gets +1/+0 and is a Monk in addition to its other types.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Job select",
+        "Equip",
+        "Mutsunokami"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}",
+      "name": "Ninja's Blades",
+      "oracle_id": "cdaffb13-c2a4-4bc5-a9d6-c1a0d1686a81",
+      "oracle_text": "Job select\nEquipped creature gets +1/+1, is a Ninja in addition to its other types, and has \"Whenever this creature deals combat damage to a player, draw a card, then discard a card. That player loses life equal to the discarded card's mana value.\"\nMutsunokami — Equip {2}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Job select",
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Paladin's Arms",
+      "oracle_id": "22076484-e9d5-4f33-8cf3-b9b427436b05",
+      "oracle_text": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature gets +2/+1, has ward {1}, and is a Knight in addition to its other types.\nLightbringer and Hero's Shield — Equip {4} ({4}: Attach to target creature you control. Equip only as a sorcery.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Death Sickle",
+        "Job select",
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}",
+      "name": "Reaper's Scythe",
+      "oracle_id": "b0f7c2a9-914a-48c1-871c-6f72946d61d8",
+      "oracle_text": "Job select\nAt the beginning of your end step, put a soul counter on this Equipment for each player who lost life this turn.\nEquipped creature gets +1/+1 for each soul counter on this Equipment and is an Assassin in addition to its other types.\nDeath Sickle — Equip {2}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Job select",
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Red Mage's Rapier",
+      "oracle_id": "35ad9e15-3e00-4bd2-96cf-36a6ef49059f",
+      "oracle_text": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature has \"Whenever you cast a noncreature spell, this creature gets +2/+0 until end of turn\" and is a Wizard in addition to its other types.\nEquip {3}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Hagneia",
+        "Job select",
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Sage's Nouliths",
+      "oracle_id": "97248734-6e99-42a2-8f11-f3337b25f8ab",
+      "oracle_text": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature gets +1/+0, has \"Whenever this creature attacks, untap target attacking creature,\" and is a Cleric in addition to its other types.\nHagneia — Equip {3}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Murasame",
+        "Job select",
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Samurai's Katana",
+      "oracle_id": "9b8b5812-73bd-453e-bdff-aad1fafa9226",
+      "oracle_text": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature gets +2/+2, has trample and haste, and is a Samurai in addition to its other types.\nMurasame — Equip {5}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Job select",
+        "Equip",
+        "Abraxas"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{G}",
+      "name": "Summoner's Grimoire",
+      "oracle_id": "d4453b3e-733e-4038-81da-135a6a03079c",
+      "oracle_text": "Job select\nEquipped creature is a Shaman in addition to its other types and has \"Whenever this creature attacks, you may put a creature card from your hand onto the battlefield. If that card is an enchantment card, it enters tapped and attacking.\"\nAbraxas — Equip {3}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Artifact — Book Equipment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Job select",
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Thief's Knife",
+      "oracle_id": "4bf589ed-58f8-40ad-bcee-50cb99da02ca",
+      "oracle_text": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature gets +1/+1, has \"Whenever this creature deals combat damage to a player, draw a card,\" and is a Rogue in addition to its other types.\nEquip {4}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Job select",
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}",
+      "name": "Warrior's Sword",
+      "oracle_id": "a339961e-3555-467f-a4f8-c5eaac7e7ed1",
+      "oracle_text": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature gets +3/+2 and is a Warrior in addition to its other types.\nEquip {5} ({5}: Attach to target creature you control. Equip only as a sorcery.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Job select",
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "White Mage's Staff",
+      "oracle_id": "af1acf07-39e2-441e-a1e0-1db535535e2e",
+      "oracle_text": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature gets +1/+1, has \"Whenever this creature attacks, you gain 1 life,\" and is a Cleric in addition to its other types.\nEquip {3} ({3}: Attach to target creature you control. Equip only as a sorcery.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If the Hero token is destroyed, the Equipment stays on the battlefield.",
+      "oracle_id": "1b524149-340e-4f94-9520-6a5258fabb00",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the job select ability causes two Hero tokens to be created (due to an effect such as that of Doubling Season), the Equipment becomes attached to only one of them.",
+      "oracle_id": "1b524149-340e-4f94-9520-6a5258fabb00",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Hero token enters as a 1/1 creature, then the Equipment becomes attached to it. Abilities that trigger when a creature enters the battlefield see that a 1/1 creature entered the battlefield.",
+      "oracle_id": "1b524149-340e-4f94-9520-6a5258fabb00",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay the Equipment's equip cost as normal to move it from the Hero token to another creature you control.",
+      "oracle_id": "1b524149-340e-4f94-9520-6a5258fabb00",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the Hero token is destroyed, the Equipment stays on the battlefield.",
+      "oracle_id": "22076484-e9d5-4f33-8cf3-b9b427436b05",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the job select ability causes two Hero tokens to be created (due to an effect such as that of Doubling Season), the Equipment becomes attached to only one of them.",
+      "oracle_id": "22076484-e9d5-4f33-8cf3-b9b427436b05",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Hero token enters as a 1/1 creature, then the Equipment becomes attached to it. Abilities that trigger when a creature enters the battlefield see that a 1/1 creature entered the battlefield.",
+      "oracle_id": "22076484-e9d5-4f33-8cf3-b9b427436b05",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay the Equipment's equip cost as normal to move it from the Hero token to another creature you control.",
+      "oracle_id": "22076484-e9d5-4f33-8cf3-b9b427436b05",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the Hero token is destroyed, the Equipment stays on the battlefield.",
+      "oracle_id": "35ad9e15-3e00-4bd2-96cf-36a6ef49059f",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the job select ability causes two Hero tokens to be created (due to an effect such as that of Doubling Season), the Equipment becomes attached to only one of them.",
+      "oracle_id": "35ad9e15-3e00-4bd2-96cf-36a6ef49059f",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Hero token enters as a 1/1 creature, then the Equipment becomes attached to it. Abilities that trigger when a creature enters the battlefield see that a 1/1 creature entered the battlefield.",
+      "oracle_id": "35ad9e15-3e00-4bd2-96cf-36a6ef49059f",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability granted by Red Mage's Rapier resolves before the spell that caused it to trigger. It resolves even if that spell is countered or otherwise leaves the stack.",
+      "oracle_id": "35ad9e15-3e00-4bd2-96cf-36a6ef49059f",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay the Equipment's equip cost as normal to move it from the Hero token to another creature you control.",
+      "oracle_id": "35ad9e15-3e00-4bd2-96cf-36a6ef49059f",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the Hero token is destroyed, the Equipment stays on the battlefield.",
+      "oracle_id": "4aceb786-960d-4719-9de8-79dffd491a51",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the job select ability causes two Hero tokens to be created (due to an effect such as that of Doubling Season), the Equipment becomes attached to only one of them.",
+      "oracle_id": "4aceb786-960d-4719-9de8-79dffd491a51",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Hero token enters as a 1/1 creature, then the Equipment becomes attached to it. Abilities that trigger when a creature enters the battlefield see that a 1/1 creature entered the battlefield.",
+      "oracle_id": "4aceb786-960d-4719-9de8-79dffd491a51",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay the Equipment's equip cost as normal to move it from the Hero token to another creature you control.",
+      "oracle_id": "4aceb786-960d-4719-9de8-79dffd491a51",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the Hero token is destroyed, the Equipment stays on the battlefield.",
+      "oracle_id": "4bf589ed-58f8-40ad-bcee-50cb99da02ca",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the job select ability causes two Hero tokens to be created (due to an effect such as that of Doubling Season), the Equipment becomes attached to only one of them.",
+      "oracle_id": "4bf589ed-58f8-40ad-bcee-50cb99da02ca",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Hero token enters as a 1/1 creature, then the Equipment becomes attached to it. Abilities that trigger when a creature enters the battlefield see that a 1/1 creature entered the battlefield.",
+      "oracle_id": "4bf589ed-58f8-40ad-bcee-50cb99da02ca",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay the Equipment's equip cost as normal to move it from the Hero token to another creature you control.",
+      "oracle_id": "4bf589ed-58f8-40ad-bcee-50cb99da02ca",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "Astrologian's Planisphere doesn't need to have been attached to a creature you control when the first or second card is drawn for the granted ability to trigger. As long as a creature you control has the granted ability when you draw your third card in a turn, that ability will trigger.",
+      "oracle_id": "4dcd0583-cee0-46a6-ba43-93bca5eb0428",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the Hero token is destroyed, the Equipment stays on the battlefield.",
+      "oracle_id": "4dcd0583-cee0-46a6-ba43-93bca5eb0428",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the job select ability causes two Hero tokens to be created (due to an effect such as that of Doubling Season), the Equipment becomes attached to only one of them.",
+      "oracle_id": "4dcd0583-cee0-46a6-ba43-93bca5eb0428",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Hero token enters as a 1/1 creature, then the Equipment becomes attached to it. Abilities that trigger when a creature enters the battlefield see that a 1/1 creature entered the battlefield.",
+      "oracle_id": "4dcd0583-cee0-46a6-ba43-93bca5eb0428",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay the Equipment's equip cost as normal to move it from the Hero token to another creature you control.",
+      "oracle_id": "4dcd0583-cee0-46a6-ba43-93bca5eb0428",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the spell has {X} in its mana cost, you must choose 0 as the value of X when casting it by paying {3} rather than paying its mana cost.",
+      "oracle_id": "6290233b-b015-4909-8aba-bf8d65cc37b5",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell by paying {3} rather than paying its mana cost, you can't choose to cast it for any other alternative cost. You can, however, pay additional costs. If the spell has any mandatory additional costs, those must be paid to cast the card.",
+      "oracle_id": "6290233b-b015-4909-8aba-bf8d65cc37b5",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you don't want to cast the copy, you can choose not to; the copy ceases to exist the next time state-based actions are performed.",
+      "oracle_id": "6290233b-b015-4909-8aba-bf8d65cc37b5",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "You cast the copy while the ability is resolving and still on the stack. You can't wait to cast it later in the turn.",
+      "oracle_id": "6290233b-b015-4909-8aba-bf8d65cc37b5",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The last ability granted by Dancer's Chakrams to the equipped creature applies whether or not Dancer's Chakrams is attached to a commander.",
+      "oracle_id": "7465d02f-3eee-483c-8de3-404381aa21eb",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the Hero token is destroyed, the Equipment stays on the battlefield.",
+      "oracle_id": "909b3d90-5762-461b-b49a-004a9e72733d",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the job select ability causes two Hero tokens to be created (due to an effect such as that of Doubling Season), the Equipment becomes attached to only one of them.",
+      "oracle_id": "909b3d90-5762-461b-b49a-004a9e72733d",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Hero token enters as a 1/1 creature, then the Equipment becomes attached to it. Abilities that trigger when a creature enters the battlefield see that a 1/1 creature entered the battlefield.",
+      "oracle_id": "909b3d90-5762-461b-b49a-004a9e72733d",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The granted ability resolves before the spell that caused it to trigger. It resolves even if that spell is countered or otherwise leaves the stack.",
+      "oracle_id": "909b3d90-5762-461b-b49a-004a9e72733d",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay the Equipment's equip cost as normal to move it from the Hero token to another creature you control.",
+      "oracle_id": "909b3d90-5762-461b-b49a-004a9e72733d",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the Hero token is destroyed, the Equipment stays on the battlefield.",
+      "oracle_id": "97248734-6e99-42a2-8f11-f3337b25f8ab",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the job select ability causes two Hero tokens to be created (due to an effect such as that of Doubling Season), the Equipment becomes attached to only one of them.",
+      "oracle_id": "97248734-6e99-42a2-8f11-f3337b25f8ab",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Hero token enters as a 1/1 creature, then the Equipment becomes attached to it. Abilities that trigger when a creature enters the battlefield see that a 1/1 creature entered the battlefield.",
+      "oracle_id": "97248734-6e99-42a2-8f11-f3337b25f8ab",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay the Equipment's equip cost as normal to move it from the Hero token to another creature you control.",
+      "oracle_id": "97248734-6e99-42a2-8f11-f3337b25f8ab",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the Hero token is destroyed, the Equipment stays on the battlefield.",
+      "oracle_id": "9b8b5812-73bd-453e-bdff-aad1fafa9226",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the job select ability causes two Hero tokens to be created (due to an effect such as that of Doubling Season), the Equipment becomes attached to only one of them.",
+      "oracle_id": "9b8b5812-73bd-453e-bdff-aad1fafa9226",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Hero token enters as a 1/1 creature, then the Equipment becomes attached to it. Abilities that trigger when a creature enters the battlefield see that a 1/1 creature entered the battlefield.",
+      "oracle_id": "9b8b5812-73bd-453e-bdff-aad1fafa9226",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay the Equipment's equip cost as normal to move it from the Hero token to another creature you control.",
+      "oracle_id": "9b8b5812-73bd-453e-bdff-aad1fafa9226",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the Hero token is destroyed, the Equipment stays on the battlefield.",
+      "oracle_id": "a339961e-3555-467f-a4f8-c5eaac7e7ed1",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the job select ability causes two Hero tokens to be created (due to an effect such as that of Doubling Season), the Equipment becomes attached to only one of them.",
+      "oracle_id": "a339961e-3555-467f-a4f8-c5eaac7e7ed1",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Hero token enters as a 1/1 creature, then the Equipment becomes attached to it. Abilities that trigger when a creature enters the battlefield see that a 1/1 creature entered the battlefield.",
+      "oracle_id": "a339961e-3555-467f-a4f8-c5eaac7e7ed1",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay the Equipment's equip cost as normal to move it from the Hero token to another creature you control.",
+      "oracle_id": "a339961e-3555-467f-a4f8-c5eaac7e7ed1",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the Hero token is destroyed, the Equipment stays on the battlefield.",
+      "oracle_id": "a66c35fc-d5db-4cfd-9b85-d70b001d83d3",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the job select ability causes two Hero tokens to be created (due to an effect such as that of Doubling Season), the Equipment becomes attached to only one of them.",
+      "oracle_id": "a66c35fc-d5db-4cfd-9b85-d70b001d83d3",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Hero token enters as a 1/1 creature, then the Equipment becomes attached to it. Abilities that trigger when a creature enters the battlefield see that a 1/1 creature entered the battlefield.",
+      "oracle_id": "a66c35fc-d5db-4cfd-9b85-d70b001d83d3",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay the Equipment's equip cost as normal to move it from the Hero token to another creature you control.",
+      "oracle_id": "a66c35fc-d5db-4cfd-9b85-d70b001d83d3",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the Hero token is destroyed, the Equipment stays on the battlefield.",
+      "oracle_id": "cdaffb13-c2a4-4bc5-a9d6-c1a0d1686a81",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the discarded card has {X} in its mana cost, X is 0 for the purpose of determining its mana value.",
+      "oracle_id": "cdaffb13-c2a4-4bc5-a9d6-c1a0d1686a81",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the job select ability causes two Hero tokens to be created (due to an effect such as that of Doubling Season), the Equipment becomes attached to only one of them.",
+      "oracle_id": "cdaffb13-c2a4-4bc5-a9d6-c1a0d1686a81",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Hero token enters as a 1/1 creature, then the Equipment becomes attached to it. Abilities that trigger when a creature enters the battlefield see that a 1/1 creature entered the battlefield.",
+      "oracle_id": "cdaffb13-c2a4-4bc5-a9d6-c1a0d1686a81",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay the Equipment's equip cost as normal to move it from the Hero token to another creature you control.",
+      "oracle_id": "cdaffb13-c2a4-4bc5-a9d6-c1a0d1686a81",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the Hero token is destroyed, the Equipment stays on the battlefield.",
+      "oracle_id": "d4453b3e-733e-4038-81da-135a6a03079c",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the job select ability causes two Hero tokens to be created (due to an effect such as that of Doubling Season), the Equipment becomes attached to only one of them.",
+      "oracle_id": "d4453b3e-733e-4038-81da-135a6a03079c",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Hero token enters as a 1/1 creature, then the Equipment becomes attached to it. Abilities that trigger when a creature enters the battlefield see that a 1/1 creature entered the battlefield.",
+      "oracle_id": "d4453b3e-733e-4038-81da-135a6a03079c",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay the Equipment's equip cost as normal to move it from the Hero token to another creature you control.",
+      "oracle_id": "d4453b3e-733e-4038-81da-135a6a03079c",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the Hero token is destroyed, the Equipment stays on the battlefield.",
+      "oracle_id": "e7fff34e-9b80-4a67-a917-fd9efddb5a1f",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the job select ability causes two Hero tokens to be created (due to an effect such as that of Doubling Season), the Equipment becomes attached to only one of them.",
+      "oracle_id": "e7fff34e-9b80-4a67-a917-fd9efddb5a1f",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Hero token enters as a 1/1 creature, then the Equipment becomes attached to it. Abilities that trigger when a creature enters the battlefield see that a 1/1 creature entered the battlefield.",
+      "oracle_id": "e7fff34e-9b80-4a67-a917-fd9efddb5a1f",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay the Equipment's equip cost as normal to move it from the Hero token to another creature you control.",
+      "oracle_id": "e7fff34e-9b80-4a67-a917-fd9efddb5a1f",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the Hero token is destroyed, the Equipment stays on the battlefield.",
+      "oracle_id": "eda09ed4-7509-4d1e-b169-2b7c1c87e936",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the job select ability causes two Hero tokens to be created (due to an effect such as that of Doubling Season), the Equipment becomes attached to only one of them.",
+      "oracle_id": "eda09ed4-7509-4d1e-b169-2b7c1c87e936",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Hero token enters as a 1/1 creature, then the Equipment becomes attached to it. Abilities that trigger when a creature enters the battlefield see that a 1/1 creature entered the battlefield.",
+      "oracle_id": "eda09ed4-7509-4d1e-b169-2b7c1c87e936",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay the Equipment's equip cost as normal to move it from the Hero token to another creature you control.",
+      "oracle_id": "eda09ed4-7509-4d1e-b169-2b7c1c87e936",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

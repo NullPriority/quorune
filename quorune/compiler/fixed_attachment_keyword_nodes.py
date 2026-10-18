@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-"""Closed Living Weapon and For Mirrodin! source-entry triggers."""
+"""Closed fixed-token Equipment attachment keyword triggers."""
 
 from typing import Mapping
 
 from ..rules.attachment_actions import (
     FOR_MIRRODIN_CAPABILITY,
     LIVING_WEAPON_CAPABILITY,
+    JOB_SELECT_CAPABILITY,
 )
 from .dependency_gate import explicit_capability_gate
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
@@ -22,6 +23,10 @@ _SPECS = {
     "for mirrodin!": (
         FOR_MIRRODIN_CAPABILITY,
         "Create a 2/2 red Rebel creature token.",
+    ),
+    "job select": (
+        JOB_SELECT_CAPABILITY,
+        "Create a 1/1 colorless Hero creature token.",
     ),
 }
 

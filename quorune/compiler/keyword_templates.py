@@ -5,6 +5,7 @@ from typing import Sequence
 
 from ..commander_pairing import partner_with_spec_for_material_line
 from ..landwalk import QUALIFIED_LANDWALK_KEYWORDS
+from ..rules.attachment_actions import fixed_equip_ability_spec
 
 
 _BLOODTHIRST_MECHANIC = "bloodthirst"
@@ -38,6 +39,8 @@ def keyword_mechanics(
 
     known = {keyword.casefold() for keyword in card_keywords}
     material = text.rstrip(".").strip()
+    if "equip" in known and fixed_equip_ability_spec(material) is not None:
+        return ("equip",)
     if 'morph' in known and re.match(r'Morph[—-]', material, re.I):
         return ('morph',)
     if "typecycling" in known and _TYPECYCLING.fullmatch(material):

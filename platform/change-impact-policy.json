@@ -5745,6 +5745,24 @@
         "test_block_keyword_triggers",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "job-select-and-flavored-equip-contract",
+      "patterns": [
+        "quorune/rules/attachment_actions.py",
+        "quorune/rules/attachment_action_capability_shapes.py",
+        "quorune/compiler/fixed_attachment_keyword_nodes.py",
+        "quorune/compiler/keyword_templates.py",
+        "quorune/abilities.py",
+        "tests/fixtures/job-select-cards.json"
+      ],
+      "test_modules": [
+        "test_job_select",
+        "test_fixed_attachment_actions",
+        "test_card_program_trust",
+        "test_token_entry_boundaries",
+        "test_typed_activated_ability_catalog"
+      ]
     }
   ],
   "symbol_rules": [

@@ -1796,14 +1796,19 @@ only the public seat.
 action family. It lowers one source Equipment entry attachment, one source Aura
 reattachment, fixed-mana Equip restricted to a creature token, commander,
 legendary creature, or one creature subtype, and the ordinary Living Weapon and
-For Mirrodin! entry triggers. Resolution revalidates the source incarnation and
+For Mirrodin! and Job select entry triggers. Resolution revalidates the source incarnation and
 current target before delegating to the existing reciprocal attachment owner;
 the keyword triggers first use the replacement-aware token owner and attach the
-source only to the original Germ or Rebel. Additional replacement-created
+source only to the original Germ, Rebel or 1/1 colorless Hero. Additional replacement-created
 tokens remain unattached. Multiple targets, other attachment source kinds,
 broader Equip costs or restrictions, modified keyword token definitions, and
 replacements that multiply or alter the original token remain source-spanned
 residuals.
+Decorative flavor labels on Equip preserve their original source spans. The
+complete fixed-mana Equip child is recognized by the shared typed grammar for
+compiler classification and activation catalogs; labels add no payment,
+targeting or timing permissions. Unsupported costs and restrictions retain
+their residuals.
 
 A syntactically complete but unsupported Enchant line produces one precise
 restriction residual instead of a second generic mechanic blocker. Numeric

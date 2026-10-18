@@ -130,6 +130,7 @@
     "tests/fixtures/history-entry-counters.json",
     "tests/fixtures/intrinsic-basic-land-mana-cards.json",
     "tests/fixtures/intrinsic-mana-ability-loss-cards.json",
+    "tests/fixtures/job-select-cards.json",
     "tests/fixtures/kicked-entry-triggers.json",
     "tests/fixtures/kicked-spell-conditions.json",
     "tests/fixtures/kindred-subtype-quantities.json",
