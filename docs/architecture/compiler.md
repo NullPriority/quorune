@@ -761,6 +761,15 @@ The attached grammar includes enchanted lands, and fixed live-query subjects
 include controlled tokens, Foods, Treasures, Clues, and basic lands. Both the
 query and attached forms emit a separately keyed inner CardProgram and
 a typed layer-6 fragment; the runtime never reparses the quote. The fragment
+uses the recipient as the granted ability's source and locks a triggered
+ability's controller when it triggers. Removing the attachment or grant later
+does not remove an ability already on the stack.
+An Oracle list comma immediately inside the closing quote can separate the
+quoted child from a following outer conjunction. The compiler preserves the
+original source span and validates both the complete outer attachment shell
+and independent inner body; inner punctuation and unsupported tails remain
+material. A supported ability grant can also compose with an additive type
+or subtype without requiring a P/T modifier. The fragment
 preserves only activation costs already committed by the canonical activation
 transaction, including fixed mana, tap or untap, source sacrifice, life
 payment, selected public objects, and the represented restricted-mana profile.

@@ -22,7 +22,9 @@ from scripts.build_test_database import build_fixture_database
 
 
 EXPECTED = {"Monk's Fist", "Paladin's Arms", "Bard's Bow", "Samurai's Katana",
-            "Warrior's Sword", "Dragoon's Lance", "Machinist's Arsenal"}
+            "Warrior's Sword", "Dragoon's Lance", "Machinist's Arsenal",
+            "Thief's Knife", "Black Mage's Rod", "Sage's Nouliths",
+            "White Mage's Staff", "Red Mage's Rapier"}
 
 
 class JobSelectModelTests(unittest.TestCase):

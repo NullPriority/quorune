@@ -5763,6 +5763,20 @@
         "test_token_entry_boundaries",
         "test_typed_activated_ability_catalog"
       ]
+    },
+    {
+      "id": "attached-quote-delimiter-and-independent-type-grant-contract",
+      "patterns": [
+        "quorune/compiler/continuous_templates.py",
+        "quorune/compiler/attached_granted_ability_nodes.py"
+      ],
+      "test_modules": [
+        "test_attached_quote_delimiters",
+        "test_attached_static_characteristics",
+        "test_fixed_query_quoted_ability_grants",
+        "test_job_select",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

@@ -47029,6 +47029,93 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
+      "test_id": "tests.test_attached_quote_delimiters.AttachedQuoteDelimiterRuntimeTests.test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete quoted attachment shells retain original source spans and inner punctuation while recognizing an outer list comma and independent ability/type components. Actual Equipment A / recipient B / damaged C combat draws for B after Equipment removal; noncreature spells by A do not fire B grants, B spells damage A/C/D and buff the recipient. Attack life gain, legal attacking untap targets, foreign rollback, pending load, private four-seat draw and pre-action replay are explicit. Partial children, open tails, unknown types and omitted grant production are rejected or detected."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_quote_delimiters.AttachedQuoteDelimiterRuntimeTests.test_attack_grants_gain_life_and_offer_only_attacking_untap_targets",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete quoted attachment shells retain original source spans and inner punctuation while recognizing an outer list comma and independent ability/type components. Actual Equipment A / recipient B / damaged C combat draws for B after Equipment removal; noncreature spells by A do not fire B grants, B spells damage A/C/D and buff the recipient. Attack life gain, legal attacking untap targets, foreign rollback, pending load, private four-seat draw and pre-action replay are explicit. Partial children, open tails, unknown types and omitted grant production are rejected or detected."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_quote_delimiters.AttachedQuoteDelimiterRuntimeTests.test_spell_cast_grants_use_recipient_controller_and_own_source",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete quoted attachment shells retain original source spans and inner punctuation while recognizing an outer list comma and independent ability/type components. Actual Equipment A / recipient B / damaged C combat draws for B after Equipment removal; noncreature spells by A do not fire B grants, B spells damage A/C/D and buff the recipient. Attack life gain, legal attacking untap targets, foreign rollback, pending load, private four-seat draw and pre-action replay are explicit. Partial children, open tails, unknown types and omitted grant production are rejected or detected."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
       "test_id": "tests.test_attached_static_characteristics.AttachedContinuousModelTests.test_attached_subject_type_is_rechecked_before_modifier_layers",
       "official_rule_ids": [
         "301.5",
@@ -47041,7 +47128,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47065,7 +47157,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47089,7 +47186,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47113,7 +47215,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47137,7 +47244,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47161,7 +47273,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47185,7 +47302,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47209,7 +47331,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47233,7 +47360,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47257,7 +47389,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47281,7 +47418,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47305,7 +47447,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47329,7 +47476,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47353,7 +47505,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47377,7 +47534,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47401,7 +47563,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47425,7 +47592,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47449,7 +47621,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47473,7 +47650,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47497,7 +47679,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47521,7 +47708,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -47545,7 +47737,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -47569,7 +47766,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47577,6 +47779,64 @@
         "commander_review"
       ],
       "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_quote_delimiters.AttachedQuoteDelimiterRuntimeTests.test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete quoted attachment shells retain original source spans and inner punctuation while recognizing an outer list comma and independent ability/type components. Actual Equipment A / recipient B / damaged C combat draws for B after Equipment removal; noncreature spells by A do not fire B grants, B spells damage A/C/D and buff the recipient. Attack life gain, legal attacking untap targets, foreign rollback, pending load, private four-seat draw and pre-action replay are explicit. Partial children, open tails, unknown types and omitted grant production are rejected or detected."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_quote_delimiters.AttachedQuoteDelimiterRuntimeTests.test_spell_cast_grants_use_recipient_controller_and_own_source",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete quoted attachment shells retain original source spans and inner punctuation while recognizing an outer list comma and independent ability/type components. Actual Equipment A / recipient B / damaged C combat draws for B after Equipment removal; noncreature spells by A do not fire B grants, B spells damage A/C/D and buff the recipient. Attack life gain, legal attacking untap targets, foreign rollback, pending load, private four-seat draw and pre-action replay are explicit. Partial children, open tails, unknown types and omitted grant production are rejected or detected."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -47593,7 +47853,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47617,7 +47882,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47641,7 +47911,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47665,7 +47940,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47689,7 +47969,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -47713,7 +47998,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -47737,7 +48027,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47745,6 +48040,35 @@
         "commander_review"
       ],
       "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_attached_quote_delimiters.AttachedQuoteDelimiterRuntimeTests.test_grant_fragment_omission_is_killed_by_native_recipient_consequences",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete quoted attachment shells retain original source spans and inner punctuation while recognizing an outer list comma and independent ability/type components. Actual Equipment A / recipient B / damaged C combat draws for B after Equipment removal; noncreature spells by A do not fire B grants, B spells damage A/C/D and buff the recipient. Attack life gain, legal attacking untap targets, foreign rollback, pending load, private four-seat draw and pre-action replay are explicit. Partial children, open tails, unknown types and omitted grant production are rejected or detected."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -47761,7 +48085,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47785,7 +48114,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47809,7 +48143,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47833,7 +48172,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47857,7 +48201,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47865,6 +48214,64 @@
         "commander_review"
       ],
       "applicability_note": "Ordinary-source quoted children reuse complete standalone trigger binding, preserve strict whole-program closure, reject partial children and missing dependencies, and kill omitted fallback; fixed source-permanent regeneration uses the existing incarnation-pinned shield."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_quote_delimiters.AttachedQuoteDelimiterModelTests.test_delimiter_keeps_inner_commas_complete_outer_shell_and_original_span",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete quoted attachment shells retain original source spans and inner punctuation while recognizing an outer list comma and independent ability/type components. Actual Equipment A / recipient B / damaged C combat draws for B after Equipment removal; noncreature spells by A do not fire B grants, B spells damage A/C/D and buff the recipient. Attack life gain, legal attacking untap targets, foreign rollback, pending load, private four-seat draw and pre-action replay are explicit. Partial children, open tails, unknown types and omitted grant production are rejected or detected."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_quote_delimiters.AttachedQuoteDelimiterModelTests.test_missing_outer_or_independent_child_authority_remains_residual",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete quoted attachment shells retain original source spans and inner punctuation while recognizing an outer list comma and independent ability/type components. Actual Equipment A / recipient B / damaged C combat draws for B after Equipment removal; noncreature spells by A do not fire B grants, B spells damage A/C/D and buff the recipient. Attack life gain, legal attacking untap targets, foreign rollback, pending load, private four-seat draw and pre-action replay are explicit. Partial children, open tails, unknown types and omitted grant production are rejected or detected."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -47881,7 +48288,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47905,7 +48317,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47929,7 +48346,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47953,7 +48375,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47977,7 +48404,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48001,7 +48433,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48025,7 +48462,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48049,7 +48491,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48073,7 +48520,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48097,7 +48549,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48121,7 +48578,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48145,7 +48607,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48169,7 +48636,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -48177,6 +48649,35 @@
         "traditional"
       ],
       "applicability_note": "Unknown siblings and withdrawn fine Skulk authority prevent exact admission; no partial recognition becomes complete support."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_quote_delimiters.AttachedQuoteDelimiterRuntimeTests.test_original_candidates_have_complete_normal_binding",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete quoted attachment shells retain original source spans and inner punctuation while recognizing an outer list comma and independent ability/type components. Actual Equipment A / recipient B / damaged C combat draws for B after Equipment removal; noncreature spells by A do not fire B grants, B spells damage A/C/D and buff the recipient. Attack life gain, legal attacking untap targets, foreign rollback, pending load, private four-seat draw and pre-action replay are explicit. Partial children, open tails, unknown types and omitted grant production are rejected or detected."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -48193,7 +48694,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48217,7 +48723,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48241,7 +48752,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48265,7 +48781,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48289,7 +48810,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48313,7 +48839,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48337,7 +48868,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48361,7 +48897,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48385,7 +48926,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48409,7 +48955,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48433,7 +48984,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48457,7 +49013,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48481,7 +49042,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48505,7 +49071,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48529,7 +49100,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48553,7 +49129,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48577,7 +49158,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -48601,7 +49187,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -48625,7 +49216,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -48649,7 +49245,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48657,6 +49258,35 @@
         "commander_review"
       ],
       "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_attached_quote_delimiters.AttachedQuoteDelimiterRuntimeTests.test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete quoted attachment shells retain original source spans and inner punctuation while recognizing an outer list comma and independent ability/type components. Actual Equipment A / recipient B / damaged C combat draws for B after Equipment removal; noncreature spells by A do not fire B grants, B spells damage A/C/D and buff the recipient. Attack life gain, legal attacking untap targets, foreign rollback, pending load, private four-seat draw and pre-action replay are explicit. Partial children, open tails, unknown types and omitted grant production are rejected or detected."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -48673,7 +49303,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48697,7 +49332,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48721,7 +49361,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48745,7 +49390,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48769,7 +49419,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -48793,7 +49448,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -48817,7 +49477,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48825,6 +49490,35 @@
         "commander_review"
       ],
       "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "property",
+      "test_id": "tests.test_attached_quote_delimiters.AttachedQuoteDelimiterModelTests.test_delimiter_keeps_inner_commas_complete_outer_shell_and_original_span",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete quoted attachment shells retain original source spans and inner punctuation while recognizing an outer list comma and independent ability/type components. Actual Equipment A / recipient B / damaged C combat draws for B after Equipment removal; noncreature spells by A do not fire B grants, B spells damage A/C/D and buff the recipient. Attack life gain, legal attacking untap targets, foreign rollback, pending load, private four-seat draw and pre-action replay are explicit. Partial children, open tails, unknown types and omitted grant production are rejected or detected."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -48841,7 +49535,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48849,6 +49548,93 @@
         "commander_review"
       ],
       "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_quote_delimiters.AttachedQuoteDelimiterRuntimeTests.test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete quoted attachment shells retain original source spans and inner punctuation while recognizing an outer list comma and independent ability/type components. Actual Equipment A / recipient B / damaged C combat draws for B after Equipment removal; noncreature spells by A do not fire B grants, B spells damage A/C/D and buff the recipient. Attack life gain, legal attacking untap targets, foreign rollback, pending load, private four-seat draw and pre-action replay are explicit. Partial children, open tails, unknown types and omitted grant production are rejected or detected."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_quote_delimiters.AttachedQuoteDelimiterRuntimeTests.test_attack_grants_gain_life_and_offer_only_attacking_untap_targets",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete quoted attachment shells retain original source spans and inner punctuation while recognizing an outer list comma and independent ability/type components. Actual Equipment A / recipient B / damaged C combat draws for B after Equipment removal; noncreature spells by A do not fire B grants, B spells damage A/C/D and buff the recipient. Attack life gain, legal attacking untap targets, foreign rollback, pending load, private four-seat draw and pre-action replay are explicit. Partial children, open tails, unknown types and omitted grant production are rejected or detected."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_quote_delimiters.AttachedQuoteDelimiterRuntimeTests.test_spell_cast_grants_use_recipient_controller_and_own_source",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete quoted attachment shells retain original source spans and inner punctuation while recognizing an outer list comma and independent ability/type components. Actual Equipment A / recipient B / damaged C combat draws for B after Equipment removal; noncreature spells by A do not fire B grants, B spells damage A/C/D and buff the recipient. Attack life gain, legal attacking untap targets, foreign rollback, pending load, private four-seat draw and pre-action replay are explicit. Partial children, open tails, unknown types and omitted grant production are rejected or detected."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -48865,7 +49651,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48889,7 +49680,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48913,7 +49709,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48937,7 +49738,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48961,7 +49767,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -48985,7 +49796,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -49009,7 +49825,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -49033,7 +49854,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -49057,7 +49883,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -49081,7 +49912,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -49105,7 +49941,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -49129,7 +49970,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -49153,7 +49999,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",
@@ -49161,6 +50012,35 @@
         "commander_review"
       ],
       "applicability_note": "Actual original Infernal Scarring is cast on an opponent creature; actual Murder departure draws for that recipient controller through LKI, preserving private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_attached_quote_delimiters.AttachedQuoteDelimiterRuntimeTests.test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete quoted attachment shells retain original source spans and inner punctuation while recognizing an outer list comma and independent ability/type components. Actual Equipment A / recipient B / damaged C combat draws for B after Equipment removal; noncreature spells by A do not fire B grants, B spells damage A/C/D and buff the recipient. Attack life gain, legal attacking untap targets, foreign rollback, pending load, private four-seat draw and pre-action replay are explicit. Partial children, open tails, unknown types and omitted grant production are rejected or detected."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -49177,7 +50057,12 @@
         "613.1g",
         "613.6",
         "701.3c",
-        "613.4c"
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
       ],
       "supported_profiles": [
         "traditional",

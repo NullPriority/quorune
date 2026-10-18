@@ -144,6 +144,7 @@
     "functional-04": [
       "test_activated_self_transform",
       "test_attached_counter_placement",
+      "test_attached_quote_delimiters",
       "test_attached_static_characteristics",
       "test_bestow_rules",
       "test_casting_spells_rules",
