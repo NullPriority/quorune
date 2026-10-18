@@ -5692,6 +5692,25 @@
         "test_record_lifecycle_v060",
         "test_history_entry_counters"
       ]
+    },
+    {
+      "id": "conditional-copiable-entry-origin-and-cda-contract",
+      "patterns": [
+        "quorune/conditional_copy_model.py",
+        "quorune/compiler/graveyard_copy_keyword_nodes.py",
+        "quorune/token_copy_runtime.py",
+        "quorune/entry_results.py",
+        "tests/fixtures/conditional-copy-value-cards.json"
+      ],
+      "test_modules": [
+        "test_conditional_copy_values",
+        "test_graveyard_copy_keywords",
+        "test_entry_copy_values",
+        "test_copy_objects",
+        "test_card_program_trust",
+        "test_token_entry_boundaries",
+        "test_preparation"
+      ]
     }
   ],
   "symbol_rules": [

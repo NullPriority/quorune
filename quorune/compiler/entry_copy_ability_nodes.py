@@ -19,7 +19,7 @@ def entry_copy_ability_nodes(*,record,face_id,node_id,line,material_line,span,
     keyword_match=None
     if match is None:
         keyword_match=re.fullmatch(r'(?P<shell>You may have .+? enter as a copy of .+?), except '
-            r'(?:(?P<exception>.+?)(?:, and|,| and) )?(?:it has|has) (?P<ability>haste and dethrone|myriad)\.?',material_line,re.I)
+            r'(?:(?P<exception>.+?)(?:, and|,| and) )?(?:it has|has) (?P<ability>haste and dethrone|myriad|changeling)\.?',material_line,re.I)
         match=keyword_match
     crew_shell=None
     if match is None:
@@ -34,7 +34,7 @@ def entry_copy_ability_nodes(*,record,face_id,node_id,line,material_line,span,
     residuals=[];child_id=node_id+':copy-ability';children=[];fragments=[];added_keywords=()
     if keyword_match or crew_shell:
         added_keywords=('Haste',) if quoted.casefold()=='haste and dethrone' else ()
-        keyword='Crew 3' if crew_shell else 'Dethrone' if added_keywords else 'Myriad'
+        keyword='Crew 3' if crew_shell else 'Dethrone' if added_keywords else 'Changeling' if quoted.casefold()=='changeling' else 'Myriad'
         compiled=keyword_node_compiler(record=record,face_id=face_id,node_id=child_id,line=keyword,
             material_line=keyword,card_name='Copied creature',effect_template=effect_template,span=span,
             keywords=('Crew',) if crew_shell else (keyword,),printed_card_types=('artifact',) if crew_shell else ('creature',),printed_subtypes=(),saga_chapters=(),printed_power='0',

@@ -37,6 +37,7 @@
     "tests/fixtures/composition-assurance-cards.json",
     "tests/fixtures/conditional-chosen-characteristic-cards.json",
     "tests/fixtures/conditional-color-grant-cards.json",
+    "tests/fixtures/conditional-copy-value-cards.json",
     "tests/fixtures/conditional-entry-library-targets.json",
     "tests/fixtures/conditional-exile-cards.json",
     "tests/fixtures/conditional-flash-cards.json",

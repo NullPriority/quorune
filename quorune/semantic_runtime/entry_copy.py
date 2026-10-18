@@ -13,6 +13,7 @@ from ..replacement_effects import ReplacementClass, ReplacementEffect, SetField
 from ..token_copy_recipes import apply_copy_exception
 from .component_registry import exact_fields
 from .context import SemanticNodeError
+from ..conditional_copy_model import CONDITIONAL_COPY_HANDLER,CONDITIONAL_COPY_CAPABILITY,EMBALMED_DESIGNATION
 from ..entry_copy_predicates import ENTRY_COPY_PREDICATE_HANDLER,ENTRY_COPY_PREDICATE_CAPABILITY,entry_copy_predicate_matches
 
 
@@ -27,7 +28,7 @@ class EntryCopyHandler:
 
     def validate(self, descriptor):
         exact_fields(descriptor, {'handler_id', 'schema_version', 'event', 'copy'}, field='intrinsic entry copy')
-        expected = {ENTRY_COPY_HANDLER: 1, ENTRY_COPY_QUERY_HANDLER: 2, ENTRY_COPY_VALUES_HANDLER:3, ENTRY_COPY_PREDICATE_HANDLER:4}.get(self.handler_id)
+        expected = {ENTRY_COPY_HANDLER: 1, ENTRY_COPY_QUERY_HANDLER: 2, ENTRY_COPY_VALUES_HANDLER:3, ENTRY_COPY_PREDICATE_HANDLER:4, CONDITIONAL_COPY_HANDLER:5}.get(self.handler_id)
         if (self.schema_version != expected or descriptor['handler_id'] != self.handler_id or type(descriptor['schema_version']) is not int
                 or descriptor['schema_version'] != self.schema_version or descriptor['event'] != self.event):
             raise SemanticNodeError('Intrinsic entry copy identity changed')
@@ -61,6 +62,7 @@ def entry_copy_handler(version):
             rule_references=(*EntryCopyHandler().rule_references, '115.10a', '201.5'))
     if version==3:return EntryCopyHandler(handler_id=ENTRY_COPY_VALUES_HANDLER,schema_version=3,capability_dependencies=(ENTRY_COPY_CAPABILITY,ENTRY_COPY_VALUES_CAPABILITY),rule_references=(*EntryCopyHandler().rule_references,'707.9c','707.9d','205.3d'))
     if version==4:return EntryCopyHandler(handler_id=ENTRY_COPY_PREDICATE_HANDLER,schema_version=4,capability_dependencies=(ENTRY_COPY_CAPABILITY,ENTRY_COPY_PREDICATE_CAPABILITY),rule_references=(*EntryCopyHandler().rule_references,'400.7d','601.2h'))
+    if version==5:return EntryCopyHandler(handler_id=CONDITIONAL_COPY_HANDLER,schema_version=5,capability_dependencies=(ENTRY_COPY_CAPABILITY,CONDITIONAL_COPY_CAPABILITY),rule_references=(*EntryCopyHandler().rule_references,'707.9f','702.128a'))
     raise SemanticNodeError('Copy selector version is unsupported')
 
 
@@ -77,6 +79,11 @@ def _copiable_values(host, target, spec, *, entering=None):
         identity = copiable_oracle_id(target)
         face = selected_face_id(record, target) if record is not None else 'front'
     exception=spec.exception
+    if spec.conditional_exception is not None:
+        if entering is None:raise SemanticNodeError('Conditional copy requires its entering source')
+        if entering.annotations.get(EMBALMED_DESIGNATION) is not True:
+            from ..token_copy_recipes import TokenCopyExceptionSpec
+            exception=TokenCopyExceptionSpec()
     if exception.retain_source_stats:
         if entering is None:raise SemanticNodeError('Retained copy stats require the entering source')
         # Printed/prototype spell values, before the copy and battlefield boosts.
@@ -123,7 +130,7 @@ def _copied_entry_effects(host, subject, source, target, values):
     registry = default_zone_change_replacement_registry()
     for program in programs:
         for index, descriptor in enumerate(program.handlers):
-            if descriptor.get('handler_id') in {ENTRY_COPY_HANDLER, ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_VALUES_HANDLER, ENTRY_COPY_PREDICATE_HANDLER}:
+            if descriptor.get('handler_id') in {ENTRY_COPY_HANDLER, ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_VALUES_HANDLER, ENTRY_COPY_PREDICATE_HANDLER, CONDITIONAL_COPY_HANDLER}:
                 raise SemanticNodeError('Repeated intrinsic copy-entry replacement is outside the represented composition')
             from ..entry_reveal import ENTRY_REVEAL_HANDLER
             from ..devour import DEVOUR_HANDLER
@@ -147,11 +154,11 @@ def _copied_entry_effects(host, subject, source, target, values):
         conditions={**dict(effect.conditions), 'entry_copy_source':{'eq':target.ref}}) for effect in effects)
 
 
-def entry_copy_replacement_effects(host, subject):
+def entry_copy_replacement_effects(host, subject, *, prospective_objects=None):
     """Capture each legal existing public choice as one immutable replacement."""
     if subject.destination != 'battlefield':
         return ()
-    source = host.state.cards.get(subject.object_id)
+    source = (prospective_objects or {}).get(subject.object_id) or host.state.cards.get(subject.object_id)
     if source is None:
         return ()
     record = host.card_record(source)
@@ -167,7 +174,7 @@ def entry_copy_replacement_effects(host, subject):
                 prospective_zone='battlefield', prospective_controller=subject.destination_controller):
             continue
         for index, descriptor in enumerate(program.handlers):
-            if descriptor.get('handler_id') not in {ENTRY_COPY_HANDLER, ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_VALUES_HANDLER, ENTRY_COPY_PREDICATE_HANDLER}:
+            if descriptor.get('handler_id') not in {ENTRY_COPY_HANDLER, ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_VALUES_HANDLER, ENTRY_COPY_PREDICATE_HANDLER, CONDITIONAL_COPY_HANDLER}:
                 continue
             handler = entry_copy_handler(descriptor.get('schema_version'))
             spec = handler.validate(descriptor)

@@ -113,10 +113,13 @@ class TokenCopyRecipeSpec:
     temporary_keywords: tuple[str, ...] = ()
     keyword_duration: str = "zone_object"
     schema_version: int = 1
+    creation_origin: str | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1,2}:
             raise TokenCopyRecipeError("Copy recipe version is unsupported")
+        if (self.creation_origin is not None and (self.schema_version!=2 or self.creation_origin!='embalm')
+                or self.schema_version==2 and self.creation_origin is None):raise TokenCopyRecipeError('Versioned copy creation origin is closed')
         if self.origin not in {"source", "target", "event_object"} or not isinstance(self.exception, TokenCopyExceptionSpec):
             raise TokenCopyRecipeError("Copy reference origin or exception is unsupported")
         if self.cleanup not in {"none", "sacrifice_next_end_step", "exile_next_end_step"}:
@@ -129,15 +132,15 @@ class TokenCopyRecipeSpec:
     def to_dict(self) -> dict[str, Any]:
         return {"schema_version": self.schema_version, "origin": self.origin,
                 "exception": self.exception.to_dict(), "cleanup": self.cleanup,
-                "temporary_keywords": list(self.temporary_keywords), "keyword_duration": self.keyword_duration}
+                "temporary_keywords": list(self.temporary_keywords), "keyword_duration": self.keyword_duration,**({"creation_origin":self.creation_origin} if self.schema_version==2 else {})}
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "TokenCopyRecipeSpec":
-        if not isinstance(value, Mapping) or set(value) != {"schema_version", "origin", "exception", "cleanup", "temporary_keywords", "keyword_duration"}:
+        if not isinstance(value, Mapping) or set(value) != ({"schema_version", "origin", "exception", "cleanup", "temporary_keywords", "keyword_duration","creation_origin"} if value.get("schema_version")==2 else {"schema_version", "origin", "exception", "cleanup", "temporary_keywords", "keyword_duration"}):
             raise TokenCopyRecipeError("Copy recipes have a closed complete schema")
         return cls(schema_version=value["schema_version"], origin=value["origin"],
                    exception=TokenCopyExceptionSpec.from_dict(value["exception"]), cleanup=value["cleanup"],
-                   temporary_keywords=value["temporary_keywords"], keyword_duration=value["keyword_duration"])
+                   temporary_keywords=value["temporary_keywords"], keyword_duration=value["keyword_duration"],creation_origin=value.get("creation_origin"))
 
 
 def apply_copy_exception(characteristics: Mapping[str, Any], exception: TokenCopyExceptionSpec) -> dict[str, Any]:

@@ -334,3 +334,11 @@ checkpoint by manifest state provenance. Older histories omit the mode and
 cannot synthesize positive arrival facts. Version-four copy selectors retain
 one closed `predicate` beside the existing selection and exception payloads;
 older selectors keep their original key sets.
+
+Version-two token-copy recipes add closed `creation_origin: "embalm"` when
+produced by that keyword owner. Created tokens retain the internal noncopiable
+`embalmed_creation_v1` designation through pending entry choices. Ordinary copy
+snapshots omit that designation while retaining resulting copiable values.
+Version-five entry-copy selectors add a closed `conditional_exception`; prior
+selector and recipe versions retain their original keys. Physical and token
+entry results share copied-value validation and commit before observers.

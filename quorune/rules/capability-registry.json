@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 376,
+  "registry_version": 377,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -30968,6 +30968,89 @@
       "dependency_fail_closed_rationale": "Actual compiler producer and intrinsic-copy/predicate capability withdrawal retain material residuals. Missing or malformed actual-cast payment and incompatible arrival histories cannot infer a positive.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "True always-allow/always-deny predicate substitutions fail actual Raid/no-attack and Sleeper/arrival witnesses, and pure omission fails exact current-incarnation/origin negatives. Native wrappers use fresh TestCase instances.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "zone.entry.conditional_copy_exception",
+      "version": 1,
+      "official_rules": [
+        "707.2",
+        "707.3",
+        "707.9a",
+        "707.9f",
+        "614.12",
+        "702.128a",
+        "702.73a",
+        "613.1d",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "An explicit noncopiable Embalm creation origin enables a closed conditional copied-entry exception; added Changeling uses its existing typed CDA owner.",
+        "inputs": [
+          "typed creation origin",
+          "compiled entry-copy exception",
+          "admitted CDA grant"
+        ],
+        "outputs": [
+          "correct resulting copiable values"
+        ],
+        "exclusions": [
+          "inference from token/name/color alone",
+          "arbitrary creation conditions",
+          "unadmitted child abilities"
+        ]
+      },
+      "dependencies": [
+        "zone.entry.fixed_copy"
+      ],
+      "implementation_components": [
+        "quorune.conditional_copy_model.ConditionalCopyException",
+        "quorune.semantic_runtime.entry_copy.entry_copy_replacement_effects"
+      ],
+      "positive_tests": [
+        "test_ordinary_vizier_copies_without_inventing_embalm_values",
+        "test_embalmed_vizier_conditional_values_survive_entry_and_are_copiable_without_status",
+        "test_both_originals_have_complete_children_and_native_origin_is_not_copied"
+      ],
+      "negative_tests": [
+        "test_conditional_exception_and_creation_origin_require_explicit_closed_versions",
+        "test_conditional_and_changeling_dependencies_and_producer_omissions_fail_closed",
+        "test_generic_token_status_alone_does_not_enable_conditional_exception"
+      ],
+      "interaction_tests": [
+        "test_added_changeling_is_copiable_and_layer_four_survives_humble",
+        "test_added_changeling_changes_subtype_layers_but_own_convoke_is_not_retained",
+        "test_generic_copy_recipe_cannot_acquire_embalm_origin_without_its_owner"
+      ],
+      "multiplayer_tests": [
+        "test_embalmed_vizier_conditional_values_survive_entry_and_are_copiable_without_status"
+      ],
+      "privacy_tests": [
+        "test_added_changeling_changes_subtype_layers_but_own_convoke_is_not_retained"
+      ],
+      "replay_tests": [
+        "test_ordinary_vizier_copies_without_inventing_embalm_values",
+        "test_embalmed_vizier_conditional_values_survive_entry_and_are_copiable_without_status",
+        "test_added_changeling_is_copiable_and_layer_four_survives_humble"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Conditional copy/CDA capability or compiler withdrawal retains residual; a recipe carrying Embalm origin requires the existing graveyard-copy owner. Generic token status does not enable the exception.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Actual native omission of conditional no-cost/color/subtype values or added CDA fails complete result witnesses. Model omission also fails; native wrappers use fresh TestCase instances.",
       "blockers": [],
       "status": "trusted"
     }

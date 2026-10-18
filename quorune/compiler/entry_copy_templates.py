@@ -12,6 +12,7 @@ from ..target_numeric import TargetNumericCharacteristicSpec, TargetNumericChara
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
 from .public_state_queries import fixed_characteristic_battlefield_query_subject
 from .token_copy_templates import _fixed_exception
+from ..conditional_copy_model import ConditionalCopyException,CONDITIONAL_COPY_HANDLER,CONDITIONAL_COPY_CAPABILITY
 from ..entry_copy_predicates import EntryCopyPredicate,ENTRY_COPY_PREDICATE_HANDLER,ENTRY_COPY_PREDICATE_CAPABILITY
 
 
@@ -87,10 +88,16 @@ def entry_copy_spec(text: str, *, source_name: str) -> EntryCopySpec | None:
         query = replace(query, controller='$controller')
     elif relation == 'opponents':
         query = replace(query, excluded_controllers=('$controller',))
-    exception = _entry_copy_value_exception(match['exception'] or '',source_name=source_name)
+    conditional=None
+    exception_text=match['exception'] or ''
+    if exception_text.casefold()=="if this creature was embalmed, the token has no mana cost, it's white, and it's a zombie in addition to its other types":
+        from ..token_copy_recipes import TokenCopyExceptionSpec
+        exception=TokenCopyExceptionSpec(schema_version=2,remove_mana_cost=True,colors=('W',),add_subtypes=('zombie',));conditional=ConditionalCopyException()
+    else:exception = _entry_copy_value_exception(exception_text,source_name=source_name)
     if exception is None:
         return None
     try:
+        if conditional is not None:return EntryCopySpec(query,exception,schema_version=5,conditional_exception=conditional)
         if predicate is not None:return EntryCopySpec(query,exception,schema_version=4,predicate=predicate)
         if exception.schema_version==3 or query.zones==('graveyard',):return EntryCopySpec(query,exception,schema_version=3)
         return EntryCopySpec(query, exception)
@@ -110,9 +117,9 @@ def entry_copy_node(*, node_id, line, material_line, span, source_name,
         return None
     return runtime_handler_node(node_id=node_id, line=line, span=span,
         compiled=(f'intrinsic-entry-copy-v{spec.schema_version}',
-            {'handler_id': {1:ENTRY_COPY_HANDLER,2:ENTRY_COPY_QUERY_HANDLER,3:ENTRY_COPY_VALUES_HANDLER,4:ENTRY_COPY_PREDICATE_HANDLER}[spec.schema_version],
+            {'handler_id': {1:ENTRY_COPY_HANDLER,2:ENTRY_COPY_QUERY_HANDLER,3:ENTRY_COPY_VALUES_HANDLER,4:ENTRY_COPY_PREDICATE_HANDLER,5:CONDITIONAL_COPY_HANDLER}[spec.schema_version],
             'schema_version': spec.schema_version, 'event': 'zone.change', 'copy': spec.to_dict()},
-            ENTRY_COPY_CAPABILITY if spec.schema_version == 1 else ENTRY_COPY_QUERY_CAPABILITIES if spec.schema_version==2 else (ENTRY_COPY_CAPABILITY,ENTRY_COPY_VALUES_CAPABILITY) if spec.schema_version==3 else (ENTRY_COPY_CAPABILITY,ENTRY_COPY_PREDICATE_CAPABILITY)),
+            ENTRY_COPY_CAPABILITY if spec.schema_version == 1 else ENTRY_COPY_QUERY_CAPABILITIES if spec.schema_version==2 else (ENTRY_COPY_CAPABILITY,ENTRY_COPY_VALUES_CAPABILITY) if spec.schema_version==3 else (ENTRY_COPY_CAPABILITY,ENTRY_COPY_PREDICATE_CAPABILITY) if spec.schema_version==4 else (ENTRY_COPY_CAPABILITY,CONDITIONAL_COPY_CAPABILITY)),
         kind='replacement_effect', event='zone.change', active_zone='all',
         runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
         dependency_reason='Intrinsic copy entry requires the canonical copy/replacement owner.',

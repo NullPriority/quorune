@@ -919,3 +919,12 @@ copies have zero spent mana. Graveyard arrival is distinct from creature death:
 it records origin and arrived incarnation even when a noncreature permanent
 becomes a creature card in that zone. Copy choices remain nontargeted and use
 the existing immutable replacement preparation and selection journal.
+
+Version-five intrinsic copy entry carries a closed conditional exception for an
+explicit Embalm creation origin. The graveyard-copy recipe owns the noncopiable
+creation designation; generic token status or copied name does not supply it.
+Prospective token objects use the same intrinsic copy snapshot coordinator as
+physical cards. The shared entry-result owner validates and commits copied
+values before token entry observers, while the token owner retains allocation,
+counter and trigger ownership. Added Changeling is the existing copiable
+layer-4 CDA, so layer-6 ability removal does not undo its earlier type effect.

@@ -374,6 +374,7 @@ def _copy_recipe_capabilities(effect, target_schema, mechanics):
     if set(recipe.temporary_keywords) - {"Haste"}:
         return ()
     dependencies = {FIXED_TOKEN_COPY_CAPABILITY_ID}
+    if recipe.creation_origin=='embalm':dependencies.add('activation.graveyard_copy_keyword.fixed_mana')
     if recipe.origin == "target":
         dependencies.add("target.revalidate_resolution")
         dependencies.update(direct_target_predicate_capabilities(target_schema))

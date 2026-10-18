@@ -2895,3 +2895,10 @@ current-turn battlefield-to-graveyard arrival, and actual-mana-spent predicates.
 Version four binds the predicate separately from source characteristics and
 copiable exceptions. Printed cost, declared X and a prior physical card
 incarnation cannot substitute for the corresponding authoritative fact.
+
+Conditional Embalm entry-copy exceptions require version five and explicit
+recipe creation origin. Copy-added Changeling compiles through the existing
+keyword/CDA owner and declares that exact dependency. Unknown conditions,
+unadmitted children and generic token-origin inference remain outside the
+production. Prospective token objects participate in intrinsic entry-copy
+preparation without becoming committed battlefield choices prematurely.

@@ -1028,6 +1028,8 @@ def _commit_token_specs(
         if prepared_entries is not None:
             from .entry_results import commit_entry_designations
             entry = prepared_entries[object_id]
+            from .entry_results import commit_prepared_copy_values
+            commit_prepared_copy_values(entry,host.state.cards[object_id],error_type=TokenCreationError)
             commit_entry_designations(host, host.state.cards[object_id], color=entry.entry_chosen_color, creature_type=entry.entry_chosen_creature_type)
         if plan.replacement_component is not None:
             component = thaw_value(plan.replacement_component)
