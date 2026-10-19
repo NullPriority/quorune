@@ -60,7 +60,7 @@ def reviewed_contextual_effect_template(
 
     if kicked_self_replacement_available is True:
         from .kicked_self_replacement_templates import kicked_self_replacement_template
-        replacement=kicked_self_replacement_template(text,compile_component=atomic_with_characteristics)
+        replacement=kicked_self_replacement_template(text,source_name=card_name,compile_component=atomic_with_characteristics)
         if replacement is not None:
             return replacement
 

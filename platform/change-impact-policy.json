@@ -6268,6 +6268,23 @@
         "test_fixed_stack_spell_copy",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "fixed-kicker-damage-replacement-contract",
+      "patterns": [
+        "quorune/compiler/kicked_self_replacement_templates.py",
+        "quorune/resolution_conditions.py",
+        "tests/test_kicked_damage_replacements.py",
+        "tests/fixtures/kicked-damage-replacement-cards.json"
+      ],
+      "test_modules": [
+        "test_kicked_damage_replacements",
+        "test_kicked_self_replacements",
+        "test_compound_damage_recipients",
+        "test_public_self_replacement_results",
+        "test_fixed_mass_damage",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

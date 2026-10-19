@@ -25,10 +25,13 @@ def is_fixed_spell_self_replacement(text,source_name,compile_effect,*,has_faces)
         or not has_faces and is_fixed_kicked_self_replacement(text,source_name,compile_effect))
 
 
-def _replacement_component(alternative, normal, compile_component):
+def _replacement_component(alternative, normal, compile_component,source_name):
     compiled=compile_component(alternative)
     if compiled[0] is not None:
         return compiled
+    if (len(normal[1])==1 and normal[1][0].get('op')=='damage_fixed_set'
+            and normal[1][0].get('source')=='$source' and re.match(r'^it deals ',alternative,re.I)):
+        return compile_component(source_name+alternative[len('it'):])
     # "Those tokens" retains the complete original recipe, including its types,
     # colors and abilities; only the literal count changes.
     count=re.fullmatch(rf'Create (?P<count>{FIXED_COUNT_PATTERN}|eleven|twelve|thirteen) of those tokens\.',alternative,re.I)
@@ -42,7 +45,7 @@ def _replacement_component(alternative, normal, compile_component):
     return normal[0],(effect,),None,normal[3]
 
 
-def kicked_self_replacement_template(text, *, compile_component):
+def kicked_self_replacement_template(text, *, source_name,compile_component):
     positions=_top_level_positions(text.strip(),'If ')
     if positions is None or len(positions)!=1:
         return None
@@ -57,10 +60,10 @@ def kicked_self_replacement_template(text, *, compile_component):
     normal=compile_component(normal_text)
     if normal[0] is None or len(normal[1])!=1 or normal[2] is not None:
         return None
-    replacement=_replacement_component(alternative,normal,compile_component)
+    replacement=_replacement_component(alternative,normal,compile_component,source_name)
     if replacement is None or len(replacement[1])!=1 or replacement[2] is not None:
         return None
-    if not all(cast_fact_result_is_fixed(value[1],value[3]) for value in (normal,replacement)):
+    if not all(cast_fact_result_is_fixed(value[1],value[3],allow_fixed_damage_source=True) for value in (normal,replacement)):
         return None
     wrapper={'op':RESOLUTION_CONDITION_OPERATION,'schema_version':4,'player':'$controller',
         'condition':KickedCastCondition().to_dict(),'cast_fact':'$context.kicked',

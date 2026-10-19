@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "d4df2ca5b676ea30e931dc340ff6dd00a7e55a137eb899b419ae5eb079f01508",
-  "declaration_source_fingerprint": "e87d52adef0c9eedd535ab106f3de6abe245eb465e76a0112d79f2b9508ec66f",
+  "registry_fingerprint": "f18cbf235e7f54f15558820ef57c0f0efefabf2e3f135e4310a1617cd1f8bacf",
+  "declaration_source_fingerprint": "3740e25a789d0aee5c3b1cd1cbc7b88b0c3edc305e0875d6e53494f7adbdc702",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -115661,6 +115661,96 @@
     },
     {
       "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_countered_kicked_damage_has_no_damage_or_refund",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_breath_and_canopy_select_current_flying_group_and_all_players",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_actual_flying_grant_before_resolution_changes_original_earthquake_recipients",
       "official_rule_ids": [
@@ -115841,6 +115931,96 @@
     },
     {
       "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_countered_kicked_damage_has_no_damage_or_refund",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_breath_and_canopy_select_current_flying_group_and_all_players",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
       "evidence_class": "mutation",
       "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_losing_the_grounded_filter_is_killed_by_a_fresh_native_earthquake",
       "official_rule_ids": [
@@ -115892,6 +116072,24 @@
         "commander_review"
       ],
       "applicability_note": "Kill a query-owner mutant that admits objects outside the typed damageable affected set."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_losing_paid_damage_branch_is_killed_by_fresh_original_cinderclasm",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
     },
     {
       "capability_id": "damage.batch.fixed_set",
@@ -115982,6 +116180,42 @@
         "commander_review"
       ],
       "applicability_note": "Leave dynamic quantities, divided selection, damage-history predicates, and linked riders as precise material residuals."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementCompilerTests.test_fixed_damage_branches_require_each_existing_damage_and_predicate_owner",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementCompilerTests.test_only_adopted_fixed_damage_source_is_attribution_and_legacy_conditions_stay_closed",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
     },
     {
       "capability_id": "damage.batch.fixed_set",
@@ -116273,6 +116507,96 @@
     },
     {
       "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_countered_kicked_damage_has_no_damage_or_refund",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_breath_and_canopy_select_current_flying_group_and_all_players",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
       "evidence_class": "privacy",
       "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_actual_flying_grant_before_resolution_changes_original_earthquake_recipients",
       "official_rule_ids": [
@@ -116453,6 +116777,96 @@
     },
     {
       "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_countered_kicked_damage_has_no_damage_or_refund",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_breath_and_canopy_select_current_flying_group_and_all_players",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
       "evidence_class": "replay",
       "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_actual_flying_grant_before_resolution_changes_original_earthquake_recipients",
       "official_rule_ids": [
@@ -116630,6 +117044,96 @@
         "commander_review"
       ],
       "applicability_note": "Replay the exact generated instruction, affected-set order, event identities, result journal, and final state hash."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_countered_kicked_damage_has_no_damage_or_refund",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_breath_and_canopy_select_current_flying_group_and_all_players",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
     },
     {
       "capability_id": "damage.creature_power.fixed_interaction",
@@ -125000,6 +125504,116 @@
     {
       "capability_id": "damage.source.stack_current_or_lki",
       "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_countered_kicked_damage_has_no_damage_or_refund",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_breath_and_canopy_select_current_flying_group_and_all_players",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_state_optional_result_actions.AdditionalConditionalModifierRuntimeTests.test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
       "official_rule_ids": [
         "113.7a",
@@ -125110,6 +125724,116 @@
     {
       "capability_id": "damage.source.stack_current_or_lki",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_countered_kicked_damage_has_no_damage_or_refund",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_breath_and_canopy_select_current_flying_group_and_all_players",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_public_state_optional_result_actions.AdditionalConditionalModifierRuntimeTests.test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
       "official_rule_ids": [
         "113.7a",
@@ -125150,6 +125874,28 @@
         "commander_review"
       ],
       "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_losing_paid_damage_branch_is_killed_by_fresh_original_cinderclasm",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
     },
     {
       "capability_id": "damage.source.stack_current_or_lki",
@@ -125329,6 +126075,50 @@
     },
     {
       "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementCompilerTests.test_fixed_damage_branches_require_each_existing_damage_and_predicate_owner",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementCompilerTests.test_only_adopted_fixed_damage_source_is_attribution_and_legacy_conditions_stay_closed",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_damage_source_lki.FixedDamageSourceLkiRuntimeTests.test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
       "official_rule_ids": [
@@ -125506,6 +126296,116 @@
     {
       "capability_id": "damage.source.stack_current_or_lki",
       "evidence_class": "positive",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_countered_kicked_damage_has_no_damage_or_refund",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_breath_and_canopy_select_current_flying_group_and_all_players",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "positive",
       "test_id": "tests.test_public_state_optional_result_actions.AdditionalConditionalModifierRuntimeTests.test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
       "official_rule_ids": [
         "113.7a",
@@ -125568,6 +126468,116 @@
         "commander_review"
       ],
       "applicability_note": "Actual original Crook, Hellion, Myr and Roastmaster damage retains current or immediate last-known source controller/keywords through real control changes and departure. The creating ability controller stays independent; pending batches, new incarnation poison-read rejection, failed pin rollback, hidden-source identity withholding and whole pre-action replay remain exact."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_countered_kicked_damage_has_no_damage_or_refund",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_breath_and_canopy_select_current_flying_group_and_all_players",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
     },
     {
       "capability_id": "damage.source.stack_current_or_lki",
@@ -125678,6 +126688,116 @@
         "commander_review"
       ],
       "applicability_note": "Source information is sampled at the actual damage instruction after its paid prefix, while a sealed canonical damage proposal keeps its source facts through replacement-choice resumption. Actual Aura sacrifice removes lifelink before damage; source departure facts retain their original logical incarnation."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_countered_kicked_damage_has_no_damage_or_refund",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_breath_and_canopy_select_current_flying_group_and_all_players",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "damage.source.stack_current_or_lki",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+      "official_rule_ids": [
+        "113.7a",
+        "113.8",
+        "120.1",
+        "120.2b",
+        "120.3f",
+        "400.7",
+        "608.2h",
+        "702.15b",
+        "702.15c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
     },
     {
       "capability_id": "damage.source.stack_current_or_lki",
@@ -159542,6 +160662,106 @@
     {
       "capability_id": "resolution.effect.fixed_cast_fact",
       "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_countered_kicked_damage_has_no_damage_or_refund",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_breath_and_canopy_select_current_flying_group_and_all_players",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "interaction",
       "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
       "official_rule_ids": [
         "608.2b",
@@ -159802,6 +161022,106 @@
     {
       "capability_id": "resolution.effect.fixed_cast_fact",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_countered_kicked_damage_has_no_damage_or_refund",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_breath_and_canopy_select_current_flying_group_and_all_players",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
       "official_rule_ids": [
         "608.2b",
@@ -159982,6 +161302,26 @@
     {
       "capability_id": "resolution.effect.fixed_cast_fact",
       "evidence_class": "mutation",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_losing_paid_damage_branch_is_killed_by_fresh_original_cinderclasm",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "mutation",
       "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_compiler_omission_is_killed_by_fresh_native_field_research",
       "official_rule_ids": [
         "608.2b",
@@ -160058,6 +161398,46 @@
         "commander_review"
       ],
       "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementCompilerTests.test_fixed_damage_branches_require_each_existing_damage_and_predicate_owner",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementCompilerTests.test_only_adopted_fixed_damage_source_is_attribution_and_legacy_conditions_stay_closed",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
     },
     {
       "capability_id": "resolution.effect.fixed_cast_fact",
@@ -160258,6 +161638,106 @@
         "commander_review"
       ],
       "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_countered_kicked_damage_has_no_damage_or_refund",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_breath_and_canopy_select_current_flying_group_and_all_players",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
     },
     {
       "capability_id": "resolution.effect.fixed_cast_fact",
@@ -160502,6 +161982,106 @@
     {
       "capability_id": "resolution.effect.fixed_cast_fact",
       "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_countered_kicked_damage_has_no_damage_or_refund",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_breath_and_canopy_select_current_flying_group_and_all_players",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "privacy",
       "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
       "official_rule_ids": [
         "608.2b",
@@ -160678,6 +162258,106 @@
         "commander_review"
       ],
       "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_countered_kicked_damage_has_no_damage_or_refund",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_breath_and_canopy_select_current_flying_group_and_all_players",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
     },
     {
       "capability_id": "resolution.effect.fixed_cast_fact",
@@ -161602,6 +163282,96 @@
     {
       "capability_id": "resolution.effect.fixed_public_self_replacement",
       "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_countered_kicked_damage_has_no_damage_or_refund",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_breath_and_canopy_select_current_flying_group_and_all_players",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "interaction",
       "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
       "official_rule_ids": [
         "109.5",
@@ -161818,6 +163588,96 @@
     {
       "capability_id": "resolution.effect.fixed_public_self_replacement",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_countered_kicked_damage_has_no_damage_or_refund",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_breath_and_canopy_select_current_flying_group_and_all_players",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
       "official_rule_ids": [
         "109.5",
@@ -161980,6 +163840,24 @@
     {
       "capability_id": "resolution.effect.fixed_public_self_replacement",
       "evidence_class": "mutation",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_losing_paid_damage_branch_is_killed_by_fresh_original_cinderclasm",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "mutation",
       "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_compiler_omission_is_killed_by_fresh_native_field_research",
       "official_rule_ids": [
         "109.5",
@@ -162030,6 +163908,42 @@
         "commander_review"
       ],
       "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementCompilerTests.test_fixed_damage_branches_require_each_existing_damage_and_predicate_owner",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementCompilerTests.test_only_adopted_fixed_damage_source_is_attribution_and_legacy_conditions_stay_closed",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
     },
     {
       "capability_id": "resolution.effect.fixed_public_self_replacement",
@@ -162174,6 +164088,96 @@
         "commander_review"
       ],
       "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_countered_kicked_damage_has_no_damage_or_refund",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_breath_and_canopy_select_current_flying_group_and_all_players",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
     },
     {
       "capability_id": "resolution.effect.fixed_public_self_replacement",
@@ -162376,6 +164380,96 @@
     {
       "capability_id": "resolution.effect.fixed_public_self_replacement",
       "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_countered_kicked_damage_has_no_damage_or_refund",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_breath_and_canopy_select_current_flying_group_and_all_players",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "privacy",
       "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
       "official_rule_ids": [
         "109.5",
@@ -162534,6 +164628,96 @@
         "commander_review"
       ],
       "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_countered_kicked_damage_has_no_damage_or_refund",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_breath_and_canopy_select_current_flying_group_and_all_players",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_damage_replacements.KickedDamageReplacementRuntimeTests.test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema4 Kicker self-replacement may retain one fixed damage-set instruction source as attribution. Only the selected literal amount reaches the existing simultaneous damage transaction; source/controller/current-or-LKI and current recipient predicates remain owned there. Normal admission, copied-spell facts, countering/no refund, external damage replacement, privacy, pending load, replay and fresh unpaid-branch mutation are covered. Old conditions, targeted damage, arbitrary source-relative results and derived amounts remain outside this adoption."
     },
     {
       "capability_id": "resolution.effect.fixed_public_self_replacement",
@@ -235114,5 +237298,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "f5855b0793a2b3467ddf17042ca6e6c7c63f18b03aae181d81cb87136d6bf4c7"
+  "fingerprint": "e332f99e324e723f5c76a90247249b65a7fc5c0912c605d189744b1dc21fc12c"
 }

@@ -1303,6 +1303,12 @@ quantities, permanent triggers and unsupported siblings remain residual.
 `compiler/replacement_residual_nodes.py` owns the marker boundary after closed
 static dispatch, retaining the original source span, ordering blockers and
 unowned replacement node when neither reviewed self-replacement closes.
+Schema 4 also adopts fixed untargeted damage sets. The existing damage owner
+retains source attribution, current or last-known source characteristics and
+simultaneous current recipient queries; the selected amount stays a literal.
+The compiler binds an alternative's "it deals" only to the already represented
+damage-set source. Other source-relative values and earlier condition schemas
+retain their existing boundaries.
 
 Public self-death and attached-creature death returns bind the event card and
 its exact post-departure zone-change counter. The existing graveyard-return

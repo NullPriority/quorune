@@ -45,11 +45,14 @@ def resolution_result_is_fixed(effects: Any, mechanic_ids: Any) -> bool:
     return not _DERIVED_RESULT_MECHANICS.intersection(mechanic_ids) and not _contains_derived_result_value(effects)
 
 
-def cast_fact_result_is_fixed(effects: Any, mechanic_ids: Any) -> bool:
-    """A counter instruction's source attribution is not a result quantity."""
+def cast_fact_result_is_fixed(effects: Any, mechanic_ids: Any, *, allow_fixed_damage_source: bool=False) -> bool:
+    """An adopted instruction's source attribution is not a result quantity."""
+    attributed={'place_counters_on_set','place_counter_set'}
+    if allow_fixed_damage_source:
+        attributed.add('damage_fixed_set')
     values = tuple(
         {key: value for key, value in effect.items() if key != 'source'}
-        if effect.get('op') in {'place_counters_on_set', 'place_counter_set'} and effect.get('source') == '$source'
+        if effect.get('op') in attributed and effect.get('source') == '$source'
         else effect for effect in effects
     )
     return resolution_result_is_fixed(values, mechanic_ids)
@@ -162,7 +165,7 @@ def validate_resolution_condition_instruction(
         for value in nested
     ):
         raise ValueError("Resolution conditions require a bounded nonnested effect program")
-    if not (cast_fact_result_is_fixed(nested, effect["mechanic_ids"]) if cast_fact or replacing else resolution_result_is_fixed(nested, effect["mechanic_ids"])):
+    if not (cast_fact_result_is_fixed(nested, effect["mechanic_ids"],allow_fixed_damage_source=effect.get('schema_version')==4) if cast_fact or replacing else resolution_result_is_fixed(nested, effect["mechanic_ids"])):
         raise ValueError("Derived or source-relative results require a separate binding and timing boundary")
     if replacing:
         if type(effect['schema_version']) is not int:raise ValueError('Self-replacement version must be an exact integer')
@@ -174,6 +177,6 @@ def _validate_otherwise_program(effect):
     values=effect['otherwise_effects']
     if (not isinstance(values,(list,tuple)) or not 1<=len(values)<=8
             or any(not isinstance(child,Mapping) or child.get('op')==RESOLUTION_CONDITION_OPERATION for child in values)
-            or not cast_fact_result_is_fixed(values,effect['otherwise_mechanic_ids'])
+            or not cast_fact_result_is_fixed(values,effect['otherwise_mechanic_ids'],allow_fixed_damage_source=effect.get('schema_version')==4)
             or 'fixed-next-turn-upkeep-draw' in effect['otherwise_mechanic_ids']):
         raise ValueError('Self-replacement default program is malformed or unrepresented')
