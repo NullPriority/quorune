@@ -1445,6 +1445,17 @@ variable, random, repeatable, composite, reveal, tap, linked-result, and named
 mechanic costs remain source-spanned residuals. Direct mandatory positive
 fixed-life costs use the same life-payment leaf and canonical life owner.
 
+The same compiler module separately lowers one mandatory announced-X life
+payment or one mandatory exile of X cards, creature cards, instant cards or
+sorcery cards from the caster's graveyard. The source-spanned cost retains an
+immutable typed X parameter, and the independently compiled result uses that
+same declaration. The fixed-cost leaf grammar still rejects variable amounts;
+the announced-X production owns their composition. Alternative or optional
+variable costs, random or different-name selections, X discard, sacrifice or
+return, and unrepresented linked payments remain residual. A spell combining
+this variable additional payment with Convoke, Delve or Improvise also remains
+residual until a shared payment-resource contract owns the joint budget.
+
 `compiler/activated_zone_change_costs.py` reuses the spell-cost leaf grammar
 for one mandatory selected-object activation cost. It accepts only one fixed
 discard, sacrifice, battlefield or graveyard exile, or return payment whose

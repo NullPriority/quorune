@@ -10,6 +10,7 @@
     "tests/fixtures/aggregated-zone-event-triggers.json",
     "tests/fixtures/amass-rules-cards.json",
     "tests/fixtures/announced-x-activation-cards.json",
+    "tests/fixtures/announced-x-additional-cost-cards.json",
     "tests/fixtures/as-unblocked-assignment-cards.json",
     "tests/fixtures/ascend-city-blessing-cards.json",
     "tests/fixtures/attached-characteristic-closure-cards.json",

@@ -10,6 +10,7 @@ from ..semantic_runtime import (
 )
 from ..util import stable_json
 from ..object_predicate import object_query_capabilities
+from ..rules.casting_additional_cost_groups import announced_additional_cost_dependencies
 from ..semantic_runtime.activated_abilities import (
     is_structural_activated_ability_catalog_program,
     activated_abilities_from_descriptors,
@@ -40,6 +41,10 @@ def bind_semantic_program_runtime(
         required.update(object_query_capabilities((program.effects, program.handlers, program.target_schema)))
     except (TypeError, ValueError) as exc:
         blockers.add(f'runtime_query:invalid:{exc}')
+    try:
+        required.update(announced_additional_cost_dependencies(program.cost_schema))
+    except (TypeError, ValueError) as exc:
+        blockers.add(f'runtime_cast_cost:invalid:{exc}')
     unregistered_operations: set[str] = set()
     if getattr(program, "trigger_limit", None) is not None:
         from ..rules.trigger_limits import validate_program_trigger_limit, TRIGGER_ONCE_PER_TURN_CAPABILITY

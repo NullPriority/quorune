@@ -6130,6 +6130,38 @@
         "test_public_negative_colors",
         "test_high_risk_interaction_assurance"
       ]
+    },
+    {
+      "id": "announced-x-additional-casting-cost-contract",
+      "patterns": [
+        "quorune/rules/casting_additional_costs.py",
+        "quorune/rules/casting_additional_cost_groups.py",
+        "quorune/rules/node_capability_shapes.py",
+        "quorune/card_programs/binding.py",
+        "quorune/public_alternative_costs.py",
+        "quorune/compiler/spell_additional_cost_templates.py",
+        "quorune/compiler/spell_additional_cost_nodes.py",
+        "quorune/compiler/additional_cost_payment_faces.py",
+        "quorune/rules/casting/additional_zone_costs.py",
+        "quorune/rules/casting/nonmoving_additional_costs.py",
+        "quorune/rules/casting/costs.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/choice_forms.py",
+        "web/src/choices.ts",
+        "web/unit/choices.test.ts",
+        "tests/fixtures/announced-x-additional-cost-cards.json",
+        "tests/test_announced_x_additional_costs.py"
+      ],
+      "test_modules": [
+        "test_announced_x_additional_costs",
+        "test_fixed_zone_change_additional_costs",
+        "test_fixed_alternative_additional_costs",
+        "test_fixed_tap_additional_costs",
+        "test_fixed_reveal_additional_costs",
+        "test_casting_payment_keywords",
+        "test_cascade_rules",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

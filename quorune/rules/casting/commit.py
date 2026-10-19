@@ -66,7 +66,7 @@ from ...trigger_processing import collect_ward_occurrences, enqueue_trigger_batc
 from ...zone_trigger_events import ZoneTransitionKind
 from ..action_proposals import CastProposal, thaw_json
 from ..casting_additional_costs import (
-    AdditionalCostError,
+    AdditionalCostError, announced_cost_x,
     fixed_counter_additional_cost,
     fixed_counter_cost_candidates,
     FixedZoneChangeAdditionalCost,
@@ -74,7 +74,7 @@ from ..casting_additional_costs import (
     fixed_zone_change_cost_candidates,
 )
 from ..casting_additional_cost_groups import (
-    fixed_life_payment_additional_cost,
+    fixed_life_payment_additional_cost, announced_x_life_additional_cost,
 )
 from .model import CastProposalError
 from .costs import revalidate_convoke_payment, revalidate_delve_payment
@@ -452,6 +452,10 @@ def _resolve_fixed_zone_change_additional_cost(
             "The zone-change additional cost is outside the represented family",
             reason="additional_cost_unsupported",
         )
+    declared_x = selected_option.get('announced_additional_x')
+    if cost.count_parameter is not None and announced_cost_x(response.get('x')) != declared_x:
+        raise CastProposalError('Declared additional-cost X changed before commit', reason='stale_additional_x')
+    count = cost.required_count(declared_x)
     if selected.get("operation") != cost.operation:
         raise CastProposalError(
             "The zone-change additional-cost operation is malformed",
@@ -470,8 +474,8 @@ def _resolve_fixed_zone_change_additional_cost(
         )
     if (
         not isinstance(raw_refs, (list, tuple))
-        or len(raw_refs) != cost.count
-        or len(set(raw_refs)) != cost.count
+        or len(raw_refs) != count
+        or len(set(raw_refs)) != count
         or any(type(ref) is not str or ref not in candidates for ref in raw_refs)
     ):
         raise CastProposalError(
@@ -490,7 +494,7 @@ def _resolve_fixed_zone_change_additional_cost(
         for ref in raw_refs
     )
     raw_journal = response.get("_mana_replacement_selections") or {}
-    if not isinstance(raw_journal, Mapping) or len(raw_journal) > cost.count:
+    if not isinstance(raw_journal, Mapping) or len(raw_journal) > count:
         raise CastProposalError(
             "The casting replacement journal is malformed",
             reason="replacement_journal_malformed",
@@ -661,6 +665,13 @@ def _commit_additional_costs(
                 selected_option,
                 fixed_life.amount,
             )
+            continue
+        declared_life = announced_x_life_additional_cost(additional)
+        if declared_life is not None:
+            amount = declared_life.amount_for(selected_option.get('announced_additional_x'))
+            if amount != announced_cost_x(response.get('x')):
+                raise CastProposalError('Declared life X changed before commit', reason='stale_additional_x')
+            _pay_fixed_life_additional_cost(host, proposal, card, selected_option, amount)
             continue
         if additional.get("kind") == "life_x":
             _pay_life_additional_cost(
@@ -1492,7 +1503,7 @@ def _commit_cast_costs_and_stack(
         spent,
         costs,
     )
-    item.x_value = response.get("x")
+    item.x_value = selected_option.get("announced_additional_x", response.get("x"))
     commit_reveal_additional_costs(host,proposal,card,item,selected_option)
     item.notes = str(response.get("note") or "")
     prior_spell_count = prior_storm_spell_count(host)

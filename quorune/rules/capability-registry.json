@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 393,
+  "registry_version": 394,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -32689,6 +32689,196 @@
       "dependency_fail_closed_rationale": "Compiler and runtime derive the separately declared counter query authority; withdrawal and omission must reject normal admission.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh normally admitted originals detect loss of any-counter matching, counting distinct names instead of individual counters, or omission of the source total. Parent assertions directly run fresh native witnesses.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.additional_cost.announced_x_life",
+      "version": 1,
+      "official_rules": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One declared nonnegative X is a mandatory life casting price and the locked result amount, including fixed printed mana prices.",
+        "inputs": [
+          "one immutable declared-X cost descriptor and current source face",
+          "actor X and eligible current life or owned graveyard resource state"
+        ],
+        "outputs": [
+          "shared advertised and accepted X/resource selection",
+          "same captured declaration for payment and eventual results",
+          "unchanged legacy fixed cost fields"
+        ],
+        "exclusions": [
+          "unrepresented optional/random/multiple additional costs and payment-keyword mixtures",
+          "unknown amount links and independent source siblings"
+        ]
+      },
+      "dependencies": [
+        "casting.additional_cost.fixed_life_payment"
+      ],
+      "implementation_components": [
+        "quorune.compiler.spell_additional_cost_templates.announced_x_additional_cost_template",
+        "quorune.rules.casting.costs._apply_additional_costs",
+        "quorune.rules.casting.commit._commit_additional_costs",
+        "quorune.rules.casting_additional_cost_groups.AnnouncedXLifeAdditionalCost",
+        "quorune.rules.casting.nonmoving_additional_costs.select_fixed_nonmoving_cost"
+      ],
+      "positive_tests": [
+        "test_declared_life_descriptor_rejects_unknown_fields_and_parameters",
+        "test_original_hatred_pays_declared_life_before_resolution_and_uses_same_x",
+        "test_original_zero_x_costs_need_no_life_or_graveyard_objects"
+      ],
+      "negative_tests": [
+        "test_declared_life_descriptor_rejects_unknown_fields_and_parameters",
+        "test_executable_declared_cost_rejects_undeclared_resource_authority",
+        "test_new_cost_capabilities_withdraw_to_residual_without_losing_result_scope"
+      ],
+      "interaction_tests": [
+        "test_countering_original_hatred_does_not_refund_declared_life",
+        "test_original_hatred_pays_declared_life_before_resolution_and_uses_same_x",
+        "test_original_target_departure_keeps_paid_life_and_graveyard_exile",
+        "test_real_cascade_forces_mana_x_zero_but_pays_nonmana_additional_x"
+      ],
+      "multiplayer_tests": [
+        "test_original_hatred_pays_declared_life_before_resolution_and_uses_same_x"
+      ],
+      "privacy_tests": [
+        "test_original_hatred_pays_declared_life_before_resolution_and_uses_same_x",
+        "test_original_target_departure_keeps_paid_life_and_graveyard_exile",
+        "test_real_cascade_forces_mana_x_zero_but_pays_nonmana_additional_x"
+      ],
+      "replay_tests": [
+        "test_original_hatred_pays_declared_life_before_resolution_and_uses_same_x",
+        "test_original_target_departure_keeps_paid_life_and_graveyard_exile",
+        "test_real_cascade_forces_mana_x_zero_but_pays_nonmana_additional_x"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Compiler and runtime derive the declared additional-cost authority from the typed cost schema; withdrawal or omission rejects normal admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "A fresh native original must detect skipped mandatory life or exile payment before unpublished closure is accepted.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.additional_cost.announced_x_graveyard_exile",
+      "version": 1,
+      "official_rules": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Exactly declared-X distinct owned eligible graveyard cards pay one mandatory exile price; results retain the same X independent of mana reductions.",
+        "inputs": [
+          "one immutable declared-X cost descriptor and current source face",
+          "actor X and eligible current life or owned graveyard resource state"
+        ],
+        "outputs": [
+          "shared advertised and accepted X/resource selection",
+          "same captured declaration for payment and eventual results",
+          "unchanged legacy fixed cost fields"
+        ],
+        "exclusions": [
+          "unrepresented optional/random/multiple additional costs and payment-keyword mixtures",
+          "unknown amount links and independent source siblings"
+        ]
+      },
+      "dependencies": [
+        "casting.additional_cost.zone_change.fixed_exile"
+      ],
+      "implementation_components": [
+        "quorune.compiler.spell_additional_cost_templates.announced_x_additional_cost_template",
+        "quorune.rules.casting.costs._apply_additional_costs",
+        "quorune.rules.casting.commit._commit_additional_costs",
+        "quorune.rules.casting_additional_costs.FixedZoneChangeAdditionalCost",
+        "quorune.rules.casting.additional_zone_costs._fixed_zone_change_selection"
+      ],
+      "positive_tests": [
+        "test_declared_graveyard_count_has_no_guessed_fixed_count_and_keeps_legacy_shape",
+        "test_original_chill_announces_x_without_mana_x_and_filters_creature_payment",
+        "test_original_scrying_exiles_exact_declared_cards_before_draw_and_life_loss",
+        "test_original_zero_x_costs_need_no_life_or_graveyard_objects"
+      ],
+      "negative_tests": [
+        "test_actual_scrying_rejects_bad_x_and_short_duplicate_foreign_or_source_payments",
+        "test_executable_declared_cost_rejects_undeclared_resource_authority",
+        "test_new_cost_capabilities_withdraw_to_residual_without_losing_result_scope"
+      ],
+      "interaction_tests": [
+        "test_countering_original_scrying_keeps_paid_exile_and_skips_results",
+        "test_mana_reduction_changes_price_without_changing_paid_or_resolved_x",
+        "test_original_chill_announces_x_without_mana_x_and_filters_creature_payment",
+        "test_original_scrying_exiles_exact_declared_cards_before_draw_and_life_loss",
+        "test_original_target_departure_keeps_paid_life_and_graveyard_exile",
+        "test_real_cascade_forces_mana_x_zero_but_pays_nonmana_additional_x"
+      ],
+      "multiplayer_tests": [
+        "test_original_chill_announces_x_without_mana_x_and_filters_creature_payment",
+        "test_original_scrying_exiles_exact_declared_cards_before_draw_and_life_loss"
+      ],
+      "privacy_tests": [
+        "test_original_chill_announces_x_without_mana_x_and_filters_creature_payment",
+        "test_original_scrying_exiles_exact_declared_cards_before_draw_and_life_loss",
+        "test_original_target_departure_keeps_paid_life_and_graveyard_exile",
+        "test_real_cascade_forces_mana_x_zero_but_pays_nonmana_additional_x"
+      ],
+      "replay_tests": [
+        "test_original_chill_announces_x_without_mana_x_and_filters_creature_payment",
+        "test_original_scrying_exiles_exact_declared_cards_before_draw_and_life_loss",
+        "test_original_target_departure_keeps_paid_life_and_graveyard_exile",
+        "test_real_cascade_forces_mana_x_zero_but_pays_nonmana_additional_x"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Compiler and runtime derive the declared additional-cost authority from the typed cost schema; withdrawal or omission rejects normal admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "A fresh native original must detect skipped mandatory life or exile payment before unpublished closure is accepted.",
       "blockers": [],
       "status": "trusted"
     }

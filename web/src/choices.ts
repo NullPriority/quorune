@@ -129,6 +129,12 @@ export function selectedTargetCostLabel(field: ChoiceField, values: ChoiceValues
 }
 
 function resolveDependentField(field: ChoiceField, values: ChoiceValues): ChoiceField {
+  const countFrom = stringValue(field.count_from);
+  if (countFrom) {
+    const count = Number(values[countFrom] ?? 0);
+    if (!Number.isInteger(count) || count < 0) return field;
+    field = { ...field, minimum: count, maximum: count, required: count > 0 };
+  }
   const source = stringValue(field.options_from_map);
   if (!source) return field;
   const requiredValue = stringValue(field.required_value);

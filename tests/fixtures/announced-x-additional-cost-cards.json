@@ -1,0 +1,380 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Chill Haunting",
+      "oracle_id": "ebe61471-e236-4ff8-9416-151970b5efd6",
+      "oracle_text": "As an additional cost to cast this spell, exile X creature cards from your graveyard.\nTarget creature gets -X/-X until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2003-05-26",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}{B}",
+      "name": "Hatred",
+      "oracle_id": "40601061-1b25-4db8-8b99-33324ce945cf",
+      "oracle_text": "As an additional cost to cast this spell, pay X life.\nTarget creature gets +X/+0 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "1998-06-15",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{X}{B}",
+      "name": "Skeletal Scrying",
+      "oracle_id": "561c68d8-b727-48d8-a832-2e42d1345fac",
+      "oracle_text": "As an additional cost to cast this spell, exile X cards from your graveyard.\nYou draw X cards and you lose X life.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-08-25",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Haste",
+        "Cascade"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{R}",
+      "name": "Boarding Party",
+      "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
+      "oracle_text": "Haste\nCascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+      "power": "6",
+      "produced_mana": [],
+      "released_at": "2020-11-20",
+      "toughness": "3",
+      "type_line": "Creature — Human Pirate"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Jet Medallion",
+      "oracle_id": "bccb06f1-8839-4104-9ffa-c79a817f8378",
+      "oracle_text": "Black spells you cast cost {1} less to cast.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-06-14",
+      "toughness": null,
+      "type_line": "Artifact"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "The life payment is part of the cost to cast Hatred, so it is lost if this spell is countered.",
+      "oracle_id": "40601061-1b25-4db8-8b99-33324ce945cf",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell you cast has {X} in its mana cost, you choose the value of X before calculating the spell's total cost.",
+      "oracle_id": "bccb06f1-8839-4104-9ffa-c79a817f8378",
+      "published_at": "2023-07-28",
+      "source": "wotc"
+    },
+    {
+      "comment": "If there are additional costs to cast a spell, or if the cost to cast a spell is increased by an effect (such as the one created by Thalia, Guardian of Thraben's ability), apply those increases before applying cost reductions.",
+      "oracle_id": "bccb06f1-8839-4104-9ffa-c79a817f8378",
+      "published_at": "2023-07-28",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability can't reduce the amount of colored mana you pay for a spell. It reduces only the generic mana component of that cost.",
+      "oracle_id": "bccb06f1-8839-4104-9ffa-c79a817f8378",
+      "published_at": "2023-07-28",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability doesn't change the mana cost or mana value of any spell. It changes only the total cost you pay.",
+      "oracle_id": "bccb06f1-8839-4104-9ffa-c79a817f8378",
+      "published_at": "2023-07-28",
+      "source": "wotc"
+    },
+    {
+      "comment": "The cost reduction can apply to alternative costs such as flashback costs.",
+      "oracle_id": "bccb06f1-8839-4104-9ffa-c79a817f8378",
+      "published_at": "2023-07-28",
+      "source": "wotc"
+    },
+    {
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions.",
+      "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Cascade triggers when you cast the spell, meaning that it resolves before that spell. If you end up casting the exiled card, it will go on the stack above the spell with cascade.",
+      "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Due to a 2021 rules change to cascade, not only do you stop exiling cards if you exile a nonland card with lesser mana value than the spell with cascade, but the resulting spell you cast must also have lesser mana value. Previously, in cases where a card's mana value differed from the resulting spell, such as with some modal double-faced cards or cards with an Adventure, you could cast a spell with a higher mana value than the exiled card.",
+      "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell with cascade is countered, the cascade ability will still resolve normally.",
+      "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost.",
+      "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a card \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, you must pay those to cast the card.",
+      "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If cascade allows you to cast a split card, you may cast either half but not both halves.",
+      "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "When the cascade ability resolves, you must exile cards. The only optional part of the ability is whether or not you cast the last card exiled.",
+      "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "You exile the cards face up. All players will be able to see them.",
+      "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned announced-X additional-cost originals and independent counter/free-cast controls."
+}

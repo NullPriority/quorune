@@ -570,6 +570,21 @@ the cast event. Historical unversioned discard and sacrifice schemas remain in
 an isolated compatibility query outside `CommanderEngine`. Unsupported cost
 grammar residualizes the entire spell rather than exposing a cost-free result.
 
+Mandatory announced-X life and owned-graveyard exile costs retain one declared
+nonnegative integer across the cost option, proposal, payment and spell result.
+The life query bounds X by current life. The zone query requires exactly X
+distinct qualifying owned graveyard incarnations, excluding the spell itself;
+its version-three descriptor carries `count_parameter: "x"` rather than a fixed
+count. Existing fixed descriptors retain their serialized shape. A zero payment
+needs no objects and is legal. The browser's dependent payment field follows
+the declared X, while acceptance and commit revalidate the same typed query.
+Reducing the mana price does not change X. Casting without paying the mana cost
+forces X to zero when the mana cost contains X; an additional X on a fixed-mana
+spell remains chosen and payable. Completed additional payments are not refunded
+when the spell is countered. Optional, random, mixed selected groups, alternative
+variable prices, and combinations with Convoke, Delve or Improvise remain
+outside this announced-X cost family.
+
 A fixed reveal leaf shares the existing alternative additional-cost algebra.
 Its hand query excludes the casting spell and pins one other qualifying owned
 incarnation. Choosing the fixed mana branch adds that payment before ordinary

@@ -126,7 +126,7 @@ class FixedAlternativeAdditionalCostCompilerTests(unittest.TestCase):
             "pay {2} and discard a card",
             "pay {2} or pay {2}",
             "pay 2 life or pay {2} or discard a card",
-            "pay X life",
+            "pay X life or pay {1}",
         )
         for clause in unsupported:
             text = (
@@ -138,6 +138,9 @@ class FixedAlternativeAdditionalCostCompilerTests(unittest.TestCase):
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
 
+        announced = "As an additional cost to cast this spell, pay X life.\nDraw two cards."
+        self.assertEqual("exact", self.compile(announced).status)
+        self.assertIsNone(fixed_life_payment_additional_cost_template(announced))
         promoted=self.compile('As an additional cost to cast this spell, tap an untapped creature you control or pay {3}.\nDraw two cards.')
         self.assertEqual('exact',promoted.status,promoted.material_residuals)
         self.assertIn('casting.additional_cost.fixed_tap',promoted.faces[0].nodes[0].capability_dependencies)

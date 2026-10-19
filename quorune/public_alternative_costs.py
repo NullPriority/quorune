@@ -197,7 +197,7 @@ class FixedPublicAlternativeCostSpec:
                 life = fixed_life_payment_additional_cost(descriptor)
             except (AdditionalCostError, TypeError) as exc:
                 raise FixedPublicAlternativeCostError(str(exc)) from exc
-            if (zone is None) is (life is None):
+            if (zone is None) is (life is None) or (zone is not None and zone.count_parameter is not None):
                 raise FixedPublicAlternativeCostError(
                     "Fixed alternative-cost payment is unsupported"
                 )

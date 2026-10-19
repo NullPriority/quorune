@@ -6,6 +6,7 @@ from typing import Any, Protocol
 
 from ...additional_cost_vocabulary import ZONE_CHANGE_COST_KIND
 from .nonmoving_additional_costs import select_fixed_nonmoving_cost
+from .additional_zone_costs import _fixed_zone_change_selection
 from ...casting_payment_keywords import (
     AffinitySpec,
     CastingPaymentKeywordError,
@@ -45,18 +46,16 @@ from ...object_query import object_matches_query, object_query_result
 from ..action_proposals import CastCostOption
 from ..casting_additional_costs import (
     AdditionalCostError,
-    FixedZoneChangeAdditionalCost,
     fixed_counter_additional_cost,
     fixed_counter_cost_candidates,
     fixed_zone_change_additional_cost,
-    fixed_zone_change_cost_candidates,
     legacy_additional_cost_candidates,
 )
 from ..casting_additional_cost_groups import (
     FixedManaPaymentAdditionalCost,
     fixed_additional_cost_option_label,
     fixed_alternative_additional_cost,
-    fixed_life_payment_additional_cost,
+    fixed_life_payment_additional_cost, announced_additional_cost_dependencies,
 )
 from .lifecycle_costs import (
     alternative_cost_condition_met,
@@ -398,6 +397,14 @@ def _cast_schema_and_mechanics(
     return schema, mechanics
 
 
+def _additional_x_with_free_mana(host, seat, card, program, *, suppress_source_costs):
+    resolved = _cast_schema_and_mechanics(host, seat, card, program, suppress_source_costs=suppress_source_costs)
+    if resolved is None or not announced_additional_cost_dependencies(resolved[0]):
+        return False
+    _options, printed_x = host._compiled_printed_cost_options(seat, card, x_value=0, hint=True)
+    return not printed_x
+
+
 def _initial_options(
     host: CastCostHost,
     seat: str,
@@ -423,12 +430,14 @@ def _initial_options(
         temporary_permission and temporary_permission.get("without_mana_cost") and not intrinsic_disturb
     )
     if alternative_base is not None:
-        if cast_without_mana or (x_value is not None and int(x_value) != 0):
+        if cast_without_mana or (x_value is not None and int(x_value) != 0
+                and not _additional_x_with_free_mana(host, seat, card, program, suppress_source_costs=suppress_source_costs)):
             return None
         printed = [copy.deepcopy(dict(alternative_base))]
         has_x = False
     elif cast_without_mana:
-        if x_value is not None and int(x_value) != 0:
+        if x_value is not None and int(x_value) != 0 and not _additional_x_with_free_mana(
+                host, seat, card, program, suppress_source_costs=suppress_source_costs):
             return None
         printed = [
             {
@@ -456,6 +465,10 @@ def _initial_options(
     if resolved is None:
         return None
     schema, mechanics = resolved
+    if (cast_without_mana or alternative_base is not None) and announced_additional_cost_dependencies(schema):
+        _printed, base_has_x = host._compiled_printed_cost_options(seat, card, x_value=0, hint=True)
+        if base_has_x:
+            printed = [{**option, 'x_value_policy': 'zero'} for option in printed]
     commander_tax = (
         2 * host.state.players[seat].commander_casts.get(card.oracle_id, 0)
         if card.zone == "command" and card.is_commander
@@ -1161,59 +1174,6 @@ def _maximum_affordable_x_with_mechanics(
     return maximum
 
 
-def _fixed_zone_change_selection(
-    host: CastCostHost,
-    *,
-    seat: str,
-    source_object_id: str,
-    cost: FixedZoneChangeAdditionalCost,
-    cost_position: int,
-    response: Mapping[str, Any],
-    hint: bool,
-    choice_schema: dict[str, Any],
-) -> tuple[bool, dict[str, Any] | None]:
-    candidates = list(
-        fixed_zone_change_cost_candidates(
-            host,
-            actor=seat,
-            cost=cost,
-            exclude_object_id=source_object_id,
-        )
-    )
-    if len(candidates) < cost.count:
-        return False, None
-    choice_schema[cost.choice_field] = {
-        "type": "object_ref_array",
-        "count": cost.count,
-        "legal_refs": candidates,
-        "zone": cost.origin_zone,
-        "destination": cost.destination_zone,
-        "payment": cost.log_kind,
-    }
-    if hint:
-        return True, None
-    raw_values = response.get(cost.choice_field)
-    if raw_values is None:
-        raw_values = response.get("cost_cards")
-    if not isinstance(raw_values, (list, tuple)):
-        return False, None
-    values = list(raw_values)
-    if (
-        len(values) != cost.count
-        or len(set(values)) != cost.count
-        or any(type(value) is not str or value not in candidates for value in values)
-    ):
-        return False, None
-    selected = {
-        "kind": ZONE_CHANGE_COST_KIND,
-        "operation": cost.operation,
-        "cost_position": cost_position,
-    }
-    selected["card" if cost.count == 1 else "cards"] = (
-        values[0] if cost.count == 1 else values
-    )
-    return True, selected
-
 
 def _apply_additional_costs(
     host: CastCostHost,
@@ -1290,6 +1250,7 @@ def _apply_additional_costs(
                 response=response,
                 hint=hint,
                 choice_schema=choice_schema,
+                option=option,
             )
             if not valid:
                 return False
@@ -1380,6 +1341,8 @@ def _finalize_option(
     cast_type_line: str | None,
 ) -> CastCostOption | None:
     option = copy.deepcopy(option)
+    if announced_additional_cost_dependencies({'additional_costs': list(mandatory_costs)}) and mechanics:
+        return None
     selected_additional_costs = option.pop(
         "_selected_additional_costs", None
     )

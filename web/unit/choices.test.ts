@@ -16,6 +16,23 @@ function form(fields: ChoiceForm["fields"]): ChoiceForm {
   return { v: 1, fields, submit_label: "Submit" };
 }
 
+test("Declared X updates the exact graveyard payment count", () => {
+  const choices = form([
+    { name: "x", control: "integer", minimum: 0, maximum: 3, required: true },
+    { name: "exile_cards", control: "refs", minimum: 0, maximum: 0, count_from: "x",
+      options: ["C1", "C2", "C3"].map((value) => ({ value, label: value })) },
+  ]);
+  assert.deepEqual(validateChoices(choices, { x: 0, exile_cards: [] }), []);
+  const field = activeFields(choices, { x: 2, exile_cards: [] })[1];
+  assert.equal(field.minimum, 2);
+  assert.equal(field.maximum, 2);
+  assert.ok(validateChoices(choices, { x: 2, exile_cards: ["C1"] }).length);
+  assert.deepEqual(validateChoices(choices, { x: 2, exile_cards: ["C1", "C2"] }), []);
+  assert.ok(validateChoices(choices, { x: 1, exile_cards: ["C1", "C2"] }).length);
+  assert.deepEqual(executableChoices(choices, { x: 2, exile_cards: ["C1", "C2"] }),
+    { x: 2, exile_cards: ["C1", "C2"] });
+});
+
 test("Target-dependent casting prices display the server row once per source and reject missing combinations", () => {
   const field = { name: "targets", control: "targets", schema: { groups: [{ id: "target_0", min: 0, max: 2 }] },
     target_costs: { kind: "generic_increase_once_per_source", clauses: [

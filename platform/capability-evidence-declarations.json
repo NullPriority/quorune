@@ -13579,6 +13579,1056 @@
       "applicability_note": "Typed arbitrary Squad payment counts determine the full cost and sealed simultaneous copy count. Actual Sicarian zero/one/two/six casts create N copies and N+1 draws; Securitron two copies mutually observe one simultaneous entry batch. Invalid principal/count/cost rollback, private projection, pending load and pre-action replay retain canonical owners."
     },
     {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_countering_original_scrying_keeps_paid_exile_and_skips_results",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory announced-X payment: exact native free-cast, zero, no-refund and declared-resource controls. The unpublished family remains blocked on the canonical all-life priority correction and final bounded source audit."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_mana_reduction_changes_price_without_changing_paid_or_resolved_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory announced-X payment: exact native free-cast, zero, no-refund and declared-resource controls. The unpublished family remains blocked on the canonical all-life priority correction and final bounded source audit."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_chill_announces_x_without_mana_x_and_filters_creature_payment",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_scrying_exiles_exact_declared_cards_before_draw_and_life_loss",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_target_departure_keeps_paid_life_and_graveyard_exile",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Murder removes the original target before resolution; the additional life or graveyard payment stays paid. Native pending load, private projection and pre-action replay pass."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_real_cascade_forces_mana_x_zero_but_pays_nonmana_additional_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory announced-X payment: exact native free-cast, zero, no-refund and declared-resource controls. The unpublished family remains blocked on the canonical all-life priority correction and final bounded source audit."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_chill_announces_x_without_mana_x_and_filters_creature_payment",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_scrying_exiles_exact_declared_cards_before_draw_and_life_loss",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_omitting_declared_exile_cost_is_killed_by_a_fresh_native_scrying",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXModelTests.test_new_cost_capabilities_withdraw_to_residual_without_losing_result_scope",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_actual_scrying_rejects_bad_x_and_short_duplicate_foreign_or_source_payments",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory announced-X payment: exact native free-cast, zero, no-refund and declared-resource controls. The unpublished family remains blocked on the canonical all-life priority correction and final bounded source audit."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_executable_declared_cost_rejects_undeclared_resource_authority",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXModelTests.test_declared_graveyard_count_has_no_guessed_fixed_count_and_keeps_legacy_shape",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_chill_announces_x_without_mana_x_and_filters_creature_payment",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_scrying_exiles_exact_declared_cards_before_draw_and_life_loss",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_zero_x_costs_need_no_life_or_graveyard_objects",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory announced-X payment: exact native free-cast, zero, no-refund and declared-resource controls. The unpublished family remains blocked on the canonical all-life priority correction and final bounded source audit."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_chill_announces_x_without_mana_x_and_filters_creature_payment",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_scrying_exiles_exact_declared_cards_before_draw_and_life_loss",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_target_departure_keeps_paid_life_and_graveyard_exile",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Murder removes the original target before resolution; the additional life or graveyard payment stays paid. Native pending load, private projection and pre-action replay pass."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_real_cascade_forces_mana_x_zero_but_pays_nonmana_additional_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory announced-X payment: exact native free-cast, zero, no-refund and declared-resource controls. The unpublished family remains blocked on the canonical all-life priority correction and final bounded source audit."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_chill_announces_x_without_mana_x_and_filters_creature_payment",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_scrying_exiles_exact_declared_cards_before_draw_and_life_loss",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_target_departure_keeps_paid_life_and_graveyard_exile",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Murder removes the original target before resolution; the additional life or graveyard payment stays paid. Native pending load, private projection and pre-action replay pass."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_graveyard_exile",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_real_cascade_forces_mana_x_zero_but_pays_nonmana_additional_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory announced-X payment: exact native free-cast, zero, no-refund and declared-resource controls. The unpublished family remains blocked on the canonical all-life priority correction and final bounded source audit."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_life",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_countering_original_hatred_does_not_refund_declared_life",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory announced-X payment: exact native free-cast, zero, no-refund and declared-resource controls. The unpublished family remains blocked on the canonical all-life priority correction and final bounded source audit."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_life",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_hatred_pays_declared_life_before_resolution_and_uses_same_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_life",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_target_departure_keeps_paid_life_and_graveyard_exile",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Murder removes the original target before resolution; the additional life or graveyard payment stays paid. Native pending load, private projection and pre-action replay pass."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_life",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_real_cascade_forces_mana_x_zero_but_pays_nonmana_additional_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory announced-X payment: exact native free-cast, zero, no-refund and declared-resource controls. The unpublished family remains blocked on the canonical all-life priority correction and final bounded source audit."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_life",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_hatred_pays_declared_life_before_resolution_and_uses_same_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_life",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_omitting_declared_life_cost_is_killed_by_a_fresh_native_hatred",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_life",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXModelTests.test_declared_life_descriptor_rejects_unknown_fields_and_parameters",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed immutable declared-X life schema rejects unknown fields, schema versions, parameters and noninteger/negative values; zero and absent declarations are supported."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_life",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXModelTests.test_new_cost_capabilities_withdraw_to_residual_without_losing_result_scope",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_life",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_executable_declared_cost_rejects_undeclared_resource_authority",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_life",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXModelTests.test_declared_life_descriptor_rejects_unknown_fields_and_parameters",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed immutable declared-X life schema rejects unknown fields, schema versions, parameters and noninteger/negative values; zero and absent declarations are supported."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_life",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_hatred_pays_declared_life_before_resolution_and_uses_same_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_life",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_zero_x_costs_need_no_life_or_graveyard_objects",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory announced-X payment: exact native free-cast, zero, no-refund and declared-resource controls. The unpublished family remains blocked on the canonical all-life priority correction and final bounded source audit."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_life",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_hatred_pays_declared_life_before_resolution_and_uses_same_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_life",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_target_departure_keeps_paid_life_and_graveyard_exile",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Murder removes the original target before resolution; the additional life or graveyard payment stays paid. Native pending load, private projection and pre-action replay pass."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_life",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_real_cascade_forces_mana_x_zero_but_pays_nonmana_additional_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory announced-X payment: exact native free-cast, zero, no-refund and declared-resource controls. The unpublished family remains blocked on the canonical all-life priority correction and final bounded source audit."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_life",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_hatred_pays_declared_life_before_resolution_and_uses_same_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished announced-X mandatory additional payment family. Native original full admission/actions and complete timing, bounds, privacy, rollback/load/replay and mutation evidence must pass before accepting any gain."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_life",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_original_target_departure_keeps_paid_life_and_graveyard_exile",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Murder removes the original target before resolution; the additional life or graveyard payment stays paid. Native pending load, private projection and pre-action replay pass."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_life",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_x_additional_costs.AnnouncedAdditionalXRuntimeTests.test_real_cascade_forces_mana_x_zero_but_pays_nonmana_additional_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3i",
+        "118.3",
+        "118.3b",
+        "118.8",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory announced-X payment: exact native free-cast, zero, no-refund and declared-resource controls. The unpublished family remains blocked on the canonical all-life priority correction and final bounded source audit."
+    },
+    {
       "capability_id": "casting.additional_cost.conspire_fixed_tap",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_conspire.FixedConspireRuntimeTests.test_actual_rally_spell_and_copy_create_two_untapped_independent_creature_tokens",

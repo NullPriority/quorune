@@ -235,7 +235,7 @@ def _field(
             field["minimum"] = int(minimum)
         if maximum is not None:
             field["maximum"] = int(maximum)
-        for constraint in ('subset_maxima','maximal_refs','distinct'):
+        for constraint in ('subset_maxima','maximal_refs','distinct','count_from'):
             if constraint in value:
                 field[constraint] = copy.deepcopy(value[constraint])
         if value.get("allowed_cardinalities") is not None:

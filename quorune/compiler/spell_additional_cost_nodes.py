@@ -13,7 +13,7 @@ from .ir_model import (
     append_residual,
 )
 from .spell_additional_cost_templates import (
-    fixed_alternative_additional_cost_template,
+    fixed_alternative_additional_cost_template, announced_x_additional_cost_template,
     fixed_counter_additional_cost_template,
     fixed_tap_additional_cost_template,
     fixed_life_payment_additional_cost_template,
@@ -281,7 +281,7 @@ def typed_additional_cost_spell_node(
     if not rows:
         return None
     first_clause = rows[0][1].strip()
-    cost = fixed_waterbend_additional_cost_template(first_clause) or fixed_tap_additional_cost_template(first_clause)
+    cost = announced_x_additional_cost_template(first_clause) or fixed_waterbend_additional_cost_template(first_clause) or fixed_tap_additional_cost_template(first_clause)
     cost_mechanics = ()
     if cost is None:
         cost=fixed_counter_additional_cost_template(first_clause)
