@@ -33,6 +33,13 @@ references retain their own snapshot, current-information, and last-known
 information rules. Casting validation still rejects missing and wrong-domain
 selections before payment.
 
+An optional target set may begin with zero chosen objects (CR 115.6). After
+validating its descriptor, the homogeneous destruction, movement and tap-state
+handler emits the existing empty result plan without object mutation. Later
+independent instructions still resolve. This differs from choosing targets
+that all become illegal before resolution, where CR 608.2b stops the spell or
+ability. Nonempty batches retain their simultaneous owner and strict snapshots.
+
 `targets.py` owns the closed schema vocabulary and public-zone boundary.
 `target_predicates.py` owns reusable characteristic and relationship tests.
 `CommanderEngine._target_row_matches` remains the orchestration facade over
