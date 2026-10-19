@@ -17,6 +17,7 @@ RESOLUTION_CONDITION_OPERATION = "apply_if_public_condition"
 RESOLUTION_CONDITION_MECHANIC = "fixed-resolution-public-condition"
 RESOLUTION_CONDITION_CAPABILITY = "resolution.effect.public_condition"
 PUBLIC_SELF_REPLACEMENT_CAPABILITY='resolution.effect.fixed_public_self_replacement'
+SAME_TARGET_SELF_REPLACEMENT_CAPABILITY='resolution.effect.fixed_same_target_self_replacement'
 CAST_FACT_CONDITION_CAPABILITY = 'resolution.effect.fixed_cast_fact'
 CAST_FACT_CONDITION_MECHANIC = 'fixed-cast-fact-condition'
 _DERIVED_RESULT_MECHANICS = frozenset({
@@ -45,11 +46,14 @@ def resolution_result_is_fixed(effects: Any, mechanic_ids: Any) -> bool:
     return not _DERIVED_RESULT_MECHANICS.intersection(mechanic_ids) and not _contains_derived_result_value(effects)
 
 
-def cast_fact_result_is_fixed(effects: Any, mechanic_ids: Any, *, allow_fixed_damage_source: bool=False) -> bool:
+def cast_fact_result_is_fixed(effects: Any, mechanic_ids: Any, *, allow_fixed_damage_source: bool=False,
+        allow_targeted_damage_source: bool=False) -> bool:
     """An adopted instruction's source attribution is not a result quantity."""
     attributed={'place_counters_on_set','place_counter_set'}
     if allow_fixed_damage_source:
         attributed.add('damage_fixed_set')
+    if allow_targeted_damage_source:
+        attributed.add('damage')
     values = tuple(
         {key: value for key, value in effect.items() if key != 'source'}
         if effect.get('op') in attributed and effect.get('source') == '$source'
@@ -123,8 +127,8 @@ def validate_resolution_condition_instruction(
         "op", "player", "condition", "effects",
         "mechanic_ids", "prefix_mechanic_ids",
     }
-    cast_fact = effect.get('schema_version') in {2,4}
-    replacing=effect.get('schema_version') in {3,4}
+    cast_fact = effect.get('schema_version') in {2,4,5}
+    replacing=effect.get('schema_version') in {3,4,5}
     if cast_fact:
         expected_fields |= {'schema_version', 'cast_fact'}
     if replacing:expected_fields|={'schema_version','otherwise_effects','otherwise_mechanic_ids'}
@@ -165,7 +169,8 @@ def validate_resolution_condition_instruction(
         for value in nested
     ):
         raise ValueError("Resolution conditions require a bounded nonnested effect program")
-    if not (cast_fact_result_is_fixed(nested, effect["mechanic_ids"],allow_fixed_damage_source=effect.get('schema_version')==4) if cast_fact or replacing else resolution_result_is_fixed(nested, effect["mechanic_ids"])):
+    if not (cast_fact_result_is_fixed(nested, effect["mechanic_ids"],allow_fixed_damage_source=effect.get('schema_version') in {4,5},
+            allow_targeted_damage_source=effect.get('schema_version')==5) if cast_fact or replacing else resolution_result_is_fixed(nested, effect["mechanic_ids"])):
         raise ValueError("Derived or source-relative results require a separate binding and timing boundary")
     if replacing:
         if type(effect['schema_version']) is not int:raise ValueError('Self-replacement version must be an exact integer')
@@ -177,6 +182,7 @@ def _validate_otherwise_program(effect):
     values=effect['otherwise_effects']
     if (not isinstance(values,(list,tuple)) or not 1<=len(values)<=8
             or any(not isinstance(child,Mapping) or child.get('op')==RESOLUTION_CONDITION_OPERATION for child in values)
-            or not cast_fact_result_is_fixed(values,effect['otherwise_mechanic_ids'],allow_fixed_damage_source=effect.get('schema_version')==4)
+            or not cast_fact_result_is_fixed(values,effect['otherwise_mechanic_ids'],allow_fixed_damage_source=effect.get('schema_version') in {4,5},
+                allow_targeted_damage_source=effect.get('schema_version')==5)
             or 'fixed-next-turn-upkeep-draw' in effect['otherwise_mechanic_ids']):
         raise ValueError('Self-replacement default program is malformed or unrepresented')

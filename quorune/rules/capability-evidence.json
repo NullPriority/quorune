@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "f18cbf235e7f54f15558820ef57c0f0efefabf2e3f135e4310a1617cd1f8bacf",
-  "declaration_source_fingerprint": "3740e25a789d0aee5c3b1cd1cbc7b88b0c3edc305e0875d6e53494f7adbdc702",
+  "registry_fingerprint": "29a737139a8db1eb9f65dbb0ca1d6d1a55ebe7d82458fdc5d2f77a3276202d33",
+  "declaration_source_fingerprint": "a02830fc5d4df6752ff29aeb40d42d638bde489a105bb783e8a78dd74772928a",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -164936,6 +164936,646 @@
       "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
     },
     {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_actual_bounce_invalidates_selected_incarnation_and_keeps_paid_cost",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_actual_copy_retains_paid_choice_and_retargets_only_the_copy",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_actual_countered_kicked_burst_has_no_damage_and_no_refund",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_original_damage_replacements_retain_same_target_and_literal_amount",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_original_stat_replacements_keep_one_creature_and_exact_selected_keywords",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_actual_bounce_invalidates_selected_incarnation_and_keeps_paid_cost",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_actual_copy_retains_paid_choice_and_retargets_only_the_copy",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_actual_countered_kicked_burst_has_no_damage_and_no_refund",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_original_damage_replacements_retain_same_target_and_literal_amount",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_original_stat_replacements_keep_one_creature_and_exact_selected_keywords",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_fresh_original_modifier_kills_same_target_producer_omission",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_fresh_original_modifier_kills_unpaid_branch_mutation",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedCompilerTests.test_each_required_authority_withdrawal_prevents_same_target_admission",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedCompilerTests.test_new_target_occurrences_changed_domains_and_unrepresented_results_stay_residual",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_runtime_cannot_omit_same_target_or_child_damage_authority",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedCompilerTests.test_anaphor_has_one_complete_shared_target_and_independent_branch_owners",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_actual_bounce_invalidates_selected_incarnation_and_keeps_paid_cost",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_actual_copy_retains_paid_choice_and_retargets_only_the_copy",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_actual_countered_kicked_burst_has_no_damage_and_no_refund",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_original_damage_replacements_retain_same_target_and_literal_amount",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_original_stat_replacements_keep_one_creature_and_exact_selected_keywords",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_seven_originals_have_whole_card_admission_and_fully_playable_preflight",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_actual_bounce_invalidates_selected_incarnation_and_keeps_paid_cost",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_actual_copy_retains_paid_choice_and_retargets_only_the_copy",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_actual_countered_kicked_burst_has_no_damage_and_no_refund",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_original_damage_replacements_retain_same_target_and_literal_amount",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_original_stat_replacements_keep_one_creature_and_exact_selected_keywords",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_actual_bounce_invalidates_selected_incarnation_and_keeps_paid_cost",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_actual_copy_retains_paid_choice_and_retargets_only_the_copy",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_actual_countered_kicked_burst_has_no_damage_and_no_refund",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_original_damage_replacements_retain_same_target_and_literal_amount",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_same_target_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_same_target_replacements.SameTargetKickedRuntimeTests.test_original_stat_replacements_keep_one_creature_and_exact_selected_keywords",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
+    },
+    {
       "capability_id": "resolution.effect.public_condition",
       "evidence_class": "interaction",
       "test_id": "tests.test_graveyard_resolution_conditions.GraveyardResolutionConditionTests.test_original_unholy_hunger_excludes_opponent_cards_and_resolving_spell",
@@ -237298,5 +237938,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "e332f99e324e723f5c76a90247249b65a7fc5c0912c605d189744b1dc21fc12c"
+  "fingerprint": "940c6f2ae6ba6fd486cdb47ebf07da90f69402d37c5beac8dad0d25f6f22ac9b"
 }

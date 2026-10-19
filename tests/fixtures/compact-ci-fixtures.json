@@ -141,6 +141,7 @@
     "tests/fixtures/job-select-cards.json",
     "tests/fixtures/kicked-damage-replacement-cards.json",
     "tests/fixtures/kicked-entry-triggers.json",
+    "tests/fixtures/kicked-same-target-replacement-cards.json",
     "tests/fixtures/kicked-self-replacement-cards.json",
     "tests/fixtures/kicked-spell-conditions.json",
     "tests/fixtures/kindred-subtype-quantities.json",

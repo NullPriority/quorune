@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 399,
+  "registry_version": 400,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -1293,9 +1293,9 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Choose one independently closed fixed untargeted default or self-replacement result from a controller-bound public condition before either action and its external replacements, preserving earlier mandatory instructions.",
+        "summary": "Choose one independently closed fixed default or self-replacement result under an adopted controller-bound condition variant before either action and its external replacements, preserving earlier mandatory instructions.",
         "inputs": [
-          "one recognized public condition",
+          "one adopted public condition or sealed cast fact",
           "resolving controller",
           "fixed complete default and alternative programs",
           "independent mandatory prefix"
@@ -33510,6 +33510,111 @@
       "dependency_fail_closed_rationale": "New count schemas and effect selectors derive their explicit runtime authority independently of compiler annotations.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh native Gridlock and By Force witnesses kill replacing the announced binding and restoring the fixed-six selector limit. A fresh immutable count contract also kills clipping X to six.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "resolution.effect.fixed_same_target_self_replacement",
+      "version": 1,
+      "official_rules": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "614.15",
+        "702.33g",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "An ordinary single-face Kicker spell selects one fixed stat modifier or literal damage instruction for the same single public target role, retaining its complete unchanged schema and incarnation.",
+        "inputs": [
+          "one complete normal target schema and explicit same-target anaphor",
+          "sealed paid Kicker fact",
+          "both independently owned branches: one literal damage instruction or one stat modifier with up to two fixed keyword grants"
+        ],
+        "outputs": [
+          "one target chosen at casting for both paid states",
+          "one selected fixed branch after target revalidation",
+          "copied choice and private deterministic replay"
+        ],
+        "exclusions": [
+          "new target occurrences, widened target domains or predicates, conditional extra targets",
+          "variable, divided, private-choice, linked or unsupported results",
+          "permanent trigger and multiface contexts"
+        ]
+      },
+      "dependencies": [
+        "resolution.effect.fixed_cast_fact",
+        "resolution.effect.fixed_public_self_replacement",
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.compiler.kicked_same_target_replacements.same_target_kicked_replacement",
+        "quorune.compiler.kicked_self_replacement_templates.kicked_self_replacement_template",
+        "quorune.rules.resolution_condition_shapes.resolution_condition_node_capabilities",
+        "quorune.rules.resolution_condition_shapes.same_target_self_replacement_runtime_dependencies",
+        "quorune.card_programs.runtime_requirements.program_dynamic_runtime_requirements",
+        "quorune.semantic_choices.resolution_condition.PublicResolutionConditionHandler"
+      ],
+      "positive_tests": [
+        "test_anaphor_has_one_complete_shared_target_and_independent_branch_owners",
+        "test_seven_originals_have_whole_card_admission_and_fully_playable_preflight",
+        "test_original_stat_replacements_keep_one_creature_and_exact_selected_keywords",
+        "test_original_damage_replacements_retain_same_target_and_literal_amount",
+        "test_actual_bounce_invalidates_selected_incarnation_and_keeps_paid_cost",
+        "test_actual_countered_kicked_burst_has_no_damage_and_no_refund",
+        "test_actual_copy_retains_paid_choice_and_retargets_only_the_copy"
+      ],
+      "negative_tests": [
+        "test_new_target_occurrences_changed_domains_and_unrepresented_results_stay_residual",
+        "test_each_required_authority_withdrawal_prevents_same_target_admission",
+        "test_runtime_cannot_omit_same_target_or_child_damage_authority"
+      ],
+      "interaction_tests": [
+        "test_original_stat_replacements_keep_one_creature_and_exact_selected_keywords",
+        "test_original_damage_replacements_retain_same_target_and_literal_amount",
+        "test_actual_bounce_invalidates_selected_incarnation_and_keeps_paid_cost",
+        "test_actual_countered_kicked_burst_has_no_damage_and_no_refund",
+        "test_actual_copy_retains_paid_choice_and_retargets_only_the_copy"
+      ],
+      "multiplayer_tests": [
+        "test_original_stat_replacements_keep_one_creature_and_exact_selected_keywords",
+        "test_original_damage_replacements_retain_same_target_and_literal_amount",
+        "test_actual_bounce_invalidates_selected_incarnation_and_keeps_paid_cost",
+        "test_actual_countered_kicked_burst_has_no_damage_and_no_refund",
+        "test_actual_copy_retains_paid_choice_and_retargets_only_the_copy"
+      ],
+      "privacy_tests": [
+        "test_original_stat_replacements_keep_one_creature_and_exact_selected_keywords",
+        "test_original_damage_replacements_retain_same_target_and_literal_amount",
+        "test_actual_bounce_invalidates_selected_incarnation_and_keeps_paid_cost",
+        "test_actual_countered_kicked_burst_has_no_damage_and_no_refund",
+        "test_actual_copy_retains_paid_choice_and_retargets_only_the_copy"
+      ],
+      "replay_tests": [
+        "test_original_stat_replacements_keep_one_creature_and_exact_selected_keywords",
+        "test_original_damage_replacements_retain_same_target_and_literal_amount",
+        "test_actual_bounce_invalidates_selected_incarnation_and_keeps_paid_cost",
+        "test_actual_countered_kicked_burst_has_no_damage_and_no_refund",
+        "test_actual_copy_retains_paid_choice_and_retargets_only_the_copy"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Both source admission and runtime binding require complete same-target, cast fact, target revalidation and child authority; focused withdrawals must pass before acceptance.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh native original modifier and damage witnesses must kill producer omission and lost paid-branch mutations before acceptance.",
       "blockers": [],
       "status": "trusted"
     }

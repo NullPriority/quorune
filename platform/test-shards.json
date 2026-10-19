@@ -416,6 +416,7 @@
       "test_fixed_tap_payments",
       "test_fractional_player_results",
       "test_goad_rules",
+      "test_kicked_same_target_replacements",
       "test_linked_abilities",
       "test_ordinary_crew",
       "test_permissions_projection",

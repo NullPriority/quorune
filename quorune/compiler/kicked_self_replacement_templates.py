@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Fixed untargeted self-replacement using an already sealed Kicker choice."""
+"""Fixed result self-replacement using an already sealed Kicker choice."""
 
 from copy import deepcopy
 import re
@@ -58,17 +58,23 @@ def kicked_self_replacement_template(text, *, source_name,compile_component):
     if alternative is None:
         return None
     normal=compile_component(normal_text)
-    if normal[0] is None or len(normal[1])!=1 or normal[2] is not None:
+    if normal[0] is None or len(normal[1])!=1:
         return None
-    replacement=_replacement_component(alternative,normal,compile_component,source_name)
-    if replacement is None or len(replacement[1])!=1 or replacement[2] is not None:
+    targeted=normal[2] is not None
+    if targeted:
+        from .kicked_same_target_replacements import same_target_kicked_replacement
+        replacement=same_target_kicked_replacement(normal_text,alternative,normal,compile_component)
+    else:
+        replacement=_replacement_component(alternative,normal,compile_component,source_name)
+    if replacement is None or not 1<=len(replacement[1])<=(3 if targeted else 1) or replacement[2]!=normal[2]:
         return None
-    if not all(cast_fact_result_is_fixed(value[1],value[3],allow_fixed_damage_source=True) for value in (normal,replacement)):
+    if not all(cast_fact_result_is_fixed(value[1],value[3],allow_fixed_damage_source=True,
+            allow_targeted_damage_source=targeted) for value in (normal,replacement)):
         return None
-    wrapper={'op':RESOLUTION_CONDITION_OPERATION,'schema_version':4,'player':'$controller',
+    wrapper={'op':RESOLUTION_CONDITION_OPERATION,'schema_version':5 if targeted else 4,'player':'$controller',
         'condition':KickedCastCondition().to_dict(),'cast_fact':'$context.kicked',
         'effects':deepcopy(list(replacement[1])),'mechanic_ids':list(replacement[3]),
         'otherwise_effects':deepcopy(list(normal[1])),'otherwise_mechanic_ids':list(normal[3]),
         'prefix_mechanic_ids':[]}
-    return ('fixed-kicked-self-replacement-v1',(wrapper,),None,
+    return ('fixed-kicked-self-replacement-v1',(wrapper,),deepcopy(normal[2]),
         tuple(dict.fromkeys((RESOLUTION_CONDITION_MECHANIC,CAST_FACT_CONDITION_MECHANIC,*normal[3],*replacement[3]))))

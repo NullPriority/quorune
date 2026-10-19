@@ -6285,6 +6285,26 @@
         "test_fixed_mass_damage",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "same-target-kicked-self-replacement-contract",
+      "patterns": [
+        "quorune/compiler/kicked_same_target_replacements.py",
+        "quorune/rules/resolution_condition_shapes.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/card_programs/binding.py",
+        "tests/test_kicked_same_target_replacements.py",
+        "tests/fixtures/kicked-same-target-replacement-cards.json"
+      ],
+      "test_modules": [
+        "test_kicked_same_target_replacements",
+        "test_kicked_self_replacements",
+        "test_kicked_damage_replacements",
+        "test_announced_target_cardinality",
+        "test_announced_x_additional_costs",
+        "test_public_negative_keyword_queries",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

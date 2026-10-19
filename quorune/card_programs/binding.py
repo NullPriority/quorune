@@ -9,9 +9,7 @@ from ..semantic_runtime import (
     runtime_component_registry_fingerprint,
 )
 from ..util import stable_json
-from ..object_predicate import object_query_capabilities
-from ..rules.casting_additional_cost_groups import announced_additional_cost_dependencies
-from ..rules.fixed_homogeneous_target_set_capability_shapes import announced_target_runtime_dependencies
+from .runtime_requirements import program_dynamic_runtime_requirements
 from ..semantic_runtime.activated_abilities import (
     is_structural_activated_ability_catalog_program,
     activated_abilities_from_descriptors,
@@ -36,20 +34,7 @@ def bind_semantic_program_runtime(
     }
     semantic_identities: list[dict[str, Any]] = []
     component_identities: list[dict[str, Any]] = []
-    required: set[str] = set()
-    blockers: set[str] = set()
-    try:
-        required.update(announced_target_runtime_dependencies(program))
-    except (TypeError, ValueError) as exc:
-        blockers.add(f"runtime_target_count:invalid:{exc}")
-    try:
-        required.update(object_query_capabilities((program.effects, program.handlers, program.target_schema)))
-    except (TypeError, ValueError) as exc:
-        blockers.add(f'runtime_query:invalid:{exc}')
-    try:
-        required.update(announced_additional_cost_dependencies(program.cost_schema))
-    except (TypeError, ValueError) as exc:
-        blockers.add(f'runtime_cast_cost:invalid:{exc}')
+    required,blockers=program_dynamic_runtime_requirements(program)
     unregistered_operations: set[str] = set()
     if getattr(program, "trigger_limit", None) is not None:
         from ..rules.trigger_limits import validate_program_trigger_limit, TRIGGER_ONCE_PER_TURN_CAPABILITY

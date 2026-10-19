@@ -1310,6 +1310,23 @@ The compiler binds an alternative's "it deals" only to the already represented
 damage-set source. Other source-relative values and earlier condition schemas
 retain their existing boundaries.
 
+`compiler/kicked_same_target_replacements.py` adopts schema version 5 for one
+unchanged public target role. Only an explicit same-creature anaphor or fixed
+damage-amount shorthand retains the original complete target schema. Both
+branches independently close; a stat modifier may retain its complete fixed
+keyword grants. A separate fine capability requires the Kicker fact,
+self-replacement and target-revalidation owners. The target is chosen while
+casting and checked again before resolution; a copied spell may choose its
+own legal target while retaining the paid fact. New target occurrences,
+different counts, domains or predicates, divided quantities and private choice
+results remain residual.
+
+`card_programs/runtime_requirements.py` binds descriptor-specific requirements
+in addition to registered handler minima. It retains the existing query,
+announced-target-count and additional-cost requirements and validates both
+branches and the shared target of schema 5 before runtime trust. Older
+condition variants retain their existing runtime binding contract.
+
 Public self-death and attached-creature death returns bind the event card and
 its exact post-departure zone-change counter. The existing graveyard-return
 operation lowers that descriptor to the canonical zone move intent, which
