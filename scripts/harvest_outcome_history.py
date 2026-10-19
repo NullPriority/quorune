@@ -1402,6 +1402,12 @@ def validate_semantic_transition_source_identity(
         recorded = candidates[-1]
         version = recorded.get("compiler_version") or recorded.get("head_receipt", {}).get("compiler_version")
         if recorded["transition_id"] == validated["transition_id"] and version == validated["compiler_version"]:
+            if (validated["outcome_kind"] == "non_harvest"
+                    and recorded["non_harvest_reason"] != validated["non_harvest_reason"]):
+                raise HarvestOutcomeHistoryError(
+                    "Recorded non-harvest rationale is immutable; retain it "
+                    "or declare a new compiler transition"
+                )
             return
     latest = _latest_semantic_receipt(entries, non_harvest, repository=repository)
     if latest["compiler_version"] != validated["compiler_version"]:

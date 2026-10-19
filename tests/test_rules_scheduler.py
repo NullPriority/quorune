@@ -738,7 +738,7 @@ class RulesSchedulerSourcePolicyTests(unittest.TestCase):
             "transition_id": recorded["transition_id"], "compiler_version": version,
             "bundle_id": None, "candidate_ids": [], "family_ids": [], "capability_ids": [],
             "expected_complete_card_gain": None,
-            "non_harvest_reason": "Amend a pending correctness transition without claiming a harvest.",
+            "non_harvest_reason": recorded["non_harvest_reason"],
         }
         catalog["work_selection"]["semantic_transition_declaration"] = declaration
         with tempfile.TemporaryDirectory() as directory:
@@ -764,6 +764,12 @@ class RulesSchedulerSourcePolicyTests(unittest.TestCase):
                 source.write_text(json.dumps(catalog), encoding="utf8")
                 with self.assertRaisesRegex(HarvestOutcomeHistoryError, "already recorded.*stable"):
                     update_rules_scheduler.main()
+                declaration["transition_id"] = recorded["transition_id"]
+                declaration["non_harvest_reason"] = "Rewrite an already materialized rationale without a new identity."
+                source.write_text(json.dumps(catalog), encoding="utf8")
+                with self.assertRaisesRegex(HarvestOutcomeHistoryError, "rationale is immutable"):
+                    update_rules_scheduler.main()
+                declaration["transition_id"] = "fixture-new-transition"
                 declaration["compiler_version"] = "oracle-ir-v999999"
                 source.write_text(json.dumps(catalog), encoding="utf8")
                 with mock.patch.object(update_rules_scheduler, "ORACLE_COMPILER_VERSION", "oracle-ir-v999999"):

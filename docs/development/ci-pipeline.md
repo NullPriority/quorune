@@ -106,7 +106,8 @@ comparison, including removed imports, instead of starting Git for each module.
 
 Pre-corpus source-policy validation also compares the declared transition with
 the latest materialized semantic receipt. Amending an unmerged recorded
-compiler identity retains its stable transition ID. A new compiler identity can declare a new
+compiler identity retains its stable transition ID and recorded non-harvest
+rationale. A new compiler identity can declare a new
 transition before its corpus exists. This check reads the existing history;
 it does not generate the census or rules queue.
 
