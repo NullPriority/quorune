@@ -367,6 +367,7 @@
       "test_persist_undying_rules",
       "test_prevention_immediate_sequencing",
       "test_prevention_trigger_stack",
+      "test_priced_mana_sources",
       "test_public_quantity_mana",
       "test_random_discard",
       "test_regeneration_rules",

@@ -684,8 +684,13 @@ primary shards, and every workflow, planner, sentinel, comparator, or certifier
 change remain high risk. The candidate revision never evaluates its own
 authority change to obtain this exception.
 
-`.github/workflows/ci.yml` runs these independent jobs:
+For an ordinary change that needs complete pre-merge certification, apply
+`ci-complete` before its next source event. The existing high-risk planner
+then selects every primary module, both operating systems, package checks and
+the complete browser groups. Its complete receipt is eligible for the normal
+content-identical exact-main reuse. A label edit alone does not start a matrix.
 
+`.github/workflows/ci.yml` runs these independent jobs:
 - impact-selected Ubuntu module slices partitioned by their existing primary
   owners plus the compact `merge-core` invariant overlay; high-risk changes run
   all twelve duration-ordered functional shards;

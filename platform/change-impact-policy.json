@@ -6023,6 +6023,26 @@
         "test_choice_forms",
         "test_high_risk_interaction_assurance"
       ]
+    },
+    {
+      "id": "priced-mana-source-payment-contract",
+      "patterns": [
+        "quorune/mana_source_discovery.py",
+        "quorune/mana_activation.py",
+        "tests/test_priced_mana_sources.py",
+        "tests/fixtures/priced-mana-source-cards.json"
+      ],
+      "test_modules": [
+        "test_priced_mana_sources",
+        "test_fixed_mana_abilities",
+        "test_mana_abilities",
+        "test_mana_mode_effects",
+        "test_public_state_mana_actions",
+        "test_color_set_mana_abilities",
+        "test_casting_activation_proposal_equivalence",
+        "test_card_program_trust",
+        "test_high_risk_interaction_assurance"
+      ]
     }
   ],
   "symbol_rules": [
@@ -6060,6 +6080,7 @@
     }
   ],
   "forced_labels": {
+    "ci-complete": "high_risk_source",
     "browser-full": "browser_full",
     "browser-combat": "browser_focus:combat",
     "browser-mana-action": "browser_focus:mana-action",

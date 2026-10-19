@@ -108458,7 +108458,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108478,7 +108481,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108498,7 +108504,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108518,7 +108527,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108538,7 +108550,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108546,6 +108561,98 @@
         "commander_review"
       ],
       "applicability_note": "Apply the shared haste and continuous-control restriction before a creature can pay a tap-symbol mana cost."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_free_colorless_mode_of_each_original_remains_available_for_automatic_payment",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_original_filter_lands_do_not_skip_their_mana_price",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_original_prism_can_pay_its_filter_cost_explicitly_then_cast_and_replay",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_original_prism_cannot_filter_green_from_zero_mana_for_an_automatic_cast",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
     },
     {
       "capability_id": "mana.activated.fixed_output",
@@ -108558,7 +108665,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108578,7 +108688,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108598,7 +108711,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108606,6 +108722,98 @@
         "commander_review"
       ],
       "applicability_note": "Expose a permanent's typed mana activation only to its current controller in a four-player game."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_free_colorless_mode_of_each_original_remains_available_for_automatic_payment",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_original_filter_lands_do_not_skip_their_mana_price",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_original_prism_can_pay_its_filter_cost_explicitly_then_cast_and_replay",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_original_prism_cannot_filter_green_from_zero_mana_for_an_automatic_cast",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
     },
     {
       "capability_id": "mana.activated.fixed_output",
@@ -108618,7 +108826,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108638,7 +108849,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108658,7 +108872,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108666,6 +108883,29 @@
         "commander_review"
       ],
       "applicability_note": "Kill omission, widening, or color swapping in a compiled alternative output mode."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_omitting_the_price_guard_is_killed_by_a_fresh_native_cast_witness",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
     },
     {
       "capability_id": "mana.activated.fixed_output",
@@ -108678,7 +108918,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108698,7 +108941,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108718,7 +108964,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108738,7 +108987,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108758,7 +109010,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108778,7 +109033,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108798,7 +109056,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108818,7 +109079,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108838,7 +109102,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108846,6 +109113,98 @@
         "commander_review"
       ],
       "applicability_note": "Roll back mana, life, tap, sacrifice, and output atomically when a submitted fixed output mode is invalid."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "negative",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_original_filter_lands_do_not_skip_their_mana_price",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "negative",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_original_prism_cannot_filter_green_from_zero_mana_for_an_automatic_cast",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "negative",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_original_prism_cannot_tap_for_its_own_filter_payment",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "negative",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_prepared_filter_plan_rejects_a_paid_mode_before_any_write",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
     },
     {
       "capability_id": "mana.activated.fixed_output",
@@ -108858,7 +109217,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108878,7 +109240,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108898,7 +109263,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108918,7 +109286,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108938,7 +109309,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108958,7 +109332,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108978,7 +109355,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -108998,7 +109378,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109018,7 +109401,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109038,7 +109424,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109058,7 +109447,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109078,7 +109470,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109098,7 +109493,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109106,6 +109504,52 @@
         "commander_review"
       ],
       "applicability_note": "Pay fixed mana, tap, life, and source-sacrifice costs through their canonical owners before adding the typed fixed output."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "positive",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_free_colorless_mode_of_each_original_remains_available_for_automatic_payment",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "positive",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_original_prism_can_pay_its_filter_cost_explicitly_then_cast_and_replay",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
     },
     {
       "capability_id": "mana.activated.fixed_output",
@@ -109118,7 +109562,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109138,7 +109585,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109158,7 +109608,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109178,7 +109631,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109198,7 +109654,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109206,6 +109665,98 @@
         "commander_review"
       ],
       "applicability_note": "Project the public mana source and legal action without exposing an opposing hand object."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_free_colorless_mode_of_each_original_remains_available_for_automatic_payment",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_original_filter_lands_do_not_skip_their_mana_price",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_original_prism_can_pay_its_filter_cost_explicitly_then_cast_and_replay",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_original_prism_cannot_filter_green_from_zero_mana_for_an_automatic_cast",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
     },
     {
       "capability_id": "mana.activated.fixed_output",
@@ -109218,7 +109769,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109238,7 +109792,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109258,7 +109815,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109278,7 +109838,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109298,7 +109861,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109318,7 +109884,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109338,7 +109907,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109358,7 +109930,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109378,7 +109953,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109386,6 +109964,98 @@
         "commander_review"
       ],
       "applicability_note": "Replay the exact activation command and typed fixed mana result from the initial checkpoint."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "replay",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_free_colorless_mode_of_each_original_remains_available_for_automatic_payment",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "replay",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_original_filter_lands_do_not_skip_their_mana_price",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "replay",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_original_prism_can_pay_its_filter_cost_explicitly_then_cast_and_replay",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "replay",
+      "test_id": "tests.test_priced_mana_sources.PricedManaSourceRuntimeTests.test_original_prism_cannot_filter_green_from_zero_mana_for_an_automatic_cast",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "302.6",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original normally admitted filtering sources cannot bypass a separate mana activation price during source/output-only auto payment or plan commitment. Free colorless modes and explicit fully paid filtering remain legal; native commands preserve rollback, private projection, pending load and replay."
     },
     {
       "capability_id": "mana.activated.fixed_output",
@@ -109398,7 +110068,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -109418,7 +110091,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",

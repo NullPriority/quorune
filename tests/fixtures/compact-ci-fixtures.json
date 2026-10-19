@@ -172,6 +172,7 @@
     "tests/fixtures/predefined-role-cards.json",
     "tests/fixtures/preparation-cards.json",
     "tests/fixtures/prevention-composition-cards.json",
+    "tests/fixtures/priced-mana-source-cards.json",
     "tests/fixtures/prototype-cards.json",
     "tests/fixtures/prowess-cards.json",
     "tests/fixtures/public-activation-condition-cards.json",
