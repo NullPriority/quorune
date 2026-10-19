@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 384,
+  "registry_version": 385,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -14822,7 +14822,7 @@
     },
     {
       "id": "mana.activated.fixed_output",
-      "version": 4,
+      "version": 5,
       "official_rules": [
         "106.1",
         "106.4",
@@ -14830,7 +14830,10 @@
         "605.1a",
         "605.2",
         "605.3a",
-        "605.3b"
+        "605.3b",
+        "601.2g",
+        "601.2h",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -14843,7 +14846,8 @@
           "current per-mode tap or bounded nontap self-sacrifice cost",
           "current source-cost availability",
           "selected fixed output mode",
-          "trusted source-spanned fixed-output mana descriptor"
+          "trusted source-spanned fixed-output mana descriptor",
+          "automatic source/output plans require no separate mana payment; priced modes remain explicit activations"
         ],
         "outputs": [
           "one advertised and accepted mode set",
@@ -14869,6 +14873,7 @@
         "quorune.fixed_mana_abilities.compile_fixed_activated_mana_ability",
         "quorune.mana_activation.complete_mana_activation",
         "quorune.mana_activation.complete_mana_plan_activations",
+        "quorune.mana_source_discovery._mana_plan_cost_is_supported",
         "quorune.mana_source_discovery.available_mana_sources",
         "quorune.mana_source_discovery.mana_plan_abilities",
         "quorune.semantic_runtime.mana_abilities.FixedActivatedManaAbilityHandler",
@@ -14884,8 +14889,10 @@
         "test_fixed_mana_selected_tap_retains_query_count_and_source_exclusion",
         "test_fixed_mandatory_costs_commit_through_canonical_owners",
         "test_fixed_output_compiler_lowers_source_spanned_cardprogram",
+        "test_free_colorless_mode_of_each_original_remains_available_for_automatic_payment",
         "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
         "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+        "test_original_prism_can_pay_its_filter_cost_explicitly_then_cast_and_replay",
         "test_real_flash_reduces_locked_cost_then_can_end_during_mana_payment_before_cast_event",
         "test_tapped_newly_controlled_nontap_self_sacrifice_source_can_pay_once"
       ],
@@ -14896,9 +14903,13 @@
         "test_invalid_compiled_mana_mode_rolls_back",
         "test_invalid_mode_rolls_back_fixed_mandatory_costs",
         "test_manual_nontap_flag_cannot_bypass_an_intrinsic_land_tap_cost",
+        "test_original_filter_lands_do_not_skip_their_mana_price",
         "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
         "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+        "test_original_prism_cannot_filter_green_from_zero_mana_for_an_automatic_cast",
+        "test_original_prism_cannot_tap_for_its_own_filter_payment",
         "test_parenthesized_basic_land_reminder_is_not_an_executable_program",
+        "test_prepared_filter_plan_rejects_a_paid_mode_before_any_write",
         "test_selected_mana_sacrifice_codec_capabilities_and_result_boundaries_fail_closed",
         "test_selected_tap_mana_dependency_and_malformed_choice_fail_closed"
       ],
@@ -14906,29 +14917,45 @@
         "test_actual_copied_nontap_mana_source_uses_the_same_payment_eligibility",
         "test_compiled_fixed_output_creature_respects_haste_cost_dependency",
         "test_condition_loss_during_actual_mana_payment_does_not_cancel_as_though_casts",
+        "test_free_colorless_mode_of_each_original_remains_available_for_automatic_payment",
+        "test_original_filter_lands_do_not_skip_their_mana_price",
         "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
         "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+        "test_original_prism_can_pay_its_filter_cost_explicitly_then_cast_and_replay",
+        "test_original_prism_cannot_filter_green_from_zero_mana_for_an_automatic_cast",
         "test_real_flash_reduces_locked_cost_then_can_end_during_mana_payment_before_cast_event",
         "test_tapped_newly_controlled_nontap_self_sacrifice_source_can_pay_once"
       ],
       "multiplayer_tests": [
         "test_compiled_fixed_output_is_controller_scoped_in_four_player_game",
+        "test_free_colorless_mode_of_each_original_remains_available_for_automatic_payment",
+        "test_original_filter_lands_do_not_skip_their_mana_price",
         "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
-        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays"
+        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+        "test_original_prism_can_pay_its_filter_cost_explicitly_then_cast_and_replay",
+        "test_original_prism_cannot_filter_green_from_zero_mana_for_an_automatic_cast"
       ],
       "privacy_tests": [
         "test_compiled_fixed_output_projection_exposes_no_hidden_cards",
+        "test_free_colorless_mode_of_each_original_remains_available_for_automatic_payment",
+        "test_original_filter_lands_do_not_skip_their_mana_price",
         "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
-        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays"
+        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+        "test_original_prism_can_pay_its_filter_cost_explicitly_then_cast_and_replay",
+        "test_original_prism_cannot_filter_green_from_zero_mana_for_an_automatic_cast"
       ],
       "replay_tests": [
         "test_actual_copied_nontap_mana_source_uses_the_same_payment_eligibility",
         "test_compiled_alternative_output_is_advertised_accepted_and_replayed",
         "test_compiled_fixed_output_activation_replays_exactly",
         "test_condition_loss_during_actual_mana_payment_does_not_cancel_as_though_casts",
+        "test_free_colorless_mode_of_each_original_remains_available_for_automatic_payment",
         "test_manual_nontap_flag_cannot_bypass_an_intrinsic_land_tap_cost",
+        "test_original_filter_lands_do_not_skip_their_mana_price",
         "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
         "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+        "test_original_prism_can_pay_its_filter_cost_explicitly_then_cast_and_replay",
+        "test_original_prism_cannot_filter_green_from_zero_mana_for_an_automatic_cast",
         "test_real_flash_reduces_locked_cost_then_can_end_during_mana_payment_before_cast_event",
         "test_tapped_newly_controlled_nontap_self_sacrifice_source_can_pay_once"
       ],
@@ -14943,7 +14970,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The compiler and runtime descriptor require the trusted tap-or-untap source-cost eligibility capability; closure without it is rejected before the CardProgram can become trusted.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_fixed_output_mana_mode_mutants_are_killed pins every alternative mode, amount, and color, so omission, widening, or color-swapping mutants do not survive.",
+      "implementation_mutation_rationale": "test_fixed_output_mana_mode_mutants_are_killed pins every alternative mode, amount, and color, so omission, widening, or color-swapping mutants do not survive. A fresh native original Prism cast witness kills omission of the shared automatic-plan mana-price guard.",
       "blockers": [],
       "status": "trusted"
     },
