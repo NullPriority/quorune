@@ -894,6 +894,15 @@ public permanent-state predicates such as a named counter minimum. Historical
 schema-v1 through schema-v6 payloads retain their original field sets so Game
 Record v3 replay does not silently rewrite old descriptors.
 
+Version-nine queries add `colors_none` for negative-color battlefield sets.
+The shared matcher checks current color membership, so colorless objects match
+and a multicolored object containing the excluded color does not. Static
+characteristic effects recheck the live set after layer five; resolution
+characteristic effects lock the current incarnations. Schemas one through eight
+retain their serialized field sets. Specialized consumers keep their own
+admission boundaries, and compiler/runtime binding both require the separate
+negative-color query capability when the field is used.
+
 Version-seven queries carry a fixed typed numeric characteristic predicate for
 represented battlefield creature selection. They use the same comparison
 value as direct targets and require exact effective stats. Live layer matching

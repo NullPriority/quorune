@@ -65,6 +65,8 @@ class PermanentDamageGroup:
             raise FixedDamageSetError(
                 "Permanent controller relation is unsupported"
             )
+        if self.query.colors_none:
+            raise FixedDamageSetError("Negative-color damage sets require their own reviewed consumer")
         if self.query.zones != ("battlefield",):
             raise FixedDamageSetError(
                 "Fixed permanent damage queries are battlefield-only"

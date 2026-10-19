@@ -112,6 +112,7 @@ def fixed_resolution_characteristic_query_is_closed(
             query.supertypes_all,
             query.colors_all,
             query.colors_any,
+            query.colors_none,
             query.minimum_color_count is not None,
             query.colorless is not None,
             query.token is not None,

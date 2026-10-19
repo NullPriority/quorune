@@ -9,6 +9,7 @@ from ..semantic_runtime import (
     runtime_component_registry_fingerprint,
 )
 from ..util import stable_json
+from ..object_predicate import object_query_capabilities
 from ..semantic_runtime.activated_abilities import (
     is_structural_activated_ability_catalog_program,
     activated_abilities_from_descriptors,
@@ -35,6 +36,10 @@ def bind_semantic_program_runtime(
     component_identities: list[dict[str, Any]] = []
     required: set[str] = set()
     blockers: set[str] = set()
+    try:
+        required.update(object_query_capabilities((program.effects, program.handlers)))
+    except (TypeError, ValueError) as exc:
+        blockers.add(f'runtime_query:invalid:{exc}')
     unregistered_operations: set[str] = set()
     if getattr(program, "trigger_limit", None) is not None:
         from ..rules.trigger_limits import validate_program_trigger_limit, TRIGGER_ONCE_PER_TURN_CAPABILITY

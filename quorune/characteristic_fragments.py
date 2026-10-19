@@ -201,6 +201,7 @@ class CharacteristicQuantitySpec:
             or query.exclude_ref is not None
             or query.known_to_actor is not None
             or query.keywords_all
+            or query.colors_none
             or query.keywords_none
             or query.numeric_characteristic is not None
             or query.include_phased_out

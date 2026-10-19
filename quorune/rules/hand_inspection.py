@@ -78,6 +78,7 @@ class HandCardPredicateSpec:
             or query.subtypes_all
             or query.excluded_subtypes
             or query.colors_all
+            or query.colors_none
             or query.colorless is not None
             or query.minimum_color_count is not None
             or query.keywords_all

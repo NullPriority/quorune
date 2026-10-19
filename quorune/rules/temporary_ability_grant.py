@@ -34,7 +34,7 @@ def temporary_quoted_grant_node_capabilities(*, effects, target_schema, mechanic
             query = ObjectQuerySpec.from_dict(grant['predicate'])
         except (TypeError, ValueError):
             return ()
-        if (query.to_dict() != grant['predicate'] or query.keywords_none
+        if (query.to_dict() != grant['predicate'] or query.keywords_none or query.colors_none
                 or not fixed_resolution_characteristic_query_is_closed(query, target_schema=None)):
             return ()
         return _temporary_query_grant_capabilities(grant, query)

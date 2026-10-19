@@ -10,7 +10,7 @@ from ..compiler.fixed_resolution_characteristic_queries import (
 from ..keyword_abilities import (
     FIXED_CHARACTERISTIC_KEYWORDS,
 )
-from ..object_predicate import ObjectQueryError, ObjectQuerySpec
+from ..object_predicate import ObjectQueryError, ObjectQuerySpec, object_query_capabilities
 
 
 FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY = (
@@ -84,7 +84,7 @@ def fixed_resolution_characteristic_set_node_capabilities(
             )
         ):
             return ()
-    dependencies = {FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY}
+    dependencies = {FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY, *object_query_capabilities(query)}
     if query.state_predicate is not None:
         dependencies.add("state_query.permanent.public_state_predicate")
     if target_schema is not None:

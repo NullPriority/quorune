@@ -883,6 +883,13 @@ counter relation. Static and effect consumers declare the public player-count
 producer separately; team formats and unrepresented opponent predicates retain
 their existing support boundaries.
 
+Public battlefield subjects also accept a single named negative color, such as
+nonwhite creatures. They preserve current controller and source-exclusion
+qualifiers in schema-nine queries, with an explicit negative-color capability.
+Static anthems and grants use current color after layer five; fixed end-of-turn
+characteristic sets lock recipients at resolution. Negative keywords, hidden
+queries, ambiguous compound colors and unrepresented siblings remain residual.
+
 Boolean public conditions retain complete atomic parsing before splitting
 an `and` or `or` composition. Each leaf must independently compile, and the
 versioned condition keeps its operator and producer dependencies. Ambiguous

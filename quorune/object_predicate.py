@@ -46,6 +46,8 @@ _NEGATIVE_KEYWORD_QUERY_FIELDS = _RELATIONAL_QUERY_FIELDS | {
 _DESIGNATION_QUERY_FIELDS = _NEGATIVE_KEYWORD_QUERY_FIELDS | {"commander"}
 _NUMERIC_QUERY_FIELDS = _DESIGNATION_QUERY_FIELDS | {"numeric_characteristic"}
 _SUPERTYPE_EXCLUSION_QUERY_FIELDS = _NUMERIC_QUERY_FIELDS | {"excluded_supertypes"}
+_COLOR_EXCLUSION_QUERY_FIELDS = _SUPERTYPE_EXCLUSION_QUERY_FIELDS | {"colors_none"}
+NEGATIVE_COLOR_QUERY_CAPABILITY = "state_query.permanent.negative_color"
 _LEGACY_PERMANENT_STATE_FIELDS = frozenset(
     {
         "entered_this_turn",
@@ -326,6 +328,7 @@ class ObjectQuerySpec:
     state_predicate: PermanentStatePredicateSpec | None = None
     numeric_characteristic: TargetNumericCharacteristicSpec | None = None
     excluded_supertypes: tuple[str, ...] = ()
+    colors_none: tuple[str, ...] = ()
     _serialization_version: int = field(
         default=2,
         repr=False,
@@ -334,6 +337,8 @@ class ObjectQuerySpec:
     )
 
     def __post_init__(self) -> None:
+        if type(self._serialization_version) is not int or self._serialization_version not in {1, 2, 3, 4, 5, 6, 7, 8, 9}:
+            raise ObjectQueryError('Object query serialization version is unsupported')
         for field_name in (
             "zones",
             "types_all",
@@ -354,7 +359,7 @@ class ObjectQuerySpec:
                     getattr(self, field_name), field_name=field_name
                 ),
             )
-        for field_name in ("colors_all", "colors_any"):
+        for field_name in ("colors_all", "colors_any", "colors_none"):
             object.__setattr__(
                 self,
                 field_name,
@@ -364,6 +369,12 @@ class ObjectQuerySpec:
                     upper=True,
                 ),
             )
+        if self.colors_none and (
+            self.zones != ('battlefield',)
+            or any(color not in {'W', 'U', 'B', 'R', 'G'} for color in self.colors_none)
+            or set(self.colors_none).intersection(self.colors_all)
+        ):
+            raise ObjectQueryError('Negative colors require a nonconflicting five-color battlefield query')
         for field_name in ("owner", "controller", "exclude_ref"):
             value = getattr(self, field_name)
             if value is not None:
@@ -435,10 +446,10 @@ class ObjectQuerySpec:
                 raise ObjectQueryError("Numeric characteristic predicates must be typed")
             if self.zones != ("battlefield",) or "creature" not in self.types_all:
                 raise ObjectQueryError("Numeric characteristic queries require battlefield creatures")
-            if self._serialization_version != 8:
+            if self._serialization_version not in {8, 9}:
                 object.__setattr__(self, "_serialization_version", 7)
         elif self.commander is not None:
-            if self._serialization_version != 8:
+            if self._serialization_version not in {8, 9}:
                 object.__setattr__(self, "_serialization_version", 6)
         elif self.keywords_none and self._serialization_version in {1, 2, 3, 4}:
             object.__setattr__(self, "_serialization_version", 5)
@@ -446,13 +457,15 @@ class ObjectQuerySpec:
             object.__setattr__(self, "_serialization_version", 4)
         elif extended and self._serialization_version == 2:
             object.__setattr__(self, "_serialization_version", 3)
-        if self.excluded_supertypes:
+        if self.excluded_supertypes and self._serialization_version != 9:
             object.__setattr__(self, "_serialization_version", 8)
-        if type(self._serialization_version) is not int or self._serialization_version not in {1, 2, 3, 4, 5, 6, 7, 8}:
+        if self.colors_none:
+            object.__setattr__(self, "_serialization_version", 9)
+        if type(self._serialization_version) is not int or self._serialization_version not in {1, 2, 3, 4, 5, 6, 7, 8, 9}:
             raise ObjectQueryError(
                 "Object query serialization version is unsupported"
             )
-        if extended and self._serialization_version not in {3, 4, 5, 6, 7, 8}:
+        if extended and self._serialization_version not in {3, 4, 5, 6, 7, 8, 9}:
             raise ObjectQueryError(
                 "Extended object predicates require serialization version 3"
             )
@@ -491,7 +504,7 @@ class ObjectQuerySpec:
                     ),
                 }
             )
-        elif self._serialization_version in {4, 5, 6, 7, 8}:
+        elif self._serialization_version in {4, 5, 6, 7, 8, 9}:
             value.update(
                 {
                     "subtypes_any": list(self.subtypes_any),
@@ -508,15 +521,17 @@ class ObjectQuerySpec:
                     "minimum_color_count": self.minimum_color_count,
                 }
             )
-            if self._serialization_version in {5, 6, 7, 8}:
+            if self._serialization_version in {5, 6, 7, 8, 9}:
                 value["keywords_none"] = list(self.keywords_none)
-            if self._serialization_version in {6, 7, 8}:
+            if self._serialization_version in {6, 7, 8, 9}:
                 value["commander"] = self.commander
-            if self._serialization_version in {7, 8}:
+            if self._serialization_version in {7, 8, 9}:
                 value["numeric_characteristic"] = (
                     self.numeric_characteristic.to_dict() if self.numeric_characteristic is not None else None)
-            if self._serialization_version == 8:
+            if self._serialization_version in {8, 9}:
                 value['excluded_supertypes'] = list(self.excluded_supertypes)
+            if self._serialization_version == 9:
+                value['colors_none'] = list(self.colors_none)
         return value
 
     def to_dict(self) -> dict[str, Any]:
@@ -541,6 +556,7 @@ class ObjectQuerySpec:
             _DESIGNATION_QUERY_FIELDS,
             _NUMERIC_QUERY_FIELDS,
             _SUPERTYPE_EXCLUSION_QUERY_FIELDS,
+            _COLOR_EXCLUSION_QUERY_FIELDS,
         }:
             expected = (
                 _DESIGNATION_QUERY_FIELDS
@@ -594,6 +610,7 @@ class ObjectQuerySpec:
             excluded_supertypes=value.get('excluded_supertypes',()),
             colors_all=value["colors_all"],
             colors_any=value["colors_any"],
+            colors_none=value.get("colors_none", ()),
             colorless=value.get("colorless"),
             minimum_color_count=value.get("minimum_color_count"),
             keywords_all=value["keywords_all"],
@@ -607,7 +624,9 @@ class ObjectQuerySpec:
             state_predicate=state_predicate,
             numeric_characteristic=numeric,
             _serialization_version=(
-                8
+                9
+                if actual == _COLOR_EXCLUSION_QUERY_FIELDS
+                else 8
                 if actual == _SUPERTYPE_EXCLUSION_QUERY_FIELDS
                 else 7
                 if actual == _NUMERIC_QUERY_FIELDS
@@ -664,6 +683,7 @@ def validate_chosen_damage_source_predicate(
         or spec.state_predicate is not None
         or spec.keywords_none
         or spec.excluded_supertypes
+        or spec.colors_none
     ):
         raise ObjectQueryError(
             "Chosen damage sources do not support extended public predicates"
@@ -677,3 +697,19 @@ def validate_chosen_damage_source_predicate(
             "Chosen damage sources do not support unrelated exclusions"
         )
     return spec
+
+
+def object_query_capabilities(value: Any) -> tuple[str, ...]:
+    """Derive authority only from complete typed public-query descriptors."""
+    if isinstance(value, ObjectQuerySpec):
+        return (NEGATIVE_COLOR_QUERY_CAPABILITY,) if value.colors_none else ()
+    if isinstance(value, Mapping):
+        own = ()
+        if frozenset(value) == _COLOR_EXCLUSION_QUERY_FIELDS:
+            query = ObjectQuerySpec.from_dict(value)
+            own = (NEGATIVE_COLOR_QUERY_CAPABILITY,) if query.colors_none else ()
+        return tuple(sorted({*own, *(cap for child in value.values()
+            for cap in object_query_capabilities(child))}))
+    if isinstance(value, (tuple, list)):
+        return tuple(sorted({cap for child in value for cap in object_query_capabilities(child)}))
+    return ()

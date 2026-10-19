@@ -6043,6 +6043,52 @@
         "test_card_program_trust",
         "test_high_risk_interaction_assurance"
       ]
+    },
+    {
+      "id": "public-negative-color-query-contract",
+      "patterns": [
+        "quorune/activation_condition_model.py",
+        "quorune/card_programs/binding.py",
+        "quorune/characteristic_fragments.py",
+        "quorune/color_set_mana_abilities.py",
+        "quorune/compiler/counter_placement_templates.py",
+        "quorune/compiler/fixed_resolution_characteristic_queries.py",
+        "quorune/compiler/public_state_queries.py",
+        "quorune/compiler/static_runtime_nodes.py",
+        "quorune/entry_copy.py",
+        "quorune/fixed_damage_set_model.py",
+        "quorune/object_predicate.py",
+        "quorune/object_query.py",
+        "quorune/oracle_ir.py",
+        "quorune/query_effect_amount_model.py",
+        "quorune/rules/casting_additional_costs.py",
+        "quorune/rules/fixed_resolution_characteristic_shapes.py",
+        "quorune/rules/hand_inspection.py",
+        "quorune/rules/temporary_ability_grant.py",
+        "tests/fixtures/public-negative-color-cards.json",
+        "tests/test_public_negative_colors.py"
+      ],
+      "test_modules": [
+        "test_activation_conditions",
+        "test_activation_cost_modifiers",
+        "test_card_program_trust",
+        "test_color_set_mana_abilities",
+        "test_continuous_compiler_hardening",
+        "test_continuous_effect_components",
+        "test_entry_copy_predicates",
+        "test_fixed_hand_inspection",
+        "test_fixed_mass_damage",
+        "test_fixed_optional_mana_payment_triggers",
+        "test_fixed_public_state_characteristics",
+        "test_fixed_query_keyword_grants",
+        "test_fixed_untap_participation",
+        "test_fixed_zone_change_additional_costs",
+        "test_high_risk_interaction_assurance",
+        "test_object_query",
+        "test_public_negative_colors",
+        "test_public_negative_supertypes",
+        "test_query_scaled_counters"
+      ]
     }
   ],
   "symbol_rules": [

@@ -293,6 +293,11 @@ def _negative_supertype_fields(text: str) -> dict[str, Any] | None:
 def _public_query_primary_fields(text: str) -> dict[str, Any] | None:
     fields: dict[str, Any] = {"zones": ("battlefield",)}
     normalized = text.casefold()
+    negative_color = re.fullmatch(r'non(?P<color>white|blue|black|red|green) creatures?', normalized)
+    if negative_color is not None:
+        return {**fields, 'types_all': ('creature',),
+            'colors_none': (_COLOR_SYMBOLS[negative_color['color']],)}
+
     negative = _negative_supertype_fields(normalized)
     if negative is not None:
         return {**fields, **negative}

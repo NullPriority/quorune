@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 391,
+  "registry_version": 392,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -32355,6 +32355,123 @@
       "dependency_fail_closed_rationale": "The new boundary requires the existing Defender exception capability and validates a closed numeric declaration descriptor.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "A fresh fully admitted original Sentry actual-combat witness detects omission of the declaration-time permission query.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "state_query.permanent.negative_color",
+      "version": 1,
+      "official_rules": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A typed public battlefield query excludes objects currently containing a named Magic color; multicolored presence excludes, colorless objects match. Static sets are live and resolution characteristic sets lock current incarnations.",
+        "inputs": [
+          "schema9 closed ObjectQuerySpec with colors_none",
+          "full current layer-five colors",
+          "existing static or resolution selection timing owner"
+        ],
+        "outputs": [
+          "one negative-color query verdict shared by validated current-characteristic consumers",
+          "legacyqueryschemas1through8serializeunchanged"
+        ],
+        "exclusions": [
+          "negative keyword predicates and layer-six dependency expansion",
+          "hidden-zone negative-color queries",
+          "unrepresented siblings and specialized consumer grammars"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.object_predicate.ObjectQuerySpec",
+        "quorune.object_predicate.object_query_capabilities",
+        "quorune.object_query.object_matches_query",
+        "quorune.compiler.public_state_queries._public_query_primary_fields"
+      ],
+      "positive_tests": [
+        "test_negative_color_matches_all_color_subsets_and_preserves_legacy_shapes",
+        "test_original_battle_frenzy_preserves_both_controller_scoped_results",
+        "test_original_crovax_cast_applies_negative_color_and_keeps_white_sibling",
+        "test_original_evincar_keeps_black_multicolor_sibling_and_penalizes_colorless",
+        "test_original_festergloom_excludes_black_and_multicolored_black_creatures",
+        "test_original_gloomdrifter_entry_uses_threshold_before_creating_locked_set",
+        "test_original_holy_light_locks_nonwhite_incarnations_at_actual_resolution",
+        "test_resolution_set_ignores_later_color_and_entrants_and_returned_incarnation",
+        "test_static_original_rechecks_color_and_source_departure_after_actual_casts"
+      ],
+      "negative_tests": [
+        "test_executable_negative_color_query_rejects_undeclared_capability",
+        "test_negative_color_rejects_unknown_conflicting_and_unowned_domains",
+        "test_original_gloomdrifter_entry_uses_threshold_before_creating_locked_set",
+        "test_public_grammar_keeps_color_controller_and_nearby_boundaries",
+        "test_specialized_consumers_reject_unowned_negative_color_fields",
+        "test_withdrawn_negative_color_query_capability_keeps_original_residual"
+      ],
+      "interaction_tests": [
+        "test_original_battle_frenzy_preserves_both_controller_scoped_results",
+        "test_original_crovax_cast_applies_negative_color_and_keeps_white_sibling",
+        "test_original_evincar_keeps_black_multicolor_sibling_and_penalizes_colorless",
+        "test_original_festergloom_excludes_black_and_multicolored_black_creatures",
+        "test_original_gloomdrifter_entry_uses_threshold_before_creating_locked_set",
+        "test_original_holy_light_locks_nonwhite_incarnations_at_actual_resolution",
+        "test_resolution_set_ignores_later_color_and_entrants_and_returned_incarnation",
+        "test_static_original_rechecks_color_and_source_departure_after_actual_casts"
+      ],
+      "multiplayer_tests": [
+        "test_original_battle_frenzy_preserves_both_controller_scoped_results",
+        "test_original_crovax_cast_applies_negative_color_and_keeps_white_sibling",
+        "test_original_evincar_keeps_black_multicolor_sibling_and_penalizes_colorless",
+        "test_original_festergloom_excludes_black_and_multicolored_black_creatures",
+        "test_original_gloomdrifter_entry_uses_threshold_before_creating_locked_set",
+        "test_original_holy_light_locks_nonwhite_incarnations_at_actual_resolution",
+        "test_resolution_set_ignores_later_color_and_entrants_and_returned_incarnation",
+        "test_static_original_rechecks_color_and_source_departure_after_actual_casts"
+      ],
+      "privacy_tests": [
+        "test_original_battle_frenzy_preserves_both_controller_scoped_results",
+        "test_original_crovax_cast_applies_negative_color_and_keeps_white_sibling",
+        "test_original_evincar_keeps_black_multicolor_sibling_and_penalizes_colorless",
+        "test_original_festergloom_excludes_black_and_multicolored_black_creatures",
+        "test_original_gloomdrifter_entry_uses_threshold_before_creating_locked_set",
+        "test_original_holy_light_locks_nonwhite_incarnations_at_actual_resolution",
+        "test_resolution_set_ignores_later_color_and_entrants_and_returned_incarnation",
+        "test_static_original_rechecks_color_and_source_departure_after_actual_casts"
+      ],
+      "replay_tests": [
+        "test_original_battle_frenzy_preserves_both_controller_scoped_results",
+        "test_original_crovax_cast_applies_negative_color_and_keeps_white_sibling",
+        "test_original_evincar_keeps_black_multicolor_sibling_and_penalizes_colorless",
+        "test_original_festergloom_excludes_black_and_multicolored_black_creatures",
+        "test_original_gloomdrifter_entry_uses_threshold_before_creating_locked_set",
+        "test_original_holy_light_locks_nonwhite_incarnations_at_actual_resolution",
+        "test_resolution_set_ignores_later_color_and_entrants_and_returned_incarnation",
+        "test_static_original_rechecks_color_and_source_departure_after_actual_casts"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Compiler and runtime both derive the explicit negative-color capability from complete canonical schema9 queries. Withdrawal and omission must fail normal admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "A fresh normally admitted original Crovax actual-cast witness detects removal of the shared negative-color match. All legacy query field sets1through8 roundtrip unchanged.",
       "blockers": [],
       "status": "trusted"
     }

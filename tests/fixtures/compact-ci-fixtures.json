@@ -180,6 +180,7 @@
     "tests/fixtures/public-condition-surface-cards.json",
     "tests/fixtures/public-cost-subject-cards.json",
     "tests/fixtures/public-library-action-permission-cards.json",
+    "tests/fixtures/public-negative-color-cards.json",
     "tests/fixtures/public-negative-supertype-cards.json",
     "tests/fixtures/public-quantity-mana-cards.json",
     "tests/fixtures/public-scalar-stat-cards.json",

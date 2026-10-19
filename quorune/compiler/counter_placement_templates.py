@@ -1032,6 +1032,7 @@ def fixed_counter_set_spec_is_closed(
         or query.excluded_types
         or query.excluded_subtypes
         or query.colors_all
+        or query.colors_none
         or query.colorless is not None
     ):
         return False

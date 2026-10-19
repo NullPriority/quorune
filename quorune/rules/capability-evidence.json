@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "08f8ad89ac5411822c9af35c8d5b26de4a2f9134f4cf167eb715ac538fc81737",
-  "declaration_source_fingerprint": "99864e67f4945cbb1ecb26c2b61d8b0f27c1537e5f8a199abe5e712bf31278f6",
+  "registry_fingerprint": "6a3d4a7da2af31e99fc24975211f64c4f0fde57e3f4d314d2edb8ad0e29c3591",
+  "declaration_source_fingerprint": "5f35409d7f6d0ded36f51638e40e6044a19cdd4bf607c4a1e76a2ef3fdb4f0e8",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -166281,6 +166281,1062 @@
       "applicability_note": "CR 700.5/700.5a symbol unions use copy/control/text timing and current typed devotion increases; actual Daxos and Disciple casts, source ability removal/departure, foreign-controller exclusion and complete private command replay preserve the result."
     },
     {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_battle_frenzy_preserves_both_controller_scoped_results",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_crovax_cast_applies_negative_color_and_keeps_white_sibling",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished negative-color query slice; native original admission/casting, exact current-vs-locked sets, privacy/load/replay and trust/omission witnesses must pass before counting support."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_evincar_keeps_black_multicolor_sibling_and_penalizes_colorless",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_festergloom_excludes_black_and_multicolored_black_creatures",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_gloomdrifter_entry_uses_threshold_before_creating_locked_set",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_holy_light_locks_nonwhite_incarnations_at_actual_resolution",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished negative-color query slice; native original admission/casting, exact current-vs-locked sets, privacy/load/replay and trust/omission witnesses must pass before counting support."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_resolution_set_ignores_later_color_and_entrants_and_returned_incarnation",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_static_original_rechecks_color_and_source_departure_after_actual_casts",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_battle_frenzy_preserves_both_controller_scoped_results",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_crovax_cast_applies_negative_color_and_keeps_white_sibling",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished negative-color query slice; native original admission/casting, exact current-vs-locked sets, privacy/load/replay and trust/omission witnesses must pass before counting support."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_evincar_keeps_black_multicolor_sibling_and_penalizes_colorless",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_festergloom_excludes_black_and_multicolored_black_creatures",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_gloomdrifter_entry_uses_threshold_before_creating_locked_set",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_holy_light_locks_nonwhite_incarnations_at_actual_resolution",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished negative-color query slice; native original admission/casting, exact current-vs-locked sets, privacy/load/replay and trust/omission witnesses must pass before counting support."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_resolution_set_ignores_later_color_and_entrants_and_returned_incarnation",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_static_original_rechecks_color_and_source_departure_after_actual_casts",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_omitting_negative_color_match_is_killed_by_fresh_native_original",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished negative-color query slice; native original admission/casting, exact current-vs-locked sets, privacy/load/replay and trust/omission witnesses must pass before counting support."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorModelTests.test_negative_color_rejects_unknown_conflicting_and_unowned_domains",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished negative-color query slice; native original admission/casting, exact current-vs-locked sets, privacy/load/replay and trust/omission witnesses must pass before counting support."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorModelTests.test_public_grammar_keeps_color_controller_and_nearby_boundaries",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorModelTests.test_specialized_consumers_reject_unowned_negative_color_fields",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorModelTests.test_withdrawn_negative_color_query_capability_keeps_original_residual",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished negative-color query slice; native original admission/casting, exact current-vs-locked sets, privacy/load/replay and trust/omission witnesses must pass before counting support."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_executable_negative_color_query_rejects_undeclared_capability",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished negative-color query slice; native original admission/casting, exact current-vs-locked sets, privacy/load/replay and trust/omission witnesses must pass before counting support."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_gloomdrifter_entry_uses_threshold_before_creating_locked_set",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorModelTests.test_negative_color_matches_all_color_subsets_and_preserves_legacy_shapes",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished negative-color query slice; native original admission/casting, exact current-vs-locked sets, privacy/load/replay and trust/omission witnesses must pass before counting support."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_battle_frenzy_preserves_both_controller_scoped_results",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_crovax_cast_applies_negative_color_and_keeps_white_sibling",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished negative-color query slice; native original admission/casting, exact current-vs-locked sets, privacy/load/replay and trust/omission witnesses must pass before counting support."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_evincar_keeps_black_multicolor_sibling_and_penalizes_colorless",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_festergloom_excludes_black_and_multicolored_black_creatures",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_gloomdrifter_entry_uses_threshold_before_creating_locked_set",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_holy_light_locks_nonwhite_incarnations_at_actual_resolution",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished negative-color query slice; native original admission/casting, exact current-vs-locked sets, privacy/load/replay and trust/omission witnesses must pass before counting support."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_resolution_set_ignores_later_color_and_entrants_and_returned_incarnation",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_static_original_rechecks_color_and_source_departure_after_actual_casts",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_battle_frenzy_preserves_both_controller_scoped_results",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_crovax_cast_applies_negative_color_and_keeps_white_sibling",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished negative-color query slice; native original admission/casting, exact current-vs-locked sets, privacy/load/replay and trust/omission witnesses must pass before counting support."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_evincar_keeps_black_multicolor_sibling_and_penalizes_colorless",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_festergloom_excludes_black_and_multicolored_black_creatures",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_gloomdrifter_entry_uses_threshold_before_creating_locked_set",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_holy_light_locks_nonwhite_incarnations_at_actual_resolution",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished negative-color query slice; native original admission/casting, exact current-vs-locked sets, privacy/load/replay and trust/omission witnesses must pass before counting support."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_resolution_set_ignores_later_color_and_entrants_and_returned_incarnation",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_static_original_rechecks_color_and_source_departure_after_actual_casts",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_battle_frenzy_preserves_both_controller_scoped_results",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_crovax_cast_applies_negative_color_and_keeps_white_sibling",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished negative-color query slice; native original admission/casting, exact current-vs-locked sets, privacy/load/replay and trust/omission witnesses must pass before counting support."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_evincar_keeps_black_multicolor_sibling_and_penalizes_colorless",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_festergloom_excludes_black_and_multicolored_black_creatures",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_gloomdrifter_entry_uses_threshold_before_creating_locked_set",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_original_holy_light_locks_nonwhite_incarnations_at_actual_resolution",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished negative-color query slice; native original admission/casting, exact current-vs-locked sets, privacy/load/replay and trust/omission witnesses must pass before counting support."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_resolution_set_ignores_later_color_and_entrants_and_returned_incarnation",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
+      "capability_id": "state_query.permanent.negative_color",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_negative_colors.PublicNegativeColorRuntimeTests.test_static_original_rechecks_color_and_source_departure_after_actual_casts",
+      "official_rule_ids": [
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "105.3",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1e",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normally admitted original sources and actual authenticated casts assert current negative color, resolution incarnation locks, full siblings, threshold/control boundaries, private projection, pending load and replay. Specialized unowned consumers reject the new field."
+    },
+    {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "interaction",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_public_characteristic_sets_lock_multiplayer_membership",
@@ -224646,5 +225702,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "1ac39a34a249ff007b941562d071c57d520755d835700b6f3446d745fb82fedd"
+  "fingerprint": "1d5dc8c0e8de77611a7014217bfc21a15aa5062344481730b7bb03a19b98c78a"
 }

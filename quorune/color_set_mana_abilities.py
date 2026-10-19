@@ -241,6 +241,7 @@ class ColorSetActivatedManaAbilitySpec:
                 query.subtypes_all,
                 query.colors_all,
                 query.colors_any,
+                query.colors_none,
                 query.keywords_all,
                 query.token is not None,
                 query.tapped is not None,

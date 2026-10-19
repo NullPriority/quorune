@@ -54,6 +54,7 @@ def _closed_public_query(query: ObjectQuerySpec) -> bool:
         )
         or query.excluded_subtypes
         or query.colors_any
+        or query.colors_none
         or query.colorless is not None
         or query.minimum_color_count is not None
         or query.token is not None

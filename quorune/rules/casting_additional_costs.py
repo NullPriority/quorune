@@ -368,6 +368,7 @@ class FixedZoneChangeAdditionalCost:
             or self.predicate.known_to_actor is not True
             or self.predicate.include_phased_out
             or self.predicate.keywords_all
+            or self.predicate.colors_none
             or self.predicate.excluded_controllers
             or self.predicate.excluded_subtypes
             or self.predicate.colorless is not None

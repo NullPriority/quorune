@@ -17247,6 +17247,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Prism explicitly pays its generic filtering cost, produces green immediately, and funds an actual normally admitted Growth cast with its full untap/stat/trample consequences. Wrong-principal rollback, private projection, pending load and pre-action replay agree; its free colorless mode is separately retained."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_static_original_rechecks_color_and_source_departure_after_actual_casts",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_setting",
+        "capability.state_query.permanent.negative_color"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_setting",
+        "state_query.permanent.negative_color"
+      ],
+      "interaction_order": 2,
+      "assertion": "A normally admitted generic blue setting changes all creature colors after an original Crovax exists: the static negative query recomputes and includes the now-blue source itself. Actual Unsummon removes Crovax and restores original stats; principal privacy, pending load and exact replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_resolution_set_ignores_later_color_and_entrants_and_returned_incarnation",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.state_query.permanent.negative_color"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "state_query.permanent.negative_color"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Holy Light locks nonwhite current incarnations. A later normally admitted blue setting does not add white recipients; an actual later entrant and a returned/recast affected card receive no earlier modifier. Private projection and exact replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_gloomdrifter_entry_uses_threshold_before_creating_locked_set",
+      "piece_ids": [
+        "capability.continuous.ability.fixed_public_state_grant",
+        "capability.state_query.permanent.negative_color"
+      ],
+      "capability_ids": [
+        "continuous.ability.fixed_public_state_grant",
+        "state_query.permanent.negative_color"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual normally admitted original Gloomdrifter at six versus seven graveyard cards distinguishes the conditionally present entry trigger. Only the threshold case resolves the complete nonblack penalty; black controls remain unchanged and private replay agrees."
     }
   ]
 }
