@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 402,
+  "registry_version": 403,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -12493,39 +12493,57 @@
         "quorune.semantic_runtime.fixed_characteristic_settings.ConditionalCharacteristicSettingsHandler"
       ],
       "positive_tests": [
-        "test_static_settings_preserve_exact_types_colors_and_source_spans",
         "test_actual_ensoul_offer_animation_counters_source_departure_and_replay",
-        "test_conditional_source_setting_preserves_public_condition_and_layer_contract",
+        "test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay",
         "test_actual_original_conditional_settings_cast_turn_control_counters_and_replay",
+        "test_conditional_source_setting_preserves_public_condition_and_layer_contract",
+        "test_original_decree_removes_two_keywords_and_source_departure_restores_both",
+        "test_original_sphere_applies_to_later_wind_drake_entry_and_ends_on_departure",
+        "test_original_sphere_removes_current_flying_and_later_jump_restores_it",
         "test_pure_fixed_modifiers_declare_shape_and_consumer_without_type_setting",
-        "test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay"
+        "test_static_removal_is_complete_registered_descriptor_and_unknown_removals_fail_closed",
+        "test_static_settings_preserve_exact_types_colors_and_source_spans"
       ],
       "negative_tests": [
-        "test_static_setting_unsupported_grammar_and_malformed_descriptors_fail_closed",
+        "test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay",
         "test_conditional_setting_grammar_schema_and_dependency_mutants_fail_closed",
         "test_empty_or_unknown_modifier_clauses_remain_residual",
-        "test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay"
+        "test_originals_require_full_static_and_keyword_capabilities_and_complete_preflight",
+        "test_static_removal_is_complete_registered_descriptor_and_unknown_removals_fail_closed",
+        "test_static_setting_unsupported_grammar_and_malformed_descriptors_fail_closed"
       ],
       "interaction_tests": [
-        "test_static_setting_source_removal_and_ability_order_use_current_layers",
+        "test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay",
         "test_conditional_source_settings_keep_layers_live_and_source_incarnation_exact",
+        "test_original_decree_removes_two_keywords_and_source_departure_restores_both",
         "test_original_doc_ock_graveyard_count_gates_setting_at_earlier_layers",
-        "test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay"
+        "test_original_sphere_applies_to_later_wind_drake_entry_and_ends_on_departure",
+        "test_original_sphere_removes_current_flying_and_later_jump_restores_it",
+        "test_static_setting_source_removal_and_ability_order_use_current_layers"
       ],
       "multiplayer_tests": [
         "test_actual_kudo_changes_other_creatures_across_controllers_with_replay",
-        "test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay"
+        "test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay",
+        "test_original_decree_removes_two_keywords_and_source_departure_restores_both",
+        "test_original_sphere_applies_to_later_wind_drake_entry_and_ends_on_departure",
+        "test_original_sphere_removes_current_flying_and_later_jump_restores_it"
       ],
       "privacy_tests": [
         "test_actual_ensoul_offer_animation_counters_source_departure_and_replay",
+        "test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay",
         "test_actual_original_conditional_settings_cast_turn_control_counters_and_replay",
-        "test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay"
+        "test_original_decree_removes_two_keywords_and_source_departure_restores_both",
+        "test_original_sphere_applies_to_later_wind_drake_entry_and_ends_on_departure",
+        "test_original_sphere_removes_current_flying_and_later_jump_restores_it"
       ],
       "replay_tests": [
         "test_actual_ensoul_offer_animation_counters_source_departure_and_replay",
         "test_actual_kudo_changes_other_creatures_across_controllers_with_replay",
+        "test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay",
         "test_actual_original_conditional_settings_cast_turn_control_counters_and_replay",
-        "test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay"
+        "test_original_decree_removes_two_keywords_and_source_departure_restores_both",
+        "test_original_sphere_applies_to_later_wind_drake_entry_and_ends_on_departure",
+        "test_original_sphere_removes_current_flying_and_later_jump_restores_it"
       ],
       "required_evidence": [
         "positive",

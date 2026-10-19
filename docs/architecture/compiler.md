@@ -869,6 +869,14 @@ versioned recipient-relative public quantity; the ordinary attached owner
 keeps any paired keyword fragments and applies the resolved count in layer 7c.
 Unrepresented relative qualities and hidden attachment quantities stay residual.
 
+The existing fixed public setting owner also accepts static removal of
+represented fixed keyword strings. The compiler retains the complete live
+public query and each keyword capability; the unchanged layer-6 emitter uses
+ordinary source timestamps. Later entrants join the live query, later grants
+may restore an ability, and source departure removes its contribution.
+Prohibitions, unknown or triggered-fragment removals, chosen values and
+unrepresented conditions remain residual.
+
 Fixed live-set stat and keyword composition accepts singular “each ... gets
 ... and has ...” wording alongside the plural form. Both use the same public
 query, subtype union, source exclusion and layer owners. Unknown subjects,

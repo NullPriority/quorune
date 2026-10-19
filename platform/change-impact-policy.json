@@ -6341,6 +6341,21 @@
         "test_preflight_v080",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "static-fixed-keyword-removal-contract",
+      "patterns": [
+        "quorune/compiler/fixed_characteristic_settings.py",
+        "quorune/semantic_runtime/fixed_characteristic_settings.py",
+        "tests/test_static_keyword_removal.py",
+        "tests/fixtures/static-keyword-removal-cards.json"
+      ],
+      "test_modules": [
+        "test_static_keyword_removal",
+        "test_static_characteristic_settings",
+        "test_attached_static_characteristics",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

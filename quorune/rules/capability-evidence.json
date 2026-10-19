@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "2d3d725fa9d51bafa445785a81512a9a2f9a20539e049fce9dd8e8a9e32b0993",
-  "declaration_source_fingerprint": "355f1b240de6af590dac1c2da35469c5495f0f3a6da5c519b4a10556489a8c19",
+  "registry_fingerprint": "8fbd3d9f0f8e05e6688e6f3b31556e7d83c6eed88748d1f53cec549428256a3d",
+  "declaration_source_fingerprint": "d5751eb20ae027786456eddd513b8fb2e08811f51a9500db7b416709a8f8c26b",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -74259,6 +74259,90 @@
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_keyword_removal.StaticKeywordRemovalRuntimeTests.test_original_decree_removes_two_keywords_and_source_departure_restores_both",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_keyword_removal.StaticKeywordRemovalRuntimeTests.test_original_sphere_applies_to_later_wind_drake_entry_and_ends_on_departure",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_keyword_removal.StaticKeywordRemovalRuntimeTests.test_original_sphere_removes_current_flying_and_later_jump_restores_it",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_attached_permanent_modifiers.AttachedPermanentModifierRuntimeTests.test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay",
       "official_rule_ids": [
@@ -74371,6 +74455,90 @@
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_keyword_removal.StaticKeywordRemovalRuntimeTests.test_original_decree_removes_two_keywords_and_source_departure_restores_both",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_keyword_removal.StaticKeywordRemovalRuntimeTests.test_original_sphere_applies_to_later_wind_drake_entry_and_ends_on_departure",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_keyword_removal.StaticKeywordRemovalRuntimeTests.test_original_sphere_removes_current_flying_and_later_jump_restores_it",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
       "evidence_class": "mutation",
       "test_id": "tests.test_attached_permanent_modifiers.AttachedPermanentModifierCompilerTests.test_pure_fixed_modifiers_declare_shape_and_consumer_without_type_setting",
       "official_rule_ids": [
@@ -74424,6 +74592,34 @@
         "commander_review"
       ],
       "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_static_keyword_removal.StaticKeywordRemovalRuntimeTests.test_fresh_sphere_witness_kills_lost_static_keyword_removal",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
@@ -74595,6 +74791,62 @@
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_keyword_removal.StaticKeywordRemovalCompilerTests.test_static_removal_is_complete_registered_descriptor_and_unknown_removals_fail_closed",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_keyword_removal.StaticKeywordRemovalRuntimeTests.test_originals_require_full_static_and_keyword_capabilities_and_complete_preflight",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
       "evidence_class": "positive",
       "test_id": "tests.test_attached_permanent_modifiers.AttachedPermanentModifierCompilerTests.test_pure_fixed_modifiers_declare_shape_and_consumer_without_type_setting",
       "official_rule_ids": [
@@ -74763,6 +75015,118 @@
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_keyword_removal.StaticKeywordRemovalCompilerTests.test_static_removal_is_complete_registered_descriptor_and_unknown_removals_fail_closed",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_keyword_removal.StaticKeywordRemovalRuntimeTests.test_original_decree_removes_two_keywords_and_source_departure_restores_both",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_keyword_removal.StaticKeywordRemovalRuntimeTests.test_original_sphere_applies_to_later_wind_drake_entry_and_ends_on_departure",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_keyword_removal.StaticKeywordRemovalRuntimeTests.test_original_sphere_removes_current_flying_and_later_jump_restores_it",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
       "evidence_class": "privacy",
       "test_id": "tests.test_attached_permanent_modifiers.AttachedPermanentModifierRuntimeTests.test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay",
       "official_rule_ids": [
@@ -74844,6 +75208,90 @@
         "commander_review"
       ],
       "applicability_note": "Closed conditional fixed settings retain layer order, logical source identity, live scalar/graveyard facts and current ability applicability."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_keyword_removal.StaticKeywordRemovalRuntimeTests.test_original_decree_removes_two_keywords_and_source_departure_restores_both",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_keyword_removal.StaticKeywordRemovalRuntimeTests.test_original_sphere_applies_to_later_wind_drake_entry_and_ends_on_departure",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_keyword_removal.StaticKeywordRemovalRuntimeTests.test_original_sphere_removes_current_flying_and_later_jump_restores_it",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
@@ -74984,6 +75432,90 @@
         "commander_review"
       ],
       "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_keyword_removal.StaticKeywordRemovalRuntimeTests.test_original_decree_removes_two_keywords_and_source_departure_restores_both",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_keyword_removal.StaticKeywordRemovalRuntimeTests.test_original_sphere_applies_to_later_wind_drake_entry_and_ends_on_departure",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_keyword_removal.StaticKeywordRemovalRuntimeTests.test_original_sphere_removes_current_flying_and_later_jump_restores_it",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -239220,5 +239752,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "51d3d03aa2117f409249b6662028e23cfb4d52bd7b53924ab0a08d13d16a8d80"
+  "fingerprint": "6ae6cd462f8aa9cdc1f5a34980ec7a3dba77136b30ad389087ad71bf16cc2b87"
 }

@@ -98,12 +98,14 @@ class FixedCharacteristicSettingsHandler:
         elif target["controller"] not in {"any", "source_controller", "source_opponents"}:
             raise SemanticNodeError("Fixed setting controller relation is unsupported")
         node = _attached_characteristics_node((), descriptor["modifier"])
-        if not _has_characteristic_modifier(node) or node.quantity is not None or node.add_rules_text or node.add_ability_fragments or node.remove_abilities:
+        if not _has_characteristic_modifier(node) or node.quantity is not None or node.add_rules_text or node.add_ability_fragments:
             raise SemanticNodeError("Fixed settings require represented constant operations")
         from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
         from ..creature_subtypes import CREATURE_SUBTYPES
         if any(value not in FIXED_CHARACTERISTIC_KEYWORDS for value in node.add_abilities):
             raise SemanticNodeError("Fixed setting keyword additions require represented rules")
+        if any(value not in FIXED_CHARACTERISTIC_KEYWORDS for value in node.remove_abilities):
+            raise SemanticNodeError('Fixed setting keyword removals require represented rules')
         for operation in node.type_operations:
             values=tuple(operation.value)
             if operation.field=='card_types' and (operation.op!='add_types' or not set(v.lower() for v in values)<=allowed_types):

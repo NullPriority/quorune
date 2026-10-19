@@ -41,6 +41,7 @@
       "test_public_activation_conditions",
       "test_replacement_event_ordering",
       "test_seed_20260730_regression",
+      "test_static_keyword_removal",
       "test_turn_structure_rules",
       "test_upkeep_step_rules"
     ],
