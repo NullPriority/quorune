@@ -1802,7 +1802,12 @@ represents players and opponents, public creature or instant cards in a
 graveyard, effective type and subtype alternatives, supertypes, colors,
 commander status, and controller relations. Cross-axis alternatives such as
 creature or Vehicle use `TargetCharacteristicForm`; they do not introduce an
-Aura-specific characteristic evaluator. Cast offers, resolution revalidation,
+Aura-specific characteristic evaluator. Version-three restrictions add one
+fixed maximum power, fixed maximum mana value, or absence of flying on a
+creature. They delegate to existing numeric and keyword target predicates;
+version-two serialized shapes and fingerprints remain unchanged. Modified,
+attachment-derived, variable, relative, and compound restrictions remain
+residuals. Cast offers, resolution revalidation,
 nonspell entry, and state-based attachment legality all consume the current
 effective source-pinned characteristic snapshot. Player Auras use the same
 reciprocal attachment owner with an internal typed player identity and project

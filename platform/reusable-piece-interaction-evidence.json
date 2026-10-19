@@ -16770,6 +16770,81 @@
       ],
       "interaction_order": 2,
       "assertion": "Mandatory equal-to mill uses the existing current public battlefield quantity and fixed controller subject; a real sacrificed own land reduces count from two to one while three foreign lands remain excluded. Four-seat privacy and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_power_restriction_rechecks_resolution_and_attached_state",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Runners Bane attaches to a boundary-power-three Centaur then a real Giant Growth makes it six and causes illegal-Aura state action. A separate pending spell targets power two; Growth makes five and prevents resolution. Wrong-principal rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_nonflying_restriction_uses_current_keyword_before_and_after_attachment",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.combat.block.flying"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "combat.block.flying"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Roots pending target and attached Trapped in the Tower use current Flying after real Jump responses. The former fails resolution; the latter moves to graveyard by state action, with private projection and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_mana_value_restriction_changes_control_but_rejects_three_and_new_incarnations",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.continuous.control.attached_source"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "continuous.control.attached_source"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Threads rejects a mana-value-three Centaur atomically and controls a mana-value-two Grizzly Bears. Real Unsummon removes that incarnation and the Aura; owner and new hand identity remain correct, with pending/full replay and private projection."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_mana_value_restriction_changes_control_but_rejects_three_and_new_incarnations",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.permanent.return.owner_hand"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "permanent.return.owner_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Threads rejects a mana-value-three Centaur atomically and controls a mana-value-two Grizzly Bears. Real Unsummon removes that incarnation and the Aura; owner and new hand identity remain correct, with pending/full replay and private projection."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_nonspell_entry_uses_untargeted_restriction_choice_despite_shroud",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.target.protection.shroud_permanent"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "target.protection.shroud_permanent"
+      ],
+      "interaction_order": 2,
+      "assertion": "A normally admitted constructed enchantment-return spell returns original Roots from graveyard. Shroud rejects Aura spell targeting but allows the untargeted entry choice onto original Deadly Insect; enter-tap resolves. Foreign-choice rollback, private projection, pending load and full replay agree."
     }
   ]
 }

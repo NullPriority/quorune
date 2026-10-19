@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 385,
+  "registry_version": 386,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -5773,28 +5773,125 @@
     },
     {
       "id": "attachment.aura.typed_restriction",
-      "version": 1,
-      "official_rules": ["303.4", "303.4a", "303.4c", "303.4f", "303.4g", "608.2b", "701.3", "702.5a", "704.5m"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Cast, resolve, enter, attach, and continuously validate one Aura whose Enchant restriction names a player, opponent, public graveyard card, or closed effective type, subtype, supertype, color, commander, controller, or mixed characteristic alternative.",
-        "inputs": ["one source-spanned closed Enchant restriction", "one server-produced public player, battlefield-object, or graveyard-card candidate", "current effective source-pinned characteristics", "exact source physical and logical identity", "optional nonspell Aura entry choice"],
-        "outputs": ["one mandatory target schema", "resolution and live attachment revalidation", "reciprocal object or player attachment", "state-based illegal-Aura movement", "public projected attachment ref", "exact replay and rollback"],
-        "exclusions": ["multiple Enchant abilities", "power, toughness, mana-value, and other numeric characteristic predicates", "modified, attachment-qualified, keyword-negative, nonbasic, variable, linked-result, and open-ended restrictions", "dynamic characteristic counts", "face-down or text-changing characteristic definitions outside the trusted target snapshot", "bestow, reconfigure, and face-up attachment behavior beyond their existing owners" ]
+        "summary": "Cast, resolve, enter, attach, and continuously validate one Aura whose Enchant restriction names a player, opponent, public graveyard card, or closed effective type, subtype, supertype, color, commander, controller, or mixed characteristic alternative. Explicit version-three creature restrictions reuse fixed maximum power, fixed maximum mana value, or absence of flying without changing version-two serialization.",
+        "inputs": [
+          "one source-spanned closed Enchant restriction",
+          "one server-produced public player, battlefield-object, or graveyard-card candidate",
+          "current effective source-pinned characteristics",
+          "exact source physical and logical identity",
+          "optional nonspell Aura entry choice"
+        ],
+        "outputs": [
+          "one mandatory target schema",
+          "resolution and live attachment revalidation",
+          "reciprocal object or player attachment",
+          "state-based illegal-Aura movement",
+          "public projected attachment ref",
+          "exact replay and rollback"
+        ],
+        "exclusions": [
+          "multiple Enchant abilities",
+          "unrepresented toughness, relative, variable, and compound numeric characteristic predicates",
+          "modified, attachment-qualified, unrepresented keyword-negative, nonbasic, variable, linked-result, and open-ended restrictions",
+          "dynamic characteristic counts",
+          "face-down or text-changing characteristic definitions outside the trusted target snapshot",
+          "bestow, reconfigure, and face-up attachment behavior beyond their existing owners"
+        ]
       },
-      "dependencies": ["attachment.aura.simple_object"],
-      "implementation_components": ["quorune.aura.typed_grammar.parse_typed_enchant_line", "quorune.enchant_spec.TypedEnchantSpec", "quorune.target_forms.TargetCharacteristicForm", "quorune.targets.TargetGroup.matches_type_characteristics", "quorune.aura.runtime.legal_aura_target_refs", "quorune.attachments.attach_to_player", "quorune.attachments.attachment_target_ref"],
-      "positive_tests": ["test_typed_enchant_grammar_and_fragments_are_closed", "test_typed_enchant_compiler_closes_representative_family", "test_player_aura_cast_attachment_projection_and_replay", "test_nonspell_player_aura_entry_uses_seat_choice", "test_graveyard_card_aura_attachment_clears_on_zone_change"],
-      "negative_tests": ["test_dynamic_and_malformed_typed_enchant_forms_fail_closed"],
-      "interaction_tests": ["test_live_mixed_characteristic_legality_uses_effective_types", "test_player_departure_makes_attached_aura_illegal", "test_player_protection_makes_attached_aura_illegal", "test_typed_aura_and_delayed_draw_compose"],
-      "multiplayer_tests": ["test_opponent_player_aura_is_four_player_seat_scoped"],
-      "privacy_tests": ["test_player_aura_cast_attachment_projection_and_replay"],
-      "replay_tests": ["test_player_aura_cast_attachment_projection_and_replay"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "attachment.aura.simple_object"
+      ],
+      "implementation_components": [
+        "quorune.aura.typed_grammar.parse_typed_enchant_line",
+        "quorune.enchant_spec.TypedEnchantSpec",
+        "quorune.target_forms.TargetCharacteristicForm",
+        "quorune.targets.TargetGroup.matches_type_characteristics",
+        "quorune.aura.runtime.legal_aura_target_refs",
+        "quorune.attachments.attach_to_player",
+        "quorune.attachments.attachment_target_ref",
+        "quorune.target_numeric.TargetNumericCharacteristicSpec",
+        "quorune.targets.TargetGroup.matches_keyword_characteristics"
+      ],
+      "positive_tests": [
+        "test_actual_mana_value_restriction_changes_control_but_rejects_three_and_new_incarnations",
+        "test_actual_nonflying_restriction_uses_current_keyword_before_and_after_attachment",
+        "test_actual_nonspell_entry_uses_untargeted_restriction_choice_despite_shroud",
+        "test_actual_power_restriction_rechecks_resolution_and_attached_state",
+        "test_fixed_restrictions_use_existing_target_predicates_and_closed_version",
+        "test_graveyard_card_aura_attachment_clears_on_zone_change",
+        "test_nonspell_player_aura_entry_uses_seat_choice",
+        "test_player_aura_cast_attachment_projection_and_replay",
+        "test_typed_enchant_compiler_closes_representative_family",
+        "test_typed_enchant_grammar_and_fragments_are_closed"
+      ],
+      "negative_tests": [
+        "test_actual_mana_value_restriction_changes_control_but_rejects_three_and_new_incarnations",
+        "test_actual_nonspell_entry_uses_untargeted_restriction_choice_despite_shroud",
+        "test_actual_power_restriction_rechecks_resolution_and_attached_state",
+        "test_dynamic_and_malformed_typed_enchant_forms_fail_closed",
+        "test_fixed_restrictions_use_existing_target_predicates_and_closed_version",
+        "test_nearby_unsupported_and_ambiguous_restrictions_stay_residual"
+      ],
+      "interaction_tests": [
+        "test_actual_mana_value_restriction_changes_control_but_rejects_three_and_new_incarnations",
+        "test_actual_nonflying_restriction_uses_current_keyword_before_and_after_attachment",
+        "test_actual_nonspell_entry_uses_untargeted_restriction_choice_despite_shroud",
+        "test_actual_power_restriction_rechecks_resolution_and_attached_state",
+        "test_live_mixed_characteristic_legality_uses_effective_types",
+        "test_player_departure_makes_attached_aura_illegal",
+        "test_player_protection_makes_attached_aura_illegal",
+        "test_typed_aura_and_delayed_draw_compose"
+      ],
+      "multiplayer_tests": [
+        "test_actual_mana_value_restriction_changes_control_but_rejects_three_and_new_incarnations",
+        "test_actual_nonspell_entry_uses_untargeted_restriction_choice_despite_shroud",
+        "test_actual_power_restriction_rechecks_resolution_and_attached_state",
+        "test_opponent_player_aura_is_four_player_seat_scoped"
+      ],
+      "privacy_tests": [
+        "test_actual_mana_value_restriction_changes_control_but_rejects_three_and_new_incarnations",
+        "test_actual_nonflying_restriction_uses_current_keyword_before_and_after_attachment",
+        "test_actual_nonspell_entry_uses_untargeted_restriction_choice_despite_shroud",
+        "test_actual_power_restriction_rechecks_resolution_and_attached_state",
+        "test_player_aura_cast_attachment_projection_and_replay"
+      ],
+      "replay_tests": [
+        "test_actual_mana_value_restriction_changes_control_but_rejects_three_and_new_incarnations",
+        "test_actual_nonflying_restriction_uses_current_keyword_before_and_after_attachment",
+        "test_actual_nonspell_entry_uses_untargeted_restriction_choice_despite_shroud",
+        "test_actual_power_restriction_rechecks_resolution_and_attached_state",
+        "test_player_aura_cast_attachment_projection_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The typed restriction handler depends on the trusted Aura cast, entry, target-revalidation, and state-action owner; malformed or open grammar remains a source-spanned residual before runtime admission.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_typed_enchant_target_form_mutant_is_killed removes mixed type/subtype alternative matching and the exact Vehicle candidate assertion rejects the survivor.",
+      "implementation_mutation_rationale": "test_typed_enchant_target_form_mutant_is_killed removes mixed type/subtype alternative matching and the exact Vehicle candidate assertion rejects the survivor. A fresh native Threads of Disloyalty witness directly under the parent assertion kills omission of the typed restriction compiler.",
       "blockers": [],
       "status": "trusted"
     },

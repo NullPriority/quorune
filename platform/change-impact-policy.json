@@ -5910,6 +5910,26 @@
         "test_mill_rules",
         "test_high_risk_interaction_assurance"
       ]
+    },
+    {
+      "id": "fixed-characteristic-enchant-current-legality-contract",
+      "patterns": [
+        "quorune/enchant_spec.py",
+        "quorune/aura/typed_grammar.py",
+        "quorune/compiler/ability_keyword_fragments.py",
+        "tests/fixtures/fixed-characteristic-enchant-cards.json",
+        "tests/test_fixed_characteristic_enchant.py",
+        "tests/test_aura_targeting_entry.py"
+      ],
+      "test_modules": [
+        "test_fixed_characteristic_enchant",
+        "test_aura_targeting_entry",
+        "test_target_restrictions",
+        "test_target_announcements",
+        "test_static_attached_control",
+        "test_card_program_trust",
+        "test_high_risk_interaction_assurance"
+      ]
     }
   ],
   "symbol_rules": [

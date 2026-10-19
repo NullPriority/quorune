@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "c55fdb291ef4ace280d4e783874a469c511e302b76c9722376bdd1c43055decb",
-  "declaration_source_fingerprint": "859e1ddcc9b62e9475b2803b79f4a9182995764bf2c7e067cf087211f9b78b51",
+  "registry_fingerprint": "04204c2cf284c90b75e871f7aea4de7a147009587d6a51a7fc6969f9516ad9a0",
+  "declaration_source_fingerprint": "5eb0ebeba42ddaa21971abb5d7a67c8106820b7b41c90868521c0c20bed1f53d",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -9371,6 +9371,94 @@
     },
     {
       "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_mana_value_restriction_changes_control_but_rejects_three_and_new_incarnations",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Threads rejects a mana-value-three Centaur atomically and controls a mana-value-two Grizzly Bears. Real Unsummon removes that incarnation and the Aura; owner and new hand identity remain correct, with pending/full replay and private projection."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_nonflying_restriction_uses_current_keyword_before_and_after_attachment",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Roots pending target and attached Trapped in the Tower use current Flying after real Jump responses. The former fails resolution; the latter moves to graveyard by state action, with private projection and replay."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_nonspell_entry_uses_untargeted_restriction_choice_despite_shroud",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A normally admitted constructed enchantment-return spell returns original Roots from graveyard. Shroud rejects Aura spell targeting but allows the untargeted entry choice onto original Deadly Insect; enter-tap resolves. Foreign-choice rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_power_restriction_rechecks_resolution_and_attached_state",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Runners Bane attaches to a boundary-power-three Centaur then a real Giant Growth makes it six and causes illegal-Aura state action. A separate pending spell targets power two; Growth makes five and prevents resolution. Wrong-principal rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_aura_targeting_entry.AuraTargetingEntryEngineTests.test_opponent_player_aura_is_four_player_seat_scoped",
       "official_rule_ids": [
@@ -9390,6 +9478,72 @@
         "commander_review"
       ],
       "applicability_note": "Enumerate exactly the three active opposing seats for an Enchant opponent Aura in four-player Commander."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_mana_value_restriction_changes_control_but_rejects_three_and_new_incarnations",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Threads rejects a mana-value-three Centaur atomically and controls a mana-value-two Grizzly Bears. Real Unsummon removes that incarnation and the Aura; owner and new hand identity remain correct, with pending/full replay and private projection."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_nonspell_entry_uses_untargeted_restriction_choice_despite_shroud",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A normally admitted constructed enchantment-return spell returns original Roots from graveyard. Shroud rejects Aura spell targeting but allows the untargeted entry choice onto original Deadly Insect; enter-tap resolves. Foreign-choice rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_power_restriction_rechecks_resolution_and_attached_state",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Runners Bane attaches to a boundary-power-three Centaur then a real Giant Growth makes it six and causes illegal-Aura state action. A separate pending spell targets power two; Growth makes five and prevents resolution. Wrong-principal rollback, private projection, pending load and full replay agree."
     },
     {
       "capability_id": "attachment.aura.typed_restriction",
@@ -9415,6 +9569,28 @@
     },
     {
       "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_fixed_restriction_lowering_omission_is_killed_by_native_gameplay",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fresh native TestCase directly under parent assertRaises detects omitted typed restriction lowering through actual normal admission."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
       "evidence_class": "negative",
       "test_id": "tests.test_aura_targeting_entry.SimpleEnchantModelTests.test_dynamic_and_malformed_typed_enchant_forms_fail_closed",
       "official_rule_ids": [
@@ -9434,6 +9610,116 @@
         "commander_review"
       ],
       "applicability_note": "Reject numeric, modified, attached, keyword-negative, nonbasic, unknown-subject, conflicting, and malformed restriction values before runtime mutation."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantCompilerTests.test_fixed_restrictions_use_existing_target_predicates_and_closed_version",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Enchant3 fixed power, mana-value and absent-flying predicates round-trip through existing target owners. Legacy Enchant2 keeps its pre-change fingerprint; malformed, conflated or unsupported new descriptors reject."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantCompilerTests.test_nearby_unsupported_and_ambiguous_restrictions_stay_residual",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Modified, attachment-derived, nonbasic, variable, relative and compound restrictions retain residuals."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_mana_value_restriction_changes_control_but_rejects_three_and_new_incarnations",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Threads rejects a mana-value-three Centaur atomically and controls a mana-value-two Grizzly Bears. Real Unsummon removes that incarnation and the Aura; owner and new hand identity remain correct, with pending/full replay and private projection."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_nonspell_entry_uses_untargeted_restriction_choice_despite_shroud",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A normally admitted constructed enchantment-return spell returns original Roots from graveyard. Shroud rejects Aura spell targeting but allows the untargeted entry choice onto original Deadly Insect; enter-tap resolves. Foreign-choice rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_power_restriction_rechecks_resolution_and_attached_state",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Runners Bane attaches to a boundary-power-three Centaur then a real Giant Growth makes it six and causes illegal-Aura state action. A separate pending spell targets power two; Growth makes five and prevents resolution. Wrong-principal rollback, private projection, pending load and full replay agree."
     },
     {
       "capability_id": "attachment.aura.typed_restriction",
@@ -9547,6 +9833,116 @@
     },
     {
       "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantCompilerTests.test_fixed_restrictions_use_existing_target_predicates_and_closed_version",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Enchant3 fixed power, mana-value and absent-flying predicates round-trip through existing target owners. Legacy Enchant2 keeps its pre-change fingerprint; malformed, conflated or unsupported new descriptors reject."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_mana_value_restriction_changes_control_but_rejects_three_and_new_incarnations",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Threads rejects a mana-value-three Centaur atomically and controls a mana-value-two Grizzly Bears. Real Unsummon removes that incarnation and the Aura; owner and new hand identity remain correct, with pending/full replay and private projection."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_nonflying_restriction_uses_current_keyword_before_and_after_attachment",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Roots pending target and attached Trapped in the Tower use current Flying after real Jump responses. The former fails resolution; the latter moves to graveyard by state action, with private projection and replay."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_nonspell_entry_uses_untargeted_restriction_choice_despite_shroud",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A normally admitted constructed enchantment-return spell returns original Roots from graveyard. Shroud rejects Aura spell targeting but allows the untargeted entry choice onto original Deadly Insect; enter-tap resolves. Foreign-choice rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_power_restriction_rechecks_resolution_and_attached_state",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Runners Bane attaches to a boundary-power-three Centaur then a real Giant Growth makes it six and causes illegal-Aura state action. A separate pending spell targets power two; Growth makes five and prevents resolution. Wrong-principal rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
       "evidence_class": "privacy",
       "test_id": "tests.test_aura_targeting_entry.AuraTargetingEntryEngineTests.test_player_aura_cast_attachment_projection_and_replay",
       "official_rule_ids": [
@@ -9569,6 +9965,94 @@
     },
     {
       "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_mana_value_restriction_changes_control_but_rejects_three_and_new_incarnations",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Threads rejects a mana-value-three Centaur atomically and controls a mana-value-two Grizzly Bears. Real Unsummon removes that incarnation and the Aura; owner and new hand identity remain correct, with pending/full replay and private projection."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_nonflying_restriction_uses_current_keyword_before_and_after_attachment",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Roots pending target and attached Trapped in the Tower use current Flying after real Jump responses. The former fails resolution; the latter moves to graveyard by state action, with private projection and replay."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_nonspell_entry_uses_untargeted_restriction_choice_despite_shroud",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A normally admitted constructed enchantment-return spell returns original Roots from graveyard. Shroud rejects Aura spell targeting but allows the untargeted entry choice onto original Deadly Insect; enter-tap resolves. Foreign-choice rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_power_restriction_rechecks_resolution_and_attached_state",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Runners Bane attaches to a boundary-power-three Centaur then a real Giant Growth makes it six and causes illegal-Aura state action. A separate pending spell targets power two; Growth makes five and prevents resolution. Wrong-principal rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
       "evidence_class": "replay",
       "test_id": "tests.test_aura_targeting_entry.AuraTargetingEntryEngineTests.test_player_aura_cast_attachment_projection_and_replay",
       "official_rule_ids": [
@@ -9588,6 +10072,94 @@
         "commander_review"
       ],
       "applicability_note": "Checkpoint and replay the reciprocal player attachment and principal-safe public projection exactly."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_mana_value_restriction_changes_control_but_rejects_three_and_new_incarnations",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Threads rejects a mana-value-three Centaur atomically and controls a mana-value-two Grizzly Bears. Real Unsummon removes that incarnation and the Aura; owner and new hand identity remain correct, with pending/full replay and private projection."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_nonflying_restriction_uses_current_keyword_before_and_after_attachment",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Roots pending target and attached Trapped in the Tower use current Flying after real Jump responses. The former fails resolution; the latter moves to graveyard by state action, with private projection and replay."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_nonspell_entry_uses_untargeted_restriction_choice_despite_shroud",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A normally admitted constructed enchantment-return spell returns original Roots from graveyard. Shroud rejects Aura spell targeting but allows the untargeted entry choice onto original Deadly Insect; enter-tap resolves. Foreign-choice rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "capability_id": "attachment.aura.typed_restriction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_characteristic_enchant.FixedCharacteristicEnchantRuntimeTests.test_actual_power_restriction_rechecks_resolution_and_attached_state",
+      "official_rule_ids": [
+        "303.4",
+        "303.4a",
+        "303.4c",
+        "303.4f",
+        "303.4g",
+        "608.2b",
+        "701.3",
+        "702.5a",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Runners Bane attaches to a boundary-power-three Centaur then a real Giant Growth makes it six and causes illegal-Aura state action. A separate pending spell targets power two; Growth makes five and prevents resolution. Wrong-principal rollback, private projection, pending load and full replay agree."
     },
     {
       "capability_id": "attachment.equip.fixed_mana",
@@ -216466,5 +217038,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "0562a2a902f6156f312bba7c065b44264c8750760e171245258658ac55acf681"
+  "fingerprint": "943fde2ffdea6666696e8ce01df9cd4bda8a5f306d699921fea82e1ef69c85b4"
 }

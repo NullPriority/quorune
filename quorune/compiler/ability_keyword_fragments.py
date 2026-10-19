@@ -174,7 +174,7 @@ def _lower_enchant_fragment(
             {
                 "handler_id": (
                     "ability.static.enchant.typed.v2"
-                    if enchant_spec.schema_version == 2
+                    if enchant_spec.schema_version in {2, 3}
                     else "ability.static.enchant.v1"
                 ),
                 "schema_version": 1,

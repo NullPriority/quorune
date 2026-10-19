@@ -2,7 +2,7 @@
 title: "Compact CI card dependencies"
 status: "generated"
 authoritative_source: "tests/fixtures/compact-ci-fixtures.json and platform/test-shards.json"
-verified: "a0328a3bde8666ff8830a4d5cdb0dbe340131c11a97a0c7f8d08e6a98fe05392"
+verified: "d14e5c8a1e64de3f813011ae2751f8c85f086dd9612d711a9e70e19c7581aabb"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -17,11 +17,11 @@ Overall closure: **closed**.
 
 | Measure | Value |
 | --- | ---: |
-| Fixture files | 245 |
-| Cards | 2721 |
-| Rulings | 6184 |
-| Modules inspected | 529 |
-| Static requirements | 1581 |
+| Fixture files | 246 |
+| Cards | 2729 |
+| Rulings | 6192 |
+| Modules inspected | 530 |
+| Static requirements | 1583 |
 | Declared dynamic requirements | 45 |
 | Unresolved dynamic sites | 0 |
 | Missing cards | 0 |
@@ -50,7 +50,7 @@ Overall closure: **closed**.
 | functional-09 | 44 | closed |
 | functional-10 | 34 | closed |
 | functional-11 | 59 | closed |
-| functional-12 | 57 | closed |
+| functional-12 | 58 | closed |
 | generated-validation | 32 | closed |
 | main-integration-smoke | 3 | closed |
 | main-smoke | 6 | closed |
