@@ -39,6 +39,8 @@ _HISTORY = {
 def _characteristic(value: str, *, source_name: str, body: str, schema: Any,
                     event: str | None, source_event: bool) -> ScalarEffectAmountSpec | None:
     from .public_characteristic_aggregates import public_characteristic_aggregate
+    from .target_hand_amount_templates import target_hand_count_producer
+    if (hand:=target_hand_count_producer(value,schema)) is not None:return hand
     aggregate=public_characteristic_aggregate(value)
     if aggregate is not None:return aggregate
     counter=re.fullmatch(r'(?:the )?number of (?P<counter>[A-Za-z0-9+/-]+) counters? on (?P<reference>.+)',value,re.I)
@@ -79,7 +81,8 @@ def _characteristic(value: str, *, source_name: str, body: str, schema: Any,
 def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed: Callable,
                                  event: str | None = None, source_event: bool = False):
     """Only replace result slots after complete consumption and fixed-shape proof."""
-    normalized = text.strip()
+    from .target_hand_amount_templates import normalized_target_hand_damage
+    normalized = normalized_target_hand_damage(text.strip(),source_name)
     definition = re.fullmatch(r"(?P<body>[^.]+?), where X is (?:equal to )?(?P<value>.+?)\.?", normalized, re.I)
     producer = None
     multiplier = 1
@@ -136,7 +139,9 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
         if isinstance(value, (tuple, list)):
             return type(value)(project(child) for child in value)
         return deepcopy(value)
-    return fixed[0], tuple(project(effect) for effect in fixed[1]), fixed[2], tuple(dict.fromkeys((*fixed[3], SCALAR_AMOUNT_MECHANIC)))
+    from ..scalar_effect_amount_model import TARGET_HAND_COUNT_MECHANIC
+    additional=(TARGET_HAND_COUNT_MECHANIC,) if producer.origin is ScalarAmountOrigin.TARGET_HAND_COUNT else ()
+    return fixed[0], tuple(project(effect) for effect in fixed[1]), fixed[2], tuple(dict.fromkeys((*fixed[3], SCALAR_AMOUNT_MECHANIC,*additional)))
 
 
 def scalar_amount_shape_context(effects, mechanics):
@@ -162,4 +167,5 @@ def scalar_amount_shape_context(effects, mechanics):
         return None
     if not count:
         return None
-    return fixed, set(mechanics) - {SCALAR_AMOUNT_MECHANIC, "declared-effect-amount"}
+    from ..scalar_effect_amount_model import TARGET_HAND_COUNT_MECHANIC
+    return fixed, set(mechanics) - {SCALAR_AMOUNT_MECHANIC, "declared-effect-amount",TARGET_HAND_COUNT_MECHANIC}

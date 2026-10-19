@@ -5662,6 +5662,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/target_hand_amount_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/target_restriction_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -12089,6 +12104,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/target_hand_count_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/temporary_ability_grant.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -16686,5 +16715,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "b28e13dad0af377d33ede3f8fde72bf6debcc947c59fa4ae6763b4d8b3d59b6e"
+  "fingerprint": "7fce4539364742d2dd95cc4a7b2ec5214aff3d2bed5bf39ade739fc5cee24947"
 }

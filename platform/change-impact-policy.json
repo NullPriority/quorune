@@ -6305,6 +6305,25 @@
         "test_public_negative_keyword_queries",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "target-player-hand-count-contract",
+      "patterns": [
+        "quorune/scalar_effect_amount_model.py",
+        "quorune/scalar_effect_amounts.py",
+        "quorune/compiler/target_hand_amount_templates.py",
+        "quorune/rules/target_hand_count_shapes.py",
+        "tests/test_target_player_hand_counts.py",
+        "tests/fixtures/target-player-hand-count-cards.json"
+      ],
+      "test_modules": [
+        "test_target_player_hand_counts",
+        "test_scalar_effect_amounts",
+        "test_scalar_mill_wording",
+        "test_public_scalar_stat_definitions",
+        "test_kicked_same_target_replacements",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

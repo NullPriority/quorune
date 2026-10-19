@@ -6,6 +6,7 @@ from ..object_predicate import object_query_capabilities
 from ..rules.casting_additional_cost_groups import announced_additional_cost_dependencies
 from ..rules.fixed_homogeneous_target_set_capability_shapes import announced_target_runtime_dependencies
 from ..rules.resolution_condition_shapes import same_target_self_replacement_runtime_dependencies
+from ..rules.target_hand_count_shapes import target_hand_count_runtime_dependencies
 
 
 def program_dynamic_runtime_requirements(program):
@@ -26,4 +27,8 @@ def program_dynamic_runtime_requirements(program):
         required.update(same_target_self_replacement_runtime_dependencies(program))
     except (TypeError,ValueError) as exc:
         blockers.add(f'runtime_same_target_replacement:invalid:{exc}')
+    try:
+        required.update(target_hand_count_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_target_hand_count:invalid:{exc}')
     return required,blockers

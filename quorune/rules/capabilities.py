@@ -1217,7 +1217,7 @@ def capability_dependencies_for_node(
             mechanics=mechanic_values, cost_schema=cost_schema, modal_resolver=_fixed_modal_capability_dependencies)
 
     all_operations = _nested_effect_operations(effects)
-    if (shape_context := _query.public_query_amount_shape_context(effects, mechanics)) is None: return ()
+    if (shape_context := _query.public_query_amount_shape_context(effects, mechanics,target_schema=target_schema)) is None: return ()
     shape_effects, shape_mechanics = shape_context
     dependencies: set[str] = _query.declared_amount_dependencies(mechanics)
     from ..waterbend import WATERBEND_COMPOSITION_CAPABILITY,WATERBEND_COMPOSITION_MECHANIC

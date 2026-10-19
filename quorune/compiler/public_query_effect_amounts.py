@@ -22,11 +22,13 @@ from .declared_effect_amounts import (
 from .scalar_effect_amounts import scalar_amount_shape_context
 from .counter_placement_templates import FIXED_COUNTER_NAME_PATTERN
 from ..scalar_effect_amount_model import SCALAR_AMOUNT_MECHANIC, SCALAR_AMOUNT_CAPABILITY
+from ..scalar_effect_amount_model import TARGET_HAND_COUNT_MECHANIC,TARGET_HAND_COUNT_CAPABILITY
 
 
 PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC = "public-query-effect-amount"
 AMOUNT_MECHANIC_CAPABILITIES = {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC: (PUBLIC_QUERY_AMOUNT_CAPABILITY,),
-                               SCALAR_AMOUNT_MECHANIC: (SCALAR_AMOUNT_CAPABILITY,)}
+                               SCALAR_AMOUNT_MECHANIC: (SCALAR_AMOUNT_CAPABILITY,),
+                               TARGET_HAND_COUNT_MECHANIC:(TARGET_HAND_COUNT_CAPABILITY,)}
 
 CompiledEffectTemplate = tuple[
     str | None,
@@ -573,7 +575,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
 
     if not {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC, SCALAR_AMOUNT_MECHANIC}.intersection(program.coverage):
         return False
-    context = public_query_amount_shape_context(program.effects, set(program.coverage))
+    context = public_query_amount_shape_context(program.effects, set(program.coverage),target_schema=program.target_schema)
     if context is None:
         return False
     effects, mechanics = context
@@ -610,9 +612,13 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
 
 
 def public_query_amount_shape_context(
-    effects: Sequence[Mapping[str, Any]], mechanics: set[str]
+    effects: Sequence[Mapping[str, Any]], mechanics: set[str], *, target_schema=None,
 ) -> tuple[tuple[Mapping[str, Any], ...], set[str]] | None:
     """Return fixed-value inputs for existing capability shape owners."""
+
+    from ..rules.target_hand_count_shapes import target_hand_count_dependencies
+    try:target_hand_count_dependencies(effects,target_schema,mechanics)
+    except (TypeError,ValueError):return None
 
     if SCALAR_AMOUNT_MECHANIC in mechanics:
         scalar=scalar_amount_shape_context(effects, mechanics)

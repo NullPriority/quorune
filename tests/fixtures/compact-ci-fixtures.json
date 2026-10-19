@@ -242,6 +242,7 @@
     "tests/fixtures/storm-cards.json",
     "tests/fixtures/target-announcements.json",
     "tests/fixtures/target-characteristic-sets.json",
+    "tests/fixtures/target-player-hand-count-cards.json",
     "tests/fixtures/target-restriction-cards.json",
     "tests/fixtures/targeted-owner-library-cards.json",
     "tests/fixtures/targeted-spell-cost-cards.json",

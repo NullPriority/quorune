@@ -2768,6 +2768,18 @@ cannot share a cached value. Ordinary negative result amounts use zero before
 the printed result sign, while known zero and unavailable information remain
 different outcomes. Doubling/base-setting exceptions are outside this grammar.
 
+`compiler/target_hand_amount_templates.py` adds an explicit version-4 scalar
+origin for the current hand size of one directly selected player. The source
+and runtime shape owners require the complete one-player target schema and a
+separate fine capability, together with scalar and target-revalidation
+authority. The resolver reads public cardinality when the instruction is
+applied, after responses; it never reads private card identities. An explicit
+declaration also binds the selected seat. Known zero remains distinct from an
+unavailable player, and an illegal sole target prevents resolution. Caster
+counts, quantity-only targets, event-player inference, private predicates,
+per-player group arrays and hand-count arithmetic remain outside this slice.
+Earlier scalar versions and declaration identities retain their wire contract.
+
 Public event-effect triggers compile only when one closed normalized carrier
 and one independently exact typed body compose through the shared event-effect
 owner. Zone events consume transaction-sealed owner, prior controller, type,

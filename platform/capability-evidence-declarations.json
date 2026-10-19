@@ -128124,6 +128124,708 @@
       "applicability_note": "Count committed current-turn card_discarded facts for the locked controller, including redirected hand discards."
     },
     {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_actual_copy_queries_its_new_target_and_preserves_original_target",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_actual_discard_response_makes_zero_damage_without_refunding_cost",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_actual_draw_response_changes_count_after_cast_and_remains_private",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_countered_original_keeps_paid_cost_and_does_not_damage_the_selected_player",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_departed_sole_target_prevents_query_and_resolution",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_original_storm_seeker_can_target_its_caster_after_the_card_leaves_hand",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_three_originals_damage_only_selected_player_by_current_public_hand_size",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_actual_copy_queries_its_new_target_and_preserves_original_target",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_actual_discard_response_makes_zero_damage_without_refunding_cost",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_actual_draw_response_changes_count_after_cast_and_remains_private",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_countered_original_keeps_paid_cost_and_does_not_damage_the_selected_player",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_departed_sole_target_prevents_query_and_resolution",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_original_storm_seeker_can_target_its_caster_after_the_card_leaves_hand",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_three_originals_damage_only_selected_player_by_current_public_hand_size",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_fresh_originals_kill_caster_hand_and_zero_count_mutations",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountModelTests.test_source_grammar_keeps_player_identity_and_rejects_private_predicates_and_ambiguous_targets",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_runtime_requires_hand_count_scalar_and_target_revalidation_authority",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountModelTests.test_versioned_scalar_reads_target_current_count_and_binds_declarations_to_that_seat",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_actual_copy_queries_its_new_target_and_preserves_original_target",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_actual_discard_response_makes_zero_damage_without_refunding_cost",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_actual_draw_response_changes_count_after_cast_and_remains_private",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_countered_original_keeps_paid_cost_and_does_not_damage_the_selected_player",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_departed_sole_target_prevents_query_and_resolution",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_original_storm_seeker_can_target_its_caster_after_the_card_leaves_hand",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_three_originals_damage_only_selected_player_by_current_public_hand_size",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_actual_copy_queries_its_new_target_and_preserves_original_target",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_actual_discard_response_makes_zero_damage_without_refunding_cost",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_actual_draw_response_changes_count_after_cast_and_remains_private",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_countered_original_keeps_paid_cost_and_does_not_damage_the_selected_player",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_departed_sole_target_prevents_query_and_resolution",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_original_storm_seeker_can_target_its_caster_after_the_card_leaves_hand",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_three_originals_damage_only_selected_player_by_current_public_hand_size",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_actual_copy_queries_its_new_target_and_preserves_original_target",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_actual_discard_response_makes_zero_damage_without_refunding_cost",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_actual_draw_response_changes_count_after_cast_and_remains_private",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_countered_original_keeps_paid_cost_and_does_not_damage_the_selected_player",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_departed_sole_target_prevents_query_and_resolution",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_original_storm_seeker_can_target_its_caster_after_the_card_leaves_hand",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
+      "capability_id": "quantity_expression.target_player_hand_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_target_player_hand_counts.TargetHandCountRuntimeTests.test_three_originals_damage_only_selected_player_by_current_public_hand_size",
+      "official_rule_ids": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished target-player public hand count. Exactly one selected player, current resolution-time count and existing scalar/result ownership preserve privacy, rollback, pending load and replay. Source/runtime/malformed and fresh native mutation evidence must pass before gain acceptance."
+    },
+    {
       "capability_id": "replacement.kicker.fixed_entry",
       "evidence_class": "interaction",
       "test_id": "tests.test_kicker_rules.FixedKickerRuntimeTests.test_kicked_counter_replacement_is_nested_and_replays",

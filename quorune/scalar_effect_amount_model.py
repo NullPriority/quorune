@@ -14,9 +14,12 @@ SCALAR_AMOUNT_KIND = "scalar_effect_amount"
 SCALAR_AMOUNT_CAPABILITY = "quantity_expression.scalar_effect_amount"
 SCALAR_AMOUNT_MECHANIC = "scalar-effect-amount"
 SCALAR_REFERENCE_CONTEXT = "scalar_reference_snapshots"
+TARGET_HAND_COUNT_MECHANIC='target-player-hand-count-amount'
+TARGET_HAND_COUNT_CAPABILITY='quantity_expression.target_player_hand_count'
 
 
 class ScalarAmountOrigin(StrEnum):
+    TARGET_HAND_COUNT='target_player_hand_count'
     PUBLIC_AGGREGATE = 'public_characteristic_aggregate'
     SOURCE = "source_characteristic"
     TARGET = "target_characteristic"
@@ -45,8 +48,10 @@ class ScalarEffectAmountSpec:
     aggregate: PublicCharacteristicAggregateSpec | None = None
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version not in {1,2,3}:
+        if type(self.schema_version) is not int or self.schema_version not in {1,2,3,4}:
             raise PublicQueryAmountError("Unsupported scalar effect amount version")
+        if (self.schema_version==4)!=(self.origin is ScalarAmountOrigin.TARGET_HAND_COUNT):
+            raise PublicQueryAmountError('Target hand count requires its explicit scalar version')
         if (self.schema_version==3)!=(self.origin is ScalarAmountOrigin.PUBLIC_AGGREGATE):
             raise PublicQueryAmountError('Aggregate scalar origin requires its explicit version')
         if self.schema_version==3:
@@ -121,6 +126,13 @@ def scalar_amount_specs(value: Any) -> tuple[ScalarEffectAmountSpec, ...]:
     if isinstance(value, (list, tuple)):
         return tuple(spec for child in value for spec in scalar_amount_specs(child))
     return ()
+
+
+def direct_player_amount_target_is_closed(schema):
+    return (isinstance(schema,Mapping) and set(schema)<={'zones','categories','count','player_relation'}
+        and schema.get('zones')==['player'] and schema.get('categories')==['player']
+        and type(schema.get('count')) is int and schema['count']==1
+        and schema.get('player_relation','any') in {'any','opponent'})
 
 
 def scope_scalar_amount_bindings(value: Any, source_scope: str) -> Any:

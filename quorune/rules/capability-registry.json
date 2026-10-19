@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 400,
+  "registry_version": 401,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -33615,6 +33615,116 @@
       "dependency_fail_closed_rationale": "Both source admission and runtime binding require complete same-target, cast fact, target revalidation and child authority; focused withdrawals must pass before acceptance.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh native original modifier and damage witnesses must kill producer omission and lost paid-branch mutations before acceptance.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "quantity_expression.target_player_hand_count",
+      "version": 1,
+      "official_rules": [
+        "107.1b",
+        "115.1a",
+        "402.3",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Resolve one directly selected public player hand cardinality through an explicit scalar origin, using the current count and preserving principal-private card identities.",
+        "inputs": [
+          "one complete direct player target schema",
+          "version4 target hand-count scalar in an existing registered result slot",
+          "current hand cardinality of the selected seat"
+        ],
+        "outputs": [
+          "current nonnegative integer result amount",
+          "target-bound declaration identity when explicitly declared",
+          "unchanged private hand projection and ordinary result ownership"
+        ],
+        "exclusions": [
+          "object targets, multiple targets or unbound player antecedents",
+          "private card predicates or identity inspection",
+          "quantity-only targets, event-player inference, affine hand arithmetic and per-player group arrays"
+        ]
+      },
+      "dependencies": [
+        "quantity_expression.scalar_effect_amount",
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.scalar_effect_amount_model.ScalarEffectAmountSpec",
+        "quorune.compiler.target_hand_amount_templates.target_hand_count_producer",
+        "quorune.compiler.target_hand_amount_templates.normalized_target_hand_damage",
+        "quorune.rules.target_hand_count_shapes.target_hand_count_dependencies",
+        "quorune.rules.target_hand_count_shapes.target_hand_count_runtime_dependencies",
+        "quorune.scalar_effect_amounts.resolve_scalar_effect_amount"
+      ],
+      "positive_tests": [
+        "test_versioned_scalar_reads_target_current_count_and_binds_declarations_to_that_seat",
+        "test_three_originals_damage_only_selected_player_by_current_public_hand_size",
+        "test_actual_draw_response_changes_count_after_cast_and_remains_private",
+        "test_actual_discard_response_makes_zero_damage_without_refunding_cost",
+        "test_original_storm_seeker_can_target_its_caster_after_the_card_leaves_hand",
+        "test_countered_original_keeps_paid_cost_and_does_not_damage_the_selected_player",
+        "test_actual_copy_queries_its_new_target_and_preserves_original_target",
+        "test_departed_sole_target_prevents_query_and_resolution"
+      ],
+      "negative_tests": [
+        "test_source_grammar_keeps_player_identity_and_rejects_private_predicates_and_ambiguous_targets",
+        "test_runtime_requires_hand_count_scalar_and_target_revalidation_authority"
+      ],
+      "interaction_tests": [
+        "test_three_originals_damage_only_selected_player_by_current_public_hand_size",
+        "test_actual_draw_response_changes_count_after_cast_and_remains_private",
+        "test_actual_discard_response_makes_zero_damage_without_refunding_cost",
+        "test_original_storm_seeker_can_target_its_caster_after_the_card_leaves_hand",
+        "test_countered_original_keeps_paid_cost_and_does_not_damage_the_selected_player",
+        "test_actual_copy_queries_its_new_target_and_preserves_original_target",
+        "test_departed_sole_target_prevents_query_and_resolution"
+      ],
+      "multiplayer_tests": [
+        "test_three_originals_damage_only_selected_player_by_current_public_hand_size",
+        "test_actual_draw_response_changes_count_after_cast_and_remains_private",
+        "test_actual_discard_response_makes_zero_damage_without_refunding_cost",
+        "test_original_storm_seeker_can_target_its_caster_after_the_card_leaves_hand",
+        "test_countered_original_keeps_paid_cost_and_does_not_damage_the_selected_player",
+        "test_actual_copy_queries_its_new_target_and_preserves_original_target",
+        "test_departed_sole_target_prevents_query_and_resolution"
+      ],
+      "privacy_tests": [
+        "test_three_originals_damage_only_selected_player_by_current_public_hand_size",
+        "test_actual_draw_response_changes_count_after_cast_and_remains_private",
+        "test_actual_discard_response_makes_zero_damage_without_refunding_cost",
+        "test_original_storm_seeker_can_target_its_caster_after_the_card_leaves_hand",
+        "test_countered_original_keeps_paid_cost_and_does_not_damage_the_selected_player",
+        "test_actual_copy_queries_its_new_target_and_preserves_original_target",
+        "test_departed_sole_target_prevents_query_and_resolution"
+      ],
+      "replay_tests": [
+        "test_three_originals_damage_only_selected_player_by_current_public_hand_size",
+        "test_actual_draw_response_changes_count_after_cast_and_remains_private",
+        "test_actual_discard_response_makes_zero_damage_without_refunding_cost",
+        "test_original_storm_seeker_can_target_its_caster_after_the_card_leaves_hand",
+        "test_countered_original_keeps_paid_cost_and_does_not_damage_the_selected_player",
+        "test_actual_copy_queries_its_new_target_and_preserves_original_target",
+        "test_departed_sole_target_prevents_query_and_resolution"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Source and runtime dependencies reject absent hand-count/scalar/target ownership and unrepresented target schemas; focused witnesses must pass before acceptance.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh original spell witnesses must distinguish the selected player hand from the caster hand and zero before acceptance.",
       "blockers": [],
       "status": "trusted"
     }
