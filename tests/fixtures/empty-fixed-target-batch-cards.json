@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Generic CR115.6/608.2b/c zero-target and independent-result controls",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000729300",
+      "name": "Generic Empty Destruction",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Destroy up to two target creatures.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000729301",
+      "name": "Generic Empty Permanent Exile",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Exile up to two target permanents.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000729302",
+      "name": "Generic Empty Permanent Return",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Return up to two target creatures to their owners' hands.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000729303",
+      "name": "Generic Empty Graveyard Return",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Return up to two target creature cards from your graveyard to your hand.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000729304",
+      "name": "Generic Empty Graveyard Exile",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Exile up to two target cards from a single graveyard.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000729305",
+      "name": "Generic Empty Tap",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Tap up to two target creatures.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000729306",
+      "name": "Generic Empty Untap",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Untap up to two target creatures.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000729307",
+      "name": "Generic Empty Exile Draw",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Exile up to two target cards from a graveyard. Draw a card.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000729308",
+      "name": "Generic Empty Destroy Draw",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Destroy up to two target creatures. Draw a card.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000729319",
+      "name": "Generic Empty Activation",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Artifact",
+      "oracle_text": "{1}, {T}: Exile up to two target cards from a graveyard. Draw a card.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ]
+}
