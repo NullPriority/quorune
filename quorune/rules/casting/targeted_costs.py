@@ -13,7 +13,9 @@ from ...errors import GameRuleError
 
 def target_cost_fact(sources,targets):
     applied=tuple(source for source in sources if source.applies(targets))
-    return {'schema_version':1,'generic':sum(source.spec.generic for source in applied),
+    reduction=any(source.spec.generic<0 for source in sources)
+    return {'schema_version':2 if reduction else 1,'generic':sum(max(0,source.spec.generic) for source in applied),
+        **({'generic_reduction':sum(max(0,-source.spec.generic) for source in applied)} if reduction else {}),
         'sources':[{'component_id':source.component_id,'source_ref':source.source_ref,'source_identity':source.source_identity,
             'controller':source.controller,'generic':source.spec.generic} for source in applied]}
 
@@ -84,7 +86,8 @@ def _announced_tax_variants(host,seat,card,schema,sources,option,modes):
 
 
 def target_cost_variants(host,seat,card,program,option,response,*,hint):
-    sources=targeted_spell_cost_sources(host,seat)
+    from ...morph import FACE_DOWN_CAST_METHODS
+    sources=targeted_spell_cost_sources(host,seat,card=card if option.get('id') not in FACE_DOWN_CAST_METHODS else None,spell_program=program)
     if not sources:yield option;return
     schema=option.get('target_schema') or getattr(program,'target_schema',None)
     if schema is None:
@@ -125,9 +128,20 @@ def apply_target_cost_increase(option):
     if fact['generic']:option.setdefault('cost_increases',[]).append({'kind':'targeted','count':fact['generic']})
 
 
-def target_cost_clauses(host,seat):
+def target_cost_for_x_preview(option):
+    fact=option.get('targeted_cost')
+    return fact if 'target_count_parameter' in option or fact is not None and fact.get('schema_version')==2 else None
+
+
+def _preview_option_rank(option):
+    raw=option.to_dict()
+    maximum=raw.get('choice_schema',{}).get('x',{}).get('maximum',0) if raw.get('targeted_cost',{}).get('schema_version')==2 else 0
+    return sum(raw['requirements'].values()),-maximum
+
+
+def target_cost_clauses(host,seat,*,card=None,spell_program=None):
     return [{'generic':source.spec.generic,'any_target_refs':list(source.eligible_target_refs),
-        'source':source.source_ref,'component_id':source.component_id} for source in targeted_spell_cost_sources(host,seat)]
+        'source':source.source_ref,'component_id':source.component_id} for source in targeted_spell_cost_sources(host,seat,card=card,spell_program=spell_program)]
 
 
 def consolidate_target_cost_options(options,*,hint):
@@ -146,22 +160,24 @@ def consolidate_target_cost_options(options,*,hint):
             components=tuple(row['component_id'] for row in raw['targeted_cost']['sources'])
             prices.setdefault(option.option_id,{})[(modes,components)]={'modes':list(modes),'components':list(components),
                 'requirements':raw['requirements'], **({'maximum_x':raw['choice_schema']['x']['maximum']}
-                    if 'target_count_parameter' in raw and 'x' in raw.get('choice_schema',{}) else {})}
+                if ('target_count_parameter' in raw or raw['targeted_cost'].get('schema_version')==2) and 'x' in raw.get('choice_schema',{}) else {})}
         prior=result.get(option.option_id)
-        if prior is None or sum(option.to_dict()['requirements'].values())<sum(prior.to_dict()['requirements'].values()):result[option.option_id]=option
+        if prior is None or _preview_option_rank(option)<_preview_option_rank(prior):result[option.option_id]=option
     return tuple(CastCostOption.from_dict({**option.to_dict(),**({'payable_target_witnesses':witnesses[oid],
         'target_cost_prices':list(prices.get(oid,{}).values())} if oid in witnesses else {})}) for oid,option in result.items())
 
 
-def public_target_costs(host,seat,option):
-    clauses=target_cost_clauses(host,seat)
+def public_target_costs(host,seat,option,*,card=None,spell_program=None):
+    from ...morph import FACE_DOWN_CAST_METHODS
+    clauses=target_cost_clauses(host,seat,card=card if option.get('id') not in FACE_DOWN_CAST_METHODS else None,spell_program=spell_program)
     if not clauses:return None
     def label(requirements):
         value=(f"{{{requirements['GENERIC']}}}" if requirements.get('GENERIC') else '')
         value+=''.join(('{'+key+'}')*requirements.get(key,0) for key in 'WUBRGC')
         return 'Pay '+(value or '{0}')
-    return {'kind':'generic_increase_once_per_source','clauses':clauses,
-        'prices':[{**row,'label':label(row['requirements'])} for row in option.get('target_cost_prices',())]}
+    return {'kind':'generic_adjustment_once_per_source' if any(row['generic']<0 for row in clauses) else 'generic_increase_once_per_source','clauses':clauses,
+        'prices':[{**row,'label':f"Choose X up to {row['maximum_x']}" if option.get('targeted_cost',{}).get('schema_version')==2 and 'maximum_x' in row
+            else label(row['requirements'])} for row in option.get('target_cost_prices',())]}
 
 
 def public_payable_target_schema(schema,option):

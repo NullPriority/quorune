@@ -55,7 +55,7 @@ def target_count_cost_preview(host, seat, card, program, option):
         return option
     schema["up_to"] = len(public.get("legal_refs", ()))
     from .targeted_costs import targeted_spell_cost_sources
-    return {**option, **({"target_schema": schema} if targeted_spell_cost_sources(host, seat) else {}),
+    return {**option, **({"target_schema": schema} if targeted_spell_cost_sources(host, seat,card=card,spell_program=program) else {}),
         "target_count_preview_limit": len(public.get("legal_refs", ()))}
 
 

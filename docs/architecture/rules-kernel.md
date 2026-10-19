@@ -837,6 +837,17 @@ instruction whose captured count is stale. Source reincarnation, ability
 removal, save/load, and public projection all use those typed identities rather
 than Oracle prose.
 
+Source-face target-dependent reductions use the same announced-target
+witnesses for offers and accepted commands. One matching target applies one
+printed reduction once, including when several targets qualify. The cost owner
+adds increases before reducing generic requirements, preserves colored mana,
+and locks the actual paid cost before responses. Captured cost schema 2 keeps
+generic increases and reductions separate; historical tax schema 1 retains its
+original bytes. X previews and public price tables retain each target set's
+affordable bound instead of hiding a supported larger X or allowing an
+underpaid different target. Copies and ordinary counter or invalid-target
+resolution continue under their existing owners.
+
 The current committed spell-cast event adds actual mana spent as a
 nonnegative integer in schema version 7. The cast commit publishes the already
 sealed paid stack fact, including additional costs and reductions; it does not

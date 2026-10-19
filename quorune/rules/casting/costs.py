@@ -68,6 +68,7 @@ from .static_modifiers import (
     apply_static_reductions as _apply_owned_static_reductions,
     fixed_generic_reduction as _static_generic_reduction,
 )
+from .targeted_costs import target_cost_for_x_preview
 
 
 class CastCostHost(Protocol):
@@ -1427,7 +1428,7 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
             mechanics,
             spend_context=spend_context,
             reserved_cards=reserved_cards,
-            targeted_cost=option.get('targeted_cost') if 'target_count_parameter' in option else None,
+            targeted_cost=target_cost_for_x_preview(option),
         )
         from .target_cardinality import target_count_preview_maximum
         maximum = target_count_preview_maximum(option, maximum)

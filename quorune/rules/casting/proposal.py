@@ -857,7 +857,7 @@ def _cast_offer_payload(
             public_schema = public_target_count_schema(public_schema, raw)
             projected["target_schema"] = public_schema
             from .targeted_costs import public_target_costs
-            prices=public_target_costs(host,seat,raw)
+            prices=public_target_costs(host,seat,raw,card=card,spell_program=program)
             if prices is not None:projected['target_costs']=prices
         public_options.append(projected)
         legal_options.append(option)

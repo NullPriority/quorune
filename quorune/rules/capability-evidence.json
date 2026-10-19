@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "51f35af7078ae59bbf292f4a5143f4d4d963364150124a42a930d25e9e84d10a",
-  "declaration_source_fingerprint": "b384479003b716b4057abc82aa9b3950a794a9463ee6f80f4062e70cdff5df30",
+  "registry_fingerprint": "6aff775ca8b1d7d088038e5e52304d8c0899f575a6a645c8b83235123e8f2538",
+  "declaration_source_fingerprint": "c4eb9cdc64496eb43d9883370f1fa1deec5c61c9356749fc85f510db2c75d551",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -33604,6 +33604,1374 @@
         "commander_review"
       ],
       "applicability_note": "The rejected principal, resource or face-down attempt leaves complete authoritative state unchanged."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_actual_copy_retargets_to_untapped_creature_without_another_cast_or_reduction_payment",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_all_illegal_target_resolution_does_not_reprice_or_refund_the_paid_reduction",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_graveyard_reductions_use_selected_card_value_and_keep_return_ownership",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_price_of_fame_keeps_surveil_choice_private_after_discounted_destruction",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_quicksand_cost_stays_locked_after_actual_refocus_untaps_target",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_quicksand_offers_cheaper_tapped_target_and_rejects_cheap_untapped_payment_atomically",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_savage_stomp_binds_controller_and_subtype_across_both_target_roles",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_stack_reductions_use_creature_or_blue_spell_characteristics",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_swampsnare_aura_uses_current_flying_and_canonical_attachment_layers",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_torch_at_x_zero_still_requires_its_red_mana",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_torch_reduction_changes_payment_without_changing_x_or_counter_prohibition",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_town_optional_targets_reduce_once_for_one_or_two_qualifiers",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_typed_free_base_seam_reduces_real_sphere_increase_before_payment",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_actual_copy_retargets_to_untapped_creature_without_another_cast_or_reduction_payment",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_all_illegal_target_resolution_does_not_reprice_or_refund_the_paid_reduction",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_graveyard_reductions_use_selected_card_value_and_keep_return_ownership",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_price_of_fame_keeps_surveil_choice_private_after_discounted_destruction",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_quicksand_cost_stays_locked_after_actual_refocus_untaps_target",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_quicksand_offers_cheaper_tapped_target_and_rejects_cheap_untapped_payment_atomically",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_savage_stomp_binds_controller_and_subtype_across_both_target_roles",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_stack_reductions_use_creature_or_blue_spell_characteristics",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_swampsnare_aura_uses_current_flying_and_canonical_attachment_layers",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_torch_at_x_zero_still_requires_its_red_mana",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_torch_reduction_changes_payment_without_changing_x_or_counter_prohibition",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_town_optional_targets_reduce_once_for_one_or_two_qualifiers",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_typed_free_base_seam_reduces_real_sphere_increase_before_payment",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_fresh_original_quicksand_kills_non_target_qualifier_substitution",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_fresh_original_quicksand_kills_target_reduction_omission",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionCompilerTests.test_compiler_requires_new_authority_and_keeps_unsupported_costs_residual",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionCompilerTests.test_component_rejects_malformed_public_predicate_leaf",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_all_twenty_nine_originals_have_complete_preflight_and_runtime_reduction_authority",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionCompilerTests.test_public_card_and_spell_predicates_keep_their_own_domains",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionCompilerTests.test_version_two_reduction_and_captured_fact_are_closed_without_reinterpreting_old_taxes",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_actual_copy_retargets_to_untapped_creature_without_another_cast_or_reduction_payment",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_all_illegal_target_resolution_does_not_reprice_or_refund_the_paid_reduction",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_graveyard_reductions_use_selected_card_value_and_keep_return_ownership",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_price_of_fame_keeps_surveil_choice_private_after_discounted_destruction",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_quicksand_cost_stays_locked_after_actual_refocus_untaps_target",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_quicksand_offers_cheaper_tapped_target_and_rejects_cheap_untapped_payment_atomically",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_savage_stomp_binds_controller_and_subtype_across_both_target_roles",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_stack_reductions_use_creature_or_blue_spell_characteristics",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_swampsnare_aura_uses_current_flying_and_canonical_attachment_layers",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_torch_at_x_zero_still_requires_its_red_mana",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_torch_reduction_changes_payment_without_changing_x_or_counter_prohibition",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_town_optional_targets_reduce_once_for_one_or_two_qualifiers",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_typed_free_base_seam_reduces_real_sphere_increase_before_payment",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_actual_copy_retargets_to_untapped_creature_without_another_cast_or_reduction_payment",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_all_illegal_target_resolution_does_not_reprice_or_refund_the_paid_reduction",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_graveyard_reductions_use_selected_card_value_and_keep_return_ownership",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_price_of_fame_keeps_surveil_choice_private_after_discounted_destruction",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_quicksand_cost_stays_locked_after_actual_refocus_untaps_target",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_quicksand_offers_cheaper_tapped_target_and_rejects_cheap_untapped_payment_atomically",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_savage_stomp_binds_controller_and_subtype_across_both_target_roles",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_stack_reductions_use_creature_or_blue_spell_characteristics",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_swampsnare_aura_uses_current_flying_and_canonical_attachment_layers",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_torch_at_x_zero_still_requires_its_red_mana",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_torch_reduction_changes_payment_without_changing_x_or_counter_prohibition",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_town_optional_targets_reduce_once_for_one_or_two_qualifiers",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_typed_free_base_seam_reduces_real_sphere_increase_before_payment",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_actual_copy_retargets_to_untapped_creature_without_another_cast_or_reduction_payment",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_all_illegal_target_resolution_does_not_reprice_or_refund_the_paid_reduction",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_graveyard_reductions_use_selected_card_value_and_keep_return_ownership",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_price_of_fame_keeps_surveil_choice_private_after_discounted_destruction",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_quicksand_cost_stays_locked_after_actual_refocus_untaps_target",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_quicksand_offers_cheaper_tapped_target_and_rejects_cheap_untapped_payment_atomically",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_savage_stomp_binds_controller_and_subtype_across_both_target_roles",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_stack_reductions_use_creature_or_blue_spell_characteristics",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_swampsnare_aura_uses_current_flying_and_canonical_attachment_layers",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_torch_at_x_zero_still_requires_its_red_mana",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_torch_reduction_changes_payment_without_changing_x_or_counter_prohibition",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_original_town_optional_targets_reduce_once_for_one_or_two_qualifiers",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
+    },
+    {
+      "capability_id": "casting.cost.self_target_generic_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionRuntimeTests.test_typed_free_base_seam_reduces_real_sphere_increase_before_payment",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-face reduction binds the actual public announced targets, cost order, generic floor, X price witnesses, complete consequences, privacy, rollback, loaded replay and fresh omissions."
     },
     {
       "capability_id": "casting.cost.targeted_fixed_generic",
@@ -186106,6 +187474,27 @@
     },
     {
       "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_target_reductions.SelfTargetReductionCompilerTests.test_announced_count_recognizer_safely_rejects_an_unrelated_composition_view",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An unrelated composed-effect projection without a full event/ability identity must safely decline announced-cardinality ownership."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
       "evidence_class": "positive",
       "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_actual_cascade_forces_original_gridlock_to_zero_target_count",
       "official_rule_ids": [
@@ -242512,5 +243901,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "9a343c07ba51abad1f2961137882a66b5f1df78ef2dc63cf0598dd9824281d4a"
+  "fingerprint": "cfb95d1f11f64c2fdde5aa359b900e455ee5395da6bdd4f35fcff902e6e33018"
 }

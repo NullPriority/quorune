@@ -2609,6 +2609,15 @@ component, so removal, control changes and source departure affect subsequent
 prices. Variable, target-qualified, history-qualified and unrepresented source
 zone forms remain residual. Recognizing a modifier does not remove unrelated
 Companion, return, Adapt or other whole-card residuals.
+`compiler/targeted_spell_costs.py` lowers complete source-face conditional
+generic reductions to a sealed public target predicate in the existing cost
+component registry. Battlefield permanent predicates, public graveyard
+creature-card mana values, and creature or blue spell predicates retain their
+separate target domains. The compiler does not turn private zones, nested
+antecedents, colored reductions or unresolved effect siblings into support.
+Announced-cardinality recognition safely declines sequence components that
+lack its required whole-ability event and identity context.
+
 Printed Increment uses `compiler/increment_nodes.py` and independent
 source-spanned instance identities. The normalized cast event carries the
 actual committed mana total in explicit version 7, copied from the existing

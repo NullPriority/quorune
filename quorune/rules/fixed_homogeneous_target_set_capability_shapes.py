@@ -221,11 +221,13 @@ def announced_target_runtime_dependencies(program: Any) -> tuple[str, ...]:
 
 
 def is_closed_announced_target_set_program(program: Any) -> bool:
-    spell = str(program.ability_id).startswith("spell:") and program.event == "resolve"
+    event = getattr(program,"event",None)
+    spell = str(getattr(program,"ability_id","")).startswith("spell:") and event == "resolve"
     if not spell:
+        if event != "activate":return False
         from ..activation_x import activation_x_symbols, ANNOUNCED_ACTIVATION_X_CAPABILITY
         cost = program.cost_schema or {}
-        if (program.event != "activate" or ANNOUNCED_ACTIVATION_X_CAPABILITY not in program.capability_dependencies
+        if (ANNOUNCED_ACTIVATION_X_CAPABILITY not in program.capability_dependencies
                 or type(cost.get("announced_x_symbols")) is not int
                 or activation_x_symbols(str(cost.get("text") or "")) != cost["announced_x_symbols"]):
             return False

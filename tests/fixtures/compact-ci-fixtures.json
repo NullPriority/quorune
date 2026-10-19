@@ -221,6 +221,7 @@
     "tests/fixtures/scoped-damage-prevention-cards.json",
     "tests/fixtures/scryfall-exact-lists.json",
     "tests/fixtures/self-public-zone-cards.json",
+    "tests/fixtures/self-target-reduction-cards.json",
     "tests/fixtures/shared-characteristic-query-cards.json",
     "tests/fixtures/soulbond-cards.json",
     "tests/fixtures/source-block-pair-cards.json",

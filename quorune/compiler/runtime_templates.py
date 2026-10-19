@@ -10,6 +10,7 @@ from .activation_restriction_templates import (
     static_activation_restriction_handler,
 )
 from .activation_cost_modifier_templates import static_activation_cost_modifier_handler
+from .targeted_spell_costs import self_target_reduction_template
 from .action_permission_templates import static_action_permission_handler,opening_hand_battlefield_permission_handler
 from .opening_hand_reveal_templates import opening_hand_reveal_permission_handler
 from .entry_designation_templates import entry_designation_handler, chosen_characteristics_handler
@@ -601,7 +602,7 @@ def static_runtime_template(
 ) -> StaticRuntimeTemplate | None:
     """Select one closed static runtime production for an Oracle line."""
 
-    self_spell_reduction = self_spell_cost_reduction_handler(text)
+    self_spell_reduction = self_target_reduction_template(text) or self_spell_cost_reduction_handler(text)
     if self_spell_reduction is not None:
         return StaticRuntimeTemplate(
             compiled=self_spell_reduction,

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 405,
+  "registry_version": 406,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -33458,7 +33458,8 @@
         "test_unrepresented_self_exile_sibling_keeps_original_wildest_dreams_residual",
         "test_original_gridlock_tax_preview_excludes_a_target_when_x_and_tax_cannot_be_paid",
         "test_executable_count_rejects_undeclared_and_malformed_parameter_authority",
-        "test_declared_count_rejects_malformed_values_and_mixed_authority"
+        "test_declared_count_rejects_malformed_values_and_mixed_authority",
+        "test_announced_count_recognizer_safely_rejects_an_unrelated_composition_view"
       ],
       "interaction_tests": [
         "test_original_gridlock_uses_one_announced_x_for_cost_and_distinct_targets",
@@ -34045,6 +34046,150 @@
       "dependency_fail_closed_rationale": "Printed capability/source closure and exact paid-fact validation must pass focused omissions before gain acceptance.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "A fresh original Professor cast must detect omitted Increment condition before acceptance.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.cost.self_target_generic_reduction",
+      "version": 1,
+      "official_rules": [
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "107.4b",
+        "115.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One fixed generic reduction of this source face if at least one announced target matches its sealed public predicate.",
+        "inputs": [
+          "current selected battlefield permanent, public graveyard creature-card mana value, or creature/blue spell target",
+          "normal source-face registration and exact whole-card result closure"
+        ],
+        "outputs": [
+          "cost increases before reductions and locked actual payment",
+          "once per clause rather than per target pricing",
+          "affordable target witnesses and per-target X limits, with old tax bytes unchanged"
+        ],
+        "exclusions": [
+          "private zones, nested antecedents and unsupported independent result clauses",
+          "colored and per-target reductions"
+        ]
+      },
+      "dependencies": [
+        "casting.cost.targeted_fixed_generic",
+        "state_query.permanent.public_state_predicate",
+        "target.permanent.characteristic_predicate",
+        "target.permanent.damage_history_predicate"
+      ],
+      "implementation_components": [
+        "quorune.compiler.targeted_spell_costs.self_target_reduction_template",
+        "quorune.targeted_spell_costs.TargetedSpellCostSpec",
+        "quorune.targeted_spell_costs.self_target_reduction_runtime_dependencies",
+        "quorune.semantic_runtime.targeted_spell_costs._self_targeted_reduction_sources",
+        "quorune.rules.casting.static_modifiers.apply_static_reductions",
+        "quorune.rules.casting.targeted_costs.target_cost_for_x_preview",
+        "quorune.semantic_runtime.targeted_spell_costs.TargetedSpellCostHandler"
+      ],
+      "positive_tests": [
+        "test_version_two_reduction_and_captured_fact_are_closed_without_reinterpreting_old_taxes",
+        "test_public_card_and_spell_predicates_keep_their_own_domains",
+        "test_original_quicksand_offers_cheaper_tapped_target_and_rejects_cheap_untapped_payment_atomically",
+        "test_original_savage_stomp_binds_controller_and_subtype_across_both_target_roles",
+        "test_original_town_optional_targets_reduce_once_for_one_or_two_qualifiers",
+        "test_original_torch_reduction_changes_payment_without_changing_x_or_counter_prohibition",
+        "test_original_quicksand_cost_stays_locked_after_actual_refocus_untaps_target",
+        "test_original_swampsnare_aura_uses_current_flying_and_canonical_attachment_layers",
+        "test_original_price_of_fame_keeps_surveil_choice_private_after_discounted_destruction",
+        "test_typed_free_base_seam_reduces_real_sphere_increase_before_payment",
+        "test_original_torch_at_x_zero_still_requires_its_red_mana",
+        "test_original_graveyard_reductions_use_selected_card_value_and_keep_return_ownership",
+        "test_original_stack_reductions_use_creature_or_blue_spell_characteristics",
+        "test_actual_copy_retargets_to_untapped_creature_without_another_cast_or_reduction_payment",
+        "test_all_illegal_target_resolution_does_not_reprice_or_refund_the_paid_reduction"
+      ],
+      "negative_tests": [
+        "test_compiler_requires_new_authority_and_keeps_unsupported_costs_residual",
+        "test_component_rejects_malformed_public_predicate_leaf",
+        "test_all_twenty_nine_originals_have_complete_preflight_and_runtime_reduction_authority"
+      ],
+      "interaction_tests": [
+        "test_original_quicksand_offers_cheaper_tapped_target_and_rejects_cheap_untapped_payment_atomically",
+        "test_original_savage_stomp_binds_controller_and_subtype_across_both_target_roles",
+        "test_original_town_optional_targets_reduce_once_for_one_or_two_qualifiers",
+        "test_original_torch_reduction_changes_payment_without_changing_x_or_counter_prohibition",
+        "test_original_quicksand_cost_stays_locked_after_actual_refocus_untaps_target",
+        "test_original_swampsnare_aura_uses_current_flying_and_canonical_attachment_layers",
+        "test_original_price_of_fame_keeps_surveil_choice_private_after_discounted_destruction",
+        "test_typed_free_base_seam_reduces_real_sphere_increase_before_payment",
+        "test_original_torch_at_x_zero_still_requires_its_red_mana",
+        "test_original_graveyard_reductions_use_selected_card_value_and_keep_return_ownership",
+        "test_original_stack_reductions_use_creature_or_blue_spell_characteristics",
+        "test_actual_copy_retargets_to_untapped_creature_without_another_cast_or_reduction_payment",
+        "test_all_illegal_target_resolution_does_not_reprice_or_refund_the_paid_reduction"
+      ],
+      "multiplayer_tests": [
+        "test_original_quicksand_offers_cheaper_tapped_target_and_rejects_cheap_untapped_payment_atomically",
+        "test_original_savage_stomp_binds_controller_and_subtype_across_both_target_roles",
+        "test_original_town_optional_targets_reduce_once_for_one_or_two_qualifiers",
+        "test_original_torch_reduction_changes_payment_without_changing_x_or_counter_prohibition",
+        "test_original_quicksand_cost_stays_locked_after_actual_refocus_untaps_target",
+        "test_original_swampsnare_aura_uses_current_flying_and_canonical_attachment_layers",
+        "test_original_price_of_fame_keeps_surveil_choice_private_after_discounted_destruction",
+        "test_typed_free_base_seam_reduces_real_sphere_increase_before_payment",
+        "test_original_torch_at_x_zero_still_requires_its_red_mana",
+        "test_original_graveyard_reductions_use_selected_card_value_and_keep_return_ownership",
+        "test_original_stack_reductions_use_creature_or_blue_spell_characteristics",
+        "test_actual_copy_retargets_to_untapped_creature_without_another_cast_or_reduction_payment",
+        "test_all_illegal_target_resolution_does_not_reprice_or_refund_the_paid_reduction"
+      ],
+      "privacy_tests": [
+        "test_original_quicksand_offers_cheaper_tapped_target_and_rejects_cheap_untapped_payment_atomically",
+        "test_original_savage_stomp_binds_controller_and_subtype_across_both_target_roles",
+        "test_original_town_optional_targets_reduce_once_for_one_or_two_qualifiers",
+        "test_original_torch_reduction_changes_payment_without_changing_x_or_counter_prohibition",
+        "test_original_quicksand_cost_stays_locked_after_actual_refocus_untaps_target",
+        "test_original_swampsnare_aura_uses_current_flying_and_canonical_attachment_layers",
+        "test_original_price_of_fame_keeps_surveil_choice_private_after_discounted_destruction",
+        "test_typed_free_base_seam_reduces_real_sphere_increase_before_payment",
+        "test_original_torch_at_x_zero_still_requires_its_red_mana",
+        "test_original_graveyard_reductions_use_selected_card_value_and_keep_return_ownership",
+        "test_original_stack_reductions_use_creature_or_blue_spell_characteristics",
+        "test_actual_copy_retargets_to_untapped_creature_without_another_cast_or_reduction_payment",
+        "test_all_illegal_target_resolution_does_not_reprice_or_refund_the_paid_reduction"
+      ],
+      "replay_tests": [
+        "test_original_quicksand_offers_cheaper_tapped_target_and_rejects_cheap_untapped_payment_atomically",
+        "test_original_savage_stomp_binds_controller_and_subtype_across_both_target_roles",
+        "test_original_town_optional_targets_reduce_once_for_one_or_two_qualifiers",
+        "test_original_torch_reduction_changes_payment_without_changing_x_or_counter_prohibition",
+        "test_original_quicksand_cost_stays_locked_after_actual_refocus_untaps_target",
+        "test_original_swampsnare_aura_uses_current_flying_and_canonical_attachment_layers",
+        "test_original_price_of_fame_keeps_surveil_choice_private_after_discounted_destruction",
+        "test_typed_free_base_seam_reduces_real_sphere_increase_before_payment",
+        "test_original_torch_at_x_zero_still_requires_its_red_mana",
+        "test_original_graveyard_reductions_use_selected_card_value_and_keep_return_ownership",
+        "test_original_stack_reductions_use_creature_or_blue_spell_characteristics",
+        "test_actual_copy_retargets_to_untapped_creature_without_another_cast_or_reduction_payment",
+        "test_all_illegal_target_resolution_does_not_reprice_or_refund_the_paid_reduction"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Unpublished new-source withdrawal and runtime omissions must pass before gain acceptance.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh original Quicksand witnesses kill omitted source reduction and substituting an unselected qualifier for an announced target.",
       "blockers": [],
       "status": "trusted"
     }
