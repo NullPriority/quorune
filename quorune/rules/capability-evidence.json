@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "e5ecbeabcc35b8a285efde026f70027ed68e9dc9017320706cd0759d0098baf9",
-  "declaration_source_fingerprint": "7233fa9120c2e82df6d096d6ef1b2e024108e0f3d177efce0e74fb4af7758953",
+  "registry_fingerprint": "00af58417f6c6b843cf34626bf46333a618dd39e48d904f1f09aa9f80a54e1a5",
+  "declaration_source_fingerprint": "f4d6a2953df03e3f761e4d203b4cbef77233df5e5d9f989db7008a8891708459",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -4502,6 +4502,1898 @@
         "commander_review"
       ],
       "applicability_note": "Persist and exactly replay the snow-source mana activation, provenance consumption, source tap cost, stack placement, and resolved life effect."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_both_legal_minimum_orders_are_offered_paid_and_replayed",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_generic_nonmana_tax_includes_loyalty_mana_without_changing_counter_cost",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_minimum_one_does_not_create_a_price_for_original_zero_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_controller_scope_does_not_reduce_an_opponents_creature",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_forensic_investigation_creates_a_clue_with_reduced_draw_cost",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_gloom_mana_tax_requires_payment_and_prevents_mana_undo",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_power_artifact_applies_only_to_the_actual_enchanted_source",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_sam_reduces_a_printed_mana_price_to_zero_for_automatic_payment",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_suppression_field_taxes_zero_x_but_keeps_mana_abilities_free",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_training_grounds_pays_one_for_x_three_and_retains_result",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_training_reduction_counts_colored_mana_without_changing_x_damage",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_phyrexian_alternatives_keep_their_distinct_mana_minimum_and_life_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_power_up_source_reduction_orders_with_static_minimum_after_an_actual_cast",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_reduced_waterbend_minimum_can_be_paid_with_one_other_tapped_object",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_removing_original_reducer_does_not_reprice_paid_ability_but_changes_next_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_snow_obligation_satisfies_the_minimum_but_is_never_reduced",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_both_legal_minimum_orders_are_offered_paid_and_replayed",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_generic_nonmana_tax_includes_loyalty_mana_without_changing_counter_cost",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_minimum_one_does_not_create_a_price_for_original_zero_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_controller_scope_does_not_reduce_an_opponents_creature",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_forensic_investigation_creates_a_clue_with_reduced_draw_cost",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_gloom_mana_tax_requires_payment_and_prevents_mana_undo",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_power_artifact_applies_only_to_the_actual_enchanted_source",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_sam_reduces_a_printed_mana_price_to_zero_for_automatic_payment",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_suppression_field_taxes_zero_x_but_keeps_mana_abilities_free",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_training_grounds_pays_one_for_x_three_and_retains_result",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_training_reduction_counts_colored_mana_without_changing_x_damage",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_phyrexian_alternatives_keep_their_distinct_mana_minimum_and_life_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_power_up_source_reduction_orders_with_static_minimum_after_an_actual_cast",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_reduced_waterbend_minimum_can_be_paid_with_one_other_tapped_object",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_removing_original_reducer_does_not_reprice_paid_ability_but_changes_next_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_snow_obligation_satisfies_the_minimum_but_is_never_reduced",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_omitting_static_price_application_is_killed_by_fresh_native_original",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "negative",
+      "test_id": "tests.test_activation_cost_modifiers.ActivationCostModifierModelTests.test_modifier_grammar_and_handler_do_not_strip_unknown_qualifications",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "negative",
+      "test_id": "tests.test_activation_cost_modifiers.ActivationCostModifierModelTests.test_withdrawn_static_cost_capability_keeps_an_otherwise_closed_source_residual",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "negative",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_executable_modifier_rejects_an_undeclared_cost_capability",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "negative",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_controller_scope_does_not_reduce_an_opponents_creature",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_activation_cost_modifiers.ActivationCostModifierModelTests.test_generic_modifier_grammar_preserves_each_scope_and_floor",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_both_legal_minimum_orders_are_offered_paid_and_replayed",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_generic_nonmana_tax_includes_loyalty_mana_without_changing_counter_cost",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_minimum_one_does_not_create_a_price_for_original_zero_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_controller_scope_does_not_reduce_an_opponents_creature",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_forensic_investigation_creates_a_clue_with_reduced_draw_cost",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_gloom_mana_tax_requires_payment_and_prevents_mana_undo",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_power_artifact_applies_only_to_the_actual_enchanted_source",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_sam_reduces_a_printed_mana_price_to_zero_for_automatic_payment",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_suppression_field_taxes_zero_x_but_keeps_mana_abilities_free",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_training_grounds_pays_one_for_x_three_and_retains_result",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_training_reduction_counts_colored_mana_without_changing_x_damage",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_phyrexian_alternatives_keep_their_distinct_mana_minimum_and_life_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_power_up_source_reduction_orders_with_static_minimum_after_an_actual_cast",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_reduced_waterbend_minimum_can_be_paid_with_one_other_tapped_object",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_removing_original_reducer_does_not_reprice_paid_ability_but_changes_next_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_snow_obligation_satisfies_the_minimum_but_is_never_reduced",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_both_legal_minimum_orders_are_offered_paid_and_replayed",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_generic_nonmana_tax_includes_loyalty_mana_without_changing_counter_cost",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_minimum_one_does_not_create_a_price_for_original_zero_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_controller_scope_does_not_reduce_an_opponents_creature",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_forensic_investigation_creates_a_clue_with_reduced_draw_cost",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_gloom_mana_tax_requires_payment_and_prevents_mana_undo",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_power_artifact_applies_only_to_the_actual_enchanted_source",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_sam_reduces_a_printed_mana_price_to_zero_for_automatic_payment",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_suppression_field_taxes_zero_x_but_keeps_mana_abilities_free",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_training_grounds_pays_one_for_x_three_and_retains_result",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_training_reduction_counts_colored_mana_without_changing_x_damage",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_phyrexian_alternatives_keep_their_distinct_mana_minimum_and_life_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_power_up_source_reduction_orders_with_static_minimum_after_an_actual_cast",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_reduced_waterbend_minimum_can_be_paid_with_one_other_tapped_object",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_removing_original_reducer_does_not_reprice_paid_ability_but_changes_next_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_snow_obligation_satisfies_the_minimum_but_is_never_reduced",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_both_legal_minimum_orders_are_offered_paid_and_replayed",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_generic_nonmana_tax_includes_loyalty_mana_without_changing_counter_cost",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_minimum_one_does_not_create_a_price_for_original_zero_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_controller_scope_does_not_reduce_an_opponents_creature",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_forensic_investigation_creates_a_clue_with_reduced_draw_cost",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_gloom_mana_tax_requires_payment_and_prevents_mana_undo",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_power_artifact_applies_only_to_the_actual_enchanted_source",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_sam_reduces_a_printed_mana_price_to_zero_for_automatic_payment",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_suppression_field_taxes_zero_x_but_keeps_mana_abilities_free",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_training_grounds_pays_one_for_x_three_and_retains_result",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_original_training_reduction_counts_colored_mana_without_changing_x_damage",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_phyrexian_alternatives_keep_their_distinct_mana_minimum_and_life_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_power_up_source_reduction_orders_with_static_minimum_after_an_actual_cast",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_reduced_waterbend_minimum_can_be_paid_with_one_other_tapped_object",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_removing_original_reducer_does_not_reprice_paid_ability_but_changes_next_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_snow_obligation_satisfies_the_minimum_but_is_never_reduced",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
     },
     {
       "capability_id": "activation.permission.controlled_creature_as_haste",
@@ -221175,5 +223067,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "1f83737a09b27544a005d0705b0914c7f9d6801e2dba2312d1fdbf6bf81d94c9"
+  "fingerprint": "7462e01127e391527f44251e1bb808eae8c7e10018667a82e56311d6db0fff97"
 }

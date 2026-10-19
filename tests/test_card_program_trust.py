@@ -220,6 +220,7 @@ class CardProgramTrustTests(unittest.TestCase):
         )
         self.assertEqual(
             {
+                "activation.cost.modifier.fixed_generic",
                 "ability.activated.catalog",
                 "ability.activated.class-level",
                 "ability.activated.mana.color-set",

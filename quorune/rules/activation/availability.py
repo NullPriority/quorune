@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import Any, Protocol
 
-from ...abilities import ActivatedAbility, reduced_requirements
-from ...activation_mana_cost import payable_activation_mana_options
+from ...abilities import ActivatedAbility
+from .pricing import payable_activation_mana_options
+from .x_costs import activation_requirements
 from ...crew import available_crew_power
 from ...haste import summoning_sickness_prohibits_tap_or_untap_cost
 from ...mana_restrictions import ability_mana_spend_context
@@ -121,7 +122,7 @@ def activation_availability(
         return "unpayable", "insufficient_crew_power"
     if ability.waterbend is not None:
         from ..waterbend_payments import activation_waterbend_plan
-        requirements=reduced_requirements(ability,legendary_creatures=host._legendary_creatures_controlled(seat))
+        requirements,_=activation_requirements(host,seat,card,ability)
         if activation_waterbend_plan(host,seat,card,ability,requirements,{},hint=True) is None:return 'unpayable','waterbend_unpayable'
         return 'payable',None
     if ability.mana_cost_options:
@@ -130,10 +131,7 @@ def activation_availability(
         if not payable:
             return "unpayable", "complex_mana_cost_unpayable"
     else:
-        requirements = reduced_requirements(
-            ability,
-            legendary_creatures=host._legendary_creatures_controlled(seat),
-        )
+        requirements,_ = activation_requirements(host,seat,card,ability)
         excluded = {card.object_id} if ability.tap_source else set()
         spend_context = ability_mana_spend_context(
             str(host._effective_card_data(card).get("type_line") or "")

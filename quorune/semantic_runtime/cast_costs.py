@@ -51,6 +51,8 @@ from .disturb import FixedManaDisturbHandler
 from .replicate import FixedManaReplicateHandler
 from .conspire import FixedConspireHandler
 from .targeted_spell_costs import TargetedSpellCostHandler
+from .activation_costs import FixedActivationCostModifierHandler
+from ..activation_cost_modifiers import FixedActivationCostModifierSpec
 
 
 CONVOKE_ACTIVE_ZONE = "stack"
@@ -543,7 +545,8 @@ class CastCostComponentRegistry(
         | FixedManaEmergeSpec
         | FixedManaDisturbSpec
         | FixedManaReplicateSpec
-        | FixedConspireSpec,
+        | FixedConspireSpec
+        | FixedActivationCostModifierSpec,
     ]
 ):
     pass
@@ -569,6 +572,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             FixedManaDisturbHandler(),
             FixedManaReplicateHandler(),
             FixedConspireHandler(),
+            FixedActivationCostModifierHandler(),
         )
     )
     registry.require_registered_capabilities(load_default_capability_registry())

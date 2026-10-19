@@ -1577,12 +1577,6 @@ def reduced_requirements(
     legendary_creatures: int = 0,
     announced_x: int = 0,
 ) -> dict[str, int]:
-    result = {"GENERIC": int(ability.mana.get("GENERIC", 0))}
-    if type(announced_x) is not int or announced_x < 0:raise ValueError('Announced activation X must be a nonnegative integer')
-    if ability.announced_x_symbols is not None:result['GENERIC'] += ability.announced_x_symbols * announced_x
-    for color in "WUBRGC":
-        result[color] = int(ability.mana.get(color, 0))
-    if ability.generic_reduction_per_legendary_creature:
-        reduction = ability.generic_reduction_per_legendary_creature * max(0, legendary_creatures)
-        result["GENERIC"] = max(0, result["GENERIC"] - reduction)
-    return result
+    from .activation_cost_modifiers import base_activation_requirements
+    return base_activation_requirements(ability, legendary_creatures=legendary_creatures,
+        announced_x=announced_x)

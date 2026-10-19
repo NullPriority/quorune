@@ -66,6 +66,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/basic_type_setting_model.py",
         "quorune/bloodthirst.py",
         "quorune/cast_cost_modifiers.py",
+        "quorune/activation_cost_modifiers.py",
         "quorune/characteristic_fragments.py",
         "quorune/counter_maximums.py",
         "quorune/counter_names.py",
@@ -416,7 +417,9 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
-    if relative in {'quorune/activation_x.py','quorune/rules/activation/x_costs.py'}:
+    if relative in {'quorune/activation_x.py','quorune/rules/activation/x_costs.py',
+            'quorune/activation_cost_modifiers.py','quorune/rules/activation/cost_modifiers.py',
+            'quorune/rules/activation/pricing.py'}:
         return 'casting_activation_and_costs'
     if relative == "quorune/ability_line_normalization.py":
         return "activated_abilities"

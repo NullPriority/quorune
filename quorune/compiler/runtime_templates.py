@@ -9,6 +9,7 @@ from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from .activation_restriction_templates import (
     static_activation_restriction_handler,
 )
+from .activation_cost_modifier_templates import static_activation_cost_modifier_handler
 from .action_permission_templates import static_action_permission_handler,opening_hand_battlefield_permission_handler
 from .opening_hand_reveal_templates import opening_hand_reveal_permission_handler
 from .entry_designation_templates import entry_designation_handler, chosen_characteristics_handler
@@ -229,14 +230,15 @@ def _source_permanent_participation_template(
             ),
             runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
         )
-    activation_restriction = static_activation_restriction_handler(text)
-    if activation_restriction is not None:
+    activation_rule = (static_activation_restriction_handler(text)
+        or static_activation_cost_modifier_handler(text))
+    if activation_rule is not None:
         return StaticRuntimeTemplate(
-            compiled=activation_restriction,
+            compiled=activation_rule,
             kind="static_ability",
-            event="activation.permission",
+            event=activation_rule[1]['event'],
             dependency_reason=(
-                "generic activation restriction requires its closed typed "
+                "generic activation rule requires its closed typed "
                 "runtime capability"
             ),
             runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),

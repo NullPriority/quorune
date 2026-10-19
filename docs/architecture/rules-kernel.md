@@ -516,6 +516,24 @@ Text-defined or restricted X, variable target domains and nonordinary or
 nonmana X costs remain outside this boundary. Activated-ability copying has
 no represented owner and gains no execution path here.
 
+Static generic activation-cost modifiers use the existing cost-component
+registry. `rules/activation/cost_modifiers.py` reads only current trusted
+sources, faces, controllers, attachments and public source types.
+`rules/activation/pricing.py` shares their prices across availability, offers,
+proposals and pre-payment validation. The chosen X enters the base price
+before taxes and reductions. Minimum-one restrictions belong to each effect;
+colored, colorless and snow obligations count toward the minimum, and an
+already-zero cost stays zero. Distinct legal reduction-order prices remain
+selectable. The paid total locks before payment changes its sources.
+
+Fixed alternatives retain their life and snow obligations. Power-up supplies
+its existing current-entry reduction facts to the same ordered price model,
+and Waterbend reservations use the reduced generic amount before selecting
+tapped objects. Automatic source/output plans accept only a currently zero
+mana price; an explicit activation that pays mana cannot create reversible
+mana undo. Unknown modifier qualifiers, variable or colored static reductions,
+and unrepresented nonmana adjustments remain residual.
+
 Ordinary printed `Crew N` is compiled once into a source-spanned activated-
 ability descriptor. `crew.py` owns the immutable current-characteristic
 candidate set and aggregate-power cost plan; activation offers and commits use

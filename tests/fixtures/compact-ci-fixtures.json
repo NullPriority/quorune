@@ -222,6 +222,7 @@
     "tests/fixtures/spree-mode-cost-cards.json",
     "tests/fixtures/squad-paid-entry-copy-cards.json",
     "tests/fixtures/static-action-permission-cards.json",
+    "tests/fixtures/static-activation-cost-cards.json",
     "tests/fixtures/static-attached-control.json",
     "tests/fixtures/static-characteristic-labels.json",
     "tests/fixtures/static-characteristic-setting-cards.json",

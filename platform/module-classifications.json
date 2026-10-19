@@ -126,6 +126,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/activation_cost_modifiers.py",
+      "layer": "domain",
+      "owning_subsystem": "casting_activation_and_costs",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/activation_mana_cost.py",
       "layer": "rules",
       "owning_subsystem": "mana_rules",
@@ -1661,6 +1673,21 @@
     },
     {
       "file": "quorune/compiler/activated_zone_change_costs.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/activation_cost_modifier_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -9551,6 +9578,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/activation/cost_modifiers.py",
+      "layer": "rules",
+      "owning_subsystem": "casting_activation_and_costs",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/activation/counter_costs.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -9605,6 +9646,20 @@
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/rules/activation/pricing.py",
+      "layer": "rules",
+      "owning_subsystem": "casting_activation_and_costs",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
     },
     {
       "file": "quorune/rules/activation/proposal.py",
@@ -13263,6 +13318,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/activation_costs.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/activation_restrictions.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -16472,5 +16542,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "c929d94f0f22a40b998d3647733795cc639a99eb5890bec0fd16de75b04600be"
+  "fingerprint": "d98cc0b8b858a01d487f02877ab68a9a3461a776095f716d33ecf410e998e42b"
 }

@@ -6,8 +6,8 @@ from collections.abc import Mapping
 from dataclasses import replace
 from typing import Any, Protocol
 
-from ...abilities import ActivatedAbility, choose_ability, reduced_requirements
-from ...activation_mana_cost import (
+from ...abilities import ActivatedAbility, choose_ability
+from .pricing import (
     payable_activation_mana_options,
     select_activation_mana_option,
 )
@@ -362,12 +362,15 @@ def build_activation_proposal(
             try: validate_activation_x_payment(host,request.actor,source,ability,requirements)
             except ValueError as exc: raise ActivationProposalError(str(exc),status='unpayable',reason='activation_x_unpayable') from exc
     waterbend_details={}
+    if not ability.mana_cost_options:
+        from .pricing import activation_price_details
+        waterbend_details.update(activation_price_details(host,request.actor,source,ability,response))
     if ability.waterbend is not None:
         from ..waterbend_payments import activation_waterbend_plan
         try:payment=activation_waterbend_plan(host,request.actor,source,ability,requirements,response,hint=False)
         except ValueError as exc:raise ActivationProposalError(str(exc),reason='stale_waterbend_payment') from exc
         if payment is None:raise ActivationProposalError('Waterbend payment is not payable',status='unpayable',reason='waterbend_unpayable')
-        requirements,_,waterbend,_=payment;waterbend_details={'waterbend_payment':waterbend.to_dict()}
+        requirements,_,waterbend,_=payment;waterbend_details['waterbend_payment']=waterbend.to_dict()
     proposal = ActivationProposal(
         seat=request.actor,
         source_ref=source.ref,
@@ -598,12 +601,17 @@ def build_activation_offer(
     )
     if selected.waterbend is not None:
         from ..waterbend_payments import activation_waterbend_plan
-        requirements=reduced_requirements(selected,legendary_creatures=host._legendary_creatures_controlled(seat))
+        from .x_costs import activation_requirements
+        requirements,_=activation_requirements(host,seat,source,selected)
         payment=activation_waterbend_plan(host,seat,source,selected,requirements,{},hint=True)
         if payment is None:return ActivationProposalResult('unpayable','waterbend_unpayable')
         choice_schema={**(choice_schema or {}),**payment[3]}
     if selected.announced_x_symbols is not None:
         choice_schema={**(choice_schema or {}),'x':{'type':'integer','label':'X','minimum':0,'default':0}}
+    if not selected.mana_cost_options:
+        from .pricing import activation_price_choice_schema
+        price_choices=activation_price_choice_schema(host,seat,source,selected)
+        if price_choices:choice_schema={**(choice_schema or {}),**price_choices}
     if choice_schema is not None:
         payload["choice_schema"] = choice_schema
     if public_schema is not None:

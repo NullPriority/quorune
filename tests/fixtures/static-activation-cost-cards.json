@@ -1,0 +1,1193 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned static activation-cost carriers/rulings and explicit generic order controls; no fixture identity selects runtime behavior.",
+  "cards": [
+    {
+      "oracle_id": "923d44a9-774d-459c-9cec-1d5b081b51f0",
+      "name": "Biomancer's Familiar",
+      "mana_cost": "{G}{U}",
+      "type_line": "Creature \u2014 Mutant",
+      "oracle_text": "Activated abilities of creatures you control cost {2} less to activate. This effect can't reduce the mana in that cost to less than one mana.\n{T}: The next time target creature adapts this turn, it adapts as though it had no +1/+1 counters on it.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-01-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "5e1bf23b-7fb0-45ff-8544-fce9fa3eba00",
+      "name": "Blossoming Tortoise",
+      "mana_cost": "{2}{G}{G}",
+      "type_line": "Creature \u2014 Turtle",
+      "oracle_text": "Whenever this creature enters or attacks, mill three cards, then return a land card from your graveyard to the battlefield tapped.\nActivated abilities of lands you control cost {1} less to activate.\nLand creatures you control get +1/+1.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-09-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "9d5917d5-4fb3-4f37-9278-e08c1f73aae5",
+      "name": "Forensic Gadgeteer",
+      "mana_cost": "{2}{U}",
+      "type_line": "Creature \u2014 Vedalken Artificer Detective",
+      "oracle_text": "Whenever you cast an artifact spell, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nActivated abilities of artifacts you control cost {1} less to activate. This effect can't reduce the mana in that cost to less than one mana.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Investigate"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "4d022f53-b1fb-4071-afcc-0af3214fe604",
+      "name": "Gloom",
+      "mana_cost": "{2}{B}",
+      "type_line": "Enchantment",
+      "oracle_text": "White spells cost {3} more to cast.\nActivated abilities of white enchantments cost {3} more to activate.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-01-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "8f8ebf49-37c5-4da0-9cee-84ad22ab5d37",
+      "name": "Heartstone",
+      "mana_cost": "{3}",
+      "type_line": "Artifact",
+      "oracle_text": "Activated abilities of creatures cost {1} less to activate. This effect can't reduce the mana in that cost to less than one mana.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1998-03-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "9a8c8d52-1701-4ae0-9d2d-cce4e476673b",
+      "name": "Power Artifact",
+      "mana_cost": "{U}{U}",
+      "type_line": "Enchantment \u2014 Aura",
+      "oracle_text": "Enchant artifact\nEnchanted artifact's activated abilities cost {2} less to activate. This effect can't reduce the mana in that cost to less than one mana.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-01-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "2837be10-23ad-49d2-943e-b1e00edbbbd9",
+      "name": "Sam, Loyal Attendant",
+      "mana_cost": "{1}{G}{W}",
+      "type_line": "Legendary Creature \u2014 Halfling Peasant",
+      "oracle_text": "Partner with Frodo, Adventurous Hobbit (When this creature enters, target player may put Frodo into their hand from their library, then shuffle.)\nAt the beginning of combat on your turn, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\nActivated abilities of Foods you control cost {1} less to activate.",
+      "power": "2",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "keywords": [
+        "Partner with",
+        "Food",
+        "Partner"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-06-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "63439f19-01e5-4ae1-9841-90493d62d0c8",
+      "name": "Suppression Field",
+      "mana_cost": "{1}{W}",
+      "type_line": "Enchantment",
+      "oracle_text": "Activated abilities cost {2} more to activate unless they're mana abilities.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2005-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "8de3eabe-9a8f-4865-beef-a4888c081d39",
+      "name": "Training Grounds",
+      "mana_cost": "{U}",
+      "type_line": "Enchantment",
+      "oracle_text": "Activated abilities of creatures you control cost {2} less to activate. This effect can't reduce the mana in that cost to less than one mana.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-05-12",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "7b515c56-7b1e-42a8-82b0-1b30201fb162",
+      "name": "Zirda, the Dawnwaker",
+      "mana_cost": "{1}{R/W}{R/W}",
+      "type_line": "Legendary Creature \u2014 Elemental Fox",
+      "oracle_text": "Companion \u2014 Each permanent card in your starting deck has an activated ability. (If this card is your chosen companion, you may put it into your hand from outside the game for {3} as a sorcery.)\nAbilities you activate that aren't mana abilities cost {2} less to activate. This effect can't reduce the mana in that cost to less than one mana.\n{1}, {T}: Target creature can't block this turn.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "keywords": [
+        "Companion"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "banned",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "fixture:static-cost:unrestricted-food",
+      "name": "Generic Unrestricted Food Reducer",
+      "type_line": "Enchantment",
+      "oracle_text": "Activated abilities of Foods you control cost {1} less to activate."
+    },
+    {
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "fixture:static-cost:food-study",
+      "name": "Generic Food Study",
+      "type_line": "Artifact Creature \u2014 Food",
+      "power": "2",
+      "toughness": "2",
+      "oracle_text": "{3}, {T}: You gain 2 life."
+    },
+    {
+      "mana_cost": "{1}{W}",
+      "cmc": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "fixture:static-cost:white-mana",
+      "name": "Generic White Enchantment Mana Source",
+      "type_line": "Enchantment",
+      "oracle_text": "{T}: Add {G}."
+    },
+    {
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "fixture:static-cost:food-mana",
+      "name": "Generic Food Mana Source",
+      "type_line": "Artifact Creature — Food",
+      "power": "2",
+      "toughness": "2",
+      "oracle_text": "{1}, {T}: Add {G}."
+    },
+    {
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "type_line": "Creature",
+      "power": "2",
+      "toughness": "2",
+      "oracle_id": "fixture:static-cost:waterbend",
+      "name": "Generic Waterbend Cost Study",
+      "oracle_text": "Waterbend {3}, {T}: Draw a card."
+    },
+    {
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "type_line": "Creature",
+      "power": "2",
+      "toughness": "2",
+      "oracle_id": "fixture:static-cost:phyrexian",
+      "name": "Generic Phyrexian Cost Study",
+      "oracle_text": "{2}{U/P}, {T}: You gain 2 life."
+    },
+    {
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "type_line": "Creature",
+      "power": "2",
+      "toughness": "2",
+      "oracle_id": "fixture:static-cost:snow",
+      "name": "Generic Snow Cost Study",
+      "oracle_text": "{2}{S}, {T}: You gain 2 life."
+    },
+    {
+      "mana_cost": "{R}",
+      "cmc": 1,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "type_line": "Creature",
+      "power": "2",
+      "toughness": "2",
+      "oracle_id": "fixture:static-cost:power-up",
+      "name": "Generic Powerup Cost Study",
+      "oracle_text": "Power-up — {2}: Put a +1/+1 counter on this creature. (Activate each power-up ability only once. Reduce the cost by its mana cost if it entered this turn.)"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
+    },
+    {
+      "oracle_id": "5f0d3be8-e63e-4ade-ae58-6b0c14f2ce6d",
+      "name": "Snow-Covered Forest",
+      "mana_cost": "",
+      "type_line": "Basic Snow Land — Forest",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2021-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 0.0
+    },
+    {
+      "oracle_id": "fixture:static-cost:walker",
+      "name": "Generic Cost Walker",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Planeswalker",
+      "loyalty": "3",
+      "oracle_text": "+1: You gain 2 life.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "restricted"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Sol Ring",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "923d44a9-774d-459c-9cec-1d5b081b51f0",
+      "published_at": "2019-01-25",
+      "source": "wotc",
+      "comment": "Biomancer\u2019s Familiar affects only abilities of creatures you control on the battlefield. The costs of activated abilities of creature cards that work in other zones (such as cycling) won\u2019t be reduced."
+    },
+    {
+      "oracle_id": "923d44a9-774d-459c-9cec-1d5b081b51f0",
+      "published_at": "2019-01-25",
+      "source": "wotc",
+      "comment": "Activated abilities contain a colon. They\u2019re generally written \u201c[Cost]: [Effect].\u201d Some keyword abilities are activated abilities and will have colons in their reminder text. Triggered abilities (starting with \u201cwhen,\u201d \u201cwhenever,\u201d or \u201cat\u201d) are unaffected by the cost reduction ability of Biomancer\u2019s Familiar."
+    },
+    {
+      "oracle_id": "923d44a9-774d-459c-9cec-1d5b081b51f0",
+      "published_at": "2019-01-25",
+      "source": "wotc",
+      "comment": "An ability that has only one generic mana and some amount of other mana symbols in its activation cost will have its cost reduced by {1}."
+    },
+    {
+      "oracle_id": "923d44a9-774d-459c-9cec-1d5b081b51f0",
+      "published_at": "2019-01-25",
+      "source": "wotc",
+      "comment": "The last ability of Biomancer\u2019s Familiar doesn\u2019t add or remove any counters. It just lets the creature adapt despite already having +1/+1 counters on it."
+    },
+    {
+      "oracle_id": "5e1bf23b-7fb0-45ff-8544-fce9fa3eba00",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Blossoming Tortoise's second ability affects only abilities of lands you control on the battlefield. The costs of activated abilities of land cards that work in other zones (such as cycling) won't be reduced."
+    },
+    {
+      "oracle_id": "5e1bf23b-7fb0-45ff-8544-fce9fa3eba00",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Activated abilities contain a colon. They're generally written \"[Cost]: [Effect].\" Some keyword abilities are activated abilities and will have colons in their reminder text. Triggered abilities (starting with \"when,\" \"whenever,\" or \"at\") are unaffected by the cost reduction ability of Blossoming Tortoise."
+    },
+    {
+      "oracle_id": "9d5917d5-4fb3-4f37-9278-e08c1f73aae5",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Forensic Gadgeteer's last ability affects only abilities of artifacts you control on the battlefield. The costs of activated abilities of artifact cards that work in other zones, such as cycling, won't be reduced."
+    },
+    {
+      "oracle_id": "9d5917d5-4fb3-4f37-9278-e08c1f73aae5",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Some abilities trigger \"whenever you sacrifice a Clue\". Those abilities trigger whenever you sacrifice a Clue for any reason, not just to activate a Clue's activated ability."
+    },
+    {
+      "oracle_id": "9d5917d5-4fb3-4f37-9278-e08c1f73aae5",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Activated abilities contain a colon. They're generally written \"[Cost]: [Effect].\" Some keywords are activated abilities and will have colons in their reminder text. Triggered abilities (starting with \"when,\" \"whenever,\" or \"at\") are unaffected by the cost reduction ability of Forensic Gadgeteer."
+    },
+    {
+      "oracle_id": "9d5917d5-4fb3-4f37-9278-e08c1f73aae5",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "You can't sacrifice a Clue to pay multiple costs. For example, you can't sacrifice a Clue token to activate its own ability and also to activate Alquist Proft, Master Sleuth's ability."
+    },
+    {
+      "oracle_id": "9d5917d5-4fb3-4f37-9278-e08c1f73aae5",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Clue is an artifact type. Even though it appears on some cards with other permanent types, it's never a creature type, a land type, or anything but an artifact type."
+    },
+    {
+      "oracle_id": "9d5917d5-4fb3-4f37-9278-e08c1f73aae5",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If an effect refers to a Clue, it means any Clue artifact, not just a Clue artifact token. For example, you can sacrifice Wrench to pay for Alquist Proft, Master Sleuth's activated ability."
+    },
+    {
+      "oracle_id": "9d5917d5-4fb3-4f37-9278-e08c1f73aae5",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Some spells and abilities that investigate may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve. You won't create any Clue tokens."
+    },
+    {
+      "oracle_id": "4d022f53-b1fb-4071-afcc-0af3214fe604",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "The extra mana is not considered part of the activation cost. It is a separate cost."
+    },
+    {
+      "oracle_id": "4d022f53-b1fb-4071-afcc-0af3214fe604",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "The extra mana is part of the total cost, so cost reducers can be applied to this cost."
+    },
+    {
+      "oracle_id": "4d022f53-b1fb-4071-afcc-0af3214fe604",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "The additional mana is paid at the same time the spell/ability is cast/activated."
+    },
+    {
+      "oracle_id": "4d022f53-b1fb-4071-afcc-0af3214fe604",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Activated abilities contain a colon. They're generally written \"[Cost]: [Effect].\" Some keywords are activated abilities and will have colons in their reminder text."
+    },
+    {
+      "oracle_id": "8f8ebf49-37c5-4da0-9cee-84ad22ab5d37",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "It will never reduce any colored mana portion of an activation cost."
+    },
+    {
+      "oracle_id": "8f8ebf49-37c5-4da0-9cee-84ad22ab5d37",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "It will not add a {1} to abilities with no generic mana in their activation cost."
+    },
+    {
+      "oracle_id": "8f8ebf49-37c5-4da0-9cee-84ad22ab5d37",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "The cost reduction can be applied to additional costs."
+    },
+    {
+      "oracle_id": "8f8ebf49-37c5-4da0-9cee-84ad22ab5d37",
+      "published_at": "2006-07-15",
+      "source": "wotc",
+      "comment": "Can\u2019t reduce Snow mana costs."
+    },
+    {
+      "oracle_id": "8f8ebf49-37c5-4da0-9cee-84ad22ab5d37",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Activated abilities contain a colon. They\u2019re generally written \u201c[Cost]: [Effect].\u201d Some keywords are activated abilities and will have colons in their reminder text."
+    },
+    {
+      "oracle_id": "9a8c8d52-1701-4ae0-9d2d-cce4e476673b",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "Only affects the generic mana part of activation costs. Colored parts of mana costs are not affected."
+    },
+    {
+      "oracle_id": "9a8c8d52-1701-4ae0-9d2d-cce4e476673b",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "Can be placed on artifacts with no or zero activation costs, but this has no effect on them. It does not increase the cost to one."
+    },
+    {
+      "oracle_id": "9a8c8d52-1701-4ae0-9d2d-cce4e476673b",
+      "published_at": "2006-07-15",
+      "source": "wotc",
+      "comment": "Can't reduce Snow mana costs."
+    },
+    {
+      "oracle_id": "9a8c8d52-1701-4ae0-9d2d-cce4e476673b",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Activated abilities contain a colon. They're generally written \"[Cost]: [Effect].\" Some keywords are activated abilities and will have colons in their reminder text."
+    },
+    {
+      "oracle_id": "2837be10-23ad-49d2-943e-b1e00edbbbd9",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders."
+    },
+    {
+      "oracle_id": "2837be10-23ad-49d2-943e-b1e00edbbbd9",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "To have two commanders, both must have the partner ability or corresponding \"partner with\" abilities as the game begins. A creature with a \"partner with\" ability can't partner with any creature other than its designated partner. Losing a partner ability during the game doesn't cause either to cease to be your commander."
+    },
+    {
+      "oracle_id": "2837be10-23ad-49d2-943e-b1e00edbbbd9",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 damage from one of them, not from both of them combined. Command Beacon's effect puts one into your hand from the command zone, not both."
+    },
+    {
+      "oracle_id": "2837be10-23ad-49d2-943e-b1e00edbbbd9",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "The second ability represented by the \"partner with [name]\" keyword modifies the rules for deck construction in the Commander variant and has no function outside of that variant. If a legendary creature card with \"partner with [name]\" is designated as your commander, the named legendary creature card can also be designated as your commander. For more information on the Commander variant, please visit Wizards.com/Commander."
+    },
+    {
+      "oracle_id": "2837be10-23ad-49d2-943e-b1e00edbbbd9",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "\"Partner with [name]\" represents two abilities. The first is a triggered ability: \"When this permanent enters the battlefield, target player may search their library for a card named [name], reveal it, put it into their hand, then shuffle their library.\""
+    },
+    {
+      "oracle_id": "2837be10-23ad-49d2-943e-b1e00edbbbd9",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "If your Commander deck has two commanders, you can only include cards whose own color identities are also found in your commanders' combined color identities. If Frodo, Adventurous Hobbit and Sam, Loyal Attendant are your commanders, your deck may contain cards with white, black, and/or green in their color identity, but not blue or red."
+    },
+    {
+      "oracle_id": "2837be10-23ad-49d2-943e-b1e00edbbbd9",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "The triggered ability of the \"partner with\" keyword still triggers in a Commander game. If your other commander has somehow ended up in your library, you can find it. You can also target another player, whether or not they have that card in their library."
+    },
+    {
+      "oracle_id": "2837be10-23ad-49d2-943e-b1e00edbbbd9",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards of your deck are shuffled to become your library."
+    },
+    {
+      "oracle_id": "2837be10-23ad-49d2-943e-b1e00edbbbd9",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Note that the target player searches their library (which may be affected by effects such as that of Stranglehold) and that the card they find is revealed, even though these words aren't included in the ability's reminder text."
+    },
+    {
+      "oracle_id": "2837be10-23ad-49d2-943e-b1e00edbbbd9",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Food is an artifact type. Even though it appears on some creatures, it's never a creature type."
+    },
+    {
+      "oracle_id": "2837be10-23ad-49d2-943e-b1e00edbbbd9",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You can't sacrifice a Food to pay multiple costs. For example, you can't sacrifice a Food token to activate its own ability and also to activate Maraleaf Rider's ability."
+    },
+    {
+      "oracle_id": "2837be10-23ad-49d2-943e-b1e00edbbbd9",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If an effect refers to a Food, it means any Food artifact, not just a Food artifact token. For example, you can sacrifice Tough Cookie (an Artifact Creature \u2014 Food Golem) to activate Maraleaf Rider's ability (an ability with \"Sacrifice a Food\" in its cost)."
+    },
+    {
+      "oracle_id": "2837be10-23ad-49d2-943e-b1e00edbbbd9",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Whatever you do, don't eat the delicious cards."
+    },
+    {
+      "oracle_id": "63439f19-01e5-4ae1-9841-90493d62d0c8",
+      "published_at": "2005-10-01",
+      "source": "wotc",
+      "comment": "Suppression Field\u2019s ability doesn\u2019t affect static abilities, triggered abilities, or mana abilities. (A \u201cmana ability\u201d is an ability that produces mana, not an ability that costs mana.)"
+    },
+    {
+      "oracle_id": "63439f19-01e5-4ae1-9841-90493d62d0c8",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Activated abilities contain a colon. They\u2019re generally written \u201c[Cost]: [Effect].\u201d Some keywords are activated abilities and will have colons in their reminder text."
+    },
+    {
+      "oracle_id": "8de3eabe-9a8f-4865-beef-a4888c081d39",
+      "published_at": "2010-06-15",
+      "source": "wotc",
+      "comment": "Training Grounds won't affect a cost that isn't the cost to activate a creature's activated ability. For example, it won't affect Flameblast Dragon's {X}{R} cost, since that's a cost paid when a triggered ability resolves, and it won't affect a kicker cost, since that's an additional cost to cast a spell. Activated ability costs appear before a colon (:) in a card's rules text, or, in the case of some keywords, before a colon in reminder text."
+    },
+    {
+      "oracle_id": "8de3eabe-9a8f-4865-beef-a4888c081d39",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "If an activated ability of a creature you control costs no generic mana to activate (for example, if it costs {R}{R}, it costs {0}, or it costs only nonmana actions such as {T} or \"Sacrifice a creature\"), Training Grounds simply won't affect it. In particular, it won't increase the cost to include a mana payment of {1}."
+    },
+    {
+      "oracle_id": "8de3eabe-9a8f-4865-beef-a4888c081d39",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Training Grounds takes the total cost to activate a creature's activated ability into account, not just the cost printed on it. For example, Urabrask has an activated ability that costs {R}, and Suppression Field says \"Activated abilities cost {2} more to activate unless they're mana abilities.\" Since activating Urabrask's activated ability would now cost {2}{R}, Training Grounds reduces that cost back to {R}."
+    },
+    {
+      "oracle_id": "8de3eabe-9a8f-4865-beef-a4888c081d39",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Training Grounds can reduce the part of an activation cost represented by generic mana symbols down to nothing, as long as it still costs at least one mana. For example, if an activation cost is {2}{G}, you'd have to pay only {G}. If an activation cost is {2}, though, you'd still have to pay {1}."
+    },
+    {
+      "oracle_id": "8de3eabe-9a8f-4865-beef-a4888c081d39",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Training Grounds reduces the generic mana in waterbend costs for activated abilities. It will not reduce waterbend costs that are additional costs for casting spells."
+    },
+    {
+      "oracle_id": "8de3eabe-9a8f-4865-beef-a4888c081d39",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Training Grounds won't affect the part of an activation cost represented by colored mana symbols or snow mana symbols. It also won't affect nonmana parts of an activation cost, if there are any."
+    },
+    {
+      "oracle_id": "8de3eabe-9a8f-4865-beef-a4888c081d39",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Training Grounds affects only creatures you control on the battlefield. The costs of activated abilities that work in other zones (such as cycling or unearth) won't be reduced."
+    },
+    {
+      "oracle_id": "8de3eabe-9a8f-4865-beef-a4888c081d39",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Training Grounds can reduce the amount you pay for a creature's activated ability cost that includes {X}. For example, Drana, Kalastria Bloodchief has an activated ability that costs {X}{B}{B}. If you control Training Grounds and you activate the ability with X equal to 5, you'll have to pay only {3}{B}{B}. This is true even if the ability states that {X} must be paid with a certain color of mana, as Crimson Hellkite's ability does."
+    },
+    {
+      "oracle_id": "7b515c56-7b1e-42a8-82b0-1b30201fb162",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Activated abilities contain a colon. They're generally written \"[Cost]: [Effect].\" Some keyword abilities are activated abilities (such as cycling) and will have colons in their reminder text."
+    },
+    {
+      "oracle_id": "7b515c56-7b1e-42a8-82b0-1b30201fb162",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If you reveal a companion outside the game, for as long as it remains there, you may pay {3} any time you could cast a sorcery (that is, you have priority during your main phase and the stack is empty). Once you do, you put it into your hand and behaves like any other card you've brought into the game. For example, if it's discard, countered, or destroyed, it's put into your graveyard, remaining in the game. This is a change from previous rules."
+    },
+    {
+      "oracle_id": "7b515c56-7b1e-42a8-82b0-1b30201fb162",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Before shuffling your deck to become your library, you may reveal one card from outside the game to be your companion if your starting deck meets the requirements of the companion ability. You can't reveal more than one. It remains revealed outside the game as the game begins."
+    },
+    {
+      "oracle_id": "7b515c56-7b1e-42a8-82b0-1b30201fb162",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "The companion ability has no effect if the card is in your starting deck and creates no restriction on putting a card with a companion ability into your starting deck. For example, Zirda may be in your starting deck even if your other permanent cards don't all have activated abilities."
+    },
+    {
+      "oracle_id": "7b515c56-7b1e-42a8-82b0-1b30201fb162",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Paying {3} to put your companion into your hand is a special action. It doesn't use the stack and players can't respond to it. Once you take this action, you may cast that card if it's legal to do so before any other player can take actions."
+    },
+    {
+      "oracle_id": "7b515c56-7b1e-42a8-82b0-1b30201fb162",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Activating Zirda's last ability after a creature has blocked won't remove the blocking creature from combat or cause the creature it blocked to become unblocked."
+    },
+    {
+      "oracle_id": "7b515c56-7b1e-42a8-82b0-1b30201fb162",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If more than one player wishes to reveal a companion, the starting player does so first, and players proceed in turn order. Once a player has chosen not to reveal a companion, that player can't change their mind."
+    },
+    {
+      "oracle_id": "7b515c56-7b1e-42a8-82b0-1b30201fb162",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Effects that reduce the generic mana cost of an activation cost can't reduce that cost's colored mana requirements. The activation cost is reduced by only {1} if doing so reduces that cost to one mana. For example, a cycling cost of {2} would become {1}, and one of {1}{R} would become {R}. The activation cost is unaffected if it already costs one or zero mana (such as the activation cost of Zirda's last ability)."
+    },
+    {
+      "oracle_id": "7b515c56-7b1e-42a8-82b0-1b30201fb162",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "An activated mana ability is one that produces mana as it resolves, not one that costs mana to activate."
+    },
+    {
+      "oracle_id": "7b515c56-7b1e-42a8-82b0-1b30201fb162",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Permanent cards are artifact, creature, enchantment, land, and planeswalker cards. Land cards with basic land types have intrinsic activated mana abilities associated with those types."
+    },
+    {
+      "oracle_id": "7b515c56-7b1e-42a8-82b0-1b30201fb162",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "The companion's other abilities apply only if the creature is on the battlefield. They have no effect while the companion is outside the game."
+    },
+    {
+      "oracle_id": "7b515c56-7b1e-42a8-82b0-1b30201fb162",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "The requirements of the companion ability apply only to your starting deck. They do not apply to your sideboard."
+    },
+    {
+      "oracle_id": "7b515c56-7b1e-42a8-82b0-1b30201fb162",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Your companion begins the game outside the game. In tournament play, this means your sideboard. In casual play, it's simply a card you own that's not in your starting deck."
+    },
+    {
+      "oracle_id": "7b515c56-7b1e-42a8-82b0-1b30201fb162",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "You may have one companion in the Commander variant. Your deck, including your commander, must meet its companion requirement. Your companion is not one of your one hundred cards."
+    },
+    {
+      "oracle_id": "7b515c56-7b1e-42a8-82b0-1b30201fb162",
+      "published_at": "2020-06-01",
+      "source": "wotc",
+      "comment": "Paying {3} to put your companion into your hand is a special action. It doesn't use the stack and players can't respond to it. Once you take this action, you may cast that card if it's legal to do so before any other player can take actions."
+    },
+    {
+      "oracle_id": "7b515c56-7b1e-42a8-82b0-1b30201fb162",
+      "published_at": "2020-06-01",
+      "source": "wotc",
+      "comment": "If you reveal a companion outside the game, for as long as it remains there, you may pay {3} any time you could cast a sorcery (that is, you have priority during your main phase and the stack is empty). Once you do, you put it into your hand and behaves like any other card you've brought into the game. For example, if it's discarded, countered, or destroyed, it's put into your graveyard, remaining in the game. This is a change from previous rules."
+    },
+    {
+      "oracle_id": "7b515c56-7b1e-42a8-82b0-1b30201fb162",
+      "published_at": "2020-06-01",
+      "source": "scryfall",
+      "comment": "Wizards of the Coast has issued functional errata for the Companion mechanic. Instead of casting companions from outside the game: Once per game, any time you could cast a sorcery (during your main phase when the stack is empty), you can pay {3} to put your companion from your sideboard into your hand. This is a special action, not an activated ability. It happens immediately and can\u2019t be responded to. It can\u2019t be countered or stopped by cards like Phyrexian Revoker. For more information please see https://magic.wizards.com/en/articles/archive/news/june-1-2020-banned-and-restricted-announcement"
+    }
+  ]
+}

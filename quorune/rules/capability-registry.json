@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 388,
+  "registry_version": 389,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -32052,6 +32052,169 @@
         "test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
         "test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
         "test_two_original_spider_activations_keep_separate_x_and_colored_payment"
+      ]
+    },
+    {
+      "id": "activation.mana_cost.static_generic",
+      "version": 1,
+      "official_rules": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Apply current public fixed generic activation taxes and reductions in legal order through shared authoritative prices, retaining each per-effect minimum and the chosen activation X.",
+        "inputs": [
+          "trusted complete static cost descriptor and current source/face/layer-six availability",
+          "current activator, ability kind and typed public battlefield source predicate",
+          "canonical activation base, additional costs, chosen X and existing source-owned reductions"
+        ],
+        "outputs": [
+          "shared offered and accepted mana prices",
+          "one or two distinct legal reduction-order prices",
+          "unchanged colored/colorless/snow and nonmana obligations",
+          "locked paid price independent from result X",
+          "legacy absent optional fields when no public modifier applies"
+        ],
+        "exclusions": [
+          "variable or colored static modifiers, nonmana additional costs and cost replacement",
+          "target-sensitive or history-sensitive qualifiers and unknown source-zone predicates",
+          "unrepresented source bodies or unresolved independent whole-card siblings"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.activation_cost_modifiers.activation_cost_prices",
+        "quorune.activation_mana_cost._modified_activation_mana_options",
+        "quorune.compiler.activation_cost_modifier_templates.static_activation_cost_modifier_handler",
+        "quorune.mana_activation.complete_mana_activation",
+        "quorune.mana_source_discovery._mana_plan_cost_is_supported",
+        "quorune.rules.activation.cost_modifiers.current_activation_cost_modifiers",
+        "quorune.rules.activation.pricing.select_ordinary_activation_price",
+        "quorune.semantic_runtime.activation_costs.FixedActivationCostModifierHandler"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawing the static-cost capability leaves a complete source residual; an undeclared executable-handler dependency fails runtime binding.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "A fresh native original Training Grounds witness kills omission of current static price application.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_both_legal_minimum_orders_are_offered_paid_and_replayed",
+        "test_generic_modifier_grammar_preserves_each_scope_and_floor",
+        "test_generic_nonmana_tax_includes_loyalty_mana_without_changing_counter_cost",
+        "test_minimum_one_does_not_create_a_price_for_original_zero_x",
+        "test_original_controller_scope_does_not_reduce_an_opponents_creature",
+        "test_original_forensic_investigation_creates_a_clue_with_reduced_draw_cost",
+        "test_original_gloom_mana_tax_requires_payment_and_prevents_mana_undo",
+        "test_original_power_artifact_applies_only_to_the_actual_enchanted_source",
+        "test_original_sam_reduces_a_printed_mana_price_to_zero_for_automatic_payment",
+        "test_original_suppression_field_taxes_zero_x_but_keeps_mana_abilities_free",
+        "test_original_training_grounds_pays_one_for_x_three_and_retains_result",
+        "test_original_training_reduction_counts_colored_mana_without_changing_x_damage",
+        "test_phyrexian_alternatives_keep_their_distinct_mana_minimum_and_life_price",
+        "test_power_up_source_reduction_orders_with_static_minimum_after_an_actual_cast",
+        "test_reduced_waterbend_minimum_can_be_paid_with_one_other_tapped_object",
+        "test_removing_original_reducer_does_not_reprice_paid_ability_but_changes_next_price",
+        "test_snow_obligation_satisfies_the_minimum_but_is_never_reduced"
+      ],
+      "negative_tests": [
+        "test_both_legal_minimum_orders_are_offered_paid_and_replayed",
+        "test_executable_modifier_rejects_an_undeclared_cost_capability",
+        "test_modifier_grammar_and_handler_do_not_strip_unknown_qualifications",
+        "test_original_controller_scope_does_not_reduce_an_opponents_creature",
+        "test_withdrawn_static_cost_capability_keeps_an_otherwise_closed_source_residual"
+      ],
+      "interaction_tests": [
+        "test_both_legal_minimum_orders_are_offered_paid_and_replayed",
+        "test_generic_nonmana_tax_includes_loyalty_mana_without_changing_counter_cost",
+        "test_minimum_one_does_not_create_a_price_for_original_zero_x",
+        "test_original_controller_scope_does_not_reduce_an_opponents_creature",
+        "test_original_forensic_investigation_creates_a_clue_with_reduced_draw_cost",
+        "test_original_gloom_mana_tax_requires_payment_and_prevents_mana_undo",
+        "test_original_power_artifact_applies_only_to_the_actual_enchanted_source",
+        "test_original_sam_reduces_a_printed_mana_price_to_zero_for_automatic_payment",
+        "test_original_suppression_field_taxes_zero_x_but_keeps_mana_abilities_free",
+        "test_original_training_grounds_pays_one_for_x_three_and_retains_result",
+        "test_original_training_reduction_counts_colored_mana_without_changing_x_damage",
+        "test_phyrexian_alternatives_keep_their_distinct_mana_minimum_and_life_price",
+        "test_power_up_source_reduction_orders_with_static_minimum_after_an_actual_cast",
+        "test_reduced_waterbend_minimum_can_be_paid_with_one_other_tapped_object",
+        "test_removing_original_reducer_does_not_reprice_paid_ability_but_changes_next_price",
+        "test_snow_obligation_satisfies_the_minimum_but_is_never_reduced"
+      ],
+      "multiplayer_tests": [
+        "test_both_legal_minimum_orders_are_offered_paid_and_replayed",
+        "test_generic_nonmana_tax_includes_loyalty_mana_without_changing_counter_cost",
+        "test_minimum_one_does_not_create_a_price_for_original_zero_x",
+        "test_original_controller_scope_does_not_reduce_an_opponents_creature",
+        "test_original_forensic_investigation_creates_a_clue_with_reduced_draw_cost",
+        "test_original_gloom_mana_tax_requires_payment_and_prevents_mana_undo",
+        "test_original_power_artifact_applies_only_to_the_actual_enchanted_source",
+        "test_original_sam_reduces_a_printed_mana_price_to_zero_for_automatic_payment",
+        "test_original_suppression_field_taxes_zero_x_but_keeps_mana_abilities_free",
+        "test_original_training_grounds_pays_one_for_x_three_and_retains_result",
+        "test_original_training_reduction_counts_colored_mana_without_changing_x_damage",
+        "test_phyrexian_alternatives_keep_their_distinct_mana_minimum_and_life_price",
+        "test_power_up_source_reduction_orders_with_static_minimum_after_an_actual_cast",
+        "test_reduced_waterbend_minimum_can_be_paid_with_one_other_tapped_object",
+        "test_removing_original_reducer_does_not_reprice_paid_ability_but_changes_next_price",
+        "test_snow_obligation_satisfies_the_minimum_but_is_never_reduced"
+      ],
+      "privacy_tests": [
+        "test_both_legal_minimum_orders_are_offered_paid_and_replayed",
+        "test_generic_nonmana_tax_includes_loyalty_mana_without_changing_counter_cost",
+        "test_minimum_one_does_not_create_a_price_for_original_zero_x",
+        "test_original_controller_scope_does_not_reduce_an_opponents_creature",
+        "test_original_forensic_investigation_creates_a_clue_with_reduced_draw_cost",
+        "test_original_gloom_mana_tax_requires_payment_and_prevents_mana_undo",
+        "test_original_power_artifact_applies_only_to_the_actual_enchanted_source",
+        "test_original_sam_reduces_a_printed_mana_price_to_zero_for_automatic_payment",
+        "test_original_suppression_field_taxes_zero_x_but_keeps_mana_abilities_free",
+        "test_original_training_grounds_pays_one_for_x_three_and_retains_result",
+        "test_original_training_reduction_counts_colored_mana_without_changing_x_damage",
+        "test_phyrexian_alternatives_keep_their_distinct_mana_minimum_and_life_price",
+        "test_power_up_source_reduction_orders_with_static_minimum_after_an_actual_cast",
+        "test_reduced_waterbend_minimum_can_be_paid_with_one_other_tapped_object",
+        "test_removing_original_reducer_does_not_reprice_paid_ability_but_changes_next_price",
+        "test_snow_obligation_satisfies_the_minimum_but_is_never_reduced"
+      ],
+      "replay_tests": [
+        "test_both_legal_minimum_orders_are_offered_paid_and_replayed",
+        "test_generic_nonmana_tax_includes_loyalty_mana_without_changing_counter_cost",
+        "test_minimum_one_does_not_create_a_price_for_original_zero_x",
+        "test_original_controller_scope_does_not_reduce_an_opponents_creature",
+        "test_original_forensic_investigation_creates_a_clue_with_reduced_draw_cost",
+        "test_original_gloom_mana_tax_requires_payment_and_prevents_mana_undo",
+        "test_original_power_artifact_applies_only_to_the_actual_enchanted_source",
+        "test_original_sam_reduces_a_printed_mana_price_to_zero_for_automatic_payment",
+        "test_original_suppression_field_taxes_zero_x_but_keeps_mana_abilities_free",
+        "test_original_training_grounds_pays_one_for_x_three_and_retains_result",
+        "test_original_training_reduction_counts_colored_mana_without_changing_x_damage",
+        "test_phyrexian_alternatives_keep_their_distinct_mana_minimum_and_life_price",
+        "test_power_up_source_reduction_orders_with_static_minimum_after_an_actual_cast",
+        "test_reduced_waterbend_minimum_can_be_paid_with_one_other_tapped_object",
+        "test_removing_original_reducer_does_not_reprice_paid_ability_but_changes_next_price",
+        "test_snow_obligation_satisfies_the_minimum_but_is_never_reduced"
       ]
     }
   ]

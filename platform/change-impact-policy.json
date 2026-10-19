@@ -5984,6 +5984,39 @@
         "test_typed_grant_carriers",
         "test_waterbend"
       ]
+    },
+    {
+      "id": "static-generic-activation-cost-contract",
+      "patterns": [
+        "quorune/activation_cost_modifiers.py",
+        "quorune/compiler/activation_cost_modifier_templates.py",
+        "quorune/compiler/runtime_templates.py",
+        "quorune/semantic_runtime/activation_costs.py",
+        "quorune/semantic_runtime/cast_costs.py",
+        "quorune/activation_mana_cost.py",
+        "quorune/abilities.py",
+        "quorune/power_up.py",
+        "quorune/rules/activation/**",
+        "quorune/mana_source_discovery.py",
+        "quorune/mana_activation.py",
+        "tests/test_activation_cost_modifiers.py",
+        "tests/fixtures/static-activation-cost-cards.json"
+      ],
+      "test_modules": [
+        "test_activation_cost_modifiers",
+        "test_announced_activation_x",
+        "test_complex_activation_mana_costs",
+        "test_casting_activation_metadata",
+        "test_loyalty_abilities",
+        "test_static_action_rules",
+        "test_ordinary_cycling",
+        "test_power_up",
+        "test_waterbend",
+        "test_fixed_mana_abilities",
+        "test_card_program_trust",
+        "test_choice_forms",
+        "test_high_risk_interaction_assurance"
+      ]
     }
   ],
   "symbol_rules": [

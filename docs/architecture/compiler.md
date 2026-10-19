@@ -2499,6 +2499,15 @@ amount projection varies only numeric results and preserves fixed target
 domains. Discovery requires the existing exact complete-card certificate,
 including when the catalog is attached after effect-program generation.
 An exact leaf beside an unknown sibling cannot expose a newly paid X action.
+`compiler/activation_cost_modifier_templates.py` lowers complete fixed generic
+activation taxes and reductions, including their per-effect minimum sentence,
+into the existing cost registry. Controller and enchanted-source relations
+remain separate from the shared public object predicate; nonmana exceptions
+stay explicit. Runtime discovery also requires the source's current layer-six
+component, so removal, control changes and source departure affect subsequent
+prices. Variable, target-qualified, history-qualified and unrepresented source
+zone forms remain residual. Recognizing a modifier does not remove unrelated
+Companion, return, Adapt or other whole-card residuals.
 Target-qualified spell-cast predicates consume version-six public cast facts.
 The casting owner reads effective creature types and controllers only for
 selected targets still in their expected zone and incarnation at cast completion

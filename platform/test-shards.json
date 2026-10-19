@@ -18,6 +18,7 @@
   "primary_shards": {
     "functional-01": [
       "test_ability_word_event_triggers",
+      "test_activation_cost_modifiers",
       "test_announced_activation_x",
       "test_card_program_v2",
       "test_casting_activation_proposal_equivalence",

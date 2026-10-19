@@ -8,8 +8,8 @@ from typing import Any, Protocol
 from ...abilities import ActivatedAbility
 from ...activation_mana_cost import (
     ActivationManaCostOption,
-    select_activation_mana_option,
 )
+from .pricing import select_activation_mana_option
 from ...attachment_references import (
     SourceAttachmentSnapshot,
     capture_source_attachment_snapshot,
@@ -175,13 +175,19 @@ def _revalidate_activation(
             reason=condition_reason or "stale_activation_condition",
         )
     details = thaw_json(proposal.details)
-    if ability.announced_x_symbols is not None:
+    if not ability.mana_cost_options:
         from .x_costs import activation_requirements, validate_activation_x_payment
         try:
-            expected, value = activation_requirements(host,proposal.seat,source,ability,{'x':details.get('announced_x')})
-            if expected != dict(thaw_json(proposal.requirements)):raise ValueError('Activation X price changed after proposal')
-            validate_activation_x_payment(host,proposal.seat,source,ability,expected)
-        except ValueError as exc:raise ActivationProposalError(str(exc),reason='stale_activation_x') from exc
+            snapshot=details.get('static_activation_price') or {}
+            response={'x':details.get('announced_x')}
+            if snapshot:response['cost_reduction_order']=snapshot['order']
+            expected, value = activation_requirements(host,proposal.seat,source,ability,response)
+            if ability.waterbend is not None:
+                payment=details.get('waterbend_payment') or {}
+                expected['GENERIC']-=len(payment.get('objects',()))
+            if expected != dict(thaw_json(proposal.requirements)):raise ValueError('Activation mana price changed after proposal')
+            if ability.waterbend is None:validate_activation_x_payment(host,proposal.seat,source,ability,expected)
+        except ValueError as exc:raise ActivationProposalError(str(exc),reason='stale_activation_price') from exc
     raw_option = details.get("mana_cost_option")
     mana_option = None
     if ability.mana_cost_options:
@@ -818,6 +824,7 @@ def _commit_activation_costs_and_stack(
             payment_activations=activations,
             source_was_snow=source_was_snow,
             source_information=mana_source_information or chosen_source_information,
+            mana_payment=spent,
         )
         return True
     item = _activation_stack_item(
