@@ -13773,7 +13773,7 @@
         "continuous.characteristics.conditional_creature_type_removal"
       ],
       "interaction_order": 2,
-      "assertion": "All pinned original carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+      "assertion": "The named pinned boundary carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
     },
     {
       "evidence_class": "interaction",
@@ -13787,7 +13787,7 @@
         "continuous.characteristics.conditional_creature_type_removal"
       ],
       "interaction_order": 2,
-      "assertion": "All pinned original carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+      "assertion": "The named pinned boundary carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
     },
     {
       "evidence_class": "interaction",
@@ -13801,7 +13801,7 @@
         "damage.source.stack_current_or_lki"
       ],
       "interaction_order": 2,
-      "assertion": "All pinned original carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+      "assertion": "The named pinned boundary carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
     },
     {
       "evidence_class": "interaction",
@@ -13815,7 +13815,7 @@
         "damage.source.stack_current_or_lki"
       ],
       "interaction_order": 2,
-      "assertion": "All pinned original carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+      "assertion": "The named pinned boundary carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
     },
     {
       "evidence_class": "interaction",
@@ -13829,7 +13829,7 @@
         "damage.source.stack_current_or_lki"
       ],
       "interaction_order": 2,
-      "assertion": "All pinned original carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+      "assertion": "The named pinned boundary carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
     },
     {
       "evidence_class": "interaction",
@@ -13843,7 +13843,7 @@
         "mana.production.source_chosen_color"
       ],
       "interaction_order": 2,
-      "assertion": "All pinned original carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+      "assertion": "The named pinned boundary carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
     },
     {
       "evidence_class": "interaction",
@@ -13857,7 +13857,7 @@
         "mana.production.source_chosen_color"
       ],
       "interaction_order": 2,
-      "assertion": "All pinned original carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+      "assertion": "The named pinned boundary carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
     },
     {
       "evidence_class": "interaction",

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Independent runtime composition and whole-card rejection witnesses for #519."""
+"""Independent runtime composition and complete-card admission witnesses."""
 
 import json
 from pathlib import Path
@@ -18,7 +18,7 @@ from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.semantics import SemanticRegistry
 from scripts.build_test_database import build_fixture_database
-from high_risk_interaction_support import _observed_piece_ids
+from high_risk_interaction_support import _observed_piece_ids, _record as boundary_witness_record
 import test_paid_entry_copy as paid_actions
 
 
@@ -217,3 +217,25 @@ class BatchInteractionRecoveryTests(unittest.TestCase):
                 self.assertFalse(binding['strict_capability_ready'])
                 self.assertFalse(binding['compatible_ready'])
                 self.assertTrue(binding['blockers'])
+
+    def test_promoted_originals_close_while_shared_replacement_boundary_stays_rejected(self):
+        data = json.loads((ROOT / 'tests/fixtures/batch-interaction-recovery-cards.json').read_text(encoding='utf-8'))
+        self.assertTrue(data['admission_promotions'])
+        for witness in data['admission_promotions']:
+            cases = (
+                (self.db.by_oracle_id(witness['oracle_id']), witness['piece_ids'], True),
+                (boundary_witness_record(witness['residual_witness_id']), witness['residual_piece_ids'], False),
+            )
+            for card, pieces, supported in cases:
+                with self.subTest(card=card.name, supported=supported):
+                    ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile='commander_review')
+                    program = compile_best_available_card_program(self.db, card, semantic_registry=SemanticRegistry(),
+                        capability_registry=self.registry, capability_profile='commander_review')
+                    unlock = analyze_card_unlocks(ir, program=program, program_error=None,
+                        capabilities=self.registry, profile='commander_review')
+                    self.assertLessEqual(set(pieces), _observed_piece_ids(unlock))
+                    binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+                    self.assertEqual(supported, binding['strict_capability_ready'])
+                    self.assertEqual(supported, binding['compatible_ready'])
+                    self.assertEqual(not supported, bool(ir.material_residuals))
+                    self.assertEqual(not supported, bool(binding['blockers']))

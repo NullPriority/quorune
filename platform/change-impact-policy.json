@@ -5543,7 +5543,9 @@
         "test_token_entry_boundaries",
         "test_card_program_trust",
         "test_choice_forms",
-        "test_oracle_ir"
+        "test_oracle_ir",
+        "test_batch_interaction_recovery",
+        "test_high_risk_interaction_assurance"
       ]
     },
     {
@@ -5866,6 +5868,21 @@
         "test_target_restrictions",
         "test_choice_forms",
         "test_untap_selection_limits"
+      ]
+    },
+    {
+      "id": "promoted-original-and-shared-residual-admission-consumers",
+      "patterns": [
+        "tests/test_batch_interaction_recovery.py",
+        "tests/fixtures/batch-interaction-recovery-cards.json",
+        "tests/high_risk_interaction_support.py",
+        "quorune/damage_source.py",
+        "quorune/rules/stack_damage_sources.py"
+      ],
+      "test_modules": [
+        "test_batch_interaction_recovery",
+        "test_high_risk_interaction_assurance",
+        "test_devour"
       ]
     }
   ],
