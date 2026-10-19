@@ -2664,7 +2664,7 @@ class CommanderEngine(
         self.state.priority_passes = []
         if self._stabilize():
             return
-        self.state.priority_player = seat
+        self.turn_priority.retain_priority_after_action(seat)
 
     def _select_cast_face(self, record: CardRecord, face_name: str | None) -> dict[str, Any] | None:
         if not record.faces:

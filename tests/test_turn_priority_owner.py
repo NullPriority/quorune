@@ -324,5 +324,212 @@ class ConcessionPriorityRoundRuntimeTests(unittest.TestCase):
                 self.test_actual_last_seat_concession_allows_wrapped_priority_pass_and_replays()
 
 
+class CostPaymentDeparturePriorityTests(unittest.TestCase):
+    """CR 118.3b/704.5a/800.4a: full-life costs finish before departure."""
+
+    register_fixture_cards_on_add = True
+    import test_bound_effect_programs as _bound
+    session = _bound.BoundEffectProgramRuntimeTests.session
+    add = _bound.BoundEffectProgramRuntimeTests.add
+    checkpoint = _bound.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = _bound.BoundEffectProgramRuntimeTests.resolve
+    replay = _bound.BoundEffectProgramRuntimeTests.replay
+
+    @classmethod
+    def setUpClass(cls):
+        import json
+        import tempfile
+        from pathlib import Path
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        fixture = Path(cls.temporary.name) / "full-life-costs.json"
+        cards = []
+        for index, (name, type_line, text) in enumerate([
+            ("Generic Full Life Spell", "Instant",
+             "As an additional cost to cast this spell, pay 40 life.\nDraw a card."),
+            ("Generic Full Life Ability", "Artifact", "Pay 40 life: Draw a card."),
+            ("Generic Full Life Mana", "Artifact", "Pay 40 life: Add {B}."),
+            ("Generic Full Life Land", "Land",
+             "As this land enters, you may pay 2 life. If you don't, it enters tapped."),
+        ]):
+            cards.append({"oracle_id": f"00000000-0000-4000-8000-{7290+index:012d}",
+                "name": name, "mana_cost": "{1}", "cmc": 1, "type_line": type_line,
+                "oracle_text": text, "colors": [], "color_identity": [], "keywords": [],
+                "layout": "normal", "legalities": {"commander": "legal"}})
+        fixture.write_text(json.dumps({"schema_version": 1, "cards": cards}), encoding="utf8")
+        path = Path(cls.temporary.name) / "full-life-costs.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/bound-effect-program-cards.json", fixture], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Life payment priority", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def prepare(self, session, actor="A"):
+        engine = session.engine
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.started = True
+        engine.state.active_player = actor
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.phase_index = 3
+        engine.state.players[actor].mana_pool["C"] = 1
+        engine._grant_priority(actor)
+        engine.pump()
+
+    def action(self, session, source, actor="A"):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        program = compile_best_available_card_program(self.db, self.db.lookup(source.printed_name),
+            semantic_registry=session.engine.semantics, capability_registry=self.registry,
+            capability_profile="commander_review")
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+        self.assertTrue(binding["strict_capability_ready"], binding)
+        self.assertEqual("capability_closed", binding["trust_basis"])
+        actions = session.packet("pilot:"+actor, full=True)["decision"]["ctx"]["legal"]["actions"]
+        return next(row for row in actions if row.get("card") == source.ref
+            or row["id"].startswith("activate:"+source.ref+":"))
+
+    def departure_witness(self, name, *, actor="A", successor="B"):
+        import json
+        session = self.session(729002)
+        source = self.add(session.engine, name, seat=actor,
+            zone="hand" if name.endswith("Spell") else "battlefield")
+        private = self.add(session.engine, "Generic Bound Growth", seat="C", zone="hand")
+        self.prepare(session, actor)
+        action = self.action(session, source, actor)
+        self.checkpoint(session)
+        # The pending offered action survives save/load before the payment.
+        session = self.replay(session, load=True)
+        before = authoritative_state_hash(session.state)
+        denied = session.act("pilot:C", {"action_id": action["id"], "pay": "auto"})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:"+actor, {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(0, session.state.players[actor].life)
+        self.assertFalse(session.state.players[actor].in_game)
+        self.assertEqual(actor, session.state.active_player)
+        self.assertEqual(successor, session.state.priority_player)
+        self.assertEqual([], session.state.priority_passes)
+        self.assertEqual("outside", session.state.cards[source.object_id].zone)
+        self.assertFalse(session.state.stack)
+        self.assertEqual(0 if name.endswith("Spell") else 1,
+            session.state.players[actor].mana_pool.get("C", 0))
+        self.assertEqual(1 if name.endswith("Mana") else 0,
+            session.state.players[actor].mana_pool.get("B", 0))
+        for viewer in "ABD":
+            self.assertNotIn(private.ref, json.dumps(session.packet("pilot:"+viewer, full=True)))
+        self.assertIn(private.ref, json.dumps(session.packet("pilot:C", full=True)))
+        session = self.replay(session, load=True)
+        passed = session.act("pilot:"+successor, {"action_id": "pass"})
+        self.assertTrue(passed.ok, passed.summary)
+        self.assertEqual([successor], session.state.priority_passes)
+        self.replay(session, load=True)
+
+    def test_full_life_spell_departs_then_gives_next_survivor_usable_priority(self):
+        self.departure_witness("Generic Full Life Spell")
+
+    def test_full_life_nonmana_activation_removes_departed_stack_ability(self):
+        self.departure_witness("Generic Full Life Ability", actor="D", successor="A")
+
+    def test_full_life_mana_activation_gives_next_survivor_priority(self):
+        self.departure_witness("Generic Full Life Mana")
+
+    def test_full_life_land_entry_passes_priority_after_owned_land_leaves(self):
+        session = self.session(729006)
+        source = self.add(session.engine, "Generic Full Life Land", zone="hand")
+        session.state.players["A"].life = 2
+        self.prepare(session)
+        action = self.action(session, source)
+        self.checkpoint(session)
+        session = self.replay(session, load=True)
+        accepted = session.act("pilot:A", {"action_id": action["id"], "pay_life": True})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertFalse(session.state.players["A"].in_game)
+        self.assertEqual(0, session.state.players["A"].life)
+        self.assertEqual("outside", session.state.cards[source.object_id].zone)
+        self.assertEqual("B", session.state.priority_player)
+        self.assertTrue(session.act("pilot:B", {"action_id": "pass"}).ok)
+        self.replay(session, load=True)
+
+    def test_insufficient_life_rejects_but_surviving_payer_retains_priority(self):
+        session = self.session(729003)
+        source = self.add(session.engine, "Generic Full Life Spell", zone="hand")
+        session.state.players["A"].life = 41
+        self.prepare(session)
+        action = self.action(session, source)
+        self.checkpoint(session)
+        epoch = session.state.priority_epoch
+        accepted = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(1, session.state.players["A"].life)
+        self.assertTrue(session.state.players["A"].in_game)
+        self.assertEqual("A", session.state.priority_player)
+        self.assertEqual(epoch, session.state.priority_epoch)
+        before_draw = len(session.state.players["A"].zones["hand"])
+        self.resolve(session)
+        self.assertEqual(before_draw+1, len(session.state.players["A"].zones["hand"]))
+        self.replay(session, load=True)
+
+        session = self.session(729004)
+        source = self.add(session.engine, "Generic Full Life Spell", zone="hand")
+        session.state.players["A"].life = 39
+        self.prepare(session)
+        self.checkpoint(session)
+        before = authoritative_state_hash(session.state)
+        denied = session.act("pilot:A", {"action_id": "cast:"+source.ref, "pay": "auto"})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.replay(session, load=True)
+
+    def test_restoring_departed_actor_mutant_is_killed_by_fresh_spell(self):
+        from unittest.mock import patch
+        from quorune.turn_priority_owner import TurnPriorityDecisionOwner
+
+        def restore_departed(owner, seat):
+            owner.state.priority_player = seat
+            owner.state.priority_passes = []
+
+        with patch.object(TurnPriorityDecisionOwner, "retain_priority_after_action", new=restore_departed):
+            method = "test_full_life_spell_departs_then_gives_next_survivor_usable_priority"
+            with self.assertRaisesRegex(StateInvariantError, "not in the game"):
+                getattr(type(self)(method), method)()
+
+    def test_special_action_stabilization_preserves_departure_choice_and_game_end(self):
+        from unittest.mock import patch
+        session = self.session(729005)
+        self.prepare(session)
+        owner = session.engine.turn_priority
+
+        def depart():
+            session.engine._eliminate_players(["A"], reason="full-life special-action witness")
+            return False
+
+        with patch.object(session.engine, "_stabilize", side_effect=depart):
+            owner.complete_special_action("A")
+        self.assertEqual("B", session.state.priority_player)
+        self.assertEqual([], session.state.priority_passes)
+        with patch.object(session.engine, "_stabilize", return_value=True):
+            owner.complete_special_action("B")
+        self.assertIsNone(session.state.priority_player)
+        session.engine._eliminate_players(["B", "C"], reason="game-end witness")
+        self.assertTrue(session.state.game_over)
+        owner.retain_priority_after_action("D")
+        self.assertIsNone(session.state.priority_player)
+
+
 if __name__ == "__main__":
     unittest.main()
